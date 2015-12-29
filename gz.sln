@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gzWeb", "gzWeb\gzWeb.csproj", "{6459A7AB-F7C0-49E6-A099-2A3DEE11A255}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gzWeb.Tests", "gzWeb.Tests\gzWeb.Tests.csproj", "{719E70BB-8D47-4509-AC17-1D3D6CDEA9D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublishScripts", "PublishScripts", "{174FB6C3-A291-49D2-ADE1-24E061508652}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{9227FDB5-84E4-4CFB-92C3-A491ED07A155}"
+	ProjectSection(SolutionItems) = preProject
+		PublishScripts\Scripts\Deploy-AzureResourceGroup.ps1 = PublishScripts\Scripts\Deploy-AzureResourceGroup.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{9CBB63FD-9405-4DA4-A1A2-6A210D137DD0}"
+	ProjectSection(SolutionItems) = preProject
+		PublishScripts\Templates\gzWeb.json = PublishScripts\Templates\gzWeb.json
+		PublishScripts\Templates\gzWeb.param.dev.json = PublishScripts\Templates\gzWeb.param.dev.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6459A7AB-F7C0-49E6-A099-2A3DEE11A255}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6459A7AB-F7C0-49E6-A099-2A3DEE11A255}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6459A7AB-F7C0-49E6-A099-2A3DEE11A255}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6459A7AB-F7C0-49E6-A099-2A3DEE11A255}.Release|Any CPU.Build.0 = Release|Any CPU
+		{719E70BB-8D47-4509-AC17-1D3D6CDEA9D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{719E70BB-8D47-4509-AC17-1D3D6CDEA9D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{719E70BB-8D47-4509-AC17-1D3D6CDEA9D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{719E70BB-8D47-4509-AC17-1D3D6CDEA9D3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9227FDB5-84E4-4CFB-92C3-A491ED07A155} = {174FB6C3-A291-49D2-ADE1-24E061508652}
+		{9CBB63FD-9405-4DA4-A1A2-6A210D137DD0} = {174FB6C3-A291-49D2-ADE1-24E061508652}
+	EndGlobalSection
+EndGlobal

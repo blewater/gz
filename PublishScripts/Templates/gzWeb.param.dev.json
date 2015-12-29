@@ -1,0 +1,29 @@
+{
+  "siteName": {
+    "value": "zorro"
+  },
+  "hostingPlanName": {
+    "value": "greenzorro"
+  },
+  "siteLocation": {
+    "value": "West Europe"
+  },
+  "sku": {
+    "value": "Free"
+  },
+  "workerSize": {
+    "value": "0"
+  },
+  "siteMode": {
+    "value": "Limited"
+  },
+  "computeMode": {
+    "value": "0"
+  },
+  "subscriptionId": {
+    "value": "bde1dc11-e585-4635-bf19-d8b61015a8bb"
+  },
+  "resourceGroup": {
+    "value": "greenzorro"
+  }
+}
