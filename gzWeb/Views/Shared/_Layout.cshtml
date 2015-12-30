@@ -3,45 +3,56 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Greenzorro</title>
-    @Styles.Render("~/Content/css")
-    <link href="~/Content/kendo/2015.3.1111/kendo.common.min.css" rel="stylesheet" />
-    <link href="~/Content/kendo/2015.3.1111/kendo.metro.min.css" rel="stylesheet" />
-    @Scripts.Render("~/bundles/modernizr")
-
+    <title>@ViewBag.Title - Greenzorro Entertainment</title>
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.common.core.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.metro.mobile.min.css")" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Casino", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
+    <header>
+        <div class="content-wrapper">
+            <nav>
+                <div class="float-left">
+                </div><div class="float-left">
+                    <ul id="menu">
+                        <li>
+                            <a href='@Url.Action("Index", "Home")'>
+                                <img src='@Url.Content("~/Content/images/gz_logo_sm.png")' />
+                            </a>
+                        </li>
+                        <li>Investments</li>
+                        <li>Casino</li>
+                        <li>Betting</li>
+                    </ul>
+                </div>
+                <div class="float-right">
+                    <section id="login">
+                        @Html.Partial("_LoginPartial")
+                    </section>
+                </div>
+            </nav>
         </div>
+
+    </header>
+    <div id="body">
+        <div class="content-wrapper">
+            <hr />
+        </div>
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
+    <footer>
+        <div class="content-wrapper">
             <p>&copy; @DateTime.Now.Year - Greenzorro</p>
-        </footer>
-    </div>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     <script src="~/Scripts/kendo/2015.3.1111/kendo.ui.core.min.js"></script>
-    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/App/Views/Shared/layout.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
