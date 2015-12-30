@@ -1,3 +1,3 @@
-﻿$(function () {
-    $("#menu").kendoMenu();
-});
+﻿//$(function () {
+//    $(".menu").kendoMenu();
+//});

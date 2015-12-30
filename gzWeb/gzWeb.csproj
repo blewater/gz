@@ -190,6 +190,7 @@
     <Content Include="Content\images\accent.png" />
     <Content Include="Content\images\bullet.png" />
     <Content Include="Content\images\gz_logo.png" />
+    <Content Include="Content\images\gz_logo_sm.png" />
     <Content Include="Content\kendo\2015.3.1111\Black\editor.png" />
     <Content Include="Content\kendo\2015.3.1111\Black\imagebrowser.png" />
     <Content Include="Content\kendo\2015.3.1111\Black\indeterminate.gif" />

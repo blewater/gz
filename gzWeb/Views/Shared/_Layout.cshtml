@@ -13,26 +13,23 @@
 <body>
     <header>
         <div class="content-wrapper">
-            <nav>
                 <div class="float-left">
-                </div><div class="float-left">
-                    <ul id="menu">
+                    <ul class="menu">
                         <li>
                             <a href='@Url.Action("Index", "Home")'>
                                 <img src='@Url.Content("~/Content/images/gz_logo_sm.png")' />
                             </a>
                         </li>
-                        <li>Investments</li>
-                        <li>Casino</li>
-                        <li>Betting</li>
+                        <li>@Html.ActionLink("Investments", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Casino", "About", "Home")</li>
+                        <li>@Html.ActionLink("Betting", "Contact", "Home")</li>
                     </ul>
                 </div>
                 <div class="float-right">
-                    <section id="login">
-                        @Html.Partial("_LoginPartial")
-                    </section>
+                    <nav>
+                            @Html.Partial("_LoginPartial")
+                    </nav>
                 </div>
-            </nav>
         </div>
 
     </header>
