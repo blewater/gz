@@ -25,8 +25,7 @@ x86/
 # Mario to allow packages to nuget flow
 #build/
 bld/
-# Mario to allow dlls in sc
-#[Bb]in/
+[Bb]in/*
 [Oo]bj/
 
 # Visual Studio 2015 cache/options directory
