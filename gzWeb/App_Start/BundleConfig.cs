@@ -24,13 +24,8 @@ namespace gzWeb
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-        "~/Content/site.css",
-        "~/Content/kendo/2015.3.1111/kendo.common-office365.min.css",
-        "~/Content/kendo/2015.3.1111/kendo.mobile.all.min.css",
-        "~/Content/kendo/2015.3.1111/kendo.dataviz.mobile.min.css",
-        "~/Content/kendo/2015.3.1111/kendo.metro.min.css",
-        "~/Content/kendo/2015.3.1111/kendo.metro.mobile.min.css"
-        ));
+                      "~/Content/bootstrap.css",
+                      "~/Content/site.css"));
         }
     }
 }
