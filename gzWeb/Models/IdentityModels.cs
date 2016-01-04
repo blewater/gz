@@ -11,11 +11,11 @@ namespace gzWeb.Models
     public class ApplicationUser : IdentityUser
     {
         // Mario added extra profile
-        //public string FirstName { get; set; }
-        //public string LastName { get; set; }
-        //public DateTime Birthday { get; set; }
-        //public DateTime? DateCreated { get; set; }
-        //public DateTime? DateUpdated { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime Birthday { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

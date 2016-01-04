@@ -178,6 +178,10 @@
     <Compile Include="Migrations\201512312022070_IdentityTesting.Designer.cs">
       <DependentUpon>201512312022070_IdentityTesting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601041328453_f,lnames.cs" />
+    <Compile Include="Migrations\201601041328453_f,lnames.Designer.cs">
+      <DependentUpon>201601041328453_f,lnames.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustomerProfile.cs" />
@@ -1200,6 +1204,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201512312022070_IdentityTesting.resx">
       <DependentUpon>201512312022070_IdentityTesting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601041328453_f,lnames.resx">
+      <DependentUpon>201601041328453_f,lnames.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
