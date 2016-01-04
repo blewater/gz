@@ -91,6 +91,15 @@ namespace gzWeb.Controllers
             }
         }
 
+        [ChildActionOnly]
+        public string GetUserFirstName() {
+            if (User.Identity.IsAuthenticated) {
+                var currUser =_userManager.FindById(User.Identity.GetUserId());
+                return currUser.FirstName;
+            }
+            return "";
+        }
+
         //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
@@ -153,11 +162,10 @@ namespace gzWeb.Controllers
             {
                 var user = new ApplicationUser {
                     UserName = model.Email,
-                    Email = model.Email
-                    //,
-                    //FirstName = model.FirstName,
-                    //LastName = model.LastName,
-                    //Birthday = model.Birthday
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Birthday = model.Birthday
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
