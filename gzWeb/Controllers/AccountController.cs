@@ -94,7 +94,7 @@ namespace gzWeb.Controllers
         [ChildActionOnly]
         public string GetUserFirstName() {
             if (User.Identity.IsAuthenticated) {
-                var currUser =_userManager.FindById(User.Identity.GetUserId());
+                var currUser = UserManager.FindById(User.Identity.GetUserId());
                 return currUser.FirstName;
             }
             return "";
