@@ -30,7 +30,9 @@ namespace gzWeb.Models
         [ForeignKey("InvBalanceId")]
         public virtual InvBalance InvBalance { get; set; }
 
+        public virtual ICollection<CustPortfolios> PortfWeights { get; set; }
         public virtual ICollection<Portfolio> Portfolio { get; set; }
+
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
