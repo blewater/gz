@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace gzWeb.Models
 {
@@ -11,11 +14,23 @@ namespace gzWeb.Models
     public class ApplicationUser : IdentityUser
     {
         // Mario added extra profile
+        [Required, StringLength(30)]
         public string FirstName { get; set; }
+
+        [Required, StringLength(30)]
         public string LastName { get; set; }
+
+        [Required]
         public DateTime Birthday { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
+
+        [NotMapped] /* Must get from Casino API */
+        public decimal GamBalance { get; set; }
+
+        public int InvBalanceId { get; set; }
+        [ForeignKey("InvBalanceId")]
+        public virtual InvBalance InvBalance { get; set; }
+
+        public virtual ICollection<Portfolio> Portfolio { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
