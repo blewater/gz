@@ -22,6 +22,7 @@ namespace gzWeb.Models {
         [StringLength(128)]
         public string Note { get; set; }
 
+        public virtual ICollection<PortFunds> FundWeights { get; set; }
         public virtual ICollection<Fund> Funds { get; set; }
     }
 }
