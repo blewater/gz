@@ -185,8 +185,15 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustomerProfile.cs" />
+    <Compile Include="Models\CustPortfolios.cs" />
+    <Compile Include="Models\Fund.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\InvBalance.cs" />
+    <Compile Include="Models\PortFunds.cs" />
+    <Compile Include="Models\TransxType.cs" />
+    <Compile Include="Models\Transx.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Portfolio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
