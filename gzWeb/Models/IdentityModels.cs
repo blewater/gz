@@ -26,8 +26,6 @@ namespace gzWeb.Models
         [NotMapped] /* Must get from Casino API */
         public decimal GamBalance { get; set; }
 
-        public int InvBalanceId { get; set; }
-        [ForeignKey("InvBalanceId")]
         public virtual InvBalance InvBalance { get; set; }
 
         public virtual ICollection<CustPortfolios> PortfWeights { get; set; }
