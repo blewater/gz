@@ -10,10 +10,9 @@ namespace gzWeb.Models {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Key, Column(Order = 0)]
-        public int CustId { get; set; }
-
-        [ForeignKey("CustId")]
+        [Key, Required]
+        public int CustomerId { get; set; }
+        [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
         public decimal Balance { get; set; }
