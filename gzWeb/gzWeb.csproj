@@ -178,13 +178,17 @@
     <Compile Include="Migrations\201601061023223_Init ApplicationUser Id is int.Designer.cs">
       <DependentUpon>201601061023223_Init ApplicationUser Id is int.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601062116014_Add Unique Index in Funds.cs" />
+    <Compile Include="Migrations\201601062116014_Add Unique Index in Funds.Designer.cs">
+      <DependentUpon>201601062116014_Add Unique Index in Funds.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CustPortfolios.cs" />
+    <Compile Include="Models\CustPortfolio.cs" />
     <Compile Include="Models\Fund.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InvBalance.cs" />
-    <Compile Include="Models\PortFunds.cs" />
+    <Compile Include="Models\PortFund.cs" />
     <Compile Include="Models\TransxType.cs" />
     <Compile Include="Models\Transx.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -1206,6 +1210,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201601061023223_Init ApplicationUser Id is int.resx">
       <DependentUpon>201601061023223_Init ApplicationUser Id is int.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601062116014_Add Unique Index in Funds.resx">
+      <DependentUpon>201601062116014_Add Unique Index in Funds.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
