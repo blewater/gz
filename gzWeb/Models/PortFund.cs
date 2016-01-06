@@ -7,7 +7,7 @@ namespace gzWeb.Models {
     /// <summary>
     /// Bridge for Many to Many Portfolio <--> Fund
     /// </summary>
-    public class PortFunds {
+    public class PortFund {
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

@@ -8,10 +8,10 @@ namespace gzWeb.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Index, MaxLength(10)]
+        [Index(IsUnique = true), MaxLength(10)]
         public string Symbol { get; set; }
 
-        [Index, Required, MaxLength(128)]
+        [Index(IsUnique = true), Required, MaxLength(128)]
         public string HoldingName { get; set; }
     }
 }

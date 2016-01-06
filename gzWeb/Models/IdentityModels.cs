@@ -28,7 +28,7 @@ namespace gzWeb.Models
 
         public virtual InvBalance InvBalance { get; set; }
 
-        public virtual ICollection<CustPortfolios> PortfWeights { get; set; }
+        public virtual ICollection<CustPortfolio> PortfWeights { get; set; }
         public virtual ICollection<Portfolio> Portfolio { get; set; }
 
 
@@ -41,6 +41,9 @@ namespace gzWeb.Models
         }
     }
 
+    /// <summary>
+    /// Introduced them to change Id to Int identity
+    /// </summary>
     public class CustomUserRole : IdentityUserRole<int> { }
     public class CustomUserClaim : IdentityUserClaim<int> { }
     public class CustomUserLogin : IdentityUserLogin<int> { }
@@ -63,12 +66,28 @@ namespace gzWeb.Models
         }
     }
 
+    // End of custom classes for int Id
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, CustomRole, int,
         CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
         public ApplicationDbContext()
             : base("DefaultConnection")
         {
+        }
+
+        public DbSet<CustPortfolio> CustPortfolios { get; set; }
+        public DbSet<Fund> Funds { get; set; }
+        public DbSet<InvBalance> InvBalances { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<PortFund> PortFunds { get; set; }
+        public DbSet<Transx> Transxes { get; set; }
+        public DbSet<TransxType> TransxTypes { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder) {
+            base.OnModelCreating(modelBuilder);
+
+            // do fluent API stuff below
         }
 
         public static ApplicationDbContext Create()
