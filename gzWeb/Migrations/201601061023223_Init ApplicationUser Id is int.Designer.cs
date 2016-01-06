@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class flnames : IMigrationMetadata
+    public sealed partial class InitApplicationUserIdisint : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(flnames));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitApplicationUserIdisint));
         
         string IMigrationMetadata.Id
         {
-            get { return "201601041328453_f,lnames"; }
+            get { return "201601061023223_Init ApplicationUser Id is int"; }
         }
         
         string IMigrationMetadata.Source

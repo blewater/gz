@@ -174,13 +174,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201512312022070_IdentityTesting.cs" />
-    <Compile Include="Migrations\201512312022070_IdentityTesting.Designer.cs">
-      <DependentUpon>201512312022070_IdentityTesting.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601041328453_f,lnames.cs" />
-    <Compile Include="Migrations\201601041328453_f,lnames.Designer.cs">
-      <DependentUpon>201601041328453_f,lnames.cs</DependentUpon>
+    <Compile Include="Migrations\201601061023223_Init ApplicationUser Id is int.cs" />
+    <Compile Include="Migrations\201601061023223_Init ApplicationUser Id is int.Designer.cs">
+      <DependentUpon>201601061023223_Init ApplicationUser Id is int.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1208,11 +1204,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201512312022070_IdentityTesting.resx">
-      <DependentUpon>201512312022070_IdentityTesting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601041328453_f,lnames.resx">
-      <DependentUpon>201601041328453_f,lnames.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601061023223_Init ApplicationUser Id is int.resx">
+      <DependentUpon>201601061023223_Init ApplicationUser Id is int.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
