@@ -7,6 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using gzWeb.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using AutoMapper;
 
 namespace gzWeb.Controllers
 {
@@ -17,24 +20,31 @@ namespace gzWeb.Controllers
         // GET: Investments
         public ActionResult Index()
         {
-            var applicationUsers = db.ApplicationUsers.Include(a => a.InvBalance);
-            return View(applicationUsers.ToList());
+            var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var customer = manager.FindById(User.Identity.GetUserId<int>());
+
+            //var applicationUser = db.ApplicationUsers.Include(a => a.InvBalance);
+
+            var customerVM = new CustomerViewModel();
+            Mapper.Map<ApplicationUser, CustomerViewModel>(customer, customerVM);
+            Mapper.Map<InvBalance, CustomerViewModel>(customer.InvBalance, customerVM);
+            return View(customerVM);
         }
 
         // GET: Investments/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
-            if (applicationUser == null)
-            {
-                return HttpNotFound();
-            }
-            return View(applicationUser);
-        }
+        //public ActionResult Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
+        //    if (applicationUser == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(applicationUser);
+        //}
 
         // GET: Investments/Create
         public ActionResult Create()
@@ -46,36 +56,36 @@ namespace gzWeb.Controllers
         // POST: Investments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Birthday,PlatformCustomerId,ActiveCustomerIdInPlatform,PlatformBalance,LastUpdatedBalance,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] ApplicationUser applicationUser)
-        {
-            if (ModelState.IsValid)
-            {
-                db.ApplicationUsers.Add(applicationUser);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Birthday,PlatformCustomerId,ActiveCustomerIdInPlatform,PlatformBalance,LastUpdatedBalance,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] ApplicationUser applicationUser)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.ApplicationUsers.Add(applicationUser);
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
 
-            ViewBag.Id = new SelectList(db.InvBalances, "CustomerId", "CustomerId", applicationUser.Id);
-            return View(applicationUser);
-        }
+        //    ViewBag.Id = new SelectList(db.InvBalances, "CustomerId", "CustomerId", applicationUser.Id);
+        //    return View(applicationUser);
+        //}
 
         // GET: Investments/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
-            if (applicationUser == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.Id = new SelectList(db.InvBalances, "CustomerId", "CustomerId", applicationUser.Id);
-            return View(applicationUser);
-        }
+        //public ActionResult Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
+        //    if (applicationUser == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    ViewBag.Id = new SelectList(db.InvBalances, "CustomerId", "CustomerId", applicationUser.Id);
+        //    return View(applicationUser);
+        //}
 
         // POST: Investments/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -95,30 +105,30 @@ namespace gzWeb.Controllers
         }
 
         // GET: Investments/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
-            if (applicationUser == null)
-            {
-                return HttpNotFound();
-            }
-            return View(applicationUser);
-        }
+        //public ActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
+        //    if (applicationUser == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(applicationUser);
+        //}
 
         // POST: Investments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
-            db.ApplicationUsers.Remove(applicationUser);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult DeleteConfirmed(int id)
+        //{
+        //    ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
+        //    db.ApplicationUsers.Remove(applicationUser);
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
 
         protected override void Dispose(bool disposing)
         {
