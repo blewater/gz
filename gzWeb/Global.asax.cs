@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using AutoMapper;
+using gzWeb.Models;
 
 namespace gzWeb
 {
@@ -16,6 +18,10 @@ namespace gzWeb
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            //Automapper
+            Mapper.Initialize(cfg => cfg.CreateMap<ApplicationUser, CustomerViewModel>());
+            Mapper.CreateMap<InvBalance, CustomerViewModel>();
         }
     }
 }
