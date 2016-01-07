@@ -182,6 +182,10 @@
     <Compile Include="Migrations\201601062116014_Add Unique Index in Funds.Designer.cs">
       <DependentUpon>201601062116014_Add Unique Index in Funds.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601071016494_PlatformTies.cs" />
+    <Compile Include="Migrations\201601071016494_PlatformTies.Designer.cs">
+      <DependentUpon>201601071016494_PlatformTies.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -1213,6 +1217,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601062116014_Add Unique Index in Funds.resx">
       <DependentUpon>201601062116014_Add Unique Index in Funds.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601071016494_PlatformTies.resx">
+      <DependentUpon>201601071016494_PlatformTies.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

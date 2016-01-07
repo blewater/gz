@@ -5,7 +5,7 @@ namespace gzWeb.Migrations
     using System;
     using System.Data.Entity.Migrations;
     using Microsoft.AspNet.Identity.Owin;
-
+    using System.Data.Entity;
     internal sealed class Configuration : DbMigrationsConfiguration<gzWeb.Models.ApplicationDbContext>
     {
         public Configuration()
@@ -13,8 +13,7 @@ namespace gzWeb.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(gzWeb.Models.ApplicationDbContext context)
-        {
+        protected override void Seed(gzWeb.Models.ApplicationDbContext context) {
             //  This method will be called after migrating to the latest version.
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
@@ -27,41 +26,78 @@ namespace gzWeb.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+
+            DbContextTransaction transaction = null;
+            try {
+                transaction = context.Database.BeginTransaction();
+
+                AddUpdData(context);
+                transaction.Commit();
+
+                // if succeeded call base.seed
+                base.Seed(context);
+
+            } catch (Exception ex) {
+
+                if (transaction != null) {
+                    transaction.Rollback();
+                    transaction.Dispose();
+                }
+            }
+
+        }
+
+        private static void AddUpdData(ApplicationDbContext context) {
             var manager = new ApplicationUserManager(new CustomUserStore(context));
 
-            var user = new ApplicationUser() {
-                UserName = "johnsmith@mymail.com",
-                Email = "johnsmith@mymail.com",
+            Random rnd = new Random();
+            int rndPlatformId = rnd.Next(1, int.MaxValue);
+
+            var newUser = new ApplicationUser() {
+                UserName = "joe@mymail.com",
+                Email = "joe@mymail.com",
                 EmailConfirmed = true,
-                FirstName = "John",
+                FirstName = "Joe",
                 LastName = "Smith",
-                Birthday = new DateTime(1990, 1, 1)
-                
+                Birthday = new DateTime(1990, 1, 1),
+                PlatformCustomerId = rndPlatformId,
+                PlatformBalance = new decimal(4200.54),
+                LastUpdatedBalance = DateTime.Now
             };
 
-            manager.Create(user, "1q2w3e");
+            // Truncate tables
+            http://stackoverflow.com/questions/24209220/ef6-code-first-drop-tables-not-entire-database-when-model-changes
+            var fUser = manager.FindByEmail(newUser.Email);
+            if (fUser == null) {
+                manager.Create(newUser, "1q2w3e");
+            } else {
+                manager.Update(newUser);
+            }
 
-            var nfund = new Fund { HoldingName = "iShares MUB", Symbol = "MUB" };
-            context.Funds.AddOrUpdate(nfund);
-            nfund = new Fund { HoldingName = "Schwab SCHP", Symbol = "SCHP" };
-            context.Funds.AddOrUpdate(nfund);
-            nfund = new Fund { HoldingName = "State Street XLE", Symbol = "XLE" };
-            context.Funds.AddOrUpdate(nfund);
-            nfund = new Fund { HoldingName = "Vanguard VEA", Symbol = "VEA" };
-            context.Funds.AddOrUpdate(nfund);
-            nfund = new Fund { HoldingName = "Vanguard VIG", Symbol = "VIG" };
-            context.Funds.AddOrUpdate(nfund);
-            nfund = new Fund { HoldingName = "Vanguard VTI", Symbol = "VTI" };
-            context.Funds.AddOrUpdate(nfund);
-            nfund = new Fund { HoldingName = "Vanguard VWO", Symbol = "VWO" };
-            context.Funds.AddOrUpdate(nfund);
-
-            //context.Funds.AddOrUpdate(
-            //    f => f,
-            //    new Fund { f.HoldingName = "Schwab SCHP" },
-            //);
-
-            base.Seed(context);
+            context.Funds.AddOrUpdate(
+                f => f.Symbol,
+                new Fund {
+                    HoldingName = "iShares MUB", Symbol = "MUB"
+                },
+                new Fund {
+                    HoldingName = "Schwab SCHP", Symbol = "SCHP"
+                },
+                new Fund {
+                    HoldingName = "State Street XLE", Symbol = "XLE"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VEA", Symbol = "VEA"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VIG", Symbol = "VIG"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VTI", Symbol = "VTI"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VWO", Symbol = "VWO"
+                }
+                );
         }
     }
 }
