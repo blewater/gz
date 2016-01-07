@@ -23,14 +23,21 @@ namespace gzWeb.Models
         [Required]
         public DateTime Birthday { get; set; }
 
-        [NotMapped] /* Must get from Casino API */
-        public decimal GamBalance { get; set; }
-
         public virtual InvBalance InvBalance { get; set; }
 
         public virtual ICollection<CustPortfolio> PortfWeights { get; set; }
         public virtual ICollection<Portfolio> Portfolio { get; set; }
 
+        [Index(IsUnique=true)]
+        [Required]
+        public int PlatformCustomerId { get; set; }
+
+        /* Must get from Casino Operator */
+        [Required]
+        public bool ActiveCustomerIdInPlatform { get; set; }
+
+        public decimal? PlatformBalance { get; set; }
+        public DateTime? LastUpdatedBalance { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager)
         {
