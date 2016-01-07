@@ -101,5 +101,7 @@ namespace gzWeb.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<gzWeb.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }
