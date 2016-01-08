@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class DupIndexTransx : IMigrationMetadata
+    public sealed partial class Initv1 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(DupIndexTransx));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initv1));
         
         string IMigrationMetadata.Id
         {
-            get { return "201601081623351_Dup Index Transx"; }
+            get { return "201601082257313_Init v1"; }
         }
         
         string IMigrationMetadata.Source
