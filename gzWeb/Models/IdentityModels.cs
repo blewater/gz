@@ -23,7 +23,7 @@ namespace gzWeb.Models
         [Required]
         public DateTime Birthday { get; set; }
 
-        public virtual InvBalance InvBalance { get; set; }
+        public virtual ICollection<InvBalance> InvBalances { get; set; }
 
         public virtual ICollection<CustPortfolio> PortfWeights { get; set; }
         public virtual ICollection<Portfolio> Portfolio { get; set; }
@@ -36,8 +36,8 @@ namespace gzWeb.Models
         [Required]
         public bool ActiveCustomerIdInPlatform { get; set; }
 
-        public decimal? PlatformBalance { get; set; }
-        public DateTime? LastUpdatedBalance { get; set; }
+        public decimal? GamBalance { get; set; }
+        public DateTime? GamBalanceUpdOnUTC { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager)
         {
