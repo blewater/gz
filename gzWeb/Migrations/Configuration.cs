@@ -30,9 +30,9 @@ namespace gzWeb.Migrations
             //
 
             //http://stackoverflow.com/questions/815586/entity-framework-using-transactions-or-savechangesfalse-and-acceptallchanges
-            using (var dbContextTransaction = context.Database.BeginTransaction()) {
-                using (var sqlLogFile = new StreamWriter("d:\\temp\\sqlLogFile.txt")) {
-                    context.Database.Log = sqlLogFile.Write;
+            using (var sqlLogFile = new StreamWriter("d:\\temp\\sqlLogFile.txt")) {
+                context.Database.Log = sqlLogFile.Write;
+                using (var dbContextTransaction = context.Database.BeginTransaction()) {
                     try {
 
                         AddUpdData(context);
@@ -44,9 +44,8 @@ namespace gzWeb.Migrations
                         dbContextTransaction.Rollback();
                     }
                 }
+                base.Seed(context);
             }
-            base.Seed(context);
-
         }
 
         private static void AddUpdData(ApplicationDbContext context) {
@@ -119,6 +118,10 @@ namespace gzWeb.Migrations
                     Description = "Customer withdrawals of any excess funds to their account"
                 },
                 new TransxType {
+                    Code = TransferTypeEnum.TransferToGaming,
+                    Description = "Customer transfers to gaming account"
+                },
+                new TransxType {
                     Code = TransferTypeEnum.PlayingLoss,
                     Description = "Losses due to playing in Casino, Betting etc"
                 },
@@ -140,8 +143,6 @@ namespace gzWeb.Migrations
                 }
                 );
 
-            var type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).First();
-
             // Transxs
             context.Transxes.AddOrUpdate(
                 t => new { t.CreatedOnUTC, t.TypeId },
@@ -151,7 +152,7 @@ namespace gzWeb.Migrations
                     YearMonthCtd = "201503",
                     CreatedOnUTC = new DateTime(2015, 3, 4, 7, 23, 42),
                     Amount = new decimal(10000),
-                    TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t=>t.Id).FirstOrDefault(),
+                    TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t => t.Id).FirstOrDefault(),
                     Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).FirstOrDefault()
                 },
                 new Transx {

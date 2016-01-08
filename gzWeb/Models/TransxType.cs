@@ -13,6 +13,8 @@ namespace gzWeb.Models {
 
         Withdrawal,
 
+        TransferToGaming,
+
         InvestmentRet,
 
         PlayingLoss, /* End of the month iGC loss */
