@@ -18,16 +18,17 @@ namespace gzWeb.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Investments
+        [Authorize]
         public ActionResult Index()
         {
             var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var customer = manager.FindById(User.Identity.GetUserId<int>());
-
+            var invBalance = customer.InvBalances.Where(b=>b.CustomerId==customer.Id).OrderByDescending(b => b.Id).FirstOrDefault();
             //var applicationUser = db.ApplicationUsers.Include(a => a.InvBalance);
 
             var customerVM = new CustomerViewModel();
             Mapper.Map<ApplicationUser, CustomerViewModel>(customer, customerVM);
-            Mapper.Map<InvBalance, CustomerViewModel>(customer.InvBalance, customerVM);
+            Mapper.Map<InvBalance, CustomerViewModel>(invBalance, customerVM);
             return View(customerVM);
         }
 

@@ -191,6 +191,14 @@
     <Compile Include="Migrations\201601071016494_PlatformTies.Designer.cs">
       <DependentUpon>201601071016494_PlatformTies.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601081506022_Tuning Transx-InvBalance.cs" />
+    <Compile Include="Migrations\201601081506022_Tuning Transx-InvBalance.Designer.cs">
+      <DependentUpon>201601081506022_Tuning Transx-InvBalance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601081623351_Dup Index Transx.cs" />
+    <Compile Include="Migrations\201601081623351_Dup Index Transx.Designer.cs">
+      <DependentUpon>201601081623351_Dup Index Transx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -1218,6 +1226,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Migrations\201601081505337_Tuning Transx\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -1232,6 +1241,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601071016494_PlatformTies.resx">
       <DependentUpon>201601071016494_PlatformTies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601081506022_Tuning Transx-InvBalance.resx">
+      <DependentUpon>201601081506022_Tuning Transx-InvBalance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601081623351_Dup Index Transx.resx">
+      <DependentUpon>201601081623351_Dup Index Transx.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

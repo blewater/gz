@@ -7,19 +7,23 @@ using System.Web;
 
 namespace gzWeb.Models {
     public class InvBalance {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Key, ForeignKey("Customer")]
-        public int CustomerId { get; set; }
+        [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
         public decimal Balance { get; set; }
-        public int Month { get; set; }
-        public int Year { get; set; }
 
+        //Transx dependency
+        [Index("CustomerId_Mon_idx_invbal", 1, IsUnique=true)]
+        public int CustomerId { get; set; }
+        [Index("CustomerId_Mon_idx_invbal", 2, IsUnique = true)]
+        [MinLength(6), StringLength(6)]
+        public string YearMonthCtd { get; set; }
+
+        [ForeignKey("Transx")]
         public int TransxId { get; set; }
-        [ForeignKey("TransxId")]
         public virtual Transx Transx { get; set; }
     }
 }

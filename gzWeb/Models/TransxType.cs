@@ -15,9 +15,13 @@ namespace gzWeb.Models {
 
         InvestmentRet,
 
-        PlayingCost, /* 50% */
+        PlayingLoss, /* End of the month iGC loss */
+
+        CreditedPlayingLoss, /* Playing loss * 50% */
 
         FundFee, /* 1.5% */
+
+        Commission, /* 2.5% */
 
         Other
     }
@@ -27,10 +31,8 @@ namespace gzWeb.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required, StringLength(30)]
-        public string Code { get; set; }
-
-        public TransferTypeEnum Reason { get; set; }
+        [Index(IsUnique=true), Required]
+        public TransferTypeEnum Code { get; set; }
 
         [StringLength(128)]
         public string Description { get; set; }
