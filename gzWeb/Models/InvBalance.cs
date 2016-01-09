@@ -21,9 +21,5 @@ namespace gzWeb.Models {
         [Index("CustomerId_Mon_idx_invbal", 2, IsUnique = true)]
         [MinLength(6), StringLength(6)]
         public string YearMonthCtd { get; set; }
-
-        [ForeignKey("Transx")]
-        public int TransxId { get; set; }
-        public virtual Transx Transx { get; set; }
     }
 }

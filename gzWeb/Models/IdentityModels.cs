@@ -24,6 +24,7 @@ namespace gzWeb.Models
         public DateTime Birthday { get; set; }
 
         public virtual ICollection<InvBalance> InvBalances { get; set; }
+        public virtual ICollection<Transx> Transxes { get; set; }
 
         public virtual ICollection<CustPortfolio> PortfWeights { get; set; }
         public virtual ICollection<Portfolio> Portfolio { get; set; }
