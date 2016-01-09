@@ -105,6 +105,8 @@ namespace gzWeb.Migrations
                 }
                 );
 
+            #region TransxTypes
+
             // TransxTypes
 
             context.TransxTypes.AddOrUpdate(
@@ -127,7 +129,7 @@ namespace gzWeb.Migrations
                 },
                 new TransxType {
                     Code = TransferTypeEnum.CreditedPlayingLoss,
-                    Description = "Losses due to playing in Casino, Betting etc"
+                    Description = "Losses credited to players account after a 50% deduction"
                 },
                 new TransxType {
                     Code = TransferTypeEnum.InvestmentRet,
@@ -143,9 +145,13 @@ namespace gzWeb.Migrations
                 }
                 );
 
+            #endregion
+
+            #region Transxes
+
             // Transxs
             context.Transxes.AddOrUpdate(
-                t => new { t.CreatedOnUTC, t.TypeId },
+                t => new { t.CustomerId, t.CreatedOnUTC, t.TypeId },
                 //March
                 new Transx {
                     CustomerId = custId,
@@ -315,6 +321,34 @@ namespace gzWeb.Migrations
                     Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 }
                 );
+
+            #endregion
+
+            var yearMonthsGroups = context.Transxes.Where(t => t.CustomerId == 2)
+                .OrderBy(t => t.YearMonthCtd)
+                .GroupBy(t => t.YearMonthCtd)
+                .ToList();
+            //yearMonths.Dump();
+            var prevMonBal = new decimal(0.00);
+            foreach (var g in yearMonthsGroups) {
+
+                var InvAmount = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
+                var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.InvestmentRet ? t.Amount : 0);
+                var WithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal ||t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
+
+                var gBalance = prevMonBal + InvAmount + InvGain - WithdrawnAmounts;
+
+                context.InvBalances.AddOrUpdate(
+                    b => new { b.CustomerId, b.YearMonthCtd },
+                    new InvBalance {
+                        Balance = gBalance,
+                        CustomerId = custId,
+                        YearMonthCtd = g.Key
+                    }
+                );
+                //Now this is the previous month balance
+                prevMonBal = gBalance;
+            }
         }
     }
 }

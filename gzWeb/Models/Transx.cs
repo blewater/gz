@@ -19,6 +19,8 @@ namespace gzWeb.Models {
 
         [Required, Index("CustomerId_Mon_idx_transx", 1, IsUnique = false)]
         public int CustomerId { get; set; }
+        [ForeignKey("CustomerId")]
+        public virtual ApplicationUser Customer { get; set; }
 
         [Index("CustomerId_Mon_idx_transx", 2, IsUnique = false)]
         [Required, MinLength(6), StringLength(6)]
