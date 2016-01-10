@@ -1,5 +1,4 @@
-namespace gzWeb.Migrations
-{
+namespace gzWeb.Migrations {
     using Microsoft.AspNet.Identity;
     using Models;
     using System;
@@ -8,10 +7,8 @@ namespace gzWeb.Migrations
     using System.Data.Entity;
     using System.Linq;
     using System.IO;
-    internal sealed class Configuration : DbMigrationsConfiguration<gzWeb.Models.ApplicationDbContext>
-    {
-        public Configuration()
-        {
+    internal sealed class Configuration : DbMigrationsConfiguration<gzWeb.Models.ApplicationDbContext> {
+        public Configuration() {
             AutomaticMigrationsEnabled = false;
         }
 
@@ -197,9 +194,10 @@ namespace gzWeb.Migrations
                 new Transx {
                     CustomerId = custId,
                     YearMonthCtd = "201504",
-                    CreatedOnUTC = new DateTime(2015, 4, 13, 29, 27, 03, 704),
+                    CreatedOnUTC = new DateTime(2015, 4, 13, 19, 27, 03, 704),
                     Amount = new decimal(3000),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Id).FirstOrDefault(),
+                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.TransferToGaming).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -341,7 +339,7 @@ namespace gzWeb.Migrations
 
                 var InvAmount = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
                 var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.InvestmentRet ? t.Amount : 0);
-                var WithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal ||t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
+                var WithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
 
                 var gBalance = prevMonBal + InvAmount + InvGain - WithdrawnAmounts;
 

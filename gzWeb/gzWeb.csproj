@@ -179,13 +179,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601082257313_Init v1.cs" />
-    <Compile Include="Migrations\201601082257313_Init v1.Designer.cs">
-      <DependentUpon>201601082257313_Init v1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601091503532_Transx to Customer outof InvBalance.cs" />
-    <Compile Include="Migrations\201601091503532_Transx to Customer outof InvBalance.Designer.cs">
-      <DependentUpon>201601091503532_Transx to Customer outof InvBalance.cs</DependentUpon>
+    <Compile Include="Migrations\201601101952278_Init.cs" />
+    <Compile Include="Migrations\201601101952278_Init.Designer.cs">
+      <DependentUpon>201601101952278_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1221,11 +1217,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601082257313_Init v1.resx">
-      <DependentUpon>201601082257313_Init v1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601091503532_Transx to Customer outof InvBalance.resx">
-      <DependentUpon>201601091503532_Transx to Customer outof InvBalance.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601101952278_Init.resx">
+      <DependentUpon>201601101952278_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
