@@ -3,7 +3,7 @@ namespace gzWeb.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initv1 : DbMigration
+    public partial class Init : DbMigration
     {
         public override void Up()
         {
@@ -45,13 +45,10 @@ namespace gzWeb.Migrations
                         Balance = c.Decimal(nullable: false, precision: 18, scale: 2),
                         CustomerId = c.Int(nullable: false),
                         YearMonthCtd = c.String(maxLength: 6),
-                        TransxId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AspNetUsers", t => t.CustomerId, cascadeDelete: true)
-                .ForeignKey("dbo.Transxes", t => t.TransxId, cascadeDelete: true)
-                .Index(t => new { t.CustomerId, t.YearMonthCtd }, unique: true, name: "CustomerId_Mon_idx_invbal")
-                .Index(t => t.TransxId);
+                .Index(t => new { t.CustomerId, t.YearMonthCtd }, unique: true, name: "CustomerId_Mon_idx_invbal");
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -158,6 +155,7 @@ namespace gzWeb.Migrations
                         Amount = c.Decimal(nullable: false, precision: 18, scale: 2),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.CustomerId, cascadeDelete: true)
                 .ForeignKey("dbo.TransxTypes", t => t.TypeId, cascadeDelete: true)
                 .Index(t => new { t.CustomerId, t.YearMonthCtd }, name: "CustomerId_Mon_idx_transx")
                 .Index(t => t.TypeId)
@@ -189,8 +187,8 @@ namespace gzWeb.Migrations
         public override void Down()
         {
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.InvBalances", "TransxId", "dbo.Transxes");
             DropForeignKey("dbo.Transxes", "TypeId", "dbo.TransxTypes");
+            DropForeignKey("dbo.Transxes", "CustomerId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.CustPortfolios", "ApplicationUser_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.Portfolios", "ApplicationUser_Id", "dbo.AspNetUsers");
@@ -212,7 +210,6 @@ namespace gzWeb.Migrations
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "PlatformCustomerId" });
-            DropIndex("dbo.InvBalances", new[] { "TransxId" });
             DropIndex("dbo.InvBalances", "CustomerId_Mon_idx_invbal");
             DropIndex("dbo.Funds", new[] { "Portfolio_Id" });
             DropIndex("dbo.Funds", new[] { "HoldingName" });

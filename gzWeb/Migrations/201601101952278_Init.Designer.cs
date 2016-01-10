@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class TransxtoCustomeroutofInvBalance : IMigrationMetadata
+    public sealed partial class Init : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(TransxtoCustomeroutofInvBalance));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Init));
         
         string IMigrationMetadata.Id
         {
-            get { return "201601091503532_Transx to Customer outof InvBalance"; }
+            get { return "201601101952278_Init"; }
         }
         
         string IMigrationMetadata.Source
