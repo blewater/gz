@@ -24,12 +24,48 @@ namespace gzWeb.Models
         [Required]
         public DateTime Birthday { get; set; }
 
+
+        [NotMapped]
+        public decimal InvBalance {
+            get {
+                return InvBalances.Where(b => b.CustomerId == this.Id).OrderByDescending(b => b.Id).Select(b => b.Balance).FirstOrDefault();
+            }
+        }
         public virtual ICollection<InvBalance> InvBalances { get; set; }
         public virtual ICollection<Transx> Transxes { get; set; }
 
         public virtual ICollection<CustPortfolio> PortfWeights { get; set; }
         public virtual ICollection<Portfolio> Portfolio { get; set; }
 
+        [Index(IsUnique=true)]
+        [Required]
+        public int PlatformCustomerId { get; set; }
+
+        /* Must get from Casino Operator */
+        [Required]
+        public bool ActiveCustomerIdInPlatform { get; set; }
+
+        public decimal? GamBalance { get; set; }
+        public DateTime? GamBalanceUpdOnUTC { get; set; }
+
+        [NotMapped]
+        public decimal LastInvestmentAmount {
+            get {
+                return Transxes.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).OrderByDescending(t => t.Id).Select(t => t.Amount).FirstOrDefault();
+            }
+        }
+        [NotMapped]
+        public decimal TotalInvestmReturns {
+            get {
+                return this.Transxes.Where(t => t.Type.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Amount).Sum();
+            }
+        }
+        [NotMapped]
+        public decimal TotalInvestments {
+            get {
+                return this.Transxes.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Amount).Sum();
+            }
+        }
         [NotMapped]
         public decimal TotalDeposits {
             get {
@@ -42,17 +78,6 @@ namespace gzWeb.Models
                 return this.Transxes.Where(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Amount).Sum();
             }
         }
-
-        [Index(IsUnique=true)]
-        [Required]
-        public int PlatformCustomerId { get; set; }
-
-        /* Must get from Casino Operator */
-        [Required]
-        public bool ActiveCustomerIdInPlatform { get; set; }
-
-        public decimal? GamBalance { get; set; }
-        public DateTime? GamBalanceUpdOnUTC { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager)
         {

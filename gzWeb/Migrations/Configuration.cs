@@ -197,6 +197,13 @@ namespace gzWeb.Migrations
                 new Transx {
                     CustomerId = custId,
                     YearMonthCtd = "201504",
+                    CreatedOnUTC = new DateTime(2015, 4, 13, 29, 27, 03, 704),
+                    Amount = new decimal(3000),
+                    TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Id).FirstOrDefault(),
+                },
+                new Transx {
+                    CustomerId = custId,
+                    YearMonthCtd = "201504",
                     CreatedOnUTC = new DateTime(2015, 4, 30, 23, 47, 53, 934),
                     Amount = new decimal(2013.48),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
