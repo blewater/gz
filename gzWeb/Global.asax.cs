@@ -21,7 +21,6 @@ namespace gzWeb
 
             //Automapper
             Mapper.Initialize(cfg => cfg.CreateMap<ApplicationUser, CustomerViewModel>());
-            Mapper.CreateMap<InvBalance, CustomerViewModel>();
 
             // Used only to debug Seed method
 

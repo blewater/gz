@@ -21,13 +21,15 @@ namespace gzWeb.Controllers
         [Authorize]
         public ActionResult Index()
         {
+            db.Database.Log = new DebugTextWriter().Write;
+
             var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var customer = manager.FindById(User.Identity.GetUserId<int>());
-            var invBalance = customer.InvBalances.Where(b=>b.CustomerId==customer.Id).OrderByDescending(b => b.Id).FirstOrDefault();
+
+            //var lastInv = customer.Transxes.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).OrderByDescending(t => t.Id).Select(t => t.Amount).FirstOrDefault();
 
             var customerVM = new CustomerViewModel();
             Mapper.Map<ApplicationUser, CustomerViewModel>(customer, customerVM);
-            Mapper.Map<InvBalance, CustomerViewModel>(invBalance, customerVM);
             return View(customerVM);
         }
 

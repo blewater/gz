@@ -201,6 +201,7 @@
     <Compile Include="Models\Portfolio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utl\DebugTextWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitattributes" />
