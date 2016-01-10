@@ -1211,10 +1211,10 @@
     <Content Include="Views\Investments\Details.cshtml" />
     <Content Include="Views\Investments\Edit.cshtml" />
     <Content Include="Views\Investments\Index.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\String.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
