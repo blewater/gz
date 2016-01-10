@@ -41,7 +41,9 @@ mark {
     padding-left: 5px;
     padding-right: 5px;
 }
-
+.k-current-page ,.k-pager-numbers ,.k-reset ,.k-state-expanded {
+    margin-left: 23px;
+}
 /*http://getbootstrap.com/getting-started/#third-box-sizing*/
 /*.k-pager, .k-pager-number
 .element {

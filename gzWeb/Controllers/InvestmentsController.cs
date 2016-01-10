@@ -24,7 +24,6 @@ namespace gzWeb.Controllers
             var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var customer = manager.FindById(User.Identity.GetUserId<int>());
             var invBalance = customer.InvBalances.Where(b=>b.CustomerId==customer.Id).OrderByDescending(b => b.Id).FirstOrDefault();
-            //var applicationUser = db.ApplicationUsers.Include(a => a.InvBalance);
 
             var customerVM = new CustomerViewModel();
             Mapper.Map<ApplicationUser, CustomerViewModel>(customer, customerVM);
@@ -32,20 +31,17 @@ namespace gzWeb.Controllers
             return View(customerVM);
         }
 
-        // GET: Investments/Details/5
-        //public ActionResult Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    ApplicationUser applicationUser = db.ApplicationUsers.Find(id);
-        //    if (applicationUser == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(applicationUser);
-        //}
+
+
+        // GET: Investments ajax
+        public JsonResult GetInvestAmnt() {
+            var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var customer = manager.FindById(User.Identity.GetUserId<int>());
+
+            var investments = customer.Transxes.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).OrderByDescending(t => t.CreatedOnUTC).Select(t => new { t.Amount, t.CreatedOnUTC}).ToList();
+
+            return Json(investments, JsonRequestBehavior.AllowGet);
+        }
 
         // GET: Investments/Create
         public ActionResult Create()

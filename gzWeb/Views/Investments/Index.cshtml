@@ -4,20 +4,87 @@
     ViewBag.Title = "Investments";
 }
 
-<h2>Summary</h2>
-<hr />
-<div class="panel panel-default col-md-2">
-    <div class="panel-heading">
-        <h3 class="panel-title">Status</h3>
-    </div>
-    <div class="panel-body">
-        <div class="control-label">
-            Your investment balance
+<div class="container">
+    <h1 class="text-center">
+        <span class="glyphicon-euro"> @Html.DisplayFor(model => model.Balance)</span>
+    </h1>
+    <p class="text-center">Your investment balance.</p>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default table">
+                <div class="panel-body">
+                    Gaming Activities
+                </div>
+
+                <table class="table">
+                    <tr>
+                        <th>Cash In</th>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.TotalDeposits)</span></td>
+                    </tr>
+
+                    <tr>
+                        <th>Cash Out</th>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.TotalWithdrawals)</span></td>
+                    </tr>
+
+                    <tr>
+                        <th>Balance</th>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.GamBalance)</span></td>
+                    </tr>
+                </table>
+            </div>
+
         </div>
-        <div">
-            <span class="glyphicon-euro">
-                @Html.DisplayFor(model => model.Balance)
-            </span>
+        <div class="col-md-6">
+            <div class="panel panel-default table">
+                <table class="table">
+                    <tr>
+                        <td>You have invested</td>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.TotalDeposits)</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>You have gained</td>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.TotalWithdrawals)</span></td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div class="panel panel-default table">
+                <div class="panel-body">
+                    <strong>Investment vintages</strong>
+                </div>
+
+                <table class="table" id="listView"></table>
+                <div id="pager"></div>
+                @*<table class="table">
+                    <tr>
+                        <th>Cash In</th>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.TotalDeposits)</span></td>
+                    </tr>
+
+                    <tr>
+                        <th>Cash Out</th>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.TotalWithdrawals)</span></td>
+                    </tr>
+
+                    <tr>
+                        <th>Balance</th>
+                        <td><span class="glyphicon-euro">@Html.DisplayFor(model => model.GamBalance)</span></td>
+                    </tr>
+                </table>*@
+            </div>
+        </div>
+        <div class="col-md-3">
+            @*<h2>Heading</h2>
+                <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>*@
         </div>
     </div>
 </div>
+@section scripts
+{
+    <script src="~/Scripts/App/Views/Investments/index.js"></script>
+}
