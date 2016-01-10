@@ -8,7 +8,7 @@ body {
     background-color: #fff;
     border-top: solid 10px #000;
     color: #333;
-    font-size: .85em;
+    /*font-size: .85em;*/
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
@@ -42,6 +42,14 @@ mark {
     padding-right: 5px;
 }
 
+/*http://getbootstrap.com/getting-started/#third-box-sizing*/
+/*.k-pager, .k-pager-number
+.element {
+  -webkit-box-sizing: content-box;
+     -moz-box-sizing: content-box;
+          box-sizing: content-box;
+}*/
+
 .float-left {
     float: left;
 }
@@ -65,7 +73,7 @@ h4, h5, h6 {
     padding-bottom: 0;
 }
 
-h1 {
+/*h1 {
     font-size: 2em;
 }
 
@@ -83,7 +91,7 @@ h4 {
 
 h5, h6 {
     font-size: 1em;
-}
+}*/
 
     h5 a:link, h5 a:visited, h5 a:active {
         padding: 0;
@@ -116,7 +124,7 @@ header .content-wrapper {
 footer {
     clear: both;
     background-color: #e2e2e2;
-    font-size: .8em;
+    /*font-size: .8em;*/
     height: 100px;
 }
 
@@ -126,7 +134,7 @@ footer {
 .site-title {
     color: #c8c8c8;
     font-family: Rockwell, Consolas, "Courier New", Courier, monospace;
-    font-size: 2.3em;
+    /*font-size: 2.3em;*/
     margin: 0;
 }
 
@@ -202,7 +210,7 @@ ul.menu {
         }
 
         .featured p {
-            font-size: 1.1em;
+            /*font-size: 1.1em;*/
         }
 
 /* page titles */
@@ -355,9 +363,9 @@ aside {
 }
 
 /* contact */
-.contact h3 {
+/*.contact h3 {
     font-size: 1.2em;
-}
+}*/
 
 .contact p {
     margin: 5px 0 0 10px;
@@ -390,7 +398,7 @@ fieldset {
 
 label {
     display: block;
-    font-size: 1.2em;
+    /*font-size: 1.2em;*/
     font-weight: 600;
 }
 
@@ -402,7 +410,7 @@ input, textarea {
     border: 1px solid #e2e2e2;
     background: #fff;
     color: #333;
-    font-size: 1.2em;
+    /*font-size: 1.2em;*/
     margin: 5px 0 6px 0;
     padding: 5px;
     width: 300px;
@@ -429,7 +437,7 @@ textarea {
         background-color: #d3dce0;
         border: 1px solid #787878;
         cursor: pointer;
-        font-size: 1.2em;
+        /*font-size: 1.2em;*/
         font-weight: 600;
         padding: 7px;
         margin-right: 8px;
@@ -439,7 +447,7 @@ textarea {
     td input[type="submit"],
     td input[type="button"],
     td button {
-        font-size: 1em;
+        /*font-size: 1em;*/
         padding: 4px;
         margin-right: 4px;
     }
@@ -509,7 +517,7 @@ table {
 }
 
 th {
-    font-size: 1.2em;
+    /*font-size: 1.2em;*/
     text-align: left;
     border: none 0px;
     padding-left: 0;
@@ -540,7 +548,7 @@ th {
         position: absolute;
         right: 0em;
         top: 0;
-        font-size: 0.75em;
+        /*font-size: 0.75em;*/
     }
 
     th.asc a:after {
@@ -654,7 +662,7 @@ tr.pager td {
         section.feature img {
             color: #999;
             content: attr(alt);
-            font-size: 1.5em;
+            /*font-size: 1.5em;*/
             font-weight: 600;
         }
 
