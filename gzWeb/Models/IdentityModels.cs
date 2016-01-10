@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace gzWeb.Models
 {
@@ -28,6 +29,19 @@ namespace gzWeb.Models
 
         public virtual ICollection<CustPortfolio> PortfWeights { get; set; }
         public virtual ICollection<Portfolio> Portfolio { get; set; }
+
+        [NotMapped]
+        public decimal TotalDeposits {
+            get {
+                return this.Transxes.Where(t => t.Type.Code == TransferTypeEnum.Deposit).Select(t => t.Amount).Sum();
+            }
+        }
+        [NotMapped]
+        public decimal TotalWithdrawals {
+            get {
+                return this.Transxes.Where(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Amount).Sum();
+            }
+        }
 
         [Index(IsUnique=true)]
         [Required]

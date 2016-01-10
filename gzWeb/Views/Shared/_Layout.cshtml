@@ -5,32 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Greenzorro Entertainment</title>
     @Styles.Render("~/Content/css")
-    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.common.core.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.mobile.all.min.css")" rel="stylesheet" type="text/css" />
+    @*<link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.common.core.min.css")" rel="stylesheet" type="text/css" />*@
+    <link href="~/Content/kendo/2015.3.1111/kendo.common-bootstrap.min.css" rel="stylesheet" />
+    @*kendo.common-bootstrap.min.css*@
     <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.metro.mobile.min.css")" rel="stylesheet" type="text/css" />
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
     <header>
         <div class="content-wrapper">
-                <div class="float-left">
-                    <ul class="menu">
-                        <li>
-                            <a href='@Url.Action("Index", "Home")'>
-                                <img src='@Url.Content("~/Content/images/gz_logo_sm.png")' />
-                            </a>
-                        </li>
-                        <li>@Html.ActionLink("Investments", "Index", "Investments")</li>
-                        <li>@Html.ActionLink("Casino", "About", "Home")</li>
-                        <li>@Html.ActionLink("Betting", "Contact", "Home")</li>
-                    </ul>
-                </div>
-                <div class="float-right">
-                    <nav>
-                            @Html.Partial("_LoginPartial")
-                    </nav>
-                </div>
+            <div class="float-left">
+                <ul class="menu">
+                    <li>
+                        <a href='@Url.Action("Index", "Home")'>
+                            <img src='@Url.Content("~/Content/images/gz_logo_sm.png")' />
+                        </a>
+                    </li>
+                    <li>@Html.ActionLink("Investments", "Index", "Investments")</li>
+                    <li>@Html.ActionLink("Casino", "About", "Home")</li>
+                    <li>@Html.ActionLink("Betting", "Contact", "Home")</li>
+                </ul>
+            </div>
+            <div class="float-right">
+                <nav>
+                    @Html.Partial("_LoginPartial")
+                </nav>
+            </div>
         </div>
 
     </header>
@@ -38,9 +38,7 @@
         <div class="content-wrapper">
             <hr />
         </div>
-        <section class="jumbotron">
-            @RenderBody()
-        </section>
+        @RenderBody()
     </div>
     <footer>
         <div class="content-wrapper">
