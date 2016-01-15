@@ -24,9 +24,7 @@ namespace gzWeb
 
             // Used only to debug Seed method
 
-            //var configuration = new gzWeb.Migrations.Configuration();
-            //var migrator = new System.Data.Entity.Migrations.DbMigrator(configuration);
-            //migrator.Update();
+            //Seed.GenData();
         }
     }
 }

@@ -26,7 +26,6 @@ namespace gzWeb.Controllers
             var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var customer = manager.FindById(User.Identity.GetUserId<int>());
 
-            //var lastInv = customer.Transxes.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).OrderByDescending(t => t.Id).Select(t => t.Amount).FirstOrDefault();
             var invbal = customer.InvBalances.OrderByDescending(b => b.Id).Select(b => b.Balance).FirstOrDefault();
 
             var customerVM = new CustomerViewModel();
