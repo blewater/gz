@@ -141,7 +141,5 @@ namespace gzWeb.Models
         {
             return new ApplicationDbContext();
         }
-
-        //public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }
