@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzWeb.Models {
     public class Fund {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Index(IsUnique = true), MaxLength(10)]
@@ -13,5 +13,7 @@ namespace gzWeb.Models {
 
         [Index(IsUnique = true), Required, MaxLength(128)]
         public string HoldingName { get; set; }
+
+        public virtual ICollection<PortFund> PortFunds { get; set; }
     }
 }

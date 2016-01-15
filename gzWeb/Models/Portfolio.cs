@@ -6,9 +6,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzWeb.Models {
     public class Portfolio {
-        public Portfolio() {
-            Funds = new SortedSet<Fund>();
-        }
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -22,7 +19,6 @@ namespace gzWeb.Models {
         [StringLength(128)]
         public string Note { get; set; }
 
-        public virtual ICollection<PortFund> FundWeights { get; set; }
-        public virtual ICollection<Fund> Funds { get; set; }
+        public virtual ICollection<PortFund> PortFunds { get; set; }
     }
 }

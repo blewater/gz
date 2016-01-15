@@ -183,6 +183,10 @@
     <Compile Include="Migrations\201601101952278_Init.Designer.cs">
       <DependentUpon>201601101952278_Init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601150911269_Many2Many PortFund.cs" />
+    <Compile Include="Migrations\201601150911269_Many2Many PortFund.Designer.cs">
+      <DependentUpon>201601150911269_Many2Many PortFund.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -559,6 +563,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
     <Content Include="Scripts\App\Views\Investments\index.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -1219,6 +1224,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201601101952278_Init.resx">
       <DependentUpon>201601101952278_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601150911269_Many2Many PortFund.resx">
+      <DependentUpon>201601150911269_Many2Many PortFund.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

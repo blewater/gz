@@ -329,7 +329,7 @@ namespace gzWeb.Migrations {
 
             #endregion
 
-            var yearMonthsGroups = context.Transxes.Where(t => t.CustomerId == 2)
+            var yearMonthsGroups = context.Transxes.Where(t => t.CustomerId == custId)
                 .OrderBy(t => t.YearMonthCtd)
                 .GroupBy(t => t.YearMonthCtd)
                 .ToList();
