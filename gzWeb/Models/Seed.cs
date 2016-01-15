@@ -30,6 +30,7 @@ namespace gzWeb.Models {
                             //dbContextTransaction.Commit();
                         } catch (Exception ex) {
                             var exception = retVal = ex.Message;
+                            throw ex;
                             //dbContextTransaction.Rollback();
                         }
                     //}
@@ -100,7 +101,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 3, 4, 7, 23, 42),
                     Amount = new decimal(10000),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -108,7 +108,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 3, 18, 18, 22, 13),
                     Amount = new decimal(9000),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.Deposit).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -116,7 +115,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 01),
                     Amount = new decimal(9853),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -124,7 +122,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 02, 853),
                     Amount = new decimal(4926.5),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -132,7 +129,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 05),
                     Amount = new decimal(1.232),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).FirstOrDefault()
                 },
                 // April
                 new Transx {
@@ -141,7 +137,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 4, 13, 19, 27, 03, 704),
                     Amount = new decimal(3000),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.TransferToGaming).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -149,7 +144,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 4, 30, 23, 47, 53, 934),
                     Amount = new decimal(2013.48),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -157,7 +151,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 4, 30, 23, 47, 54, 343),
                     Amount = new decimal(1006.74),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -165,7 +158,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 4, 30, 23, 49, 05),
                     Amount = new decimal(245.32),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).FirstOrDefault()
                 },
                 // May
                 new Transx {
@@ -174,7 +166,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 5, 31, 23, 46, 59),
                     Amount = new decimal(1568.43),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -182,7 +173,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 5, 31, 23, 47, 12),
                     Amount = new decimal(784.22),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 },
                 // June
                 new Transx {
@@ -191,7 +181,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 6, 30, 23, 47, 22),
                     Amount = new decimal(2384.22),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -199,7 +188,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 6, 30, 23, 47, 32),
                     Amount = new decimal(1192.11),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 },
                 // August Skip July he won
                 new Transx {
@@ -208,7 +196,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 8, 31, 23, 47, 23),
                     Amount = new decimal(584.23),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -216,7 +203,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 8, 31, 23, 47, 46),
                     Amount = new decimal(292.12),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 },
                 // Sept
                 new Transx {
@@ -225,7 +211,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 9, 30, 23, 47, 23),
                     Amount = new decimal(2943),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -233,7 +218,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 9, 30, 23, 47, 46),
                     Amount = new decimal(1471.5),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 },
                 // Oct
                 new Transx {
@@ -242,7 +226,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 10, 31, 23, 47, 01),
                     Amount = new decimal(1832.21),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -250,7 +233,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 10, 31, 23, 47, 46),
                     Amount = new decimal(916.11),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 },
                 // Dec Skip Nov either won or did not play
                 new Transx {
@@ -259,7 +241,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 12, 31, 23, 46, 58),
                     Amount = new decimal(3354.03),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).FirstOrDefault()
                 },
                 new Transx {
                     CustomerId = custId,
@@ -267,7 +248,6 @@ namespace gzWeb.Models {
                     CreatedOnUTC = new DateTime(2015, 12, 31, 23, 47, 12),
                     Amount = new decimal(1677.02),
                     TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                    Type = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).FirstOrDefault()
                 }
                 );
         }
