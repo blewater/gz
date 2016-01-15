@@ -195,6 +195,7 @@
     <Compile Include="Models\InvBalance.cs" />
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Models\PortFund.cs" />
+    <Compile Include="Models\Seed.cs" />
     <Compile Include="Models\TransxType.cs" />
     <Compile Include="Models\Transx.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
