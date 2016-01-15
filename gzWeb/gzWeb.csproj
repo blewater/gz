@@ -179,13 +179,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601101952278_Init.cs" />
-    <Compile Include="Migrations\201601101952278_Init.Designer.cs">
-      <DependentUpon>201601101952278_Init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601150911269_Many2Many PortFund.cs" />
-    <Compile Include="Migrations\201601150911269_Many2Many PortFund.Designer.cs">
-      <DependentUpon>201601150911269_Many2Many PortFund.cs</DependentUpon>
+    <Compile Include="Migrations\201601151356496_Init SQL Expr.cs" />
+    <Compile Include="Migrations\201601151356496_Init SQL Expr.Designer.cs">
+      <DependentUpon>201601151356496_Init SQL Expr.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1223,11 +1219,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601101952278_Init.resx">
-      <DependentUpon>201601101952278_Init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601150911269_Many2Many PortFund.resx">
-      <DependentUpon>201601150911269_Many2Many PortFund.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601151356496_Init SQL Expr.resx">
+      <DependentUpon>201601151356496_Init SQL Expr.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

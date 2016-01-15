@@ -38,5 +38,7 @@ namespace gzWeb.Models {
 
         [StringLength(128)]
         public string Description { get; set; }
+
+        public virtual ICollection<Transx> Transxions { get; set; }
     }
 }

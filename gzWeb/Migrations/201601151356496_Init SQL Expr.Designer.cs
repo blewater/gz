@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Many2ManyPortFund : IMigrationMetadata
+    public sealed partial class InitSQLExpr : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Many2ManyPortFund));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitSQLExpr));
         
         string IMigrationMetadata.Id
         {
-            get { return "201601150911269_Many2Many PortFund"; }
+            get { return "201601151356496_Init SQL Expr"; }
         }
         
         string IMigrationMetadata.Source

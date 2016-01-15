@@ -5,6 +5,14 @@ using System.Linq;
 using Microsoft.AspNet.Identity;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// Seed class moved here from migrations.configuration
+    /// Use the line below inside configuration.seed:
+    /// 
+    ///         Models.Seed.GenData();
+    /// 
+    /// </summary>
     public class Seed {
         public static string GenData() {
             //Assume success
@@ -14,18 +22,17 @@ namespace gzWeb.Models {
             using (var sqlLogFile = new StreamWriter("d:\\temp\\sqlLogFile.txt")) {
                 using (ApplicationDbContext context = new ApplicationDbContext()) {
                     context.Database.Log = sqlLogFile.Write;
-                    using (var dbContextTransaction = context.Database.BeginTransaction()) {
+                    //using (var dbContextTransaction = context.Database.BeginTransaction()) {
                         try {
 
                             AddUpdData(context);
-                            context.SaveChanges();
 
-                            dbContextTransaction.Commit();
+                            //dbContextTransaction.Commit();
                         } catch (Exception ex) {
                             var exception = retVal = ex.Message;
-                            dbContextTransaction.Rollback();
+                            //dbContextTransaction.Rollback();
                         }
-                    }
+                    //}
                 }
             }
             return retVal;
@@ -36,18 +43,23 @@ namespace gzWeb.Models {
 
             // Customer
             int custId = CreateUpdUser(manager);
+            context.SaveChanges();
 
             // Funds
             CreateUpdFunds(context);
+            context.SaveChanges();
 
             // TransxTypes
             CreateUpdTranxType(context);
+            context.SaveChanges();
 
             // Transxs
             CreateUpdTransx(context, custId);
+            context.SaveChanges();
 
             // Balances
             CreateBalances(context, custId);
+            context.SaveChanges();
         }
 
         private static void CreateBalances(ApplicationDbContext context, int custId) {
