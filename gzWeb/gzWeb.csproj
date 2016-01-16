@@ -183,6 +183,14 @@
     <Compile Include="Migrations\201601151356496_Init SQL Expr.Designer.cs">
       <DependentUpon>201601151356496_Init SQL Expr.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601152224513_Portfolio Uniq RiskTol.cs" />
+    <Compile Include="Migrations\201601152224513_Portfolio Uniq RiskTol.Designer.cs">
+      <DependentUpon>201601152224513_Portfolio Uniq RiskTol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.cs" />
+    <Compile Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.Designer.cs">
+      <DependentUpon>201601152343314_Port to Customer and Remove ident on PortFund.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -1221,6 +1229,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201601151356496_Init SQL Expr.resx">
       <DependentUpon>201601151356496_Init SQL Expr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601152224513_Portfolio Uniq RiskTol.resx">
+      <DependentUpon>201601152224513_Portfolio Uniq RiskTol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.resx">
+      <DependentUpon>201601152343314_Port to Customer and Remove ident on PortFund.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

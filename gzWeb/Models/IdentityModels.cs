@@ -24,7 +24,6 @@ namespace gzWeb.Models
         [Required]
         public DateTime Birthday { get; set; }
 
-
         [NotMapped]
         public decimal InvBalance {
             get {
@@ -34,20 +33,22 @@ namespace gzWeb.Models
         public virtual ICollection<InvBalance> InvBalances { get; set; }
         public virtual ICollection<Transx> Transxes { get; set; }
 
-        public virtual ICollection<CustPortfolio> PortfWeights { get; set; }
-        public virtual ICollection<Portfolio> Portfolio { get; set; }
+        public virtual ICollection<CustPortfolio> CustPortfolios { get; set; }
 
         [Index(IsUnique=true)]
         [Required]
         public int PlatformCustomerId { get; set; }
 
-        /* Must get from Casino Operator */
+        /// <summary>
+        /// Must get from Casino Operator
+        /// </summary>
         [Required]
         public bool ActiveCustomerIdInPlatform { get; set; }
 
         public decimal? GamBalance { get; set; }
         public DateTime? GamBalanceUpdOnUTC { get; set; }
 
+        // Calculated fields
         [NotMapped]
         public decimal LastInvestmentAmount {
             get {

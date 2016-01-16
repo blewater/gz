@@ -44,10 +44,17 @@ namespace gzWeb.Models {
 
             // Customer
             int custId = CreateUpdUser(manager);
-            context.SaveChanges();
 
             // Funds
             CreateUpdFunds(context);
+            context.SaveChanges();
+
+            // Portfolios
+            CreateUpdPortfolios(context);
+            context.SaveChanges();
+
+            // Portfolios - Funds association table
+            CreateUpdPortFunds(context);
             context.SaveChanges();
 
             // TransxTypes
@@ -89,6 +96,225 @@ namespace gzWeb.Models {
                 //Now this is the previous month balance
                 prevMonBal = gBalance;
             }
+        }
+
+        private static void CreateUpdFunds(ApplicationDbContext context) {
+            context.Funds.AddOrUpdate(
+                f => f.Symbol,
+                new Fund {
+                    HoldingName = "iShares MUB", Symbol = "MUB"
+                },
+                new Fund {
+                    HoldingName = "Schwab SCHP", Symbol = "SCHP"
+                },
+                new Fund {
+                    HoldingName = "State Street XLE", Symbol = "XLE"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VEA", Symbol = "VEA"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VIG", Symbol = "VIG"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VTI", Symbol = "VTI"
+                },
+                new Fund {
+                    HoldingName = "Vanguard VWO", Symbol = "VWO"
+                }
+                );
+        }
+
+        private static void CreateUpdPortfolios(ApplicationDbContext context) {
+
+            context.Portfolios.AddOrUpdate(
+                p => p.RiskTolerance,
+                new Portfolio {
+                    RiskTolerance = RiskToleranceEnum.Low
+                },
+                new Portfolio {
+                    RiskTolerance = RiskToleranceEnum.Low_Medium
+                },
+                new Portfolio {
+                    RiskTolerance = RiskToleranceEnum.Medium
+                },
+                new Portfolio {
+                    RiskTolerance = RiskToleranceEnum.Medium_High
+                },
+                new Portfolio {
+                    RiskTolerance = RiskToleranceEnum.High
+                });
+        }
+
+        private static void CreateUpdPortFunds(ApplicationDbContext context) {
+            context.PortFunds.AddOrUpdate(
+                p => new { p.PortfolioId, p.FundId },
+                // LOW
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .08f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .15f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .07f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .25f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .35f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
+                },
+                // LOW_MEDIUM
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .26f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .11f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .08f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .06f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .09f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .35f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                // MEDIUM
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .33f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .15f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .12f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .06f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .15f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
+                },
+                // MEDIUM-HIGH
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .35f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .21f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .16f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .08f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .29f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
+                },
+                // HIGH
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .35f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .22f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .28f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
+                },
+                new PortFund {
+                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                    Weight = .05f,
+                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
+                }
+                );
         }
 
         private static void CreateUpdTransx(ApplicationDbContext context, int custId) {
@@ -286,33 +512,6 @@ namespace gzWeb.Models {
                 new TransxType {
                     Code = TransferTypeEnum.Commission,
                     Description = "Commissions (1.5% = 2.5%) Profit for GreenZorro"
-                }
-                );
-        }
-
-        private static void CreateUpdFunds(ApplicationDbContext context) {
-            context.Funds.AddOrUpdate(
-                f => f.Symbol,
-                new Fund {
-                    HoldingName = "iShares MUB", Symbol = "MUB"
-                },
-                new Fund {
-                    HoldingName = "Schwab SCHP", Symbol = "SCHP"
-                },
-                new Fund {
-                    HoldingName = "State Street XLE", Symbol = "XLE"
-                },
-                new Fund {
-                    HoldingName = "Vanguard VEA", Symbol = "VEA"
-                },
-                new Fund {
-                    HoldingName = "Vanguard VIG", Symbol = "VIG"
-                },
-                new Fund {
-                    HoldingName = "Vanguard VTI", Symbol = "VTI"
-                },
-                new Fund {
-                    HoldingName = "Vanguard VWO", Symbol = "VWO"
                 }
                 );
         }
