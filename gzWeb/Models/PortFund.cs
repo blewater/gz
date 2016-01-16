@@ -11,9 +11,6 @@ namespace gzWeb.Models {
     /// </summary>
     public class PortFund {
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required, Key, Column(Order = 0)]
         public int PortfolioId { get; set; }
 
