@@ -24,7 +24,7 @@ namespace gzWeb
 
             // Used only to debug Seed method
 
-            Seed.GenData();
+            //Seed.GenData();
         }
     }
 }
