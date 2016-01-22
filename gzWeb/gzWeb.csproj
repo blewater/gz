@@ -191,6 +191,14 @@
     <Compile Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.Designer.cs">
       <DependentUpon>201601152343314_Port to Customer and Remove ident on PortFund.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601221132084_Fund Returns.cs" />
+    <Compile Include="Migrations\201601221132084_Fund Returns.Designer.cs">
+      <DependentUpon>201601221132084_Fund Returns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601221231092_Portfolio Active Return.cs" />
+    <Compile Include="Migrations\201601221231092_Portfolio Active Return.Designer.cs">
+      <DependentUpon>201601221231092_Portfolio Active Return.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -198,6 +206,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InvBalance.cs" />
     <Compile Include="Models\InvestmentViewModels.cs" />
+    <Compile Include="Models\PortfolioRepository.cs" />
     <Compile Include="Models\PortFund.cs" />
     <Compile Include="Models\Seed.cs" />
     <Compile Include="Models\TransxType.cs" />
@@ -1236,6 +1245,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.resx">
       <DependentUpon>201601152343314_Port to Customer and Remove ident on PortFund.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601221132084_Fund Returns.resx">
+      <DependentUpon>201601221132084_Fund Returns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601221231092_Portfolio Active Return.resx">
+      <DependentUpon>201601221231092_Portfolio Active Return.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

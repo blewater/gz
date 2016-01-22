@@ -9,10 +9,11 @@ using gzWeb.Models;
 namespace gzWeb.Tests.Models {
     [TestClass]
     public class SeedTest {
-        //[TestMethod]
+        [TestMethod]
         public void GenData() {
 
-            var result = Seed.GenData();
+            // Null means no exception
+            Assert.IsNull(Seed.GenData());
         }
     }
 }

@@ -116,25 +116,25 @@ namespace gzWeb.Models {
             context.Funds.AddOrUpdate(
                 f => f.Symbol,
                 new Fund {
-                    HoldingName = "iShares MUB", Symbol = "MUB"
+                    HoldingName = "iShares MUB", Symbol = "MUB", ThreeYrReturnPcnt = .0281f, FiveYrReturnPcnt = .0525f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Schwab SCHP", Symbol = "SCHP"
+                    HoldingName = "Schwab SCHP", Symbol = "SCHP", ThreeYrReturnPcnt = -.0234f, FiveYrReturnPcnt = .0239f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "State Street XLE", Symbol = "XLE"
+                    HoldingName = "State Street XLE", Symbol = "XLE", ThreeYrReturnPcnt = -.0327f, FiveYrReturnPcnt = -.0042f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VEA", Symbol = "VEA"
+                    HoldingName = "Vanguard VEA", Symbol = "VEA", ThreeYrReturnPcnt = .045f, FiveYrReturnPcnt = .0348f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VIG", Symbol = "VIG"
+                    HoldingName = "Vanguard VIG", Symbol = "VIG", ThreeYrReturnPcnt = .1163f, FiveYrReturnPcnt = .1052f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VTI", Symbol = "VTI"
+                    HoldingName = "Vanguard VTI", Symbol = "VTI", ThreeYrReturnPcnt = .1466f, FiveYrReturnPcnt = .1213f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VWO", Symbol = "VWO"
+                    HoldingName = "Vanguard VWO", Symbol = "VWO", ThreeYrReturnPcnt = -.0717f, FiveYrReturnPcnt = -.0498f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 }
                 );
         }
@@ -144,19 +144,19 @@ namespace gzWeb.Models {
             context.Portfolios.AddOrUpdate(
                 p => p.RiskTolerance,
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Low
+                    RiskTolerance = RiskToleranceEnum.Low, IsActive = true,
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Low_Medium
+                    RiskTolerance = RiskToleranceEnum.Low_Medium, IsActive = false,
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Medium
+                    RiskTolerance = RiskToleranceEnum.Medium, IsActive = true,
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Medium_High
+                    RiskTolerance = RiskToleranceEnum.Medium_High, IsActive = false,
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.High
+                    RiskTolerance = RiskToleranceEnum.High, IsActive = true
                 });
         }
 

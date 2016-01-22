@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\FundsTest.cs" />
+    <Compile Include="Models\PortfolioTest.cs" />
     <Compile Include="Models\SeedTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\HomeControllerTest.cs" />

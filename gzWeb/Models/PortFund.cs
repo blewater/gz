@@ -7,7 +7,7 @@ namespace gzWeb.Models {
     /// <summary>
     /// Bridge for Many to Many Portfolio <--> Fund
     /// Many to Many with additional fields in association table
-    /// http://stackoverflow.com/questions/7050404/create-code-first-many-to-many-with-additional-fields-in-association-table
+    /// Design http://stackoverflow.com/questions/7050404/create-code-first-many-to-many-with-additional-fields-in-association-table
     /// </summary>
     public class PortFund {
 
