@@ -94,7 +94,7 @@ namespace gzWeb.Models {
             foreach (var g in yearMonthsGroups) {
 
                 var InvAmount = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
-                var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.InvestmentRet ? t.Amount : 0);
+                var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.EarnedInvestmentRet ? t.Amount : 0);
                 var WithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
 
                 var gBalance = prevMonBal + InvAmount + InvGain - WithdrawnAmounts;
@@ -116,25 +116,25 @@ namespace gzWeb.Models {
             context.Funds.AddOrUpdate(
                 f => f.Symbol,
                 new Fund {
-                    HoldingName = "iShares MUB", Symbol = "MUB", ThreeYrReturnPcnt = .0281f, FiveYrReturnPcnt = .0525f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "iShares MUB", Symbol = "MUB", ThreeYrReturnPcnt = 2.81f, FiveYrReturnPcnt = 5.25f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Schwab SCHP", Symbol = "SCHP", ThreeYrReturnPcnt = -.0234f, FiveYrReturnPcnt = .0239f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Schwab SCHP", Symbol = "SCHP", ThreeYrReturnPcnt = -2.34f, FiveYrReturnPcnt = 2.39f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "State Street XLE", Symbol = "XLE", ThreeYrReturnPcnt = -.0327f, FiveYrReturnPcnt = -.0042f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "State Street XLE", Symbol = "XLE", ThreeYrReturnPcnt = -3.27f, FiveYrReturnPcnt = -0.42f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VEA", Symbol = "VEA", ThreeYrReturnPcnt = .045f, FiveYrReturnPcnt = .0348f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VEA", Symbol = "VEA", ThreeYrReturnPcnt = 4.5f, FiveYrReturnPcnt = 3.48f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VIG", Symbol = "VIG", ThreeYrReturnPcnt = .1163f, FiveYrReturnPcnt = .1052f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VIG", Symbol = "VIG", ThreeYrReturnPcnt = 11.63f, FiveYrReturnPcnt = 10.52f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VTI", Symbol = "VTI", ThreeYrReturnPcnt = .1466f, FiveYrReturnPcnt = .1213f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VTI", Symbol = "VTI", ThreeYrReturnPcnt = 14.66f, FiveYrReturnPcnt = 12.13f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VWO", Symbol = "VWO", ThreeYrReturnPcnt = -.0717f, FiveYrReturnPcnt = -.0498f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VWO", Symbol = "VWO", ThreeYrReturnPcnt = -7.17f, FiveYrReturnPcnt = -4.98f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
                 }
                 );
         }
@@ -368,7 +368,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201503",
                     CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 05),
                     Amount = new decimal(1.232),
-                    TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.EarnedInvestmentRet).Select(t => t.Id).FirstOrDefault(),
                 },
                 // April
                 new Transx {
@@ -397,7 +397,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201504",
                     CreatedOnUTC = new DateTime(2015, 4, 30, 23, 49, 05),
                     Amount = new decimal(245.32),
-                    TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.TransxTypes.Where(t => t.Code == TransferTypeEnum.EarnedInvestmentRet).Select(t => t.Id).FirstOrDefault(),
                 },
                 // May
                 new Transx {
@@ -516,7 +516,7 @@ namespace gzWeb.Models {
                     Description = "Losses credited to players account after a 50% deduction"
                 },
                 new TransxType {
-                    Code = TransferTypeEnum.InvestmentRet,
+                    Code = TransferTypeEnum.EarnedInvestmentRet,
                     Description = "Any gains by the investment returns"
                 },
                 new TransxType {

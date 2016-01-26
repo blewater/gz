@@ -17,7 +17,7 @@ namespace gzWeb.Tests.Models {
 
             foreach (var p in portfolios) {
                 Trace.Write(p.RiskTolerance.ToString() + " portfolio return ");
-                var r = p.PortFunds.Select(f => f.Weight *100* Math.Max(f.Fund.ThreeYrReturnPcnt, f.Fund.FiveYrReturnPcnt)).Average();
+                var r = p.PortFunds.Select(f => f.Weight * Math.Max(f.Fund.ThreeYrReturnPcnt, f.Fund.FiveYrReturnPcnt)).Sum();
                 Trace.WriteLine(r + "%");
             }
         }

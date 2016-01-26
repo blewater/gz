@@ -11,21 +11,26 @@ namespace gzWeb.Models {
 
         Deposit = 1,
 
-        Withdrawal,
+        Withdrawal = 2,
 
-        TransferToGaming,
+        TransferToGaming = 3,
 
-        InvestmentRet,
+        TransferToInvestment = 4,
 
-        PlayingLoss, /* End of the month iGC loss */
+        EarnedInvestmentRet = 5,
 
-        CreditedPlayingLoss, /* Playing loss * 50% */
+        PlayingLoss = 6, /* iGC gaming loss */
 
-        FundFee, /* 1.5% */
+        /// <summary>
+        /// In case the %50 pcnt changes we store the whole amount too "Playing Loss"
+        /// </summary>
+        CreditedPlayingLoss = 7, /* Playing loss * 50% */
 
-        Commission, /* 2.5% */
+        FundFee = 8, /* 1.5% */
 
-        Other
+        Commission = 9, /* 2.5% */
+
+        Other = 10
     }
 
     public class TransxType {
