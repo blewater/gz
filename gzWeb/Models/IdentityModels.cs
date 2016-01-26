@@ -58,7 +58,7 @@ namespace gzWeb.Models
         [NotMapped]
         public decimal TotalInvestmReturns {
             get {
-                return this.Transxes.Where(t => t.Type.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Amount).Sum();
+                return this.Transxes.Where(t => t.Type.Code == TransferTypeEnum.EarnedInvestmentRet).Select(t => t.Amount).Sum();
             }
         }
         [NotMapped]

@@ -199,6 +199,10 @@
     <Compile Include="Migrations\201601221231092_Portfolio Active Return.Designer.cs">
       <DependentUpon>201601221231092_Portfolio Active Return.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601251126110_Customer Investments.cs" />
+    <Compile Include="Migrations\201601251126110_Customer Investments.Designer.cs">
+      <DependentUpon>201601251126110_Customer Investments.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -1251,6 +1255,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601221231092_Portfolio Active Return.resx">
       <DependentUpon>201601221231092_Portfolio Active Return.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601251126110_Customer Investments.resx">
+      <DependentUpon>201601251126110_Customer Investments.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -16,6 +16,8 @@ namespace gzWeb.Models {
         public virtual Portfolio Portfolio { get; set; }
 
         [Required]
-        public float Weight { get; set; }
+        public decimal Amount { get; set; }
+        [Required]
+        public DateTime UpdatedOnUTC { get; set; }
     }
 }
