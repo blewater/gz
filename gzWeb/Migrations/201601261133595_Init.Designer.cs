@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class PorttoCustomerandRemoveidentonPortFund : IMigrationMetadata
+    public sealed partial class Init : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(PorttoCustomerandRemoveidentonPortFund));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Init));
         
         string IMigrationMetadata.Id
         {
-            get { return "201601152343314_Port to Customer and Remove ident on PortFund"; }
+            get { return "201601261133595_Init"; }
         }
         
         string IMigrationMetadata.Source

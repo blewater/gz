@@ -179,29 +179,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601151356496_Init SQL Expr.cs" />
-    <Compile Include="Migrations\201601151356496_Init SQL Expr.Designer.cs">
-      <DependentUpon>201601151356496_Init SQL Expr.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601152224513_Portfolio Uniq RiskTol.cs" />
-    <Compile Include="Migrations\201601152224513_Portfolio Uniq RiskTol.Designer.cs">
-      <DependentUpon>201601152224513_Portfolio Uniq RiskTol.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.cs" />
-    <Compile Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.Designer.cs">
-      <DependentUpon>201601152343314_Port to Customer and Remove ident on PortFund.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601221132084_Fund Returns.cs" />
-    <Compile Include="Migrations\201601221132084_Fund Returns.Designer.cs">
-      <DependentUpon>201601221132084_Fund Returns.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601221231092_Portfolio Active Return.cs" />
-    <Compile Include="Migrations\201601221231092_Portfolio Active Return.Designer.cs">
-      <DependentUpon>201601221231092_Portfolio Active Return.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601251126110_Customer Investments.cs" />
-    <Compile Include="Migrations\201601251126110_Customer Investments.Designer.cs">
-      <DependentUpon>201601251126110_Customer Investments.cs</DependentUpon>
+    <Compile Include="Migrations\201601261133595_Init.cs" />
+    <Compile Include="Migrations\201601261133595_Init.Designer.cs">
+      <DependentUpon>201601261133595_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1241,23 +1221,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601151356496_Init SQL Expr.resx">
-      <DependentUpon>201601151356496_Init SQL Expr.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601152224513_Portfolio Uniq RiskTol.resx">
-      <DependentUpon>201601152224513_Portfolio Uniq RiskTol.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601152343314_Port to Customer and Remove ident on PortFund.resx">
-      <DependentUpon>201601152343314_Port to Customer and Remove ident on PortFund.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601221132084_Fund Returns.resx">
-      <DependentUpon>201601221132084_Fund Returns.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601221231092_Portfolio Active Return.resx">
-      <DependentUpon>201601221231092_Portfolio Active Return.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601251126110_Customer Investments.resx">
-      <DependentUpon>201601251126110_Customer Investments.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601261133595_Init.resx">
+      <DependentUpon>201601261133595_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

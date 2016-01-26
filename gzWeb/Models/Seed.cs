@@ -3,7 +3,6 @@ using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNet.Identity;
-using gzWeb.Migrations;
 using System.Data.Entity.Migrations.Infrastructure;
 using System.Diagnostics;
 
@@ -17,16 +16,6 @@ namespace gzWeb.Models {
     /// 
     /// </summary>
     public class Seed {
-
-        /// <summary>
-        /// To be called from Unit Testing to test Seed
-        /// http://stackoverflow.com/questions/16786925/how-to-run-seed-method-of-configuration-class-of-migrations
-        /// </summary>
-        public void TriggerSeed() {
-            Configuration configuration = new Configuration();
-            configuration.ContextType = typeof(ApplicationDbContext);
-            
-        }
 
         public static string GenData() {
             //Assume success
@@ -502,6 +491,10 @@ namespace gzWeb.Models {
                 new TransxType {
                     Code = TransferTypeEnum.Withdrawal,
                     Description = "Customer withdrawals of any excess funds to their banking account"
+                },
+                new TransxType {
+                    Code = TransferTypeEnum.TransferToInvestment,
+                    Description = "Customer transfers to gaming account"
                 },
                 new TransxType {
                     Code = TransferTypeEnum.TransferToGaming,

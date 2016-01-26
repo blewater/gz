@@ -10,7 +10,7 @@ namespace gzWeb.Tests.Models {
     [TestClass]
     public class SeedTest {
         [TestMethod]
-        public void GenData() {
+        public void SeedData() {
 
             // Null means no exception
             Assert.IsNull(Seed.GenData());
