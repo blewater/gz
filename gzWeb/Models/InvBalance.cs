@@ -15,7 +15,7 @@ namespace gzWeb.Models {
 
         public decimal Balance { get; set; }
 
-        //Transx dependency
+        //Transaction dependency
         [Index("CustomerId_Mon_idx_invbal", 1, IsUnique=true)]
         public int CustomerId { get; set; }
         [Index("CustomerId_Mon_idx_invbal", 2, IsUnique = true)]

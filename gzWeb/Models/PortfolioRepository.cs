@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.Identity;
 
 namespace gzWeb.Models {
 
@@ -9,9 +10,9 @@ namespace gzWeb.Models {
 
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        public IEnumerable<Portfolio> GetAllPortfolios() {
+        public IQueryable<Portfolio> GetAllPortfolios() {
 
-            return db.Portfolios.ToList();
+            return db.Portfolios;
         }
     }
 }

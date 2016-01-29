@@ -40,7 +40,7 @@ namespace gzWeb.Controllers
             var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var customer = manager.FindById(User.Identity.GetUserId<int>());
 
-            var investments = customer.Transxes.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).OrderByDescending(t => t.CreatedOnUTC).Select(t => new { t.Amount, t.CreatedOnUTC}).ToList();
+            var investments = customer.GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).OrderByDescending(t => t.CreatedOnUTC).Select(t => new { t.Amount, t.CreatedOnUTC}).ToList();
 
             return Json(investments, JsonRequestBehavior.AllowGet);
         }
