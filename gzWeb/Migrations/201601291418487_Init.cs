@@ -65,6 +65,35 @@ namespace gzWeb.Migrations
                 .Index(t => t.UserId);
             
             CreateTable(
+                "dbo.GzTransactions",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        CustomerId = c.Int(nullable: false),
+                        YearMonthCtd = c.String(nullable: false, maxLength: 6),
+                        TypeId = c.Int(nullable: false),
+                        CreatedOnUTC = c.DateTime(nullable: false),
+                        Amount = c.Decimal(nullable: false, precision: 18, scale: 2),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.CustomerId, cascadeDelete: true)
+                .ForeignKey("dbo.GzTransactionTypes", t => t.TypeId, cascadeDelete: true)
+                .Index(t => new { t.CustomerId, t.YearMonthCtd }, name: "CustomerId_Mon_idx_gztransaction")
+                .Index(t => t.TypeId)
+                .Index(t => t.CreatedOnUTC);
+            
+            CreateTable(
+                "dbo.GzTransactionTypes",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Code = c.Int(nullable: false),
+                        Description = c.String(maxLength: 128),
+                    })
+                .PrimaryKey(t => t.Id)
+                .Index(t => t.Code, unique: true);
+            
+            CreateTable(
                 "dbo.InvBalances",
                 c => new
                     {
@@ -101,35 +130,6 @@ namespace gzWeb.Migrations
                 .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
                 .Index(t => t.UserId)
                 .Index(t => t.RoleId);
-            
-            CreateTable(
-                "dbo.Transxes",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        CustomerId = c.Int(nullable: false),
-                        YearMonthCtd = c.String(nullable: false, maxLength: 6),
-                        TypeId = c.Int(nullable: false),
-                        CreatedOnUTC = c.DateTime(nullable: false),
-                        Amount = c.Decimal(nullable: false, precision: 18, scale: 2),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.AspNetUsers", t => t.CustomerId, cascadeDelete: true)
-                .ForeignKey("dbo.TransxTypes", t => t.TypeId, cascadeDelete: true)
-                .Index(t => new { t.CustomerId, t.YearMonthCtd }, name: "CustomerId_Mon_idx_transx")
-                .Index(t => t.TypeId)
-                .Index(t => t.CreatedOnUTC);
-            
-            CreateTable(
-                "dbo.TransxTypes",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Code = c.Int(nullable: false),
-                        Description = c.String(maxLength: 128),
-                    })
-                .PrimaryKey(t => t.Id)
-                .Index(t => t.Code, unique: true);
             
             CreateTable(
                 "dbo.Portfolios",
@@ -189,11 +189,11 @@ namespace gzWeb.Migrations
             DropForeignKey("dbo.CustPortfolios", "PortfolioId", "dbo.Portfolios");
             DropForeignKey("dbo.PortFunds", "PortfolioId", "dbo.Portfolios");
             DropForeignKey("dbo.PortFunds", "FundId", "dbo.Funds");
-            DropForeignKey("dbo.Transxes", "TypeId", "dbo.TransxTypes");
-            DropForeignKey("dbo.Transxes", "CustomerId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.InvBalances", "CustomerId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.GzTransactions", "TypeId", "dbo.GzTransactionTypes");
+            DropForeignKey("dbo.GzTransactions", "CustomerId", "dbo.AspNetUsers");
             DropForeignKey("dbo.CustPortfolios", "ApplicationUser_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
@@ -202,14 +202,14 @@ namespace gzWeb.Migrations
             DropIndex("dbo.PortFunds", new[] { "FundId" });
             DropIndex("dbo.PortFunds", new[] { "PortfolioId" });
             DropIndex("dbo.Portfolios", new[] { "RiskTolerance" });
-            DropIndex("dbo.TransxTypes", new[] { "Code" });
-            DropIndex("dbo.Transxes", new[] { "CreatedOnUTC" });
-            DropIndex("dbo.Transxes", new[] { "TypeId" });
-            DropIndex("dbo.Transxes", "CustomerId_Mon_idx_transx");
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.InvBalances", "CustomerId_Mon_idx_invbal");
+            DropIndex("dbo.GzTransactionTypes", new[] { "Code" });
+            DropIndex("dbo.GzTransactions", new[] { "CreatedOnUTC" });
+            DropIndex("dbo.GzTransactions", new[] { "TypeId" });
+            DropIndex("dbo.GzTransactions", "CustomerId_Mon_idx_gztransaction");
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "PlatformCustomerId" });
@@ -219,11 +219,11 @@ namespace gzWeb.Migrations
             DropTable("dbo.Funds");
             DropTable("dbo.PortFunds");
             DropTable("dbo.Portfolios");
-            DropTable("dbo.TransxTypes");
-            DropTable("dbo.Transxes");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.InvBalances");
+            DropTable("dbo.GzTransactionTypes");
+            DropTable("dbo.GzTransactions");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.CustPortfolios");

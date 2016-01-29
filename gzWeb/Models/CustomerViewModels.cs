@@ -6,12 +6,16 @@ using System.Web;
 namespace gzWeb.Models {
     public class CustomerViewModel {
 
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public bool EmailConfirmed { get; set; }
         public string FirstName { get; set; }
-
         public string LastName { get; set; }
-
+        public DateTime Birthday { get; set; }
+        public int PlatformCustomerId { get; set; }
+        public DateTime GamBalanceUpdOnUTC { get; set; }
         public decimal InvBalance { get; set; }
-
         public decimal GamBalance { get; set; }
 
         public decimal LastInvestmentAmount { get; set; }

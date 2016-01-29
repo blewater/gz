@@ -13,7 +13,7 @@ namespace gzWeb.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201601261133595_Init"; }
+            get { return "201601291418487_Init"; }
         }
         
         string IMigrationMetadata.Source

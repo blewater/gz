@@ -33,7 +33,7 @@ namespace gzWeb.Models {
         Other = 10
     }
 
-    public class TransxType {
+    public class GzTransactionType {
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -44,6 +44,6 @@ namespace gzWeb.Models {
         [StringLength(128)]
         public string Description { get; set; }
 
-        public virtual ICollection<Transx> Transxions { get; set; }
+        public virtual ICollection<GzTransaction> GzTransactions { get; set; }
     }
 }
