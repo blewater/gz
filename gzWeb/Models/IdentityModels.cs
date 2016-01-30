@@ -126,6 +126,7 @@ namespace gzWeb.Models
 
         public DbSet<CustPortfolio> CustPortfolios { get; set; }
         public DbSet<Fund> Funds { get; set; }
+        public DbSet<FundPrice> FundPrices { get; set; }
         public DbSet<InvBalance> InvBalances { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }

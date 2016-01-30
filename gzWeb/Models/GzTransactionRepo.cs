@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Data.Entity.Migrations;
-using EFExtensions;
 using System.Threading.Tasks;
 
 namespace gzWeb.Models {
@@ -23,13 +20,13 @@ namespace gzWeb.Models {
 
                 //Not thread safe but ok...within a single request context
                 db.GzTransactions.AddOrUpdate(
-                    // Hopefully CreatedOnUTC remains constant for same
+                    // Assume CreatedOnUTC remains constant for same trx
                     // to support idempotent transactions
                     t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC, t.Amount },
                         new GzTransaction {
                             CustomerId = customerId,
                             TypeId = db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
-                            YearMonthCtd = createdOnUTC.Year.ToString()+createdOnUTC.Month.ToString(),
+                            YearMonthCtd = createdOnUTC.Year.ToString("0000")+createdOnUTC.Month.ToString("00"),
                             Amount = amount,
                             CreatedOnUTC = createdOnUTC
                         }
@@ -48,32 +45,29 @@ namespace gzWeb.Models {
         /// <returns></returns>
         public async Task AddPlayingLoss(int customerId, decimal totPlayinLossAmount, float creditPcnt, DateTime createdOnUTC) {
 
-            using (var db = new ApplicationDbContext()) {
-                using (var dbContextTransaction = db.Database.BeginTransaction()) {
+            if (creditPcnt < 0 || creditPcnt > 100) {
 
-                    try {
+                throw new Exception("Invalid percentage not within range 0..100: " + creditPcnt);
 
-                        await AddGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC);
-                        await AddGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * new decimal(creditPcnt/100), createdOnUTC);
+            } else {
 
-                        dbContextTransaction.Commit();
-                    } catch (Exception ex) {
-                        var exception = ex.Message;
-                        dbContextTransaction.Rollback();
-                        throw ex;
+                using (var db = new ApplicationDbContext()) {
+                    using (var dbContextTransaction = db.Database.BeginTransaction()) {
+
+                        try {
+
+                            await AddGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC);
+                            await AddGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * new decimal(creditPcnt / 100), createdOnUTC);
+
+                            dbContextTransaction.Commit();
+                        } catch (Exception ex) {
+                            var exception = ex.Message;
+                            dbContextTransaction.Rollback();
+                            throw ex;
+                        }
                     }
                 }
             }
         }
-
-
-        public void CreateIdempotentTransactions(List<GzTransaction> transactions) {
-
-            using (var db = new ApplicationDbContext()) {
-                db.Upsert<GzTransaction>(transactions);
-            }
-
-        }
-
-    }
+   }
 }

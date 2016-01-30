@@ -17,13 +17,13 @@ namespace gzWeb.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required, Index("CustomerId_Mon_idx_gztransaction", 1, IsUnique = false)]
+        [Required, Index("CustomerId_Mon_idx_gztransaction", IsUnique = false, Order = 1)]
         public int CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
-        [Index("CustomerId_Mon_idx_gztransaction", 2, IsUnique = false)]
-        [Required, MinLength(6), StringLength(6)]
+        [Index("CustomerId_Mon_idx_gztransaction",IsUnique = false, Order = 2)]
+        [Required, StringLength(6)]
         public string YearMonthCtd { get; set; }
 
         [ForeignKey("Type")]

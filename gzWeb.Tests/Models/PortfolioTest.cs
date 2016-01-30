@@ -23,12 +23,48 @@ namespace gzWeb.Tests.Models {
             }
         }
         [TestMethod]
-        public void CalculateReturns() {
+        public void SaveDailyFundClosingPrice() {
+            var fundRepo = new FundRepo();
+            fundRepo.AddDailyFundClosingPrices();
+        }
+        [TestMethod]
+        public async Task CalculateReturns() {
 
             int custId = CreateUpd6MonthAllocationCustomer();
 
+            var gzTrx = new GzTransactionRepo();
 
-//            var creditedPlayingLoss =
+            // First 6 months of 2015
+            await gzTrx.AddPlayingLoss(customerId:custId,totPlayinLossAmount:160, creditPcnt:50, createdOnUTC:new DateTime(2015, 1, 1));
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 120, creditPcnt: 50, createdOnUTC: new DateTime(2015, 2, 1));
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 3, 1));
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50, createdOnUTC: new DateTime(2015, 4, 1));
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50, createdOnUTC: new DateTime(2015, 5, 1));
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 6, 1));
+
+            var cpRepo = new CustPortfolioRepo();
+            // Jan
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 30, new DateTime(2015, 1, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 50, new DateTime(2015, 2, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 20, new DateTime(2015, 3, 1));
+            // Feb
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 10, new DateTime(2015, 1, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 50, new DateTime(2015, 2, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 40, new DateTime(2015, 3, 1));
+            // Mar
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 100, new DateTime(2015, 3, 1));
+            // Apr
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 30, new DateTime(2015, 1, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 30, new DateTime(2015, 2, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 40, new DateTime(2015, 3, 1));
+            // May
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 10, new DateTime(2015, 1, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 20, new DateTime(2015, 2, 1));
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 70, new DateTime(2015, 3, 1));
+            // Jun
+            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 100, new DateTime(2015, 2, 1));
+
+            //            var creditedPlayingLoss =
 
             //db.GzTransactions.AddOrUpdate(
             //    t => new { t.CustomerId, t.CreatedOnUTC, t.TypeId },

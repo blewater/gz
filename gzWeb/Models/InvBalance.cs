@@ -15,11 +15,14 @@ namespace gzWeb.Models {
 
         public decimal Balance { get; set; }
 
-        //Transaction dependency
-        [Index("CustomerId_Mon_idx_invbal", 1, IsUnique=true)]
+        [Index("CustomerId_Mon_idx_invbal", IsUnique=true, Order=1)]
         public int CustomerId { get; set; }
-        [Index("CustomerId_Mon_idx_invbal", 2, IsUnique = true)]
-        [MinLength(6), StringLength(6)]
+
+        [Index("CustomerId_Mon_idx_invbal", IsUnique = true, Order=2)]
+        [StringLength(6)]
         public string YearMonthCtd { get; set; }
+
+        [Required]
+        public DateTime UpdatedOnUTC { get; set; }
     }
 }

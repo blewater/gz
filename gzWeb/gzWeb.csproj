@@ -179,21 +179,23 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601291418487_Init.cs" />
-    <Compile Include="Migrations\201601291418487_Init.Designer.cs">
-      <DependentUpon>201601291418487_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201601292244492_FundPrices.cs" />
+    <Compile Include="Migrations\201601292244492_FundPrices.Designer.cs">
+      <DependentUpon>201601292244492_FundPrices.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
+    <Compile Include="Models\CustPortfolioRepo.cs" />
     <Compile Include="Models\EFExtensions.cs" />
     <Compile Include="Models\Fund.cs" />
+    <Compile Include="Models\FundPrice.cs" />
+    <Compile Include="Models\FundRepo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InvBalance.cs" />
     <Compile Include="Models\CustomerViewModels.cs" />
     <Compile Include="Models\PortfolioRepository.cs" />
     <Compile Include="Models\PortFund.cs" />
-    <Compile Include="Models\Repository.cs" />
     <Compile Include="Models\Seed.cs" />
     <Compile Include="Models\GzTransactionRepo.cs" />
     <Compile Include="Models\GzTransactionType.cs" />
@@ -1225,8 +1227,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601291418487_Init.resx">
-      <DependentUpon>201601291418487_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601292244492_FundPrices.resx">
+      <DependentUpon>201601292244492_FundPrices.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
