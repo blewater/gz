@@ -3,7 +3,7 @@ namespace gzWeb.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Init : DbMigration
+    public partial class FundPrices : DbMigration
     {
         public override void Up()
         {
@@ -12,16 +12,16 @@ namespace gzWeb.Migrations
                 c => new
                     {
                         CustomerId = c.Int(nullable: false),
+                        YearMonthCtd = c.String(nullable: false, maxLength: 6),
                         PortfolioId = c.Int(nullable: false),
-                        Amount = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Weight = c.Single(nullable: false),
                         UpdatedOnUTC = c.DateTime(nullable: false),
-                        ApplicationUser_Id = c.Int(),
                     })
-                .PrimaryKey(t => new { t.CustomerId, t.PortfolioId })
-                .ForeignKey("dbo.AspNetUsers", t => t.ApplicationUser_Id)
+                .PrimaryKey(t => new { t.CustomerId, t.YearMonthCtd })
+                .ForeignKey("dbo.AspNetUsers", t => t.CustomerId, cascadeDelete: true)
                 .ForeignKey("dbo.Portfolios", t => t.PortfolioId, cascadeDelete: true)
-                .Index(t => t.PortfolioId)
-                .Index(t => t.ApplicationUser_Id);
+                .Index(t => t.CustomerId)
+                .Index(t => t.PortfolioId);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -101,6 +101,7 @@ namespace gzWeb.Migrations
                         Balance = c.Decimal(nullable: false, precision: 18, scale: 2),
                         CustomerId = c.Int(nullable: false),
                         YearMonthCtd = c.String(maxLength: 6),
+                        UpdatedOnUTC = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AspNetUsers", t => t.CustomerId, cascadeDelete: true)
@@ -172,6 +173,20 @@ namespace gzWeb.Migrations
                 .Index(t => t.HoldingName, unique: true);
             
             CreateTable(
+                "dbo.FundPrices",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        FundId = c.Int(nullable: false),
+                        ClosingPrice = c.Single(nullable: false),
+                        YearMonthDay = c.String(maxLength: 8),
+                        UpdatedOnUTC = c.DateTime(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Funds", t => t.FundId, cascadeDelete: true)
+                .Index(t => new { t.FundId, t.YearMonthDay }, unique: true, name: "FundId_YMD_idx");
+            
+            CreateTable(
                 "dbo.AspNetRoles",
                 c => new
                     {
@@ -189,14 +204,16 @@ namespace gzWeb.Migrations
             DropForeignKey("dbo.CustPortfolios", "PortfolioId", "dbo.Portfolios");
             DropForeignKey("dbo.PortFunds", "PortfolioId", "dbo.Portfolios");
             DropForeignKey("dbo.PortFunds", "FundId", "dbo.Funds");
+            DropForeignKey("dbo.FundPrices", "FundId", "dbo.Funds");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.InvBalances", "CustomerId", "dbo.AspNetUsers");
             DropForeignKey("dbo.GzTransactions", "TypeId", "dbo.GzTransactionTypes");
             DropForeignKey("dbo.GzTransactions", "CustomerId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.CustPortfolios", "ApplicationUser_Id", "dbo.AspNetUsers");
+            DropForeignKey("dbo.CustPortfolios", "CustomerId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
+            DropIndex("dbo.FundPrices", "FundId_YMD_idx");
             DropIndex("dbo.Funds", new[] { "HoldingName" });
             DropIndex("dbo.Funds", new[] { "Symbol" });
             DropIndex("dbo.PortFunds", new[] { "FundId" });
@@ -213,9 +230,10 @@ namespace gzWeb.Migrations
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "PlatformCustomerId" });
-            DropIndex("dbo.CustPortfolios", new[] { "ApplicationUser_Id" });
             DropIndex("dbo.CustPortfolios", new[] { "PortfolioId" });
+            DropIndex("dbo.CustPortfolios", new[] { "CustomerId" });
             DropTable("dbo.AspNetRoles");
+            DropTable("dbo.FundPrices");
             DropTable("dbo.Funds");
             DropTable("dbo.PortFunds");
             DropTable("dbo.Portfolios");

@@ -32,15 +32,5 @@ namespace gzWeb.Models {
         public virtual ICollection<PortFund> PortFunds { get; set; }
 
         public bool IsActive { get; set; }
-
-        /// <summary>
-        /// Based on max(3yr, 5yr) returns of the individual funds what's the weighted funds portfolio return
-        /// </summary>
-        [NotMapped]
-        public float AvgReturn {
-            get {
-                return this.PortFunds.Select(f => f.Weight).Average();
-            }
-        }
     }
 }

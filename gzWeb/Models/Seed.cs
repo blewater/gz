@@ -57,6 +57,10 @@ namespace gzWeb.Models {
             CreateUpdFunds(context);
             context.SaveChanges();
 
+            //FundPrices
+            CreateUpdFundsPrices(context);
+            context.SaveChanges();
+
             // Portfolios
             CreateUpdPortfolios(context);
             context.SaveChanges();
@@ -136,7 +140,8 @@ namespace gzWeb.Models {
                     new InvBalance {
                         Balance = gBalance,
                         CustomerId = custId,
-                        YearMonthCtd = g.Key
+                        YearMonthCtd = g.Key,
+                        UpdatedOnUTC = DateTime.UtcNow
                     }
                 );
                 //This is the previous month balance
@@ -167,6 +172,60 @@ namespace gzWeb.Models {
                 },
                 new Fund {
                     HoldingName = "Vanguard VWO", Symbol = "VWO", ThreeYrReturnPcnt = -7.17f, FiveYrReturnPcnt = -4.98f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                }
+                );
+        }
+
+        private static void CreateUpdFundsPrices(ApplicationDbContext context) {
+            context.FundPrices.AddOrUpdate(
+                f => new { f.FundId, f.YearMonthDay },
+                new FundPrice {
+                    ClosingPrice = 108.79F,
+                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150721",
+                    UpdatedOnUTC = new DateTime(2015, 7, 21, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 108.44F,
+                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150601",
+                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 109.58F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150601",
+                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 54.44F,
+                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150601",
+                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 41.25F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150601",
+                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 42.31F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150601",
+                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 78.19F,
+                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150601",
+                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 81.19F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20150601",
+                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
                 }
                 );
         }

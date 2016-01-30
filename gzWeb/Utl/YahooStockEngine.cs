@@ -6,6 +6,13 @@ using System.Collections.Generic;
 
 namespace gzWeb.Helpers {
 
+    public class PQuote {
+        public string Symbol { get; set; }
+        public float? LastTradePrice { get; set; }
+        public DateTime? LastTradeDate { get; set; }
+        public DateTime UpdatedOnUTC { get; set; }
+    }
+
     public class Quote {
         public string Symbol { get; set; }
         public decimal? Ask { get; set; }
@@ -65,6 +72,35 @@ namespace gzWeb.Helpers {
         private const string BASE_URL = "http://query.yahooapis.com/v1/public/yql?q=" +
                                         "select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20({0})" +
                                         "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+
+        /// <summary>
+        /// Partial Quote version
+        /// </summary>
+        /// <param name="quotes"></param>
+        public static void Fetch(IEnumerable<PQuote> quotes) {
+            string symbolList = String.Join("%2C", quotes.Select(w => "%22" + w.Symbol + "%22").ToArray());
+            string url = string.Format(BASE_URL, symbolList);
+
+            XDocument doc = XDocument.Load(url);
+            Parse(quotes, doc);
+        }
+
+        /// <summary>
+        /// Partial Quote version
+        /// </summary>
+        /// <param name="quotes"></param>
+        /// <param name="doc"></param>
+        private static void Parse(IEnumerable<PQuote> quotes, XDocument doc) {
+            XElement results = doc.Root.Element("results");
+
+            foreach (PQuote quote in quotes) {
+                XElement q = results.Elements("quote").First(w => w.Attribute("symbol").Value == quote.Symbol);
+
+                quote.LastTradePrice = GetFloat(q.Element("LastTradePriceOnly").Value);
+                quote.LastTradeDate = GetDateTime(q.Element("LastTradeDate").Value + " " + q.Element("LastTradeTime").Value);
+                quote.UpdatedOnUTC = DateTime.UtcNow;
+            }
+        }
 
         public static void Fetch(IEnumerable<Quote> quotes) {
             string symbolList = String.Join("%2C", quotes.Select(w => "%22" + w.Symbol + "%22").ToArray());
@@ -126,6 +162,17 @@ namespace gzWeb.Helpers {
 
                 quote.UpdatedOnUTC = DateTime.UtcNow;
             }
+        }
+
+        private static float? GetFloat(string input) {
+            if (input == null) return null;
+
+            input = input.Replace("%", "");
+
+            float value;
+
+            if (float.TryParse(input, out value)) return value;
+            return null;
         }
 
         private static decimal? GetDecimal(string input) {

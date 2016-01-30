@@ -19,6 +19,7 @@ namespace gzWeb.Models {
         public float FiveYrReturnPcnt { get; set; }
 
         public virtual ICollection<PortFund> PortFunds { get; set; }
+        public virtual ICollection<FundPrice> FundPrices { get; set; }
 
         public DateTime UpdatedOnUTC { get; set; }
     }

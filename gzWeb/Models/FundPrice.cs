@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace gzWeb.Models {
+    public class FundPrice {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [ForeignKey("FundId")]
+        virtual public Fund Fund { get; set; }
+
+        [Required]
+        [Index("FundId_YMD_idx", IsUnique = true, Order = 1)]
+        public int FundId { get; set; }
+
+        [Required]
+        public float ClosingPrice { get; set; }
+
+        [StringLength(8)]
+        [Index("FundId_YMD_idx", IsUnique = true, Order = 2)]
+        public string YearMonthDay { get; set; }
+
+        [Required]
+        public DateTime UpdatedOnUTC { get; set; }
+    }
+}
