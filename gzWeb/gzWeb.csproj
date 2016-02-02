@@ -187,9 +187,14 @@
     <Compile Include="Migrations\201602011056104_CustFundShares.Designer.cs">
       <DependentUpon>201602011056104_CustFundShares.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602021921345_Decimal numShares.cs" />
+    <Compile Include="Migrations\201602021921345_Decimal numShares.Designer.cs">
+      <DependentUpon>201602021921345_Decimal numShares.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BalanceRepo.cs" />
+    <Compile Include="Models\CustFundShareRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
     <Compile Include="Models\CustPortfolioRepo.cs" />
     <Compile Include="Models\EFExtensions.cs" />
@@ -213,6 +218,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utl\DebugTextWriter.cs" />
+    <Compile Include="Utl\Expressions.cs" />
     <Compile Include="Utl\YahooStockEngine.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1239,6 +1245,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602011056104_CustFundShares.resx">
       <DependentUpon>201602011056104_CustFundShares.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602021921345_Decimal numShares.resx">
+      <DependentUpon>201602021921345_Decimal numShares.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
