@@ -58,7 +58,7 @@ namespace gzWeb.Models
         [NotMapped]
         public decimal TotalInvestmReturns {
             get {
-                return this.GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.EarnedInvestmentRet).Select(t => t.Amount).Sum();
+                return this.GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Amount).Sum();
             }
         }
         [NotMapped]
@@ -127,6 +127,7 @@ namespace gzWeb.Models
         public DbSet<CustPortfolio> CustPortfolios { get; set; }
         public DbSet<Fund> Funds { get; set; }
         public DbSet<FundPrice> FundPrices { get; set; }
+        public DbSet<CustFundShare> CustFundShares { get; set; }
         public DbSet<InvBalance> InvBalances { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }

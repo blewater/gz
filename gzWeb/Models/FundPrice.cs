@@ -15,12 +15,12 @@ namespace gzWeb.Models {
         [Index("FundId_YMD_idx", IsUnique = true, Order = 1)]
         public int FundId { get; set; }
 
-        [Required]
-        public float ClosingPrice { get; set; }
-
         [StringLength(8)]
         [Index("FundId_YMD_idx", IsUnique = true, Order = 2)]
         public string YearMonthDay { get; set; }
+
+        [Required]
+        public float ClosingPrice { get; set; }
 
         [Required]
         public DateTime UpdatedOnUTC { get; set; }

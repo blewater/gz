@@ -77,12 +77,14 @@ namespace gzWeb.Helpers {
         /// Partial Quote version
         /// </summary>
         /// <param name="quotes"></param>
-        public static void Fetch(IEnumerable<PQuote> quotes) {
+        public static List<PQuote> Fetch(List<PQuote> quotes) {
             string symbolList = String.Join("%2C", quotes.Select(w => "%22" + w.Symbol + "%22").ToArray());
             string url = string.Format(BASE_URL, symbolList);
 
             XDocument doc = XDocument.Load(url);
             Parse(quotes, doc);
+
+            return quotes;
         }
 
         /// <summary>

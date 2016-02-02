@@ -20,6 +20,8 @@ namespace gzWeb.Models {
                 var manager = new ApplicationUserManager(new CustomUserStore(db));
                 var newUser = new ApplicationUser();
 
+                Mapper.Initialize(cfg => cfg.CreateMap<CustomerViewModel, ApplicationUser>());
+                //Mapper.CreateMap <CustomerViewModel, ApplicationUser> ();
                 Mapper.Map<CustomerViewModel, ApplicationUser>(dto, newUser);
 
                 // Don't recreate if existing

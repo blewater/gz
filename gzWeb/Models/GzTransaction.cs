@@ -30,6 +30,9 @@ namespace gzWeb.Models {
         public int TypeId { get; set; }
         public virtual GzTransactionType Type { get; set; }
 
+        // For Type:CreditedPlayingLoss -> the credit percentage for playing losses i.e. 50 for half
+        public float? CreditPcntApplied { get; set; }
+
         [Index, Required]
         public DateTime CreatedOnUTC { get; set; }
 

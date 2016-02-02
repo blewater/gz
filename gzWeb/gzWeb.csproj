@@ -179,21 +179,28 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601292244492_FundPrices.cs" />
-    <Compile Include="Migrations\201601292244492_FundPrices.Designer.cs">
-      <DependentUpon>201601292244492_FundPrices.cs</DependentUpon>
+    <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.cs" />
+    <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.Designer.cs">
+      <DependentUpon>201601301303283_Init CustPortfolio Key.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602011056104_CustFundShares.cs" />
+    <Compile Include="Migrations\201602011056104_CustFundShares.Designer.cs">
+      <DependentUpon>201602011056104_CustFundShares.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BalanceRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
     <Compile Include="Models\CustPortfolioRepo.cs" />
     <Compile Include="Models\EFExtensions.cs" />
     <Compile Include="Models\Fund.cs" />
     <Compile Include="Models\FundPrice.cs" />
     <Compile Include="Models\FundRepo.cs" />
+    <Compile Include="Models\CustFundShare.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InvBalance.cs" />
     <Compile Include="Models\CustomerViewModels.cs" />
+    <Compile Include="Models\PortfolioRepo.cs" />
     <Compile Include="Models\PortfolioRepository.cs" />
     <Compile Include="Models\PortFund.cs" />
     <Compile Include="Models\Seed.cs" />
@@ -1227,8 +1234,11 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601292244492_FundPrices.resx">
-      <DependentUpon>201601292244492_FundPrices.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601301303283_Init CustPortfolio Key.resx">
+      <DependentUpon>201601301303283_Init CustPortfolio Key.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602011056104_CustFundShares.resx">
+      <DependentUpon>201602011056104_CustFundShares.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

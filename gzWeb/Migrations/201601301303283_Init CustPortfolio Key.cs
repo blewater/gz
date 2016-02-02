@@ -3,7 +3,7 @@ namespace gzWeb.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class FundPrices : DbMigration
+    public partial class InitCustPortfolioKey : DbMigration
     {
         public override void Up()
         {
@@ -11,16 +11,17 @@ namespace gzWeb.Migrations
                 "dbo.CustPortfolios",
                 c => new
                     {
+                        Id = c.Int(nullable: false, identity: true),
                         CustomerId = c.Int(nullable: false),
-                        YearMonthCtd = c.String(nullable: false, maxLength: 6),
+                        YearMonth = c.String(nullable: false, maxLength: 6),
                         PortfolioId = c.Int(nullable: false),
                         Weight = c.Single(nullable: false),
                         UpdatedOnUTC = c.DateTime(nullable: false),
                     })
-                .PrimaryKey(t => new { t.CustomerId, t.YearMonthCtd })
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AspNetUsers", t => t.CustomerId, cascadeDelete: true)
                 .ForeignKey("dbo.Portfolios", t => t.PortfolioId, cascadeDelete: true)
-                .Index(t => t.CustomerId)
+                .Index(t => new { t.CustomerId, t.YearMonth }, name: "CustomerId_Mon_idx_custp")
                 .Index(t => t.PortfolioId);
             
             CreateTable(
@@ -231,7 +232,7 @@ namespace gzWeb.Migrations
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUsers", new[] { "PlatformCustomerId" });
             DropIndex("dbo.CustPortfolios", new[] { "PortfolioId" });
-            DropIndex("dbo.CustPortfolios", new[] { "CustomerId" });
+            DropIndex("dbo.CustPortfolios", "CustomerId_Mon_idx_custp");
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.FundPrices");
             DropTable("dbo.Funds");

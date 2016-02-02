@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class FundPrices : IMigrationMetadata
+    public sealed partial class CustFundShares : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(FundPrices));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(CustFundShares));
         
         string IMigrationMetadata.Id
         {
-            get { return "201601292244492_FundPrices"; }
+            get { return "201602011056104_CustFundShares"; }
         }
         
         string IMigrationMetadata.Source
