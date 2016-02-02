@@ -31,7 +31,7 @@ namespace gzWeb.Models {
         public virtual ApplicationUser ApplicationUser { get; set; }
 
         [Required]
-        public float NumShares { get; set; }
+        public decimal NumShares { get; set; }
 
         [Required]
         public DateTime UpdatedOnUTC { get; set; }

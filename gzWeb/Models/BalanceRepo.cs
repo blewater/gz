@@ -23,29 +23,25 @@ namespace gzWeb.Models {
                 var prevMonBal = new decimal(0.00);
                 foreach (var g in monthlyTrx) {
 
+                    int year = int.Parse(g.Key.Substring(0, 3));
+                    int month = int.Parse(g.Key.Substring(4, 2));
+
+                    var InvAmount = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
+                    var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.InvestmentRet ? t.Amount : 0);
+
+                    /**///Step 3 Calc & save Portfolio Value
                     // Select max month for the current transaction activity
                     var lastMonthPort = db.CustPortfolios
                         .Where(p => p.CustomerId == custId && string.Compare(p.YearMonth, g.Key) <= 0)
                         .Select(p => p.YearMonth)
                         .Max();
 
-                    decimal investmentRet = 0;
-
                     if (lastMonthPort != null) {
-
-                        //Take last portfolio configuration (multiple rows or null?) at the current Month
-                        var portWeights = db.CustPortfolios
-                            .Where(p => p.CustomerId == custId && string.Compare(p.YearMonth, lastMonthPort) <= 0)
-                            .Select(p => new { p.PortfolioId, p.Portfolio.RiskTolerance, p.Weight});
-
-                        //var fundWeights = db.PortFunds.
+                        var customerFundSharesRepo = new CustFundShareRepo();
+                        var portfolioFundsValues = customerFundSharesRepo.CalcCustomerMonthlyFundShares(custId, InvAmount, year, month);
+                        customerFundSharesRepo.AddCustomerPurchasedFundShares(custId, portfolioFundsValues, year, month, DateTime.UtcNow);
                     }
 
-
-
-                    //portWeights.
-                    var InvAmount = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
-                    var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.InvestmentRet ? t.Amount : 0);
                     var WithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
 
                     var gBalance = prevMonBal + InvAmount + InvGain - WithdrawnAmounts;
