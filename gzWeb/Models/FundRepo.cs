@@ -8,7 +8,15 @@ using System.Data.Entity.Migrations;
 namespace gzWeb.Models {
     public class FundRepo {
 
-        public void AddDailyFundClosingPrices() {
+        /// <summary>
+        /// Retrieve the last completed day's closing price for our funds.
+        /// If it's a weekday before 4pm (US Eastern Time?) then we get the closing price of the previous weekday.
+        /// For example on Monday 12pm, we go to Friday's closing price if Friday was not a western holiday.
+        /// </summary>
+        /// <returns></returns>
+        public List<PQuote> AddDailyFundClosingPrices() {
+
+            List<PQuote> retVal = null;
 
             using (var db = new ApplicationDbContext()) {
 
@@ -16,7 +24,7 @@ namespace gzWeb.Models {
 
                 var quotes = fundsList.Select(f => new PQuote { Symbol = f }).ToList();
 
-                YahooStockEngine.Fetch(quotes);
+                retVal = YahooStockEngine.Fetch(quotes);
 
                 using (var dbContextTransaction = db.Database.BeginTransaction()) {
 
@@ -46,6 +54,8 @@ namespace gzWeb.Models {
                     }
                 }
             }
+
+            return retVal;
         }
     }
 }

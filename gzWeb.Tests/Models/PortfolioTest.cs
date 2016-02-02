@@ -10,6 +10,9 @@ using System.Diagnostics;
 namespace gzWeb.Tests.Models {
     [TestClass]
     public class PortfolioTest {
+        /// <summary>
+        /// Get the Apr returns based on the 3 year or 5 year returns whichever is greater
+        /// </summary>
         [TestMethod]
         public void PortfolioReturns() {
 
@@ -25,80 +28,62 @@ namespace gzWeb.Tests.Models {
         [TestMethod]
         public void SaveDailyFundClosingPrice() {
             var fundRepo = new FundRepo();
-            fundRepo.AddDailyFundClosingPrices();
+            var quotes = fundRepo.AddDailyFundClosingPrices();
+
+            Assert.IsNotNull(quotes);
+
+            //Assert we have a closing price for first symbol
+            Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
         }
         [TestMethod]
         public async Task CalculateReturns() {
 
             int custId = CreateUpd6MonthAllocationCustomer();
 
+            // Add invested Customer Portfolio 
+            await CreateTestCustomerPortfolioSelections(custId);
+
+            await CreateTestPlayerLossTransactions(custId);
+
+        }
+
+        private static async Task CreateTestCustomerPortfolioSelections(int custId) {
+
+            var cpRepo = new CustPortfolioRepo();
+
+            /*** For phase I we test only single portfolio selections ***/
+            //// Jan 2015
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 30, 2015, 1, new DateTime(2015, 1, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 1, new DateTime(2015, 1, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 20, 2015, 1, new DateTime(2015, 1, 1));
+            //// Feb
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 10, 2015, 2, new DateTime(2015, 2, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 2, new DateTime(2015, 2, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 40, 2015, 2, new DateTime(2015, 2, 1));
+            // Mar
+            await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 100, 2015, 3, new DateTime(2015, 3, 1));
+            //// Apr
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 30, 2015, 4, new DateTime(2015, 4, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 30, 2015, 4, new DateTime(2015, 4, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 40, 2015, 4, new DateTime(2015, 4, 1));
+            //// May
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 10, 2015, 5, new DateTime(2015, 5, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 20, 2015, 5, new DateTime(2015, 5, 1));
+            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 70, 2015, 5, new DateTime(2015, 5, 1));
+            // Jun
+            await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
+        }
+
+        private static async Task CreateTestPlayerLossTransactions(int custId) {
             var gzTrx = new GzTransactionRepo();
 
-            // First 6 months of 2015
-            await gzTrx.AddPlayingLoss(customerId:custId,totPlayinLossAmount:160, creditPcnt:50, createdOnUTC:new DateTime(2015, 1, 1));
+            // Add playing losses for first 6 months of 2015
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 160, creditPcnt: 50, createdOnUTC: new DateTime(2015, 1, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 120, creditPcnt: 50, createdOnUTC: new DateTime(2015, 2, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 3, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50, createdOnUTC: new DateTime(2015, 4, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50, createdOnUTC: new DateTime(2015, 5, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 6, 1));
-
-            var cpRepo = new CustPortfolioRepo();
-            // Jan
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 30, new DateTime(2015, 1, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 50, new DateTime(2015, 2, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 20, new DateTime(2015, 3, 1));
-            // Feb
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 10, new DateTime(2015, 1, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 50, new DateTime(2015, 2, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 40, new DateTime(2015, 3, 1));
-            // Mar
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 100, new DateTime(2015, 3, 1));
-            // Apr
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 30, new DateTime(2015, 1, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 30, new DateTime(2015, 2, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 40, new DateTime(2015, 3, 1));
-            // May
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Low, 10, new DateTime(2015, 1, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 20, new DateTime(2015, 2, 1));
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.High, 70, new DateTime(2015, 3, 1));
-            // Jun
-            await cpRepo.SetMonthCustPortfolio(custId, RiskToleranceEnum.Medium, 100, new DateTime(2015, 2, 1));
-
-            //            var creditedPlayingLoss =
-
-            //db.GzTransactions.AddOrUpdate(
-            //    t => new { t.CustomerId, t.CreatedOnUTC, t.TypeId },
-            //    //March
-            //    new GzTransaction {
-            //        CustomerId = custId,
-            //        YearMonthCtd = "201503",
-            //        CreatedOnUTC = new DateTime(2015, 3, 4, 7, 23, 42),
-            //        Amount = new decimal(10000),
-            //        TypeId = context.gzTransactionTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t => t.Id).FirstOrDefault(),
-            //    },
-            //    new GzTransaction {
-            //        CustomerId = custId,
-            //        YearMonthCtd = "201503",
-            //        CreatedOnUTC = new DateTime(2015, 3, 18, 18, 22, 13),
-            //        Amount = new decimal(9000),
-            //        TypeId = context.gzTransactionTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t => t.Id).FirstOrDefault(),
-            //    },
-            //    new GzTransaction {
-            //        CustomerId = custId,
-            //        YearMonthCtd = "201503",
-            //        CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 01),
-            //        Amount = new decimal(9853),
-            //        TypeId = context.gzTransactionTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-            //    },
-            //    new GzTransaction {
-            //        CustomerId = custId,
-            //        YearMonthCtd = "201503",
-            //        CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 02, 853),
-            //        Amount = new decimal(4926.5),
-            //        TypeId = context.gzTransactionTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-            //    },
-
-
         }
 
         private static int CreateUpd6MonthAllocationCustomer() {

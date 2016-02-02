@@ -17,7 +17,7 @@ namespace gzWeb.Models {
 
         TransferToInvestment = 4,
 
-        EarnedInvestmentRet = 5,
+        InvestmentRet = 5,
 
         PlayingLoss = 6, /* iGC gaming loss */
 

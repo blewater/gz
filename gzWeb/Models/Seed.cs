@@ -130,7 +130,7 @@ namespace gzWeb.Models {
             foreach (var g in yearMonthsGroups) {
 
                 var InvAmount = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
-                var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.EarnedInvestmentRet ? t.Amount : 0);
+                var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.InvestmentRet ? t.Amount : 0);
                 var WithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
 
                 var gBalance = prevMonBal + InvAmount + InvGain - WithdrawnAmounts;
@@ -179,12 +179,52 @@ namespace gzWeb.Models {
         private static void CreateUpdFundsPrices(ApplicationDbContext context) {
             context.FundPrices.AddOrUpdate(
                 f => new { f.FundId, f.YearMonthDay },
+
+                // End of 2014
                 new FundPrice {
-                    ClosingPrice = 108.79F,
+                    ClosingPrice = 110.34F,
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150721",
-                    UpdatedOnUTC = new DateTime(2015, 7, 21, 23, 50, 0)
+                    YearMonthDay = "20141231",
+                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
                 },
+                new FundPrice {
+                    ClosingPrice = 106.00F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20141231",
+                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 54.24F,
+                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20141231",
+                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 37.88F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20141231",
+                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 40.02F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20141231",
+                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 79.16F,
+                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20141231",
+                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                },
+                new FundPrice {
+                    ClosingPrice = 81.16F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20141231",
+                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                },
+
+                // June 2015
                 new FundPrice {
                     ClosingPrice = 108.44F,
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
@@ -227,6 +267,13 @@ namespace gzWeb.Models {
                     YearMonthDay = "20150601",
                     UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
                 }
+                //, later with the rest
+                //new FundPrice {
+                //    ClosingPrice = 108.79F,
+                //    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                //    YearMonthDay = "20150721",
+                //    UpdatedOnUTC = new DateTime(2015, 7, 21, 23, 50, 0)
+                //}
                 );
         }
 
@@ -257,166 +304,166 @@ namespace gzWeb.Models {
                 // LOW
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .08f,
+                    Weight = 8,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .15f,
+                    Weight = 15,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .07f,
+                    Weight = 7,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .25f,
+                    Weight = 25f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .35f,
+                    Weight = 35f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 // LOW_MEDIUM
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .26f,
+                    Weight = 26,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .11f,
+                    Weight = 11,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .08f,
+                    Weight = 8,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .06f,
+                    Weight = 6,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .09f,
+                    Weight = 9,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .35f,
+                    Weight = 35f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 // MEDIUM
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .33f,
+                    Weight = 33,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .15f,
+                    Weight = 15,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .12f,
+                    Weight = 12,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .06f,
+                    Weight = 6,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .15f,
+                    Weight = 29,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 // MEDIUM-HIGH
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .35f,
+                    Weight = 35,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .21f,
+                    Weight = 21,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .16f,
+                    Weight = 16,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .08f,
+                    Weight = 8,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .29f,
+                    Weight = 15,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
                 },
                 // HIGH
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .35f,
+                    Weight = 35,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .22f,
+                    Weight = 22,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .28f,
+                    Weight = 28,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = .05f,
+                    Weight = 5,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 }
                 );
@@ -452,6 +499,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201503",
                     CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 02, 853),
                     Amount = new decimal(4926.5),
+                    CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 new GzTransaction {
@@ -459,7 +507,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201503",
                     CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 05),
                     Amount = new decimal(1.232),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.EarnedInvestmentRet).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
                 },
                 // April
                 new GzTransaction {
@@ -481,6 +529,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201504",
                     CreatedOnUTC = new DateTime(2015, 4, 30, 23, 47, 54, 343),
                     Amount = new decimal(1006.74),
+                    CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 new GzTransaction {
@@ -488,7 +537,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201504",
                     CreatedOnUTC = new DateTime(2015, 4, 30, 23, 49, 05),
                     Amount = new decimal(245.32),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.EarnedInvestmentRet).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
                 },
                 // May
                 new GzTransaction {
@@ -503,6 +552,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201505",
                     CreatedOnUTC = new DateTime(2015, 5, 31, 23, 47, 12),
                     Amount = new decimal(784.22),
+                    CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // June
@@ -518,6 +568,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201506",
                     CreatedOnUTC = new DateTime(2015, 6, 30, 23, 47, 32),
                     Amount = new decimal(1192.11),
+                    CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // August Skip July he won
@@ -548,6 +599,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201509",
                     CreatedOnUTC = new DateTime(2015, 9, 30, 23, 47, 46),
                     Amount = new decimal(1471.5),
+                    CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // Oct
@@ -578,6 +630,7 @@ namespace gzWeb.Models {
                     YearMonthCtd = "201512",
                     CreatedOnUTC = new DateTime(2015, 12, 31, 23, 47, 12),
                     Amount = new decimal(1677.02),
+                    CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 }
                 );
@@ -611,7 +664,7 @@ namespace gzWeb.Models {
                     Description = "Losses credited to players account after a 50% deduction"
                 },
                 new GzTransactionType {
-                    Code = TransferTypeEnum.EarnedInvestmentRet,
+                    Code = TransferTypeEnum.InvestmentRet,
                     Description = "Any gains by the investment returns"
                 },
                 new GzTransactionType {
