@@ -30,8 +30,30 @@ namespace gzWeb.Models {
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
 
+        /// <summary>
+        /// Total number of shares for month
+        /// </summary>
         [Required]
         public decimal NumShares { get; set; }
+        /// <summary>
+        /// $ Value of NumShares
+        /// </summary>
+        [Required]
+        public decimal Value { get; set; }
+
+        /// <summary>
+        /// Number of new shares bought for month
+        /// </summary>
+        [Required]
+        public decimal NewNumShares { get; set; }
+
+        /// <summary>
+        /// Price of newly bought shares in month
+        /// </summary>
+        [ForeignKey("BoughtFundPrice")]
+        public int? BoughtFundPriceId { get; set; }
+        public virtual FundPrice BoughtFundPrice { get; set; }
+        public DateTime? TradeDayofNewSharesUTC { get; set; }
 
         [Required]
         public DateTime UpdatedOnUTC { get; set; }

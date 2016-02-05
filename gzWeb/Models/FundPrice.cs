@@ -22,6 +22,11 @@ namespace gzWeb.Models {
         [Required]
         public float ClosingPrice { get; set; }
 
+        // Tracking the price only for the shares bought
+        [ForeignKey("CustNewFundShare")]
+        public int? CustNewFundShareId { get; set; }
+        virtual public CustFundShare CustNewFundShare { get; set; }
+
         [Required]
         public DateTime UpdatedOnUTC { get; set; }
     }

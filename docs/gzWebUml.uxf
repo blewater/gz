@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.1.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>100</y>
+      <w>350</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>Model::CustPortfolioRepo
+--
+SetCustMonthsPortfolioMix()
+-- Save the month's portfolio mix for a customer.
+-- For example, 30% for Low, 50% Medium, 20% High
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>740</y>
+      <w>280</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>Model::InvBalanceRepo
+--
+CalcMonthlyBalancesForCustomer()
+-- Calculate monthly investment balances for all months of a player.
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>950</y>
+      <w>440</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>Model::PortfolioRepo
+--
+CalcPortfoliosDayValues
+-- Incomplete
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>530</y>
+      <w>440</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>Model::FundRepo
+--
+GetFundsPrices(ApplicationDbContext db, int year, int month, int day)
+-- Gets funds prices for a selected day by looking at the last trade day before the requested day.
+
+AddDailyFundClosingPrice()
+-- Retrieve the last completed day's closing price for our funds.
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>320</y>
+      <w>390</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>Model::CustFundShareRepo
+{innerclass
+Inner PortfolioFundValue Class
+--
+Return type of CalcCustMonthlyFundShares()
+innerclass}
+--
+AddCustPurchasedFundShares()
+-- Save purchased funds shares to the customer's account.
+
+CalcCustMonthlyFundShares()
+-- Calculate the customer portfolio value for a given month.
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

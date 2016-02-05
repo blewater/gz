@@ -9,7 +9,15 @@ using gzWeb.Utl;
 namespace gzWeb.Models {
     public class CustFundShareRepo {
 
-        public void AddCustomerPurchasedFundShares(int customerId, IEnumerable<PortfolioFundValue> fundsShares, int year, int month, DateTime updatedOnUTC) {
+        /// <summary>
+        /// Save purchased funds shares to the customer's account.
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="fundsShares"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="updatedOnUTC"></param>
+        public void AddCustPurchasedFundShares(int customerId, IEnumerable<PortfolioFundValue> fundsShares, int year, int month, DateTime updatedOnUTC) {
 
             using (var db = new ApplicationDbContext()) {
 
@@ -53,7 +61,7 @@ namespace gzWeb.Models {
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="updatedOnUTC"></param>
-        public List<PortfolioFundValue> CalcCustomerMonthlyFundShares(int customerId, decimal cashToInvest, int year, int month) {
+        public List<PortfolioFundValue> CalcCustMonthlyFundShares(int customerId, decimal cashToInvest, int year, int month) {
 
             List<PortfolioFundValue> portfolioFundValues;
 
