@@ -136,11 +136,11 @@ namespace gzWeb.Models {
                 var gBalance = prevMonBal + InvAmount + InvGain - WithdrawnAmounts;
 
                 context.InvBalances.AddOrUpdate(
-                    b => new { b.CustomerId, b.YearMonthCtd },
+                    b => new { b.CustomerId, b.YearMonth },
                     new InvBalance {
                         Balance = gBalance,
                         CustomerId = custId,
-                        YearMonthCtd = g.Key,
+                        YearMonth = g.Key,
                         UpdatedOnUTC = DateTime.UtcNow
                     }
                 );

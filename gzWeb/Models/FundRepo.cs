@@ -9,6 +9,33 @@ namespace gzWeb.Models {
     public class FundRepo {
 
         /// <summary>
+        /// GetFundsPrices for a selected day by looking at the last trade day before the requested day.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        public Dictionary<string, float> GetFundsPrices(ApplicationDbContext db, int year, int month, int day) {
+
+            Dictionary<string, float> fundClosingPrices = null;
+
+            // Get last trade day before our interested day
+            var lastTradeDay = db.FundPrices
+                .Where(f => string.Compare(f.YearMonthDay, year.ToString("0000") + month.ToString("00") + day.ToString("00")) <= 0)
+                .Max(f => f.YearMonthDay);
+
+            if (lastTradeDay != null) {
+
+                // Get Funds prices
+                fundClosingPrices = db.FundPrices.Where(fp => fp.YearMonthDay == lastTradeDay)
+                            .Select(p => new { p.Fund.Symbol, p.ClosingPrice })
+                            .ToDictionary(p => p.Symbol, p => p.ClosingPrice);
+            }
+
+            return fundClosingPrices;
+        }
+
+
+        /// <summary>
         /// Retrieve the last completed day's closing price for our funds.
         /// If it's a weekday before 4pm (US Eastern Time?) then we get the closing price of the previous weekday.
         /// For example on Monday 12pm, we go to Friday's closing price if Friday was not a western holiday.

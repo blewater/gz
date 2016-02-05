@@ -19,7 +19,7 @@ namespace gzWeb.Models {
         /// <param name="portfMonth"></param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public async Task SetCustMonthsFullPortfolio(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        public async Task SetCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (customerId <= 0) {
 
@@ -36,7 +36,7 @@ namespace gzWeb.Models {
 
             }
 
-            await this.SetCustMonthsPortfolio(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
+            await this.SetCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace gzWeb.Models {
         /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public async Task SetCustMonthsPortfolio(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        public async Task SetCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (weight < 0 || weight > 100) {
 
