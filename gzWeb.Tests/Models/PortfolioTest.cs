@@ -26,6 +26,16 @@ namespace gzWeb.Tests.Models {
             }
         }
         [TestMethod]
+        public void SaveDailyCurrenciesRates() {
+            var currencyRateRepo = new CurrencyRateRepo();
+            var quotes = currencyRateRepo.AddDailyCurrenciesRates();
+
+            Assert.IsNotNull(quotes);
+
+            //Assert we have a closing price for first symbol
+            Assert.IsTrue(quotes[0].TradeDateTime.HasValue);
+        }
+        [TestMethod]
         public void SaveDailyFundClosingPrice() {
             var fundRepo = new FundRepo();
             var quotes = fundRepo.AddDailyFundClosingPrices();
@@ -45,6 +55,8 @@ namespace gzWeb.Tests.Models {
 
             await CreateTestPlayerLossTransactions(custId);
 
+            var fundSharesRepo = new CustFundShareRepo();
+            //var fundShares = fundSharesRepo.CalcCustMonthlyFundShares(custId, );
         }
 
         private static async Task CreateTestCustomerPortfolioSelections(int custId) {
@@ -53,7 +65,7 @@ namespace gzWeb.Tests.Models {
 
             /*** For phase I we test only single portfolio selections ***/
             //// Jan 2015
-            //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 30, 2015, 1, new DateTime(2015, 1, 1));
+            await cpRepo.SetCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 1, new DateTime(2015, 1, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 20, 2015, 1, new DateTime(2015, 1, 1));
             //// Feb

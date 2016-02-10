@@ -15,12 +15,12 @@ namespace gzWeb.Tests.Helpers {
         [TestMethod]
         public void GetYahooQuotes() {
 
-            List<Quote> quotes = new List<Quote>() {
-                new Quote() { Symbol = "VTI" },
-                new Quote() { Symbol = "XLE" },
+            List<FundFullQuote> quotes = new List<FundFullQuote>() {
+                new FundFullQuote() { Symbol = "VTI" },
+                new FundFullQuote() { Symbol = "XLE" },
             };
 
-            YahooStockEngine.Fetch(quotes);
+            YQLFundCurrencyInq.FetchFundsFullQuoteInfo(quotes);
 
             foreach (var q in quotes) {
                 foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(q)) {

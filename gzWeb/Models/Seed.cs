@@ -53,6 +53,9 @@ namespace gzWeb.Models {
             // Customers
             int custId = CreateUpdUser(manager);
 
+            CreateUpdCurrenciesList(context);
+            context.SaveChanges();
+
             // Funds
             CreateUpdFunds(context);
             context.SaveChanges();
@@ -147,6 +150,36 @@ namespace gzWeb.Models {
                 //This is the previous month balance
                 prevMonBal = gBalance;
             }
+        }
+
+        private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
+            context.CurrenciesListX.AddOrUpdate(
+                c => new { c.From, c.To },
+                new CurrencyListX {
+                    From = "AUD", UpdatedOnUTC=DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = "CAD", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = "CHF", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = "DKK", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = "EUR", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = "GBP", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = "NOK", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = "SEK", UpdatedOnUTC = DateTime.UtcNow
+                }
+                );
         }
 
         private static void CreateUpdFunds(ApplicationDbContext context) {

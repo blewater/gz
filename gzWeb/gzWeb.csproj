@@ -199,9 +199,15 @@
     <Compile Include="Migrations\201602042130150_PurchasedStockValue.Designer.cs">
       <DependentUpon>201602042130150_PurchasedStockValue.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602091155456_CurrencyListX.cs" />
+    <Compile Include="Migrations\201602091155456_CurrencyListX.Designer.cs">
+      <DependentUpon>201602091155456_CurrencyListX.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
+    <Compile Include="Models\CurrencyRateRepo.cs" />
     <Compile Include="Models\InvBalanceRepo.cs" />
     <Compile Include="Models\CustFundShareRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -228,7 +234,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Utl\DebugTextWriter.cs" />
     <Compile Include="Utl\Expressions.cs" />
-    <Compile Include="Utl\YahooStockEngine.cs" />
+    <Compile Include="Utl\YQLFundCurrencyInq.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitattributes" />
@@ -1263,6 +1269,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602042130150_PurchasedStockValue.resx">
       <DependentUpon>201602042130150_PurchasedStockValue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602091155456_CurrencyListX.resx">
+      <DependentUpon>201602091155456_CurrencyListX.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

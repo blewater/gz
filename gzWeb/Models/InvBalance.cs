@@ -49,8 +49,8 @@ namespace gzWeb.Models {
         /// <summary>
         /// The conversion used for the month's cash investment if player's currency is different than $USD
         /// </summary>
-        [ForeignKey("CashConvRate")]
-        public int CashConvRateId { get; set; }
+        public int? CashConvRateId { get; set; }
+        [ForeignKey("CashConvRateId")]
         public virtual CurrencyRate CashConvRate { get; set; }
 
         [Required]

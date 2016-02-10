@@ -12,11 +12,17 @@ namespace gzWeb.Utl {
             return year.ToString("0000") + month.ToString("00");
         }
 
-        public static string GetStrYearMonthLastDay(int year, int month) {
+        public static string GetStrYearMonthDay(int year, int month) {
 
             int days = DateTime.DaysInMonth(year, month);
 
             return year.ToString("0000") + month.ToString("00") + days.ToString("00");
+        }
+
+        public static DateTime GetDtYearMonthDay(string yearMonthDay) {
+            return new DateTime(int.Parse(yearMonthDay.Substring(0, 4))
+                        , int.Parse(yearMonthDay.Substring(4, 2))
+                        , int.Parse(yearMonthDay.Substring(6, 2)));
         }
     }
 }
