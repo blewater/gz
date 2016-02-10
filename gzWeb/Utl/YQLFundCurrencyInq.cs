@@ -14,14 +14,30 @@ using System.Collections.Generic;
 /// https://query.yahooapis.com/v1/public/yql?q=select%20Symbol%2C%20Date%2C%20Close%20from%20yahoo.finance.historicaldata%20where%20symbol%20IN%20(%22XLE%22%2C%22VTI%22)%20and%20startDay%20%3D%201%20and%20startDate%20%3D%20%222015-12-01%22%20and%20endDate%20%3D%20%222016-02-03%22&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys
 namespace gzWeb.Helpers {
 
-    public class PQuote {
+    /// <summary>
+    /// Replacing Quote for just the basics
+    /// </summary>
+    public class FundQuote {
         public string Symbol { get; set; }
         public float? LastTradePrice { get; set; }
         public DateTime? LastTradeDate { get; set; }
         public DateTime UpdatedOnUTC { get; set; }
     }
 
-    public class Quote {
+    /// <summary>
+    /// Replacing Quote for just the basics
+    /// </summary>
+    public class CurrencyQuote {
+        public string CurrFromTo { get; set; }
+        public decimal Rate { get; set; }
+        public DateTime? TradeDateTime { get; set; }
+        public DateTime UpdatedOnUTC { get; set; }
+    }
+
+    /// <summary>
+    /// Replacing Quote for just the basics
+    /// </summary>
+    public class FundFullQuote {
         public string Symbol { get; set; }
         public decimal? Ask { get; set; }
         public decimal? Bid { get; set; }
@@ -74,20 +90,46 @@ namespace gzWeb.Helpers {
     /// http://www.jarloo.com/get-yahoo-finance-api-data-via-yql/
     /// modified, simplified
     /// </summary>
-    public class YahooStockEngine {
+    public class YQLFundCurrencyInq {
 
 
-        private const string BASE_URL = "http://query.yahooapis.com/v1/public/yql?q=" +
+        private const string Funds_YQL_URL = "http://query.yahooapis.com/v1/public/yql?q=" +
                                         "select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20({0})" +
                                         "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
+        private const string Currencies_YQL_URL = @"http://query.yahooapis.com/v1/public/yql?q=" +
+                                        "select%20*%20from%20yahoo.finance.xchange%20where%20pair%3D%22{0}%22" +
+                                        "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+
         /// <summary>
-        /// Partial Quote version
+        /// Execute YQL and get Funds Partial quotes
         /// </summary>
-        /// <param name="quotes"></param>
-        public static List<PQuote> Fetch(List<PQuote> quotes) {
-            string symbolList = String.Join("%2C", quotes.Select(w => "%22" + w.Symbol + "%22").ToArray());
-            string url = string.Format(BASE_URL, symbolList);
+        /// <param name="quotes">Input Output list of partial quotes</param>
+        public static List<FundQuote> FetchFundsQuoteInfo(List<FundQuote> quotes) {
+            string symbolList = String.Join("%2C", quotes.Select(f => "%22" + f.Symbol + "%22").ToArray());
+            XDocument doc = ExecFundsYQL(symbolList);
+            Parse(quotes, doc);
+
+            return quotes;
+        }
+
+        /// <summary>
+        /// Execute YQL and get Funds full quote info
+        /// </summary>
+        /// <param name="quotes">Input Output list of full info quotes</param>
+        public static List<FundFullQuote> FetchFundsFullQuoteInfo(List<FundFullQuote> quotes) {
+            string symbolList = String.Join("%2C", quotes.Select(f => "%22" + f.Symbol + "%22").ToArray());
+            XDocument doc = ExecFundsYQL(symbolList);
+
+            Parse(quotes, doc);
+
+            return quotes;
+        }
+
+        public static List<CurrencyQuote> FetchCurrencyRates(List<CurrencyQuote> quotes) {
+            string symbolList = String.Join("%2C", quotes.Select(c => c.CurrFromTo));
+
+            string url = string.Format(Currencies_YQL_URL, symbolList);
 
             XDocument doc = XDocument.Load(url);
             Parse(quotes, doc);
@@ -95,15 +137,22 @@ namespace gzWeb.Helpers {
             return quotes;
         }
 
-        /// <summary>
-        /// Partial Quote version
-        /// </summary>
-        /// <param name="quotes"></param>
-        /// <param name="doc"></param>
-        private static void Parse(IEnumerable<PQuote> quotes, XDocument doc) {
-            XElement results = doc.Root.Element("results");
+        private static XDocument ExecFundsYQL(string symbolList) {
+            string url = string.Format(Funds_YQL_URL, symbolList);
 
-            foreach (PQuote quote in quotes) {
+            XDocument doc = XDocument.Load(url);
+            return doc;
+        }
+
+        /// <summary>
+        /// Parse the YQL Document Response
+        /// </summary>
+        /// <param name="fundsQuote"></param>
+        /// <param name="YQLResp"></param>
+        private static void Parse(IEnumerable<FundQuote> fundsQuote, XDocument YQLResp) {
+            XElement results = YQLResp.Root.Element("results");
+
+            foreach (FundQuote quote in fundsQuote) {
                 XElement q = results.Elements("quote").First(w => w.Attribute("symbol").Value == quote.Symbol);
 
                 quote.LastTradePrice = GetFloat(q.Element("LastTradePriceOnly").Value);
@@ -112,18 +161,32 @@ namespace gzWeb.Helpers {
             }
         }
 
-        public static void Fetch(IEnumerable<Quote> quotes) {
-            string symbolList = String.Join("%2C", quotes.Select(w => "%22" + w.Symbol + "%22").ToArray());
-            string url = string.Format(BASE_URL, symbolList);
+        /// <summary>
+        /// Parse the YQL Document Response
+        /// </summary>
+        /// <param name="currenciesQuotes"></param>
+        /// <param name="YQLResp"></param>
+        private static void Parse(IEnumerable<CurrencyQuote> currenciesQuotes, XDocument YQLResp) {
+            XElement results = YQLResp.Root.Element("results");
 
-            XDocument doc = XDocument.Load(url);
-            Parse(quotes, doc);
+            foreach (var quote in currenciesQuotes) {
+                XElement q = results.Elements("rate").First(w => w.Attribute("id").Value == quote.CurrFromTo);
+
+                quote.Rate = GetDecimal(q.Element("Rate").Value).Value;
+                quote.TradeDateTime = GetDateTime(q.Element("Date").Value + " " + q.Element("Time").Value);
+                quote.UpdatedOnUTC = DateTime.UtcNow;
+            }
         }
 
-        private static void Parse(IEnumerable<Quote> quotes, XDocument doc) {
-            XElement results = doc.Root.Element("results");
+        /// <summary>
+        /// Parse the YQL Document Response
+        /// </summary>
+        /// <param name="fundsQuote"></param>
+        /// <param name="YQLResp"></param>
+        private static void Parse(IEnumerable<FundFullQuote> fundsQuote, XDocument YQLResp) {
+            XElement results = YQLResp.Root.Element("results");
 
-            foreach (Quote quote in quotes) {
+            foreach (FundFullQuote quote in fundsQuote) {
                 XElement q = results.Elements("quote").First(w => w.Attribute("symbol").Value == quote.Symbol);
 
                 quote.Ask = GetDecimal(q.Element("Ask").Value);

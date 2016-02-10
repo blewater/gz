@@ -11,13 +11,13 @@ namespace gzWeb.Models {
         public int Id { get; set; }
 
         [Index("CurrRate_ftd_idx", IsUnique = true, Order = 1), Required]
-        public DateTime UpdatedOnUTC { get; set; }
-        [StringLength(3), Index("CurrRate_ftd_idx", IsUnique = true, Order = 2), Required]
-        public string FromCurrency { get; set; }
-        [StringLength(3), Index("CurrRate_ftd_idx", IsUnique = true, Order = 3), Required]
-        public string ToCurrency { get; set; }
+        public DateTime TradeDateTime { get; set; }
+        [StringLength(6), Index("CurrRate_ftd_idx", IsUnique = true, Order = 2), Required]
+        public string FromTo { get; set; }
 
         [Required]
         public decimal rate { get; set; }
+
+        public DateTime UpdatedOnUTC { get; set; }
     }
 }

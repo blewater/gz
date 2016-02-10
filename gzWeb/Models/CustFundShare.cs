@@ -6,10 +6,17 @@ using System.Linq;
 using System.Web;
 
 namespace gzWeb.Models {
+    /// <summary>
+    /// Tracking new and existing balance of monthly shares per customer and fund
+    /// </summary>
     public class CustFundShare {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        /// <summary>
+        /// Non Unique: You may have multiple same fund share purchases
+        /// within the month.
+        /// <summary>
         [Required]
         [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
@@ -31,31 +38,55 @@ namespace gzWeb.Models {
         public virtual ApplicationUser ApplicationUser { get; set; }
 
         /// <summary>
+        /// Last Updated
+        /// </summary>
+        [Required]
+        public DateTime UpdatedOnUTC { get; set; }
+
+        #region Total Monthly Shares
+        /// <summary>
         /// Total number of shares for month
         /// </summary>
         [Required]
-        public decimal NumShares { get; set; }
+        public decimal SharesNum { get; set; }
         /// <summary>
-        /// $ Value of NumShares
+        /// $ Value of NumShares: Total number of shares for month.
         /// </summary>
         [Required]
-        public decimal Value { get; set; }
+        public decimal SharesValue { get; set; }
 
         /// <summary>
-        /// Number of new shares bought for month
+        /// Trade Day for calculating total shares owned for the month
         /// </summary>
         [Required]
-        public decimal NewNumShares { get; set; }
+        public string SharesTradeDay { get; set; }
 
         /// <summary>
         /// Price of newly bought shares in month
         /// </summary>
-        [ForeignKey("BoughtFundPrice")]
-        public int? BoughtFundPriceId { get; set; }
-        public virtual FundPrice BoughtFundPrice { get; set; }
-        public DateTime? TradeDayofNewSharesUTC { get; set; }
+        [ForeignKey("SharesFundPrice")]
+        public int? SharesFundPriceId { get; set; }
+        public virtual FundPrice SharesFundPrice { get; set; }
 
-        [Required]
-        public DateTime UpdatedOnUTC { get; set; }
+        #endregion
+        #region NewShares
+
+        /// <summary>
+        /// Number of new shares bought for month
+        /// </summary>
+        public decimal? NewSharesNum { get; set; }
+        /// <summary>
+        /// Value of new shares bought for month
+        /// </summary>
+        public decimal? NewSharesValue { get; set; }
+
+        /// <summary>
+        /// Price of newly bought shares in month
+        /// </summary>
+        [ForeignKey("NewSharesFundPrice")]
+        public int? NewSharesFundPriceId { get; set; }
+        public virtual FundPrice NewSharesFundPrice { get; set; }
+
+        #endregion
     }
 }
