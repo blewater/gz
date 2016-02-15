@@ -33,6 +33,10 @@ namespace gzWeb.Models {
         // For Type:CreditedPlayingLoss -> the credit percentage for playing losses i.e. 50 for half
         public float? CreditPcntApplied { get; set; }
 
+        public int? CurrencyRateId { get; set; }
+        [ForeignKey("CurrencyRateId")]
+        public virtual CurrencyRate CurrencyRateToUSD { get; set; }
+
         [Index, Required]
         public DateTime CreatedOnUTC { get; set; }
 

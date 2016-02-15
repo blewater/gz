@@ -56,12 +56,6 @@ namespace gzWeb.Models {
         public decimal SharesValue { get; set; }
 
         /// <summary>
-        /// Trade Day for calculating total shares owned for the month
-        /// </summary>
-        [Required]
-        public string SharesTradeDay { get; set; }
-
-        /// <summary>
         /// Price of newly bought shares in month
         /// </summary>
         [ForeignKey("SharesFundPrice")]

@@ -10,31 +10,46 @@ namespace gzWeb.Models {
 
         /// <summary>
         /// Save purchased funds shares to the customer's account.
+        /// 
+        /// Does *not* call DBcontext.SaveChanges() for easy transaction support
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="fundsShares"></param>
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="updatedOnUTC"></param>
-        public void SaveCustPurchasedFundShares(int customerId, IEnumerable<PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUTC) {
+        public void SaveDbCustPurchasedFundShares(ApplicationDbContext db, int customerId, IEnumerable<PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUTC) {
 
-            using (var db = new ApplicationDbContext()) {
+            foreach (var fundShares in fundsShares) {
 
-                foreach (var fundShares in fundsShares) {
-
+                try {
                     db.CustFundShares.AddOrUpdate(
                         f => new { f.CustomerId, f.FundId, f.YearMonth },
                         new CustFundShare {
-                            CustomerId = customerId,
+                        // Key
+                        CustomerId = customerId,
                             FundId = fundShares.FundId,
-                            NewSharesNum = fundShares.SharesNum,
-                            YearMonth = Expressions.GetStrYearMonth(year,month),
+                            YearMonth = Expressions.GetStrYearMonth(year, month),
+
+                        // Updated Monthly balance
+                        SharesNum = fundShares.SharesNum,
+                            SharesValue = fundShares.SharesValue,
+                            SharesFundPriceId = fundShares.SharesFundPriceId,
+
+                        // New Shares
+                        NewSharesNum = fundShares.SharesNum,
+                            NewSharesValue = fundShares.NewSharesValue,
+
                             UpdatedOnUTC = updatedOnUTC
                         }
                     );
+                    // Save often to 
+                    db.SaveChanges();
+                } catch (Exception e) {
+                    // TODO: log customer id, fundId
+                    var msg = e.Message;
+                    throw e;
                 }
-
-                db.SaveChanges();
             }
         }
 
@@ -65,7 +80,7 @@ namespace gzWeb.Models {
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="updatedOnUTC"></param>
-        public List<PortfolioFundDTO> CalcCustMonthlyFundShares(int customerId, decimal netInvAmount, int year, int month) {
+        public List<PortfolioFundDTO> GetCalcCustMonthlyFundShares(int customerId, decimal netInvAmount, int year, int month) {
 
             List<PortfolioFundDTO> portfolioFundValues = null;
 
@@ -74,7 +89,8 @@ namespace gzWeb.Models {
 
                     portfolioFundValues = BuyShares(customerId, netInvAmount, year, month, db);
 
-                } else if (netInvAmount < 0) {
+                    // Note this case for repricing (0 cash) or liquidating shares to cash
+                } else if (netInvAmount <= 0) {
 
                     SellShares(customerId, netInvAmount, year, month, db);
 
@@ -107,7 +123,7 @@ namespace gzWeb.Models {
                 return null;
             }
 
-            portfolioFundValues = CalcUpdPortfShares(customerId, cashToExtract, year, month, db, lastMonthPort);
+            portfolioFundValues = GetCalcPortfShares(customerId, cashToExtract, year, month, db, lastMonthPort);
 
             return portfolioFundValues;
         }
@@ -134,12 +150,26 @@ namespace gzWeb.Models {
                 throw new Exception($"No portfolio has been set for customer Id: {customerId}");
             }
 
-            portfolioFundValues = CalcUpdPortfShares(customerId, cashToInvest, year, month, db, lastMonthPort);
+            portfolioFundValues = GetCalcPortfShares(customerId, cashToInvest, year, month, db, lastMonthPort);
 
             return portfolioFundValues;
         }
 
-        private static List<PortfolioFundDTO> CalcUpdPortfShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db, string lastMonthPort) {
+        /// <summary>
+        /// Calculating this months funds shares when
+        /// +    -- More cash is invested according to the latest portfolio weight configuration
+        /// - Or -- Selling Shares to get cash
+        /// 0 Or -- 0 cash proceed to next step
+        /// Then Reprice shares to this month's stock prices
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="cashToInvest"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="db"></param>
+        /// <param name="lastMonthPort"></param>
+        /// <returns></returns>
+        private static List<PortfolioFundDTO> GetCalcPortfShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db, string lastMonthPort) {
             List<PortfolioFundDTO> portfolioFundValues;
             //Get Portfolio Funds Weights
             IQueryable<PortFund> portFundWeights = GetFundWeights(customerId, db, lastMonthPort);
@@ -150,8 +180,11 @@ namespace gzWeb.Models {
             foreach (var pfund in portFundWeights) {
                 var weight = pfund.Weight;
                 var fundId = pfund.FundId;
+
+                // If cash is positive then this is the latest
                 var portfolioId = pfund.PortfolioId;
                 var cashPerFund = (decimal)weight * cashToInvest;
+
                 //Find last trade day 
                 var lastTradeDay = db.FundPrices
                     .Where(fp => fp.FundId == fundId
@@ -166,7 +199,8 @@ namespace gzWeb.Models {
                 // Get previous months shares
                 DateTime prevYearMonth = new DateTime(year, month, 1).AddMonths(-1);
                 var prevMonShares = db.CustFundShares
-                    .Where(f => f.YearMonth == Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month)
+                    .Where(f => f.CustomerId == customerId
+                        && f.YearMonth == Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month)
                         && f.FundId == fundId)
                     .Select(f => f.SharesNum)
                     .SingleOrDefault();
@@ -180,13 +214,13 @@ namespace gzWeb.Models {
 
                 var tradeDayDateTime = Expressions.GetDtYearMonthDay(lastTradeDay);
 
-                SetMemPortFundShares(portfolioFundValues, fundId, portfolioId, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
+                SaveDtoPortFundShares(portfolioFundValues, fundId, portfolioId, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
             }
 
             return portfolioFundValues;
         }
 
-        private static void SetMemPortFundShares(List<PortfolioFundDTO> portfolioFundValues, int fundId, int portfolioId, decimal cashPerFund, string lastTradeDay, FundPrice fundPrice, decimal NewsharesNum, decimal thisMonthsSharesNum, decimal thisMonthsSharesVal) {
+        private static void SaveDtoPortFundShares(List<PortfolioFundDTO> portfolioFundValues, int fundId, int portfolioId, decimal cashPerFund, string lastTradeDay, FundPrice fundPrice, decimal NewsharesNum, decimal thisMonthsSharesNum, decimal thisMonthsSharesVal) {
             portfolioFundValues.Add(
                 new PortfolioFundDTO() {
                     PortfolioId = portfolioId,
