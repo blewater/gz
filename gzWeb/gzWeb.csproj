@@ -48,8 +48,8 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AutoMapper, Version=4.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.4.1.1\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=4.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.2.0\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -58,7 +58,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -202,6 +202,14 @@
     <Compile Include="Migrations\201602091155456_CurrencyListX.cs" />
     <Compile Include="Migrations\201602091155456_CurrencyListX.Designer.cs">
       <DependentUpon>201602091155456_CurrencyListX.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602111100324_CustFundShares_Simplified.cs" />
+    <Compile Include="Migrations\201602111100324_CustFundShares_Simplified.Designer.cs">
+      <DependentUpon>201602111100324_CustFundShares_Simplified.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602140845493_Trx.cs" />
+    <Compile Include="Migrations\201602140845493_Trx.Designer.cs">
+      <DependentUpon>201602140845493_Trx.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -1272,6 +1280,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602091155456_CurrencyListX.resx">
       <DependentUpon>201602091155456_CurrencyListX.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602111100324_CustFundShares_Simplified.resx">
+      <DependentUpon>201602111100324_CustFundShares_Simplified.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602140845493_Trx.resx">
+      <DependentUpon>201602140845493_Trx.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
