@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
+using gzWeb.Utl;
 
 
 namespace gzWeb.Models {
@@ -66,11 +67,11 @@ namespace gzWeb.Models {
                     db.CustPortfolios.AddOrUpdate(
                         // Assume UpdatedOnUTC remains constant for same trx
                         // to support idempotent transactions
-                        cp => new { cp.CustomerId, cp.PortfolioId, cp.UpdatedOnUTC },
+                        cp => new { cp.CustomerId, cp.YearMonth },
                             new CustPortfolio {
                                 CustomerId = customerId,
                                 PortfolioId = db.Portfolios.Where(p => p.RiskTolerance == riskType).Select(p => p.Id).FirstOrDefault(),
-                                YearMonth = portfYear.ToString("0000") + portfMonth.ToString("00"),
+                                YearMonth = Expressions.GetStrYearMonth(portfYear, portfMonth),
                                 UpdatedOnUTC = UpdatedOnUTC,
                                 Weight = weight
                             }

@@ -211,6 +211,10 @@
     <Compile Include="Migrations\201602140845493_Trx.Designer.cs">
       <DependentUpon>201602140845493_Trx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602162235481_Decimal Precision.cs" />
+    <Compile Include="Migrations\201602162235481_Decimal Precision.Designer.cs">
+      <DependentUpon>201602162235481_Decimal Precision.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
@@ -1286,6 +1290,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602140845493_Trx.resx">
       <DependentUpon>201602140845493_Trx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602162235481_Decimal Precision.resx">
+      <DependentUpon>201602162235481_Decimal Precision.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

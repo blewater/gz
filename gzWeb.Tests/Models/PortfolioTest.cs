@@ -55,8 +55,7 @@ namespace gzWeb.Tests.Models {
 
             await CreateTestPlayerLossTransactions(custId);
 
-            var fundSharesRepo = new CustFundShareRepo();
-            //var fundShares = fundSharesRepo.CalcCustMonthlyFundShares(custId, );
+            new InvBalanceRepo().SaveCustTrxsBalances(custId);
         }
 
         private static async Task CreateTestCustomerPortfolioSelections(int custId) {
@@ -96,6 +95,7 @@ namespace gzWeb.Tests.Models {
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50, createdOnUTC: new DateTime(2015, 4, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50, createdOnUTC: new DateTime(2015, 5, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 6, 1));
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2016, 1, 1));
         }
 
         private static int CreateUpd6MonthAllocationCustomer() {
