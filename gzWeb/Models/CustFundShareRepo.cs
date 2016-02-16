@@ -37,7 +37,7 @@ namespace gzWeb.Models {
                             SharesFundPriceId = fundShares.SharesFundPriceId,
 
                         // New Shares
-                        NewSharesNum = fundShares.SharesNum,
+                        NewSharesNum = fundShares.NewSharesNum,
                             NewSharesValue = fundShares.NewSharesValue,
 
                             UpdatedOnUTC = updatedOnUTC
@@ -172,7 +172,7 @@ namespace gzWeb.Models {
         private static List<PortfolioFundDTO> GetCalcPortfShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db, string lastMonthPort) {
             List<PortfolioFundDTO> portfolioFundValues;
             //Get Portfolio Funds Weights
-            IQueryable<PortFund> portFundWeights = GetFundWeights(customerId, db, lastMonthPort);
+            List<PortFund> portFundWeights = GetFundWeights(customerId, db, lastMonthPort);
 
             portfolioFundValues = new List<PortfolioFundDTO>();
 
@@ -183,14 +183,16 @@ namespace gzWeb.Models {
 
                 // If cash is positive then this is the latest
                 var portfolioId = pfund.PortfolioId;
-                var cashPerFund = (decimal)weight * cashToInvest;
+                var cashPerFund = (decimal)weight/100 * cashToInvest;
 
                 //Find last trade day 
+                var lastMonthDay = new DateTime(year, month, 1).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
                 var lastTradeDay = db.FundPrices
                     .Where(fp => fp.FundId == fundId
-                    && string.Compare(fp.YearMonthDay, new DateTime(year, month, 1).AddMonths(1).AddDays(-1).ToString("yyyyMMdd")) <= 0)
+                    && string.Compare(fp.YearMonthDay, lastMonthDay) <= 0)
+                    .OrderByDescending(fp => fp.YearMonthDay)
                     .Select(fp => fp.YearMonthDay)
-                    .Max();
+                    .First();
                 // Find latest closing price
                 var fundPrice = db.FundPrices
                     .Where(fp => fp.FundId == fundId && fp.YearMonthDay == lastTradeDay)
@@ -198,9 +200,10 @@ namespace gzWeb.Models {
 
                 // Get previous months shares
                 DateTime prevYearMonth = new DateTime(year, month, 1).AddMonths(-1);
+                var preYearMonStr = Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
                 var prevMonShares = db.CustFundShares
                     .Where(f => f.CustomerId == customerId
-                        && f.YearMonth == Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month)
+                        && f.YearMonth == preYearMonStr
                         && f.FundId == fundId)
                     .Select(f => f.SharesNum)
                     .SingleOrDefault();
@@ -210,7 +213,7 @@ namespace gzWeb.Models {
 
                 var thisMonthsSharesNum = prevMonShares + NewsharesNum;
 
-                var thisMonthsSharesVal = thisMonthsSharesNum * (decimal)fundPrice.ClosingPrice;
+                var thisMonthsSharesVal = cashPerFund + prevMonShares * (decimal)fundPrice.ClosingPrice; // thisMonthsSharesNum * (decimal)fundPrice.ClosingPrice;
 
                 var tradeDayDateTime = Expressions.GetDtYearMonthDay(lastTradeDay);
 
@@ -236,12 +239,19 @@ namespace gzWeb.Models {
             );
         }
 
-        private static IQueryable<PortFund> GetFundWeights(int customerId, ApplicationDbContext db, string lastMonthPort) {
+        private static List<PortFund> GetFundWeights(int customerId, ApplicationDbContext db, string lastMonthPort) {
             return db.CustPortfolios
-                .Where(p => p.CustomerId == customerId && p.YearMonth == lastMonthPort)
                 .Include(p => p.Portfolio.PortFunds)
-                .SelectMany(p => p.Portfolio.PortFunds)
-                .AsQueryable();
+                .Where(p => p.CustomerId == customerId && p.YearMonth == lastMonthPort && p.Portfolio.PortFunds.Any(pf=>pf.PortfolioId == p.PortfolioId))
+                .SelectMany(pf=>pf.Portfolio.PortFunds)
+                .ToList();
+
+            /*** Equivalent in Join syntax comprehensive syntax ***
+            return (from pf in db.PortFunds
+            join p in db.CustPortfolios on pf.PortfolioId equals p.PortfolioId
+                 where p.CustomerId == customerId && p.YearMonth == lastMonthPort
+            select pf).ToList(); */
+
         }
 
         /// <summary>
@@ -253,10 +263,14 @@ namespace gzWeb.Models {
         /// <param name="db"></param>
         /// <returns></returns>
         private static string GetCustPortfYearMonth(int customerId, int year, int month, ApplicationDbContext db) {
+
+            string YearMonthStr = Expressions.GetStrYearMonth(year, month);
+
             return db.CustPortfolios
-                .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, Expressions.GetStrYearMonth(year, month)) <= 0)
+                .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, YearMonthStr) <= 0)
+                .OrderByDescending(p => p.YearMonth)
                 .Select(p => p.YearMonth)
-                .Max();
+                .First();
         }
     }
 }

@@ -8,43 +8,31 @@ using gzWeb.Utl;
 namespace gzWeb.Models {
     public class InvBalanceRepo {
 
-        public List<CustFundShareRepo.PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int custId, int year, int month, out decimal monthlyBalance, out decimal invGainLoss, out decimal cashToInvest) {
+        public List<CustFundShareRepo.PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int custId, int year, int month, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss) {
 
             using (var db = new ApplicationDbContext()) {
-
-                // Step 1: Retrieve all the months Transactions
-                var monthlyTrx = db.GzTransactions.Where(t => t.CustomerId == custId
-                    && t.YearMonthCtd == Expressions.GetStrYearMonth(year, month));
-
-                var withdrawals = monthlyTrx
-                    .Where(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming)
-                    .Select(t => t.Amount)
-                    .Sum();
-                var newInvTransfers = monthlyTrx
-                    .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
-                    .Select(t => t.Amount)
-                    .Sum();
-                cashToInvest = newInvTransfers - withdrawals;
 
                 // Previous Month DateTime                
                 DateTime prevYearMonth = new DateTime(year, month, 1).AddMonths(-1);
 
-                // Step 2: Buy if amount is positive otherwise sell shares or just reprice for the month the existing shares
+                // Step 1: Buy if amount is positive otherwise sell shares or just reprice for the month the existing shares
                 var customerFundSharesRepo = new CustFundShareRepo();
                 var portfolioFundsValuesThisMonth = customerFundSharesRepo.GetCalcCustMonthlyFundShares(custId, cashToInvest, year, month);
-                var prevMonSharesPricedNow = portfolioFundsValuesThisMonth.Sum(f => f.SharesValue - f.NewSharesValue ?? 0);
+                var totSharesValue = portfolioFundsValuesThisMonth.Sum(f => f.SharesValue);
+                var newShareVal = portfolioFundsValuesThisMonth.Sum(f => f.NewSharesValue ?? 0);
+                var prevMonSharesPricedNow = totSharesValue - newShareVal;
 
-                // Step 3: Get the previous month balance
+                // Step 2: Get the previous month balance
+                var prevYearMonthStr = Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
                 var prevMonthBalAmount = db.InvBalances
                     .Where(b => b.CustomerId == custId &&
-                    string.Compare(b.YearMonth, Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month)) < 0)
+                    string.Compare(b.YearMonth, prevYearMonthStr) <= 0)
                     .OrderByDescending(b => b.YearMonth)
                     .Select(b => b.Balance)
-                    .Take(1)
-                    .Single();
+                    .FirstOrDefault();
 
                 invGainLoss = prevMonSharesPricedNow - prevMonthBalAmount;
-                monthlyBalance = portfolioFundsValuesThisMonth.Sum(f => f.SharesValue);
+                monthlyBalance = totSharesValue;
 
                 return portfolioFundsValuesThisMonth;
             }
@@ -56,10 +44,10 @@ namespace gzWeb.Models {
         /// <param name="custId"></param>
         /// <param name="year"></param>
         /// <param name="month"></param>
-        public void SaveMonthlyBalanceForCustomer(int custId, int year, int month) {
+        public void SaveMonthlyBalanceForCustomer(int custId, int year, int month, decimal cashToInvest) {
 
             decimal monthlyBalance, invGainLoss, cashInvestment;
-            var portfolioFunds = GetCalcMonthlyBalancesForCustomer(custId, year, month, out monthlyBalance, out invGainLoss, out cashInvestment);
+            var portfolioFunds = GetCalcMonthlyBalancesForCustomer(custId, year, month, cashToInvest, out monthlyBalance, out invGainLoss);
 
             var customerFundSharesRepo = new CustFundShareRepo();
             using (var db = new ApplicationDbContext()) {
@@ -76,11 +64,11 @@ namespace gzWeb.Models {
                                 CustomerId = custId,
                                 Balance = monthlyBalance,
                                 InvGainLoss = invGainLoss,
-                                CashInvestment = cashInvestment,
+                                CashInvestment = cashToInvest,
                                 UpdatedOnUTC = DateTime.UtcNow
                             }
                             );
-
+                        db.SaveChanges();
                         dbContextTransaction.Commit();
                     } catch (Exception e) {
                         dbContextTransaction.Rollback();
@@ -109,7 +97,7 @@ namespace gzWeb.Models {
                 // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
                 foreach (var g in monthlyTrx) {
 
-                    int curYear = int.Parse(g.Key.Substring(0, 3));
+                    int curYear = int.Parse(g.Key.Substring(0, 4));
                     int curMonth = int.Parse(g.Key.Substring(4, 2));
 
 
@@ -121,7 +109,7 @@ namespace gzWeb.Models {
                     // TODO Remove invGainLoss type of transaction
 
                     //var monthlyCashBalance = prevMonBal + monthlyCashToInvest;
-                    SaveMonthlyBalanceForCustomer(custId, curYear, curMonth);
+                    SaveMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
                 }
             }
         }
