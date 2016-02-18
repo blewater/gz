@@ -142,7 +142,7 @@ namespace gzWeb.Models
             // do fluent API stuff below
 
             // Adjust Sql Server 18,2 decimal to -->
-            modelBuilder.Properties<decimal>().Configure(c => c.HasPrecision(28, 14));
+            modelBuilder.Properties<decimal>().Configure(c => c.HasPrecision(29, 16));
         }
 
         public static ApplicationDbContext Create()

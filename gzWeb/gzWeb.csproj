@@ -215,6 +215,14 @@
     <Compile Include="Migrations\201602162235481_Decimal Precision.Designer.cs">
       <DependentUpon>201602162235481_Decimal Precision.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602171111398_Decimal Precision 29.16.cs" />
+    <Compile Include="Migrations\201602171111398_Decimal Precision 29.16.Designer.cs">
+      <DependentUpon>201602171111398_Decimal Precision 29.16.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602172221201_New Shares Fund Price Del.cs" />
+    <Compile Include="Migrations\201602172221201_New Shares Fund Price Del.Designer.cs">
+      <DependentUpon>201602172221201_New Shares Fund Price Del.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
@@ -1293,6 +1301,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602162235481_Decimal Precision.resx">
       <DependentUpon>201602162235481_Decimal Precision.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602171111398_Decimal Precision 29.16.resx">
+      <DependentUpon>201602171111398_Decimal Precision 29.16.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602172221201_New Shares Fund Price Del.resx">
+      <DependentUpon>201602172221201_New Shares Fund Price Del.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
