@@ -57,8 +57,9 @@ namespace gzWeb.Models {
         /// Return type of CalcCustomerMonthlyFundShares method
         /// </summary>
         public class PortfolioFundDTO {
-            public int PortfolioId { get; set; }
+            public int? PortfolioId { get; set; }
             public int FundId { get; set; }
+            public float? Weight { get; set; }
             public decimal SharesNum { get; set; }
             public decimal SharesValue { get; set; }
             public string SharesTradeDay { get; set; }
@@ -171,8 +172,11 @@ namespace gzWeb.Models {
         /// <returns></returns>
         private static List<PortfolioFundDTO> GetCalcPortfShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db, string lastMonthPort) {
             List<PortfolioFundDTO> portfolioFundValues;
+
+            var prevYearMonStr = Expressions.GetPrevYearMonth(year, month);
+
             //Get Portfolio Funds Weights
-            List<PortFund> portFundWeights = GetFundWeights(customerId, db, lastMonthPort);
+            List<PortfolioFundDTO> portFundWeights = GetFundWeights(customerId, db, lastMonthPort, prevYearMonStr);
 
             portfolioFundValues = new List<PortfolioFundDTO>();
 
@@ -199,11 +203,9 @@ namespace gzWeb.Models {
                     .Single();
 
                 // Get previous months shares
-                DateTime prevYearMonth = new DateTime(year, month, 1).AddMonths(-1);
-                var preYearMonStr = Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
                 var prevMonShares = db.CustFundShares
                     .Where(f => f.CustomerId == customerId
-                        && f.YearMonth == preYearMonStr
+                        && f.YearMonth == prevYearMonStr
                         && f.FundId == fundId)
                     .Select(f => f.SharesNum)
                     .SingleOrDefault();
@@ -217,7 +219,7 @@ namespace gzWeb.Models {
 
                 var tradeDayDateTime = Expressions.GetDtYearMonthDay(lastTradeDay);
 
-                SaveDtoPortFundShares(portfolioFundValues, fundId, portfolioId, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
+                SaveDtoPortFundShares(portfolioFundValues, fundId, portfolioId??0, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
             }
 
             return portfolioFundValues;
@@ -239,12 +241,23 @@ namespace gzWeb.Models {
             );
         }
 
-        private static List<PortFund> GetFundWeights(int customerId, ApplicationDbContext db, string lastMonthPort) {
-            return db.CustPortfolios
+        private static List<PortfolioFundDTO> GetFundWeights(int customerId, ApplicationDbContext db, string lastMonthPort, string prevYearMonStr) {
+            /* return db.CustPortfolios
                 .Include(p => p.Portfolio.PortFunds)
                 .Where(p => p.CustomerId == customerId && p.YearMonth == lastMonthPort && p.Portfolio.PortFunds.Any(pf=>pf.PortfolioId == p.PortfolioId))
                 .SelectMany(pf=>pf.Portfolio.PortFunds)
-                .ToList();
+                .ToList(); */
+
+            return
+            (from cf in db.CustFundShares
+             from pf in db.PortFunds
+                 .Where(f => f.FundId == cf.FundId && cf.YearMonth == prevYearMonStr)
+                 .DefaultIfEmpty()
+             from cp in db.CustPortfolios
+                 .Where(p => p.PortfolioId == pf.PortfolioId && p.YearMonth == lastMonthPort)
+                 .DefaultIfEmpty()
+             select new PortfolioFundDTO { PortfolioId = cp.PortfolioId, FundId = cf.FundId, Weight = pf.Weight }).ToList();
+
 
             /*** Equivalent in Join syntax comprehensive syntax ***
             return (from pf in db.PortFunds
