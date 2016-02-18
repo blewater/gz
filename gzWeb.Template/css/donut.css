@@ -1,0 +1,12 @@
+.highcharts-background{
+	fill:none !important;
+}
+.highcharts-button{
+	display:none;
+}
+text{
+	display:none !important;
+}
+.highcharts-tooltip text{
+	display:block !important;
+}
