@@ -171,17 +171,14 @@ namespace gzWeb.Models {
         /// <param name="lastMonthPort"></param>
         /// <returns></returns>
         private static List<PortfolioFundDTO> GetCalcPortfShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db, string lastMonthPort) {
-            List<PortfolioFundDTO> portfolioFundValues;
 
             var prevYearMonStr = Expressions.GetPrevYearMonth(year, month);
 
             //Get Portfolio Funds Weights
-            List<PortfolioFundDTO> portFundWeights = GetFundWeights(customerId, db, lastMonthPort, prevYearMonStr);
-
-            portfolioFundValues = new List<PortfolioFundDTO>();
+            List<PortfolioFundDTO> portfolioFundValues = GetFundWeights(customerId, db, lastMonthPort, prevYearMonStr);
 
             // Loop through each portfolio funds
-            foreach (var pfund in portFundWeights) {
+            foreach (var pfund in portfolioFundValues) {
                 var weight = pfund.Weight;
                 var fundId = pfund.FundId;
 
@@ -203,12 +200,18 @@ namespace gzWeb.Models {
                     .Single();
 
                 // Get previous months shares
-                var prevMonShares = db.CustFundShares
+
+                decimal prevMonShares = 0;
+                // If this iteration is working with owed fund shares that exists in the current customer portfolio
+                if (pfund.SharesNum == 0) {
+
+                    prevMonShares = db.CustFundShares
                     .Where(f => f.CustomerId == customerId
                         && f.YearMonth == prevYearMonStr
                         && f.FundId == fundId)
                     .Select(f => f.SharesNum)
                     .SingleOrDefault();
+                }
 
                 // Calculate shares values balance and new purchases
                 var NewsharesNum = cashPerFund / (decimal)fundPrice.ClosingPrice;
@@ -219,51 +222,58 @@ namespace gzWeb.Models {
 
                 var tradeDayDateTime = Expressions.GetDtYearMonthDay(lastTradeDay);
 
-                SaveDtoPortFundShares(portfolioFundValues, fundId, portfolioId??0, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
+                SaveDtoPortFundShares(pfund, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
             }
 
             return portfolioFundValues;
         }
 
-        private static void SaveDtoPortFundShares(List<PortfolioFundDTO> portfolioFundValues, int fundId, int portfolioId, decimal cashPerFund, string lastTradeDay, FundPrice fundPrice, decimal NewsharesNum, decimal thisMonthsSharesNum, decimal thisMonthsSharesVal) {
-            portfolioFundValues.Add(
-                new PortfolioFundDTO() {
-                    PortfolioId = portfolioId,
-                    FundId = fundId,
-                    SharesNum = thisMonthsSharesNum,
-                    SharesValue = thisMonthsSharesVal,
-                    SharesTradeDay = lastTradeDay,
-                    SharesFundPriceId = fundPrice.Id,
-                    NewSharesNum = NewsharesNum,
-                    NewSharesValue = cashPerFund,
-                    UpdatedOnUTC = DateTime.UtcNow
-                }
-            );
+        private static void SaveDtoPortFundShares(PortfolioFundDTO savePortfolioFundDTO, decimal cashPerFund, string lastTradeDay, FundPrice fundPrice, decimal NewsharesNum, decimal thisMonthsSharesNum, decimal thisMonthsSharesVal) {
+
+            savePortfolioFundDTO.SharesNum = thisMonthsSharesNum;
+            savePortfolioFundDTO.SharesValue = thisMonthsSharesVal;
+            savePortfolioFundDTO.SharesTradeDay = lastTradeDay;
+            savePortfolioFundDTO.SharesFundPriceId = fundPrice.Id;
+            savePortfolioFundDTO.NewSharesNum = NewsharesNum;
+            savePortfolioFundDTO.NewSharesValue = cashPerFund;
+            savePortfolioFundDTO.UpdatedOnUTC = DateTime.UtcNow;
+
         }
 
         private static List<PortfolioFundDTO> GetFundWeights(int customerId, ApplicationDbContext db, string lastMonthPort, string prevYearMonStr) {
-            /* return db.CustPortfolios
-                .Include(p => p.Portfolio.PortFunds)
-                .Where(p => p.CustomerId == customerId && p.YearMonth == lastMonthPort && p.Portfolio.PortFunds.Any(pf=>pf.PortfolioId == p.PortfolioId))
-                .SelectMany(pf=>pf.Portfolio.PortFunds)
-                .ToList(); */
 
-            return
-            (from cf in db.CustFundShares
-             from pf in db.PortFunds
-                 .Where(f => f.FundId == cf.FundId && cf.YearMonth == prevYearMonStr)
-                 .DefaultIfEmpty()
-             from cp in db.CustPortfolios
-                 .Where(p => p.PortfolioId == pf.PortfolioId && p.YearMonth == lastMonthPort)
-                 .DefaultIfEmpty()
-             select new PortfolioFundDTO { PortfolioId = cp.PortfolioId, FundId = cf.FundId, Weight = pf.Weight }).ToList();
-
+            //var fundsList = db.CustPortfolios
+            //    .Include(p => p.Portfolio.PortFunds)
+            //    .Where(p => p.CustomerId == customerId && p.YearMonth == lastMonthPort && p.Portfolio.PortFunds.Any(pf => pf.PortfolioId == p.PortfolioId))
+            //    .SelectMany(pf => pf.Portfolio.PortFunds);
 
             /*** Equivalent in Join syntax comprehensive syntax ***
             return (from pf in db.PortFunds
             join p in db.CustPortfolios on pf.PortfolioId equals p.PortfolioId
                  where p.CustomerId == customerId && p.YearMonth == lastMonthPort
             select pf).ToList(); */
+
+            var fundsList = from pf in db.PortFunds
+                            join p in db.CustPortfolios on pf.PortfolioId equals p.PortfolioId
+                            where p.CustomerId == customerId && p.YearMonth == lastMonthPort
+                            select new PortfolioFundDTO {
+                                FundId = pf.FundId,
+                                PortfolioId = pf.PortfolioId,
+                                Weight = pf.Weight,
+                                SharesNum = 0
+                            };
+
+            var custFundsList =
+                from c in db.CustFundShares
+                where c.YearMonth == prevYearMonStr && !fundsList.Select(f => f.FundId).Contains(c.FundId)
+                select new PortfolioFundDTO {
+                    FundId = c.FundId,
+                    PortfolioId = 0,
+                    Weight = 0,
+                    SharesNum = c.SharesNum
+                };
+
+            return fundsList.Concat(custFundsList).ToList();
 
         }
 
