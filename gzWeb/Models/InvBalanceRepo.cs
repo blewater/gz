@@ -8,7 +8,7 @@ using gzWeb.Utl;
 namespace gzWeb.Models {
     public class InvBalanceRepo {
 
-        public List<CustFundShareRepo.PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int custId, int year, int month, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss) {
+        public Dictionary<int, CustFundShareRepo.PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int custId, int year, int month, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss) {
 
             using (var db = new ApplicationDbContext()) {
 
@@ -18,8 +18,8 @@ namespace gzWeb.Models {
                 // Step 1: Buy if amount is positive otherwise sell shares or just reprice for the month the existing shares
                 var customerFundSharesRepo = new CustFundShareRepo();
                 var portfolioFundsValuesThisMonth = customerFundSharesRepo.GetCalcCustMonthlyFundShares(custId, cashToInvest, year, month);
-                var totSharesValue = portfolioFundsValuesThisMonth.Sum(f => f.SharesValue);
-                var newShareVal = portfolioFundsValuesThisMonth.Sum(f => f.NewSharesValue ?? 0);
+                var totSharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
+                var newShareVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue ?? 0);
                 var prevMonSharesPricedNow = totSharesValue - newShareVal;
 
                 // Step 2: Get the previous month balance
@@ -46,7 +46,7 @@ namespace gzWeb.Models {
         /// <param name="month"></param>
         public void SaveMonthlyBalanceForCustomer(int custId, int year, int month, decimal cashToInvest) {
 
-            decimal monthlyBalance, invGainLoss, cashInvestment;
+            decimal monthlyBalance, invGainLoss;
             var portfolioFunds = GetCalcMonthlyBalancesForCustomer(custId, year, month, cashToInvest, out monthlyBalance, out invGainLoss);
 
             var customerFundSharesRepo = new CustFundShareRepo();
