@@ -31,8 +31,8 @@ namespace gzWeb.Models {
                     .Select(b => b.Balance)
                     .FirstOrDefault();
 
-                invGainLoss = prevMonSharesPricedNow - prevMonthBalAmount;
-                monthlyBalance = totSharesValue;
+                invGainLoss = Expressions.RoundCustomerBalanceAmount(prevMonSharesPricedNow - prevMonthBalAmount);
+                monthlyBalance = Expressions.RoundCustomerBalanceAmount(totSharesValue);
 
                 return portfolioFundsValuesThisMonth;
             }

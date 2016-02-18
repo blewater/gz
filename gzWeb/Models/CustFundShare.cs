@@ -74,13 +74,6 @@ namespace gzWeb.Models {
         /// </summary>
         public decimal? NewSharesValue { get; set; }
 
-        /// <summary>
-        /// Price of newly bought shares in month
-        /// </summary>
-        [ForeignKey("NewSharesFundPrice")]
-        public int? NewSharesFundPriceId { get; set; }
-        public virtual FundPrice NewSharesFundPrice { get; set; }
-
         #endregion
     }
 }
