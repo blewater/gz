@@ -80,7 +80,7 @@ namespace gzWeb.Models {
         }
 
         /// <summary>
-        /// Calculate monthly investment balances for all months of a player.
+        /// Calculate monthly investment balances for all months of a player that they have transactions.
         /// </summary>
         /// <param name="custId"></param>
         public void SaveCustTrxsBalances(int custId) {
@@ -103,12 +103,14 @@ namespace gzWeb.Models {
 
                     // Step 3: Calculate monthly cash balances before investment
                     var monthlyPlayingLosses = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
-                    var monthlyWithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
-                    var monthlyCashToInvest = monthlyPlayingLosses - monthlyWithdrawnAmounts;
+                    var monthlyWithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.InvWithdrawal? t.Amount : 0);
+                    var monthlyTransfersToGaming = g.Sum(t => t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
+                    var monthlyFees = g.Sum(t => t.Type.Code == TransferTypeEnum.GzFees || t.Type.Code == TransferTypeEnum.FundFee ? t.Amount : 0);
 
-                    // TODO Remove invGainLoss type of transaction
 
-                    //var monthlyCashBalance = prevMonBal + monthlyCashToInvest;
+                    // Net amount to invest
+                    var monthlyCashToInvest = monthlyPlayingLosses - monthlyWithdrawnAmounts - monthlyTransfersToGaming - monthlyFees;
+
                     SaveMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
                 }
             }

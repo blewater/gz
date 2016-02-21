@@ -65,7 +65,7 @@ namespace gzWeb.Models {
             context.SaveChanges();
 
             // Portfolios
-            CreateUpdPortfolios(context);
+            CreateUpdPortfolios(context, custId);
             context.SaveChanges();
 
             // Portfolios - Funds association table
@@ -124,32 +124,9 @@ namespace gzWeb.Models {
         /// <param name="context"></param>
         /// <param name="custId"></param>
         private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
-            var yearMonthsGroups = context.GzTransactions.Where(t => t.CustomerId == custId)
-                .OrderBy(t => t.YearMonthCtd)
-                .GroupBy(t => t.YearMonthCtd)
-                .ToList();
-            //yearMonths.Dump();
-            var prevMonBal = new decimal(0.00);
-            foreach (var g in yearMonthsGroups) {
 
-                var InvAmount = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
-                var InvGain = g.Sum(t => t.Type.Code == TransferTypeEnum.InvestmentRet ? t.Amount : 0);
-                var WithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
+            new InvBalanceRepo().SaveCustTrxsBalances(custId);
 
-                var gBalance = prevMonBal + InvAmount + InvGain - WithdrawnAmounts;
-
-                context.InvBalances.AddOrUpdate(
-                    b => new { b.CustomerId, b.YearMonth },
-                    new InvBalance {
-                        Balance = gBalance,
-                        CustomerId = custId,
-                        YearMonth = g.Key,
-                        UpdatedOnUTC = DateTime.UtcNow
-                    }
-                );
-                //This is the previous month balance
-                prevMonBal = gBalance;
-            }
         }
 
         private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
@@ -310,7 +287,7 @@ namespace gzWeb.Models {
                 );
         }
 
-        private static void CreateUpdPortfolios(ApplicationDbContext context) {
+        private static void CreateUpdPortfolios(ApplicationDbContext context, int custId) {
 
             context.Portfolios.AddOrUpdate(
                 p => p.RiskTolerance,
@@ -329,6 +306,10 @@ namespace gzWeb.Models {
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.High, IsActive = true
                 });
+
+            
+            var task = new CustPortfolioRepo().SetCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            task.Wait();
         }
 
         private static void CreateUpdPortFunds(ApplicationDbContext context) {
@@ -535,19 +516,12 @@ namespace gzWeb.Models {
                     CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201503",
-                    CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 05),
-                    Amount = new decimal(1.232),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
-                },
                 // April
                 new GzTransaction {
                     CustomerId = custId,
                     YearMonthCtd = "201504",
                     CreatedOnUTC = new DateTime(2015, 4, 13, 19, 27, 03, 704),
-                    Amount = new decimal(3000),
+                    Amount = new decimal(300),
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Id).FirstOrDefault(),
                 },
                 new GzTransaction {
@@ -564,13 +538,6 @@ namespace gzWeb.Models {
                     Amount = new decimal(1006.74),
                     CreditPcntApplied = 50,
                     TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201504",
-                    CreatedOnUTC = new DateTime(2015, 4, 30, 23, 49, 05),
-                    Amount = new decimal(245.32),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Id).FirstOrDefault(),
                 },
                 // May
                 new GzTransaction {
@@ -677,16 +644,16 @@ namespace gzWeb.Models {
                     Description = "Customer Bank Deposit"
                 },
                 new GzTransactionType {
-                    Code = TransferTypeEnum.Withdrawal,
+                    Code = TransferTypeEnum.InvWithdrawal,
                     Description = "Customer withdrawals of any excess funds to their banking account"
-                },
-                new GzTransactionType {
-                    Code = TransferTypeEnum.TransferToInvestment,
-                    Description = "Customer transfers to gaming account"
                 },
                 new GzTransactionType {
                     Code = TransferTypeEnum.TransferToGaming,
                     Description = "Customer transfers to gaming account"
+                }, 
+                new GzTransactionType {
+                    Code = TransferTypeEnum.CasinoWithdrawal,
+                    Description = "Losses due to playing in Casino, Betting etc"
                 },
                 new GzTransactionType {
                     Code = TransferTypeEnum.PlayingLoss,
@@ -697,15 +664,11 @@ namespace gzWeb.Models {
                     Description = "Losses credited to players account after a 50% deduction"
                 },
                 new GzTransactionType {
-                    Code = TransferTypeEnum.InvestmentRet,
-                    Description = "Any gains by the investment returns"
-                },
-                new GzTransactionType {
                     Code = TransferTypeEnum.FundFee,
                     Description = "Any fees by the Fund itself i.e. 0.5%"
                 },
                 new GzTransactionType {
-                    Code = TransferTypeEnum.Commission,
+                    Code = TransferTypeEnum.GzFees,
                     Description = "Commissions (1.5% = 2.5%) Profit for GreenZorro"
                 }
                 );

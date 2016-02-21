@@ -8,6 +8,17 @@ namespace gzWeb.Utl {
     static public class Expressions {
 
         /// <summary>
+        /// date1 > date2 giving a positive value and date2 > date1 a negative value
+        /// http://stackoverflow.com/questions/4638993/difference-in-months-between-two-dates
+        /// </summary>
+        /// <param name="date1"></param>
+        /// <param name="date2"></param>
+        /// <returns></returns>
+        public static int MonthDiff(DateTime date1, DateTime date2) {
+            return ((date1.Year - date2.Year) * 12) + date1.Month - date2.Month;
+        }
+
+        /// <summary>
         /// Slack chat 
         /// .6 to round up on our fees calculation. 0 Decimals.
         /// For example: 3.5 --> 3, 3.6 --> 4
