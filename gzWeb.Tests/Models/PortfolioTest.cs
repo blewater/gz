@@ -46,19 +46,21 @@ namespace gzWeb.Tests.Models {
             Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
         }
         [TestMethod]
-        public async Task CalculateReturns() {
+        public async Task CalculatePortfolioReturns() {
 
-            int custId = CreateUpd6MonthAllocationCustomer();
+            int custId = CreateTestCustomer();
 
             // Add invested Customer Portfolio 
             await CreateTestCustomerPortfolioSelections(custId);
 
             await CreateTestPlayerLossTransactions(custId);
+            await CreateTestPlayerDepositWidthdrawnTransactions(custId);
 
             new InvBalanceRepo().SaveCustTrxsBalances(custId);
         }
 
-        private static async Task CreateTestCustomerPortfolioSelections(int custId) {
+        [TestMethod]
+        public static async Task CreateTestCustomerPortfolioSelections(int custId) {
 
             var cpRepo = new CustPortfolioRepo();
 
@@ -85,7 +87,8 @@ namespace gzWeb.Tests.Models {
             await cpRepo.SetCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
         }
 
-        private static async Task CreateTestPlayerLossTransactions(int custId) {
+        [TestMethod]
+        public static async Task CreateTestPlayerLossTransactions(int custId) {
             var gzTrx = new GzTransactionRepo();
 
             // Add playing losses for first 6 months of 2015
@@ -96,9 +99,25 @@ namespace gzWeb.Tests.Models {
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50, createdOnUTC: new DateTime(2015, 5, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 6, 1));
             await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2016, 1, 1));
+            await gzTrx.AddPlayingLoss(customerId: custId, totPlayinLossAmount: 100, creditPcnt: 50, createdOnUTC: new DateTime(2015, 9, 30));
         }
 
-        private static int CreateUpd6MonthAllocationCustomer() {
+
+        [TestMethod]
+        public static async Task CreateTestPlayerDepositWidthdrawnTransactions(int custId) {
+            var gzTrx = new GzTransactionRepo();
+
+            // Add deposit, withdrawals
+            await gzTrx.AddGzTransaction(customerId: custId, gzTransactionType:TransferTypeEnum.Deposit, amount:100, createdOnUTC: new DateTime(2015, 7, 15));
+            await gzTrx.AddTransferToGamingAmount(custId, 100, new DateTime(2015, 7, 31));
+            await gzTrx.AddInvWithdrawalAmount(custId, 50, new DateTime(2015, 8, 30));
+            await gzTrx.AddTransferToGamingAmount(custId, 50, new DateTime(2015, 8, 31));
+            await gzTrx.AddInvWithdrawalAmount(custId, 50, new DateTime(2015, 9, 1));
+            await gzTrx.AddTransferToGamingAmount(custId, 50, new DateTime(2015, 9, 15));
+        }
+
+        [TestMethod]
+        public static int CreateTestCustomer() {
 
             Random rnd = new Random();
             int rndPlatformId = rnd.Next(1, int.MaxValue);

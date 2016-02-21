@@ -16,8 +16,8 @@ namespace gzWeb.Models {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="riskType"></param>
-        /// <param name="portfYear"></param>
-        /// <param name="portfMonth"></param>
+        /// <param name="portfYear">i.e. 2015 the year this portfolio weight applies</param>
+        /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
         public async Task SetCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
@@ -28,12 +28,11 @@ namespace gzWeb.Models {
             }
             DateTime monthsPortfolio = new DateTime(portfYear, portfMonth, DateTime.UtcNow.Day);
 
-            //http://stackoverflow.com/questions/4638993/difference-in-months-between-two-dates
-            var monthDifffromNow = ((DateTime.UtcNow.Year - monthsPortfolio.Year) * 12) + DateTime.UtcNow.Month - monthsPortfolio.Month;
+            var monthDifffromNow = Expressions.MonthDiff(DateTime.UtcNow, monthsPortfolio);
 
             if (monthDifffromNow != 0) {
 
-                throw new Exception("You can set the customer portfolio only for the current month: " + monthsPortfolio);
+                throw new Exception("You can set the customer portfolio for the current month only: " + monthsPortfolio);
 
             }
 
@@ -41,7 +40,7 @@ namespace gzWeb.Models {
         }
 
         /// <summary>
-        /// Use SetCustMonthsFullPortfolio instead
+        /// Use overloaded SetCustMonthsPortfolioMix instead
         /// Public in order to unit test it.
         /// Save the month's portfolio mix for a customer.
         /// For example, 30% for Low, 50% Medium, 20% High
@@ -63,7 +62,7 @@ namespace gzWeb.Models {
 
                 using (var db = new ApplicationDbContext()) {
 
-                    //Not thread safe but ok...within a single request context
+                    //Not thread atomic but ok...within a single request context
                     db.CustPortfolios.AddOrUpdate(
                         // Assume UpdatedOnUTC remains constant for same trx
                         // to support idempotent transactions

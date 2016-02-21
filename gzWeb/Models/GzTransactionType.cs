@@ -9,28 +9,54 @@ using System.Web;
 namespace gzWeb.Models {
     public enum TransferTypeEnum {
 
+        /// <summary>
+        /// Player deposit to their casino account. 
+        /// Informational only
+        /// </summary>
         Deposit = 1,
 
-        Withdrawal = 2,
-
-        TransferToGaming = 3,
-
-        TransferToInvestment = 4,
-
-        InvestmentRet = 5,
-
-        PlayingLoss = 6, /* iGC gaming loss */
+        /// <summary>
+        /// Player withdrawal from their investment account.
+        /// Generate fees transactions: FundFee, Commission (4%)
+        /// </summary>
+        InvWithdrawal = 2,
 
         /// <summary>
-        /// In case the %50 pcnt changes we store the whole amount too "Playing Loss"
+        /// Sell portfolio shares and transfer cash to their casino account.
         /// </summary>
-        CreditedPlayingLoss = 7, /* Playing loss * 50% */
+        TransferToGaming = 3,
 
-        FundFee = 8, /* 1.5% */
+        /// <summary>
+        /// Net player withdrawal from their casino account. 
+        /// Informational only
+        /// </summary>
+        CasinoWithdrawal = 4,
 
-        Commission = 9, /* 2.5% */
+        /// <summary>
+        /// Total Casino losses.
+        /// We credit a percentage i.e. 50% from this amount.
+        /// <see cref="CreditedPlayingLoss"/>
+        /// </summary>
+        PlayingLoss = 6,
 
-        Other = 10
+        /// <summary>
+        /// The %50 pcnt changes we credit to the players investment account.
+        /// the whole amount "Playing Loss"
+        /// <see cref="PlayingLoss"/>
+        /// </summary>
+        CreditedPlayingLoss = 7,
+
+        /// <summary>
+        /// Fund fees: 2.5%
+        /// Deducted from the investment cash when withdrawn cash
+        /// </summary>
+        FundFee = 8,
+
+        /// <summary>
+        /// Greenzorro fees: 1.5%
+        /// Deducted from the investment cash when withdrawn cash
+        /// </summary>
+        GzFees = 9,
     }
 
     public class GzTransactionType {

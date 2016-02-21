@@ -27,7 +27,10 @@ namespace gzWeb.Models
         [NotMapped]
         public decimal InvBalance {
             get {
-                return InvBalances.Where(b => b.CustomerId == this.Id).OrderByDescending(b => b.Id).Select(b => b.Balance).FirstOrDefault();
+                return InvBalances
+                    .OrderByDescending(b => b.Id)
+                    .Select(b => b.Balance)
+                    .FirstOrDefault();
             }
         }
         public virtual ICollection<InvBalance> InvBalances { get; set; }
@@ -52,31 +55,51 @@ namespace gzWeb.Models
         [NotMapped]
         public decimal LastInvestmentAmount {
             get {
-                return GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).OrderByDescending(t => t.Id).Select(t => t.Amount).FirstOrDefault();
+                return GzTransactions
+                    .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
+                    .OrderByDescending(t => t.Id)
+                    .Select(t => t.Amount)
+                    .FirstOrDefault();
             }
         }
         [NotMapped]
         public decimal TotalInvestmReturns {
             get {
-                return this.GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.InvestmentRet).Select(t => t.Amount).Sum();
+                return 
+                    InvBalances
+                    .Select(b => b.InvGainLoss)
+                    .Sum();
             }
         }
         [NotMapped]
         public decimal TotalInvestments {
             get {
-                return this.GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Amount).Sum();
+                return 
+                    GzTransactions
+                    .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
+                    .Select(t => t.Amount)
+                    .Sum();
             }
         }
         [NotMapped]
         public decimal TotalDeposits {
             get {
-                return this.GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.Deposit).Select(t => t.Amount).Sum();
+                return 
+                    GzTransactions
+                    .Where(t => t.Type.Code == TransferTypeEnum.Deposit)
+                    .Select(t => t.Amount)
+                    .Sum();
             }
         }
         [NotMapped]
         public decimal TotalWithdrawals {
             get {
-                return this.GzTransactions.Where(t => t.Type.Code == TransferTypeEnum.Withdrawal || t.Type.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Amount).Sum();
+                return 
+                    GzTransactions
+                    .Where(t => t.Type.Code == TransferTypeEnum.InvWithdrawal 
+                             || t.Type.Code == TransferTypeEnum.TransferToGaming)
+                    .Select(t => t.Amount)
+                    .Sum();
             }
         }
 
