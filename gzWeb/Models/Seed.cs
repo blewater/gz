@@ -35,7 +35,7 @@ namespace gzWeb.Models {
                         } catch (Exception ex) {
                             var exception = retVal = ex.Message;
                             //dbContextTransaction.Rollback();
-                            throw ex;
+                            throw;
                         }
                     //}
                 }

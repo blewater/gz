@@ -121,7 +121,11 @@ namespace gzWeb.Models {
                     // Net amount to invest
                     var monthlyCashToInvest = monthlyPlayingLosses - monthlyWithdrawnAmounts - monthlyTransfersToGaming - monthlyFees;
 
-                    SaveDBbyTrxMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
+                    System.Diagnostics.Trace.Assert(monthlyCashToInvest >= 0, "Cash to invest should be positive or 0. Selling stock is supported only for the whole portfolio.");
+
+                    if (monthlyCashToInvest >= 0) {
+                        SaveDBbyTrxMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
+                    }
                 }
             }
         }

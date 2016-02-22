@@ -11,11 +11,17 @@ namespace gzWeb.Models {
     /// </summary>
     public class PortfolioRepository {
 
-        private ApplicationDbContext db = new ApplicationDbContext();
+        public List<Portfolio> GetAllPortfolios() {
 
-        public IQueryable<Portfolio> GetAllPortfolios() {
+            List<Portfolio> portfolios = null;
 
-            return db.Portfolios;
+            using (ApplicationDbContext db = new ApplicationDbContext()) {
+
+                portfolios = db.Portfolios.ToList();
+
+            }
+
+            return portfolios;
         }
     }
 }
