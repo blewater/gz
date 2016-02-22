@@ -240,7 +240,6 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InvBalance.cs" />
     <Compile Include="Models\CustomerViewModels.cs" />
-    <Compile Include="Models\PortfolioRepo.cs" />
     <Compile Include="Models\PortfolioRepository.cs" />
     <Compile Include="Models\PortFund.cs" />
     <Compile Include="Models\Seed.cs" />

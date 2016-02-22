@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// The stock market closing price after the completion of the trading day.
+    /// </summary>
     public class FundPrice {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

@@ -9,7 +9,8 @@ using System.Web;
 namespace gzWeb.Models {
 
     /// <summary>
-    /// Transfers
+    /// Transfers between Casino <--> Greenzorro accounts, Casino <--> Customer bank account, 
+    /// Greenzorro <--> Customer Bank account ? (requires special communication with casino as the intermediatery
     /// </summary>
     public class GzTransaction {
 

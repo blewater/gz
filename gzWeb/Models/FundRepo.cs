@@ -41,7 +41,7 @@ namespace gzWeb.Models {
         /// For example on Monday 12pm, we go to Friday's closing price if Friday was not a western holiday.
         /// </summary>
         /// <returns></returns>
-        public List<FundQuote> AddDailyFundClosingPrices() {
+        public List<FundQuote> SaveDBDailyFundClosingPrices() {
 
             List<FundQuote> retVal = null;
 

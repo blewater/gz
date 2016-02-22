@@ -8,7 +8,7 @@ using System.Data.Entity.Migrations;
 namespace gzWeb.Models {
     public class CurrencyRateRepo {
 
-        public List<CurrencyQuote> AddDailyCurrenciesRates() {
+        public List<CurrencyQuote> SaveDBDailyCurrenciesRates() {
 
             List<CurrencyQuote> retVal = null;
 

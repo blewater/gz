@@ -5,6 +5,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// PHase 1: We use Low, Medium, High.
+    /// </summary>
     public enum RiskToleranceEnum {
 
         Low = 1,

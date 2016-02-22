@@ -6,6 +6,10 @@ using System.Linq;
 using System.Web;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// The investment balance for the customer per month per row. Hold gain losses too.
+    /// </summary>
     public class InvBalance {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

@@ -5,6 +5,13 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// Intermediate object: The Customer Portfolio selection
+    /// Phase 1: The row weight is always 100%. 
+    /// There's a single portfolio per customer.
+    /// Phase 2: Multiple portfolios with varying weights.
+    /// </summary>
     public class CustPortfolio {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
