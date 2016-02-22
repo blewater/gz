@@ -8,6 +8,16 @@ using gzWeb.Utl;
 namespace gzWeb.Models {
     public class InvBalanceRepo {
 
+        /// <summary>
+        /// Calculate numeric balance metrics for a customer on a given month
+        /// </summary>
+        /// <param name="custId"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="cashToInvest">The positive cash to buy shares</param>
+        /// <param name="monthlyBalance">Useful in summary page</param>
+        /// <param name="invGainLoss">Used in summary page</param>
+        /// <returns></returns>
         public Dictionary<int, CustFundShareRepo.PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int custId, int year, int month, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss) {
 
             using (var db = new ApplicationDbContext()) {
@@ -44,7 +54,7 @@ namespace gzWeb.Models {
         /// <param name="custId"></param>
         /// <param name="year"></param>
         /// <param name="month"></param>
-        public void SaveMonthlyBalanceForCustomer(int custId, int year, int month, decimal cashToInvest) {
+        public void SaveDBbyTrxMonthlyBalanceForCustomer(int custId, int year, int month, decimal cashToInvest) {
 
             decimal monthlyBalance, invGainLoss;
             var portfolioFunds = GetCalcMonthlyBalancesForCustomer(custId, year, month, cashToInvest, out monthlyBalance, out invGainLoss);
@@ -111,7 +121,7 @@ namespace gzWeb.Models {
                     // Net amount to invest
                     var monthlyCashToInvest = monthlyPlayingLosses - monthlyWithdrawnAmounts - monthlyTransfersToGaming - monthlyFees;
 
-                    SaveMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
+                    SaveDBbyTrxMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
                 }
             }
         }
