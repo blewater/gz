@@ -6,6 +6,9 @@ using Microsoft.AspNet.Identity;
 
 namespace gzWeb.Models {
 
+    /// <summary>
+    /// Used in unit testing
+    /// </summary>
     public class PortfolioRepository {
 
         private ApplicationDbContext db = new ApplicationDbContext();

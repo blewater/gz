@@ -11,8 +11,9 @@ namespace gzWeb.Models {
         /// <summary>
         /// Save purchased funds shares to the customer's account.
         /// 
-        /// Does *not* call DBcontext.SaveChanges() for easy transaction support
+        /// Call DBcontext.SaveChanges() on incoming db object for transaction support
         /// </summary>
+        /// <param name="db"></param>
         /// <param name="customerId"></param>
         /// <param name="fundsShares"></param>
         /// <param name="year"></param>
@@ -173,7 +174,7 @@ namespace gzWeb.Models {
         /// Calculating this months funds shares when
         /// +    -- More cash is invested according to the latest portfolio weight configuration
         /// - Or -- Selling Shares to get cash
-        /// 0 Or -- 0 cash proceed to next step
+        /// 0 Or -- 0 see line below
         /// Then Re-price shares to this month's stock prices
         /// </summary>
         /// <param name="db"></param>

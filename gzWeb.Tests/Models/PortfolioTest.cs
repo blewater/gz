@@ -28,7 +28,7 @@ namespace gzWeb.Tests.Models {
         [TestMethod]
         public void SaveDailyCurrenciesRates() {
             var currencyRateRepo = new CurrencyRateRepo();
-            var quotes = currencyRateRepo.AddDailyCurrenciesRates();
+            var quotes = currencyRateRepo.SaveDBDailyCurrenciesRates();
 
             Assert.IsNotNull(quotes);
 
@@ -38,7 +38,7 @@ namespace gzWeb.Tests.Models {
         [TestMethod]
         public void SaveDailyFundClosingPrice() {
             var fundRepo = new FundRepo();
-            var quotes = fundRepo.AddDailyFundClosingPrices();
+            var quotes = fundRepo.SaveDBDailyFundClosingPrices();
 
             Assert.IsNotNull(quotes);
 

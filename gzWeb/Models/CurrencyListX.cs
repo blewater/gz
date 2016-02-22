@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// A set of rows consisting of a FROM currency and a TO currency
+    /// </summary>
     public class CurrencyListX {
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

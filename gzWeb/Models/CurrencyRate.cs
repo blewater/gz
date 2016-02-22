@@ -6,6 +6,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// The exchange rate for a FromTO Currencies row.
+    /// </summary>
     public class CurrencyRate {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

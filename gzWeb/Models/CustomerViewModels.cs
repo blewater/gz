@@ -4,6 +4,10 @@ using System.Linq;
 using System.Web;
 
 namespace gzWeb.Models {
+
+    /// <summary>
+    /// Customer Values buffer for values communication between controller views
+    /// </summary>
     public class CustomerViewModel {
 
         public string UserName { get; set; }
