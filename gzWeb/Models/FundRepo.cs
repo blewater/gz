@@ -73,7 +73,7 @@ namespace gzWeb.Models {
 
                 } catch (Exception ex) {
                     var exception = ex.Message;
-                    throw ex;
+                    throw ;
                 }
             }
 

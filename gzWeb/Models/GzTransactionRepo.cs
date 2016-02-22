@@ -35,7 +35,7 @@ namespace gzWeb.Models {
         /// <param name="amount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public async Task AddGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC) {
+        public void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC) {
 
             if (
                        gzTransactionType == TransferTypeEnum.GzFees
@@ -55,7 +55,7 @@ namespace gzWeb.Models {
             }
 
             using (var db = new ApplicationDbContext()) {
-                await SaveDBTransaction(customerId, gzTransactionType, amount, createdOnUTC, db);
+                SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, db);
             }
         }
 
@@ -66,7 +66,7 @@ namespace gzWeb.Models {
         /// <param name="withdrawnAmount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public async Task AddTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
+        public void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
 
             if (withdrawnAmount < 0) {
 
@@ -79,8 +79,8 @@ namespace gzWeb.Models {
 
                         try {
 
-                            await SaveDBTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, db);
-                            await SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, db);
+                            SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
 
                             dbContextTransaction.Commit();
                         } catch (Exception ex) {
@@ -95,14 +95,14 @@ namespace gzWeb.Models {
 
         /// <summary>
         /// Save an investment withdrawal transaction and save the calculated commission and fund fees transactions
-        /// Note identical method to <see cref="AddTransferToGamingAmount"/> though in practice it may not be 
+        /// Note identical method to <see cref="SaveDBTransferToGamingAmount"/> though in practice it may not be 
         /// able to instruct the casino platform to use it.
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="withdrawnAmount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public async Task AddInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
+        public void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
 
             if (withdrawnAmount < 0) {
 
@@ -115,8 +115,8 @@ namespace gzWeb.Models {
 
                         try {
 
-                            await SaveDBTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, db);
-                            await SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, db);
+                            SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
 
                             dbContextTransaction.Commit();
                         } catch (Exception ex) {
@@ -137,9 +137,9 @@ namespace gzWeb.Models {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private async Task SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC, ApplicationDbContext db) {
-            await SaveDBTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * COMMISSION_PCNT / 100, createdOnUTC, db);
-            await SaveDBTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * FUND_FEE_PCNT / 100, createdOnUTC, db);
+        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC, ApplicationDbContext db) {
+            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * COMMISSION_PCNT / 100, createdOnUTC, db);
+            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * FUND_FEE_PCNT / 100, createdOnUTC, db);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace gzWeb.Models {
         /// <param name="creditPcnt">Percentage number (0-100) to credit balance. For example 50 for half the amount to be credited</param>
         /// <param name="createdOnUTC">Date of the transaction in UTC</param>
         /// <returns></returns>
-        public async Task AddPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC) {
+        public void SaveDBPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC) {
 
             if (creditPcnt < 0 || creditPcnt > 100) {
 
@@ -163,8 +163,8 @@ namespace gzWeb.Models {
 
                         try {
 
-                            await SaveDBTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, db);
-                            await SaveDBTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, db);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db);
 
                             dbContextTransaction.Commit();
                         } catch (Exception ex) {
@@ -178,7 +178,7 @@ namespace gzWeb.Models {
         }
 
         /// <summary>
-        /// Using an existing DbContext (to support transactions)
+        /// Save to database a general type of transation using an existing DbContext (to support transactions)
         /// Save any transaction type to the database
         /// </summary>
         /// <param name="customerId"></param>
@@ -187,7 +187,7 @@ namespace gzWeb.Models {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private async Task SaveDBTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, ApplicationDbContext db) {
+        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, ApplicationDbContext db) {
             //Not thread safe but ok...within a single request context
             db.GzTransactions.AddOrUpdate(
                 // Assume CreatedOnUTC remains constant for same trx
@@ -201,7 +201,7 @@ namespace gzWeb.Models {
                         CreatedOnUTC = createdOnUTC
                     }
                 );
-            await db.SaveChangesAsync();
+            db.SaveChangesAsync();
         }
 
     }

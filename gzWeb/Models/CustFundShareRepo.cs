@@ -49,7 +49,7 @@ namespace gzWeb.Models {
                 } catch (Exception e) {
                     // TODO: log customer id, fundId
                     var msg = e.Message;
-                    throw e;
+                    throw ;
                 }
             }
         }
