@@ -1260,10 +1260,6 @@
     <Content Include="Scripts\kendo\2015.3.1111\kendo.angular2.min.js.map" />
     <Content Include="Scripts\kendo\2015.3.1111\kendo.angular.min.js.map" />
     <Content Include="Scripts\kendo\2015.3.1111\jquery.min.map" />
-    <Content Include="Views\Investments\Create.cshtml" />
-    <Content Include="Views\Investments\Delete.cshtml" />
-    <Content Include="Views\Investments\Details.cshtml" />
-    <Content Include="Views\Investments\Edit.cshtml" />
     <Content Include="Views\Investments\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

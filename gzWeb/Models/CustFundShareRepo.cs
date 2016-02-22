@@ -88,12 +88,12 @@ namespace gzWeb.Models {
             using (var db = new ApplicationDbContext()) {
                 if (netInvAmount > 0) {
 
-                    portfolioFundValues = BuyShares(customerId, netInvAmount, year, month, db);
+                    portfolioFundValues = GetBoughtShares(customerId, netInvAmount, year, month, db);
 
                     // Note this case for repricing (0 cash) or liquidating shares to cash
                 } else if (netInvAmount <= 0) {
 
-                    SellShares(customerId, netInvAmount, year, month, db);
+                    GetSoldShares(customerId, netInvAmount, year, month, db);
 
                 }
             }
@@ -112,7 +112,7 @@ namespace gzWeb.Models {
         /// <param name="month"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> SellShares(int customerId, decimal cashToExtract, int year, int month, ApplicationDbContext db) {
+        private Dictionary<int, PortfolioFundDTO> GetSoldShares(int customerId, decimal cashToExtract, int year, int month, ApplicationDbContext db) {
 
             Dictionary<int, PortfolioFundDTO> portfolioFundValues = null;
 
@@ -145,9 +145,8 @@ namespace gzWeb.Models {
 
         /// <summary>
         /// Buy shares for the cashToInvest cash amount.
-        /// Big difference compared to SellShares method aside from the cash amount being positive in this case
+        /// Difference compared to SellShares method aside from the cash amount being positive
         /// is that we use the present month's portfolio to assign weight to the cash amount per fund.
-        /// We care about this month's customer portfolio to assign weights.
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="cashToInvest">Positive amount of cash to invest by buying shares</param>
@@ -155,11 +154,10 @@ namespace gzWeb.Models {
         /// <param name="month"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> BuyShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db) {
+        private Dictionary<int, PortfolioFundDTO> GetBoughtShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db) {
             Dictionary<int, PortfolioFundDTO> portfolioFundValues;
 
-            string YearMonthStr = Expressions.GetStrYearMonth(year, month);
-            string lastMonthPort = GetCustPortfYearMonth(customerId, YearMonthStr, db);
+            string lastMonthPort = GetCustPortfYearMonth(customerId, Expressions.GetStrYearMonth(year, month), db);
 
             if (lastMonthPort == null) {
 
@@ -201,13 +199,14 @@ namespace gzWeb.Models {
             //Get Portfolio Funds Weights
             Dictionary<int, PortfolioFundDTO> portfolioFundValues = GetFundWeights(customerId, db, lastMonthPort, prevYearMonStr);
 
-            ProcessPortfolioFunds(db, portfolioFundValues, year, month, cashToInvest, cashToGetBySellingShares, prevInvBal);
+            GetCashtoFundsShares(db, portfolioFundValues, year, month, cashToInvest, cashToGetBySellingShares, prevInvBal);
 
             return portfolioFundValues;
         }
 
         /// <summary>
-        /// Calculate all the funds shares values and save them in the input collection
+        /// Convert cash --> funds shares  
+        /// Calculate all the funds shares metrics and save them in the input collection
         /// </summary>
         /// <param name="db"></param>
         /// <param name="portfolioFundValues"></param>
@@ -216,7 +215,7 @@ namespace gzWeb.Models {
         /// <param name="cashToInvest"></param>
         /// <param name="cashToGetBySellingShares"></param>
         /// <param name="prevInvBal"></param>
-        private void ProcessPortfolioFunds(ApplicationDbContext db, Dictionary<int, PortfolioFundDTO> portfolioFundValues, int year, int month, 
+        private void GetCashtoFundsShares(ApplicationDbContext db, Dictionary<int, PortfolioFundDTO> portfolioFundValues, int year, int month, 
             decimal cashToInvest, 
             decimal cashToGetBySellingShares = 0, 
             decimal prevInvBal = 0) {
@@ -234,7 +233,7 @@ namespace gzWeb.Models {
 
                 string lastTradeDay;
                 FundPrice fundPrice = GetFundPrice(year, month, db, fundId, out lastTradeDay);
-
+                
                 decimal cashPerFund = (decimal)weight / 100 * cashToInvest, existingFundSharesVal = prevMonShares * (decimal)fundPrice.ClosingPrice;
 
                 // Calculate shares values balance and new purchases
