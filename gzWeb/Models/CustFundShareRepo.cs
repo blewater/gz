@@ -160,6 +160,8 @@ namespace gzWeb.Models {
 
             string lastMonthPort = GetCustPortfYearMonth(customerId, Expressions.GetStrYearMonth(year, month), db);
 
+            System.Diagnostics.Trace.Assert(lastMonthPort != null, $"No portfolio has been set for customer Id: {customerId}");
+
             if (lastMonthPort == null) {
 
                 throw new Exception($"No portfolio has been set for customer Id: {customerId}");

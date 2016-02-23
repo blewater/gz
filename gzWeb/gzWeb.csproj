@@ -228,6 +228,7 @@
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
     <Compile Include="Models\CurrencyRateRepo.cs" />
+    <Compile Include="Models\CustFundShareSold.cs" />
     <Compile Include="Models\InvBalanceRepo.cs" />
     <Compile Include="Models\CustFundShareRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
