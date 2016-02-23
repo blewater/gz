@@ -150,6 +150,7 @@ namespace gzWeb.Models
         public DbSet<CurrencyListX> CurrenciesListX { get; set; }
         public DbSet<CurrencyRate> CurrencyRates { get; set; }
         public DbSet<CustFundShare> CustFundShares { get; set; }
+        public DbSet<CustFundShareSold> CustFundSharesSold { get; set; }
         public DbSet<CustPortfolio> CustPortfolios { get; set; }
         public DbSet<Fund> Funds { get; set; }
         public DbSet<FundPrice> FundPrices { get; set; }

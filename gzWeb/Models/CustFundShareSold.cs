@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace gzWeb.Models {
     /// <summary>
-    /// Tracking new and existing balance of monthly shares per customer and fund
+    /// Tracking monthly sold shares
+    /// Phase 1: this will be done for all the owned shares in a customer's 
+    /// account.
     /// </summary>
-    public class CustFundShare {
+    public class CustFundShareSold {
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
@@ -33,13 +35,7 @@ namespace gzWeb.Models {
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
 
-        /// <summary>
-        /// Last Updated
-        /// </summary>
-        [Required]
-        public DateTime UpdatedOnUTC { get; set; }
-
-        #region Total Monthly Shares
+        #region Monthly Sold Shares
         /// <summary>
         /// Total number of shares for month
         /// </summary>
@@ -59,17 +55,14 @@ namespace gzWeb.Models {
         public virtual FundPrice SharesFundPrice { get; set; }
 
         #endregion
-        #region NewShares
+
+        [StringLength(128)]
+        public string Rationale { get; set; }
 
         /// <summary>
-        /// Number of new shares bought for month
+        /// Last Updated
         /// </summary>
-        public decimal? NewSharesNum { get; set; }
-        /// <summary>
-        /// Value of new shares bought for month
-        /// </summary>
-        public decimal? NewSharesValue { get; set; }
-
-        #endregion
+        [Required]
+        public DateTime UpdatedOnUTC { get; set; }
     }
 }
