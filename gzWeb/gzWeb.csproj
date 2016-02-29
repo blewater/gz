@@ -223,12 +223,16 @@
     <Compile Include="Migrations\201602172221201_New Shares Fund Price Del.Designer.cs">
       <DependentUpon>201602172221201_New Shares Fund Price Del.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602291353494_CustFundSoldShare.cs" />
+    <Compile Include="Migrations\201602291353494_CustFundSoldShare.Designer.cs">
+      <DependentUpon>201602291353494_CustFundSoldShare.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
     <Compile Include="Models\CurrencyRateRepo.cs" />
-    <Compile Include="Models\CustFundShareSold.cs" />
+    <Compile Include="Models\CustFundSoldShare.cs" />
     <Compile Include="Models\InvBalanceRepo.cs" />
     <Compile Include="Models\CustFundShareRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -1302,6 +1306,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602172221201_New Shares Fund Price Del.resx">
       <DependentUpon>201602172221201_New Shares Fund Price Del.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602291353494_CustFundSoldShare.resx">
+      <DependentUpon>201602291353494_CustFundSoldShare.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
