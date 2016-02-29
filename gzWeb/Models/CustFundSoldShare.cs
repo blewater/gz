@@ -10,7 +10,7 @@ namespace gzWeb.Models {
     /// Phase 1: this will be done for all the owned shares in a customer's 
     /// account.
     /// </summary>
-    public class CustFundShareSold {
+    public class CustFundSoldShare {
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
