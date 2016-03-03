@@ -20,7 +20,7 @@ namespace gzWeb
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             //Automapper
-            Mapper.Initialize(cfg => cfg.CreateMap<ApplicationUser, CustomerViewModel>());
+            Mapper.Initialize(cfg => cfg.CreateMap<ApplicationUser, CustomerDTO>());
             //Mapper.CreateMap<, >();
         }
     }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations;
-using System.Threading.Tasks;
-using gzWeb.Utl;
+using gzWeb.Model.Util;
 
 
 namespace gzWeb.Models {
@@ -20,7 +18,7 @@ namespace gzWeb.Models {
         /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public async Task SetCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        public void SaveDBCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (customerId <= 0) {
 
@@ -36,7 +34,7 @@ namespace gzWeb.Models {
 
             }
 
-            await this.SetCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
+            this.SaveDBCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
         }
 
         /// <summary>
@@ -52,7 +50,7 @@ namespace gzWeb.Models {
         /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public async Task SetCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        public void SaveDBCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (weight < 0 || weight > 100) {
 
@@ -75,7 +73,7 @@ namespace gzWeb.Models {
                                 Weight = weight
                             }
                         );
-                    await db.SaveChangesAsync();
+                    db.SaveChanges();
                 }
             }
         }

@@ -16,13 +16,10 @@ namespace gzWeb.Tests.Models {
         [TestMethod]
         public void PortfolioReturns() {
 
-            var portfolios = new PortfolioRepository().GetAllPortfolios();
+            var portfolioLines = new PortfolioRepository().GetPortfolioRetLines();
 
-            foreach (var p in portfolios) {
-                
-                Console.Write(p.RiskTolerance.ToString() + " portfolio return ");
-                var r = p.PortFunds.Select(f => f.Weight * Math.Max(f.Fund.ThreeYrReturnPcnt, f.Fund.FiveYrReturnPcnt)).Sum();
-                Console.WriteLine(r + "%");
+            foreach (var l in portfolioLines) {
+                Console.WriteLine(l);
             }
         }
         [TestMethod]
@@ -46,7 +43,7 @@ namespace gzWeb.Tests.Models {
             Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
         }
         [TestMethod]
-        public void CalculatePortfolioReturns() {
+        public void SaveDBPortfolioReturns() {
 
             int custId = CreateTestCustomer();
 
@@ -65,7 +62,7 @@ namespace gzWeb.Tests.Models {
 
             /*** For phase I we test only single portfolio selections ***/
             //// Jan 2015
-            cpRepo.SetCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            cpRepo.SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 1, new DateTime(2015, 1, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 20, 2015, 1, new DateTime(2015, 1, 1));
             //// Feb
@@ -73,7 +70,7 @@ namespace gzWeb.Tests.Models {
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 2, new DateTime(2015, 2, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 40, 2015, 2, new DateTime(2015, 2, 1));
             // Mar
-            cpRepo.SetCustMonthsPortfolioMix(custId, RiskToleranceEnum.High, 100, 2015, 3, new DateTime(2015, 3, 1));
+            cpRepo.SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.High, 100, 2015, 3, new DateTime(2015, 3, 1));
             //// Apr
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 30, 2015, 4, new DateTime(2015, 4, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 30, 2015, 4, new DateTime(2015, 4, 1));
@@ -83,7 +80,7 @@ namespace gzWeb.Tests.Models {
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 20, 2015, 5, new DateTime(2015, 5, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 70, 2015, 5, new DateTime(2015, 5, 1));
             // Jun
-            cpRepo.SetCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
+            cpRepo.SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
         }
 
         public void CreateTestPlayerLossTransactions(int custId) {
@@ -105,12 +102,12 @@ namespace gzWeb.Tests.Models {
             var gzTrx = new GzTransactionRepo();
 
             // Add deposit, withdrawals
+            gzTrx.SaveDBTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
             gzTrx.SaveDBGzTransaction(customerId: custId, gzTransactionType: TransferTypeEnum.Deposit, amount: 100, createdOnUTC: new DateTime(2015, 7, 15));
-            gzTrx.SaveDBTransferToGamingAmount(custId, 100, new DateTime(2015, 7, 31));
-            gzTrx.SaveDBInvWithdrawalAmount(custId, 50, new DateTime(2015, 8, 30));
-            gzTrx.SaveDBTransferToGamingAmount(custId, 50, new DateTime(2015, 8, 31));
-            gzTrx.SaveDBInvWithdrawalAmount(custId, 50, new DateTime(2015, 9, 1));
-            gzTrx.SaveDBTransferToGamingAmount(custId, 50, new DateTime(2015, 9, 15));
+            gzTrx.SaveDBInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
+            gzTrx.SaveDBTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
+            gzTrx.SaveDBInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
+            gzTrx.SaveDBTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
         }
 
         public static int CreateTestCustomer() {
@@ -118,7 +115,7 @@ namespace gzWeb.Tests.Models {
             Random rnd = new Random();
             int rndPlatformId = rnd.Next(1, int.MaxValue);
 
-            var newUser = new CustomerViewModel() {
+            var newUser = new CustomerDTO() {
                 UserName = "6month@allocation.com",
                 Email = "6month@allocation.com",
                 Password = "1q2w3e",

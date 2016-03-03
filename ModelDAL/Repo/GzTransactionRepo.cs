@@ -86,7 +86,7 @@ namespace gzWeb.Models {
                         } catch (Exception ex) {
                             var exception = ex.Message;
                             dbContextTransaction.Rollback();
-                            throw ex;
+                            throw ;
                         }
                     }
                 }
@@ -122,7 +122,7 @@ namespace gzWeb.Models {
                         } catch (Exception ex) {
                             var exception = ex.Message;
                             dbContextTransaction.Rollback();
-                            throw ex;
+                            throw ;
                         }
                     }
                 }
@@ -170,7 +170,7 @@ namespace gzWeb.Models {
                         } catch (Exception ex) {
                             var exception = ex.Message;
                             dbContextTransaction.Rollback();
-                            throw ex;
+                            throw ;
                         }
                     }
                 }
@@ -192,7 +192,7 @@ namespace gzWeb.Models {
             db.GzTransactions.AddOrUpdate(
                 // Assume CreatedOnUTC remains constant for same trx
                 // to support idempotent transactions
-                t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC, t.Amount },
+                t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC },
                     new GzTransaction {
                         CustomerId = customerId,
                         TypeId = db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
@@ -201,7 +201,7 @@ namespace gzWeb.Models {
                         CreatedOnUTC = createdOnUTC
                     }
                 );
-            db.SaveChangesAsync();
+            db.SaveChanges();
         }
 
     }

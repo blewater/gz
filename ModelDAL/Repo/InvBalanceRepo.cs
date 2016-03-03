@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations;
-using System.Threading.Tasks;
-using gzWeb.Utl;
+using gzWeb.Model.Util;
 
 namespace gzWeb.Models {
     public class InvBalanceRepo {

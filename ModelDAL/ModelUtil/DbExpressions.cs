@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace gzWeb.Utl {
+namespace gzWeb.Model.Util {
+
     static public class Expressions {
 
         /// <summary>
