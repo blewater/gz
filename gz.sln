@@ -43,6 +43,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "gzWeb.Template", "gzWeb.Tem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelDAL", "ModelDAL\ModelDAL.csproj", "{78FEA6AE-ABF3-457A-AA85-0904F710488B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustPortfoliosCalc", "CustPortfoliosCalc\CustPortfoliosCalc.csproj", "{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{78FEA6AE-ABF3-457A-AA85-0904F710488B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78FEA6AE-ABF3-457A-AA85-0904F710488B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78FEA6AE-ABF3-457A-AA85-0904F710488B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

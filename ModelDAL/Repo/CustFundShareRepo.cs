@@ -30,7 +30,7 @@ namespace gzWeb.Models {
                         // Key
                         CustomerId = customerId,
                             FundId = fundShares.Value.FundId,
-                            YearMonth = Expressions.GetStrYearMonth(year, month),
+                            YearMonth = DbExpressions.GetStrYearMonth(year, month),
 
                         // Updated Monthly balance
                         SharesNum = fundShares.Value.SharesNum,
@@ -119,7 +119,7 @@ namespace gzWeb.Models {
 
             // Skip this month's but get previous month's portfolio
             DateTime prevYearMonth = new DateTime(year, month, 1).AddMonths(-1);
-            string YearMonthStr = Expressions.GetStrYearMonth(year, month);
+            string YearMonthStr = DbExpressions.GetStrYearMonth(year, month);
             string lastMonthPort = GetCustPortfYearMonth(customerId, YearMonthStr, db);
             if (lastMonthPort == null) {
 
@@ -132,7 +132,7 @@ namespace gzWeb.Models {
                     && b.Id ==
                         (db.InvBalances
                         .Where(p => p.CustomerId == customerId 
-                            && string.Compare(p.YearMonth, Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month)) <=0)
+                            && string.Compare(p.YearMonth, DbExpressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month)) <=0)
                         .Select(p => p.Id)
                         .Max())
                 )
@@ -158,7 +158,7 @@ namespace gzWeb.Models {
         private Dictionary<int, PortfolioFundDTO> GetBoughtShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db) {
             Dictionary<int, PortfolioFundDTO> portfolioFundValues;
 
-            string lastMonthPort = GetCustPortfYearMonth(customerId, Expressions.GetStrYearMonth(year, month), db);
+            string lastMonthPort = GetCustPortfYearMonth(customerId, DbExpressions.GetStrYearMonth(year, month), db);
 
             System.Diagnostics.Trace.Assert(lastMonthPort != null, $"No portfolio has been set for customer Id: {customerId}");
 
@@ -189,7 +189,7 @@ namespace gzWeb.Models {
         /// <returns></returns>
         private Dictionary<int, PortfolioFundDTO> GetCalcPortfShares(ApplicationDbContext db, int customerId, decimal cashToInvest, int year, int month, string lastMonthPort, decimal prevInvBal = 0) {
 
-            var prevYearMonStr = Expressions.GetPrevYearMonth(year, month);
+            var prevYearMonStr = DbExpressions.GetPrevYearMonth(year, month);
             decimal cashToGetBySellingShares = 0;
 
             // Negative cash or amount to sell becomes positive amount to invest by subtracting it from the previous balance
@@ -246,7 +246,7 @@ namespace gzWeb.Models {
 
                 var thisMonthsSharesVal = cashPerFund + existingFundSharesVal;
 
-                var tradeDayDateTime = Expressions.GetDtYearMonthDay(lastTradeDay);
+                var tradeDayDateTime = DbExpressions.GetDtYearMonthDay(lastTradeDay);
 
                 SaveDtoPortFundShares(pfund.Value, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
             }

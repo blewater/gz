@@ -26,7 +26,7 @@ namespace gzWeb.Models {
             }
             DateTime monthsPortfolio = new DateTime(portfYear, portfMonth, DateTime.UtcNow.Day);
 
-            var monthDifffromNow = Expressions.MonthDiff(DateTime.UtcNow, monthsPortfolio);
+            var monthDifffromNow = DbExpressions.MonthDiff(DateTime.UtcNow, monthsPortfolio);
 
             if (monthDifffromNow != 0) {
 
@@ -68,7 +68,7 @@ namespace gzWeb.Models {
                             new CustPortfolio {
                                 CustomerId = customerId,
                                 PortfolioId = db.Portfolios.Where(p => p.RiskTolerance == riskType).Select(p => p.Id).FirstOrDefault(),
-                                YearMonth = Expressions.GetStrYearMonth(portfYear, portfMonth),
+                                YearMonth = DbExpressions.GetStrYearMonth(portfYear, portfMonth),
                                 UpdatedOnUTC = UpdatedOnUTC,
                                 Weight = weight
                             }
