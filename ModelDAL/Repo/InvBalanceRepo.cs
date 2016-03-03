@@ -32,7 +32,7 @@ namespace gzWeb.Models {
                 var prevMonSharesPricedNow = totSharesValue - newShareVal;
 
                 // Step 2: Get the previous month balance
-                var prevYearMonthStr = Expressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
+                var prevYearMonthStr = DbExpressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
                 var prevMonthBalAmount = db.InvBalances
                     .Where(b => b.CustomerId == custId &&
                     string.Compare(b.YearMonth, prevYearMonthStr) <= 0)
@@ -40,8 +40,8 @@ namespace gzWeb.Models {
                     .Select(b => b.Balance)
                     .FirstOrDefault();
 
-                invGainLoss = Expressions.RoundCustomerBalanceAmount(prevMonSharesPricedNow - prevMonthBalAmount);
-                monthlyBalance = Expressions.RoundCustomerBalanceAmount(totSharesValue);
+                invGainLoss = DbExpressions.RoundCustomerBalanceAmount(prevMonSharesPricedNow - prevMonthBalAmount);
+                monthlyBalance = DbExpressions.RoundCustomerBalanceAmount(totSharesValue);
 
                 return portfolioFundsValuesThisMonth;
             }
@@ -69,7 +69,7 @@ namespace gzWeb.Models {
                         db.InvBalances.AddOrUpdate(
                             i => new { i.CustomerId, i.YearMonth },
                             new InvBalance {
-                                YearMonth = Expressions.GetStrYearMonth(year, month),
+                                YearMonth = DbExpressions.GetStrYearMonth(year, month),
                                 CustomerId = custId,
                                 Balance = monthlyBalance,
                                 InvGainLoss = invGainLoss,

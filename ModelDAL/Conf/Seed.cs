@@ -23,7 +23,7 @@ namespace gzWeb.Models {
             string retVal = null;
 
             //http://stackoverflow.com/questions/815586/entity-framework-using-transactions-or-savechangesfalse-and-acceptallchanges
-            using (var sqlLogFile = new StreamWriter("d:\\temp\\sqlLogFile.txt")) {
+            using (var sqlLogFile = new StreamWriter("sqlLogFile.log")) {
                 using (ApplicationDbContext context = new ApplicationDbContext()) {
                     context.Database.Log = sqlLogFile.Write;
                     //using (var dbContextTransaction = context.Database.BeginTransaction()) {
@@ -486,14 +486,15 @@ namespace gzWeb.Models {
 
             var trxRepo = new GzTransactionRepo();
 
+            // Use new API
             trxRepo.SaveDBGzTransaction(custId, TransferTypeEnum.Deposit, 10000, new DateTime(2015, 3, 4, 7, 23, 42));
             trxRepo.SaveDBGzTransaction(custId, TransferTypeEnum.Deposit, 90000, new DateTime(2015, 3, 18, 18, 22, 13));
             trxRepo.SaveDBPlayingLoss(custId, 9853, 50, new DateTime(2015, 3, 31, 23, 46, 01));
 
-            // Comment out April it's inserting on recurring runs instead of updating
-            // trxRepo.SaveDBTransferToGamingAmount(custId, 300, new DateTime(2015, 4, 15, 11, 26, 02, 52));
-            // trxRepo.SaveDBPlayingLoss(custId, 2013, 50, new DateTime(2015, 4, 29, 23, 56, 12, 42));
+            trxRepo.SaveDBTransferToGamingAmount(custId, 300, new DateTime(2015, 4, 15, 11, 26, 02, 52));
+            trxRepo.SaveDBPlayingLoss(custId, 2013, 50, new DateTime(2015, 4, 29, 23, 56, 12, 42));
 
+            // Old implementation before repo
             context.GzTransactions.AddOrUpdate(
                 t => new { t.CustomerId, t.CreatedOnUTC },
                 // May

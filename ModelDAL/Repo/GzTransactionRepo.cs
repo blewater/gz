@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
+using System.IO;
+using gzWeb.Model.Util;
 
 namespace gzWeb.Models {
 
@@ -73,23 +75,29 @@ namespace gzWeb.Models {
                 throw new Exception("Invalid amount to transfer to gaming account. Amount must be greater than 0: " + withdrawnAmount);
 
             } else {
+                //string datPath = "d:\\temp";
+                //using (var sqlLogFile = new StreamWriter(datPath + "\\sqlLogFile_SaveDBTransferToGamingAmount.log")) {
 
-                using (var db = new ApplicationDbContext()) {
-                    using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                    using (var db = new ApplicationDbContext()) {
 
-                        try {
+                        //db.Database.Log = sqlLogFile.Write;
 
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, db);
-                            SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
+                        using (var dbContextTransaction = db.Database.BeginTransaction()) {
 
-                            dbContextTransaction.Commit();
-                        } catch (Exception ex) {
-                            var exception = ex.Message;
-                            dbContextTransaction.Rollback();
-                            throw ;
+                            try {
+
+                                SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, db);
+                                SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
+
+                                dbContextTransaction.Commit();
+                            } catch (Exception ex) {
+                                var exception = ex.Message;
+                                dbContextTransaction.Rollback();
+                                throw;
+                            }
                         }
                     }
-                }
+                //}
             }
         }
 
@@ -164,7 +172,7 @@ namespace gzWeb.Models {
                         try {
 
                             SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, db);
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db, (float) CREDIT_LOSS_PCNT);
 
                             dbContextTransaction.Commit();
                         } catch (Exception ex) {
@@ -187,7 +195,7 @@ namespace gzWeb.Models {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, ApplicationDbContext db) {
+        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, ApplicationDbContext db, float? creditPcntApplied = null) {
             //Not thread safe but ok...within a single request context
             db.GzTransactions.AddOrUpdate(
                 // Assume CreatedOnUTC remains constant for same trx
@@ -198,7 +206,10 @@ namespace gzWeb.Models {
                         TypeId = db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
                         YearMonthCtd = createdOnUTC.Year.ToString("0000") + createdOnUTC.Month.ToString("00"),
                         Amount = amount,
-                        CreatedOnUTC = createdOnUTC
+                        // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
+                        CreditPcntApplied = creditPcntApplied,
+                        // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
+                        CreatedOnUTC = DbExpressions.Truncate(createdOnUTC, TimeSpan.FromSeconds(1))
                     }
                 );
             db.SaveChanges();

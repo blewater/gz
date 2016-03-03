@@ -6,7 +6,22 @@ using System.Web;
 
 namespace gzWeb.Model.Util {
 
-    static public class Expressions {
+    static public class DbExpressions {
+
+        /// <summary>
+        /// How to truncate milliseconds off of a .NET DateTime
+        /// There's a bug in AddorUpdate method when a datetime key is used which has milli accuracy: 
+        /// it always inserts because it won't add +1 on millis to find the record in SQL Server
+        /// As of Entity framework 6.1.3
+        /// http://stackoverflow.com/questions/1004698/how-to-truncate-milliseconds-off-of-a-net-datetime
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <param name="timeSpan"></param>
+        /// <returns></returns>
+        public static DateTime Truncate(this DateTime dateTime, TimeSpan timeSpan) {
+            if (timeSpan == TimeSpan.Zero) return dateTime; // Or could throw an ArgumentException
+            return dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
+        }
 
         /// <summary>
         /// date1 > date2 giving a positive value and date2 > date1 a negative value
@@ -54,7 +69,7 @@ namespace gzWeb.Model.Util {
         public static string GetPrevYearMonth(int year, int month) {
 
             var prevMonthDt = new DateTime(year, month, 1).AddMonths(-1);
-            return Expressions.GetStrYearMonth(prevMonthDt.Year, prevMonthDt.Month);
+            return DbExpressions.GetStrYearMonth(prevMonthDt.Year, prevMonthDt.Month);
 
         }
 
