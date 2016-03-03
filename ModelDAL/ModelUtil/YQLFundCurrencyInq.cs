@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 /// Alternative for historical data
 /// https://query.yahooapis.com/v1/public/yql?q=select%20Symbol%2C%20Date%2C%20Close%20from%20yahoo.finance.historicaldata%20where%20symbol%20IN%20(%22XLE%22%2C%22VTI%22)%20and%20startDay%20%3D%201%20and%20startDate%20%3D%20%222015-12-01%22%20and%20endDate%20%3D%20%222016-02-03%22&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys
-namespace gzWeb.Helpers {
+namespace gzWeb.Models.Util {
 
     /// <summary>
     /// Replacing Quote for just the basics

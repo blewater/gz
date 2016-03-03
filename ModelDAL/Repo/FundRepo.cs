@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using gzWeb.Helpers;
+using gzWeb.Models.Util;
 using System.Data.Entity.Migrations;
 
 namespace gzWeb.Models {

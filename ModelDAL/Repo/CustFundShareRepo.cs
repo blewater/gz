@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using gzWeb.Utl;
+using gzWeb.Model.Util;
 
 namespace gzWeb.Models {
     public class CustFundShareRepo {
@@ -87,12 +87,12 @@ namespace gzWeb.Models {
             Dictionary<int, PortfolioFundDTO> portfolioFundValues = null;
 
             using (var db = new ApplicationDbContext()) {
-                if (netInvAmount > 0) {
+                if (netInvAmount >= 0) {
 
                     portfolioFundValues = GetBoughtShares(customerId, netInvAmount, year, month, db);
 
                     // Note this case for repricing (0 cash) or liquidating shares to cash
-                } else if (netInvAmount <= 0) {
+                } else if (netInvAmount < 0) {
 
                     GetSoldShares(customerId, netInvAmount, year, month, db);
 

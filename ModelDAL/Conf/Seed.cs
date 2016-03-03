@@ -308,8 +308,7 @@ namespace gzWeb.Models {
                 });
 
             
-            var task = new CustPortfolioRepo().SetCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
-            task.Wait();
+            new CustPortfolioRepo().SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
         }
 
         private static void CreateUpdPortFunds(ApplicationDbContext context) {
@@ -484,61 +483,19 @@ namespace gzWeb.Models {
         }
 
         private static void CreateUpdGzTransaction(ApplicationDbContext context, int custId) {
+
+            var trxRepo = new GzTransactionRepo();
+
+            trxRepo.SaveDBGzTransaction(custId, TransferTypeEnum.Deposit, 10000, new DateTime(2015, 3, 4, 7, 23, 42));
+            trxRepo.SaveDBGzTransaction(custId, TransferTypeEnum.Deposit, 90000, new DateTime(2015, 3, 18, 18, 22, 13));
+            trxRepo.SaveDBPlayingLoss(custId, 9853, 50, new DateTime(2015, 3, 31, 23, 46, 01));
+
+            // Comment out April it's inserting on recurring runs instead of updating
+            // trxRepo.SaveDBTransferToGamingAmount(custId, 300, new DateTime(2015, 4, 15, 11, 26, 02, 52));
+            // trxRepo.SaveDBPlayingLoss(custId, 2013, 50, new DateTime(2015, 4, 29, 23, 56, 12, 42));
+
             context.GzTransactions.AddOrUpdate(
-                t => new { t.CustomerId, t.CreatedOnUTC, t.TypeId },
-                //March
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201503",
-                    CreatedOnUTC = new DateTime(2015, 3, 4, 7, 23, 42),
-                    Amount = new decimal(10000),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201503",
-                    CreatedOnUTC = new DateTime(2015, 3, 18, 18, 22, 13),
-                    Amount = new decimal(9000),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.Deposit).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201503",
-                    CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 01),
-                    Amount = new decimal(9853),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201503",
-                    CreatedOnUTC = new DateTime(2015, 3, 31, 23, 46, 02, 853),
-                    Amount = new decimal(4926.5),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // April
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201504",
-                    CreatedOnUTC = new DateTime(2015, 4, 13, 19, 27, 03, 704),
-                    Amount = new decimal(300),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.TransferToGaming).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201504",
-                    CreatedOnUTC = new DateTime(2015, 4, 30, 23, 47, 53, 934),
-                    Amount = new decimal(2013.48),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201504",
-                    CreatedOnUTC = new DateTime(2015, 4, 30, 23, 47, 54, 343),
-                    Amount = new decimal(1006.74),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == TransferTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
+                t => new { t.CustomerId, t.CreatedOnUTC },
                 // May
                 new GzTransaction {
                     CustomerId = custId,

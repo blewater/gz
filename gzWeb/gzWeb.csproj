@@ -48,8 +48,12 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AutoMapper, Version=4.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.4.2.0\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=4.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -132,9 +136,6 @@
     <Reference Include="Microsoft.AspNet.Identity.Owin">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
@@ -169,7 +170,6 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -228,37 +228,11 @@
       <DependentUpon>201602291353494_CustFundSoldShare.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CurrencyListX.cs" />
-    <Compile Include="Models\CurrencyRate.cs" />
-    <Compile Include="Models\CurrencyRateRepo.cs" />
-    <Compile Include="Models\CustFundSoldShare.cs" />
-    <Compile Include="Models\InvBalanceRepo.cs" />
-    <Compile Include="Models\CustFundShareRepo.cs" />
-    <Compile Include="Models\CustPortfolio.cs" />
-    <Compile Include="Models\CustPortfolioRepo.cs" />
-    <Compile Include="Models\EFExtensions.cs" />
-    <Compile Include="Models\Fund.cs" />
-    <Compile Include="Models\FundPrice.cs" />
-    <Compile Include="Models\FundRepo.cs" />
-    <Compile Include="Models\CustFundShare.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\InvBalance.cs" />
-    <Compile Include="Models\CustomerViewModels.cs" />
-    <Compile Include="Models\PortfolioRepository.cs" />
-    <Compile Include="Models\PortFund.cs" />
-    <Compile Include="Models\Seed.cs" />
-    <Compile Include="Models\GzTransactionRepo.cs" />
-    <Compile Include="Models\GzTransactionType.cs" />
-    <Compile Include="Models\GzTransaction.cs" />
-    <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Portfolio.cs" />
-    <Compile Include="Models\CustomerRepo.cs" />
+    <Compile Include="ViewModels\AccountViewModels.cs" />
+    <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utl\DebugTextWriter.cs" />
-    <Compile Include="Utl\Expressions.cs" />
-    <Compile Include="Utl\YQLFundCurrencyInq.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitattributes" />
@@ -1310,6 +1284,12 @@
     <EmbeddedResource Include="Migrations\201602291353494_CustFundSoldShare.resx">
       <DependentUpon>201602291353494_CustFundSoldShare.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ModelDAL\ModelDAL.csproj">
+      <Project>{78fea6ae-abf3-457a-aa85-0904f710488b}</Project>
+      <Name>ModelDAL</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

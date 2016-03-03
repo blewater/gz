@@ -28,9 +28,9 @@ namespace gzWeb.Controllers
 
             var bal = customer.InvBalance;
 
-            var customerVM = new CustomerViewModel();
-            Mapper.Map<ApplicationUser, CustomerViewModel>(customer, customerVM);
-            return View(customerVM);
+            var customerDto = new CustomerDTO();
+            Mapper.Map<ApplicationUser, CustomerDTO>(customer, customerDto);
+            return View(customerDto);
         }
 
         // GET: Investments ajax

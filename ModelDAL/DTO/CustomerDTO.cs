@@ -8,7 +8,7 @@ namespace gzWeb.Models {
     /// <summary>
     /// Customer Values buffer for values communication between controller views
     /// </summary>
-    public class CustomerViewModel {
+    public class CustomerDTO {
 
         public string UserName { get; set; }
         public string Email { get; set; }
