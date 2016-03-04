@@ -1,0 +1,46 @@
+﻿@charset "utf-8";
+
+body{
+	margin:0;
+	padding:0;
+	font-family:Helvetica;
+	background:#F2F2F2;
+}
+
+a { text-decoration:none; }
+
+.no-padded { padding: 0; }
+.padded-xs { padding: 5px; }
+.padded-sm { padding: 10px; }
+.padded-md { padding: 20px; }
+.padded-lg { padding: 50px; }
+
+.lefted { text-align: left; }
+.centered { text-align: center; }
+.righted { text-align: right; }
+.strike {
+    text-decoration: line-through;
+    -ms-opacity: 0.3;
+    opacity: 0.3;
+}
+.fade-out {
+    -ms-opacity: 0.5;
+    opacity: 0.5;
+}
+.full-width { width: 100%; }
+.auto-width { width: auto; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.text-shadow-dark {
+    -ms-text-shadow: 1px 1px 1px #000000, 2px 2px 4px #999;
+    -ms-text-shadow: 1px 1px 1px rgba(0, 0, 0, .8), 2px 2px 4px #999;
+    text-shadow: 1px 1px 1px #000000, 2px 2px 4px #999;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .8), 2px 2px 4px #999;
+}
+
+.text-shadow-light {
+    -ms-text-shadow: 1px 1px 1px #ffffff, 2px 2px 4px #999;
+    -ms-text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
+    text-shadow: 1px 1px 1px #ffffff, 2px 2px 4px #999;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
+}
