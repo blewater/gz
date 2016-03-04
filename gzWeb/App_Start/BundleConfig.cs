@@ -28,6 +28,7 @@ namespace gzWeb
                 //"~/Content/Site.css"
                 "~/Content/Styles/_app/general.css"
                 , "~/Content/Styles/_app/header.css"
+                , "~/Content/Styles/_app/footer.css"
             ));
             #endregion
             
@@ -52,6 +53,7 @@ namespace gzWeb
             ));
 
             bundles.Add(new ScriptBundle("~/js/app").Include(
+                "~/Scripts/_app/Views/Shared/header.js"
             ));
             #endregion
         }
