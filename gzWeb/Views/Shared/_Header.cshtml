@@ -1,7 +1,7 @@
-﻿@model gzWeb.Models.UserInfoViewModel
+﻿@model gzWeb.ViewModels.UserInfoViewModel
 
 <header>
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="centered hidden">
                 <span class="visible-lg">LG</span>
@@ -9,7 +9,7 @@
                 <span class="visible-sm">SM</span>
                 <span class="visible-xs">XS</span>
             </div>
-            <div class="row">
+            <div>
                 <div class="navbar-header">
                     <a id="logo" class="navbar-brand" href="/">
                         <img class="pull-left" src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
@@ -23,29 +23,59 @@
                     </button>
                 </div>
 
-                <div class="collapse navbar-collapse" id="header-collapse-section">
-                    <div id="member">
-                        <div id="mmb"><img src="@Url.Content("~/Content/images/nikos.png")" alt="User Image" /></div>
-                        <div id="m-name">Nikos</div>
-                    </div>
-                    @*<div id="games">
-                        <a href="#">
-                            <img src="img/games.svg" />
+                <div class="collapse navbar-collapse " id="header-collapse-section">
+                    <span class="user-info pull-left">
+                        <span class="user-avatar">
+                            @if (String.IsNullOrEmpty(Model.Img))
+                            {
+                                <span class="user-initials img-circle">@Model.Initials</span>
+                            }
+                            else
+                            {
+                                <img class="user-img img-circle" src="@Model.Img" alt="User Image" />
+                            }
+                        </span>
+                        <span class="user-name">@Model.Name</span>
+                    </span>
+                    <div class="nav-btns pull-right">
+                        <a class="nav-btn-login">
+                            <img src="@Url.Content("~/Content/Images/login.png")" />
+                            <p>LOGIN</p>
+                        </a>
+                        <a class="nav-btn-casino">
+                            <img src="@Url.Content("~/Content/Images/diagram.svg")" />
+                            <p>TO INVESTMENTS</p>
+                        </a>
+                        <a class="nav-btn-investments">
+                            <img src="@Url.Content("~/Content/Images/games.svg")" />
                             <p>BACK TO GAMES</p>
                         </a>
                     </div>
                     <div class="links">
                         <nav class="cl-effect">
-                            <ul>
-                                <li><a href="index.html">SUMMARY</a></li>
-                                <li><a href="#" class="focus">PORTFOLIO</a></li>
-                                <li><a href="performance.html">PERFORMANCE</a></li>
-                                <li><a href="#">ACTIVITY</a></li>
+                            <ul class="links-guest">
+                                <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+                                <li><a href="@Url.Action("Transparency", "Home")">Transparency</a></li>
+                                <li><a href="@Url.Action("About", "Home")">About</a></li>
+                            </ul>
+                            <ul class="links-casino">
+                                <li><a href="@Url.Action("Index", "Casino")">Casino</a></li>
+                                <li><a href="@Url.Action("Page1", "Casino")">Casino 1</a></li>
+                                <li><a href="@Url.Action("Page2", "Casino")">Casino 2</a></li>
+                                <li><a href="@Url.Action("Page3", "Casino")">Casino 3</a></li>
+                            </ul>
+                            <ul class="links-investments">
+                                <li><a href="@Url.Action("Index", "Investments")">SUMMARY</a></li>
+                                <li><a href="@Url.Action("Portfolio", "Investments")">PORTFOLIO</a></li>
+                                <li><a href="@Url.Action("Performance", "Investments")">PERFORMANCE</a></li>
+                                <li><a href="@Url.Action("Activity", "Investments")">ACTIVITY</a></li>
                             </ul>
                         </nav>
-                    </div>*@
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 </header>
+
+

@@ -46,17 +46,25 @@
     </header>*@
     @{Html.RenderAction("Header", "Home");}
 
-    <div id="body">
+    @*<div id="body">
         <div class="content-wrapper">
             <hr />
         </div>
         @RenderBody()
+    </div>*@
+    <div class="clearfix">
+        <div class="container">
+            @RenderBody()
+        </div>
     </div>
-    <footer>
-        <div class="content-wrapper">
+    
+    @*<footer>
+        <div class="container">
             <p class="text-right">&copy; @DateTime.Now.Year - Greenzorro</p>
         </div>
-    </footer>
+    </footer>*@
+    @Html.Partial("_Footer")
+
     
     @Scripts.Render("~/js/jquery")
     @*@Scripts.Render("~/js/plugins")*@

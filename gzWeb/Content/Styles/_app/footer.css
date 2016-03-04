@@ -1,0 +1,9 @@
+﻿@charset "utf-8";
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+	color:#27A95C;
+    color: #000;
+}

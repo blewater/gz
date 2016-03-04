@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using gzWeb.Models;
+using gzWeb.ViewModels;
 
-namespace gzWeb.Controllers {
+namespace gzWeb.Controllers
+{
     public class HomeController : Controller
     {
         #region Actions
@@ -14,44 +12,29 @@ namespace gzWeb.Controllers {
         {
             return View();
         }
-
+        public ActionResult Transparency()
+        {
+            return View();
+        }
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
             return View();
         }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
-        #region Casino
-
-        #endregion
-
-        #region Investment
-
-        #endregion
 
         #region Shared
         public PartialViewResult Header()
         {
+            var showFullName = false;
             var first = "Manolis";
             var last = "Marinos";
-            var username = "mmarinos";
+            var username = "Nikos";
             var avatarsPath = "~/Content/Images";
             var imgName = "nikos.png";
-            var text = String.IsNullOrEmpty(first) || String.IsNullOrEmpty(last)
-                       ? String.Format("{0}{2}{1}", first, last, String.IsNullOrEmpty(first) && String.IsNullOrEmpty(last))
-                       : username;
 
             var model = new UserInfoViewModel()
             {
-                Text = text,
+                Name = showFullName ? String.Format("{0}{2}{1}", first, last, String.IsNullOrEmpty(first) || String.IsNullOrEmpty(last) ? String.Empty : " ") : username,
+                Initials = showFullName ? String.Format("{0}{1}", first.Substring(0, 1).ToUpper(), last.Substring(0, 1).ToUpper()) : username.Substring(0, 1).ToUpper(),
                 Img = String.IsNullOrEmpty(imgName) ? String.Empty : Url.Content(Path.Combine(avatarsPath, imgName)),
                 Bg = String.IsNullOrEmpty(imgName) ? GetNewBgColor() : String.Empty
             };
@@ -63,8 +46,8 @@ namespace gzWeb.Controllers {
         #region Methods
         private static string GetNewBgColor()
         {
-            const int colorMin = 110;
-            const int colorMax = 240;
+            const int colorMin = 40;
+            const int colorMax = 180;
 
             const int minTotalDiff = 80;    // parameter used in new color acceptance criteria
             const int okSingleDiff = 30;    // id.
