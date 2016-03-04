@@ -1,18 +1,29 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="@Url.Content("~/favicon.ico")" rel="shortcut icon" type="image/x-icon" />
+    <link href="@Url.Content("~/apple-touch-icon.png")" rel="apple-touch-icon" />
+    <link href="@Url.Content("~/apple-touch-icon.png")" rel="apple-touch-icon-precomposed" />
+
     <title>@ViewBag.Title - Greenzorro Entertainment</title>
-    @Styles.Render("~/Content/css")
+    
+    @Styles.Render("~/css/bootstrap")
+    @Styles.Render("~/css/fa")
+    @*@Styles.Render("~/css/app_old")*@
+    @Styles.Render("~/css/app")
+
+    @*@Styles.Render("~/Content/css")*@
     @*<link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.common.core.min.css")" rel="stylesheet" type="text/css" />*@
-    <link href="~/Content/kendo/2015.3.1111/kendo.common-bootstrap.min.css" rel="stylesheet" />
+    @*<link href="~/Content/kendo/2015.3.1111/kendo.common-bootstrap.min.css" rel="stylesheet" />*@
     @*kendo.common-bootstrap.min.css*@
-    <link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
-    @Scripts.Render("~/bundles/modernizr")
+    @*<link href="@Url.Content("~/Content/kendo/2015.3.1111/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
+    @Scripts.Render("~/bundles/modernizr")*@
 </head>
 <body>
-    <header>
+    @*<header>
         <div class="content-wrapper">
             <div class="float-left">
                 <ul class="menu">
@@ -32,8 +43,9 @@
                 </nav>
             </div>
         </div>
+    </header>*@
+    @{Html.RenderAction("Header", "Home");}
 
-    </header>
     <div id="body">
         <div class="content-wrapper">
             <hr />
@@ -45,11 +57,15 @@
             <p class="text-right">&copy; @DateTime.Now.Year - Greenzorro</p>
         </div>
     </footer>
-
-    @Scripts.Render("~/bundles/jquery")
+    
+    @Scripts.Render("~/js/jquery")
+    @*@Scripts.Render("~/js/plugins")*@
+    @Scripts.Render("~/js/bootstrap")
+    @Scripts.Render("~/js/app")
+    @*@Scripts.Render("~/bundles/jquery")
     <script src="~/Scripts/kendo/2015.3.1111/kendo.ui.core.min.js"></script>
     <script src="~/Scripts/App/Views/Shared/layout.js"></script>
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/bootstrap")*@
     @RenderSection("scripts", required: false)
 </body>
 </html>
