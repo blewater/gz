@@ -160,11 +160,11 @@ namespace gzWeb.Models {
 
             string lastMonthPort = GetCustPortfYearMonth(customerId, DbExpressions.GetStrYearMonth(year, month), db);
 
-            System.Diagnostics.Trace.Assert(lastMonthPort != null, $"No portfolio has been set for customer Id: {customerId}");
+            System.Diagnostics.Trace.Assert(lastMonthPort != null, String.Format("No portfolio has been set for customer Id: {0}", customerId));
 
             if (lastMonthPort == null) {
 
-                throw new Exception($"No portfolio has been set for customer Id: {customerId}");
+                throw new Exception(String.Format("No portfolio has been set for customer Id: {0}", customerId));
             }
 
             portfolioFundValues = GetCalcPortfShares(db, customerId, cashToInvest, year, month, lastMonthPort);
