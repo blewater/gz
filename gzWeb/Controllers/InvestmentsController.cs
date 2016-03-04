@@ -15,6 +15,24 @@ namespace gzWeb.Controllers
 {
     public class InvestmentsController : Controller
     {
+        public ActionResult Performance()
+        {
+            return View();
+        }
+
+        public ActionResult Portfolio()
+        {
+            return View();
+        }
+
+        public ActionResult Activity()
+        {
+            return View();
+        }
+        
+
+
+
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Investments
