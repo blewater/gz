@@ -45,6 +45,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelDAL", "ModelDAL\ModelD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustPortfoliosCalc", "CustPortfoliosCalc\CustPortfoliosCalc.csproj", "{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustPortfoliosCalcLib", "CustPortfoliosLib\CustPortfoliosCalcLib.csproj", "{BA006926-CA0A-4F9C-B4F6-675C28621359}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustPortfoliosCalcTest", "CustPortfoliosCalcTest\CustPortfoliosCalcTest.csproj", "{3CA71932-D434-4E15-9397-92D65E75FC36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,14 @@ Global
 		{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBFFA13F-1F84-4D54-B758-2D19C7AA1ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA006926-CA0A-4F9C-B4F6-675C28621359}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA006926-CA0A-4F9C-B4F6-675C28621359}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA006926-CA0A-4F9C-B4F6-675C28621359}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA006926-CA0A-4F9C-B4F6-675C28621359}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CA71932-D434-4E15-9397-92D65E75FC36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CA71932-D434-4E15-9397-92D65E75FC36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CA71932-D434-4E15-9397-92D65E75FC36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CA71932-D434-4E15-9397-92D65E75FC36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
