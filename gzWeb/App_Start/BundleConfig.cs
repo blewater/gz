@@ -27,6 +27,7 @@ namespace gzWeb
             bundles.Add(new StyleBundle("~/css/app").Include(
                 //"~/Content/Site.css"
                 "~/Content/Styles/_app/general.css"
+                , "~/Content/Styles/_app/preloader.css"
                 , "~/Content/Styles/_app/header.css"
                 , "~/Content/Styles/_app/footer.css"
             ));
@@ -52,8 +53,58 @@ namespace gzWeb
                 , "~/Scripts/respond/respond.js"
             ));
 
+            bundles.Add(new ScriptBundle("~/js/plugins").Include(
+                "~/Scripts/moment/moment.min.js"
+                , "~/Scripts/spin/spin.min.js"
+            ));
+
+            bundles.Add(new ScriptBundle("~/js/angular").Include(
+                "~/Scripts/angular/angular.js"
+                , "~/Scripts/angular-route/angular-route.min.js"
+                , "~/Scripts/angular-resource/angular-resource.min.js"
+                , "~/Scripts/angular-animate/angular-animate.min.js"
+                , "~/Scripts/angular-sanitize/angular-sanitize.min.js"
+                , "~/Scripts/angular-cookies/angular-cookies.min.js"
+            ));
+
+            bundles.Add(new ScriptBundle("~/js/modules").Include(
+                "~/Scripts/angular-ui/ui-bootstrap.min.js"
+                , "~/Scripts/angular-ui/ui-bootstrap-tpls.min.js"
+                , "~/Scripts/angular-filter/angular-filter.min.js"
+                , "~/Scripts/angular-spinner/angular-spinner.min.js"
+                , "~/Scripts/angular-moment/angular-moment.min.js"
+                , "~/Scripts/angular-match-media/match-media.js"
+                , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
+
+                //, "~/Scripts/_modules/customDirectives.js"
+                //, "~/Scripts/_modules/customFilters.js"
+                //, "~/Scripts/_modules/styleInjector.js"
+            ));
+
             bundles.Add(new ScriptBundle("~/js/app").Include(
-                "~/Scripts/_app/Views/Shared/header.js"
+                "~/Scripts/_app/app.js"
+            ).Include(
+                "~/Scripts/_app/configuration/config.js"
+                , "~/Scripts/_app/constants/constants.js"
+
+                , "~/Scripts/_app/controllers/common/headerCtrl.js"
+                , "~/Scripts/_app/controllers/common/footerCtrl.js"
+                , "~/Scripts/_app/controllers/auth/loginCtrl.js"
+                , "~/Scripts/_app/controllers/auth/registerCtrl.js"
+                , "~/Scripts/_app/controllers/guest/homeCtrl.js"
+                , "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
+                , "~/Scripts/_app/controllers/guest/aboutCtrl.js"
+                , "~/Scripts/_app/controllers/investments/summaryCtrl.js"
+                , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
+                , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
+                , "~/Scripts/_app/controllers/investments/activityCtrl.js"
+                , "~/Scripts/_app/controllers/casino/casinoIndexCtrl.js"
+                , "~/Scripts/_app/controllers/casino/casinoPage2Ctrl.js"
+                , "~/Scripts/_app/controllers/casino/casinoPage3Ctrl.js"
+                , "~/Scripts/_app/controllers/casino/casinoPage4Ctrl.js"
+
+                , "~/Scripts/_app/services/authInterceptor.js"
+                , "~/Scripts/_app/services/routingService.js"
             ));
             #endregion
         }

@@ -1,5 +1,11 @@
 ﻿@charset "utf-8";
 
+/**************** UI-Bootstrap ********************/
+.nav, .pagination, .carousel, .panel-title a, a:hover {
+    cursor: pointer;
+}
+
+
 body{
 	margin:0;
 	padding:0;
@@ -43,4 +49,16 @@ a { text-decoration:none; }
     -ms-text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
     text-shadow: 1px 1px 1px #ffffff, 2px 2px 4px #999;
     text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
+}
+
+.loading {
+    position: fixed;
+    min-height: 100%;
+    width: 100%;
+    height: auto;
+    top: 0;
+    left: 0;
+    z-index: 1005;
+    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.6);
 }

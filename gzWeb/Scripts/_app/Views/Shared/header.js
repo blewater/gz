@@ -15,6 +15,6 @@
             $collapse.removeClass('guest-mode investments-mode');
             $collapse.addClass('casino-mode');
         });
-        $collapse.addClass('investments-mode');
+        $collapse.addClass('guest-mode');
     });
 })()
