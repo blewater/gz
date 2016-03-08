@@ -10,6 +10,11 @@ namespace gzWeb.Areas.Mvc.Controllers
 {
     public class InvestmentsController : Controller
     {
+        public ActionResult Summary()
+        {
+            return View();
+        }
+
         public ActionResult Performance()
         {
             return View();
@@ -32,7 +37,7 @@ namespace gzWeb.Areas.Mvc.Controllers
 
         // GET: Investments
         [Authorize]
-        public ActionResult Summary()
+        public ActionResult Index()
         {
             db.Database.Log = new DebugTextWriter().Write;
 

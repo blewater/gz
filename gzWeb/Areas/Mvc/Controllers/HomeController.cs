@@ -25,6 +25,7 @@ namespace gzWeb.Areas.Mvc.Controllers
 
             var model = new UserInfoViewModel()
             {
+                IsAuthenticated = true,//HttpContext.User != null && HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated,
                 Name = showFullName ? String.Format("{0}{2}{1}", first, last, String.IsNullOrEmpty(first) || String.IsNullOrEmpty(last) ? String.Empty : " ") : username,
                 Initials = showFullName ? String.Format("{0}{1}", first.Substring(0, 1).ToUpper(), last.Substring(0, 1).ToUpper()) : username.Substring(0, 1).ToUpper(),
                 Img = String.IsNullOrEmpty(imgName) ? String.Empty : Url.Content(Path.Combine(avatarsPath, imgName)),
