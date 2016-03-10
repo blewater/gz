@@ -14,21 +14,6 @@ namespace gzWeb.Models {
     public class GzTransactionRepo {
 
         /// <summary>
-        /// Greenzorro percentage fee %
-        /// </summary>
-        const decimal COMMISSION_PCNT = 1.5M;
-
-        /// <summary>
-        /// Fund fee %
-        /// </summary>
-        const decimal FUND_FEE_PCNT = 2.5M;
-
-        /// <summary>
-        /// Percentage to credit on loss
-        /// </summary>
-        const decimal CREDIT_LOSS_PCNT = 50M;
-
-        /// <summary>
         /// Create any type of transaction from those allowed.
         /// Used along with peer API methods for specialized transactions
         /// </summary>
@@ -146,8 +131,8 @@ namespace gzWeb.Models {
         /// <param name="db"></param>
         /// <returns></returns>
         private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC, ApplicationDbContext db) {
-            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * COMMISSION_PCNT / 100, createdOnUTC, db);
-            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * FUND_FEE_PCNT / 100, createdOnUTC, db);
+            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100, createdOnUTC, db);
+            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100, createdOnUTC, db);
         }
 
         /// <summary>
@@ -172,7 +157,7 @@ namespace gzWeb.Models {
                         try {
 
                             SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, db);
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db, (float) CREDIT_LOSS_PCNT);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db, db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
                             dbContextTransaction.Commit();
                         } catch (Exception ex) {
