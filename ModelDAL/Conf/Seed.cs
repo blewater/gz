@@ -103,11 +103,17 @@ namespace gzWeb.Models {
         /// <param name="context"></param>
         private static void CreateUpdConfiguationRow(ApplicationDbContext context) {
 
+            var dbConf = new GzConfiguration();
+
             context.GzConfigurations.AddOrUpdate(
                 c => c.Id,
                 new GzConfiguration {
                     // Essentially write out the defaults in a single row
-                    Id = 1
+                    Id = 1,
+                    COMMISSION_PCNT = dbConf.COMMISSION_PCNT,
+                    CREDIT_LOSS_PCNT = dbConf.CREDIT_LOSS_PCNT,
+                    FUND_FEE_PCNT = dbConf.FUND_FEE_PCNT,
+                    LOCK_IN_NUM_DAYS = dbConf.LOCK_IN_NUM_DAYS
                 }
             );
         }
