@@ -4,9 +4,12 @@ using System.Linq;
 using System.Web;
 using gzWeb.Models.Util;
 using System.Data.Entity.Migrations;
+using gzWeb.Repo.Interfaces;
+using gzWeb.Models;
 
-namespace gzWeb.Models {
-    public class CurrencyRateRepo {
+namespace gzWeb.Repo {
+    public class CurrencyRateRepo : ICurrencyRateRepo
+    {
 
         public List<CurrencyQuote> SaveDBDailyCurrenciesRates() {
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using gzWeb.Areas.Mvc.Controllers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using gzWeb;
-using gzWeb.Controllers;
 
 namespace gzWeb.Tests.Controllers {
     [TestClass]
