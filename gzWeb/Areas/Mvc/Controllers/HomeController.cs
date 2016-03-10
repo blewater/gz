@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Web;
 using System.Web.Mvc;
 using gzWeb.Areas.Mvc.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace gzWeb.Areas.Mvc.Controllers
 {
@@ -16,6 +19,9 @@ namespace gzWeb.Areas.Mvc.Controllers
         #region Shared
         public PartialViewResult Header()
         {
+            //var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            //var customer = manager.FindById(User.Identity.GetUserId<int>());
+            
             var showFullName = false;
             var first = "Manolis";
             var last = "Marinos";

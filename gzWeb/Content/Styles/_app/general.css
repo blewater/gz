@@ -51,7 +51,7 @@ a { text-decoration:none; }
     text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
 }
 
-.loading {
+/*.loading {
     position: fixed;
     min-height: 100%;
     width: 100%;
@@ -61,4 +61,66 @@ a { text-decoration:none; }
     z-index: 1005;
     background-color: transparent;
     background-color: rgba(255, 255, 255, 0.6);
+}*/
+
+
+.text-gz { color: #27A95C; }
+.text-grey { color: #646464; }
+.text-black { color: #000; }
+
+.bg-gz { color: #27A95C; }
+.bg-grey { color: #F2F2F2; }
+.bg-white { color: #fff; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* #region Conditional Styling */
+
+/**************** XS ********************/
+@media (max-width: 767px) {
 }
+
+/**************** SM ********************/
+@media (min-width: 768px) and (max-width: 991px) {
+}
+
+/**************** MD ********************/
+@media (min-width: 992px) and (max-width: 1199px) {
+}
+
+/**************** LG ********************/
+@media (min-width: 1200px) {
+}
+
+/**************** XS - SM ********************/
+@media (max-width: 991px) {
+}
+
+/**************** SM - MD ********************/
+@media (min-width: 768px) and (max-width: 1199px) {
+}
+
+/**************** MD - LG ********************/
+@media (min-width: 992px) {
+}
+
+/**************** XS - MD ********************/
+@media (max-width: 1199px) {
+}
+
+/**************** SM - LG ********************/
+@media (min-width: 768px) {
+}
+
+/* #endregion */
