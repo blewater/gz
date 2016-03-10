@@ -30,6 +30,10 @@ namespace gzWeb
                 , "~/Content/Styles/_app/preloader.css"
                 , "~/Content/Styles/_app/header.css"
                 , "~/Content/Styles/_app/footer.css"
+                , "~/Content/Styles/_app/guest.css"
+                , "~/Content/Styles/_app/auth.css"
+                , "~/Content/Styles/_app/investments.css"
+                , "~/Content/Styles/_app/games.css"
             ));
             #endregion
             
@@ -98,10 +102,10 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
                 , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
                 , "~/Scripts/_app/controllers/investments/activityCtrl.js"
-                , "~/Scripts/_app/controllers/casino/casinoIndexCtrl.js"
-                , "~/Scripts/_app/controllers/casino/casinoPage2Ctrl.js"
-                , "~/Scripts/_app/controllers/casino/casinoPage3Ctrl.js"
-                , "~/Scripts/_app/controllers/casino/casinoPage4Ctrl.js"
+                , "~/Scripts/_app/controllers/games/games1Ctrl.js"
+                , "~/Scripts/_app/controllers/games/games2Ctrl.js"
+                , "~/Scripts/_app/controllers/games/games3Ctrl.js"
+                , "~/Scripts/_app/controllers/games/games4Ctrl.js"
 
                 , "~/Scripts/_app/services/authInterceptor.js"
                 , "~/Scripts/_app/services/routingService.js"

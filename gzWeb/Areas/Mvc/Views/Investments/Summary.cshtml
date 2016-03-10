@@ -1,5 +1,155 @@
-﻿@{
+﻿@using System.Globalization
+@using gzWeb.Utilities
+@model gzWeb.Areas.Mvc.Models.SummaryViewModel
+@{
     Layout = "~/Areas/Mvc/Views/Shared/_InvestmentsLayout.cshtml";
 }
 
-<h1 class="text-center">Summary</h1>
+<div class="summary">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="text-center">
+                <div class="investments-balance-amount text-gz">
+                    <img src="@Url.Content("~/Content/Images/line.svg")" alt="Line" />
+                    @*<i class="fa fa-euro"></i>*@
+                    <span>@Model.InvestmentsBalance.ToMoneyString(Model.Currency)</span>
+                    <img src="@Url.Content("~/Content/Images/line.svg")" alt="Line" />
+                </div>
+                <div class="investments-balance-descr">
+                    Your investment balance
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-lg-6 col-lg-push-3">
+            <div class="summary-section investments-overview">
+                <div class="text-center">
+                    <img src="@Url.Content("~/Content/Images/invest.svg")" alt="Diagram" class="icon" />
+                </div>
+                <div class="overview-box">
+                    <div class="half">
+                        <div class="row">
+                            <div class="col-xs-6 text-left">You have invested</div>
+                            <div class="col-xs-6 text-right">@Model.TotalInvestments.ToMoneyString(Model.Currency)</div>
+                        </div>
+                    </div>
+                    <div class="half">
+                        <div class="row">
+                            <div class="col-xs-6 text-left">You have gained</div>
+                            <div class="col-xs-6 text-right">@Model.TotalInvestmentsReturns.ToMoneyString(Model.Currency)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="vintages-box">
+                    <div class="vintages-box-table">
+                        <div class="vintages-box-table-head">
+                            <div class="row">
+                                <div class="col-xs-4 text-left">Vintage</div>
+                                <div class="col-xs-4 text-right">Invested</div>
+                                <div class="col-xs-4 text-right">Return</div>
+                            </div>
+                        </div>
+                        <div class="vintages-box-table-body">
+                            <div class="row" ng-repeat="vintage in lastVintages">
+                                <div class="col-xs-4 text-left">{{vintage.month}}</div>
+                                <div class="col-xs-4 text-right">€{{vintage.invested}}</div>
+                                <div class="col-xs-4 text-right"><span ng-if="vintage.returnPercent > 0">+</span>{{vintage.returnPercent}}%</div>
+                            </div>
+                        </div>
+                        <div class="vintages-box-table-foot">
+                            <a class="showmore" ng-click="showAllVintages()">
+                                <img src="@Url.Content("~/Content/Images/plus.svg")" alt="Show More" class="pull-left" />
+                                <span class="pull-left">SHOW MORE</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-lg-3 col-lg-pull-6">
+            <div class="summary-section gaming-activities">
+                <div class="text-center">
+                    <img src="@Url.Content("~/Content/Images/diagram.svg")" alt="Diagram" class="icon" />
+                </div>
+                <div class="side-box">
+                    <div class="side-box-table">
+                        <div class="side-box-table-head">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <h4>Gaming Activities</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="side-box-table-body">
+                            <div class="row">
+                                <div class="col-xs-6 text-left">Cash In</div>
+                                <div class="col-xs-6 text-right">@Model.TotalDeposits.ToMoneyString(Model.Currency)</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 text-left">Cash Out</div>
+                                <div class="col-xs-6 text-right">@Model.TotalWithdrawals.ToMoneyString(Model.Currency)</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 text-left">Balance</div>
+                                <div class="col-xs-6 text-right">@Model.GamingBalance.ToMoneyString(Model.Currency)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-lg-3">
+            <div class="summary-section investments-schedule">
+                <div class="text-center">
+                    <img src="@Url.Content("~/Content/Images/calendar.svg")" alt="Diagram" class="icon" />
+                </div>
+                <div class="side-box">
+                    <div class="side-box-table">
+                        <div class="side-box-table-head">
+                            <div class="row">
+                                <div class="col-xs-12">Next Investment on:</div>
+                            </div>
+                        </div>
+                        <div class="side-box-table-body">
+                            <div class="row">
+                                <div class="col-xs-12 text-left">@Model.NextInvestmentOn.ToString("MMMM d", new CultureInfo(Model.Culture))</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side-box-table">
+                        <div class="side-box-table-head">
+                            <div class="row">
+                                <div class="col-xs-12">Investment amount:</div>
+                            </div>
+                        </div>
+                        <div class="side-box-table-body">
+                            <div class="row">
+                                <div class="col-xs-12 text-left">@Model.LastInvestmentAmount.ToMoneyString(Model.Currency)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side-box-table">
+                        <div class="side-box-table-foot">
+                            <div class="row">
+                                <div class="col-xs-12 text-left">
+                                    *Status as of @DateTime.Now.ToString("MMM d, h:mm tt", new CultureInfo(Model.Culture)) - 50% of net losses (cach in - cash out - investment balance)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="transfer-cash hidden-sm hidden-md" ng-click="transferCashToGames()">
+                    <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
+                    <span>TRANSFER CASH TO GAMES</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="transfer-cash visible-sm visible-md" ng-click="transferCashToGames()">
+        <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
+        <span>TRANSFER CASH TO GAMES</span>
+    </div>
+</div>
+
+

@@ -2,9 +2,9 @@
 
 namespace gzWeb.Areas.Mvc.Controllers
 {
-    public class CasinoController : Controller
+    public class GamesController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Page1()
         {
             return View();
         }

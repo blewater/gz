@@ -1,0 +1,210 @@
+﻿@charset "utf-8";
+
+
+/* #region Common */
+.investments {
+    /*padding-top: 80px;*/
+}
+/* #endregion */
+
+
+/* #region Summary */
+.investments .summary {
+
+}
+.investments .summary .investments-balance-amount {
+    font-weight: 300;
+    font-size: 57px;
+}
+.investments .summary .investments-balance-amount .fa {
+    font-size: 50px;
+}
+.investments .summary .investments-balance-descr {
+    font-size: 17px;
+    margin-top: 10px;
+}
+
+.investments .summary .summary-section {
+    margin-top: 40px;
+}
+.investments .summary .summary-section img.icon {
+    margin-bottom: 40px;
+    -ms-opacity: 0.35;
+    opacity: 0.35;
+    height: 45px;
+}
+
+.investments .summary .summary-section.gaming-activities {
+} 
+.investments .summary .summary-section.investments-overview {
+} 
+.investments .summary .summary-section.investments-schedule {
+}
+
+
+.side-box {
+    min-height: 300px;
+	border:1px solid #ccc;
+	-webkit-transition: border 0.5s ease; /* Safari */
+    -moz-transition: border 0.5s ease;
+    -ms-transition: border 0.5s ease;
+    -o-transition: border 0.5s ease;
+    transition: border 0.5s ease;
+	padding: 20px;
+}
+.side-box:hover {
+	border:1px solid #5b5b5b;
+}
+
+.side-box .side-box-table {
+    font-weight: 300;
+    margin-top: 10px;
+}
+.side-box .side-box-table .side-box-table-head {
+    font-size: 20px;
+    color: #646464;
+    -ms-opacity: 0.5;
+    opacity: 0.5;
+    padding-bottom: 5px;
+}
+
+.side-box .side-box-table .side-box-table-body {
+    font-style:oblique;
+}
+.side-box .side-box-table .side-box-table-body .row {
+    padding-top: 10px;
+    line-height: 40px;
+}
+.side-box .side-box-table .side-box-table-body .text-left {
+	color:#000;
+	font-size:18px;
+}
+.side-box .side-box-table .side-box-table-body .text-right {
+    color:#000;
+    font-size: 15px;
+    font-weight: 300;
+    -ms-opacity: 0.65;
+    opacity: 0.65;
+}
+.side-box .side-box-table .side-box-table-foot {
+    font-size: 11px;
+    color: #000;
+    -ms-opacity: 0.65;
+    opacity: 0.65;
+    margin-top: 20px;
+}
+
+
+.overview-box {
+    min-height: 300px;
+}
+.overview-box .half {
+    background-color: #fff;
+    height: 149px;
+    line-height: 50px;
+    font-size: 22px;
+    color: #646464;
+    padding: 50px;
+}
+.overview-box .half:first-of-type {
+    margin-bottom: 2px;
+}
+
+.vintages-box {
+    margin-top: 30px;
+    background-color: #fff;
+    font-size: 18px;
+    color: #646464;
+    padding: 50px;
+}
+
+.vintages-box .vintages-box-table {
+}
+.vintages-box .vintages-box-table .vintages-box-table-head {
+    font-weight: 500;
+    padding-bottom: 20px;
+}
+.vintages-box .vintages-box-table .vintages-box-table-body {
+    font-size: 18px;
+    -ms-opacity: 0.6;
+    opacity: 0.6;
+}
+.vintages-box .vintages-box-table .vintages-box-table-foot {
+    margin-top: 20px;
+}
+.vintages-box .vintages-box-table .vintages-box-table-foot .showmore {
+    text-transform: uppercase;
+    font-size: 15px;
+    color: #000;
+    -ms-opacity: 0.65;
+    opacity: 0.65;
+    margin: 0;
+    line-height: 18px;
+}
+
+.vintages-box .vintages-box-table .vintages-box-table-foot .showmore:hover {
+    text-decoration: none;
+}
+
+.vintages-box .vintages-box-table .vintages-box-table-foot .showmore img {
+    margin-right: 15px;
+    width: 18px;
+    height: 18px;
+}
+
+.transfer-cash {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    width: 100%;
+    height: 60px;
+    color: #000;
+    -ms-opacity: 0.8;
+    opacity: 0.8;
+    border: 2px solid #fff;
+    line-height: 60px;
+    text-align: center;
+    -webkit-transition: background 0.5s ease;
+    -moz-transition: background 0.5s ease;
+    -ms-transition: background 0.5s ease;
+    -o-transition: background 0.5s ease;
+    transition: background 0.5s ease;
+}
+.transfer-cash:hover {
+    background: #fff;
+    cursor: pointer;
+}
+
+.transfer-cash img {
+    padding-right: 15px;
+    margin-top: -3px;
+    vertical-align: middle;
+}
+
+@media (max-width: 767px) {
+    .investments .summary .investments-balance-amount {
+        font-size: 50px;
+    }
+    .investments .summary .investments-balance-amount img {
+        margin: 0 auto;
+        display: block;
+    }
+}
+/* #endregion */
+
+
+/* #region Portfolio */
+.investments .portfolio {
+}
+/* #endregion */
+
+
+/* #region Performance */
+.investments .performance {
+}
+/* #endregion */
+
+
+/* #region Activity */
+.investments .activity {
+}
+/* #endregion */

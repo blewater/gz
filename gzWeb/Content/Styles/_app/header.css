@@ -13,6 +13,9 @@
 .navbar-brand {
     padding: 7px;
 }
+.navbar > .container .navbar-brand {
+    margin: 0;
+}
 .navbar-brand h2 {
     font-family: Helvetica;
     font-size: 18px;
@@ -159,24 +162,24 @@
 
 
 .navbar-collapse.guest-mode .user-info,
-.navbar-collapse.guest-mode .nav-btn-casino,
+.navbar-collapse.guest-mode .nav-btn-games,
 .navbar-collapse.guest-mode .nav-btn-investments,
-.navbar-collapse.guest-mode .links-casino,
+.navbar-collapse.guest-mode .links-games,
 .navbar-collapse.guest-mode .links-investments {
     display: none;
 }
 
-.navbar-collapse.casino-mode .nav-btn-login,
-.navbar-collapse.casino-mode .nav-btn-investments,
-.navbar-collapse.casino-mode .links-guest,
-.navbar-collapse.casino-mode .links-investments {
+.navbar-collapse.games-mode .nav-btn-login,
+.navbar-collapse.games-mode .nav-btn-investments,
+.navbar-collapse.games-mode .links-guest,
+.navbar-collapse.games-mode .links-investments {
     display: none;
 }
 
 .navbar-collapse.investments-mode .nav-btn-login,
-.navbar-collapse.investments-mode .nav-btn-casino,
+.navbar-collapse.investments-mode .nav-btn-games,
 .navbar-collapse.investments-mode .links-guest,
-.navbar-collapse.investments-mode .links-casino {
+.navbar-collapse.investments-mode .links-games {
     display: none;
 }
 
@@ -277,8 +280,8 @@
 }
 
 
-@media (max-width: 767px) {
+/*@media (max-width: 767px) {
     .navbar .container {
         padding: 0;
     }
-}
+}*/
