@@ -112,8 +112,16 @@
     <Compile Include="Conf\IdentityConfig.cs" />
     <Compile Include="Model\IdentityModels.cs" />
     <Compile Include="Model\InvBalance.cs" />
+    <Compile Include="Repo\Interfaces\IInvBalanceRepo.cs" />
+    <Compile Include="Repo\Interfaces\IGzTransactionRepo.cs" />
+    <Compile Include="Repo\Interfaces\IFundRepo.cs" />
+    <Compile Include="Repo\Interfaces\ICustPortfolioRepo.cs" />
+    <Compile Include="Repo\Interfaces\ICustomerRepo.cs" />
+    <Compile Include="Repo\Interfaces\ICustFundShareRepo.cs" />
+    <Compile Include="Repo\Interfaces\ICurrencyRateRepo.cs" />
     <Compile Include="Repo\InvBalanceRepo.cs" />
     <Compile Include="Model\Portfolio.cs" />
+    <Compile Include="Repo\Interfaces\IPortfolioRepository.cs" />
     <Compile Include="Repo\PortfolioRepository.cs" />
     <Compile Include="Model\PortFund.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using gzWeb.Models;
 using System.Diagnostics;
+using gzWeb.Repo;
 
 namespace gzWeb.Tests.Models {
     [TestClass]
