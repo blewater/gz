@@ -4,9 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using gzWeb.Models.Util;
 using System.Data.Entity.Migrations;
+using gzWeb.Repo.Interfaces;
+using gzWeb.Models;
 
-namespace gzWeb.Models {
-    public class FundRepo {
+namespace gzWeb.Repo {
+    public class FundRepo : IFundRepo
+    {
 
         /// <summary>
         /// GetFundsPrices for a selected day by looking at the last trade day before the requested day.

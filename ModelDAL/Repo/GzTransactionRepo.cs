@@ -4,14 +4,17 @@ using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
 using System.IO;
 using gzWeb.Model.Util;
+using gzWeb.Repo.Interfaces;
+using gzWeb.Models;
 
-namespace gzWeb.Models {
+namespace gzWeb.Repo {
 
     /// <summary>
     /// For any Greenzorro Transaction creation/update
     /// Currency conversions are encapsulated here alone.
     /// </summary>
-    public class GzTransactionRepo {
+    public class GzTransactionRepo : IGzTransactionRepo
+    {
 
         /// <summary>
         /// Greenzorro percentage fee %
