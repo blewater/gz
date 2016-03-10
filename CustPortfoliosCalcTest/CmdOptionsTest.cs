@@ -9,44 +9,80 @@ namespace CustPortfoliosCalcTest {
         [TestMethod]
         public void ConsoleOnlyOption() {
 
-            CpcOptions.ProcArgs(new string[] { "-c" });
+            var options = CpcOptions.ProcArgs(new string[] { "-c" });
+            Assert.IsTrue(options.ParsingSuccess);
 
-            Assert.IsFalse(CpcOptions.SaveToDb);
+            Assert.IsTrue(options.ConsoleOutOnly);
         }
 
         [TestMethod]
         public void CustomerIdOption() {
 
-            CpcOptions.ProcArgs(new string[] { "-i=1" });
+            var options = CpcOptions.ProcArgs(new string[] { "-i 1" });
+            Assert.IsTrue(options.ParsingSuccess);
 
-            Assert.IsTrue(CpcOptions.CustomersToProc[0] == 1 && CpcOptions.CustomersToProc.Count == 1);
+            Assert.IsTrue(options.CustomersToProc[0] == 1 && options.CustomersToProc.Length == 1);
+        }
+
+        [TestMethod]
+        public void StockMarketOnlyOption() {
+
+            var options = CpcOptions.ProcArgs(new string[] { "-s" });
+            Assert.IsTrue(options.ParsingSuccess);
+
+            Assert.IsTrue(options.StockMarketUpdOnly);
         }
 
         [TestMethod]
         public void MarketOnlyOption() {
 
-            CpcOptions.ProcArgs(new string[] { "-s" });
+            var options = CpcOptions.ProcArgs(new string[] { "-f" });
+            Assert.IsTrue(options.ParsingSuccess);
 
-            Assert.IsTrue(CpcOptions.MarketUpdOnly);
+            Assert.IsTrue(options.MarketUpdOnly);
+        }
+
+        [TestMethod]
+        public void CurrencyRatesOnlyOption() {
+
+            var options = CpcOptions.ProcArgs(new string[] { "-r" });
+            Assert.IsTrue(options.ParsingSuccess);
+
+            Assert.IsTrue(options.CurrenciesMarketUpdOnly);
+        }
+
+        [TestMethod]
+        public void ConflictingMarketUpdOption() {
+
+            var options = CpcOptions.ProcArgs(new string[] { "-r", "-f" });
+            Assert.IsFalse(options.ParsingSuccess);
+
+            Assert.IsTrue(options.CurrenciesMarketUpdOnly && options.MarketUpdOnly);
         }
 
         [TestMethod]
         public void MonthOption() {
 
-            CpcOptions.ProcArgs(new string[] { "-c", "-m=201505" });
+            var options = CpcOptions.ProcArgs(new string[] { "-m", "201505","201504" });
+            Assert.IsTrue(options.ParsingSuccess);
 
-            Assert.IsTrue(CpcOptions.YearMonnthsToProc[0] == "201505");
+            Assert.IsTrue(options.YearMonthsToProc[0] == 201505);
         }
 
         [TestMethod]
         public void MixedOptions() {
 
-            CpcOptions.ProcArgs(new string[] { "-c", "/i 30", "--i=1" });
+            var options = CpcOptions.ProcArgs(new string[] { "-c", "-i", "30", "1", "-m", "201601", "201502", "201501" });
+            Assert.IsTrue(options.ParsingSuccess);
 
-            Assert.IsFalse(CpcOptions.SaveToDb);
-            Assert.IsTrue(CpcOptions.CustomersToProc[0] == 30);
-            Assert.IsTrue(CpcOptions.CustomersToProc[1] == 1);
-            Assert.IsTrue(CpcOptions.CustomersToProc.Count == 2);
+            Assert.IsTrue(options.ConsoleOutOnly);
+            Assert.IsTrue(options.CustomersToProc[0] == 30);
+            Assert.IsTrue(options.CustomersToProc[1] == 1);
+            Assert.IsTrue(options.CustomersToProc.Length == 2);
+            Assert.IsTrue(options.YearMonthsToProc[0] == 201601);
+            Assert.IsTrue(options.YearMonthsToProc[1] == 201502);
+            Assert.IsTrue(options.YearMonthsToProc[2]== 201501);
+            Assert.IsTrue(options.YearMonthsToProc.Length == 3);
         }
 
     }

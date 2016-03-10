@@ -8,6 +8,7 @@ namespace gzWeb.Models {
     public class CustPortfolioRepo {
 
         /// <summary>
+        /// Phase 1 Implementation
         /// Save the month's full portfolio mix for a customer.
         /// For phase I you can only select 1 portfolio in 100%
         /// V2 will accept a collection of portfolios for example, 30% for Low, 50% Medium, 20% High
@@ -30,7 +31,7 @@ namespace gzWeb.Models {
 
             if (monthDifffromNow != 0) {
 
-                throw new Exception("You can set the customer portfolio for the current month only: " + monthsPortfolio);
+                throw new Exception("You can set the customer portfolio for the present month only. Passed in a past month: " + monthsPortfolio);
 
             }
 
@@ -38,8 +39,11 @@ namespace gzWeb.Models {
         }
 
         /// <summary>
-        /// Use overloaded SetCustMonthsPortfolioMix instead
-        /// Public in order to unit test it.
+        /// Phase 2 Implementation allowing multiple portfolios linked to a *single* customer with a weight mix.
+        /// Note Does not impose present month restriciton. Can set a portfolio mix for the past.
+        /// Used internally by Phase 1 method for 100% single customer portfolio selection and for Seeding outside of the current month.
+        /// Use overloaded SetCustMonthsPortfolioMix instead for phase I
+        /// Though it's use is internal it's declared Public to unit test it.
         /// Save the month's portfolio mix for a customer.
         /// For example, 30% for Low, 50% Medium, 20% High
         /// </summary>
