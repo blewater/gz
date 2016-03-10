@@ -15,6 +15,7 @@
     z-index: 20000000000;
     overflow-y: hidden;
     background-color: #e6e6e6;
+    background-color: rgba(230, 230, 230, 0.6);
 }
 
 #preloader.die {

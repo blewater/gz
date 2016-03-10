@@ -1,9 +1,7 @@
 (function () {
     'use strict';
 
-    APP.config(['$routeProvider', '$locationProvider', 'constants', config]);
-    function config($routeProvider, $locationProvider, constants) {
-
+    APP.config(['$routeProvider', '$locationProvider', 'constants', function($routeProvider, $locationProvider, constants) {
         for (var i = 0; i < constants.routes.length; i++)
             $routeProvider.when(constants.routes[i].path, {
                 controller: constants.routes[i].ctrl,
@@ -13,7 +11,7 @@
         $routeProvider.otherwise({ redirectTo: '/' });
 
         $locationProvider.html5Mode(constants.html5Mode).hashPrefix();
-    }
+    }]);
 
     APP.config(['$httpProvider', function ($httpProvider) {
         $httpProvider.interceptors.push('authInterceptor');

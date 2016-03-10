@@ -61,8 +61,9 @@ var APP = (function () {
 
             $timeout(function() {
                 angular.element(document.querySelector('#preloader')).addClass('die');
-                $timeout(function() {
-                    angular.element(document.querySelector('#preloader')).remove();
+                $timeout(function () {
+                    angular.element(document.querySelector('#preloader')).removeClass('die');
+                    //$rootScope.loading = false;
                 }, 2000);
             }, 1000);
         }

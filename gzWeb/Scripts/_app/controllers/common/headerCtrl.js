@@ -5,7 +5,7 @@
     function ctrlFactory($scope, constants, routingService) {
         $scope.routes = {
             guest: routingService.getGroup(constants.groupKeys.guest),
-            casino: routingService.getGroup(constants.groupKeys.casino),
+            games: routingService.getGroup(constants.groupKeys.games),
             investments: routingService.getGroup(constants.groupKeys.investments)
         }
         $scope.getClass = function (path) {

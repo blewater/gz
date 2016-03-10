@@ -187,10 +187,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
+    <Compile Include="Areas\Mvc\Models\SummaryViewModel.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
     <Compile Include="Areas\Mvc\Controllers\HomeController.cs" />
-    <Compile Include="Areas\Mvc\Controllers\CasinoController.cs" />
+    <Compile Include="Areas\Mvc\Controllers\GamesController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Areas\Mvc\Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -254,7 +255,9 @@
     <Compile Include="Areas\Mvc\Models\UserInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utl\DebugTextWriter.cs" />
+    <Compile Include="Utilities\ExtensionMethods.cs" />
+    <Compile Include="Utilities\DebugTextWriter.cs" />
+    <Compile Include="Utilities\Response.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitattributes" />
@@ -591,6 +594,10 @@
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
     <Content Include="Content\Styles\_app\general.css" />
     <Content Include="Content\Styles\_app\footer.css" />
+    <Content Include="Content\Styles\_app\auth.css" />
+    <Content Include="Content\Styles\_app\guest.css" />
+    <Content Include="Content\Styles\_app\games.css" />
+    <Content Include="Content\Styles\_app\investments.css" />
     <Content Include="Content\Styles\_app\header.css" />
     <Content Include="Content\Styles\_app\preloader.css" />
     <Content Include="Content\Styles\_app\template\acorns.css" />
@@ -655,7 +662,7 @@
     <Content Include="Areas\Mvc\Views\Guest\Transparency.cshtml" />
     <Content Include="Areas\Mvc\Views\Guest\About.cshtml" />
     <Content Include="Areas\Mvc\Views\Guest\Home.cshtml" />
-    <Content Include="Areas\Mvc\Views\Shared\_CasinoLayout.cshtml" />
+    <Content Include="Areas\Mvc\Views\Shared\_GamesLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Index.cshtml" />
@@ -702,14 +709,14 @@
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
-    <Content Include="Scripts\_app\controllers\casino\casinoPage4Ctrl.js" />
+    <Content Include="Scripts\_app\controllers\games\games4Ctrl.js" />
     <Content Include="Scripts\_app\controllers\common\footerCtrl.js" />
     <Content Include="Scripts\_app\controllers\common\headerCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\loginCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerCtrl.js" />
-    <Content Include="Scripts\_app\controllers\casino\casinoIndexCtrl.js" />
-    <Content Include="Scripts\_app\controllers\casino\casinoPage2Ctrl.js" />
-    <Content Include="Scripts\_app\controllers\casino\casinoPage3Ctrl.js" />
+    <Content Include="Scripts\_app\controllers\games\games1Ctrl.js" />
+    <Content Include="Scripts\_app\controllers\games\games2Ctrl.js" />
+    <Content Include="Scripts\_app\controllers\games\games3Ctrl.js" />
     <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
@@ -1376,16 +1383,16 @@
     <Content Include="Views\Shared\_Footer.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Performance.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Areas\Mvc\Views\Casino\Page4.cshtml" />
-    <Content Include="Areas\Mvc\Views\Casino\Index.cshtml" />
-    <Content Include="Areas\Mvc\Views\Casino\Page2.cshtml" />
-    <Content Include="Areas\Mvc\Views\Casino\Page3.cshtml" />
+    <Content Include="Areas\Mvc\Views\Games\Page4.cshtml" />
+    <Content Include="Areas\Mvc\Views\Games\Page1.cshtml" />
+    <Content Include="Areas\Mvc\Views\Games\Page2.cshtml" />
+    <Content Include="Areas\Mvc\Views\Games\Page3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Controllers\" />
+    <Folder Include="Partials\directives\" />
     <Folder Include="Scripts\_app\directives\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
