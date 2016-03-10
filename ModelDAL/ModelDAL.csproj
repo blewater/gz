@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\GzConfiguration.cs" />
     <Compile Include="Model\CurrencyListX.cs" />
     <Compile Include="Model\CurrencyRate.cs" />
     <Compile Include="Repo\CurrencyRateRepo.cs" />

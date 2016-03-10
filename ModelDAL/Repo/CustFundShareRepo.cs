@@ -44,7 +44,6 @@ namespace gzWeb.Models {
                             UpdatedOnUTC = updatedOnUTC
                         }
                     );
-                    // Save often to 
                     db.SaveChanges();
                 } catch (Exception e) {
                     // TODO: log customer id, fundId
