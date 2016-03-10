@@ -6,7 +6,7 @@
     //var areaCtrls = {
     //    guest: area + '/Guest',
     //    auth: area + '/Auth',
-    //    casino: area + '/Casino',
+    //    games: area + '/Games',
     //    investments: area + '/Investments'
     //};
 
@@ -19,10 +19,10 @@
         login: 'login',
         register: 'register',
 
-        casino: 'casino',
-        casino2: 'casino2',
-        casino3: 'casino3',
-        casino4: 'casino4',
+        games1: 'games1',
+        games2: 'games2',
+        games3: 'games3',
+        games4: 'games4',
 
         summary: 'summary',
         portfolio: 'portfolio',
@@ -33,7 +33,7 @@
     var groupKeys = {
         guest: 'guest',
         auth: 'auth',
-        casino: 'casino',
+        games: 'games',
         investments: 'investments'
     };
     // #endregion
@@ -101,38 +101,38 @@
 
     // #endregion
 
-    // #region Casino
-    var casino1 = {
-        key: routeKeys.casino,
-        group: groupKeys.casino,
-        path: '/casino',
-        ctrl: 'casinoIndexCtrl',
-        tpl: '/Mvc/Casino/Index',
-        title: 'Casino'
+    // #region Games
+    var games1 = {
+        key: routeKeys.games1,
+        group: groupKeys.games,
+        path: '/games',
+        ctrl: 'games1Ctrl',
+        tpl: '/Mvc/Games/Page1',
+        title: 'Games 1'
     };
-    var casino2 = {
-        key: routeKeys.casino2,
-        group: groupKeys.casino,
-        path: '/casino2',
-        ctrl: 'casinoPage2Ctrl',
-        tpl: '/Mvc/Casino/Page2',
-        title: 'Casino 2'
+    var games2 = {
+        key: routeKeys.games2,
+        group: groupKeys.games,
+        path: '/games2',
+        ctrl: 'games2Ctrl',
+        tpl: '/Mvc/Games/Page2',
+        title: 'Games 2'
     };
-    var casino3 = {
-        key: routeKeys.casino3,
-        group: groupKeys.casino,
-        path: '/casino3',
-        ctrl: 'casinoPage3Ctrl',
-        tpl: '/Mvc/Casino/Page3',
-        title: 'Casino 3'
+    var games3 = {
+        key: routeKeys.games3,
+        group: groupKeys.games,
+        path: '/games3',
+        ctrl: 'games3Ctrl',
+        tpl: '/Mvc/Games/Page3',
+        title: 'Games 3'
     };
-    var casino4 = {
-        key: routeKeys.casino4,
-        group: groupKeys.casino,
-        path: '/casino4',
-        ctrl: 'casinoPage4Ctrl',
-        tpl: '/Mvc/Casino/Page4',
-        title: 'Casino 4'
+    var games4 = {
+        key: routeKeys.games4,
+        group: groupKeys.games,
+        path: '/games4',
+        ctrl: 'games4Ctrl',
+        tpl: '/Mvc/Games/Page4',
+        title: 'Games 4'
     };
     // #endregion
 
@@ -181,11 +181,11 @@
         login: login,
         register: register
     };
-    var casino = {
-        casino1: casino1,
-        casino2: casino2,
-        casino3: casino3,
-        casino4: casino4
+    var games = {
+        games1: games1,
+        games2: games2,
+        games3: games3,
+        games4: games4
     };
     var investments = {
         summary: summary,
@@ -196,13 +196,13 @@
     var routesGroups = {
         guest: guest,
         auth: auth,
-        casino: casino,
+        games: games,
         investments: investments
     };
     var routes = [
         home, transparency, about,
         login, register,
-        casino1, casino2, casino3, casino4,
+        games1, games2, games3, games4,
         summary, portfolio, performance, activity
     ];
     // #endregion
