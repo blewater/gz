@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity;
+using gzWeb.Models;
 
-namespace gzWeb.Models {
+namespace gzWeb.Repo {
 
     /// <summary>
     /// Used in unit testing
     /// </summary>
-    public class PortfolioRepository {
+    public class PortfolioRepository : IPortfolioRepository
+    {
 
         public IList<string> GetPortfolioRetLines() {
 
