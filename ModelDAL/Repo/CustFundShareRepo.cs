@@ -4,9 +4,12 @@ using System.Linq;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using gzWeb.Model.Util;
+using gzWeb.Repo.Interfaces;
+using gzWeb.Models;
 
-namespace gzWeb.Models {
-    public class CustFundShareRepo {
+namespace gzWeb.Repo {
+    public class CustFundShareRepo : ICustFundShareRepo
+    {
 
         /// <summary>
         /// Save purchased funds shares to the customer's account.

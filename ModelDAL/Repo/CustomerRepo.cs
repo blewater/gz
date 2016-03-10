@@ -4,9 +4,12 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity;
 using AutoMapper;
+using gzWeb.Models;
+using gzWeb.Repo.Interfaces;
 
-namespace gzWeb.Models {
-    public class CustomerRepo {
+namespace gzWeb.Repo {
+    public class CustomerRepo : ICustomerRepo
+    {
 
         /// <summary>
         /// Create a customer (user) only if not preexisting. Otherwise, update it.
