@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using gzWeb.Model.Util;
+using gzWeb.Repo.Interfaces;
+using gzWeb.Models;
 
-namespace gzWeb.Models {
-    public class InvBalanceRepo {
+namespace gzWeb.Repo {
+    public class InvBalanceRepo : IInvBalanceRepo
+    {
 
         /// <summary>
         /// Calculate numeric balance metrics for a customer on a given month

@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Data.Entity.Migrations;
 using gzWeb.Model.Util;
+using gzWeb.Repo.Interfaces;
+using gzWeb.Models;
 
-
-namespace gzWeb.Models {
-    public class CustPortfolioRepo {
+namespace gzWeb.Repo {
+    public class CustPortfolioRepo : ICustPortfolioRepo
+    {
 
         /// <summary>
         /// Phase 1 Implementation

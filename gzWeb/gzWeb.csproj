@@ -67,6 +67,18 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.2.3\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.1.2\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.3.1.2\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -174,11 +186,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\CasinoController.cs" />
-    <Compile Include="Controllers\InvestmentsController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
+    <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
+    <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
+    <Compile Include="Areas\Mvc\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Mvc\Controllers\CasinoController.cs" />
+    <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
+    <Compile Include="Areas\Mvc\Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -235,9 +249,9 @@
       <DependentUpon>201603101532458_Conf_Table.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="ViewModels\AccountViewModels.cs" />
-    <Compile Include="ViewModels\ManageViewModels.cs" />
-    <Compile Include="ViewModels\UserInfoViewModel.cs" />
+    <Compile Include="Areas\Mvc\Models\AccountViewModels.cs" />
+    <Compile Include="Areas\Mvc\Models\ManageViewModels.cs" />
+    <Compile Include="Areas\Mvc\Models\UserInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utl\DebugTextWriter.cs" />
@@ -578,10 +592,12 @@
     <Content Include="Content\Styles\_app\general.css" />
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\header.css" />
+    <Content Include="Content\Styles\_app\preloader.css" />
     <Content Include="Content\Styles\_app\template\acorns.css" />
     <Content Include="Content\Styles\_app\template\acorns_backup.css" />
     <Content Include="Content\Styles\_app\template\basic.css" />
     <Content Include="Content\Styles\_app\template\donut.css" />
+    <Content Include="Content\Styles\ui-bootstrap\ui-bootstrap-csp.css" />
     <Content Include="favicon.ico" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -635,15 +651,84 @@
     <Content Include="Content\Images\plus.svg" />
     <Content Include="Content\Images\test.svg" />
     <Content Include="Content\Images\test2.svg" />
+    <Content Include="Areas\Mvc\Views\web.config" />
+    <Content Include="Areas\Mvc\Views\Guest\Transparency.cshtml" />
+    <Content Include="Areas\Mvc\Views\Guest\About.cshtml" />
+    <Content Include="Areas\Mvc\Views\Guest\Home.cshtml" />
+    <Content Include="Areas\Mvc\Views\Shared\_CasinoLayout.cshtml" />
+    <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
+    <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
+    <Content Include="Areas\Mvc\Views\Investments\Index.cshtml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
+    <Content Include="Scripts\angular-animate\angular-animate.js" />
+    <Content Include="Scripts\angular-animate\angular-animate.min.js" />
+    <Content Include="Scripts\angular-cookies\angular-cookies.js" />
+    <Content Include="Scripts\angular-cookies\angular-cookies.min.js" />
+    <Content Include="Scripts\angular-filter\angular-filter.js" />
+    <Content Include="Scripts\angular-filter\angular-filter.min.js" />
+    <Content Include="Scripts\angular-local-storage\angular-local-storage.js" />
+    <Content Include="Scripts\angular-local-storage\angular-local-storage.min.js" />
+    <Content Include="Scripts\angular-match-media\match-media.js" />
+    <Content Include="Scripts\angular-moment\angular-moment.js" />
+    <Content Include="Scripts\angular-moment\angular-moment.min.js" />
+    <Content Include="Scripts\angular-spinner\angular-spinner.js" />
+    <Content Include="Scripts\angular-spinner\angular-spinner.min.js" />
+    <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.js" />
+    <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
+    <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
+    <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
+    <Content Include="Scripts\angular\angular-mocks.js" />
+    <Content Include="Scripts\angular-resource\angular-resource.js" />
+    <Content Include="Scripts\angular-resource\angular-resource.min.js" />
+    <Content Include="Scripts\angular-route\angular-route.js" />
+    <Content Include="Scripts\angular-route\angular-route.min.js" />
+    <Content Include="Scripts\angular-sanitize\angular-sanitize.js" />
+    <Content Include="Scripts\angular-sanitize\angular-sanitize.min.js" />
+    <Content Include="Scripts\angular\angular.js" />
+    <Content Include="Scripts\angular\angular.min.js" />
+    <Content Include="Scripts\moment\moment-with-locales.js" />
+    <Content Include="Scripts\moment\moment-with-locales.min.js" />
+    <Content Include="Scripts\moment\moment.js" />
+    <Content Include="Scripts\moment\moment.min.js" />
+    <Content Include="Scripts\spin\spin.js" />
+    <Content Include="Scripts\spin\spin.min.js" />
     <Content Include="Scripts\_app\acorns.js" />
     <Content Include="Scripts\_app\acorns_backup.js" />
+    <Content Include="Scripts\_app\app.js" />
+    <Content Include="Scripts\_app\configuration\config.js" />
+    <Content Include="Scripts\_app\constants\constants.js" />
+    <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
+    <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
+    <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
+    <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
+    <Content Include="Scripts\_app\controllers\casino\casinoPage4Ctrl.js" />
+    <Content Include="Scripts\_app\controllers\common\footerCtrl.js" />
+    <Content Include="Scripts\_app\controllers\common\headerCtrl.js" />
+    <Content Include="Scripts\_app\controllers\auth\loginCtrl.js" />
+    <Content Include="Scripts\_app\controllers\auth\registerCtrl.js" />
+    <Content Include="Scripts\_app\controllers\casino\casinoIndexCtrl.js" />
+    <Content Include="Scripts\_app\controllers\casino\casinoPage2Ctrl.js" />
+    <Content Include="Scripts\_app\controllers\casino\casinoPage3Ctrl.js" />
+    <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
+    <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
+    <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
     <Content Include="Scripts\_app\donut.js" />
     <Content Include="Scripts\_app\main.js" />
+    <Content Include="Scripts\_app\services\authInterceptor.js" />
+    <Content Include="Scripts\_app\services\routingService.js" />
     <Content Include="Scripts\_app\Views\Investments\index.js" />
     <Content Include="Scripts\bootstrap\bootstrap.js" />
     <Content Include="Scripts\bootstrap\bootstrap.min.js" />
+    <Content Include="Scripts\angular\angular.min.js.map" />
+    <Content Include="Scripts\angular-route\angular-route.min.js.map" />
+    <Content Include="Scripts\angular-cookies\angular-cookies.min.js.map" />
+    <Content Include="Scripts\angular-animate\angular-animate.min.js.map" />
+    <Content Include="Scripts\angular-resource\angular-resource.min.js.map" />
+    <Content Include="Scripts\angular-sanitize\angular-sanitize.min.js.map" />
+    <Content Include="Scripts\angular-spinner\angular-spinner.min.js.map" />
+    <Content Include="Scripts\angular-filter\angular-filter.min.js.map" />
+    <Content Include="Scripts\angular-moment\angular-moment.min.js.map" />
     <None Include="Scripts\jquery\jquery-1.12.0.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.min.js" />
@@ -1176,6 +1261,9 @@
     <Content Include="Scripts\respond\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond\respond.min.js" />
     <Content Include="Scripts\_app\Views\Shared\header.js" />
+    <Content Include="Scripts\_modules\customDirectives.js" />
+    <Content Include="Scripts\_modules\customFilters.js" />
+    <Content Include="Scripts\_modules\styleInjector.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Scripts\_app\Views\Shared\layout.js" />
     <Content Include="Web.config">
@@ -1191,26 +1279,26 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Investments\Activity.cshtml" />
-    <Content Include="Views\Investments\Portfolio.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\ConfirmEmail.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="Views\Account\ForgotPassword.cshtml" />
-    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\ResetPassword.cshtml" />
-    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\SendCode.cshtml" />
-    <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
-    <Content Include="Views\Manage\ChangePassword.cshtml" />
-    <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Manage\ManageLogins.cshtml" />
-    <Content Include="Views\Manage\SetPassword.cshtml" />
-    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
+    <Content Include="Areas\Mvc\Views\Investments\Activity.cshtml" />
+    <Content Include="Areas\Mvc\Views\Investments\Portfolio.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\ExternalLoginFailure.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\Login.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\Register.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\ResetPassword.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\SendCode.cshtml" />
+    <Content Include="Areas\Mvc\Views\Account\VerifyCode.cshtml" />
+    <Content Include="Areas\Mvc\Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Areas\Mvc\Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Areas\Mvc\Views\Manage\Index.cshtml" />
+    <Content Include="Areas\Mvc\Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Areas\Mvc\Views\Manage\SetPassword.cshtml" />
+    <Content Include="Areas\Mvc\Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Scripts\kendo\2015.3.1111\kendo.window.min.js.map" />
@@ -1283,20 +1371,21 @@
     <Content Include="Scripts\kendo\2015.3.1111\kendo.angular2.min.js.map" />
     <Content Include="Scripts\kendo\2015.3.1111\kendo.angular.min.js.map" />
     <Content Include="Scripts\kendo\2015.3.1111\jquery.min.map" />
-    <Content Include="Views\Investments\Index.cshtml" />
+    <Content Include="Areas\Mvc\Views\Investments\Summary.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Views\Shared\_Footer.cshtml" />
-    <Content Include="Views\Investments\Performance.cshtml" />
+    <Content Include="Areas\Mvc\Views\Investments\Performance.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Casino\Page1.cshtml" />
-    <Content Include="Views\Casino\Index.cshtml" />
-    <Content Include="Views\Casino\Page2.cshtml" />
-    <Content Include="Views\Casino\Page3.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Transparency.cshtml" />
+    <Content Include="Areas\Mvc\Views\Casino\Page4.cshtml" />
+    <Content Include="Areas\Mvc\Views\Casino\Index.cshtml" />
+    <Content Include="Areas\Mvc\Views\Casino\Page2.cshtml" />
+    <Content Include="Areas\Mvc\Views\Casino\Page3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Scripts\_app\directives\" />
+    <Folder Include="ViewModels\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
