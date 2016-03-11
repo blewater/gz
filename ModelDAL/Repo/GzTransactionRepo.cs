@@ -51,10 +51,9 @@ namespace gzWeb.Repo {
 
             }
 
-            using (var db = new ApplicationDbContext())
-            {
-                SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, db);
-            }
+            
+            SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, null);
+            
         }
 
         /// <summary>
@@ -76,32 +75,18 @@ namespace gzWeb.Repo {
             else {
                 //string datPath = "d:\\temp";
                 //using (var sqlLogFile = new StreamWriter(datPath + "\\sqlLogFile_SaveDBTransferToGamingAmount.log")) {
+                
+                //db.Database.Log = sqlLogFile.Write;
 
-                using (var db = new ApplicationDbContext())
+                using (var dbContextTransaction = db.Database.BeginTransaction())
                 {
 
-                    //db.Database.Log = sqlLogFile.Write;
+                    SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, null);
+                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                    using (var dbContextTransaction = db.Database.BeginTransaction())
-                    {
-
-                        try
-                        {
-
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, db);
-                            SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
-
-                            dbContextTransaction.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            var exception = ex.Message;
-                            dbContextTransaction.Rollback();
-                            throw;
-                        }
-                    }
+                    dbContextTransaction.Commit();
                 }
-                //}
+                
             }
         }
 
@@ -125,27 +110,17 @@ namespace gzWeb.Repo {
             }
             else {
 
-                using (var db = new ApplicationDbContext())
+                
+                using (var dbContextTransaction = db.Database.BeginTransaction())
                 {
-                    using (var dbContextTransaction = db.Database.BeginTransaction())
-                    {
 
-                        try
-                        {
+                    SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
+                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, db);
-                            SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
-
-                            dbContextTransaction.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            var exception = ex.Message;
-                            dbContextTransaction.Rollback();
-                            throw;
-                        }
-                    }
+                    dbContextTransaction.Commit();
+                        
                 }
+                
             }
         }
 
@@ -157,10 +132,10 @@ namespace gzWeb.Repo {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC, ApplicationDbContext db)
+        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC)
         {
-            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100, createdOnUTC, db);
-            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100, createdOnUTC, db);
+            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100, createdOnUTC, null);
+            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100, createdOnUTC, null);
         }
 
         /// <summary>
@@ -182,27 +157,16 @@ namespace gzWeb.Repo {
             }
             else {
 
-                using (var db = new ApplicationDbContext())
+                
+                using (var dbContextTransaction = db.Database.BeginTransaction())
                 {
-                    using (var dbContextTransaction = db.Database.BeginTransaction())
-                    {
 
-                        try
-                        {
+                    SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
+                    SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, db);
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db, db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
-
-                            dbContextTransaction.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            var exception = ex.Message;
-                            dbContextTransaction.Rollback();
-                            throw;
-                        }
-                    }
+                    dbContextTransaction.Commit();                        
                 }
+                
             }
         }
 
@@ -216,7 +180,7 @@ namespace gzWeb.Repo {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, ApplicationDbContext db, float? creditPcntApplied = null)
+        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, float? creditPcntApplied)
         {
             //Not thread safe but ok...within a single request context
             db.GzTransactions.AddOrUpdate(
