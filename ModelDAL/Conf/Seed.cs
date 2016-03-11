@@ -20,28 +20,33 @@ namespace gzWeb.Models {
     public class Seed {
 
         public static string GenData() {
+
             //Assume success
-            string retVal = null;
+            string retExceptionVal = null;
+
+            // Tracing log location + name i.e. C:\Users\Mario\AppData\Local\Temp\sqlLogFile.log
+            var tempSQLLogPath = Path.GetTempPath() + "sqlLogFile.log";
 
             //http://stackoverflow.com/questions/815586/entity-framework-using-transactions-or-savechangesfalse-and-acceptallchanges
-            using (var sqlLogFile = new StreamWriter("sqlLogFile.log")) {
+            using (var sqlLogFile = new StreamWriter(tempSQLLogPath)) {
                 using (ApplicationDbContext context = new ApplicationDbContext()) {
                     context.Database.Log = sqlLogFile.Write;
-                    //using (var dbContextTransaction = context.Database.BeginTransaction()) {
+                    // Decided against enclosing in a all encompassing transactions because of frequent failures due to the schema volatility and the need to get immediate feedback on the failure
+                    // using (var dbContextTransaction = context.Database.BeginTransaction()) {
                         try {
 
                             AddUpdData(context);
 
                             //dbContextTransaction.Commit();
                         } catch (Exception ex) {
-                            var exception = retVal = ex.Message;
+                            var exception = retExceptionVal = ex.Message;
                             //dbContextTransaction.Rollback();
                             throw;
                         }
                     //}
                 }
             }
-            return retVal;
+            return retExceptionVal;
         }
 
         /// <summary>
@@ -49,11 +54,15 @@ namespace gzWeb.Models {
         /// </summary>
         /// <param name="context"></param>
         private static void AddUpdData(ApplicationDbContext context) {
-            var manager = new ApplicationUserManager(new CustomUserStore(context));
+            
+            // GzConfigurations
+            CreateUpdConfiguationRow(context);
 
             // Customers
+            var manager = new ApplicationUserManager(new CustomUserStore(context));
             int custId = CreateUpdUser(manager);
 
+            // Currencies
             CreateUpdCurrenciesList(context);
             context.SaveChanges();
 
@@ -61,13 +70,16 @@ namespace gzWeb.Models {
             CreateUpdFunds(context);
             context.SaveChanges();
 
-            //FundPrices
+            // FundPrices
             CreateUpdFundsPrices(context);
             context.SaveChanges();
 
             // Portfolios
             CreateUpdPortfolios(context, custId);
             context.SaveChanges();
+
+            // Link now a portfolio for this customer
+            new CustPortfolioRepo().SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
 
             // Portfolios - Funds association table
             CreateUpdPortFunds(context);
@@ -84,6 +96,27 @@ namespace gzWeb.Models {
             // Balances
             CalcMonthlyBalances(context, custId);
             context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Insert or Update the gzConfiguration Constants in a single row
+        /// </summary>
+        /// <param name="context"></param>
+        private static void CreateUpdConfiguationRow(ApplicationDbContext context) {
+
+            var dbConf = new GzConfiguration();
+
+            context.GzConfigurations.AddOrUpdate(
+                c => c.Id,
+                new GzConfiguration {
+                    // Essentially write out the defaults in a single row
+                    Id = 1,
+                    COMMISSION_PCNT = dbConf.COMMISSION_PCNT,
+                    CREDIT_LOSS_PCNT = dbConf.CREDIT_LOSS_PCNT,
+                    FUND_FEE_PCNT = dbConf.FUND_FEE_PCNT,
+                    LOCK_IN_NUM_DAYS = dbConf.LOCK_IN_NUM_DAYS
+                }
+            );
         }
 
         /// <summary>
@@ -308,8 +341,6 @@ namespace gzWeb.Models {
                     RiskTolerance = RiskToleranceEnum.High, IsActive = true
                 });
 
-            
-            new CustPortfolioRepo(context).SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
         }
 
         private static void CreateUpdPortFunds(ApplicationDbContext context) {

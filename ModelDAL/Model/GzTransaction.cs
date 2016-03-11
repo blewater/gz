@@ -14,7 +14,6 @@ namespace gzWeb.Models {
     /// </summary>
     public class GzTransaction {
 
-        //User
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
