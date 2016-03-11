@@ -16,8 +16,8 @@ namespace gzWeb.Tests.Models {
         /// </summary>
         [TestMethod]
         public void PortfolioReturns() {
-
-            var portfolioLines = new PortfolioRepository().GetPortfolioRetLines();
+            var db = new ApplicationDbContext();
+            var portfolioLines = new PortfolioRepository(db).GetPortfolioRetLines();
 
             foreach (var l in portfolioLines) {
                 Console.WriteLine(l);
@@ -25,7 +25,7 @@ namespace gzWeb.Tests.Models {
         }
         [TestMethod]
         public void SaveDailyCurrenciesRates() {
-            var currencyRateRepo = new CurrencyRateRepo();
+            var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext());
             var quotes = currencyRateRepo.SaveDBDailyCurrenciesRates();
 
             Assert.IsNotNull(quotes);
@@ -35,7 +35,8 @@ namespace gzWeb.Tests.Models {
         }
         [TestMethod]
         public void SaveDailyFundClosingPrice() {
-            var fundRepo = new FundRepo();
+            var db = new ApplicationDbContext();
+            var fundRepo = new FundRepo(db);
             var quotes = fundRepo.SaveDBDailyFundClosingPrices();
 
             Assert.IsNotNull(quotes);
@@ -54,12 +55,13 @@ namespace gzWeb.Tests.Models {
             CreateTestPlayerLossTransactions(custId);
             CreateTestPlayerDepositWidthdrawnTransactions(custId);
 
-            new InvBalanceRepo().SaveCustTrxsBalances(custId);
+            var db = new ApplicationDbContext();
+            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveCustTrxsBalances(custId);
         }
 
         public void CreateTestCustomerPortfolioSelections(int custId) {
-
-            var cpRepo = new CustPortfolioRepo();
+            var db = new ApplicationDbContext();
+            var cpRepo = new CustPortfolioRepo(db);
 
             /*** For phase I we test only single portfolio selections ***/
             //// Jan 2015
@@ -85,7 +87,8 @@ namespace gzWeb.Tests.Models {
         }
 
         public void CreateTestPlayerLossTransactions(int custId) {
-            var gzTrx = new GzTransactionRepo();
+            var db = new ApplicationDbContext();
+            var gzTrx = new GzTransactionRepo(db);
 
             // Add playing losses for first 6 months of 2015
             gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 160, creditPcnt: 50, createdOnUTC: new DateTime(2015, 1, 1));
@@ -100,7 +103,8 @@ namespace gzWeb.Tests.Models {
 
 
         public void CreateTestPlayerDepositWidthdrawnTransactions(int custId) {
-            var gzTrx = new GzTransactionRepo();
+            var db = new ApplicationDbContext();
+            var gzTrx = new GzTransactionRepo(db);
 
             // Add deposit, withdrawals
             gzTrx.SaveDBTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
@@ -128,8 +132,8 @@ namespace gzWeb.Tests.Models {
                 GamBalance = new decimal(4200.54),
                 GamBalanceUpdOnUTC = DateTime.UtcNow
             };
-
-            var custRepo = new CustomerRepo();
+            var db = new ApplicationDbContext();
+            var custRepo = new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db)));
 
             return custRepo.CreateUpdUser(newUser);
         }

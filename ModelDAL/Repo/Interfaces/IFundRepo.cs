@@ -6,7 +6,7 @@ namespace gzWeb.Repo.Interfaces
 {
     public interface IFundRepo
     {
-        Dictionary<string, float> GetFundsPrices(ApplicationDbContext db, int year, int month, int day);
+        Dictionary<string, float> GetFundsPrices(int year, int month, int day);
         List<FundQuote> SaveDBDailyFundClosingPrices();
     }
 }

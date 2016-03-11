@@ -10,6 +10,11 @@ using gzWeb.Models;
 namespace gzWeb.Repo {
     public class FundRepo : IFundRepo
     {
+        private readonly ApplicationDbContext db;
+        public FundRepo(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
 
         /// <summary>
         /// GetFundsPrices for a selected day by looking at the last trade day before the requested day.
@@ -17,7 +22,7 @@ namespace gzWeb.Repo {
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="day"></param>
-        public Dictionary<string, float> GetFundsPrices(ApplicationDbContext db, int year, int month, int day) {
+        public Dictionary<string, float> GetFundsPrices(int year, int month, int day) {
 
             Dictionary<string, float> fundClosingPrices = null;
 
@@ -46,40 +51,31 @@ namespace gzWeb.Repo {
         /// <returns></returns>
         public List<FundQuote> SaveDBDailyFundClosingPrices() {
 
-            List<FundQuote> retVal = null;
+            
 
-            using (var db = new ApplicationDbContext()) {
+            var fundsList = db.Funds.Select(f => f.Symbol).ToList();
 
-                var fundsList = db.Funds.Select(f => f.Symbol).ToList();
+            var quotes = fundsList.Select(f => new FundQuote { Symbol = f }).ToList();
 
-                var quotes = fundsList.Select(f => new FundQuote { Symbol = f }).ToList();
+            List<FundQuote> retVal = YQLFundCurrencyInq.FetchFundsQuoteInfo(quotes);
 
-                retVal = YQLFundCurrencyInq.FetchFundsQuoteInfo(quotes);
+            foreach (var q in retVal) {
 
-                try {
-                    foreach (var q in quotes) {
-
-                        db.FundPrices.AddOrUpdate(
-                            f => new { f.FundId, f.YearMonthDay },
-                            new FundPrice {
-                                FundId = db.Funds.Where(f => f.Symbol == q.Symbol).Select(f => f.Id).FirstOrDefault(),
-                                ClosingPrice = q.LastTradePrice.Value,
-                                YearMonthDay = q.LastTradeDate.Value.Year.ToString("0000")
-                                    + q.LastTradeDate.Value.Month.ToString("00")
-                                    + q.LastTradeDate.Value.Day.ToString("00"),
-                                UpdatedOnUTC = q.UpdatedOnUTC
-                            }
-                            );
+                db.FundPrices.AddOrUpdate(
+                    f => new { f.FundId, f.YearMonthDay },
+                    new FundPrice {
+                        FundId = db.Funds.Where(f => f.Symbol == q.Symbol).Select(f => f.Id).FirstOrDefault(),
+                        ClosingPrice = q.LastTradePrice.Value,
+                        YearMonthDay = q.LastTradeDate.Value.Year.ToString("0000")
+                            + q.LastTradeDate.Value.Month.ToString("00")
+                            + q.LastTradeDate.Value.Day.ToString("00"),
+                        UpdatedOnUTC = q.UpdatedOnUTC
                     }
-
-                    db.SaveChanges();
-
-                } catch (Exception ex) {
-                    var exception = ex.Message;
-                    throw ;
-                }
+                    );
             }
 
+            db.SaveChanges();
+            
             return retVal;
         }
     }

@@ -10,40 +10,35 @@ using gzWeb.Models;
 namespace gzWeb.Repo {
     public class CurrencyRateRepo : ICurrencyRateRepo
     {
+        private readonly ApplicationDbContext db;
+
+        public CurrencyRateRepo(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
 
         public List<CurrencyQuote> SaveDBDailyCurrenciesRates() {
 
-            List<CurrencyQuote> retVal = null;
+            var currenciesList = db.CurrenciesListX.Select(c => c.From + c.To).ToList();
 
-            using (var db = new ApplicationDbContext()) {
+            var quotes = currenciesList.Select(c => new CurrencyQuote { CurrFromTo = c }).ToList();
 
-                var currenciesList = db.CurrenciesListX.Select(c => c.From + c.To).ToList();
+            List<CurrencyQuote> retVal = YQLFundCurrencyInq.FetchCurrencyRates(quotes);
+                
+            foreach (var q in retVal) {
 
-                var quotes = currenciesList.Select(c => new CurrencyQuote { CurrFromTo = c }).ToList();
-
-                retVal = YQLFundCurrencyInq.FetchCurrencyRates(quotes);
-
-                try {
-                    foreach (var q in quotes) {
-
-                        db.CurrencyRates.AddOrUpdate(
-                            c => new { c.FromTo, c.TradeDateTime },
-                            new CurrencyRate {
-                                rate = q.Rate,
-                                FromTo = q.CurrFromTo,
-                                TradeDateTime = q.TradeDateTime.Value,
-                                UpdatedOnUTC = DateTime.UtcNow,
-                            }
-                            );
-                    }
-
-                    db.SaveChanges();
-
-                } catch (Exception ex) {
-                    var exception = ex.Message;
-                    throw ;
-                }
+                db.CurrencyRates.AddOrUpdate(
+                    c => new { c.FromTo, c.TradeDateTime },
+                    new CurrencyRate {
+                        rate = q.Rate,
+                        FromTo = q.CurrFromTo,
+                        TradeDateTime = q.TradeDateTime.Value,
+                        UpdatedOnUTC = DateTime.UtcNow,
+                    });
             }
+
+            db.SaveChanges();
+
             return retVal;
         }
     }

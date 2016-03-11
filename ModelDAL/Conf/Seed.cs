@@ -126,7 +126,7 @@ namespace gzWeb.Models {
         /// <param name="custId"></param>
         private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
 
-            new InvBalanceRepo().SaveCustTrxsBalances(custId);
+            new InvBalanceRepo(context, new CustFundShareRepo(context)).SaveCustTrxsBalances(custId);
 
         }
 
@@ -309,7 +309,7 @@ namespace gzWeb.Models {
                 });
 
             
-            new CustPortfolioRepo().SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            new CustPortfolioRepo(context).SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
         }
 
         private static void CreateUpdPortFunds(ApplicationDbContext context) {
@@ -485,7 +485,7 @@ namespace gzWeb.Models {
 
         private static void CreateUpdGzTransaction(ApplicationDbContext context, int custId) {
 
-            var trxRepo = new GzTransactionRepo();
+            var trxRepo = new GzTransactionRepo(context);
 
             // Use new API
             trxRepo.SaveDBGzTransaction(custId, TransferTypeEnum.Deposit, 10000, new DateTime(2015, 3, 4, 7, 23, 42));
