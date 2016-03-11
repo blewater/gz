@@ -79,7 +79,7 @@ namespace gzWeb.Models {
             context.SaveChanges();
 
             // Link now a portfolio for this customer
-            new CustPortfolioRepo().SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            new CustPortfolioRepo(new ApplicationDbContext()).SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
 
             // Portfolios - Funds association table
             CreateUpdPortFunds(context);

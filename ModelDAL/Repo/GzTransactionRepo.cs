@@ -15,13 +15,12 @@ namespace gzWeb.Repo {
     /// </summary>
     public class GzTransactionRepo : IGzTransactionRepo
     {
-
-        /// <summary>
         private readonly ApplicationDbContext db;
         public GzTransactionRepo(ApplicationDbContext db)
         {
             this.db = db;
         }
+        /// <summary>
         /// Create any type of transaction from those allowed.
         /// Used along with peer API methods for specialized transactions
         /// </summary>
@@ -30,7 +29,8 @@ namespace gzWeb.Repo {
         /// <param name="amount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC) {
+        public void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC)
+        {
 
             if (
                        gzTransactionType == TransferTypeEnum.GzFees
@@ -38,21 +38,24 @@ namespace gzWeb.Repo {
                     || gzTransactionType == TransferTypeEnum.InvWithdrawal
 
                     || gzTransactionType == TransferTypeEnum.PlayingLoss
-                    || gzTransactionType == TransferTypeEnum.CreditedPlayingLoss ) {
+                    || gzTransactionType == TransferTypeEnum.CreditedPlayingLoss)
+            {
 
                 throw new Exception("This type of transaction can be created/updated only by the specialized api of this class" + amount);
             }
 
-            if (amount < 0) {
+            if (amount < 0)
+            {
 
                 throw new Exception("Amount must be greater than 0: " + amount);
 
             }
 
-            
-            SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, null);
-            
+            using (var db = new ApplicationDbContext())
+            {
+                SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, db);
             }
+        }
 
         /// <summary>
         /// Transfer to the Gaming account by selling investment shares and save the calculated commission and fund fees transactions
@@ -61,29 +64,43 @@ namespace gzWeb.Repo {
         /// <param name="withdrawnAmount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
+        public void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC)
+        {
 
-            if (withdrawnAmount < 0) {
+            if (withdrawnAmount < 0)
+            {
 
                 throw new Exception("Invalid amount to transfer to gaming account. Amount must be greater than 0: " + withdrawnAmount);
 
-            } else {
+            }
+            else {
                 //string datPath = "d:\\temp";
                 //using (var sqlLogFile = new StreamWriter(datPath + "\\sqlLogFile_SaveDBTransferToGamingAmount.log")) {
 
+                using (var db = new ApplicationDbContext())
+                {
 
+                    //db.Database.Log = sqlLogFile.Write;
 
-                        //db.Database.Log = sqlLogFile.Write;
+                    using (var dbContextTransaction = db.Database.BeginTransaction())
+                    {
 
-                        using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                        try
+                        {
 
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, null);
-                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, db);
+                            SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
 
-                                dbContextTransaction.Commit();
-                    
-                            }
-                    
+                            dbContextTransaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            var exception = ex.Message;
+                            dbContextTransaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
                 //}
             }
         }
@@ -97,24 +114,38 @@ namespace gzWeb.Repo {
         /// <param name="withdrawnAmount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
+        public void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC)
+        {
 
-            if (withdrawnAmount < 0) {
+            if (withdrawnAmount < 0)
+            {
 
                 throw new Exception("Invalid withdrawal. Amount must be greater than 0: " + withdrawnAmount);
 
-            } else {
+            }
+            else {
 
-                
-                    using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                using (var db = new ApplicationDbContext())
+                {
+                    using (var dbContextTransaction = db.Database.BeginTransaction())
+                    {
 
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
-                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                        try
+                        {
 
-                    dbContextTransaction.Commit();
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, db);
+                            SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC, db);
 
+                            dbContextTransaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            var exception = ex.Message;
+                            dbContextTransaction.Rollback();
+                            throw;
+                        }
+                    }
                 }
-                
             }
         }
 
@@ -126,9 +157,10 @@ namespace gzWeb.Repo {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC, ApplicationDbContext db) {
-            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * COMMISSION_PCNT / 100, createdOnUTC, db);
-            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * FUND_FEE_PCNT / 100, createdOnUTC, db);
+        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC, ApplicationDbContext db)
+        {
+            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100, createdOnUTC, db);
+            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100, createdOnUTC, db);
         }
 
         /// <summary>
@@ -139,25 +171,38 @@ namespace gzWeb.Repo {
         /// <param name="creditPcnt">Percentage number (0-100) to credit balance. For example 50 for half the amount to be credited</param>
         /// <param name="createdOnUTC">Date of the transaction in UTC</param>
         /// <returns></returns>
-        public void SaveDBPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC) {
+        public void SaveDBPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC)
+        {
 
-            if (creditPcnt < 0 || creditPcnt > 100) {
+            if (creditPcnt < 0 || creditPcnt > 100)
+            {
 
                 throw new Exception("Invalid percentage not within range 0..100: " + creditPcnt);
 
-            } else {
+            }
+            else {
 
-                
-                    using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                using (var db = new ApplicationDbContext())
+                {
+                    using (var dbContextTransaction = db.Database.BeginTransaction())
+                    {
 
-                        try {
+                        try
+                        {
 
                             SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, db);
-                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db, (float) CREDIT_LOSS_PCNT);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db, db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
                             dbContextTransaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            var exception = ex.Message;
+                            dbContextTransaction.Rollback();
+                            throw;
+                        }
+                    }
                 }
-                
             }
         }
 
@@ -171,13 +216,15 @@ namespace gzWeb.Repo {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, float? creditPcntApplied) {
+        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, ApplicationDbContext db, float? creditPcntApplied = null)
+        {
             //Not thread safe but ok...within a single request context
             db.GzTransactions.AddOrUpdate(
                 // Assume CreatedOnUTC remains constant for same trx
                 // to support idempotent transactions
                 t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC },
-                    new GzTransaction {
+                    new GzTransaction
+                    {
                         CustomerId = customerId,
                         TypeId = db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
                         YearMonthCtd = createdOnUTC.Year.ToString("0000") + createdOnUTC.Month.ToString("00"),
@@ -190,6 +237,7 @@ namespace gzWeb.Repo {
                 );
             db.SaveChanges();
         }
+
 
     }
 }
