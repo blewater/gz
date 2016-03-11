@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CustPortfoliosCalc {
+namespace cpc {
+
     class Program {
+
         static void Main(string[] args) {
+
+            CpcOptions.ProcArgs(args);
         }
     }
 }

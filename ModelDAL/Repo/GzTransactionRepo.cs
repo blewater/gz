@@ -17,27 +17,11 @@ namespace gzWeb.Repo {
     {
 
         /// <summary>
-        /// Greenzorro percentage fee %
-        /// </summary>
-        const decimal COMMISSION_PCNT = 1.5M;
-
-        /// <summary>
-        /// Fund fee %
-        /// </summary>
-        const decimal FUND_FEE_PCNT = 2.5M;
-
-        /// <summary>
-        /// Percentage to credit on loss
-        /// </summary>
-        const decimal CREDIT_LOSS_PCNT = 50M;
-
         private readonly ApplicationDbContext db;
         public GzTransactionRepo(ApplicationDbContext db)
         {
             this.db = db;
         }
-
-        /// <summary>
         /// Create any type of transaction from those allowed.
         /// Used along with peer API methods for specialized transactions
         /// </summary>
@@ -68,7 +52,7 @@ namespace gzWeb.Repo {
             
             SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, null);
             
-        }
+            }
 
         /// <summary>
         /// Transfer to the Gaming account by selling investment shares and save the calculated commission and fund fees transactions
@@ -87,18 +71,18 @@ namespace gzWeb.Repo {
                 //string datPath = "d:\\temp";
                 //using (var sqlLogFile = new StreamWriter(datPath + "\\sqlLogFile_SaveDBTransferToGamingAmount.log")) {
 
-                    
+
 
                         //db.Database.Log = sqlLogFile.Write;
 
-                using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                        using (var dbContextTransaction = db.Database.BeginTransaction()) {
 
                     SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, null);
                     SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                    dbContextTransaction.Commit();
+                                dbContextTransaction.Commit();
                     
-                }
+                            }
                     
                 //}
             }
@@ -122,13 +106,13 @@ namespace gzWeb.Repo {
             } else {
 
                 
-                using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                    using (var dbContextTransaction = db.Database.BeginTransaction()) {
 
                     SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
                     SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
                     dbContextTransaction.Commit();
-                        
+
                 }
                 
             }
@@ -142,9 +126,9 @@ namespace gzWeb.Repo {
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC) {
-            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * COMMISSION_PCNT / 100, createdOnUTC, null);
-            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * FUND_FEE_PCNT / 100, createdOnUTC, null);
+        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC, ApplicationDbContext db) {
+            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * COMMISSION_PCNT / 100, createdOnUTC, db);
+            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * FUND_FEE_PCNT / 100, createdOnUTC, db);
         }
 
         /// <summary>
@@ -164,12 +148,14 @@ namespace gzWeb.Repo {
             } else {
 
                 
-                using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                    using (var dbContextTransaction = db.Database.BeginTransaction()) {
 
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, (float) CREDIT_LOSS_PCNT);
+                        try {
 
-                    dbContextTransaction.Commit();
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, db);
+                            SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db, (float) CREDIT_LOSS_PCNT);
+
+                            dbContextTransaction.Commit();
                 }
                 
             }
