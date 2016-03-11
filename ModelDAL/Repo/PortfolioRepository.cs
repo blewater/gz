@@ -12,19 +12,20 @@ namespace gzWeb.Repo {
     /// </summary>
     public class PortfolioRepository : IPortfolioRepository
     {
+        private readonly ApplicationDbContext db;
+        public PortfolioRepository(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
 
         public IList<string> GetPortfolioRetLines() {
 
             List<string> portfolioRetLine = new List<string>();
 
-            using (ApplicationDbContext db = new ApplicationDbContext()) {
+            foreach (var p in db.Portfolios.ToList()) {
 
-                foreach (var p in db.Portfolios.ToList()) {
-
-                    var r = p.PortFunds.Select(f => f.Weight * Math.Max(f.Fund.ThreeYrReturnPcnt, f.Fund.FiveYrReturnPcnt)/100).Sum();
-                    portfolioRetLine.Add(p.RiskTolerance.ToString() + " portfolio return " + r + "%");
-                }
-
+                var r = p.PortFunds.Select(f => f.Weight * Math.Max(f.Fund.ThreeYrReturnPcnt, f.Fund.FiveYrReturnPcnt)/100).Sum();
+                portfolioRetLine.Add(p.RiskTolerance.ToString() + " portfolio return " + r + "%");
             }
 
             return portfolioRetLine;

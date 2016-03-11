@@ -11,6 +11,12 @@ namespace gzWeb.Repo {
     public class CustFundShareRepo : ICustFundShareRepo
     {
 
+        private readonly ApplicationDbContext db;
+        public CustFundShareRepo(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
+
         /// <summary>
         /// Save purchased funds shares to the customer's account.
         /// 
@@ -22,7 +28,7 @@ namespace gzWeb.Repo {
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="updatedOnUTC"></param>
-        public void SaveDbCustPurchasedFundShares(ApplicationDbContext db, int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUTC) {
+        public void SaveDbCustPurchasedFundShares(int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUTC) {
 
             foreach (var fundShares in fundsShares) {
 
@@ -92,12 +98,12 @@ namespace gzWeb.Repo {
             using (var db = new ApplicationDbContext()) {
                 if (netInvAmount >= 0) {
 
-                    portfolioFundValues = GetBoughtShares(customerId, netInvAmount, year, month, db);
+                    portfolioFundValues = GetBoughtShares(customerId, netInvAmount, year, month);
 
                     // Note this case for repricing (0 cash) or liquidating shares to cash
                 } else if (netInvAmount < 0) {
 
-                    GetSoldShares(customerId, netInvAmount, year, month, db);
+                    GetSoldShares(customerId, netInvAmount, year, month);
 
                 }
             }
@@ -116,7 +122,7 @@ namespace gzWeb.Repo {
         /// <param name="month"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetSoldShares(int customerId, decimal cashToExtract, int year, int month, ApplicationDbContext db) {
+        private Dictionary<int, PortfolioFundDTO> GetSoldShares(int customerId, decimal cashToExtract, int year, int month) {
 
             Dictionary<int, PortfolioFundDTO> portfolioFundValues = null;
 
@@ -142,7 +148,7 @@ namespace gzWeb.Repo {
                 .Select(b => b.Balance)
                 .SingleOrDefault();
 
-            portfolioFundValues = GetCalcPortfShares(db, customerId, cashToExtract, year, month, lastMonthPort, prevBal);
+            portfolioFundValues = GetCalcPortfShares(customerId, cashToExtract, year, month, lastMonthPort, prevBal);
 
             return portfolioFundValues;
         }
@@ -158,7 +164,7 @@ namespace gzWeb.Repo {
         /// <param name="month"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetBoughtShares(int customerId, decimal cashToInvest, int year, int month, ApplicationDbContext db) {
+        private Dictionary<int, PortfolioFundDTO> GetBoughtShares(int customerId, decimal cashToInvest, int year, int month) {
             Dictionary<int, PortfolioFundDTO> portfolioFundValues;
 
             string lastMonthPort = GetCustPortfYearMonth(customerId, DbExpressions.GetStrYearMonth(year, month), db);
@@ -170,7 +176,7 @@ namespace gzWeb.Repo {
                 throw new Exception(String.Format("No portfolio has been set for customer Id: {0}", customerId));
             }
 
-            portfolioFundValues = GetCalcPortfShares(db, customerId, cashToInvest, year, month, lastMonthPort);
+            portfolioFundValues = GetCalcPortfShares(customerId, cashToInvest, year, month, lastMonthPort);
 
             return portfolioFundValues;
         }
@@ -190,7 +196,7 @@ namespace gzWeb.Repo {
         /// <param name="lastMonthPort"></param>
         /// <param name="prevInvBal"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetCalcPortfShares(ApplicationDbContext db, int customerId, decimal cashToInvest, int year, int month, string lastMonthPort, decimal prevInvBal = 0) {
+        private Dictionary<int, PortfolioFundDTO> GetCalcPortfShares(int customerId, decimal cashToInvest, int year, int month, string lastMonthPort, decimal prevInvBal = 0) {
 
             var prevYearMonStr = DbExpressions.GetPrevYearMonth(year, month);
             decimal cashToGetBySellingShares = 0;
@@ -203,9 +209,9 @@ namespace gzWeb.Repo {
             }
 
             //Get Portfolio Funds Weights
-            Dictionary<int, PortfolioFundDTO> portfolioFundValues = GetFundWeights(customerId, db, lastMonthPort, prevYearMonStr);
+            Dictionary<int, PortfolioFundDTO> portfolioFundValues = GetFundWeights(customerId, lastMonthPort, prevYearMonStr);
 
-            GetCashtoFundsShares(db, portfolioFundValues, year, month, cashToInvest, cashToGetBySellingShares, prevInvBal);
+            GetCashtoFundsShares(portfolioFundValues, year, month, cashToInvest, cashToGetBySellingShares, prevInvBal);
 
             return portfolioFundValues;
         }
@@ -221,7 +227,7 @@ namespace gzWeb.Repo {
         /// <param name="cashToInvest"></param>
         /// <param name="cashToGetBySellingShares"></param>
         /// <param name="prevInvBal"></param>
-        private void GetCashtoFundsShares(ApplicationDbContext db, Dictionary<int, PortfolioFundDTO> portfolioFundValues, int year, int month, 
+        private void GetCashtoFundsShares(Dictionary<int, PortfolioFundDTO> portfolioFundValues, int year, int month, 
             decimal cashToInvest, 
             decimal cashToGetBySellingShares = 0, 
             decimal prevInvBal = 0) {
@@ -238,7 +244,7 @@ namespace gzWeb.Repo {
                 var portfolioId = pfund.Value.PortfolioId;
 
                 string lastTradeDay;
-                FundPrice fundPrice = GetFundPrice(year, month, db, fundId, out lastTradeDay);
+                FundPrice fundPrice = GetFundPrice(year, month, fundId, out lastTradeDay);
                 
                 decimal cashPerFund = (decimal)weight / 100 * cashToInvest, existingFundSharesVal = prevMonShares * (decimal)fundPrice.ClosingPrice;
 
@@ -251,7 +257,7 @@ namespace gzWeb.Repo {
 
                 var tradeDayDateTime = DbExpressions.GetDtYearMonthDay(lastTradeDay);
 
-                SaveDtoPortFundShares(pfund.Value, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
+                UpdateDtoPortFundShares(pfund.Value, cashPerFund, lastTradeDay, fundPrice, NewsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
             }
         }
 
@@ -264,7 +270,7 @@ namespace gzWeb.Repo {
         /// <param name="fundId"></param>
         /// <param name="lastTradeDay"></param>
         /// <returns></returns>
-        private FundPrice GetFundPrice(int year, int month, ApplicationDbContext db, int fundId, out string lastTradeDay) {
+        private FundPrice GetFundPrice(int year, int month, int fundId, out string lastTradeDay) {
 
             FundPrice fundPriceToRet = null;
 
@@ -296,7 +302,7 @@ namespace gzWeb.Repo {
         /// <param name="NewsharesNum"></param>
         /// <param name="thisMonthsSharesNum"></param>
         /// <param name="thisMonthsSharesVal"></param>
-        private void SaveDtoPortFundShares(
+        private void UpdateDtoPortFundShares(
             PortfolioFundDTO savePortfolioFundDTO, decimal cashPerFund, string lastTradeDay, 
             FundPrice fundPrice, decimal NewsharesNum, decimal thisMonthsSharesNum, 
             decimal thisMonthsSharesVal) {
@@ -319,7 +325,7 @@ namespace gzWeb.Repo {
         /// <param name="lastMonthPort"></param>
         /// <param name="prevYearMonStr"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetFundWeights(int customerId, ApplicationDbContext db, string lastMonthPort, string prevYearMonStr) {
+        private Dictionary<int, PortfolioFundDTO> GetFundWeights(int customerId, string lastMonthPort, string prevYearMonStr) {
 
             // STEP 1: Retrieve the funds associated with the current customer portfolio
             var fundsIQry = from pf in db.PortFunds

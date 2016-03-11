@@ -9,6 +9,13 @@ using gzWeb.Models;
 namespace gzWeb.Repo {
     public class InvBalanceRepo : IInvBalanceRepo
     {
+        private readonly ApplicationDbContext db;
+        private readonly ICustFundShareRepo customerFundSharesRepo;
+        public InvBalanceRepo(ApplicationDbContext db, ICustFundShareRepo customerFundSharesRepo)
+        {
+            this.db = db;
+            this.customerFundSharesRepo = customerFundSharesRepo;
+        }
 
         /// <summary>
         /// Calculate numeric balance metrics for a customer on a given month
@@ -22,32 +29,29 @@ namespace gzWeb.Repo {
         /// <returns></returns>
         public Dictionary<int, CustFundShareRepo.PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int custId, int year, int month, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss) {
 
-            using (var db = new ApplicationDbContext()) {
+            // Previous Month DateTime                
+            DateTime prevYearMonth = new DateTime(year, month, 1).AddMonths(-1);
 
-                // Previous Month DateTime                
-                DateTime prevYearMonth = new DateTime(year, month, 1).AddMonths(-1);
+            // Step 1: Buy if amount is positive otherwise sell shares or just reprice for the month the existing shares
+            var portfolioFundsValuesThisMonth = customerFundSharesRepo.GetCalcCustMonthlyFundShares(custId, cashToInvest, year, month);
+            var totSharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
+            var newShareVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue ?? 0);
+            var prevMonSharesPricedNow = totSharesValue - newShareVal;
 
-                // Step 1: Buy if amount is positive otherwise sell shares or just reprice for the month the existing shares
-                var customerFundSharesRepo = new CustFundShareRepo();
-                var portfolioFundsValuesThisMonth = customerFundSharesRepo.GetCalcCustMonthlyFundShares(custId, cashToInvest, year, month);
-                var totSharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
-                var newShareVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue ?? 0);
-                var prevMonSharesPricedNow = totSharesValue - newShareVal;
+            // Step 2: Get the previous month balance
+            var prevYearMonthStr = DbExpressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
+            var prevMonthBalAmount = db.InvBalances
+                .Where(b => b.CustomerId == custId &&
+                string.Compare(b.YearMonth, prevYearMonthStr) <= 0)
+                .OrderByDescending(b => b.YearMonth)
+                .Select(b => b.Balance)
+                .FirstOrDefault();
 
-                // Step 2: Get the previous month balance
-                var prevYearMonthStr = DbExpressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
-                var prevMonthBalAmount = db.InvBalances
-                    .Where(b => b.CustomerId == custId &&
-                    string.Compare(b.YearMonth, prevYearMonthStr) <= 0)
-                    .OrderByDescending(b => b.YearMonth)
-                    .Select(b => b.Balance)
-                    .FirstOrDefault();
+            invGainLoss = DbExpressions.RoundCustomerBalanceAmount(prevMonSharesPricedNow - prevMonthBalAmount);
+            monthlyBalance = DbExpressions.RoundCustomerBalanceAmount(totSharesValue);
 
-                invGainLoss = DbExpressions.RoundCustomerBalanceAmount(prevMonSharesPricedNow - prevMonthBalAmount);
-                monthlyBalance = DbExpressions.RoundCustomerBalanceAmount(totSharesValue);
-
-                return portfolioFundsValuesThisMonth;
-            }
+            return portfolioFundsValuesThisMonth;
+            
         }
 
         /// <summary>
@@ -61,33 +65,25 @@ namespace gzWeb.Repo {
             decimal monthlyBalance, invGainLoss;
             var portfolioFunds = GetCalcMonthlyBalancesForCustomer(custId, year, month, cashToInvest, out monthlyBalance, out invGainLoss);
 
-            var customerFundSharesRepo = new CustFundShareRepo();
-            using (var db = new ApplicationDbContext()) {
+            using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                
+                customerFundSharesRepo.SaveDbCustPurchasedFundShares(custId, portfolioFunds, year, month, DateTime.UtcNow);
 
-                using (var dbContextTransaction = db.Database.BeginTransaction()) {
-
-                    try {
-                        customerFundSharesRepo.SaveDbCustPurchasedFundShares(db, custId, portfolioFunds, year, month, DateTime.UtcNow);
-
-                        db.InvBalances.AddOrUpdate(
-                            i => new { i.CustomerId, i.YearMonth },
-                            new InvBalance {
-                                YearMonth = DbExpressions.GetStrYearMonth(year, month),
-                                CustomerId = custId,
-                                Balance = monthlyBalance,
-                                InvGainLoss = invGainLoss,
-                                CashInvestment = cashToInvest,
-                                UpdatedOnUTC = DateTime.UtcNow
-                            }
-                            );
-                        db.SaveChanges();
-                        dbContextTransaction.Commit();
-                    } catch (Exception e) {
-                        dbContextTransaction.Rollback();
-                        var msg = e.Message;
+                db.InvBalances.AddOrUpdate(
+                    i => new { i.CustomerId, i.YearMonth },
+                    new InvBalance {
+                        YearMonth = DbExpressions.GetStrYearMonth(year, month),
+                        CustomerId = custId,
+                        Balance = monthlyBalance,
+                        InvGainLoss = invGainLoss,
+                        CashInvestment = cashToInvest,
+                        UpdatedOnUTC = DateTime.UtcNow
                     }
-                }
+                    );
+                db.SaveChanges();
+                dbContextTransaction.Commit();
             }
+            
 
         }
 
@@ -97,39 +93,37 @@ namespace gzWeb.Repo {
         /// <param name="custId"></param>
         public void SaveCustTrxsBalances(int custId) {
 
-            using (var db = new ApplicationDbContext()) {
-
-                // Step 1: Retrieve all Transactions by YearMonth
-                var monthlyTrx = db.GzTransactions.Where(t => t.CustomerId == custId)
-                .OrderBy(t => t.YearMonthCtd)
-                .GroupBy(t => t.YearMonthCtd)
-                .ToList();
+            // Step 1: Retrieve all Transactions by YearMonth
+            var monthlyTrx = db.GzTransactions.Where(t => t.CustomerId == custId)
+            .OrderBy(t => t.YearMonthCtd)
+            .GroupBy(t => t.YearMonthCtd)
+            .ToList();
 
 
-                // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
-                foreach (var g in monthlyTrx) {
+            // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
+            foreach (var g in monthlyTrx) {
 
-                    int curYear = int.Parse(g.Key.Substring(0, 4));
-                    int curMonth = int.Parse(g.Key.Substring(4, 2));
-
-
-                    // Step 3: Calculate monthly cash balances before investment
-                    var monthlyPlayingLosses = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
-                    var monthlyWithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.InvWithdrawal? t.Amount : 0);
-                    var monthlyTransfersToGaming = g.Sum(t => t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
-                    var monthlyFees = g.Sum(t => t.Type.Code == TransferTypeEnum.GzFees || t.Type.Code == TransferTypeEnum.FundFee ? t.Amount : 0);
+                int curYear = int.Parse(g.Key.Substring(0, 4));
+                int curMonth = int.Parse(g.Key.Substring(4, 2));
 
 
-                    // Net amount to invest
-                    var monthlyCashToInvest = monthlyPlayingLosses - monthlyWithdrawnAmounts - monthlyTransfersToGaming - monthlyFees;
+                // Step 3: Calculate monthly cash balances before investment
+                var monthlyPlayingLosses = g.Sum(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
+                var monthlyWithdrawnAmounts = g.Sum(t => t.Type.Code == TransferTypeEnum.InvWithdrawal? t.Amount : 0);
+                var monthlyTransfersToGaming = g.Sum(t => t.Type.Code == TransferTypeEnum.TransferToGaming ? t.Amount : 0);
+                var monthlyFees = g.Sum(t => t.Type.Code == TransferTypeEnum.GzFees || t.Type.Code == TransferTypeEnum.FundFee ? t.Amount : 0);
 
-                    System.Diagnostics.Trace.Assert(monthlyCashToInvest >= 0, "Cash to invest should be positive or 0. Selling stock is supported only for the whole portfolio.");
 
-                    if (monthlyCashToInvest >= 0) {
-                        SaveDBbyTrxMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
-                    }
+                // Net amount to invest
+                var monthlyCashToInvest = monthlyPlayingLosses - monthlyWithdrawnAmounts - monthlyTransfersToGaming - monthlyFees;
+
+                System.Diagnostics.Trace.Assert(monthlyCashToInvest >= 0, "Cash to invest should be positive or 0. Selling stock is supported only for the whole portfolio.");
+
+                if (monthlyCashToInvest >= 0) {
+                    SaveDBbyTrxMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
                 }
             }
+            
         }
     }
 }

@@ -8,7 +8,11 @@ using gzWeb.Models;
 namespace gzWeb.Repo {
     public class CustPortfolioRepo : ICustPortfolioRepo
     {
-
+        private readonly ApplicationDbContext db;
+        public CustPortfolioRepo(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
         /// <summary>
         /// Save the month's full portfolio mix for a customer.
         /// For phase I you can only select 1 portfolio in 100%
@@ -60,23 +64,23 @@ namespace gzWeb.Repo {
 
             } else {
 
-                using (var db = new ApplicationDbContext()) {
+                
 
-                    //Not thread atomic but ok...within a single request context
-                    db.CustPortfolios.AddOrUpdate(
-                        // Assume UpdatedOnUTC remains constant for same trx
-                        // to support idempotent transactions
-                        cp => new { cp.CustomerId, cp.YearMonth },
-                            new CustPortfolio {
-                                CustomerId = customerId,
-                                PortfolioId = db.Portfolios.Where(p => p.RiskTolerance == riskType).Select(p => p.Id).FirstOrDefault(),
-                                YearMonth = DbExpressions.GetStrYearMonth(portfYear, portfMonth),
-                                UpdatedOnUTC = UpdatedOnUTC,
-                                Weight = weight
-                            }
-                        );
-                    db.SaveChanges();
-                }
+                //Not thread atomic but ok...within a single request context
+                db.CustPortfolios.AddOrUpdate(
+                    // Assume UpdatedOnUTC remains constant for same trx
+                    // to support idempotent transactions
+                    cp => new { cp.CustomerId, cp.YearMonth },
+                        new CustPortfolio {
+                            CustomerId = customerId,
+                            PortfolioId = db.Portfolios.Where(p => p.RiskTolerance == riskType).Select(p => p.Id).FirstOrDefault(),
+                            YearMonth = DbExpressions.GetStrYearMonth(portfYear, portfMonth),
+                            UpdatedOnUTC = UpdatedOnUTC,
+                            Weight = weight
+                        }
+                    );
+                db.SaveChanges();
+                
             }
         }
     }
