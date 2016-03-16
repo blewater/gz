@@ -19,25 +19,20 @@ namespace gzWeb.Repo {
         /// <summary>
         /// Create a customer (user) only if not preexisting. Otherwise, update it.
         /// </summary>
-        /// <param name="dto">Use the VM object since the applicationUser has non-public properties i.e. Password (clear)</param>
-        /// <returns></returns>
-        public int CreateUpdUser(CustomerDTO dto) {
+        /// <param name="newUser">The new applicationUser</param>
+        /// <param name="password">Password in clear text</param>
+        /// <returns>The Id of the new User</returns>
+        public int CreateOrUpdateUser(ApplicationUser newUser, string password) {
             
-            var newUser = new ApplicationUser();
-
-            Mapper.Map<CustomerDTO, ApplicationUser>(dto, newUser);
-
             // Don't recreate if existing
             var fUser = manager.FindByEmail(newUser.Email);
             if (fUser == null) {
-                manager.Create(newUser, dto.Password);
+                manager.Create(newUser, password);
             } else {
                 manager.Update(newUser);
             }
-
-            var custId = manager.FindByEmail(newUser.Email).Id;
-            return custId;
             
+            return newUser.Id;
         }
 
 
