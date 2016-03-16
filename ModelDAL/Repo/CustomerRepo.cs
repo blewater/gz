@@ -25,8 +25,6 @@ namespace gzWeb.Repo {
             
             var newUser = new ApplicationUser();
 
-            Mapper.Initialize(cfg => cfg.CreateMap<CustomerDTO, ApplicationUser>());
-            //Mapper.CreateMap <CustomerDTO, ApplicationUser> ();
             Mapper.Map<CustomerDTO, ApplicationUser>(dto, newUser);
 
             // Don't recreate if existing
