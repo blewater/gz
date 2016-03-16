@@ -7,10 +7,19 @@ using System.Threading.Tasks;
 using gzWeb.Models;
 using System.Diagnostics;
 using gzWeb.Repo;
+using AutoMapper;
 
 namespace gzWeb.Tests.Models {
     [TestClass]
     public class PortfolioTest {
+
+        [ClassInitialize]
+        public void PortfolioTestInitialize()
+        {
+            Mapper.Initialize(cfg => cfg.CreateMap<CustomerDTO, ApplicationUser>());
+        }
+        
+
         /// <summary>
         /// Get the Apr returns based on the 3 year or 5 year returns whichever is greater
         /// </summary>
