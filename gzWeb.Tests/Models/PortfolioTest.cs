@@ -129,10 +129,9 @@ namespace gzWeb.Tests.Models {
             Random rnd = new Random();
             int rndPlatformId = rnd.Next(1, int.MaxValue);
 
-            var newUser = new CustomerDTO() {
+            var newUserDTO = new CustomerDTO() {
                 UserName = "6month@allocation.com",
                 Email = "6month@allocation.com",
-                Password = "1q2w3e",
                 EmailConfirmed = true,
                 FirstName = "Six",
                 LastName = "Month",
@@ -141,10 +140,12 @@ namespace gzWeb.Tests.Models {
                 GamBalance = new decimal(4200.54),
                 GamBalanceUpdOnUTC = DateTime.UtcNow
             };
-            var db = new ApplicationDbContext();
-            var custRepo = new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db)));
+            var newUser = new ApplicationUser();
+            Mapper.Map<CustomerDTO, ApplicationUser>(newUserDTO, newUser);
 
-            return custRepo.CreateUpdUser(newUser);
+            var db = new ApplicationDbContext();            
+            var custRepo = new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db)));
+            return custRepo.CreateOrUpdateUser(newUser, "1q2w3e");
         }
     }
 }
