@@ -6,7 +6,8 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using AutoMapper;
-using gzWeb.Models;
+using gzDAL.Models;
+using gzDAL.DTO;
 
 namespace gzWeb
 {

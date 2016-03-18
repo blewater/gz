@@ -3,7 +3,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
-using gzWeb.Models;
+using gzDAL.Models;
+using gzDAL.Conf;
 
 namespace gzWeb {
     public partial class Startup {

@@ -53,9 +53,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ModelDAL\ModelDAL.csproj">
+    <ProjectReference Include="..\ModelDAL\gzDAL.csproj">
       <Project>{78fea6ae-abf3-457a-aa85-0904f710488b}</Project>
-      <Name>ModelDAL</Name>
+      <Name>gzDAL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

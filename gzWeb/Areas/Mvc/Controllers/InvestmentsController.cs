@@ -6,10 +6,12 @@ using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using gzWeb.Areas.Mvc.Models;
-using gzWeb.Models;
+using gzDAL.Models;
 using gzWeb.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using gzDAL.DTO;
+using gzDAL.Conf;
 
 namespace gzWeb.Areas.Mvc.Controllers
 {

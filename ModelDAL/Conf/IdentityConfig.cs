@@ -9,9 +9,9 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using gzWeb.Models;
+using gzDAL.Models;
 
-namespace gzWeb
+namespace gzDAL.Conf
 {
     public class EmailService : IIdentityMessageService
     {
