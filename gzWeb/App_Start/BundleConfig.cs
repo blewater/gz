@@ -57,6 +57,11 @@ namespace gzWeb
                 , "~/Scripts/respond/respond.js"
             ));
 
+            bundles.Add(new ScriptBundle("~/js/d3").Include(
+                "~/Scripts/d3/d3.min.js"
+                , "~/Scripts/d3-tip/d3-tip.js"
+            ));
+
             bundles.Add(new ScriptBundle("~/js/plugins").Include(
                 "~/Scripts/moment/moment.min.js"
                 , "~/Scripts/spin/spin.min.js"
@@ -109,6 +114,8 @@ namespace gzWeb
 
                 , "~/Scripts/_app/services/authInterceptor.js"
                 , "~/Scripts/_app/services/routingService.js"
+
+                , "~/Scripts/_app/directives/gzPortfolioChart.js"
             ));
             #endregion
         }
