@@ -4,9 +4,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="@Url.Content("~/favicon.ico")" rel="shortcut icon" type="image/x-icon" />
-    <link href="@Url.Content("~/apple-touch-icon.png")" rel="apple-touch-icon" />
-    <link href="@Url.Content("~/apple-touch-icon.png")" rel="apple-touch-icon-precomposed" />
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="/apple-touch-icon.png" rel="apple-touch-icon-precomposed" />
 
     <title ng-if="!documentTitle">Greenzorro</title>
     <title ng-if="documentTitle">{{documentTitle}}</title>
@@ -27,6 +27,7 @@
     @Scripts.Render("~/js/jquery")
     @Scripts.Render("~/js/plugins")
     @Scripts.Render("~/js/bootstrap")
+    @Scripts.Render("~/js/d3")
     @Scripts.Render("~/js/angular")
     @Scripts.Render("~/js/modules")
     @Scripts.Render("~/js/app")
