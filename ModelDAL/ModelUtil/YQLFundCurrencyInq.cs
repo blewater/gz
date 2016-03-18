@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using System.Globalization;
 
 /// <summary>
 /// Credit to jarloo
@@ -264,7 +265,7 @@ namespace gzWeb.Models.Util {
 
             DateTime value;
 
-            if (DateTime.TryParse(input, out value)) return value;
+            if (DateTime.TryParse(input, CultureInfo.InvariantCulture, DateTimeStyles.None, out value)) return value;
             return null;
         }
     }

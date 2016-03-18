@@ -32,7 +32,7 @@ namespace gzWeb.Repo {
                 manager.Update(newUser);
             }
             
-            return newUser.Id;
+            return manager.FindByEmail(newUser.Email).Id;
         }
 
 
