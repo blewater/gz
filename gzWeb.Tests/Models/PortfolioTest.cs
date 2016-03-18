@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using gzWeb.Models;
+using gzDAL.Models;
 using System.Diagnostics;
-using gzWeb.Repo;
+using gzDAL.Repos;
 using AutoMapper;
+using gzDAL.DTO;
+using gzDAL.Conf;
 
 namespace gzWeb.Tests.Models {
     [TestClass]

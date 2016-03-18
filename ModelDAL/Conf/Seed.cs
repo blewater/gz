@@ -1,11 +1,13 @@
-﻿using gzWeb.Repo;
+﻿using gzDAL.Models;
+using gzDAL.Repos;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 
-namespace gzWeb.Models {
+namespace gzDAL.Conf
+{
 
     /// <summary>
     /// Seed class moved here from migrations.configuration

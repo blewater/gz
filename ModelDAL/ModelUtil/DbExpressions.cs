@@ -1,10 +1,10 @@
-﻿using gzWeb.Models;
+﻿using gzDAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace gzWeb.Model.Util {
+namespace gzDAL.ModelUtil {
 
     static public class DbExpressions {
 
