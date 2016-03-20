@@ -43,11 +43,11 @@
                     }
                     else
                     {
-                        <a class="nav-btn-games" ng-show="gamesMode" ng-click="gamesMode = !gamesMode">
+                        <a class="nav-btn-games" ng-show="gamesMode" ng-click="toInvestments()">
                             <img src="@Url.Content("~/Content/Images/diagram.svg")" />
                             <p>TO INVESTMENTS</p>
                         </a>
-                        <a class="nav-btn-investments" ng-hide="gamesMode" ng-click="gamesMode = !gamesMode">
+                        <a class="nav-btn-investments" ng-hide="gamesMode" ng-click="backToGames()">
                             <img src="@Url.Content("~/Content/Images/games.svg")" />
                             <p>BACK TO GAMES</p>
                         </a>

@@ -21,9 +21,6 @@ a { text-decoration:none; }
 .padded-md { padding: 20px; }
 .padded-lg { padding: 50px; }
 
-.lefted { text-align: left; }
-.centered { text-align: center; }
-.righted { text-align: right; }
 .strike {
     text-decoration: line-through;
     -ms-opacity: 0.3;

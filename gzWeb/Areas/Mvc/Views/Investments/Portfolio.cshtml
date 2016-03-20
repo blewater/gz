@@ -2,4 +2,103 @@
     Layout = "~/Areas/Mvc/Views/Shared/_InvestmentsLayout.cshtml";
 }
 
-<h1 class="text-center">Portfolio</h1>
+<div class="portfolio">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="text-center">
+                <div class="invest-prompt">
+                    Please select your next month’s investment plan:
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-lg-6 col-lg-push-3">
+            <div class="portfolio-section portfolio-plans">
+                <div class="row header">
+                    <div class="col-xs-4"><div>Plan</div></div>
+                    <div class="col-xs-4"><div>Current Balance</div></div>
+                    <div class="col-xs-4"><div>Selection</div></div>
+                </div>
+                <div class="row plan" ng-class="{'expanded':expanded}" ng-repeat="plan in model.plans">
+                    <div class="basic">
+                        <div class="col-xs-4">
+                            <div class="title text-left">{{plan.title}}</div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="balance text-center">€{{plan.balance}}</div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="selection text-right">
+                                <button type="button" ng-disabled="plan.selected" ng-click="selectPlan(plan)">
+                                    <span ng-if="plan.selected">
+                                        <i class="fa fa-check"></i> Selected
+                                    </span>
+                                    <span ng-if="!plan.selected">
+                                        Select
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <img src="@Url.Content("~/Content/Images/open.svg")" alt="Expand/Collapse" ng-click="expanded = !expanded" />                        
+                    </div>
+                    <div class="details">
+                        <div>
+                            <div class="col-xs-4 text-left">
+                                <div><u>Holding Name</u></div>
+                            </div>
+                            <div class="col-xs-4"></div>
+                            <div class="col-xs-4 text-right">
+                                <div><u>Port. Weight</u></div>
+                            </div>                            
+                        </div>
+                        <div ng-repeat="holding in plan.holdings">
+                            <div class="col-xs-4 text-left">
+                                <div class="holding-name">{{holding.name}}</div>
+                            </div>
+                            <div class="col-xs-4"></div>
+                            <div class="col-xs-4 text-right">
+                                <div class="holding-weight">{{holding.weight}}.00%</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-lg-3 col-lg-pull-6">
+            <div class="portfolio-section next-investment">
+                <div class="side-box">
+                    <div class="side-box-table">
+                        <div class="side-box-table-head">
+                            Next expected investment:
+                        </div>
+                        <div class="side-box-table-body">
+                            <div class="balance text-gz">€15.000</div>
+                        </div>
+                    </div>
+                    <div class="side-box-table">
+                        <div class="side-box-table-head">
+                            {{model.nextInvestmentOn}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-lg-3">
+            <div class="portfolio-section current-portfolio">
+                <div class="side-box">
+                    <div id="portfolio-chart"
+                         gz-portfolio-chart
+                         gz-conservative="model.conservativePercent"
+                         gz-moderate="model.moderatePercent"
+                         gz-aggressive="model.aggressivePercent" 
+                         gz-average="model.averagePercent">                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

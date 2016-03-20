@@ -123,9 +123,9 @@
       <Project>{6459A7AB-F7C0-49E6-A099-2A3DEE11A255}</Project>
       <Name>gzWeb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ModelDAL\ModelDAL.csproj">
+    <ProjectReference Include="..\ModelDAL\gzDAL.csproj">
       <Project>{78fea6ae-abf3-457a-aa85-0904f710488b}</Project>
-      <Name>ModelDAL</Name>
+      <Name>gzDAL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

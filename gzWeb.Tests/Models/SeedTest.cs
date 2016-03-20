@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using gzWeb.Models;
+using gzDAL.Models;
+using gzDAL.Conf;
 
 namespace gzWeb.Tests.Models {
     [TestClass]
