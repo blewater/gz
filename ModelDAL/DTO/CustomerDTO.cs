@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace gzWeb.Models {
+namespace gzDAL.DTO
+{
 
     /// <summary>
     /// Customer Values buffer for values communication between controller views

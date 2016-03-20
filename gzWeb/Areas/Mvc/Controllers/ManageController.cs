@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using gzWeb.Areas.Mvc.Models;
-using gzWeb.Models;
+using gzDAL.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using gzDAL.Conf;
 
 namespace gzWeb.Areas.Mvc.Controllers
 {
