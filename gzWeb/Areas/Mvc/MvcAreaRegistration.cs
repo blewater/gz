@@ -14,6 +14,9 @@ namespace gzWeb.Areas.Mvc
 
         public override void RegisterArea(AreaRegistrationContext context) 
         {
+
+            context.Routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
             context.MapRoute(
                 "MvcRoute",
                 "Mvc/{controller}/{action}/{id}",
