@@ -210,7 +210,23 @@
 .investments .portfolio .next-investment {
     font-size: 20px;
     color: #646464;
+    position: relative;
 }
+.investments .portfolio .next-investment svg {
+    position: absolute;
+    right: -58px;
+    top: 0;
+    opacity: 1;
+    -webkit-transition: opacity 0.4s ease-in-out;
+    -moz-transition: opacity 0.4s ease-in-out;
+    -ms-transition: opacity 0.4s ease-in-out;
+    -o-transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.4s ease-in-out;
+}
+.investments .portfolio .next-investment svg.hide {
+    opacity: 0;
+}
+
 
 .investments .portfolio .next-investment .balance {
     font-size: 47px;
@@ -265,7 +281,6 @@
 }
 .investments .portfolio .portfolio-plans .plan .details .holding-weight {
 }
-
 
 
 .investments .portfolio .portfolio-plans .plan img {
@@ -380,6 +395,31 @@
     text-shadow: 1px 1px 1px #555;
 }
 
+.tooltip {
+    position: absolute;			
+    text-align: center;
+    margin: 10px;
+    padding: 5px;				
+    font: 12px sans-serif;		
+    background: #27A95C;
+    color: #fff;
+    border: 0;
+    -ms-border-radius: 5px;
+    border-radius: 5px;			
+    pointer-events: none;
+    
+    /*-webkit-transition: opacity 400ms linear;
+    -moz-transition: opacity 400ms linear;
+    -ms-transition: opacity 400ms linear;
+    -o-transition: opacity 400ms linear;
+    transition: opacity 400ms linear;*/
+}
+
+@media (max-width: 1199px) {
+    .investments .portfolio .portfolio-plans .row {
+        margin-left: 0;
+    }
+}
 /* #endregion */
 
 
