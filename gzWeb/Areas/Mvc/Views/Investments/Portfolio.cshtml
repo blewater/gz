@@ -20,7 +20,7 @@
                     <div class="col-xs-4"><div>Current Balance</div></div>
                     <div class="col-xs-4"><div>Selection</div></div>
                 </div>
-                <div class="row plan" ng-class="{'expanded':expanded}" ng-repeat="plan in model.plans">
+                <div class="row plan" ng-class="{'expanded': plan.expanded}" ng-repeat="plan in model.plans">
                     <div class="basic">
                         <div class="col-xs-4">
                             <div class="title text-left">{{plan.title}}</div>
@@ -40,7 +40,7 @@
                                 </button>
                             </div>
                         </div>
-                        <img src="@Url.Content("~/Content/Images/open.svg")" alt="Expand/Collapse" ng-click="expanded = !expanded" />                        
+                        <img src="@Url.Content("~/Content/Images/open.svg")" alt="Expand/Collapse" ng-click="plan.expanded = !plan.expanded" />                        
                     </div>
                     <div class="details">
                         <div>
@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-lg-3 col-lg-pull-6">
-            <div class="portfolio-section next-investment">
+            <div class="portfolio-section next-investment text-center">
                 <div class="side-box">
                     <div class="side-box-table">
                         <div class="side-box-table-head">
@@ -83,6 +83,12 @@
                         </div>
                     </div>
                 </div>
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                     x="0px" y="0px" width="64px" height="240px" viewBox="0 -1.5 64 185.25" enable-background="new 0 -1.5 64 185.25"
+                     class="visible-lg" ng-class="{'hide': thereIsExpanded()}">
+                    <path sketch:type="MSShapeGroup" fill="none" stroke="#CCCCCC" d="M0.391,91.32h59.115" />
+                    <polyline fill="none" stroke="#CCCCCC" points="59.006,0 24.892,0 24.892,182.641 59.006,182.641 " />
+				</svg>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-lg-3">
