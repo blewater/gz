@@ -76,7 +76,7 @@
 }
 
 .investments .summary .summary-section {
-    margin-top: 40px;
+    margin-top: 60px;
 }
 .investments .summary .summary-section img.icon {
     margin-bottom: 40px;
@@ -186,6 +186,10 @@
     .investments .summary .investments-balance-amount img {
         margin: 0 auto;
         display: block;
+    }
+
+    .investments .summary .overview-box .half {
+        line-height: inherit;
     }
 }
 /* #endregion */

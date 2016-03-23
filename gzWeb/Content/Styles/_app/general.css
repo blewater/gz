@@ -84,6 +84,10 @@ a { text-decoration:none; }
 
 /* #region Conditional Styling */
 
+/**************** XΧS ********************/
+@media (max-width: 419px) {
+}
+
 /**************** XS ********************/
 @media (max-width: 767px) {
 }
