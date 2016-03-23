@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
@@ -21,10 +22,16 @@ namespace gzWeb
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            // Code first Init
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
-            // Initialize to latest version only if not run before
-            new ApplicationDbContext().Database.Initialize(false);
+            // Check from web.config or Azure settings if db needs to be init
+            bool dbMigrateToLatest = bool.Parse(ConfigurationManager.AppSettings["MigrateDatabaseToLatestVersion"]);
+
+            if (dbMigrateToLatest)
+            {
+                Database.SetInitializer(
+                    new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
+                // Initialize to latest version only if not run before
+                new ApplicationDbContext().Database.Initialize(false);
+            }
 
             //Automapper
             Mapper.Initialize(cfg => cfg.CreateMap<ApplicationUser, CustomerDTO>());
