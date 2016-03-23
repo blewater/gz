@@ -32,7 +32,7 @@ var APP = (function () {
             });
 
             $rootScope.$on('$routeChangeSuccess', function() {
-                $rootScope.loading = false;
+                $rootScope.loading = false; 
                 $rootScope.documentTitle = constants.title;
                 if ($route.current.$$route && $route.current.$$route.title) {
                     $rootScope.title = $route.current.$$route.title;
