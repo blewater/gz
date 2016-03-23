@@ -115,7 +115,9 @@
 }
 .navbar .links a:hover,
 .navbar .links a:focus,
-.navbar .links a:active{
+.navbar .links a:active,
+.navbar .links a.focus
+{
 	opacity:1;
 }
 /*.navbar .links a.focus:link,

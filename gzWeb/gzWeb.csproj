@@ -754,6 +754,7 @@
     <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
+    <Content Include="Scripts\_app\directives\gzPortfolioChart.js" />
     <Content Include="Scripts\_app\donut.js" />
     <Content Include="Scripts\_app\main.js" />
     <Content Include="Scripts\_app\services\authInterceptor.js" />
@@ -1430,7 +1431,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Controllers\" />
     <Folder Include="Partials\directives\" />
-    <Folder Include="Scripts\_app\directives\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
