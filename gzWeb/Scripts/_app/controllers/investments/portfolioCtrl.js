@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'portfolioCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, $filter) {
+    APP.controller(ctrlId, ['$scope', '$filter', '$timeout', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, $filter, $timeout, constants) {
         $scope.model = {
             nextInvestmentOn: 'On January 31st',
             plans: [
@@ -58,13 +58,18 @@
             averagePercent: 59
         }
         $scope.thereIsExpanded = function() {
-            var x = $filter('some')($scope.model.plans, function (p) { return p.expanded; });
-            return x;
+            return $filter('some')($scope.model.plans, function (p) { return p.expanded; });
         };
-        $scope.selectPlan = function(plan) {
-            var index = $scope.model.plans.indexOf(plan);
-            for (var i = 0; i < $scope.model.plans.length; i++)
-                $scope.model.plans[i].selected = index === i;
+        $scope.selecting = false;
+        $scope.spinnerOptions = constants.spinners.sm_rel_green;
+        $scope.selectPlan = function (plan) {
+            //$scope.selecting = true;
+            //$timeout(function () {
+                var index = $scope.model.plans.indexOf(plan);
+                for (var i = 0; i < $scope.model.plans.length; i++)
+                    $scope.model.plans[i].selected = index === i;
+                //$scope.selecting = false;
+            //}, 1000);
         }
     }
 })();

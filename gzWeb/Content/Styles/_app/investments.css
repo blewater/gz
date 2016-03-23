@@ -8,6 +8,7 @@
 }
 /* #endregion */
 
+
 /* #region side-box */
 .side-box {
 	border:1px solid #ccc;
@@ -259,10 +260,24 @@
     height: 70px;
     line-height: 50px;
     font-size: 18px;
-    padding: 10px;
+    padding: 10px 0;
     margin-bottom: 15px;
     position: relative;
 }
+.investments .portfolio .portfolio-plans .plan .basic.selected {
+    border: 1px #27A95C solid;
+    -webkit-box-shadow: 0 0 3px 0 #27A95C;
+    -ms-box-shadow: 0 0 3px 0 #27A95C;
+    box-shadow: 0 0 3px 0 #27A95C;
+    color: #27A95C;
+}
+.investments .portfolio .portfolio-plans .plan .basic.selected .title {
+    color: #27A95C;
+}
+.investments .portfolio .portfolio-plans .plan .basic.selected .balance {
+    color: #27A95C;
+}
+
 .investments .portfolio .portfolio-plans .plan .details {
     overflow: hidden;
     display: block;
@@ -354,6 +369,12 @@
     background: none;
     color: #27A95C;
 }
+.investments .portfolio .portfolio-plans .plan .selection button .spinner {
+    color: #27A95C;
+}
+.investments .portfolio .portfolio-plans .plan .selection button:hover .spinner{
+	color:#fff;
+}
 
 
 
@@ -423,6 +444,14 @@
     .investments .portfolio .portfolio-plans .row {
         margin-left: 0;
     }
+}
+
+@media (max-width: 767px) {
+    .investments .portfolio .invest-prompt { font-size: 20px; }
+    .investments .portfolio .portfolio-plans .header div { font-size: 15px;padding: 0; }
+    .investments .portfolio .portfolio-plans .plan .title { font-size: 15px; }
+    .investments .portfolio .portfolio-plans .plan .balance { font-size: 20px; }
+    .investments .portfolio .portfolio-plans .plan .selection button { font-size: 12px; }
 }
 /* #endregion */
 

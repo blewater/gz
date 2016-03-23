@@ -22,6 +22,7 @@ var APP = (function () {
         , 'angularMoment'
         , 'matchMedia'
         , 'LocalStorageModule'
+        , 'angularSpinner'
     ]);
 
     app.run([
