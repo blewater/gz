@@ -18,11 +18,13 @@
     @Styles.Render("~/css/app")
 </head>
 <body ng-cloak>
-    @{Html.RenderAction("Header", "Home");}
-    
-    @RenderBody()
-
-    @Html.Partial("_Footer")
+    <div class="non-footer">
+        @{ Html.RenderAction("Header", "Home"); }
+        @RenderBody()
+    </div>
+    <div class="footer">
+        @Html.Partial("_Footer")
+    </div>
 
     @Scripts.Render("~/js/jquery")
     @Scripts.Render("~/js/plugins")
