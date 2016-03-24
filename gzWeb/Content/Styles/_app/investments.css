@@ -364,7 +364,8 @@
     width: 100%;
     height: 36px;
     line-height: 36px;
-    margin: 7px 0;
+    margin: 0;
+    padding: 0;
     border: 1px solid #27A95C;
     background: none;
     -webkit-box-shadow: none;
@@ -474,8 +475,8 @@
 @media (max-width: 767px) {
     .investments .portfolio .invest-prompt { font-size: 20px; }
     .investments .portfolio .portfolio-plans .header div { font-size: 11px;padding: 0; }
-    .investments .portfolio .portfolio-plans .plan .title { font-size: 14px; }
-    .investments .portfolio .portfolio-plans .plan .balance { font-size: 18px; }
+    .investments .portfolio .portfolio-plans .plan .title { font-size: 13px; }
+    .investments .portfolio .portfolio-plans .plan .balance { font-size: 16px; }
     .investments .portfolio .portfolio-plans .plan .selection button { font-size: 12px; }
 }
 /* #endregion */
