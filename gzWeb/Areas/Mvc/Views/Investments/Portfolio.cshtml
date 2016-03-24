@@ -30,13 +30,14 @@
                         </div>
                         <div class="col-xs-4">
                             <div class="selection text-right">
-                                <button type="button" ng-disabled="plan.selected" ng-click="selectPlan(plan)">
-                                    <span ng-if="plan.selected">
+                                <button type="button" ng-disabled="plan.selected" ng-click="selectPlan(plan)" ng-mouseenter="plan.selectHovered = true" ng-mouseleave="plan.selectHovered = false">
+                                    <span ng-show="plan.selected">
                                         <i class="fa fa-lg fa-check-circle" title="Current"></i>
                                     </span>
-                                    <span ng-if="!plan.selected">
-                                        <span ng-show="selecting" class="spinner" us-spinner="spinnerOptions"></span>
-                                        <span ng-show="!selecting">Select</span>
+                                    <span ng-show="!plan.selected">
+                                        <span ng-show="plan.selecting && !plan.selectHovered" class="spinner" us-spinner="spinnerGreen"></span>
+                                        <span ng-show="plan.selecting && plan.selectHovered" class="spinner" us-spinner="spinnerWhite"></span>
+                                        <span ng-show="!plan.selecting">Select</span>
                                     </span>
                                 </button>
                             </div>
