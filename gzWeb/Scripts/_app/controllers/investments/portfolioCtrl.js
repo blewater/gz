@@ -60,16 +60,16 @@
         $scope.thereIsExpanded = function() {
             return $filter('some')($scope.model.plans, function (p) { return p.expanded; });
         };
-        $scope.selecting = false;
-        $scope.spinnerOptions = constants.spinners.sm_rel_green;
+        $scope.spinnerGreen = constants.spinners.sm_rel_green;
+        $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.selectPlan = function (plan) {
-            //$scope.selecting = true;
-            //$timeout(function () {
+            plan.selecting = true;
+            $timeout(function () {
                 var index = $scope.model.plans.indexOf(plan);
                 for (var i = 0; i < $scope.model.plans.length; i++)
                     $scope.model.plans[i].selected = index === i;
-                //$scope.selecting = false;
-            //}, 1000);
+                plan.selecting = false;
+            }, 1000);
         }
     }
 })();

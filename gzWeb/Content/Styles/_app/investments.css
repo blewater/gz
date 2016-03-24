@@ -264,18 +264,43 @@
     margin-bottom: 15px;
     position: relative;
 }
+.investments .portfolio .portfolio-plans .plan .basic > span {
+    -webkit-transition: color 0.4s ease;
+    -moz-transition: color 0.4s ease;
+    -ms-transition: color 0.4s ease;
+    -o-transition: color 0.4s ease;
+    transition: color 0.4s ease;
+}
+
 .investments .portfolio .portfolio-plans .plan .basic.selected {
     border: 1px #27A95C solid;
     -webkit-box-shadow: 0 0 3px 0 #27A95C;
     -ms-box-shadow: 0 0 3px 0 #27A95C;
     box-shadow: 0 0 3px 0 #27A95C;
     color: #27A95C;
+
+    -webkit-transition: color 0.4s ease;
+    -moz-transition: color 0.4s ease;
+    -ms-transition: color 0.4s ease;
+    -o-transition: color 0.4s ease;
+    transition: color 0.4s ease;
 }
+
 .investments .portfolio .portfolio-plans .plan .basic.selected .title {
     color: #27A95C;
+    -webkit-transition: color 0.4s ease;
+    -moz-transition: color 0.4s ease;
+    -ms-transition: color 0.4s ease;
+    -o-transition: color 0.4s ease;
+    transition: color 0.4s ease;
 }
 .investments .portfolio .portfolio-plans .plan .basic.selected .balance {
     color: #27A95C;
+    -webkit-transition: color 0.4s ease;
+    -moz-transition: color 0.4s ease;
+    -ms-transition: color 0.4s ease;
+    -o-transition: color 0.4s ease;
+    transition: color 0.4s ease;
 }
 
 .investments .portfolio .portfolio-plans .plan .details {
@@ -292,7 +317,7 @@
     height: 0;
 }
 .investments .portfolio .portfolio-plans .plan.expanded .details {
-    margin-top: 40px;
+    margin: 20px 0;
     height: 150px;
 }
 .investments .portfolio .portfolio-plans .plan .details .holding-name {
@@ -448,9 +473,9 @@
 
 @media (max-width: 767px) {
     .investments .portfolio .invest-prompt { font-size: 20px; }
-    .investments .portfolio .portfolio-plans .header div { font-size: 15px;padding: 0; }
-    .investments .portfolio .portfolio-plans .plan .title { font-size: 15px; }
-    .investments .portfolio .portfolio-plans .plan .balance { font-size: 20px; }
+    .investments .portfolio .portfolio-plans .header div { font-size: 11px;padding: 0; }
+    .investments .portfolio .portfolio-plans .plan .title { font-size: 14px; }
+    .investments .portfolio .portfolio-plans .plan .balance { font-size: 18px; }
     .investments .portfolio .portfolio-plans .plan .selection button { font-size: 12px; }
 }
 /* #endregion */
