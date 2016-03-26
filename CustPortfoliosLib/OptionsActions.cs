@@ -54,7 +54,7 @@ namespace cpc {
 
         public void SubscribeToObs(ObservableTask cpcTask, string logCompletionMsg, bool indicateWhenCompleteProcessing = false) {
 
-            using (cpcTask.WorkObservable.Subscribe(
+            cpcTask.WorkObservable.Subscribe(
                 _ => {
 
                     Console.WriteLine(logCompletionMsg);
@@ -62,7 +62,8 @@ namespace cpc {
                         IsProcessing = false;
                     }
 
-            })) { /* Empty body of Using */ }
+               }
+            );
         }
 
         public void MergeObs(ObservableTask cpcTask1, ObservableTask cpcTask2, string logCompletionMsg) {
