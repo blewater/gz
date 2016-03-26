@@ -49,11 +49,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="connectionStrings.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustPortfoliosLib\CustPortfoliosCalcLib.csproj">
       <Project>{ba006926-ca0a-4f9c-b4f6-675c28621359}</Project>
       <Name>CustPortfoliosCalcLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModelDAL\gzDAL.csproj">
+      <Project>{78fea6ae-abf3-457a-aa85-0904f710488b}</Project>
+      <Name>gzDAL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

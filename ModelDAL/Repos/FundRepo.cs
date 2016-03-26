@@ -50,15 +50,13 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public List<FundQuote> SaveDBDailyFundClosingPrices() {
 
-            
-
             var fundsList = db.Funds.Select(f => f.Symbol).ToList();
 
             var quotes = fundsList.Select(f => new FundQuote { Symbol = f }).ToList();
 
-            List<FundQuote> retVal = YQLFundCurrencyInq.FetchFundsQuoteInfo(quotes);
+            List<FundQuote> fundQuotes = YQLFundCurrencyInq.FetchFundsQuoteInfo(quotes);
 
-            foreach (var q in retVal) {
+            foreach (var q in fundQuotes) {
 
                 db.FundPrices.AddOrUpdate(
                     f => new { f.FundId, f.YearMonthDay },
@@ -75,7 +73,7 @@ namespace gzDAL.Repos
 
             db.SaveChanges();
             
-            return retVal;
+            return fundQuotes;
         }
     }
 }

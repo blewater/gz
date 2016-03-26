@@ -1,16 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
+using cpc;
 
-namespace cpc {
+namespace CustPortfoliosCalc {
 
     class Program {
 
+        const int SleepIntervalMillis = 250;
+
         static void Main(string[] args) {
 
-            CpcOptions.ProcArgs(args);
+            try {
+                var options = Options.ProcArgs(args);
+                var optionsActions = new OptionsActions(options, new CurrencyRatesUpdDb(), new FundMarketUpdDb());
+                optionsActions.ProcOptions();
+
+                while (optionsActions.IsProcessing) {
+                    Thread.Sleep(SleepIntervalMillis);
+                }
+            }
+            catch (Exception ex) {
+                var exMsg = ex.Message;
+            }
         }
     }
 }
