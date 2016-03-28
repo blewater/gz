@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Text;
-using System.Threading.Tasks;
-using gzDAL.Models;
+﻿using gzDAL.Models;
 using gzDAL.Repos;
-using System.Reactive.Linq;
 
-namespace gzCpcLib {
+namespace gzCpcLib.Task {
     public class CurrencyRatesUpdDb : CpcTask {
 
         public override void DoTask() {

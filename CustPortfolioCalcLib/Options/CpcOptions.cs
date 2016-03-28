@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 
-namespace gzCpcLib
+namespace gzCpcLib.Options
 {
-    public class Options
+    public class CpcOptions
     {
         public bool ParsingSuccess { get; private set; }
 
@@ -61,9 +60,9 @@ namespace gzCpcLib
         /// </summary>
         /// <param name="args">The string argurments array to parse and resolve</param>
         /// <returns></returns>
-        public static Options ProcArgs(string[] args) {
+        public static CpcOptions ProcArgs(string[] args) {
 
-            var options = new Options();
+            var options = new CpcOptions();
 
             var parser = new Parser(s => {
                 s.MutuallyExclusive = true; s.CaseSensitive = false; s.HelpWriter = Console.Error;

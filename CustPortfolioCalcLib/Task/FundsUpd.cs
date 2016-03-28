@@ -1,10 +1,8 @@
-﻿using System;
-using System.Reactive;
-using System.Reactive.Linq;
-using gzDAL.Models;
+﻿using gzDAL.Models;
 using gzDAL.Repos;
 
-namespace gzCpcLib {
+namespace gzCpcLib.Task {
+
     public class FundMarketUpdDb : CpcTask {
 
         public override void DoTask() {

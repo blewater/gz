@@ -76,12 +76,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICpcTask.cs" />
-    <Compile Include="FundMarketUpdDb.cs" />
-    <Compile Include="CpcTask.cs" />
-    <Compile Include="Options.cs" />
-    <Compile Include="CurrencyRatesUpdDb.cs" />
-    <Compile Include="OptionsActions.cs" />
+    <Compile Include="Task\ICpcTask.cs" />
+    <Compile Include="Task\FundsUpd.cs" />
+    <Compile Include="Task\CpcTask.cs" />
+    <Compile Include="Options\CpcOptions.cs" />
+    <Compile Include="Task\ExchRatesUpd.cs" />
+    <Compile Include="Options\OptionsActions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +94,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

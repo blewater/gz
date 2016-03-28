@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Threading.Tasks;
-using gzDAL.Models;
-using gzDAL.Repos;
 
-namespace gzCpcLib {
+namespace gzCpcLib.Task {
     /// <summary>
     /// 
     /// A Customer Portfolio Calculation Task
@@ -21,7 +17,7 @@ namespace gzCpcLib {
         /// </summary>
         public IObservable<Unit> TaskObservable {
             get {
-                return Task.Factory
+                return System.Threading.Tasks.Task.Factory
                     .StartNew(DoTask)
                     .ToObservable();
             }

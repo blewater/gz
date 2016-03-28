@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
-using gzCpcLib;
+using gzCpcLib.Options;
+using gzCpcLib.Task;
 
 namespace CustPortfoliosCalc {
 
@@ -11,7 +12,7 @@ namespace CustPortfoliosCalc {
         static void Main(string[] args) {
 
             try {
-                var options = Options.ProcArgs(args);
+                var options = CpcOptions.ProcArgs(args);
                 var optionsActions = new OptionsActions(options, new CurrencyRatesUpdDb(), new FundMarketUpdDb());
                 optionsActions.ProcOptions();
 

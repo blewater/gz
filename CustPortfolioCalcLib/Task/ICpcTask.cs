@@ -1,13 +1,14 @@
 using System;
 using System.Reactive;
 
-namespace gzCpcLib {
+namespace gzCpcLib.Task {
+
     public interface ICpcTask {
-        /// <summary>
-        /// Create an observable from the work task
-        /// </summary>
+
         IObservable<Unit> TaskObservable { get; }
 
         void DoTask();
+
     }
+
 }
