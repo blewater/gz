@@ -7,7 +7,7 @@
     <ProjectGuid>{BA006926-CA0A-4F9C-B4F6-675C28621359}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>cpc</RootNamespace>
+    <RootNamespace>gzCpcLib</RootNamespace>
     <AssemblyName>cpcLib</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -76,12 +76,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IObservableTask.cs" />
+    <Compile Include="ICpcTask.cs" />
     <Compile Include="FundMarketUpdDb.cs" />
-    <Compile Include="ObservableTask.cs" />
+    <Compile Include="CpcTask.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="CurrencyRatesUpdDb.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="OptionsActions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

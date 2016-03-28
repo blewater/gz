@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using cpc;
+using gzCpcLib;
 
 namespace CustPortfoliosCalc {
 

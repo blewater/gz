@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace cpc {
+namespace gzCpcLib {
     public class OptionsActions {
 
         private readonly Options options;
@@ -52,9 +52,9 @@ namespace cpc {
             return ;
         }
 
-        public void SubscribeToObs(ObservableTask cpcTask, string logCompletionMsg, bool indicateWhenCompleteProcessing = false) {
+        public void SubscribeToObs(CpcTask cpcTask, string logCompletionMsg, bool indicateWhenCompleteProcessing = false) {
 
-            cpcTask.WorkObservable.Subscribe(
+            cpcTask.TaskObservable.Subscribe(
                 _ => {
 
                     Console.WriteLine(logCompletionMsg);
@@ -66,10 +66,10 @@ namespace cpc {
             );
         }
 
-        public void MergeObs(ObservableTask cpcTask1, ObservableTask cpcTask2, string logCompletionMsg) {
+        public void MergeObs(CpcTask cpcTask1, CpcTask cpcTask2, string logCompletionMsg) {
 
-            cpcTask1.WorkObservable
-                .Merge(cpcTask2.WorkObservable)
+            cpcTask1.TaskObservable
+                .Merge(cpcTask2.TaskObservable)
                 .Subscribe(
                     // OnNext
                     w =>
