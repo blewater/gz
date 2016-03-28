@@ -54,7 +54,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CustPortfoliosLib\CustPortfoliosCalcLib.csproj">
+    <ProjectReference Include="..\CustPortfolioCalcLib\CustPortfolioCalcLib.csproj">
       <Project>{ba006926-ca0a-4f9c-b4f6-675c28621359}</Project>
       <Name>CustPortfoliosCalcLib</Name>
     </ProjectReference>
