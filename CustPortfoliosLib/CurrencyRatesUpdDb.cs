@@ -8,10 +8,10 @@ using gzDAL.Models;
 using gzDAL.Repos;
 using System.Reactive.Linq;
 
-namespace cpc {
-    public class CurrencyRatesUpdDb : ObservableTask {
+namespace gzCpcLib {
+    public class CurrencyRatesUpdDb : CpcTask {
 
-        public override void DoWork() {
+        public override void DoTask() {
 
             var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext());
             var quotes = currencyRateRepo.SaveDBDailyCurrenciesRates();

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using cpc;
+using gzCpcLib;
 
 namespace CustPortfoliosCalcTest {
     [TestClass]

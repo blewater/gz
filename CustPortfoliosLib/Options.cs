@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 
-namespace cpc
+namespace gzCpcLib
 {
     public class Options
     {

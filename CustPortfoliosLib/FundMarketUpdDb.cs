@@ -4,10 +4,10 @@ using System.Reactive.Linq;
 using gzDAL.Models;
 using gzDAL.Repos;
 
-namespace cpc {
-    public class FundMarketUpdDb : ObservableTask {
+namespace gzCpcLib {
+    public class FundMarketUpdDb : CpcTask {
 
-        public override void DoWork() {
+        public override void DoTask() {
 
             var fundRepo = new FundRepo(new ApplicationDbContext());
             fundRepo.SaveDBDailyFundClosingPrices();
