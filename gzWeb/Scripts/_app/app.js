@@ -59,12 +59,12 @@ var APP = (function () {
             });
 
             localStorageService.set('randomSuffix', Math.random());
+            $rootScope.loading = false;
 
             $timeout(function() {
                 angular.element(document.querySelector('#preloader')).addClass('die');
                 $timeout(function () {
-                    angular.element(document.querySelector('#preloader')).removeClass('die');
-                    //$rootScope.loading = false;
+                    angular.element(document.querySelector('#preloader')).remove();//removeClass('die');
                 }, 2000);
             }, 1000);
         }

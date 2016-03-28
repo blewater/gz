@@ -14,8 +14,8 @@
     opacity: 1;
     z-index: 20000000000;
     overflow-y: hidden;
-    background-color: #e6e6e6;
-    background-color: rgba(230, 230, 230, 0.6);
+    background-color: #F2F2F2;
+    /*background-color: rgba(242, 242, 242, 0.6);*/
 }
 
 #preloader.die {
@@ -69,7 +69,7 @@
 
 
 
-.sk-fading-circle {
+/*.sk-fading-circle {
   margin: 100px auto;
   width: 40px;
   height: 40px;
@@ -284,7 +284,7 @@
 @keyframes sk-circleFadeDelay {
   0%, 39%, 100% { opacity: 0; }
   40% { opacity: 1; } 
-}
+}*/
 
 
 
@@ -307,7 +307,7 @@
 
 
 
-/*.sk-folding-cube {
+.sk-folding-cube {
     margin: 20px auto;
     width: 40px;
     height: 40px;
@@ -337,7 +337,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #333;
+        background-color: #248734;
         -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
         -moz-animation: sk-foldCubeAngle 2.4s infinite linear both;
         -ms-animation: sk-foldCubeAngle 2.4s infinite linear both;
@@ -475,4 +475,4 @@
         transform: perspective(140px) rotateY(180deg);
         opacity: 0;
     }
-}*/
+}
