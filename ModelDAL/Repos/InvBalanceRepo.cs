@@ -77,7 +77,7 @@ namespace gzDAL.Repos {
                              {
                                  using (var dbContextTransaction = db.Database.BeginTransaction())
                                  {
-                                     customerFundSharesRepo.SaveDbCustPurchasedFundShares(customerId, portfolioFunds, year, month, DateTime.UtcNow);
+                                     customerFundSharesRepo.SaveDBCustomerPurchasedFundShares(customerId, portfolioFunds, year, month, DateTime.UtcNow);
 
                                      db.InvBalances.AddOrUpdate(i => new {i.CustomerId, i.YearMonth},
                                                                 new InvBalance
