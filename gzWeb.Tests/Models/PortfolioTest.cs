@@ -21,7 +21,6 @@ namespace gzWeb.Tests.Models {
             Mapper.Initialize(cfg => cfg.CreateMap<CustomerDTO, ApplicationUser>());
         }
 
-
         /// <summary>
         /// Get the Apr returns based on the 3 year or 5 year returns whichever is greater
         /// </summary>

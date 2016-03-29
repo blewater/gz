@@ -13,15 +13,29 @@ namespace CustPortfoliosCalc {
 
             try {
                 var options = CpcOptions.ProcArgs(args);
-                var optionsActions = new OptionsActions(options, new CurrencyRatesUpdDb(), new FundMarketUpdDb());
-                optionsActions.ProcOptions();
 
-                while (optionsActions.IsProcessing) {
-                    Thread.Sleep(SleepIntervalMillis);
+                if (options.ParsingSuccess) {
+
+                    ProcessParsedOptions(options);
+
                 }
             }
             catch (Exception ex) {
                 var exMsg = ex.Message;
+            }
+        }
+
+        private static void ProcessParsedOptions(CpcOptions options) {
+
+            var optionsActions = new OptionsActions(options
+                , new ExchRatesUpd()
+                , new FundsUpd()
+                , new CustInvestmentBalUpd());
+
+            optionsActions.ProcessOptions();
+
+            while (optionsActions.IsProcessing) {
+                Thread.Sleep(SleepIntervalMillis);
             }
         }
     }
