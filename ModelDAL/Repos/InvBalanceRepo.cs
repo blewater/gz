@@ -93,7 +93,7 @@ namespace gzDAL.Repos {
                                  }
                              });
 
-            ConnRetryConf.SuspendExecutionStrategy = true;
+            ConnRetryConf.SuspendExecutionStrategy = false;
         }
 
         /// <summary>
