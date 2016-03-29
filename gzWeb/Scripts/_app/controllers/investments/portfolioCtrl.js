@@ -69,7 +69,7 @@
                 for (var i = 0; i < $scope.model.plans.length; i++)
                     $scope.model.plans[i].selected = index === i;
                 plan.selecting = false;
-            }, 1000);
+            }, 10000);
         }
     }
 })();
