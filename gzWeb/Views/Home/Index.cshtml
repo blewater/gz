@@ -2,9 +2,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="preloader" ng-show="loading">
+<div id="preloader">@*ng-show="loading"*@
     <div class="spinner-container">
-        <div class="sk-fading-circle">
+        @*<div class="sk-fading-circle">
             <div class="sk-circle1 sk-circle"></div>
             <div class="sk-circle2 sk-circle"></div>
             <div class="sk-circle3 sk-circle"></div>
@@ -17,25 +17,25 @@
             <div class="sk-circle10 sk-circle"></div>
             <div class="sk-circle11 sk-circle"></div>
             <div class="sk-circle12 sk-circle"></div>
-        </div>
+        </div>*@
 
-        @*<div class="sk-folding-cube">
-                <div class="sk-cube1 sk-cube"></div>
-                <div class="sk-cube2 sk-cube"></div>
-                <div class="sk-cube4 sk-cube"></div>
-                <div class="sk-cube3 sk-cube"></div>
-            </div>*@
+        <div class="sk-folding-cube">
+            <div class="sk-cube1 sk-cube"></div>
+            <div class="sk-cube2 sk-cube"></div>
+            <div class="sk-cube4 sk-cube"></div>
+            <div class="sk-cube3 sk-cube"></div>
+        </div>
     </div>
 </div>
 
-@*<div class="loading" ng-show="loading" us-spinner="{ radius: 20, width: 8, length: 20, color: '#248734', position: 'fixed' }"></div>*@
+<div class="loading" ng-show="loading" us-spinner="{ radius: 15, width: 6, length: 12, color: '#248734', position: 'fixed' }"></div>
 
 <!--This is where the main views would get loaded for SPA
     This page is the container page for all sub views that get loaded.
     The sub views that would get loaded into ng-view would not inherit the master page,
     and hence would only send relevant html fargments to render specific views.-->
 
-<div class="clearfix">
-    <div ng-view style="padding-top: 100px;"></div>
+<div class="clearfix view-container">
+    <div ng-view></div>
 </div>
 

@@ -30,14 +30,14 @@
                 <div class="overview-box">
                     <div class="half">
                         <div class="row">
-                            <div class="col-xs-6 text-left">You have invested</div>
-                            <div class="col-xs-6 text-right">@Model.TotalInvestments.ToMoneyString(Model.Currency)</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">You have invested</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">@Model.TotalInvestments.ToMoneyString(Model.Currency)</div>
                         </div>
                     </div>
                     <div class="half">
                         <div class="row">
-                            <div class="col-xs-6 text-left">You have gained</div>
-                            <div class="col-xs-6 text-right">@Model.TotalInvestmentsReturns.ToMoneyString(Model.Currency)</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">You have gained</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">@Model.TotalInvestmentsReturns.ToMoneyString(Model.Currency)</div>
                         </div>
                     </div>
                 </div>
