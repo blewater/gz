@@ -56,6 +56,8 @@ namespace gzCpcLib.Options {
             } else if (cpcOptions.CustomersToProc != null) {
 
                 custInvestBalUpd.CustomerIds = cpcOptions.CustomersToProc;
+                custInvestBalUpd.YearMonthsToProc = cpcOptions.YearMonthsToProc;
+
                 MergeReduceObs(exchRatesUpd, fundsUpd, custInvestBalUpd, "Customers Balances Processed");
 
             } else {

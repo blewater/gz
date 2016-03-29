@@ -120,17 +120,21 @@ namespace gzDAL.Repos
             }
             else {
 
-                
-                using (var dbContextTransaction = db.Database.BeginTransaction())
+                ConnRetryConf.SuspendExecutionStrategy = true;
+                var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
+                executionStrategy.Execute(() =>
                 {
+                    using (var dbContextTransaction = db.Database.BeginTransaction())
+                    {
 
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
-                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                        SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
+                        SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                    dbContextTransaction.Commit();
-                        
-                }
-                
+                        dbContextTransaction.Commit();
+
+                    }
+                });
+                ConnRetryConf.SuspendExecutionStrategy = false;
             }
         }
 
