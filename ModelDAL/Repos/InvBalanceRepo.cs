@@ -60,13 +60,14 @@ namespace gzDAL.Repos {
         /// <summary>
         /// Save in the database account the monthly customer balance
         /// </summary>
-        /// <param name="custId"></param>
+        /// <param name="customerId"></param>
         /// <param name="year"></param>
         /// <param name="month"></param>
-        public void SaveDBbyTrxMonthlyBalanceForCustomer(int custId, int year, int month, decimal cashToInvest) {
+        /// <param name="cashToInvest">Positive cash amount to invest</param>
+        public void SaveDBCustomerMonthBalanceByCashInv(int customerId, int year, int month, decimal cashToInvest) {
 
             decimal monthlyBalance, invGainLoss;
-            var portfolioFunds = GetCalcMonthlyBalancesForCustomer(custId, year, month, cashToInvest, out monthlyBalance,
+            var portfolioFunds = GetCalcMonthlyBalancesForCustomer(customerId, year, month, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
             ConnRetryConf.SuspendExecutionStrategy = true;
@@ -76,13 +77,13 @@ namespace gzDAL.Repos {
                              {
                                  using (var dbContextTransaction = db.Database.BeginTransaction())
                                  {
-                                     customerFundSharesRepo.SaveDbCustPurchasedFundShares(custId, portfolioFunds, year, month, DateTime.UtcNow);
+                                     customerFundSharesRepo.SaveDbCustPurchasedFundShares(customerId, portfolioFunds, year, month, DateTime.UtcNow);
 
                                      db.InvBalances.AddOrUpdate(i => new {i.CustomerId, i.YearMonth},
                                                                 new InvBalance
                                                                 {
                                                                         YearMonth = DbExpressions.GetStrYearMonth(year, month),
-                                                                        CustomerId = custId,
+                                                                        CustomerId = customerId,
                                                                         Balance = monthlyBalance,
                                                                         InvGainLoss = invGainLoss,
                                                                         CashInvestment = cashToInvest,
@@ -97,27 +98,37 @@ namespace gzDAL.Repos {
         }
 
         /// <summary>
-        /// Calculate customer monthly investment balances for the given months
+        /// Calculate customer monthly investment balances for the given months if monthsToProc is not null
+        ///     otherwise calculate monthly investment balances for all transaction activity months of a player.
         /// </summary>
-        /// <param name="custId"></param>
+        /// <param name="customerId"></param>
         /// <param name="monthsToProc">Array of YYYYMM values i.e. [201601, 201502]</param>
-        public void SaveCustomerTrxsBalances(int custId, uint[] monthsToProc) {
+        public void SaveDBCustomerMonthlyBalancesByTrx(int customerId, string[] monthsToProc = null) {
 
+            List<IGrouping<string, GzTransaction>> monthlyTrx;
+
+            // Step 1: Retrieve all Transactions by player activity
+            if (monthsToProc == null || monthsToProc.Length == 0) {
+
+                monthlyTrx = db.GzTransactions.Where(t => t.CustomerId == customerId)
+                    .OrderBy(t => t.YearMonthCtd)
+                    .GroupBy(t => t.YearMonthCtd)
+                    .ToList();
+            }
+            // Add filter condition: given months
+            else {
+
+                monthlyTrx = db.GzTransactions.Where(t => t.CustomerId == customerId && monthsToProc.Contains(t.YearMonthCtd))
+                    .OrderBy(t => t.YearMonthCtd)
+                    .GroupBy(t => t.YearMonthCtd)
+                    .ToList();
+            }
+
+            SaveDBCustomerMonthBalance(customerId, monthlyTrx);
         }
 
-        /// <summary>
-        /// Calculate monthly investment balances for all months of a player that they have transactions.
-        /// </summary>
-        /// <param name="custId"></param>
-        public void SaveCustomerTrxsBalances(int custId) {
-
-            // Step 1: Retrieve all Transactions by YearMonth
-            var monthlyTrx = db.GzTransactions.Where(t => t.CustomerId == custId)
-                .OrderBy(t => t.YearMonthCtd)
-                .GroupBy(t => t.YearMonthCtd)
-                .ToList();
-
-
+        private void SaveDBCustomerMonthBalance(int customerId, List<IGrouping<string, GzTransaction>> monthlyTrx) {
+            
             // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
             foreach (var g in monthlyTrx) {
 
@@ -146,25 +157,26 @@ namespace gzDAL.Repos {
                     "Cash to invest should be positive or 0. Selling stock is supported only for the whole portfolio.");
 
                 if (monthlyCashToInvest >= 0) {
-                    SaveDBbyTrxMonthlyBalanceForCustomer(custId, curYear, curMonth, monthlyCashToInvest);
+                    SaveDBCustomerMonthBalanceByCashInv(customerId, curYear, curMonth, monthlyCashToInvest);
                 }
             }
-
         }
 
         /// <summary>
-        /// Overload for multiple Customer Ids
+        /// Multiple Customers Version:
+        /// Calculate customer monthly investment balances for the given months if monthsToProc is not null
+        ///     otherwise calculate monthly investment balances for all transaction activity months of a player.
         /// </summary>
         /// <param name="customerIds"></param>
         /// <param name="yearMonthsToProc"></param>
-        public void SaveCustomerTrxsBalances(int[] customerIds, uint[] yearMonthsToProc) {
+        public void SaveDBCustomersMonthlyBalancesByTrx(int[] customerIds, string[] yearMonthsToProc) {
 
             if (customerIds == null) {
                 return;
             }
 
             foreach (var customerId in customerIds) {
-                SaveCustomerTrxsBalances(customerId);
+                SaveDBCustomerMonthlyBalancesByTrx(customerId, yearMonthsToProc);
             }
         }
     }

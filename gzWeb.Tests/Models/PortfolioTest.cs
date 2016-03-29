@@ -36,20 +36,20 @@ namespace gzWeb.Tests.Models {
             // Case 1
             decimal startingAmount = 1000;
             decimal RoR = 10; // 10%
-            int yearOfInv = 10;
+            int yearsOfInv = 10;
             decimal annualContribution = 100;
 
-            var expectedRet = ExpectedRet(yearOfInv, startingAmount, RoR, annualContribution);
+            var expectedRet = ExpectedRet(yearsOfInv, startingAmount, RoR, annualContribution);
 
             Assert.AreEqual(4187, Math.Round(expectedRet, 0));
 
             // Case 2
             startingAmount = 5356;
             RoR = 11.43m; // 11.43%
-            yearOfInv = 13;
+            yearsOfInv = 13;
             annualContribution = 141;
 
-            expectedRet = ExpectedRet(yearOfInv, startingAmount, RoR, annualContribution);
+            expectedRet = ExpectedRet(yearsOfInv, startingAmount, RoR, annualContribution);
 
             // Expected by https://smartasset.com/investing/investment-calculator#iw7vdcEJRj
             Assert.AreEqual(25675, Math.Round(expectedRet, 0));
@@ -66,13 +66,13 @@ namespace gzWeb.Tests.Models {
         /// by assuming a single investment at the end of the year.
         /// 
         /// </summary>
-        /// <param name="yearOfInv">Years To Grow</param>
+        /// <param name="yearsOfInv">Years To Grow</param>
         /// <param name="startingAmount"></param>
         /// <param name="roR">Rate at which investment will grow. Human Rate Input i.e. 14.25 for 14.25%</param>
         /// <param name="annualContribution">Annual capital investment amount</param>
-        /// <returns>End Balance at year <see cref="yearOfInv"/></returns>
-        private static decimal ExpectedRet(int yearOfInv, decimal startingAmount, decimal roR, decimal annualContribution) {
-            for (var i = 0; i < yearOfInv; i++) {
+        /// <returns>End Balance at year <see cref="yearsOfInv"/></returns>
+        private static decimal ExpectedRet(int yearsOfInv, decimal startingAmount, decimal roR, decimal annualContribution) {
+            for (var i = 0; i < yearsOfInv; i++) {
                 startingAmount = startingAmount*(1 + roR/100) + annualContribution;
             }
             return startingAmount;
@@ -123,7 +123,7 @@ namespace gzWeb.Tests.Models {
             CreateTestPlayerDepositWidthdrawnTransactions(custId);
 
             var db = new ApplicationDbContext();
-            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveCustomerTrxsBalances(custId);
+            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveDBCustomerMonthlyBalancesByTrx(custId);
         }
 
         public void CreateTestCustomerPortfolioSelections(int custId) {
