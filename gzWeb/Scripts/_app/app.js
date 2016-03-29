@@ -22,6 +22,7 @@ var APP = (function () {
         , 'angularMoment'
         , 'matchMedia'
         , 'LocalStorageModule'
+        , 'angularSpinner'
     ]);
 
     app.run([
@@ -32,7 +33,7 @@ var APP = (function () {
             });
 
             $rootScope.$on('$routeChangeSuccess', function() {
-                $rootScope.loading = false;
+                $rootScope.loading = false; 
                 $rootScope.documentTitle = constants.title;
                 if ($route.current.$$route && $route.current.$$route.title) {
                     $rootScope.title = $route.current.$$route.title;
@@ -58,12 +59,12 @@ var APP = (function () {
             });
 
             localStorageService.set('randomSuffix', Math.random());
+            $rootScope.loading = false;
 
             $timeout(function() {
                 angular.element(document.querySelector('#preloader')).addClass('die');
                 $timeout(function () {
-                    angular.element(document.querySelector('#preloader')).removeClass('die');
-                    //$rootScope.loading = false;
+                    angular.element(document.querySelector('#preloader')).remove();//removeClass('die');
                 }, 2000);
             }, 1000);
         }

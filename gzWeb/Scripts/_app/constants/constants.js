@@ -220,10 +220,11 @@
         routes: routes,
         routesGroups: routesGroups,
 
-        //spinners: {
-        //    sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
-        //    sm_rel_white: { radius: 5, width: 2, length: 4, color: '#fff', position: 'relative', top: '0' },
-        //},
+        spinners: {
+            //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
+            sm_rel_white: { radius: 5, width: 2, length: 4, color: '#fff', position: 'relative', top: '0' },
+            sm_rel_green: { radius: 5, width: 2, length: 4, color: '#27A95C', position: 'relative', top: '0' },
+        },
         //msgs: {
         //    required: 'The field is required!',
         //    invalidEmail: 'Invalid e-mail format!'
