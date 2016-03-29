@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.SqlServer;
+using System.Runtime.Remoting.Messaging;
 
 
 namespace gzDAL.Conf {
@@ -13,10 +15,18 @@ namespace gzDAL.Conf {
     /// </summary>
     public class ConnRetryConf : DbConfiguration {
 
+        public static bool SuspendExecutionStrategy
+        {
+            get { return (bool?)CallContext.LogicalGetData("SuspendExecutionStrategy") ?? false; }
+            set { CallContext.LogicalSetData("SuspendExecutionStrategy", value); }
+        }
+
         public ConnRetryConf()
         {
-            SetExecutionStrategy("System.Data.SqlClient"
-                , () => new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10)));
+            SetExecutionStrategy("System.Data.SqlClient",
+                                 () => SuspendExecutionStrategy
+                                               ? (IDbExecutionStrategy) new DefaultExecutionStrategy()
+                                               : new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10)));
         }
     }
 }

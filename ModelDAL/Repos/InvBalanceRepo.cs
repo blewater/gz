@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using gzDAL.Conf;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
@@ -67,27 +69,31 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCalcMonthlyBalancesForCustomer(custId, year, month, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
-            using (var dbContextTransaction = db.Database.BeginTransaction()) {
+            ConnRetryConf.SuspendExecutionStrategy = true;
+            var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
+            executionStrategy
+                    .Execute(() =>
+                             {
+                                 using (var dbContextTransaction = db.Database.BeginTransaction())
+                                 {
+                                     customerFundSharesRepo.SaveDbCustPurchasedFundShares(custId, portfolioFunds, year, month, DateTime.UtcNow);
 
-                customerFundSharesRepo.SaveDbCustPurchasedFundShares(custId, portfolioFunds, year, month,
-                    DateTime.UtcNow);
+                                     db.InvBalances.AddOrUpdate(i => new {i.CustomerId, i.YearMonth},
+                                                                new InvBalance
+                                                                {
+                                                                        YearMonth = DbExpressions.GetStrYearMonth(year, month),
+                                                                        CustomerId = custId,
+                                                                        Balance = monthlyBalance,
+                                                                        InvGainLoss = invGainLoss,
+                                                                        CashInvestment = cashToInvest,
+                                                                        UpdatedOnUTC = DateTime.UtcNow
+                                                                });
+                                     db.SaveChanges();
+                                     dbContextTransaction.Commit();
+                                 }
+                             });
 
-                db.InvBalances.AddOrUpdate(
-                    i => new {i.CustomerId, i.YearMonth},
-                    new InvBalance {
-                        YearMonth = DbExpressions.GetStrYearMonth(year, month),
-                        CustomerId = custId,
-                        Balance = monthlyBalance,
-                        InvGainLoss = invGainLoss,
-                        CashInvestment = cashToInvest,
-                        UpdatedOnUTC = DateTime.UtcNow
-                    }
-                    );
-                db.SaveChanges();
-                dbContextTransaction.Commit();
-            }
-
-
+            ConnRetryConf.SuspendExecutionStrategy = true;
         }
 
         /// <summary>
