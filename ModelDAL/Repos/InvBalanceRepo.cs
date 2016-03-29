@@ -91,10 +91,19 @@ namespace gzDAL.Repos {
         }
 
         /// <summary>
+        /// Calculate customer monthly investment balances for the given months
+        /// </summary>
+        /// <param name="custId"></param>
+        /// <param name="monthsToProc">Array of YYYYMM values i.e. [201601, 201502]</param>
+        public void SaveCustomerTrxsBalances(int custId, uint[] monthsToProc) {
+
+        }
+
+        /// <summary>
         /// Calculate monthly investment balances for all months of a player that they have transactions.
         /// </summary>
         /// <param name="custId"></param>
-        public void SaveCustTrxsBalances(int custId) {
+        public void SaveCustomerTrxsBalances(int custId) {
 
             // Step 1: Retrieve all Transactions by YearMonth
             var monthlyTrx = db.GzTransactions.Where(t => t.CustomerId == custId)
@@ -141,14 +150,15 @@ namespace gzDAL.Repos {
         /// Overload for multiple Customer Ids
         /// </summary>
         /// <param name="customerIds"></param>
-        public void SaveCustTrxsBalances(int[] customerIds) {
+        /// <param name="yearMonthsToProc"></param>
+        public void SaveCustomerTrxsBalances(int[] customerIds, uint[] yearMonthsToProc) {
 
-            if (customerIds != null) {
+            if (customerIds == null) {
                 return;
             }
 
             foreach (var customerId in customerIds) {
-                SaveCustTrxsBalances(customerId);
+                SaveCustomerTrxsBalances(customerId);
             }
         }
     }
