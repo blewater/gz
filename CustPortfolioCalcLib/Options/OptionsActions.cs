@@ -18,7 +18,7 @@ namespace gzCpcLib.Options {
         private FundsUpd fundsUpd;
         private CustInvestmentBalUpd custInvestBalUpd;
 
-        public bool IsProcessing { get; private set; } = false;
+        public bool IsProcessing { get; private set; }
 
         public OptionsActions(CpcOptions inCpcOptions
             , ExchRatesUpd inExchRatesUpd

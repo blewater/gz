@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using gzDAL.Conf;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
@@ -77,15 +79,24 @@ namespace gzDAL.Repos
                 
                 //db.Database.Log = sqlLogFile.Write;
 
-                using (var dbContextTransaction = db.Database.BeginTransaction())
-                {
+                ConnRetryConf.SuspendExecutionStrategy = true;
+                var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
 
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming, withdrawnAmount, createdOnUTC, null);
-                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                executionStrategy.Execute(() =>
+                                          {
+                                              using (var dbContextTransaction = db.Database.BeginTransaction())
+                                              {
 
-                    dbContextTransaction.Commit();
-                }
-                
+                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming,
+                                                                      withdrawnAmount, createdOnUTC, null);
+                                                  SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+
+                                                  dbContextTransaction.Commit();
+                                              }
+                                          });
+
+                ConnRetryConf.SuspendExecutionStrategy = false;
+
             }
         }
 
@@ -109,17 +120,21 @@ namespace gzDAL.Repos
             }
             else {
 
-                
-                using (var dbContextTransaction = db.Database.BeginTransaction())
+                ConnRetryConf.SuspendExecutionStrategy = true;
+                var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
+                executionStrategy.Execute(() =>
                 {
+                    using (var dbContextTransaction = db.Database.BeginTransaction())
+                    {
 
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
-                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                        SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
+                        SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                    dbContextTransaction.Commit();
-                        
-                }
-                
+                        dbContextTransaction.Commit();
+
+                    }
+                });
+                ConnRetryConf.SuspendExecutionStrategy = false;
             }
         }
 
@@ -154,17 +169,24 @@ namespace gzDAL.Repos
                 throw new Exception("Invalid percentage not within range 0..100: " + creditPcnt);
 
             }
-            else {
+            else
+            {
 
-                
-                using (var dbContextTransaction = db.Database.BeginTransaction())
-                {
+                ConnRetryConf.SuspendExecutionStrategy = true;
+                var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
 
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount * creditPcnt / 100, createdOnUTC, db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
+                executionStrategy.Execute(() =>
+                                          {
+                                              using (var dbContextTransaction = db.Database.BeginTransaction())
+                                              {
+                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
+                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount*creditPcnt/100, createdOnUTC, db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
-                    dbContextTransaction.Commit();                        
-                }
+                                                  dbContextTransaction.Commit();
+                                              }
+                                          });
+
+                ConnRetryConf.SuspendExecutionStrategy = false;
                 
             }
         }
