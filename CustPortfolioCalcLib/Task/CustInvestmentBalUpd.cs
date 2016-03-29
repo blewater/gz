@@ -15,12 +15,12 @@ namespace gzCpcLib.Task {
         /// <summary>
         /// YYYYMM format i.e. 201603 (March of 2016)
         /// </summary>
-        public uint[] YearMonthsToProc { get; set; }
+        public string[] YearMonthsToProc { get; set; }
 
         public override void DoTask() {
 
             var db = new ApplicationDbContext();
-            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveCustomerTrxsBalances(CustomerIds, YearMonthsToProc);
+            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveDBCustomersMonthlyBalancesByTrx(CustomerIds, YearMonthsToProc);
 
         }
     }

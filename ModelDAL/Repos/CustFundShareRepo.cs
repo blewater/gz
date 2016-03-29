@@ -28,7 +28,7 @@ namespace gzDAL.Repos
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="updatedOnUTC"></param>
-        public void SaveDbCustPurchasedFundShares(int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUTC) {
+        public void SaveDBCustomerPurchasedFundShares(int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUTC) {
 
             foreach (var fundShares in fundsShares) {
 

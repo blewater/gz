@@ -15,7 +15,7 @@ namespace gzCpcLib.Options
 
         [OptionArray('m', "month",
             HelpText = "the {yearmonth} YYYYMM value to calculate portfolio i.e. -m 201504 201506")]
-        public uint[] YearMonthsToProc { get; set; }
+        public string[] YearMonthsToProc { get; set; }
 
         [OptionArray('i', "customerIds",  
             HelpText = "the customer Id(s) to calculate monthly balances."
