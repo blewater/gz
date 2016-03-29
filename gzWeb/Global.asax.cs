@@ -4,12 +4,15 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using AutoMapper;
 using gzDAL.Models;
 using gzDAL.DTO;
+using SimpleInjector;
+using SimpleInjector.Integration.WebApi;
 
 namespace gzWeb
 {
@@ -18,6 +21,7 @@ namespace gzWeb
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -35,6 +39,18 @@ namespace gzWeb
 
             //Automapper
             Mapper.Initialize(cfg => cfg.CreateMap<ApplicationUser, CustomerDTO>());
+
+            InitializeSimpleInjector();
+        }
+
+        private void InitializeSimpleInjector()
+        {
+            var container = new Container();
+            container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
+            container.Register<ApplicationDbContext, ApplicationDbContext>(Lifestyle.Scoped);
+            container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
+            container.Verify();
+            GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
         }
     }
 }
