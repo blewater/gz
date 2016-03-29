@@ -66,7 +66,7 @@ namespace CustPortfoliosCalcTest {
             var options = CpcOptions.ProcArgs(new string[] { "-m", "201505","201504" });
             Assert.IsTrue(options.ParsingSuccess);
 
-            Assert.IsTrue(options.YearMonthsToProc[0] == 201505);
+            Assert.IsTrue(options.YearMonthsToProc[0] == "201505");
         }
 
         [TestMethod]
@@ -79,9 +79,9 @@ namespace CustPortfoliosCalcTest {
             Assert.IsTrue(options.CustomersToProc[0] == 30);
             Assert.IsTrue(options.CustomersToProc[1] == 1);
             Assert.IsTrue(options.CustomersToProc.Length == 2);
-            Assert.IsTrue(options.YearMonthsToProc[0] == 201601);
-            Assert.IsTrue(options.YearMonthsToProc[1] == 201502);
-            Assert.IsTrue(options.YearMonthsToProc[2]== 201501);
+            Assert.IsTrue(options.YearMonthsToProc[0] == "201601");
+            Assert.IsTrue(options.YearMonthsToProc[1] == "201502");
+            Assert.IsTrue(options.YearMonthsToProc[2]== "201501");
             Assert.IsTrue(options.YearMonthsToProc.Length == 3);
         }
 
