@@ -3,7 +3,12 @@ using gzDAL.Repos;
 
 namespace gzCpcLib.Task {
 
-    public class FundMarketUpdDb : CpcTask {
+    /// <summary>
+    /// 
+    /// Request latest stock market pricing info for the interested Funds
+    /// 
+    /// </summary>
+    public class FundsUpd : CpcTask {
 
         public override void DoTask() {
 

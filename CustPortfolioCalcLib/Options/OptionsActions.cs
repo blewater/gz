@@ -1,28 +1,39 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Runtime.Remoting.Messaging;
 using gzCpcLib.Task;
 
 namespace gzCpcLib.Options {
 
+    /// <summary>
+    /// 
+    /// Execute the tasks associated to the parsed options.
+    /// 
+    /// </summary>
     public class OptionsActions {
 
-        private readonly CpcOptions _cpcOptions;
-        private CurrencyRatesUpdDb currencyRatesUpdDb;
-        private FundMarketUpdDb fundMarketUpdDb;
+        private readonly CpcOptions cpcOptions;
+        private ExchRatesUpd exchRatesUpd;
+        private FundsUpd fundsUpd;
+        private CustInvestmentBalUpd custInvestBalUpd;
 
         public bool IsProcessing { get; private set; } = false;
 
-        public OptionsActions(CpcOptions inCpcOptions, CurrencyRatesUpdDb inCurrencyRatesUpdDb, FundMarketUpdDb inFundMarketUpdDb) {
+        public OptionsActions(CpcOptions inCpcOptions
+            , ExchRatesUpd inExchRatesUpd
+            , FundsUpd inFundsUpd
+            , CustInvestmentBalUpd inCustInvestBalUpd) {
 
-            this._cpcOptions = inCpcOptions;
-            this.currencyRatesUpdDb = inCurrencyRatesUpdDb;
-            this.fundMarketUpdDb = inFundMarketUpdDb;
+            this.cpcOptions = inCpcOptions;
+            this.exchRatesUpd = inExchRatesUpd;
+            this.fundsUpd = inFundsUpd;
+            this.custInvestBalUpd = inCustInvestBalUpd;
         }
 
-        public void ProcOptions() {
+        public void ProcessOptions() {
 
-            if (!_cpcOptions.ParsingSuccess) {
+            if (!cpcOptions.ParsingSuccess) {
                 // Did not process
                 return ;
             }
@@ -30,17 +41,22 @@ namespace gzCpcLib.Options {
             // Starting to process
             IsProcessing = true;
 
-            if (_cpcOptions.CurrenciesMarketUpdOnly) {
+            if (cpcOptions.CurrenciesMarketUpdOnly) {
 
-                SubscribeToObs(currencyRatesUpdDb, "Currencies updated.", indicateWhenCompleteProcessing : true);
+                SubscribeToObs(exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing : true);
                         
-            } else if (_cpcOptions.StockMarketUpdOnly) {
+            } else if (cpcOptions.StockMarketUpdOnly) {
 
-                SubscribeToObs(fundMarketUpdDb, "Funds stock values updated.", indicateWhenCompleteProcessing: true);
+                SubscribeToObs(fundsUpd, "Funds stock values updated.", indicateWhenCompleteProcessing: true);
 
-            } else if (_cpcOptions.FinancialValuesUpd) {
+            } else if (cpcOptions.FinancialValuesUpd) {
 
-                MergeObs(currencyRatesUpdDb, fundMarketUpdDb, "Financial Values Updated.");
+                MergeObs(exchRatesUpd, fundsUpd, "Financial Values Updated.");
+
+            } else if (cpcOptions.CustomersToProc != null) {
+
+                custInvestBalUpd.CustomerIds = cpcOptions.CustomersToProc;
+                MergeReduceObs(exchRatesUpd, fundsUpd, custInvestBalUpd, "Customers Balances Processed");
 
             } else {
                 Console.WriteLine("No action taken!");
@@ -50,6 +66,12 @@ namespace gzCpcLib.Options {
             return ;
         }
 
+        /// <summary>
+        /// Subscribe to a task observable
+        /// </summary>
+        /// <param name="cpcTask"></param>
+        /// <param name="logCompletionMsg"></param>
+        /// <param name="indicateWhenCompleteProcessing"></param>
         public void SubscribeToObs(CpcTask cpcTask, string logCompletionMsg, bool indicateWhenCompleteProcessing = false) {
 
             cpcTask.TaskObservable.Subscribe(
@@ -64,6 +86,12 @@ namespace gzCpcLib.Options {
             );
         }
 
+        /// <summary>
+        /// Merge 2 parallel task observables
+        /// </summary>
+        /// <param name="cpcTask1"></param>
+        /// <param name="cpcTask2"></param>
+        /// <param name="logCompletionMsg"></param>
         public void MergeObs(CpcTask cpcTask1, CpcTask cpcTask2, string logCompletionMsg) {
 
             cpcTask1.TaskObservable
@@ -81,9 +109,34 @@ namespace gzCpcLib.Options {
                 );
         }
 
-        public void SyncSubscribe(IObservable<Unit> observable) {
-            observable.Wait();
-        }
+        /// <summary>
+        /// Merge 2 parallel task observable, wait their completion,
+        /// subscribe to last Task observable.
+        /// </summary>
+        /// <param name="cpcTask1"></param>
+        /// <param name="cpcTask2"></param>
+        /// <param name="cpcFinalTask"></param>
+        /// <param name="logCompletionMsg"></param>
+        public void MergeReduceObs(CpcTask cpcTask1, CpcTask cpcTask2, CpcTask cpcFinalTask, string logCompletionMsg) {
 
+            cpcTask1.TaskObservable
+                
+                .Merge(cpcTask2.TaskObservable)
+            
+                // Wait to complete before final task
+                .TakeLast(1)
+                .Merge(cpcFinalTask.TaskObservable)
+                .Subscribe(
+                    // OnNext
+                    w =>
+                        Console.WriteLine("OnNext Final Task"),
+
+                    // OnCompleted
+                    () => {
+                        Console.WriteLine(logCompletionMsg);
+                        IsProcessing = false;
+                    }
+                );
+        }
     }
 }

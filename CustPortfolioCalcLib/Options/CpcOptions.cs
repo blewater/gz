@@ -4,6 +4,11 @@ using CommandLine.Text;
 
 namespace gzCpcLib.Options
 {
+    /// <summary>
+    /// 
+    /// Declare the Command line options & Parse them.
+    /// 
+    /// </summary>
     public class CpcOptions
     {
         public bool ParsingSuccess { get; private set; }

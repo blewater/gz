@@ -2,7 +2,13 @@
 using gzDAL.Repos;
 
 namespace gzCpcLib.Task {
-    public class CurrencyRatesUpdDb : CpcTask {
+
+    /// <summary>
+    /// 
+    /// Request latest currency rates from YApi and save to Database
+    /// 
+    /// </summary>
+    public class ExchRatesUpd : CpcTask {
 
         public override void DoTask() {
 
