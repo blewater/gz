@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Results;
 using gzWeb.Areas.Mvc.Models;
@@ -73,10 +74,28 @@ namespace gzWeb.Controllers
         Closed = 2,
     }
 
-    public class CheckUserExistsResponse
+    public class CheckUserExistsResponse : EveryMatrixResponseBase
     {
         [JsonProperty("activeStatus")]
         public ActiveStatus ActiveStatus { get; set; }
+
+        [JsonProperty("userId")]
+        public long UserId { get; set; }
+    }
+
+    public class UserLoginResponse : EveryMatrixResponseBase
+    {
+        [JsonProperty("firstName")]
+        public string FirstName { get; set; }
+
+        [JsonProperty("lastName")]
+        public string LastName { get; set; }
+
+        [JsonProperty("language")]
+        public string Language { get; set; }
+
+        [JsonProperty("sessionId")]
+        public string SessionId { get; set; }
 
         [JsonProperty("userId")]
         public long UserId { get; set; }
@@ -126,6 +145,45 @@ namespace gzWeb.Controllers
                          .ContinueWith(task => JsonConvert.DeserializeObject<CheckUserExistsResponse>(task.Result.Content).UserId);
         }
 
+        public Task<EveryMatrixResponseBase> RegisterUser(RegisterUserViewModel model, string ipAddress)
+        {
+            var client = new RestClient(ServiceUrl);
+            var request = new RestRequest(BuildUrl("RegisterUser"), Method.POST);
+            request.AddJsonBody(new
+                                {
+                                        activateAccount = "1",
+                                        userName = model.Username,
+                                        password = model.Password,
+                                        title = model.Title,
+                                        firstName = model.FirstName,
+                                        lastName = model.LastName,
+                                        birthDate = model.Birthday.ToString("yyyy-MM-dd"),
+                                        email = model.EMail,
+                                        mobile = model.Mobile,
+                                        mobilePrefix = model.MobilePrefix,
+                                        address1 = model.Address,
+                                        postalCode = model.PostalCode,
+                                        city = model.City,
+                                        countryCode = model.CountryCode,
+                                        currency = model.Currency,
+                                        signupIp = ipAddress
+                                });
+
+
+            return client.ExecuteTaskAsync(request)
+                         .ContinueWith(task => JsonConvert.DeserializeObject<EveryMatrixResponseBase>(task.Result.Content));
+        }
+
+        public Task<UserLoginResponse> LoginUser(string username, string password, string ipAddress)
+        {
+            var client = new RestClient(ServiceUrl);
+            var resourceUrl = String.Format("{0}/{1}/{2}/{3}", BuildUrl("LoginUser"), username, password, HttpUtility.UrlEncode(ipAddress));
+            var request = new RestRequest(resourceUrl, Method.GET);
+
+            return client.ExecuteTaskAsync(request)
+                         .ContinueWith(task => JsonConvert.DeserializeObject<UserLoginResponse>(task.Result.Content));
+        }
+
         private static string BuildUrl(string method)
         {
             return String.Format("{0}/{1}/{2}/{3}", method, Version, PartnerId, PartnerKey);
@@ -135,6 +193,35 @@ namespace gzWeb.Controllers
         private const string PartnerId = "GreenZorroID";
         private const string PartnerKey = "GreenZorroCODE";
         private const string ServiceUrl = "http://core.gm.stage.everymatrix.com/ServerAPI/";
+
+        
+    }
+
+    public class RegisterUserViewModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+
+        // Title. Set to one of : "Mr.", "Mrs.", "Miss.", "Ms."
+        public string Title { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime Birthday { get; set; }
+        public string EMail { get; set; }
+        public string Mobile { get; set; }
+        public string MobilePrefix { get; set; }
+        public string Address { get; set; }
+        public string PostalCode { get; set; }
+        public string City { get; set; }
+        public string CountryCode { get; set; }
+        
+        public string Currency { get; set; }
+    }
+
+    public class LoginUserViewModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 
     public class TestGMServerApiController : ApiController
@@ -163,11 +250,66 @@ namespace gzWeb.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult CheckUserExists(RegisterViewModel model)
+        public IHttpActionResult CheckUserExists(RegisterUserViewModel model)
         {
-            return Ok(_gamMatrixClient.CheckUserExists(model.Birthday, model.Email).Result);
+            return Ok(_gamMatrixClient.CheckUserExists(model.Birthday, model.EMail).Result);
         }
-        
+
+        // Sample Data for
+        // http://localhost:63659/api/TestGMServerApi/RegisterUser
+        //
+        //{
+        //    "Username" : "xdinos",
+        //    "Password" : "12345678",
+        //    "Title" : "Mr.",
+        //    "FirstName" : "Dinos",
+        //    "LastName" : "Chatzopoulos",
+        //    "Birthday" : "1975/10/13",
+        //    "Email" : "xdinos@hotmail.com",
+        //    "Mobile" : "6955486367",
+        //    "MobilePrefix" : "+30",
+        //    "Address" : "Neofitou 48A",
+        //    "PostalCode" : "34100",
+        //    "City" : "Chalkida",
+        //    "CountryCode" : "GR",
+        //    "Currency" : "EUR"
+        //}
+
+        [HttpPost]
+        public IHttpActionResult RegisterUser(RegisterUserViewModel model)
+        {
+            return Ok(_gamMatrixClient.RegisterUser(model, GetClientIpAddress(Request)).Result);
+        }
+
+        [HttpPost]
+        public IHttpActionResult LoginUser(LoginUserViewModel model)
+        {
+            return Ok(_gamMatrixClient.LoginUser(model.Username, model.Password, GetClientIpAddress(Request)).Result);
+        }
+
+
+        public static string GetClientIpAddress(HttpRequestMessage request)
+        {
+            return "94.70.20.46";
+            if (request.Properties.ContainsKey(HttpContext))
+            {
+                dynamic ctx = request.Properties[HttpContext];
+                if (ctx != null)
+                    return ctx.Request.UserHostAddress;
+            }
+
+            if (request.Properties.ContainsKey(RemoteEndpointMessage))
+            {
+                dynamic remoteEndpoint = request.Properties[RemoteEndpointMessage];
+                if (remoteEndpoint != null)
+                    return remoteEndpoint.Address;
+            }
+
+            return null;
+        }
+
         private readonly GamMatrixClient _gamMatrixClient;
+        private const string HttpContext = "MS_HttpContext";
+        private const string RemoteEndpointMessage = "System.ServiceModel.Channels.RemoteEndpointMessageProperty";
     }
 }
