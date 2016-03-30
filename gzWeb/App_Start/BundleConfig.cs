@@ -84,6 +84,7 @@ namespace gzWeb
                 , "~/Scripts/angular-moment/angular-moment.min.js"
                 , "~/Scripts/angular-match-media/match-media.js"
                 , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
+                , "~/Scripts/angular-count-to/angular-count-to.min.js"
 
                 //, "~/Scripts/_modules/customDirectives.js"
                 //, "~/Scripts/_modules/customFilters.js"
@@ -116,6 +117,7 @@ namespace gzWeb
                 , "~/Scripts/_app/services/routingService.js"
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"
+                //, "~/Scripts/_app/directives/gzPerformanceGraph.js"                
             ));
             #endregion
         }
