@@ -23,6 +23,7 @@ var APP = (function () {
         , 'matchMedia'
         , 'LocalStorageModule'
         , 'angularSpinner'
+        , 'countTo'
     ]);
 
     app.run([

@@ -723,6 +723,7 @@
     <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Index.cshtml" />
+    <Content Include="connectionStrings.config" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
@@ -731,6 +732,7 @@
     <Content Include="Scripts\angular-animate\angular-animate.min.js" />
     <Content Include="Scripts\angular-cookies\angular-cookies.js" />
     <Content Include="Scripts\angular-cookies\angular-cookies.min.js" />
+    <Content Include="Scripts\angular-count-to\angular-count-to.min.js" />
     <Content Include="Scripts\angular-filter\angular-filter.js" />
     <Content Include="Scripts\angular-filter\angular-filter.min.js" />
     <Content Include="Scripts\angular-local-storage\angular-local-storage.js" />
@@ -782,6 +784,7 @@
     <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
+    <Content Include="Scripts\_app\directives\gzPerformanceGraph.js" />
     <Content Include="Scripts\_app\directives\gzPortfolioChart.js" />
     <Content Include="Scripts\_app\donut.js" />
     <Content Include="Scripts\_app\main.js" />
