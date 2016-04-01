@@ -725,6 +725,7 @@
     <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Index.cshtml" />
     <Content Include="connectionStrings.config" />
+    <Content Include="Areas\Mvc\Views\Guest\Register.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
