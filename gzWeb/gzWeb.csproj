@@ -239,6 +239,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Models\SummaryViewModel.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -725,7 +726,9 @@
     <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Index.cshtml" />
     <Content Include="connectionStrings.config" />
-    <Content Include="Areas\Mvc\Views\Guest\Register.cshtml" />
+    <Content Include="Areas\Mvc\Views\Auth\Register.cshtml" />
+    <Content Include="Areas\Mvc\Views\Auth\Login.cshtml" />
+    <Content Include="Areas\Mvc\Views\Shared\_AuthLayout.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
