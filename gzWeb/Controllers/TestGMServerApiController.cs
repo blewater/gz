@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using gzWeb.Areas.Mvc.Models;
 using Newtonsoft.Json;
+using NLog.LayoutRenderers;
 using RestSharp;
 
 namespace gzWeb.Controllers
@@ -66,6 +68,12 @@ namespace gzWeb.Controllers
         public string Version { get; set; }
     }
 
+    public class UserResponseBase : EveryMatrixResponseBase
+    {
+        [JsonProperty("userId")]
+        public long UserId { get; set; }
+    }
+
     public enum ActiveStatus
     {
         InActive = -1,
@@ -83,7 +91,7 @@ namespace gzWeb.Controllers
         public long UserId { get; set; }
     }
 
-    public class UserLoginResponse : EveryMatrixResponseBase
+    public class UserLoginResponse : UserResponseBase
     {
         [JsonProperty("firstName")]
         public string FirstName { get; set; }
@@ -96,9 +104,6 @@ namespace gzWeb.Controllers
 
         [JsonProperty("sessionId")]
         public string SessionId { get; set; }
-
-        [JsonProperty("userId")]
-        public long UserId { get; set; }
     }
 
     public class GamMatrixClient
@@ -145,13 +150,13 @@ namespace gzWeb.Controllers
                          .ContinueWith(task => JsonConvert.DeserializeObject<CheckUserExistsResponse>(task.Result.Content).UserId);
         }
 
-        public Task<EveryMatrixResponseBase> RegisterUser(RegisterUserViewModel model, string ipAddress)
+        public Task<object> RegisterUser(RegisterUserViewModel model, string ipAddress)
         {
             var client = new RestClient(ServiceUrl);
             var request = new RestRequest(BuildUrl("RegisterUser"), Method.POST);
             request.AddJsonBody(new
                                 {
-                                        activateAccount = "1",
+                                        //activateAccount = "1",
                                         userName = model.Username,
                                         password = model.Password,
                                         title = model.Title,
@@ -166,22 +171,56 @@ namespace gzWeb.Controllers
                                         city = model.City,
                                         countryCode = model.CountryCode,
                                         currency = model.Currency,
-                                        signupIp = ipAddress
+                                        signupIp = ipAddress,
+                                        emailVerificationURL = "http://localhost:63659/activate?key="
                                 });
 
 
             return client.ExecuteTaskAsync(request)
-                         .ContinueWith(task => JsonConvert.DeserializeObject<EveryMatrixResponseBase>(task.Result.Content));
+                         .ContinueWith(task => JsonConvert.DeserializeObject(task.Result.Content));
         }
 
         public Task<UserLoginResponse> LoginUser(string username, string password, string ipAddress)
         {
             var client = new RestClient(ServiceUrl);
-            var resourceUrl = String.Format("{0}/{1}/{2}/{3}", BuildUrl("LoginUser"), username, password, HttpUtility.UrlEncode(ipAddress));
+            var resourceUrl = String.Format("{0}/{1}/{2}/{3}", BuildUrl("LoginUser"),
+                                            HttpUtility.UrlEncode(username),
+                                            HttpUtility.UrlEncode(password),
+                                            HttpUtility.UrlEncode(ipAddress));
             var request = new RestRequest(resourceUrl, Method.GET);
 
             return client.ExecuteTaskAsync(request)
                          .ContinueWith(task => JsonConvert.DeserializeObject<UserLoginResponse>(task.Result.Content));
+        }
+
+        public Task<object> GenerateUserHash(string url, long userId)
+        {
+            var client = new RestClient(ServiceUrl);
+            var request = new RestRequest(BuildUrl("GenerateUserHash"), Method.POST);
+            request.AddJsonBody(new
+                                {
+                                        URL = url,
+                                        Userid = userId.ToString(CultureInfo.InvariantCulture)
+                                });
+            return client.ExecuteTaskAsync(request)
+                         .ContinueWith(task => JsonConvert.DeserializeObject(task.Result.Content));
+
+        }
+
+        public Task<object> IsUserHashValid(string hashKey)
+        {
+            var client = new RestClient(ServiceUrl);
+            var request = new RestRequest(String.Format("{0}/{1}", BuildUrl("IsUserHashValid"), hashKey), Method.GET);
+            return client.ExecuteTaskAsync(request)
+                         .ContinueWith(task => JsonConvert.DeserializeObject(task.Result.Content));
+        }
+
+        public Task<object> GetUserDetails(string sessionId)
+        {
+            var client = new RestClient(ServiceUrl);
+            var request = new RestRequest(String.Format("{0}/{1}", BuildUrl("GetUserDetails"), sessionId), Method.GET);
+            return client.ExecuteTaskAsync(request)
+                         .ContinueWith(task => JsonConvert.DeserializeObject(task.Result.Content));
         }
 
         private static string BuildUrl(string method)
@@ -193,6 +232,7 @@ namespace gzWeb.Controllers
         private const string PartnerId = "GreenZorroID";
         private const string PartnerKey = "GreenZorroCODE";
         private const string ServiceUrl = "http://core.gm.stage.everymatrix.com/ServerAPI/";
+
 
         
     }
@@ -222,6 +262,12 @@ namespace gzWeb.Controllers
     {
         public string Username { get; set; }
         public string Password { get; set; }
+    }
+
+    public class GenerateUserHashViewModel
+    {
+        public string Url { get; set; }
+        public long UserId { get; set; }
     }
 
     public class TestGMServerApiController : ApiController
@@ -285,6 +331,24 @@ namespace gzWeb.Controllers
         public IHttpActionResult LoginUser(LoginUserViewModel model)
         {
             return Ok(_gamMatrixClient.LoginUser(model.Username, model.Password, GetClientIpAddress(Request)).Result);
+        }
+
+        [HttpPost]
+        public IHttpActionResult GenerateUserHash(GenerateUserHashViewModel model)
+        {
+            return Ok(_gamMatrixClient.GenerateUserHash(model.Url, model.UserId).Result);
+        }
+
+        [HttpGet]
+        public IHttpActionResult IsUserHashValid(string hashKey)
+        {
+            return Ok(_gamMatrixClient.IsUserHashValid(hashKey).Result);
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetUserDetails(string sessionId)
+        {
+            return Ok(_gamMatrixClient.GetUserDetails(sessionId).Result);
         }
 
 
