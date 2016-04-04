@@ -732,6 +732,7 @@
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
+    <Content Include="Partials\directives\gzPerformanceGraph.html" />
     <Content Include="Sample.html" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
     <Content Include="Scripts\angular-animate\angular-animate.min.js" />
@@ -1465,7 +1466,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Partials\directives\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>

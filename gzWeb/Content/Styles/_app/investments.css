@@ -505,13 +505,19 @@
 .investments .performance .values .value-top {
     font-size: 15px;
     color: #000;
+    -ms-opacity: 0.65;
     opacity: 0.65;
     margin-top: 20px;
 }
+
 .investments .performance .values .value-middle {
     padding-top: 10px;
     font-size: 35px;
     color: #27A95C;
+}
+.investments .performance .values .value-middle.value-bold {
+    font-size: 45px;
+    padding-top: 0;
 }
 .investments .performance .values .value-bottom {
     font-size: 12px;
@@ -553,6 +559,27 @@
 .investments .performance .plans button:disabled {
     cursor: not-allowed;
 }
+
+.investments .performance #canvas {
+    width: 100%;
+    /*height: 480px;*/
+    font: 10px sans-serif;
+    margin: 50px auto;
+}
+.investments .performance #canvas .axis line { display: none; }
+.investments .performance #canvas .axis path { display: none; }
+.investments .performance #canvas .axis text { font-weight: bold; text-transform: uppercase; }
+.investments .performance #canvas .axis-title { font-size: 1.4em; }
+.investments .performance #canvas .line {
+    fill: none;
+    stroke: #27A95C;
+    stroke-width: 1px;
+    stroke-opacity: 0.5;
+}
+
+
+
+
 
 
 @media (min-width: 768px) {

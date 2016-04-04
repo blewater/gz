@@ -24,6 +24,7 @@ var APP = (function () {
         , 'LocalStorageModule'
         , 'angularSpinner'
         , 'countTo'
+        , 'FBAngular'
     ]);
 
     app.run([

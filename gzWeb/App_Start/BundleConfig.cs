@@ -85,6 +85,7 @@ namespace gzWeb
                 , "~/Scripts/angular-match-media/match-media.js"
                 , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
                 , "~/Scripts/angular-count-to/angular-count-to.min.js"
+                , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
 
                 //, "~/Scripts/_modules/customDirectives.js"
                 //, "~/Scripts/_modules/customFilters.js"
@@ -117,7 +118,7 @@ namespace gzWeb
                 , "~/Scripts/_app/services/routingService.js"
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"
-                //, "~/Scripts/_app/directives/gzPerformanceGraph.js"                
+                , "~/Scripts/_app/directives/gzPerformanceGraph.js"                
             ));
             #endregion
         }
