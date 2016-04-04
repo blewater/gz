@@ -18,10 +18,5 @@ namespace gzWeb.Areas.Mvc.Controllers
         {
             return View();
         }
-
-        public ActionResult Register()
-        {
-            return View();
-        }
     }
 }
