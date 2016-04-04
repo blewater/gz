@@ -4,3 +4,15 @@
 
 <h1 class="text-center">GREENZORRO</h1>
 <h3 class="text-center">Register</h3>
+
+<form>
+    <label>EMail:
+        <input type="email" ng-model="model.email" ng-blur="validateEmail()"/>
+    </label>
+    <label>Password:
+        <input type="password" ng-model="model.password" />
+    </label>
+    <label>Date of birth:
+        <input type="date" ng-model="model.dateOfBirth" />
+    </label>
+</form>
