@@ -23,12 +23,12 @@ namespace gzWeb.Tests.Models {
         }
 
         /// <summary>
-        /// 
+        ///
         /// Test expected returns formula below based on a industry standard
         /// calculation i.e. Time weighted return.
-        /// 
+        ///
         /// Asserts taken from calculator on https://smartasset.com/investing/investment-calculator#iw7vdcEJRj
-        /// 
+        ///
         /// </summary>
         [TestMethod]
         public void TimeWeightedReturnCalc() {
@@ -56,15 +56,15 @@ namespace gzWeb.Tests.Models {
         }
 
         /// <summary>
-        /// 
+        ///
         /// Time weighted return formula I think :)
         /// Based on calculator on https://smartasset.com/investing/investment-calculator#iw7vdcEJRj
-        /// 
-        /// It is assumed that all cash distributions 
+        ///
+        /// It is assumed that all cash distributions
         /// are reinvested in the portfolio.
-        /// The effect of the Cash inflows timing is eliminated 
+        /// The effect of the Cash inflows timing is eliminated
         /// by assuming a single investment at the end of the year.
-        /// 
+        ///
         /// </summary>
         /// <param name="yearsOfInv">Years To Grow</param>
         /// <param name="startingAmount"></param>
@@ -111,12 +111,22 @@ namespace gzWeb.Tests.Models {
             //Assert we have a closing price for first symbol
             Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
         }
+
+        [TestMethod]
+        public void SaveDbSellPortfolio() {
+            int custId = CreateTestCustomer();
+
+            var db = new ApplicationDbContext();
+            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveDBSellCustomerPortfolio(custId);
+
+        }
+
         [TestMethod]
         public void SaveDBPortfolioReturns() {
 
             int custId = CreateTestCustomer();
 
-            // Add invested Customer Portfolio 
+            // Add invested Customer Portfolio
             CreateTestCustomerPortfolioSelections(custId);
 
             CreateTestPlayerLossTransactions(custId);
@@ -201,7 +211,7 @@ namespace gzWeb.Tests.Models {
             var newUser = new ApplicationUser();
             Mapper.Map<CustomerDTO, ApplicationUser>(newUserDTO, newUser);
 
-            var db = new ApplicationDbContext();            
+            var db = new ApplicationDbContext();
             var custRepo = new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db)));
             return custRepo.CreateOrUpdateUser(newUser, "1q2w3e");
         }
