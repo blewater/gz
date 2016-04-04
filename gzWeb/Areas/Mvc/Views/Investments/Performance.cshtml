@@ -3,55 +3,14 @@
 }
 
 <div class="performance">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="title text-center">
-                Check your expected returns
-            </div>
-        </div>
+    <div class="title text-center">
+        Check your expected returns
     </div>
-    <div class="row values">
-        <div class="col-xs-12 col-sm-4 value text-center">
-            <div class="value-top">Years</div>
-            <div class="value-middle">{{model.years}}</div>
-            <div class="value-bottom"></div>
-        </div>
-        <div class="col-xs-12 col-sm-4 value text-center">
-            <div class="value-top">Projected Value</div>
-            <div class="value-middle">{{model.currency}}<span count-to="{{model.projectedValue}}" value="{{modelFrom.projectedValue}}" duration="{{model.countDuration}}"></span></div>
-            <div class="value-bottom">({{model.currency}}<span count-to="{{model.profit}}" value="{{modelFrom.profit}}" duration="{{model.countDuration}}"></span>)</div>
-        </div>
-        <div class="col-xs-12 col-sm-4 value text-center">
-            <div class="value-top">Monthly Invested</div>
-            <div class="value-middle">{{model.currency}}{{model.monthlyInvestment}}</div>
-            <div class="value-bottom"></div>
-        </div>
-    </div>
-    <div class="plans clearfix">
-        <div class="col-xs-12 col-sm-4 plan text-center">
-            <button type="button" ng-disabled="plans.aggressive.selected" ng-click="selectPlan(plans.aggressive)">
-                <span>{{plans.aggressive.title}}</span>
-            </button>
-        </div>
-        <div class="col-xs-12 col-sm-4 plan text-center">
-            <button type="button" ng-disabled="plans.moderate.selected" ng-click="selectPlan(plans.moderate)">
-                <span>{{plans.moderate.title}}</span>
-            </button>
-        </div>
-        <div class="col-xs-12 col-sm-4 plan text-center">
-            <button type="button" ng-disabled="plans.conservative.selected" ng-click="selectPlan(plans.conservative)">
-                <span>{{plans.conservative.title}}</span>
-            </button>
-        </div>
-    </div>
-    <div class="row clearfix" style="margin-top: 100px;">
-        <div class="col-xs-6 text-right">
-            Years: <input type="number" ng-model="model.years" ng-change="calc()" />
-        </div>
-        <div class="col-xs-6 text-left">
-            Monthly invested: <input type="number" ng-model="model.monthlyInvestment" ng-change="calc()" />
-        </div>
-    </div>
+    <gz-performance-graph gz-aggressive-rate="0.1"
+                          gz-moderate-rate="0.07"
+                          gz-conservative-rate="0.04"
+                          gz-currency="€">
+    </gz-performance-graph>
 </div>
 
 
