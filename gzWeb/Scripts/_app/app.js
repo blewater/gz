@@ -24,6 +24,8 @@ var APP = (function () {
         , 'LocalStorageModule'
         , 'angularSpinner'
         , 'countTo'
+        , 'angularLoad'
+        , 'vxWamp'
     ]);
 
     app.run([

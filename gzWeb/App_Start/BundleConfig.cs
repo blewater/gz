@@ -74,6 +74,9 @@ namespace gzWeb
                 , "~/Scripts/angular-animate/angular-animate.min.js"
                 , "~/Scripts/angular-sanitize/angular-sanitize.min.js"
                 , "~/Scripts/angular-cookies/angular-cookies.min.js"
+                , "~/Scripts/angular-load.min.js"
+                , "~/Scripts/angular-wamp.js"
+                //, "~/Scripts/angular-wamp.min.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/modules").Include(
