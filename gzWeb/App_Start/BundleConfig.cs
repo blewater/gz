@@ -74,9 +74,6 @@ namespace gzWeb
                 , "~/Scripts/angular-animate/angular-animate.min.js"
                 , "~/Scripts/angular-sanitize/angular-sanitize.min.js"
                 , "~/Scripts/angular-cookies/angular-cookies.min.js"
-                , "~/Scripts/angular-load.min.js"
-                , "~/Scripts/angular-wamp.js"
-                //, "~/Scripts/angular-wamp.min.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/modules").Include(
@@ -89,6 +86,9 @@ namespace gzWeb
                 , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
                 , "~/Scripts/angular-count-to/angular-count-to.min.js"
                 , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
+                , "~/Scripts/angular-wamp/angular-wamp.js"
+                //, "~/Scripts/angular-load.min.js"
+                //, "~/Scripts/angular-wamp/angular-wamp.min.js"
 
                 //, "~/Scripts/_modules/customDirectives.js"
                 //, "~/Scripts/_modules/customFilters.js"
