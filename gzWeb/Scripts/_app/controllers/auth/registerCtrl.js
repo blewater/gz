@@ -30,7 +30,7 @@
         };
 
         $scope.validatePassword = function (password) {
-            if (passwordPolicyRegEx.test(password)) {
+            if (_passwordPolicyRegEx.test(password)) {
                 return new { isValid: true };
             } else {
                 return new { isValid: false, error: passwordPolicyError };
@@ -51,16 +51,16 @@
                 }, logError);
         };
 
-        var getPasswordPolicy = function() {
+        function getPasswordPolicy() {
             emWamp.call('/user/pwd#getPolicy')
                 .then(function(result) {
-                        passwordPolicyRegEx = new RegExp(result.regularExpression);
-                        passwordPolicyError = result.message;
+                        _passwordPolicyRegEx = new RegExp(result.regularExpression);
+                        _passwordPolicyError = result.message;
                     },
                     logError);
         };
 
-        var getCountries = function() {
+        function getCountries() {
             emWamp.call('/user/account#getCountries', {
                     expectRegions: false, // true
                     filterByCountry: '',
@@ -73,7 +73,7 @@
                     logError);
         };
 
-        var getCurrencies = function() {
+        function getCurrencies() {
             emWamp.call('/user/account#getCurrencies')
                 .then(function(result) {
                         $scope.currencies = result;
@@ -81,14 +81,14 @@
                     logError);
         };
 
-        var logError = function (error) {
+        function logError(error) {
             console.log(error);
         };
 
-        var passwordPolicyRegEx = '';
-        var passwordPolicyError = '';
+        var _passwordPolicyRegEx = '';
+        var _passwordPolicyError = '';
 
-        var init = function () {
+        function init() {
             getPasswordPolicy();
             getCountries();
             getCurrencies();
