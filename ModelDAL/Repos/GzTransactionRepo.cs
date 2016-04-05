@@ -21,6 +21,7 @@ namespace gzDAL.Repos
         {
             this.db = db;
         }
+
         /// <summary>
         /// Create any type of transaction from those allowed.
         /// Used along with peer API methods for specialized transactions
@@ -52,9 +53,8 @@ namespace gzDAL.Repos
 
             }
 
-            
             SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, null);
-            
+
         }
 
         /// <summary>
@@ -67,42 +67,36 @@ namespace gzDAL.Repos
         public void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC)
         {
 
-            if (withdrawnAmount < 0)
+            if (withdrawnAmount <= 0)
             {
 
                 throw new Exception("Invalid amount to transfer to gaming account. Amount must be greater than 0: " + withdrawnAmount);
 
             }
-            else {
-                //string datPath = "d:\\temp";
-                //using (var sqlLogFile = new StreamWriter(datPath + "\\sqlLogFile_SaveDBTransferToGamingAmount.log")) {
-                
-                //db.Database.Log = sqlLogFile.Write;
 
-                ConnRetryConf.SuspendExecutionStrategy = true;
-                var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
 
-                executionStrategy.Execute(() =>
-                                          {
-                                              using (var dbContextTransaction = db.Database.BeginTransaction())
-                                              {
+            ConnRetryConf.SuspendExecutionStrategy = true;
+            var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
 
-                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming,
-                                                                      withdrawnAmount, createdOnUTC, null);
-                                                  SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+            executionStrategy.Execute(() =>
+                                        {
+                                            using (var dbContextTransaction = db.Database.BeginTransaction())
+                                            {
 
-                                                  dbContextTransaction.Commit();
-                                              }
-                                          });
+                                                SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming,
+                                                                    withdrawnAmount, createdOnUTC, null);
+                                                SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                ConnRetryConf.SuspendExecutionStrategy = false;
+                                                dbContextTransaction.Commit();
+                                            }
+                                        });
 
-            }
+            ConnRetryConf.SuspendExecutionStrategy = false;
         }
 
         /// <summary>
         /// Save an investment withdrawal transaction and save the calculated commission and fund fees transactions
-        /// Note identical method to <see cref="SaveDBTransferToGamingAmount"/> though in practice it may not be 
+        /// Note identical method to <see cref="SaveDBTransferToGamingAmount"/> though in practice it may not be
         /// able to instruct the casino platform to use it.
         /// </summary>
         /// <param name="customerId"></param>
@@ -112,44 +106,67 @@ namespace gzDAL.Repos
         public void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC)
         {
 
-            if (withdrawnAmount < 0)
+            if (withdrawnAmount <= 0)
             {
 
                 throw new Exception("Invalid withdrawal. Amount must be greater than 0: " + withdrawnAmount);
 
             }
-            else {
 
-                ConnRetryConf.SuspendExecutionStrategy = true;
-                var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
-                executionStrategy.Execute(() =>
+
+            ConnRetryConf.SuspendExecutionStrategy = true;
+            var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
+            executionStrategy.Execute(() =>
+            {
+                using (var dbContextTransaction = db.Database.BeginTransaction())
                 {
-                    using (var dbContextTransaction = db.Database.BeginTransaction())
-                    {
 
-                        SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
-                        SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                    SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
+                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                        dbContextTransaction.Commit();
+                    dbContextTransaction.Commit();
 
-                    }
-                });
-                ConnRetryConf.SuspendExecutionStrategy = false;
-            }
+                }
+            });
+            ConnRetryConf.SuspendExecutionStrategy = false;
+
         }
 
         /// <summary>
-        /// Save to DB the calculated Fund Greenzorro fees
+        /// 
+        /// Save to DB the calculated Fund Greenzorro fees.
+        /// 
+        /// Uses table configuration values.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="investmentSellOffAmount"></param>
+        /// <param name="invAmountLiquidationAmount"></param>
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGreenZorroFees(int customerId, decimal investmentSellOffAmount, DateTime createdOnUTC)
-        {
-            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100, createdOnUTC, null);
-            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, investmentSellOffAmount * (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100, createdOnUTC, null);
+        public decimal SaveDBGreenZorroFees(int customerId, decimal invAmountLiquidationAmount, DateTime createdOnUTC) {
+
+            if (invAmountLiquidationAmount <= 0) {
+
+                throw new Exception("Invalid investment amount to liquidate. Amount must be greater than 0: " + invAmountLiquidationAmount);
+
+            }
+
+            decimal gzFeesAmount = invAmountLiquidationAmount *
+                // COMMISSION_PCNT: Database Configuration Value
+                (decimal) db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single()/100;
+
+            decimal fundsFeesAmount = invAmountLiquidationAmount *
+                // FUND_FEE_PCNT: Database Configuration Value
+                (decimal) db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single()/100;
+
+            decimal reducedAmountToReturn = invAmountLiquidationAmount - gzFeesAmount - fundsFeesAmount;
+
+            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, gzFeesAmount, createdOnUTC, null);
+
+            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, fundsFeesAmount, createdOnUTC, null);
+
+            return reducedAmountToReturn;
         }
 
         /// <summary>
@@ -180,14 +197,19 @@ namespace gzDAL.Repos
                                               using (var dbContextTransaction = db.Database.BeginTransaction())
                                               {
                                                   SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
-                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, totPlayinLossAmount*creditPcnt/100, createdOnUTC, db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
+
+                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, 
+                                                      totPlayinLossAmount*creditPcnt/100, 
+                                                      createdOnUTC,
+                                                      // Db Configuration value
+                                                      db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
                                                   dbContextTransaction.Commit();
                                               }
                                           });
 
                 ConnRetryConf.SuspendExecutionStrategy = false;
-                
+
             }
         }
 
