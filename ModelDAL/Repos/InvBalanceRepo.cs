@@ -12,16 +12,18 @@ namespace gzDAL.Repos {
     public class InvBalanceRepo : IInvBalanceRepo {
         private readonly ApplicationDbContext db;
         private readonly ICustFundShareRepo customerFundSharesRepo;
+        private readonly IGzTransactionRepo gzTransactionRepo;
 
-        public InvBalanceRepo(ApplicationDbContext db, ICustFundShareRepo customerFundSharesRepo) {
+        public InvBalanceRepo(ApplicationDbContext db, ICustFundShareRepo customerFundSharesRepo, IGzTransactionRepo gzTransactionRepo) {
             this.db = db;
             this.customerFundSharesRepo = customerFundSharesRepo;
+            this.gzTransactionRepo = gzTransactionRepo;
         }
 
 #region Selling
 
         /// <summary>
-        /// Sell fully a customer's portfolio
+        /// Sell completely a customer's portfolio
         /// </summary>
         /// <param name="custId"></param>
         /// <param name="yearCurrent">Optional year value for selling in the past</param>
@@ -42,6 +44,7 @@ namespace gzDAL.Repos {
 
             // Trigger selling full portfolio by asking -$1 off of it.
             var portfolioFundsValuesThisMonth = customerFundSharesRepo.GetCalcCustMonthlyFundShares(custId, -1, yearCurrent, monthCurrent);
+
             var prevMonSharesPricedNow = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
             var prevMonthBalAmount = GetPrevMonthBalCashValue(custId, yearCurrent, monthCurrent);
             var invGainLoss = DbExpressions.RoundCustomerBalanceAmount(prevMonSharesPricedNow - prevMonthBalAmount);
@@ -53,9 +56,9 @@ namespace gzDAL.Repos {
         private void SaveDBCustomerMonthBalanceBySelling(
             Dictionary<int, CustFundShareRepo.PortfolioFundDTO> portfolioFunds,
             int customerId,
-            int year,
-            int month,
-            decimal totSharesValue,
+            int yearCurrent,
+            int monthCurrent,
+            decimal newMonthlyBalance,
             decimal invGainLoss) {
 
             ConnRetryConf.SuspendExecutionStrategy = true;
@@ -63,15 +66,26 @@ namespace gzDAL.Repos {
             executionStrategy
                     .Execute(() => {
                         using (var dbContextTransaction = db.Database.BeginTransaction()) {
-                            customerFundSharesRepo.SaveDBCustomerPurchasedFundShares(customerId, portfolioFunds, year, month, DateTime.UtcNow);
+
+                            // Save fees transactions first and continue with reduced cash amount
+                            var remainingCashAmount = 
+                                gzTransactionRepo.SaveDBGreenZorroFees(customerId, 
+                                    newMonthlyBalance, 
+                                    DateTime.UtcNow);
+
+                            customerFundSharesRepo.SaveDBMonthlyCustomerFundShares(boughtShares: false, customerId: customerId, 
+                                fundsShares: portfolioFunds, 
+                                year: yearCurrent, 
+                                month: monthCurrent, 
+                                updatedOnUTC: DateTime.UtcNow);
 
                             db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
                                                        new InvBalance {
-                                                           YearMonth = DbExpressions.GetStrYearMonth(year, month),
+                                                           YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
                                                            CustomerId = customerId,
-                                                           Balance = totSharesValue,
+                                                           Balance = remainingCashAmount,
                                                            InvGainLoss = invGainLoss,
-                                                           CashInvestment = -totSharesValue,
+                                                           CashInvestment = -remainingCashAmount,
                                                            UpdatedOnUTC = DateTime.UtcNow
                                                        });
                             db.SaveChanges();
@@ -168,7 +182,14 @@ namespace gzDAL.Repos {
                              {
                                  using (var dbContextTransaction = db.Database.BeginTransaction())
                                  {
-                                     customerFundSharesRepo.SaveDBCustomerPurchasedFundShares(customerId, portfolioFunds, year, month, DateTime.UtcNow);
+
+                                     customerFundSharesRepo.SaveDBMonthlyCustomerFundShares(
+                                         boughtShares: true,
+                                         customerId: customerId,
+                                         fundsShares: portfolioFunds,
+                                         year: year,
+                                         month: month,
+                                         updatedOnUTC: DateTime.UtcNow);
 
                                      db.InvBalances.AddOrUpdate(i => new {i.CustomerId, i.YearMonth},
                                                                 new InvBalance

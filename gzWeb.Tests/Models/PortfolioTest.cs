@@ -117,7 +117,8 @@ namespace gzWeb.Tests.Models {
             int custId = CreateTestCustomer();
 
             var db = new ApplicationDbContext();
-            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveDBSellCustomerPortfolio(custId);
+            new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                .SaveDBSellCustomerPortfolio(custId);
 
         }
 
@@ -133,7 +134,8 @@ namespace gzWeb.Tests.Models {
             CreateTestPlayerDepositWidthdrawnTransactions(custId);
 
             var db = new ApplicationDbContext();
-            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveDBCustomerMonthlyBalancesByTrx(custId);
+            new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                .SaveDBCustomerMonthlyBalancesByTrx(custId);
         }
 
         public void CreateTestCustomerPortfolioSelections(int custId) {

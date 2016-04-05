@@ -6,59 +6,94 @@ using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
 
-namespace gzDAL.Repos
-{
-    public class CustFundShareRepo : ICustFundShareRepo
-    {
+namespace gzDAL.Repos {
+    public class CustFundShareRepo : ICustFundShareRepo {
 
         private readonly ApplicationDbContext db;
-        public CustFundShareRepo(ApplicationDbContext db)
-        {
+        public CustFundShareRepo(ApplicationDbContext db) {
             this.db = db;
         }
 
-        /// <summary>
-        /// Save purchased funds shares to the customer's account.
+        ///  <summary>
         ///
-        /// Call DBcontext.SaveChanges() on incoming db object for transaction support
-        /// </summary>
-        /// <param name="db"></param>
-        /// <param name="customerId"></param>
-        /// <param name="fundsShares"></param>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="updatedOnUTC"></param>
-        public void SaveDBCustomerPurchasedFundShares(int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUTC) {
+        ///  Save purchased or sold funds shares to the customer's account.
+        ///
+        ///  Call DBcontext.SaveChanges() on incoming db object for transaction support
+        ///
+        ///  </summary>
+        ///  <param name="db"></param>
+        ///  <param name="customerId"></param>
+        ///  <param name="fundsShares"></param>
+        ///  <param name="year"></param>
+        ///  <param name="month"></param>
+        ///  <param name="updatedOnUTC"></param>
+        /// <param name="boughtShares"></param>
+        public void SaveDBMonthlyCustomerFundShares(
+            bool boughtShares,
+            int customerId,
+            Dictionary<int, PortfolioFundDTO> fundsShares,
+            int year,
+            int month,
+            DateTime updatedOnUTC) {
 
             foreach (var fundShares in fundsShares) {
 
-                try {
-                    db.CustFundShares.AddOrUpdate(
-                        f => new { f.CustomerId, f.FundId, f.YearMonth },
-                        new CustFundShare {
-                        // Key
-                        CustomerId = customerId,
-                            FundId = fundShares.Value.FundId,
-                            YearMonth = DbExpressions.GetStrYearMonth(year, month),
+                var custFundShare = new CustFundShare {
+                    // Key
+                    CustomerId = customerId,
+                    FundId = fundShares.Value.FundId,
+                    YearMonth = DbExpressions.GetStrYearMonth(year, month),
 
-                        // Updated Monthly balance
-                        SharesNum = fundShares.Value.SharesNum,
-                            SharesValue = fundShares.Value.SharesValue,
-                            SharesFundPriceId = fundShares.Value.SharesFundPriceId,
+                    // Updated Shares Values Monthly balance
+                    // -- Buying or Selling logic
+                    SharesNum = boughtShares ? fundShares.Value.SharesNum : 0,
+                    SharesValue = boughtShares ? fundShares.Value.SharesValue : 0,
 
-                        // New Shares
-                        NewSharesNum = fundShares.Value.NewSharesNum,
-                            NewSharesValue = fundShares.Value.NewSharesValue,
+                    // New Shares
+                    // -- Buying or Selling logic
+                    NewSharesNum = boughtShares 
+                                        ? fundShares.Value.NewSharesNum 
+                                        : -fundShares.Value.NewSharesNum,
 
-                            UpdatedOnUTC = updatedOnUTC
-                        }
-                    );
-                    db.SaveChanges();
-                } catch (Exception e) {
-                    // TODO: log customer id, fundId
-                    var msg = e.Message;
-                    throw ;
-                }
+                    NewSharesValue = boughtShares 
+                                        ? fundShares.Value.NewSharesValue 
+                                        : -fundShares.Value.NewSharesValue,
+
+                    SharesFundPriceId = fundShares.Value.SharesFundPriceId,
+                    UpdatedOnUTC = updatedOnUTC
+                };
+
+                SaveDBCustFundShare(custFundShare, customerId, year, month, updatedOnUTC, fundShares);
+            }
+        }
+
+        /// <summary>
+        /// Save one 1 Customer Fund Share Row
+        /// Rather than save all of them at once for a single customer, it saves row by row to get immediate error feedback
+        /// </summary>
+        /// <param name="custFundShare"></param>
+        /// <param name="customerId"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="updatedOnUTC"></param>
+        /// <param name="fundShares"></param>
+        private void SaveDBCustFundShare(CustFundShare custFundShare, int customerId, int year, int month, DateTime updatedOnUTC, KeyValuePair<int, PortfolioFundDTO> fundShares) {
+
+            try {
+
+                db.CustFundShares.AddOrUpdate(
+                    // Keys
+                    f => new {f.CustomerId, f.FundId, f.YearMonth},
+
+                    // Row object value
+                    custFundShare
+                );
+                db.SaveChanges();
+
+            } catch (Exception e) {
+                // TODO: log customer id, fundId
+                var msg = e.Message;
+                throw;
             }
         }
 
@@ -130,7 +165,7 @@ namespace gzDAL.Repos
                 })
                 .ToDictionary(f => f.FundId);
 
-            GetUpdatedFundsSharesValue(customerShares, year, month, cashToInvest:0);
+            GetUpdatedFundsSharesValue(customerShares, year, month, cashToInvest: 0);
 
             return customerShares;
         }
@@ -181,7 +216,6 @@ namespace gzDAL.Repos
         private Dictionary<int, PortfolioFundDTO> GetCalcPortfShares(int customerId, decimal cashToInvest, int year, int month, string lastMonthPort, decimal prevInvBal = 0) {
 
             var prevYearMonStr = DbExpressions.GetPrevMonthInYear(year, month);
-            decimal cashToGetBySellingShares = 0;
 
             //Get Portfolio Funds Weights
             Dictionary<int, PortfolioFundDTO> portfolioFundValues = GetFundWeights(customerId, lastMonthPort, prevYearMonStr);
@@ -221,7 +255,7 @@ namespace gzDAL.Repos
                 decimal existingFundSharesVal = prevMonShares * (decimal)fundPrice.ClosingPrice;
 
                 // Calculate new cash --> to shares investment
-                decimal cashPerFund = (decimal)weight/100 * cashToInvest;
+                decimal cashPerFund = (decimal)weight / 100 * cashToInvest;
                 var newsharesNum = cashPerFund / (decimal)fundPrice.ClosingPrice;
 
                 // Calculate this month current fund value including the new cash investment
@@ -257,7 +291,7 @@ namespace gzDAL.Repos
             string locLastTradeDay = lastTradeDay;
             // Find latest closing price
             fundPriceToRet = db.FundPrices
-                .Where(fp => fp.FundId == fundId && fp.YearMonthDay == locLastTradeDay )
+                .Where(fp => fp.FundId == fundId && fp.YearMonthDay == locLastTradeDay)
                 .Single();
 
             return fundPriceToRet;
@@ -314,16 +348,16 @@ namespace gzDAL.Repos
             // Note on the first month this will return 0 rows
             var custFundsDct = (
                 from c in db.CustFundShares
-                    where c.CustomerId == customerId
-                          && c.YearMonth == (lastBalanceMonth ?? prevYearMonStr)
+                where c.CustomerId == customerId
+                      && c.YearMonth == (lastBalanceMonth ?? prevYearMonStr)
 
-                 select new PortfolioFundDTO {
-                        FundId = c.FundId,
-                        PortfolioId = 0,
-                        Weight = 0,
-                        SharesNum = c.SharesNum
+                select new PortfolioFundDTO {
+                    FundId = c.FundId,
+                    PortfolioId = 0,
+                    Weight = 0,
+                    SharesNum = c.SharesNum
 
-                 })
+                })
                  .ToDictionary(f => f.FundId);
 
             // STEP 3: Update the customer owned fund shares that overlap with their current selected portfolio funds of Step 1
