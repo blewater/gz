@@ -25,7 +25,6 @@ var APP = (function () {
         , 'angularSpinner'
         , 'countTo'
         , 'FBAngular'
-        , 'angularLoad'
         , 'vxWamp'
     ]);
 
