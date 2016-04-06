@@ -20,21 +20,21 @@
                     <div class="col-xs-4"><div>Current Balance</div></div>
                     <div class="col-xs-4"><div>Selection</div></div>
                 </div>
-                <div class="row plan" ng-class="{'expanded': plan.expanded}" ng-repeat="plan in model.plans">
-                    <div class="basic" ng-class="{'selected': plan.selected}">
+                <div class="row plan" ng-class="{'expanded': plan.expanded}" ng-repeat="plan in model.Plans">
+                    <div class="basic" ng-class="{'selected': plan.Selected}">
                         <div class="col-xs-4">
-                            <div class="title text-left">{{plan.title}}</div>
+                            <div class="title text-left">{{plan.Title}}</div>
                         </div>
                         <div class="col-xs-4">
-                            <div class="balance text-center">€{{plan.balance}}</div>
+                            <div class="balance text-center">{{plan.Balance | currency : model.Currency : 0}}</div>
                         </div>
                         <div class="col-xs-4">
                             <div class="selection text-right">
-                                <button type="button" ng-disabled="plan.selected" ng-click="selectPlan(plan)" ng-mouseenter="plan.selectHovered = true" ng-mouseleave="plan.selectHovered = false">
-                                    <span ng-show="plan.selected">
+                                <button type="button" ng-disabled="plan.Selected" ng-click="selectPlan(plan)" ng-mouseenter="plan.selectHovered = true" ng-mouseleave="plan.selectHovered = false">
+                                    <span ng-show="plan.Selected">
                                         <i class="fa fa-lg fa-check-circle" title="Current"></i>
                                     </span>
-                                    <span ng-show="!plan.selected">
+                                    <span ng-show="!plan.Selected">
                                         <span ng-show="plan.selecting && !plan.selectHovered" class="spinner" us-spinner="spinnerGreen"></span>
                                         <span ng-show="plan.selecting && plan.selectHovered" class="spinner" us-spinner="spinnerWhite"></span>
                                         <span ng-show="!plan.selecting">Select</span>
@@ -53,12 +53,12 @@
                                 <div><u>Port. Weight</u></div>
                             </div>                            
                         </div>
-                        <div ng-repeat="holding in plan.holdings">
+                        <div ng-repeat="holding in plan.Holdings">
                             <div class="col-xs-7 text-left">
-                                <div class="holding-name">{{holding.name}}</div>
+                                <div class="holding-name">{{holding.Name}}</div>
                             </div>
                             <div class="col-xs-5 text-right">
-                                <div class="holding-weight">{{holding.weight}}.00%</div>
+                                <div class="holding-weight">{{holding.Weight | number : 2}}%</div>
                             </div>
                             
                         </div>
@@ -74,12 +74,12 @@
                             Next expected investment:
                         </div>
                         <div class="side-box-table-body">
-                            <div class="balance text-gz">€15.000</div>
+                            <div class="balance text-gz">{{model.NextExpectedInvestment | currency : model.Currency : 0}}</div>
                         </div>
                     </div>
                     <div class="side-box-table">
                         <div class="side-box-table-head">
-                            {{model.nextInvestmentOn}}
+                            On {{model.NextInvestmentOn | ordinalDate : 'MMMM d'}}
                         </div>
                     </div>
                 </div>
@@ -94,12 +94,15 @@
         <div class="col-xs-12 col-sm-6 col-lg-3">
             <div class="portfolio-section current-portfolio">
                 <div class="side-box">
-                    <div id="portfolio-chart"
+                    <div id="portfolio-chart" ng-if="model"
                          gz-portfolio-chart
-                         gz-conservative="model.conservativePercent"
-                         gz-moderate="model.moderatePercent"
-                         gz-aggressive="model.aggressivePercent" 
-                         gz-average="model.averagePercent">                        
+                         gz-plans="model.Plans"
+                         gz-roi="model.ROI"
+                         @*gz-conservative="model.Plans[2]"
+                         gz-moderate="model.Plans[1]"
+                         gz-aggressive="model.Plans[0]"
+                         gz-average="model.AvgPercent"*@
+                         >
                     </div>
                 </div>
             </div>
