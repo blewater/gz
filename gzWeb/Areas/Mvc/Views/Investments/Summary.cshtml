@@ -1,6 +1,4 @@
 ﻿@using System.Globalization
-@using gzWeb.Utilities
-@model gzWeb.Areas.Mvc.Models.SummaryViewModel
 @{
     Layout = "~/Areas/Mvc/Views/Shared/_InvestmentsLayout.cshtml";
 }
@@ -11,8 +9,7 @@
             <div class="text-center">
                 <div class="investments-balance-amount text-gz">
                     <img src="@Url.Content("~/Content/Images/line.svg")" alt="Line" />
-                    @*<i class="fa fa-euro"></i>*@
-                    <span>@Model.InvestmentsBalance.ToMoneyString(Model.Currency)</span>
+                    <span>{{model.InvestmentsBalance | currency : model.Currency : 0}}</span>
                     <img src="@Url.Content("~/Content/Images/line.svg")" alt="Line" />
                 </div>
                 <div class="investments-balance-descr">
@@ -31,13 +28,13 @@
                     <div class="half">
                         <div class="row">
                             <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">You have invested</div>
-                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">@Model.TotalInvestments.ToMoneyString(Model.Currency)</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestments | currency : model.Currency : 0}}</div>
                         </div>
                     </div>
                     <div class="half">
                         <div class="row">
                             <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">You have gained</div>
-                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">@Model.TotalInvestmentsReturns.ToMoneyString(Model.Currency)</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestmentsReturns | currency : model.Currency : 0}}</div>
                         </div>
                     </div>
                 </div>
@@ -52,9 +49,9 @@
                         </div>
                         <div class="vintages-box-table-body">
                             <div class="row" ng-repeat="vintage in lastVintages">
-                                <div class="col-xs-4 text-left">{{vintage.month}}</div>
-                                <div class="col-xs-4 text-right">€{{vintage.invested}}</div>
-                                <div class="col-xs-4 text-right"><span ng-if="vintage.returnPercent > 0">+</span>{{vintage.returnPercent}}%</div>
+                                <div class="col-xs-4 text-left">{{vintage.Date | date : 'MMMM'}}</div>
+                                <div class="col-xs-4 text-right">{{vintage.InvestAmount | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-4 text-right"><span ng-if="vintage.returnPercent > 0">+</span>{{vintage.ReturnPercent}}%</div>
                             </div>
                         </div>
                         <div class="vintages-box-table-foot">
@@ -84,15 +81,15 @@
                         <div class="side-box-table-body">
                             <div class="row">
                                 <div class="col-xs-6 text-left">Cash In</div>
-                                <div class="col-xs-6 text-right">@Model.TotalDeposits.ToMoneyString(Model.Currency)</div>
+                                <div class="col-xs-6 text-right">{{model.TotalDeposits | currency : model.Currency : 0}}</div>
                             </div>
                             <div class="row">
                                 <div class="col-xs-6 text-left">Cash Out</div>
-                                <div class="col-xs-6 text-right">@Model.TotalWithdrawals.ToMoneyString(Model.Currency)</div>
+                                <div class="col-xs-6 text-right">{{model.TotalWithdrawals | currency : model.Currency : 0}}</div>
                             </div>
                             <div class="row">
                                 <div class="col-xs-6 text-left">Balance</div>
-                                <div class="col-xs-6 text-right">@Model.GamingBalance.ToMoneyString(Model.Currency)</div>
+                                <div class="col-xs-6 text-right">{{model.GamingBalance | currency : model.Currency : 0}}</div>
                             </div>
                         </div>
                     </div>
@@ -113,7 +110,7 @@
                         </div>
                         <div class="side-box-table-body">
                             <div class="row">
-                                <div class="col-xs-12 text-left">@Model.NextInvestmentOn.ToString("MMMM d", new CultureInfo(Model.Culture))</div>
+                                <div class="col-xs-12 text-left">{{model.NextInvestmentOn | ordinalDate : 'MMMM d'}}</div>
                             </div>
                         </div>
                     </div>
@@ -125,7 +122,7 @@
                         </div>
                         <div class="side-box-table-body">
                             <div class="row">
-                                <div class="col-xs-12 text-left">@Model.LastInvestmentAmount.ToMoneyString(Model.Currency)</div>
+                                <div class="col-xs-12 text-left">{{model.LastInvestmentAmount | currency : model.Currency : 0}}</div>
                             </div>
                         </div>
                     </div>
@@ -133,8 +130,8 @@
                         <div class="side-box-table-foot">
                             <div class="row">
                                 <div class="col-xs-12 text-left">
-                                    *Status as of @DateTime.Now.ToString("MMM d, h:mm tt", new CultureInfo(Model.Culture)) - 50% of net losses (cach in - cash out - investment balance)
-                                </div>
+                                    *Status as of {{model.StatusAsOf | date : 'MMM d, h:mm a'}} - 50% of net losses (cach in - cash out - investment balance)
+                               </div>
                             </div>
                         </div>
                     </div>

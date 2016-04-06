@@ -10,6 +10,8 @@
         .filter('pad', pad)
         .filter('type', ['$filter', dataType])
         .filter('filterChild', filterChild)
+        .filter('ordinal', ordinal)
+        .filter('ordinalDate', ['$filter', ordinalDate])
     ;
 
     // #region partition
@@ -139,6 +141,39 @@
             }
         }
     };
+    // #endregion
+
+    // #region ordinal
+    function ordinalSuffix(input) {
+        var suffixes = ["th", "st", "nd", "rd"];
+        var n = input % 100;
+        return suffixes[(n - 20) % 10] || suffixes[n] || suffixes[0];
+    }
+
+    function ordinal() {
+        return function (input) {
+            return input + ordinalSuffix(input);
+        }
+    }
+    function ordinalDate($filter) {
+        var getOrdinalSuffix = function(number) {
+            var suffixes = ["'th'", "'st'", "'nd'", "'rd'"];
+            var relevantDigits = (number < 30) ? number % 20 : number % 30;
+            return "d" + ((relevantDigits <= 3) ? suffixes[relevantDigits] : suffixes[0]);
+        };
+
+        return function(timestamp, format) {
+            var regexPattern = /d+((?!\w*(?=')))|d$/g;
+            var date = new Date(timestamp);
+            var dayOfMonth = date.getDate();
+            var suffix = getOrdinalSuffix(dayOfMonth);
+
+            format = format.replace(regexPattern, function (match) {
+                return match === "d" ? suffix : match;
+            });
+            return $filter('date')(date, format);
+        };
+    }
     // #endregion
 })();
 

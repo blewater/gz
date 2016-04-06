@@ -11,8 +11,8 @@ var APP = (function () {
         'ngCookies'
 
         // Custom modules 
-        //, 'customDirectives'
-        //, 'customFilters'
+        , 'customDirectives'
+        , 'customFilters'
         //, 'styleInjector'
 
         // 3rd Party Modules
@@ -24,6 +24,8 @@ var APP = (function () {
         , 'LocalStorageModule'
         , 'angularSpinner'
         , 'countTo'
+        , 'FBAngular'
+        , 'vxWamp'
     ]);
 
     app.run([
