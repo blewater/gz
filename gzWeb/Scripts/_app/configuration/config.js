@@ -27,5 +27,18 @@
             return silentProvider;
         }]);
     }]);
+
+    APP.config(['$wampProvider', 'constants', function ($wampProvider, constants) {
+        
+        $wampProvider.init({
+            transports: [
+                { 'type': 'websocket', 'url': constants.webeocketApiUrl },
+                { 'type': 'longpoll', 'url': constants.fallbackApiUrl }
+            ],
+            url: constants.websocketApiUrl,
+            realm: constants.domainPrefix
+        });
+    }]);
+
 })();
 

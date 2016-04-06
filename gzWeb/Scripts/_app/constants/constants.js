@@ -214,6 +214,11 @@
         debugMode: true,
         html5Mode: true,
 
+        webeocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
+        fallbackApiUrl: 'https://fb-webapi-stage.everymatrix.com',
+        domainPrefix: 'http://www.greenzorro.com',
+        emailVerificationUrl: 'localhost:63659/activate?key=',
+
         area: area,
         routeKeys: routeKeys,
         groupKeys: groupKeys,

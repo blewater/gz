@@ -100,8 +100,24 @@ a { text-decoration:none; }
 
 
 
-
-
+.fullscreen-hud {
+    color: #27A95C;
+    position: absolute;
+    z-index: 10000000000000;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+}
+.fullscreen-hud i.fa {
+    margin-right: 10px;
+}
+.fullscreen-hud .exit {
+    /*margin-right: 40px;*/
+    cursor: pointer;
+}
+.fullscreen-hud .clock {
+    margin-right: 40px;
+}
 
 
 

@@ -219,3 +219,5 @@ _Pvt_Extensions/
 ModelManifest.xml
 .vscode/settings.json
 **/connectionStrings.config
+
+_xdinos_tests_/
