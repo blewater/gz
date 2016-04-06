@@ -26,7 +26,6 @@ body {
     padding-top: 100px;
 }
 .non-footer {
-    /*min-height: 100%;*/
     min-height: calc(100% - 50px);
     margin-bottom: -50px;
 }
@@ -39,8 +38,6 @@ body {
     clear: both;
     height: 50px;
 }
-
-
 
 a { text-decoration:none; }
 
@@ -85,7 +82,7 @@ a { text-decoration:none; }
     top: 0;
     left: 0;
     z-index: 1005;
-    background-color: transparent;
+    background-color: #ffffff;
     background-color: rgba(255, 255, 255, 0.6);
 }
 
@@ -112,7 +109,6 @@ a { text-decoration:none; }
     margin-right: 10px;
 }
 .fullscreen-hud .exit {
-    /*margin-right: 40px;*/
     cursor: pointer;
 }
 .fullscreen-hud .clock {
@@ -124,12 +120,7 @@ a { text-decoration:none; }
 
 
 
-/* #region Conditional Styling */
-
-/**************** XΧS ********************/
-@media (max-width: 419px) {
-}
-
+/* #region Bootstrap Breakpoints */
 /**************** XS ********************/
 @media (max-width: 767px) {
 }
@@ -165,5 +156,4 @@ a { text-decoration:none; }
 /**************** SM - LG ********************/
 @media (min-width: 768px) {
 }
-
 /* #endregion */
