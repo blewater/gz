@@ -18,19 +18,9 @@
     </div>
 </div>
 <div class="plans clearfix">
-    <div class="col-xs-12 col-sm-4 plan text-center">
-        <button type="button" ng-disabled="plans.aggressive.selected" ng-click="selectPlan(plans.aggressive)">
-            <span>{{plans.aggressive.title}}</span>
-        </button>
-    </div>
-    <div class="col-xs-12 col-sm-4 plan text-center">
-        <button type="button" ng-disabled="plans.moderate.selected" ng-click="selectPlan(plans.moderate)">
-            <span>{{plans.moderate.title}}</span>
-        </button>
-    </div>
-    <div class="col-xs-12 col-sm-4 plan text-center">
-        <button type="button" ng-disabled="plans.conservative.selected" ng-click="selectPlan(plans.conservative)">
-            <span>{{plans.conservative.title}}</span>
+    <div class="col-xs-12 col-sm-4 plan text-center" ng-repeat="plan in plans">
+        <button type="button" ng-disabled="plan.Selected" ng-click="selectPlan(plan)">
+            <span>{{plan.Title}}</span>
         </button>
     </div>
 </div>

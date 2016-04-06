@@ -7,32 +7,33 @@
         return {
             restrict: 'EA',
             scope: {
-                gzAggressiveRate: '=',
-                gzModerateRate: '=',
-                gzConservativeRate: '=',
+                //gzAggressiveRate: '=',
+                //gzModerateRate: '=',
+                gzPlans: '=',
                 gzCurrency: '@',
             },
             templateUrl: function () { return 'partials/directives/gzPerformanceGraph.html'; },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 // #region Variables
-                $scope.plans = {
-                    aggressive: {
-                        title: 'Aggressive',
-                        returnRate: $scope.gzAggressiveRate,
-                        selected: true
-                    },
-                    moderate: {
-                        title: 'Moderate',
-                        returnRate: $scope.gzModerateRate,
-                        selected: false
-                    },
-                    conservative: {
-                        title: 'Conservative',
-                        returnRate: $scope.gzConservativeRate,
-                        selected: false
-                    }
-                }
-                $scope.plan = $scope.plans.aggressive;
+                //$scope.plans = {
+                //    aggressive: {
+                //        title: 'Aggressive',
+                //        returnRate: $scope.gzAggressiveRate,
+                //        selected: true
+                //    },
+                //    moderate: {
+                //        title: 'Moderate',
+                //        returnRate: $scope.gzModerateRate,
+                //        selected: false
+                //    },
+                //    conservative: {
+                //        title: 'Conservative',
+                //        returnRate: $scope.gzConservativeRate,
+                //        selected: false
+                //    }
+                //}
+                $scope.plans = $scope.gzPlans;
+                $scope.plan = $filter('filter')($scope.plans, { Selected: true })[0];
                 $scope.year = 0;
                 $scope.annualContribution = 100;
                 $scope.projectedValue = 0;
@@ -41,17 +42,16 @@
                 $scope.principalAmount = 0;
                 var totalYears = 30;
                 var data = [];
-                $scope.rate = $scope.plan.returnRate;
                 for (var t = 0; t < totalYears; t++) {
                     data.push({
                         x: t,
-                        y111: project($scope.principalAmount, $scope.rate + $scope.rate * divergence * 3, t, $scope.annualContribution),
-                        y11: project($scope.principalAmount, $scope.rate + $scope.rate * divergence * 2, t, $scope.annualContribution),
-                        y1: project($scope.principalAmount, $scope.rate + $scope.rate * divergence, t, $scope.annualContribution),
-                        y: project($scope.principalAmount, $scope.rate, t, $scope.annualContribution),
-                        y0: project($scope.principalAmount, $scope.rate - $scope.rate * divergence, t, $scope.annualContribution),
-                        y00: project($scope.principalAmount, $scope.rate - $scope.rate * divergence * 2, t, $scope.annualContribution),
-                        y000: project($scope.principalAmount, $scope.rate - $scope.rate * divergence * 3, t, $scope.annualContribution)
+                        y111: project($scope.principalAmount, $scope.plan.ReturnRate + $scope.plan.ReturnRate * divergence * 3, t, $scope.annualContribution),
+                        y11: project($scope.principalAmount, $scope.plan.ReturnRate + $scope.plan.ReturnRate * divergence * 2, t, $scope.annualContribution),
+                        y1: project($scope.principalAmount, $scope.plan.ReturnRate + $scope.plan.ReturnRate * divergence, t, $scope.annualContribution),
+                        y: project($scope.principalAmount, $scope.plan.ReturnRate, t, $scope.annualContribution),
+                        y0: project($scope.principalAmount, $scope.plan.ReturnRate - $scope.plan.ReturnRate * divergence, t, $scope.annualContribution),
+                        y00: project($scope.principalAmount, $scope.plan.ReturnRate - $scope.plan.ReturnRate * divergence * 2, t, $scope.annualContribution),
+                        y000: project($scope.principalAmount, $scope.plan.ReturnRate - $scope.plan.ReturnRate * divergence * 3, t, $scope.annualContribution)
                     });
                 }
 
@@ -67,17 +67,15 @@
 
                 // #region Methods
                 $scope.selectPlan = function (plan) {
-                    var plans = $filter('toArray')($scope.plans);
-                    var index = plans.indexOf(plan);
-                    for (var i = 0; i < plans.length; i++)
-                        plans[i].selected = index === i;
-                    $scope.plan = plans[index];
+                    var index = $scope.plans.indexOf(plan);
+                    for (var i = 0; i < $scope.plans.length; i++)
+                        $scope.plans[i].Selected = index === i;
+                    $scope.plan = $scope.plans[index];
                     $scope.calculateProjection();
                 }
 
                 $scope.calculateProjection = function () {
-                    //$scope.rate = $scope.plan.returnRate;
-                    var projection = project($scope.principalAmount, $scope.rate, $scope.year, $scope.annualContribution);
+                    var projection = project($scope.principalAmount, $scope.plan.ReturnRate, $scope.year, $scope.annualContribution);
                     $scope.projectedValue = projection.amount;
                     $scope.profit = projection.profit;
                 }
