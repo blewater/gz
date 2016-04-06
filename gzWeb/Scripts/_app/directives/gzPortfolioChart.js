@@ -7,18 +7,21 @@
         return {
             restrict: 'A',
             scope: {
-                gzConservative: '=',
-                gzModerate: '=',
-                gzAggressive: '=',
-                gzAverage: '='
+                //gzConservative: '=',
+                //gzModerate: '=',
+                //gzAggressive: '=',
+                //gzAverage: '='
+                gzPlans: '=',
+                gzRoi: '='
             },
             link: function (scope, element, attrs) {
-                var plans = [
-                    { text: 'Aggressive', percent: scope.gzAggressive, color: '#227B46' },
-                    { text: 'Moderate', percent: scope.gzModerate, color: '#64BF89' },
-                    { text: 'Conservative', percent: scope.gzConservative, color: '#B4DCC4' }
-                ];
-                var roi = { text: "Current ROI", percent: scope.gzAverage }
+                //var plans = [
+                //    { text: scope.gzAggressive.Title, percent: scope.gzAggressive.Percent, color: '#227B46' },
+                //    { text: scope.gzModerate.Title, percent: scope.gzModerate.Percent, color: '#64BF89' },
+                //    { text: scope.gzConservative.Title, percent: scope.gzConservative.Percent, color: '#B4DCC4' }
+                //];
+                var plans = scope.gzPlans;
+                var roi = scope.gzRoi;
 
                 var root = d3.select(element[0]);
                 var rootWidth = root.node().getBoundingClientRect().width;
@@ -49,7 +52,7 @@
                             .padAngle(0.02);
 
                 var pie = d3.layout.pie()
-                    .value(function (d) { return d.percent; })
+                    .value(function (d) { return d.Percent; })
                     .sort(function (d, i) { return i; });
 
                 function showTooltip(text) {
@@ -78,10 +81,10 @@
                                 .delay(duration / 4)
                                 .duration(duration / 2)
                                 .ease('linear')
-                                .attrTween("d", function (d) {
-                                    var i = d3.interpolate(d.outerRadius, outerRadius);
+                                .attrTween("d", function (_d) {
+                                    var i = d3.interpolate(_d.outerRadius, outerRadius);
                                     return function (t) {
-                                        return arc.outerRadius(i(t))(d);
+                                        return arc.outerRadius(i(t))(_d);
                                     };
                                 });
                             el.select("text")
@@ -89,7 +92,7 @@
                                 .delay(duration / 4)
                                 .duration(duration / 2)
                                 .attr("font-size", fontSize * 1.2 + "px");
-                            showTooltip(d.data.text);
+                            showTooltip("% " + d.data.Title);
                         })
                         .on("mouseout", function () {
                             var el = d3.select(this);
@@ -119,7 +122,7 @@
                     .attr('pointer-events', '');
                 
                 arcs.append("path")
-                    .attr("fill", function (d) { return d.data.color; })
+                    .attr("fill", function (d) { return d.data.Color; })
                     .transition()
                     .delay(function(d, i) {
                         var totalPercent = d3.sum(plans.slice(0, i), function(x) {
@@ -127,7 +130,7 @@
                         });
                         return duration * totalPercent / 100;
                     })
-                    .duration(function(d, i) { return duration * d.data.percent / 100; })
+                    .duration(function(d, i) { return duration * d.data.Percent / 100; })
                     .ease('linear')
                     .attrTween('d', function(d) {
                         var interpolateAngle = d3.interpolate(d.startAngle, d.endAngle);
@@ -152,7 +155,7 @@
                         var c = arc.centroid(d);
                         return "translate(" + c[0]*0.8 + "," + c[1]*0.8 + ")";
                     })
-                    .text(function (d) { return d.data.percent; });
+                    .text(function (d) { return d.data.Percent; });
 
                 group.append("text")
                     .style("text-anchor", "middle")
@@ -160,7 +163,7 @@
                     .style("font-size", "0px")
                     .attr("fill", "#27A95C")
                     .on("mouseover", function () {
-                        showTooltip(roi.text);
+                        showTooltip(roi.Title);
                         d3.select(this)
                             .transition()
                             .delay(duration / 4)
@@ -184,7 +187,7 @@
                     .ease('elastic')
                     .style("font-size", "38px")
                     .attr("dy", ".35em")
-                    .text(roi.percent)
+                    .text(roi.Percent)
                 ;
             }
         };
