@@ -75,7 +75,7 @@ namespace gzDAL.Repos
             }
 
 
-            ConnRetryConf.SuspendExecutionStrategy = true;
+            ConnRetryConf.SuspendRetryExecutionStrategy = true;
             var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
 
             executionStrategy.Execute(() =>
@@ -91,7 +91,7 @@ namespace gzDAL.Repos
                                             }
                                         });
 
-            ConnRetryConf.SuspendExecutionStrategy = false;
+            ConnRetryConf.SuspendRetryExecutionStrategy = false;
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace gzDAL.Repos
             }
 
 
-            ConnRetryConf.SuspendExecutionStrategy = true;
+            ConnRetryConf.SuspendRetryExecutionStrategy = true;
             var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
             executionStrategy.Execute(() =>
             {
@@ -128,7 +128,7 @@ namespace gzDAL.Repos
 
                 }
             });
-            ConnRetryConf.SuspendExecutionStrategy = false;
+            ConnRetryConf.SuspendRetryExecutionStrategy = false;
 
         }
 
@@ -189,7 +189,7 @@ namespace gzDAL.Repos
             else
             {
 
-                ConnRetryConf.SuspendExecutionStrategy = true;
+                ConnRetryConf.SuspendRetryExecutionStrategy = true;
                 var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
 
                 executionStrategy.Execute(() =>
@@ -208,7 +208,7 @@ namespace gzDAL.Repos
                                               }
                                           });
 
-                ConnRetryConf.SuspendExecutionStrategy = false;
+                ConnRetryConf.SuspendRetryExecutionStrategy = false;
 
             }
         }

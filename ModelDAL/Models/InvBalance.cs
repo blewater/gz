@@ -27,10 +27,15 @@ namespace gzDAL.Models {
         public virtual ApplicationUser Customer { get; set; }
 
         /// <summary>
-        /// Investment Cash it will be zero in most cases.
+        /// Investment Balance in $ owned in Greenzorro managed funds.
         /// </summary>
         [Required]
         public decimal Balance { get; set; }
+
+        /// <summary>
+        /// Optional Cash balance only for the where the portfolio was sold.
+        /// </summary>
+        public decimal? CashBalance { get; set; }
 
         /// <summary>
         /// The positive or negative difference compared to the last month.

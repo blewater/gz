@@ -306,6 +306,10 @@
     <Compile Include="Migrations\201603101532458_Conf_Table.Designer.cs">
       <DependentUpon>201603101532458_Conf_Table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604061021304_Remove CustSoldFurndShares-Add CashBalance.cs" />
+    <Compile Include="Migrations\201604061021304_Remove CustSoldFurndShares-Add CashBalance.Designer.cs">
+      <DependentUpon>201604061021304_Remove CustSoldFurndShares-Add CashBalance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Areas\Mvc\Models\AccountViewModels.cs" />
     <Compile Include="Areas\Mvc\Models\ManageViewModels.cs" />
@@ -725,7 +729,6 @@
     <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Index.cshtml" />
-    <Content Include="connectionStrings.config" />
     <Content Include="Areas\Mvc\Views\Auth\Register.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Login.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_AuthLayout.cshtml" />
@@ -1512,6 +1515,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603101532458_Conf_Table.resx">
       <DependentUpon>201603101532458_Conf_Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604061021304_Remove CustSoldFurndShares-Add CashBalance.resx">
+      <DependentUpon>201604061021304_Remove CustSoldFurndShares-Add CashBalance.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

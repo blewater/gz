@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
@@ -46,18 +47,23 @@ namespace gzDAL.Repos {
 
                     // Updated Shares Values Monthly balance
                     // -- Buying or Selling logic
-                    SharesNum = boughtShares ? fundShares.Value.SharesNum : 0,
-                    SharesValue = boughtShares ? fundShares.Value.SharesValue : 0,
+                    SharesNum = boughtShares 
+                                    ? fundShares.Value.SharesNum 
+                                    : -fundShares.Value.SharesNum,
+
+                    SharesValue = boughtShares 
+                                    ? fundShares.Value.SharesValue 
+                                    : -fundShares.Value.SharesValue,
 
                     // New Shares
                     // -- Buying or Selling logic
                     NewSharesNum = boughtShares 
                                         ? fundShares.Value.NewSharesNum 
-                                        : -fundShares.Value.NewSharesNum,
+                                        : 0,
 
                     NewSharesValue = boughtShares 
                                         ? fundShares.Value.NewSharesValue 
-                                        : -fundShares.Value.NewSharesValue,
+                                        : 0,
 
                     SharesFundPriceId = fundShares.Value.SharesFundPriceId,
                     UpdatedOnUTC = updatedOnUTC
@@ -98,24 +104,6 @@ namespace gzDAL.Repos {
         }
 
         /// <summary>
-        /// Return type of CalcCustomerMonthlyFundShares method
-        /// </summary>
-        public class PortfolioFundDTO {
-            public int? PortfolioId { get; set; }
-            public int FundId { get; set; }
-            public float? Weight { get; set; }
-            public decimal SharesNum { get; set; }
-            public decimal SharesValue { get; set; }
-            public string SharesTradeDay { get; set; }
-            public int SharesFundPriceId { get; set; }
-
-            // Additional positive or negative shares
-            public decimal? NewSharesNum { get; set; }
-            public decimal? NewSharesValue { get; set; }
-            public DateTime UpdatedOnUTC { get; set; }
-        }
-
-        /// <summary>
         /// Calculate the customer portfolio value for a given month.
         /// Phase 1 implements assumes only 1 portfolio in 100%
         /// Implementation done in 2 steps to prepare Phase 2.
@@ -129,18 +117,17 @@ namespace gzDAL.Repos {
 
             Dictionary<int, PortfolioFundDTO> portfolioFundValues = null;
 
-            using (var db = new ApplicationDbContext()) {
-                if (netInvAmount >= 0) {
+            if (netInvAmount >= 0) {
 
-                    portfolioFundValues = GetBoughtShares(customerId, netInvAmount, year, month);
+                portfolioFundValues = GetBoughtShares(customerId, netInvAmount, year, month);
 
-                    // Note this case for repricing (0 cash) or liquidating shares to cash
-                } else if (netInvAmount < 0) {
+                // Note this case for repricing (0 cash) or liquidating shares to cash
+            } else if (netInvAmount < 0) {
 
-                    GetSoldShares(customerId, netInvAmount, year, month);
+                portfolioFundValues = GetSoldShares(customerId, netInvAmount, year, month);
 
-                }
             }
+
             return portfolioFundValues;
         }
 
@@ -154,10 +141,13 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         private Dictionary<int, PortfolioFundDTO> GetSoldShares(int customerId, decimal netInvAmount, int year, int month) {
 
+            string lastFundsHoldingMonth = GetLastFundSharesHoldingMonth(customerId, db, 
+                DbExpressions.GetStrYearMonth(year, month));
+
             var customerShares = (
                 from s in db.CustFundShares
                 where s.CustomerId == customerId
-                      && s.YearMonth == DbExpressions.GetStrYearMonth(year, month)
+                      && s.YearMonth == lastFundsHoldingMonth
                 select new PortfolioFundDTO {
                     FundId = s.FundId,
                     SharesNum = s.SharesNum,
@@ -184,41 +174,56 @@ namespace gzDAL.Repos {
         private Dictionary<int, PortfolioFundDTO> GetBoughtShares(int customerId, decimal cashToInvest, int year, int month) {
             Dictionary<int, PortfolioFundDTO> portfolioFundValues;
 
-            string lastMonthPort = GetCustPortfYearMonth(customerId, DbExpressions.GetStrYearMonth(year, month), db);
+            string currentPortfolioMonth = GetCustPortfYearMonth(customerId, DbExpressions.GetStrYearMonth(year, month), db);
 
-            System.Diagnostics.Trace.Assert(lastMonthPort != null, String.Format("No portfolio has been set for customer Id: {0}", customerId));
+            System.Diagnostics.Trace.Assert(currentPortfolioMonth != null, string.Format("No portfolio has been set for customer Id: {0}", customerId));
 
-            if (lastMonthPort == null) {
+            if (currentPortfolioMonth == null) {
 
-                throw new Exception(String.Format("No portfolio has been set for customer Id: {0}", customerId));
+                throw new Exception(string.Format("No portfolio has been set for customer Id: {0}", customerId));
             }
 
-            portfolioFundValues = GetCalcPortfShares(customerId, cashToInvest, year, month, lastMonthPort);
+            portfolioFundValues = GetPortfolioSharesValue(customerId, cashToInvest, year, month, currentPortfolioMonth);
 
             return portfolioFundValues;
         }
 
         /// <summary>
-        /// Calculating this month's funds shares when
-        /// +    -- More cash is invested according to the latest portfolio weight configuration
-        /// - Or -- Selling Shares to get cash
-        /// 0 Or -- 0 see line below
+        /// 
+        /// Calculating this month's funds shares value in $ when
+        /// 
+        /// + : More cash is invested according to the latest portfolio weight configuration
+        /// - : Selling Shares to get cash
+        /// 0 : Move to next step
+        /// 
         /// Then Re-price shares to this month's stock prices
+        /// 
         /// </summary>
         /// <param name="db"></param>
         /// <param name="customerId"></param>
         /// <param name="cashToInvest"></param>
         /// <param name="year"></param>
         /// <param name="month"></param>
-        /// <param name="lastMonthPort"></param>
-        /// <param name="prevInvBal"></param>
-        /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetCalcPortfShares(int customerId, decimal cashToInvest, int year, int month, string lastMonthPort, decimal prevInvBal = 0) {
+        /// <param name="currentPortfolioMonth"></param>
+        /// <returns>Dictionary of Portfolio DTO</returns>
+        private Dictionary<int, PortfolioFundDTO> GetPortfolioSharesValue(
+            int customerId, 
+            decimal cashToInvest, 
+            int year, 
+            int month, 
+            string currentPortfolioMonth) {
 
+            // Previous month is our reference for latest owned funds shares
             var prevYearMonStr = DbExpressions.GetPrevMonthInYear(year, month);
 
+            // Get Customer Owned Funds
+            var custFundsDct = GetOwnedCustomerFunds(
+                customerId, 
+                prevYearMonStr, 
+                GetLastFundSharesHoldingMonth(customerId, db, prevYearMonStr));
+
             //Get Portfolio Funds Weights
-            Dictionary<int, PortfolioFundDTO> portfolioFundValues = GetFundWeights(customerId, lastMonthPort, prevYearMonStr);
+            Dictionary<int, PortfolioFundDTO> portfolioFundValues = GetUpdatedPortfolioFundWeights(customerId, custFundsDct, currentPortfolioMonth);
 
             GetUpdatedFundsSharesValue(portfolioFundValues, year, month, cashToInvest);
 
@@ -255,7 +260,7 @@ namespace gzDAL.Repos {
                 decimal existingFundSharesVal = prevMonShares * (decimal)fundPrice.ClosingPrice;
 
                 // Calculate new cash --> to shares investment
-                decimal cashPerFund = (decimal)weight / 100 * cashToInvest;
+                var cashPerFund = (decimal)weight/ 100 * cashToInvest;
                 var newsharesNum = cashPerFund / (decimal)fundPrice.ClosingPrice;
 
                 // Calculate this month current fund value including the new cash investment
@@ -323,34 +328,86 @@ namespace gzDAL.Repos {
         }
 
         /// <summary>
-        ///
+        /// 
+        /// Retrieve all the Customer funds with their weights so we can allocate cash this month.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="db"></param>
-        /// <param name="lastMonthPort">The month associated with current portfolio</param>
-        /// <param name="prevYearMonStr">One (-1) month before the current one</param>
+        /// <param name="customerOwnedFundsDct">The owned customer fund shares if any. Note is 0 on first customer month.</param>
+        /// <param name="currentPortfolioMonth">The month associated with current portfolio</param>
+        /// <returns>
+        /// 
+        /// Returned funds collection has updated these values:
+        /// 1. their portfolio funds weights 
+        /// 2. the number of shares of Owned Customer funds.
+        /// 
+        /// </returns>
+        private Dictionary<int, PortfolioFundDTO> GetUpdatedPortfolioFundWeights(
+            int customerId,
+            Dictionary<int, PortfolioFundDTO> customerOwnedFundsDct,
+            string currentPortfolioMonth) {
+
+            var fundsIQry = GetPortfolioFunds(customerId, currentPortfolioMonth);
+
+            // Match Portfolio Funds with --> Already Owned Customer Funds of In parameter 
+            // Update the customer owned fund shares that overlap with their current selected portfolio funds of Step 1
+            // the weight of which will be used to allocate cash for the current month
+            foreach (var fundItem in fundsIQry) {
+
+                if (customerOwnedFundsDct.ContainsKey(fundItem.FundId)) {
+
+                    // Portfolio Id here is set on the customer owned funds that match 
+                    // the current Customer portfolio
+                    customerOwnedFundsDct[fundItem.FundId].PortfolioId = fundItem.PortfolioId;
+                    customerOwnedFundsDct[fundItem.FundId].Weight = fundItem.Weight;
+
+                    // Else part executed only on the first customer balance month
+                } else {
+                    customerOwnedFundsDct.Add(fundItem.FundId, fundItem);
+
+                }
+            }
+
+            return customerOwnedFundsDct;
+        }
+
+        /// <summary>
+        /// 
+        /// Retrieve the funds from the currently selected customer Portfolio 
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="currentPortfolioMonth">The </param>
+        /// <returns>The funds IQueryable holding PortfolioDTOs</returns>
+        private IQueryable<PortfolioFundDTO> GetPortfolioFunds(int customerId, string currentPortfolioMonth) {
+
+            return from pf in db.PortFunds
+                join p in db.CustPortfolios on pf.PortfolioId equals p.PortfolioId
+                where p.CustomerId == customerId && p.YearMonth == currentPortfolioMonth
+                select new PortfolioFundDTO {
+                    FundId = pf.FundId,
+                    PortfolioId = pf.PortfolioId,
+                    Weight = pf.Weight,
+                };
+        }
+
+        /// <summary>
+        /// 
+        /// Get the current customer Owned fund shares balances
+        /// 
+        /// Note on the first month this will return 0 rows
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="prevYearMonStr"></param>
+        /// <param name="lastBalanceMonth"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetFundWeights(int customerId, string lastMonthPort, string prevYearMonStr) {
+        private Dictionary<int, PortfolioFundDTO> GetOwnedCustomerFunds(int customerId, string prevYearMonStr, string lastBalanceMonth) {
 
-            // STEP 1: Retrieve the funds associated with the current customer portfolio
-            var fundsIQry = from pf in db.PortFunds
-                            join p in db.CustPortfolios on pf.PortfolioId equals p.PortfolioId
-                            where p.CustomerId == customerId && p.YearMonth == lastMonthPort
-                            select new PortfolioFundDTO {
-                                FundId = pf.FundId,
-                                PortfolioId = pf.PortfolioId,
-                                Weight = pf.Weight,
-                            };
-
-            string lastBalanceMonth = GetLastFundSharesBalMonth(customerId, db, prevYearMonStr);
-
-            // STEP 2: Get the current customer fund shares balances
-            // Note on the first month this will return 0 rows
-            var custFundsDct = (
+            return (
                 from c in db.CustFundShares
                 where c.CustomerId == customerId
                       && c.YearMonth == (lastBalanceMonth ?? prevYearMonStr)
-
                 select new PortfolioFundDTO {
                     FundId = c.FundId,
                     PortfolioId = 0,
@@ -358,40 +415,23 @@ namespace gzDAL.Repos {
                     SharesNum = c.SharesNum
 
                 })
-                 .ToDictionary(f => f.FundId);
-
-            // STEP 3: Update the customer owned fund shares that overlap with their current selected portfolio funds of Step 1
-            // the weight of which will be used to allocate cash for the current month
-            foreach (var fundItem in fundsIQry) {
-
-                if (custFundsDct.ContainsKey(fundItem.FundId)) {
-
-                    // Portfolio Id Debugging info only
-                    custFundsDct[fundItem.FundId].PortfolioId = fundItem.PortfolioId;
-                    custFundsDct[fundItem.FundId].Weight = fundItem.Weight;
-
-                    // else part executed only on the first customer balance month
-                } else {
-                    custFundsDct.Add(fundItem.FundId, fundItem);
-
-                }
-            }
-
-            return custFundsDct;
+                .ToDictionary(f => f.FundId);
         }
 
         /// <summary>
-        /// This is useful for test customer accounts when they have monthly gaps
-        /// in their funds shares balances
+        /// 
+        /// Get the last funds holding month in CustFundShares less or equal
+        /// than the month in value of in parameter currentYearMonStr.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="db"></param>
-        /// <param name="prevYearMonStr"></param>
+        /// <param name="currentYearMonStr"></param>
         /// <returns></returns>
-        private string GetLastFundSharesBalMonth(int customerId, ApplicationDbContext db, string prevYearMonStr) {
-            // Get the last month that we have a customer balance
+        private string GetLastFundSharesHoldingMonth(int customerId, ApplicationDbContext db, string currentYearMonStr) {
+
             return db.CustFundShares
-                .Where(c => c.CustomerId == customerId && string.Compare(c.YearMonth, prevYearMonStr) <= 0)
+                .Where(c => c.CustomerId == customerId && string.Compare(c.YearMonth, currentYearMonStr) <= 0)
                 .OrderByDescending(c => c.YearMonth)
                 .Select(c => c.YearMonth)
                 .FirstOrDefault();

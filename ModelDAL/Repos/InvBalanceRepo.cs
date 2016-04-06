@@ -4,6 +4,7 @@ using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using gzDAL.Conf;
+using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
@@ -54,49 +55,44 @@ namespace gzDAL.Repos {
         }
 
         private void SaveDBCustomerMonthBalanceBySelling(
-            Dictionary<int, CustFundShareRepo.PortfolioFundDTO> portfolioFunds,
+            Dictionary<int, PortfolioFundDTO> portfolioFunds,
             int customerId,
             int yearCurrent,
             int monthCurrent,
             decimal newMonthlyBalance,
             decimal invGainLoss) {
 
-            ConnRetryConf.SuspendExecutionStrategy = true;
-            var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
-            executionStrategy
-                    .Execute(() => {
-                        using (var dbContextTransaction = db.Database.BeginTransaction()) {
+            ConnRetryConf.TransactWithRetryStrategy(db,
 
-                            // Save fees transactions first and continue with reduced cash amount
-                            var remainingCashAmount = 
-                                gzTransactionRepo.SaveDBGreenZorroFees(customerId, 
-                                    newMonthlyBalance, 
-                                    DateTime.UtcNow);
+                () => {
 
-                            customerFundSharesRepo.SaveDBMonthlyCustomerFundShares(boughtShares: false, customerId: customerId, 
-                                fundsShares: portfolioFunds, 
-                                year: yearCurrent, 
-                                month: monthCurrent, 
-                                updatedOnUTC: DateTime.UtcNow);
+                    // Save fees transactions first and continue with reduced cash amount
+                    var remainingCashAmount =
+                        gzTransactionRepo.SaveDBGreenZorroFees(customerId,
+                            newMonthlyBalance,
+                            DateTime.UtcNow);
 
-                            db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
-                                                       new InvBalance {
-                                                           YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
-                                                           CustomerId = customerId,
-                                                           Balance = remainingCashAmount,
-                                                           InvGainLoss = invGainLoss,
-                                                           CashInvestment = -remainingCashAmount,
-                                                           UpdatedOnUTC = DateTime.UtcNow
-                                                       });
-                            db.SaveChanges();
-                            dbContextTransaction.Commit();
-                        }
+                    customerFundSharesRepo.SaveDBMonthlyCustomerFundShares(boughtShares: false, customerId: customerId,
+                        fundsShares: portfolioFunds,
+                        year: yearCurrent,
+                        month: monthCurrent,
+                        updatedOnUTC: DateTime.UtcNow);
+
+                    db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
+                        new InvBalance {
+                            YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
+                            CustomerId = customerId,
+                            Balance = 0,
+                            CashBalance = remainingCashAmount,
+                            InvGainLoss = invGainLoss,
+                            CashInvestment = -remainingCashAmount,
+                            UpdatedOnUTC = DateTime.UtcNow
                     });
 
-            ConnRetryConf.SuspendExecutionStrategy = false;
+            });
         }
 
-#endregion Selling
+        #endregion Selling
 
 
         /// <summary>
@@ -109,7 +105,7 @@ namespace gzDAL.Repos {
         /// <param name="monthlyBalance">Out -> Monthly Cash Value useful in summary page</param>
         /// <param name="invGainLoss">Out -> Monthly Gain or Loss in cash value Used in summary page</param>
         /// <returns></returns>
-        public Dictionary<int, CustFundShareRepo.PortfolioFundDTO>
+        public Dictionary<int, PortfolioFundDTO>
             GetCalcMonthlyBalancesForCustomer(
                 int custId,
                 int yearCurrent,
@@ -126,7 +122,7 @@ namespace gzDAL.Repos {
                 monthCurrent);
 
             var totSharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
-            var newShareVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue ?? 0);
+            var newShareVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue);
             var prevMonSharesPricedNow = totSharesValue - newShareVal;
 
             // Step 2: Get the previous month balance
@@ -175,7 +171,7 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCalcMonthlyBalancesForCustomer(customerId, year, month, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
-            ConnRetryConf.SuspendExecutionStrategy = true;
+            ConnRetryConf.SuspendRetryExecutionStrategy = true;
             var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
             executionStrategy
                     .Execute(() =>
@@ -206,7 +202,7 @@ namespace gzDAL.Repos {
                                  }
                              });
 
-            ConnRetryConf.SuspendExecutionStrategy = false;
+            ConnRetryConf.SuspendRetryExecutionStrategy = false;
         }
 
         /// <summary>
