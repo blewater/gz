@@ -86,10 +86,7 @@ namespace gzWeb
                 , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
                 , "~/Scripts/angular-count-to/angular-count-to.min.js"
                 , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
-                , "~/Scripts/angular-wamp/angular-wamp.js"
-                //, "~/Scripts/angular-load.min.js"
-                //, "~/Scripts/angular-wamp/angular-wamp.min.js"
-
+                , "~/Scripts/angular-wamp/angular-wamp.js" // TODO: "~/Scripts/angular-wamp/angular-wamp.min.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 //, "~/Scripts/_modules/styleInjector.js"
@@ -117,6 +114,7 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/games/games3Ctrl.js"
                 , "~/Scripts/_app/controllers/games/games4Ctrl.js"
 
+                , "~/Scripts/_app/services/emWamp.js"
                 , "~/Scripts/_app/services/authInterceptor.js"
                 , "~/Scripts/_app/services/routingService.js"
                 , "~/Scripts/_app/services/apiService.js"

@@ -341,7 +341,6 @@
     <Content Include="Content\Styles\_app\header.css" />
     <Content Include="Content\Styles\_app\preloader.css" />
     <Content Include="Content\Styles\ui-bootstrap\ui-bootstrap-csp.css" />
-    <Content Include="dummy-websocket.js" />
     <Content Include="favicon.ico" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -455,6 +454,7 @@
     <Content Include="Scripts\_app\directives\gzPortfolioChart.js" />
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
+    <Content Include="Scripts\_app\services\emWamp.js" />
     <Content Include="Scripts\_app\services\routingService.js" />
     <Content Include="Scripts\bootstrap\bootstrap.js" />
     <Content Include="Scripts\bootstrap\bootstrap.min.js" />
@@ -1003,9 +1003,6 @@
     <Content Include="Scripts\_modules\customFilters.js" />
     <Content Include="Scripts\_modules\styleInjector.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="session-mgr.js" />
-    <Content Include="utility.js" />
-    <Content Include="variables.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
