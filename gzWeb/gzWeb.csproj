@@ -136,6 +136,9 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Http.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
       <Private>True</Private>
@@ -248,6 +251,7 @@
     <Compile Include="Areas\Mvc\Controllers\GamesController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Areas\Mvc\Controllers\ManageController.cs" />
+    <Compile Include="Controllers\AccountApiController.cs" />
     <Compile Include="Controllers\InvestmentsApiController.cs" />
     <Compile Include="Controllers\TestGMServerApiController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
@@ -310,8 +314,10 @@
     <Compile Include="Areas\Mvc\Models\AccountViewModels.cs" />
     <Compile Include="Areas\Mvc\Models\ManageViewModels.cs" />
     <Compile Include="Areas\Mvc\Models\UserInfoViewModel.cs" />
+    <Compile Include="Models\RegisterBindingModel.cs" />
     <Compile Include="Models\ResponseViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\DebugTextWriter.cs" />

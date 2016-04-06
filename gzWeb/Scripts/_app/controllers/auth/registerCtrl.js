@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', ctrlFactory]);
-    function ctrlFactory($scope, emWamp) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, constants) {
         $scope.model = {
             email: null,
             password: null,
