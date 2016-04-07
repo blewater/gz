@@ -26,7 +26,7 @@ namespace gzDAL.Repos
         /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        public void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (customerId <= 0) {
 
@@ -42,7 +42,7 @@ namespace gzDAL.Repos
 
             }
 
-            this.SaveDBCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
+            this.SaveDbCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace gzDAL.Repos
         /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        public void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (weight < 0 || weight > 100) {
 

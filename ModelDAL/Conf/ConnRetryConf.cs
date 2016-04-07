@@ -33,10 +33,8 @@ namespace gzDAL.Conf {
         /// <summary>
         /// 
         /// Suspend Retry Execution Strategy handling method:
-        /// 
-        /// 1. That does not leak the SuspendRetryExecutionStrategy setting change.
-        /// 
-        /// 2. Encapsulate the same opening and closing db user transaction and final context.SaveChanges() code in this method.
+        /// Encapsulate the wrapping db user transaction and final context.SaveChanges() code in this method.
+        /// Don't leak the SuspendRetryExecutionStrategy setting change.
         /// 
         /// </summary>
         /// <param name="db">The db context that will be for all enclosed within a transaction database update operations</param>
