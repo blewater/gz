@@ -16,7 +16,7 @@ namespace gzDAL.Conf {
     /// </summary>
     public class ConnRetryConf : DbConfiguration {
 
-        public static bool SuspendRetryExecutionStrategy
+        private static bool SuspendRetryExecutionStrategy
         {
             get { return (bool?)CallContext.LogicalGetData("SuspendExecutionStrategy") ?? false; }
             set { CallContext.LogicalSetData("SuspendExecutionStrategy", value); }
@@ -30,6 +30,17 @@ namespace gzDAL.Conf {
                                                : new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10)));
         }
 
+        /// <summary>
+        /// 
+        /// Suspend Retry Execution Strategy handling method:
+        /// 
+        /// 1. That does not leak the SuspendRetryExecutionStrategy setting change.
+        /// 
+        /// 2. Encapsulate the same opening and closing db user transaction and final context.SaveChanges() code in this method.
+        /// 
+        /// </summary>
+        /// <param name="db">The db context that will be for all enclosed within a transaction database update operations</param>
+        /// <param name="dbOperationsAction">The delegate with any entity updates operations performed using the db context</param>
         public static void TransactWithRetryStrategy(ApplicationDbContext db, Action dbOperationsAction) {
 
             try {
