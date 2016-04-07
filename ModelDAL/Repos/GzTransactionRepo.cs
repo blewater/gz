@@ -7,18 +7,15 @@ using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
 
-namespace gzDAL.Repos
-{
+namespace gzDAL.Repos {
 
     /// <summary>
     /// For any Greenzorro Transaction creation/update
     /// Currency conversions are encapsulated here alone.
     /// </summary>
-    public class GzTransactionRepo : IGzTransactionRepo
-    {
+    public class GzTransactionRepo : IGzTransactionRepo {
         private readonly ApplicationDbContext db;
-        public GzTransactionRepo(ApplicationDbContext db)
-        {
+        public GzTransactionRepo(ApplicationDbContext db) {
             this.db = db;
         }
 
@@ -31,8 +28,7 @@ namespace gzDAL.Repos
         /// <param name="amount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC)
-        {
+        public void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC) {
 
             if (
                        gzTransactionType == TransferTypeEnum.GzFees
@@ -40,14 +36,12 @@ namespace gzDAL.Repos
                     || gzTransactionType == TransferTypeEnum.InvWithdrawal
 
                     || gzTransactionType == TransferTypeEnum.PlayingLoss
-                    || gzTransactionType == TransferTypeEnum.CreditedPlayingLoss)
-            {
+                    || gzTransactionType == TransferTypeEnum.CreditedPlayingLoss) {
 
                 throw new Exception("This type of transaction can be created/updated only by the specialized api of this class" + amount);
             }
 
-            if (amount < 0)
-            {
+            if (amount < 0) {
 
                 throw new Exception("Amount must be greater than 0: " + amount);
 
@@ -64,34 +58,26 @@ namespace gzDAL.Repos
         /// <param name="withdrawnAmount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC)
-        {
+        public void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
 
-            if (withdrawnAmount <= 0)
-            {
+            if (withdrawnAmount <= 0) {
 
                 throw new Exception("Invalid amount to transfer to gaming account. Amount must be greater than 0: " + withdrawnAmount);
 
             }
 
+            ConnRetryConf.TransactWithRetryStrategy(db,
 
-            ConnRetryConf.SuspendRetryExecutionStrategy = true;
-            var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
+                () => {
 
-            executionStrategy.Execute(() =>
-                                        {
-                                            using (var dbContextTransaction = db.Database.BeginTransaction())
-                                            {
+                    SaveDBGzTransaction(
+                        customerId,
+                        TransferTypeEnum.TransferToGaming,
+                        withdrawnAmount, createdOnUTC, null);
 
-                                                SaveDBGzTransaction(customerId, TransferTypeEnum.TransferToGaming,
-                                                                    withdrawnAmount, createdOnUTC, null);
-                                                SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                                                dbContextTransaction.Commit();
-                                            }
-                                        });
-
-            ConnRetryConf.SuspendRetryExecutionStrategy = false;
+                });
         }
 
         /// <summary>
@@ -103,33 +89,24 @@ namespace gzDAL.Repos
         /// <param name="withdrawnAmount"></param>
         /// <param name="createdOnUTC"></param>
         /// <returns></returns>
-        public void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC)
-        {
+        public void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
 
-            if (withdrawnAmount <= 0)
-            {
+            if (withdrawnAmount <= 0) {
 
                 throw new Exception("Invalid withdrawal. Amount must be greater than 0: " + withdrawnAmount);
 
             }
 
 
-            ConnRetryConf.SuspendRetryExecutionStrategy = true;
-            var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
-            executionStrategy.Execute(() =>
-            {
-                using (var dbContextTransaction = db.Database.BeginTransaction())
-                {
+            ConnRetryConf.TransactWithRetryStrategy(db,
+
+                () => {
+
 
                     SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
                     SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
 
-                    dbContextTransaction.Commit();
-
-                }
-            });
-            ConnRetryConf.SuspendRetryExecutionStrategy = false;
-
+                });
         }
 
         /// <summary>
@@ -154,11 +131,11 @@ namespace gzDAL.Repos
 
             decimal gzFeesAmount = invAmountLiquidationAmount *
                 // COMMISSION_PCNT: Database Configuration Value
-                (decimal) db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single()/100;
+                (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100;
 
             decimal fundsFeesAmount = invAmountLiquidationAmount *
                 // FUND_FEE_PCNT: Database Configuration Value
-                (decimal) db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single()/100;
+                (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100;
 
             decimal reducedAmountToReturn = invAmountLiquidationAmount - gzFeesAmount - fundsFeesAmount;
 
@@ -177,39 +154,27 @@ namespace gzDAL.Repos
         /// <param name="creditPcnt">Percentage number (0-100) to credit balance. For example 50 for half the amount to be credited</param>
         /// <param name="createdOnUTC">Date of the transaction in UTC</param>
         /// <returns></returns>
-        public void SaveDBPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC)
-        {
+        public void SaveDBPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC) {
 
-            if (creditPcnt < 0 || creditPcnt > 100)
-            {
+            if (creditPcnt < 0 || creditPcnt > 100) {
 
                 throw new Exception("Invalid percentage not within range 0..100: " + creditPcnt);
 
-            }
-            else
-            {
+            } else {
 
-                ConnRetryConf.SuspendRetryExecutionStrategy = true;
-                var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
+                ConnRetryConf.TransactWithRetryStrategy(db,
 
-                executionStrategy.Execute(() =>
-                                          {
-                                              using (var dbContextTransaction = db.Database.BeginTransaction())
-                                              {
-                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
+                    () => {
 
-                                                  SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss, 
-                                                      totPlayinLossAmount*creditPcnt/100, 
-                                                      createdOnUTC,
-                                                      // Db Configuration value
-                                                      db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
+                        SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
 
-                                                  dbContextTransaction.Commit();
-                                              }
-                                          });
+                        SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss,
+                            totPlayinLossAmount * creditPcnt / 100,
+                            createdOnUTC,
+                            // Db Configuration value
+                            db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
-                ConnRetryConf.SuspendRetryExecutionStrategy = false;
-
+                    });
             }
         }
 
@@ -223,15 +188,13 @@ namespace gzDAL.Repos
         /// <param name="createdOnUTC"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, float? creditPcntApplied)
-        {
+        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, float? creditPcntApplied) {
             //Not thread safe but ok...within a single request context
             db.GzTransactions.AddOrUpdate(
                 // Assume CreatedOnUTC remains constant for same trx
                 // to support idempotent transactions
                 t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC },
-                    new GzTransaction
-                    {
+                    new GzTransaction {
                         CustomerId = customerId,
                         TypeId = db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
                         YearMonthCtd = createdOnUTC.Year.ToString("0000") + createdOnUTC.Month.ToString("00"),

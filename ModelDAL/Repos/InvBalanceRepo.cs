@@ -21,7 +21,7 @@ namespace gzDAL.Repos {
             this.gzTransactionRepo = gzTransactionRepo;
         }
 
-#region Selling
+        #region Selling
 
         /// <summary>
         /// Sell completely a customer's portfolio
@@ -87,9 +87,9 @@ namespace gzDAL.Repos {
                             InvGainLoss = invGainLoss,
                             CashInvestment = -remainingCashAmount,
                             UpdatedOnUTC = DateTime.UtcNow
-                    });
+                        });
 
-            });
+                });
         }
 
         #endregion Selling
@@ -171,38 +171,28 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCalcMonthlyBalancesForCustomer(customerId, year, month, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
-            ConnRetryConf.SuspendRetryExecutionStrategy = true;
-            var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
-            executionStrategy
-                    .Execute(() =>
-                             {
-                                 using (var dbContextTransaction = db.Database.BeginTransaction())
-                                 {
+            ConnRetryConf.TransactWithRetryStrategy(db,
 
-                                     customerFundSharesRepo.SaveDBMonthlyCustomerFundShares(
-                                         boughtShares: true,
-                                         customerId: customerId,
-                                         fundsShares: portfolioFunds,
-                                         year: year,
-                                         month: month,
-                                         updatedOnUTC: DateTime.UtcNow);
+                () => {
 
-                                     db.InvBalances.AddOrUpdate(i => new {i.CustomerId, i.YearMonth},
-                                                                new InvBalance
-                                                                {
-                                                                        YearMonth = DbExpressions.GetStrYearMonth(year, month),
-                                                                        CustomerId = customerId,
-                                                                        Balance = monthlyBalance,
-                                                                        InvGainLoss = invGainLoss,
-                                                                        CashInvestment = cashToInvest,
-                                                                        UpdatedOnUTC = DateTime.UtcNow
-                                                                });
-                                     db.SaveChanges();
-                                     dbContextTransaction.Commit();
-                                 }
-                             });
+                    customerFundSharesRepo.SaveDBMonthlyCustomerFundShares(
+                            boughtShares: true,
+                            customerId: customerId,
+                            fundsShares: portfolioFunds,
+                            year: year,
+                            month: month,
+                            updatedOnUTC: DateTime.UtcNow);
 
-            ConnRetryConf.SuspendRetryExecutionStrategy = false;
+                    db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
+                            new InvBalance {
+                                YearMonth = DbExpressions.GetStrYearMonth(year, month),
+                                CustomerId = customerId,
+                                Balance = monthlyBalance,
+                                InvGainLoss = invGainLoss,
+                                CashInvestment = cashToInvest,
+                                UpdatedOnUTC = DateTime.UtcNow
+                            });
+                });
         }
 
         /// <summary>
