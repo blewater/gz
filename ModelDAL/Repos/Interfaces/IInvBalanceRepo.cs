@@ -5,8 +5,8 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface IInvBalanceRepo
     {
-        Dictionary<int, PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int custId, int yearCurrent, int monthCurrent, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss);
-        void SaveDBCustomerMonthlyBalancesByTrx(int customerId, string[] monthsToProc);
-        void SaveDBCustomerMonthBalanceByCashInv(int customerId, int year, int month, decimal cashToInvest);
+        Dictionary<int, PortfolioFundDTO> GetCalcMonthlyBalancesForCustomer(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss);
+        void SaveDbCustomerMonthlyBalancesByTrx(int customerId, string[] monthsToProc);
+        void SaveDbCustomerMonthBalanceByCashInv(int customerId, int year, int month, decimal cashToInvest);
     }
 }

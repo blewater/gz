@@ -48,7 +48,7 @@ namespace gzDAL.Repos
         /// For example on Monday 12pm, we go to Friday's closing price if Friday was not a western holiday.
         /// </summary>
         /// <returns></returns>
-        public List<FundQuote> SaveDBDailyFundClosingPrices() {
+        public List<FundQuote> SaveDbDailyFundClosingPrices() {
 
             var fundsList = db.Funds.Select(f => f.Symbol).ToList();
 

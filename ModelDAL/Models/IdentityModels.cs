@@ -57,7 +57,7 @@ namespace gzDAL.Models
         public decimal LastInvestmentAmount {
             get {
                 return GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
                     .OrderByDescending(t => t.Id)
                     .Select(t => t.Amount)
                     .FirstOrDefault();
@@ -77,7 +77,7 @@ namespace gzDAL.Models
             get {
                 return 
                     GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
                     .Select(t => t.Amount)
                     .Sum();
             }
@@ -87,7 +87,7 @@ namespace gzDAL.Models
             get {
                 return 
                     GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.Deposit)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.Deposit)
                     .Select(t => t.Amount)
                     .Sum();
             }
@@ -97,8 +97,8 @@ namespace gzDAL.Models
             get {
                 return 
                     GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.InvWithdrawal 
-                             || t.Type.Code == TransferTypeEnum.TransferToGaming)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.InvWithdrawal 
+                             || t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming)
                     .Select(t => t.Amount)
                     .Sum();
             }

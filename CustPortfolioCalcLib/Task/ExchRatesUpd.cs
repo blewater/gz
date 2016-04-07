@@ -13,7 +13,7 @@ namespace gzCpcLib.Task {
         public override void DoTask() {
 
             var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext());
-            var quotes = currencyRateRepo.SaveDBDailyCurrenciesRates();
+            var quotes = currencyRateRepo.SaveDbDailyCurrenciesRates();
 
         }
 

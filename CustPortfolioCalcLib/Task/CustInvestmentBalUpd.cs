@@ -21,7 +21,7 @@ namespace gzCpcLib.Task {
 
             var db = new ApplicationDbContext();
             new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                .SaveDBCustomersMonthlyBalancesByTrx(CustomerIds, YearMonthsToProc);
+                .SaveDbCustomersMonthlyBalancesByTrx(CustomerIds, YearMonthsToProc);
 
         }
     }

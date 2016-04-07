@@ -10,8 +10,10 @@ using gzDAL.Models;
 namespace gzDAL.Repos {
 
     /// <summary>
+    /// 
     /// For any Greenzorro Transaction creation/update
     /// Currency conversions are encapsulated here alone.
+    /// 
     /// </summary>
     public class GzTransactionRepo : IGzTransactionRepo {
         private readonly ApplicationDbContext db;
@@ -20,23 +22,25 @@ namespace gzDAL.Repos {
         }
 
         /// <summary>
+        /// 
         /// Create any type of transaction from those allowed.
         /// Used along with peer API methods for specialized transactions
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="gzTransactionType"></param>
         /// <param name="amount"></param>
-        /// <param name="createdOnUTC"></param>
+        /// <param name="createdOnUtc"></param>
         /// <returns></returns>
-        public void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC) {
+        public void SaveDbGzTransaction(int customerId, GzTransactionJournalTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc) {
 
             if (
-                       gzTransactionType == TransferTypeEnum.GzFees
-                    || gzTransactionType == TransferTypeEnum.FundFee
-                    || gzTransactionType == TransferTypeEnum.InvWithdrawal
+                       gzTransactionType == GzTransactionJournalTypeEnum.GzFees
+                    || gzTransactionType == GzTransactionJournalTypeEnum.FundFee
+                    || gzTransactionType == GzTransactionJournalTypeEnum.InvWithdrawal
 
-                    || gzTransactionType == TransferTypeEnum.PlayingLoss
-                    || gzTransactionType == TransferTypeEnum.CreditedPlayingLoss) {
+                    || gzTransactionType == GzTransactionJournalTypeEnum.PlayingLoss
+                    || gzTransactionType == GzTransactionJournalTypeEnum.CreditedPlayingLoss) {
 
                 throw new Exception("This type of transaction can be created/updated only by the specialized api of this class" + amount);
             }
@@ -47,18 +51,20 @@ namespace gzDAL.Repos {
 
             }
 
-            SaveDBGzTransaction(customerId, gzTransactionType, amount, createdOnUTC, null);
+            SaveDbGzTransaction(customerId, gzTransactionType, amount, createdOnUtc, null);
 
         }
 
         /// <summary>
+        /// 
         /// Transfer to the Gaming account by selling investment shares and save the calculated commission and fund fees transactions
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="withdrawnAmount"></param>
-        /// <param name="createdOnUTC"></param>
+        /// <param name="createdOnUtc"></param>
         /// <returns></returns>
-        public void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
+        public void SaveDbTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc) {
 
             if (withdrawnAmount <= 0) {
 
@@ -70,26 +76,23 @@ namespace gzDAL.Repos {
 
                 () => {
 
-                    SaveDBGzTransaction(
-                        customerId,
-                        TransferTypeEnum.TransferToGaming,
-                        withdrawnAmount, createdOnUTC, null);
-
-                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                    SaveDbLiquidatedPortfolioWithFees(customerId, withdrawnAmount, GzTransactionJournalTypeEnum.TransferToGaming, createdOnUtc);
 
                 });
         }
 
         /// <summary>
+        /// 
         /// Save an investment withdrawal transaction and save the calculated commission and fund fees transactions
-        /// Note identical method to <see cref="SaveDBTransferToGamingAmount"/> though in practice it may not be
+        /// Note identical method to <see cref="SaveDbTransferToGamingAmount"/> though in practice it may not be
         /// able to instruct the casino platform to use it.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="withdrawnAmount"></param>
-        /// <param name="createdOnUTC"></param>
+        /// <param name="createdOnUtc"></param>
         /// <returns></returns>
-        public void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC) {
+        public void SaveDbInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc) {
 
             if (withdrawnAmount <= 0) {
 
@@ -102,59 +105,94 @@ namespace gzDAL.Repos {
 
                 () => {
 
-
-                    SaveDBGzTransaction(customerId, TransferTypeEnum.InvWithdrawal, withdrawnAmount, createdOnUTC, null);
-                    SaveDBGreenZorroFees(customerId, withdrawnAmount, createdOnUTC);
+                    SaveDbLiquidatedPortfolioWithFees(customerId, withdrawnAmount, GzTransactionJournalTypeEnum.InvWithdrawal, createdOnUtc);
 
                 });
         }
 
         /// <summary>
         /// 
+        /// Overloaded: Calculate the Greenzorro & Fund fees on any amount that Greenzorro offered an investment service.
+        /// Returns the individual fees as out parameters.
+        /// 
+        /// </summary>
+        /// <param name="liquidationAmount"></param>
+        /// <param name="gzFeesAmount">Out parameter to return the Greenzorro fee.</param>
+        /// <param name="fundsFeesAmount">Out parameter to return the Fund fee.</param>
+        /// <returns>Total Greenzorro + Fund fees on a investment amount.</returns>
+        private decimal GetWithdrawnFees(decimal liquidationAmount, out decimal gzFeesAmount, out decimal fundsFeesAmount) {
+
+            gzFeesAmount = liquidationAmount *
+                // COMMISSION_PCNT: Database Configuration Value
+                (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100;
+
+            fundsFeesAmount = liquidationAmount *
+                // FUND_FEE_PCNT: Database Configuration Value
+                (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100;
+
+            return gzFeesAmount + fundsFeesAmount;
+        }
+
+        /// <summary>
+        /// 
+        /// Overloaded (Function): Calculate the Greenzorro & Fund fees on any amount that Greenzorro offered an investment service.
+        /// 
+        /// </summary>
+        /// <param name="liquidationAmount"></param>
+        /// <returns>Total Greenzorro + Fund fees on a investment amount.</returns>
+        public decimal GetWithdrawnFees(decimal liquidationAmount) {
+
+            decimal gzFeesAmount, fundsFeesAmount;
+            return GetWithdrawnFees(liquidationAmount, out gzFeesAmount, out fundsFeesAmount);
+        }
+
+        /// <summary>
+        /// 
         /// Save to DB the calculated Fund Greenzorro fees.
+        /// 
+        /// Note this is not enclosed within a user transaction. It's the responsibility of the caller.
         /// 
         /// Uses table configuration values.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="invAmountLiquidationAmount"></param>
-        /// <param name="createdOnUTC"></param>
+        /// <param name="liquidationAmount"></param>
+        /// <param name="createdOnUtc"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public decimal SaveDBGreenZorroFees(int customerId, decimal invAmountLiquidationAmount, DateTime createdOnUTC) {
+        public decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionJournalTypeEnum sellingJournalTypeReason, DateTime createdOnUtc) {
 
-            if (invAmountLiquidationAmount <= 0) {
+            if (liquidationAmount <= 0) {
 
-                throw new Exception("Invalid investment amount to liquidate. Amount must be greater than 0: " + invAmountLiquidationAmount);
+                throw new Exception("Invalid investment amount to liquidate. Amount must be greater than 0: " + liquidationAmount);
 
             }
 
-            decimal gzFeesAmount = invAmountLiquidationAmount *
-                // COMMISSION_PCNT: Database Configuration Value
-                (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100;
+            decimal gzFeesAmount, fundsFeesAmount;
+            decimal reducedAmountToReturn = liquidationAmount - GetWithdrawnFees(liquidationAmount, out gzFeesAmount, out fundsFeesAmount);
 
-            decimal fundsFeesAmount = invAmountLiquidationAmount *
-                // FUND_FEE_PCNT: Database Configuration Value
-                (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100;
+            // Save Fees Transactions
+            SaveDbGzTransaction(customerId, GzTransactionJournalTypeEnum.GzFees, gzFeesAmount, createdOnUtc, null);
 
-            decimal reducedAmountToReturn = invAmountLiquidationAmount - gzFeesAmount - fundsFeesAmount;
+            SaveDbGzTransaction(customerId, GzTransactionJournalTypeEnum.FundFee, fundsFeesAmount, createdOnUtc, null);
 
-            SaveDBGzTransaction(customerId, TransferTypeEnum.GzFees, gzFeesAmount, createdOnUTC, null);
-
-            SaveDBGzTransaction(customerId, TransferTypeEnum.FundFee, fundsFeesAmount, createdOnUTC, null);
+            // Save the reason for those fees
+            SaveDbGzTransaction(customerId, sellingJournalTypeReason, liquidationAmount, createdOnUtc, null);
 
             return reducedAmountToReturn;
         }
 
         /// <summary>
+        /// 
         /// Create or update a playing loss. Resulting in atomic 2 row being created. A type of PlayingLoss, CreditedPlayingLoss.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="totPlayinLossAmount">Total amount that was lost</param>
         /// <param name="creditPcnt">Percentage number (0-100) to credit balance. For example 50 for half the amount to be credited</param>
-        /// <param name="createdOnUTC">Date of the transaction in UTC</param>
+        /// <param name="createdOnUtc">Date of the transaction in UTC</param>
         /// <returns></returns>
-        public void SaveDBPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC) {
+        public void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUtc) {
 
             if (creditPcnt < 0 || creditPcnt > 100) {
 
@@ -166,11 +204,11 @@ namespace gzDAL.Repos {
 
                     () => {
 
-                        SaveDBGzTransaction(customerId, TransferTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUTC, null);
+                        SaveDbGzTransaction(customerId, GzTransactionJournalTypeEnum.PlayingLoss, totPlayinLossAmount, createdOnUtc, null);
 
-                        SaveDBGzTransaction(customerId, TransferTypeEnum.CreditedPlayingLoss,
+                        SaveDbGzTransaction(customerId, GzTransactionJournalTypeEnum.CreditedPlayingLoss,
                             totPlayinLossAmount * creditPcnt / 100,
-                            createdOnUTC,
+                            createdOnUtc,
                             // Db Configuration value
                             db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
@@ -179,30 +217,35 @@ namespace gzDAL.Repos {
         }
 
         /// <summary>
-        /// Save to database a general type of transation using an existing DbContext (to support transactions)
+        /// 
+        /// Save to database a general type of transaction using an existing DbContext (to support transactions)
         /// Save any transaction type to the database
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="gzTransactionType"></param>
         /// <param name="amount"></param>
-        /// <param name="createdOnUTC"></param>
+        /// <param name="createdOnUtc"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC, float? creditPcntApplied) {
+        private void SaveDbGzTransaction(int customerId, GzTransactionJournalTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc, float? creditPcntApplied) {
+
             //Not thread safe but ok...within a single request context
             db.GzTransactions.AddOrUpdate(
-                // Assume CreatedOnUTC remains constant for same trx
+
+                // Assume CreatedOnUtc remains constant for same transaction
                 // to support idempotent transactions
+                
                 t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC },
                     new GzTransaction {
                         CustomerId = customerId,
                         TypeId = db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
-                        YearMonthCtd = createdOnUTC.Year.ToString("0000") + createdOnUTC.Month.ToString("00"),
+                        YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
                         Amount = amount,
                         // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
                         CreditPcntApplied = creditPcntApplied,
                         // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
-                        CreatedOnUTC = DbExpressions.Truncate(createdOnUTC, TimeSpan.FromSeconds(1))
+                        CreatedOnUTC = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
                     }
                 );
             db.SaveChanges();

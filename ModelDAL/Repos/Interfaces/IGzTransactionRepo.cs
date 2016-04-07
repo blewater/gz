@@ -3,16 +3,18 @@ using System;
 
 namespace gzDAL.Repos.Interfaces
 {
-    public interface IGzTransactionRepo
-    {
-        void SaveDBGzTransaction(int customerId, TransferTypeEnum gzTransactionType, decimal amount, DateTime createdOnUTC);
+    public interface IGzTransactionRepo {
 
-        void SaveDBInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC);
+        decimal GetWithdrawnFees(decimal liquidationAmount);
 
-        void SaveDBPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUTC);
+        void SaveDbGzTransaction(int customerId, GzTransactionJournalTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc);
 
-        void SaveDBTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUTC);
+        void SaveDbInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc);
 
-        decimal SaveDBGreenZorroFees(int customerId, decimal invAmountLiquidationAmount, DateTime createdOnUTC);
+        void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUtc);
+
+        void SaveDbTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc);
+
+        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionJournalTypeEnum sellingJournalTypeReason, DateTime createdOnUtc);
     }
 }
