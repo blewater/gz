@@ -245,6 +245,10 @@
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Configuration\PortfolioConfiguration.cs" />
+    <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.cs" />
+    <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.Designer.cs">
+      <DependentUpon>201604081406555_Add Currency to ApplicationUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1179,6 +1183,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604061021304_Remove CustSoldFurndShares-Add CashBalance.resx">
       <DependentUpon>201604061021304_Remove CustSoldFurndShares-Add CashBalance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604081406555_Add Currency to ApplicationUser.resx">
+      <DependentUpon>201604081406555_Add Currency to ApplicationUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
