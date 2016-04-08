@@ -125,7 +125,7 @@ namespace gzWeb.Tests.Models {
         }
 
         [TestMethod]
-        public void SaveDbPortfolioReturns() {
+        public void SaveDbUpdCustomerInvBalances() {
 
             int custId = CreateTestCustomer();
 
