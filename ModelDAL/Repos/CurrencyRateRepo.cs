@@ -18,7 +18,7 @@ namespace gzDAL.Repos
             this.db = db;
         }
 
-        public List<CurrencyQuote> SaveDBDailyCurrenciesRates() {
+        public List<CurrencyQuote> SaveDbDailyCurrenciesRates() {
 
             var currenciesList = db.CurrenciesListX.Select(c => c.From + c.To).ToList();
 

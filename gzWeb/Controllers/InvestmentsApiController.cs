@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web.Http;
+using gzDAL.Conf;
 using gzDAL.Models;
+using gzDAL.ModelUtil;
+using gzWeb.Configuration;
 using gzWeb.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using NLog.LayoutRenderers;
 
 namespace gzWeb.Controllers
 {
+    [Authorize]
+    // TODO: [RoutePrefix("api/Investments")]
     public class InvestmentsApiController : BaseApiController
     {
         #region Constructor
         public InvestmentsApiController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-        } 
+        }
         #endregion
-
+        
         #region Actions
         #region Summary
         [HttpGet]
@@ -55,15 +64,19 @@ namespace gzWeb.Controllers
         [HttpGet]
         public IHttpActionResult GetPortfolioData()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null) 
+                return OkMsg(new object(), "User not found!");
+            
             var now = DateTime.Now;
-            var model = new PortfolioDataViewModel()
-            {
-                Currency = "€",
-                NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
-                NextExpectedInvestment = 15000,
-                ROI = new ReturnOnInvestmentViewModel() { Title = "% Current ROI", Percent = 59 },
-                Plans = _dummyPlans
-            };
+            var model = new PortfolioDataViewModel
+                        {
+                                Currency = user.Currency, //"€", // TODO: get from user data
+                                NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
+                                NextExpectedInvestment = 15000,
+                                ROI = new ReturnOnInvestmentViewModel {Title = "% Current ROI", Percent = 59},
+                                Plans = GetCustomerPlans(user)
+                        };
             return OkMsg(model);
         }
 
@@ -81,11 +94,15 @@ namespace gzWeb.Controllers
         [HttpGet]
         public IHttpActionResult GetPerformanceData()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+
             var model = new PerformanceDataViewModel()
-            {
-                Currency = "€",                
-                Plans = _dummyPlans
-            };
+                        {
+                                Currency = "€",
+                                Plans = GetCustomerPlans(user)
+                        };
             return OkMsg(model);
         }
         #endregion
@@ -113,21 +130,50 @@ namespace gzWeb.Controllers
         }
         #endregion
 
+        private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
+        {
+            var yearMonth = DbExpressions.GetStrYearMonth(DateTime.Now.Year, DateTime.Now.Month);
+            var customerPortfolio = _dbContext.CustPortfolios
+                                             .SingleOrDefault(x => x.CustomerId == user.Id &&
+                                                                   x.YearMonth == yearMonth);
+            var portfolios = _dbContext.Portfolios
+                             .Where(x => x.IsActive);
+
+            foreach (var portfolio in portfolios)
+            {
+                yield return
+                        CreateFromPrototype(portfolio,
+                                            customerPortfolio,
+                                            customerPortfolio != null && portfolio.Id == customerPortfolio.PortfolioId);
+            }
+        }
+
+        private PlanViewModel CreateFromPrototype(Portfolio x, CustPortfolio custPortfolio, bool active)
+        {
+            var portfolioPrototype = PortfolioConfiguration.GetPortfolioPrototype(x.RiskTolerance);
+            return new PlanViewModel
+                   {
+                           Id = x.Id,
+                           Title = portfolioPrototype.Title,
+                           Balance = 0, // TODO: get from customer data
+                           Color = portfolioPrototype.Color,
+                           Percent = active ? custPortfolio.Weight : 0,
+                           ReturnRate = 0, // TODO: ???
+                           Selected = active, // TODO: get from customer data
+                           Holdings = x.PortFunds.Select(f => new HoldingViewModel
+                                                              {
+                                                                      Name = f.Fund.HoldingName,
+                                                                      Weight = f.Weight
+                                                              })
+                   };
+        }
+        
         #region Fields
         private readonly ApplicationDbContext _dbContext;
         #endregion
 
         #region Dummy Data
-        private static IList<HoldingViewModel> _dummyHoldings = new[]
-        {
-            new HoldingViewModel() {Name = "Vanguard VTI", Weight = 8},
-            new HoldingViewModel() {Name = "Vanguard VEA", Weight = 5},
-            new HoldingViewModel() {Name = "Vanguard VWO", Weight = 5},
-            new HoldingViewModel() {Name = "Vanguard VIG", Weight = 15},
-            new HoldingViewModel() {Name = "State Street XLE", Weight = 7},
-            new HoldingViewModel() {Name = "Schwab SCHP", Weight = 25},
-            new HoldingViewModel() {Name = "State Street XLE", Weight = 35}
-        };
+        
         private static IList<VintageViewModel> _dummyVintages = new[]
         {
             new VintageViewModel {Date = new DateTime(2014, 7, 1), InvestAmount = 100M, ReturnPercent = 10},
@@ -152,37 +198,7 @@ namespace gzWeb.Controllers
             new VintageViewModel {Date = new DateTime(2016, 2, 1), InvestAmount = 80M, ReturnPercent = 15},
             new VintageViewModel {Date = new DateTime(2016, 3, 1), InvestAmount = 150M, ReturnPercent = 10},
         };
-        private static PlanViewModel _dummyAggressive = new PlanViewModel()
-        {
-            Title = "Aggressive",
-            Selected = false,
-            Percent = 34,
-            Balance = 1500,
-            ReturnRate = 0.1,
-            Color = "#227B46",
-            Holdings = _dummyHoldings
-        };
-        private static PlanViewModel _dummyModerate = new PlanViewModel()
-        {
-            Title = "Moderate",
-            Selected = true,
-            Percent = 23,
-            Balance = 1500,
-            ReturnRate = 0.07,
-            Color = "#64BF89",
-            Holdings = _dummyHoldings
-        };
-        private static PlanViewModel _dummyConservative = new PlanViewModel()
-        {
-            Title = "Conservative",
-            Selected = false,
-            Percent = 43,
-            Balance = 1500,
-            ReturnRate = 0.04,
-            Color = "#B4DCC4",
-            Holdings = _dummyHoldings
-        };
-        private static IList<PlanViewModel> _dummyPlans = new [] { _dummyConservative, _dummyModerate, _dummyAggressive };
+        
         #endregion
     }
 }
