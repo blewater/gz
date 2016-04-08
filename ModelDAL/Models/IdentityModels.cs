@@ -43,6 +43,8 @@ namespace gzDAL.Models
         [Required]
         public int PlatformCustomerId { get; set; }
 
+        public string Currency { get; set; }
+
         /// <summary>
         /// Must get from Casino Operator
         /// </summary>
