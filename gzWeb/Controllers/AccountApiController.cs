@@ -336,7 +336,8 @@ namespace gzWeb.Controllers
                                Email = model.Email,
                                FirstName = model.FirstName,
                                LastName = model.LastName,
-                               Birthday = model.Birthday
+                               Birthday = model.Birthday,
+                               Currency = model.Currency,
                        };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
