@@ -1,37 +1,18 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzPerformanceGraph', ['$filter', '$location', '$interval', directiveFactory]);
+    APP.directive('gzPerformanceGraph', ['$filter', '$location', '$interval', 'helpers', directiveFactory]);
 
-    function directiveFactory($filter, $location, $interval) {
+    function directiveFactory($filter, $location, $interval, helpers) {
         return {
             restrict: 'EA',
             scope: {
-                //gzAggressiveRate: '=',
-                //gzModerateRate: '=',
                 gzPlans: '=',
                 gzCurrency: '@',
             },
-            templateUrl: function () { return 'partials/directives/gzPerformanceGraph.html'; },
+            templateUrl: function () { return helpers.ui.getTemplate('partials/directives/gzPerformanceGraph.html'); },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 // #region Variables
-                //$scope.plans = {
-                //    aggressive: {
-                //        title: 'Aggressive',
-                //        returnRate: $scope.gzAggressiveRate,
-                //        selected: true
-                //    },
-                //    moderate: {
-                //        title: 'Moderate',
-                //        returnRate: $scope.gzModerateRate,
-                //        selected: false
-                //    },
-                //    conservative: {
-                //        title: 'Conservative',
-                //        returnRate: $scope.gzConservativeRate,
-                //        selected: false
-                //    }
-                //}
                 $scope.plans = $scope.gzPlans;
                 $scope.plan = $filter('filter')($scope.plans, { Selected: true })[0];
                 $scope.year = 0;

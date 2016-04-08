@@ -1,7 +1,7 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('apiService', ['$http', '$rootScope', serviceFactory]);
+    APP.factory('api', ['$http', '$rootScope', serviceFactory]);
 
     function serviceFactory($http, $rootScope) {
         var factory = {};
@@ -77,6 +77,7 @@
 
         // #region Auth
         // #endregion
+
         return factory;
     };
 })();

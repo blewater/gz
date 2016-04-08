@@ -1,11 +1,11 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'performanceCtrl';
-    APP.controller(ctrlId, ['$scope', 'apiService', ctrlFactory]);
-    function ctrlFactory($scope, apiService) {
+    APP.controller(ctrlId, ['$scope', 'api', ctrlFactory]);
+    function ctrlFactory($scope, api) {
         function init() {
-            apiService.call(function () {
-                return apiService.getPerformanceData();
+            api.call(function () {
+                return api.getPerformanceData();
             }, function (response) {
                 $scope.model = response.Result;
             });

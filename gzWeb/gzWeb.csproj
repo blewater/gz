@@ -461,7 +461,8 @@
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
     <Content Include="Scripts\_app\services\emWamp.js" />
-    <Content Include="Scripts\_app\services\routingService.js" />
+    <Content Include="Scripts\_app\services\helpersService.js" />
+    <Content Include="Scripts\_app\services\routeService.js" />
     <Content Include="Scripts\bootstrap\bootstrap.js" />
     <Content Include="Scripts\bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\angular\angular.min.js.map" />
@@ -1007,6 +1008,12 @@
     <Content Include="Scripts\respond\respond.min.js" />
     <Content Include="Scripts\_modules\customDirectives.js" />
     <Content Include="Scripts\_modules\customFilters.js" />
+    <Content Include="Scripts\_app\services\nsMessagesService\messages.css" />
+    <Content Include="Scripts\_app\services\nsMessagesService\nsMessage.html" />
+    <Content Include="Scripts\_app\services\nsMessagesService\nsMessage.js" />
+    <Content Include="Scripts\_app\services\nsMessagesService\nsMessages.html" />
+    <Content Include="Scripts\_app\services\nsMessagesService\nsMessages.js" />
+    <Content Include="Scripts\_app\services\nsMessagesService\messagesService.js" />
     <Content Include="Scripts\_modules\styleInjector.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">

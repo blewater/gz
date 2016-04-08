@@ -34,6 +34,7 @@ namespace gzWeb
                 , "~/Content/Styles/_app/auth.css"
                 , "~/Content/Styles/_app/investments.css"
                 , "~/Content/Styles/_app/games.css"
+                , "~/Scripts/_app/services/nsMessagesService/messages.css"
             ));
             #endregion
             
@@ -118,9 +119,14 @@ namespace gzWeb
                 , "~/Scripts/_app/services/authInterceptor.js"
                 , "~/Scripts/_app/services/routingService.js"
                 , "~/Scripts/_app/services/apiService.js"
+                , "~/Scripts/_app/services/helpersService.js"
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"
-                , "~/Scripts/_app/directives/gzPerformanceGraph.js"                
+                , "~/Scripts/_app/directives/gzPerformanceGraph.js"
+
+                , "~/Scripts/_app/services/nsMessagesService/nsMessage.js"
+                , "~/Scripts/_app/services/nsMessagesService/nsMessages.js"
+                , "~/Scripts/_app/services/nsMessagesService/messagesService.js"
             ));
             #endregion
         }

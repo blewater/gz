@@ -1,7 +1,7 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('routingService', ['$location', '$window', 'constants', '$filter', serviceFactory]);
+    APP.factory('route', ['$location', '$window', 'constants', '$filter', serviceFactory]);
     function serviceFactory($location, $window, constants, $filter) {
         var service = {
             getPaths: getPaths,
