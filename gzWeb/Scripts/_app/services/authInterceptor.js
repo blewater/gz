@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('authInterceptor', ['$q', '$location', 'constants', authInterceptor]);
+    APP.factory('authInterceptor', ['$q', '$location', 'constants', 'route', authInterceptor]);
 
-    function authInterceptor($q, $location, constants) {
+    function authInterceptor($q, $location, constants, route) {
         var factory = {};
 
         factory.request = function (config) {
@@ -13,7 +13,7 @@
 
         factory.responseError = function (rejection) {
             if (rejection.status === 401) {
-                $location.path(constants.routes.login.path);
+                $location.path(route.getPath(constants.routeKeys.login));
             }
             return $q.reject(rejection);
         }

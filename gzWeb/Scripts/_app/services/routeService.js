@@ -22,10 +22,10 @@
             return $filter('map')(routes, 'tpl');
         }
         function getGroup(groupKey) {
-            return $filter('where')(constants.routes, { 'group': groupKey });
+            return $filter('where')(constants.routes, { 'group': groupKey })[0];
         }
         function getRoute(key) {
-            return $filter('where')(constants.routes, { 'key': key });
+            return $filter('where')(constants.routes, { 'key': key })[0];
         }
         function getPath(key) {
             return getRoute(key).path;
