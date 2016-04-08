@@ -634,35 +634,39 @@ namespace gzDAL.Conf
                 t => t.Code,
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.Deposit,
-                    Description = "Customer Bank Deposit"
+                    Description = "Customer Bank Deposit."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.InvWithdrawal,
-                    Description = "Customer withdrawals of any excess funds to their banking account"
+                    Description = "Customer withdrawals of any excess funds to their banking account."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.TransferToGaming,
-                    Description = "Customer transfers to gaming account"
+                    Description = "Customer transfers to gaming account."
                 }, 
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.CasinoWithdrawal,
-                    Description = "Losses due to playing in Casino, Betting etc"
+                    Description = "Losses due to playing in Casino, Betting etc."
+                },
+                new GzTransactionType {
+                    Code = GzTransactionJournalTypeEnum.PortfolioLiquidation,
+                    Description = "Liquidating or converting the customer portfolio to cash."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.PlayingLoss,
-                    Description = "Losses due to playing in Casino, Betting etc"
+                    Description = "Losses due to playing in Casino, Betting etc."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.CreditedPlayingLoss,
-                    Description = "Losses credited to players account after a 50% deduction"
+                    Description = "Losses credited to players account after a 50% deduction."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.FundFee,
-                    Description = "Any fees by the Fund itself i.e. 0.5%"
+                    Description = "Any fees by the Fund itself i.e. 0.5%."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.GzFees,
-                    Description = "Commissions (1.5% = 2.5%) Profit for GreenZorro"
+                    Description = "Commissions (1.5% = 2.5%) Profit for GreenZorro."
                 }
                 );
         }
