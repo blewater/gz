@@ -117,7 +117,7 @@ namespace gzWeb
 
                 , "~/Scripts/_app/services/emWamp.js"
                 , "~/Scripts/_app/services/authInterceptor.js"
-                , "~/Scripts/_app/services/routingService.js"
+                , "~/Scripts/_app/services/routeService.js"
                 , "~/Scripts/_app/services/apiService.js"
                 , "~/Scripts/_app/services/helpersService.js"
 
@@ -126,7 +126,7 @@ namespace gzWeb
 
                 , "~/Scripts/_app/services/nsMessagesService/nsMessage.js"
                 , "~/Scripts/_app/services/nsMessagesService/nsMessages.js"
-                , "~/Scripts/_app/services/nsMessagesService/messagesService.js"
+                , "~/Scripts/_app/services/nsMessagesService/messageService.js"
             ));
             #endregion
         }
