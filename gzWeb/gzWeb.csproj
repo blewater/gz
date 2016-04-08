@@ -1021,7 +1021,7 @@
     <Content Include="Scripts\_app\services\nsMessagesService\nsMessage.js" />
     <Content Include="Scripts\_app\services\nsMessagesService\nsMessages.html" />
     <Content Include="Scripts\_app\services\nsMessagesService\nsMessages.js" />
-    <Content Include="Scripts\_app\services\nsMessagesService\messagesService.js" />
+    <Content Include="Scripts\_app\services\nsMessagesService\messageService.js" />
     <Content Include="Scripts\_modules\styleInjector.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
