@@ -52,7 +52,7 @@ namespace gzWeb.Areas.Mvc.Controllers
 
             var investments = customer
                 .GzTransactions
-                .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
+                .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
                 .OrderByDescending(t => t.CreatedOnUTC)
                 .Select(t => new { t.Amount, t.CreatedOnUTC })
                 .ToList();

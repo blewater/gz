@@ -23,12 +23,12 @@ namespace gzWeb.Tests.Models {
         }
 
         /// <summary>
-        /// 
+        ///
         /// Test expected returns formula below based on a industry standard
         /// calculation i.e. Time weighted return.
-        /// 
+        ///
         /// Asserts taken from calculator on https://smartasset.com/investing/investment-calculator#iw7vdcEJRj
-        /// 
+        ///
         /// </summary>
         [TestMethod]
         public void TimeWeightedReturnCalc() {
@@ -56,15 +56,15 @@ namespace gzWeb.Tests.Models {
         }
 
         /// <summary>
-        /// 
+        ///
         /// Time weighted return formula I think :)
         /// Based on calculator on https://smartasset.com/investing/investment-calculator#iw7vdcEJRj
-        /// 
-        /// It is assumed that all cash distributions 
+        ///
+        /// It is assumed that all cash distributions
         /// are reinvested in the portfolio.
-        /// The effect of the Cash inflows timing is eliminated 
+        /// The effect of the Cash inflows timing is eliminated
         /// by assuming a single investment at the end of the year.
-        /// 
+        ///
         /// </summary>
         /// <param name="yearsOfInv">Years To Grow</param>
         /// <param name="startingAmount"></param>
@@ -93,7 +93,7 @@ namespace gzWeb.Tests.Models {
         [TestMethod]
         public void SaveDailyCurrenciesRates() {
             var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext());
-            var quotes = currencyRateRepo.SaveDBDailyCurrenciesRates();
+            var quotes = currencyRateRepo.SaveDbDailyCurrenciesRates();
 
             Assert.IsNotNull(quotes);
 
@@ -104,26 +104,40 @@ namespace gzWeb.Tests.Models {
         public void SaveDailyFundClosingPrice() {
             var db = new ApplicationDbContext();
             var fundRepo = new FundRepo(db);
-            var quotes = fundRepo.SaveDBDailyFundClosingPrices();
+            var quotes = fundRepo.SaveDbDailyFundClosingPrices();
 
             Assert.IsNotNull(quotes);
 
             //Assert we have a closing price for first symbol
             Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
         }
+
         [TestMethod]
-        public void SaveDBPortfolioReturns() {
+        public void SaveDbSellPortfolio() {
 
             int custId = CreateTestCustomer();
 
-            // Add invested Customer Portfolio 
+            var db = new ApplicationDbContext();
+            var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                .SaveDbSellCustomerPortfolio(custId);
+
+            Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
+        }
+
+        [TestMethod]
+        public void SaveDbUpdCustomerInvBalances() {
+
+            int custId = CreateTestCustomer();
+
+            // Add invested Customer Portfolio
             CreateTestCustomerPortfolioSelections(custId);
 
             CreateTestPlayerLossTransactions(custId);
             CreateTestPlayerDepositWidthdrawnTransactions(custId);
 
             var db = new ApplicationDbContext();
-            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveDBCustomerMonthlyBalancesByTrx(custId);
+            new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                .SaveDbCustomerMonthlyBalancesByTrx(custId);
         }
 
         public void CreateTestCustomerPortfolioSelections(int custId) {
@@ -132,7 +146,7 @@ namespace gzWeb.Tests.Models {
 
             /*** For phase I we test only single portfolio selections ***/
             //// Jan 2015
-            cpRepo.SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 1, new DateTime(2015, 1, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 20, 2015, 1, new DateTime(2015, 1, 1));
             //// Feb
@@ -140,7 +154,7 @@ namespace gzWeb.Tests.Models {
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 2, new DateTime(2015, 2, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 40, 2015, 2, new DateTime(2015, 2, 1));
             // Mar
-            cpRepo.SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.High, 100, 2015, 3, new DateTime(2015, 3, 1));
+            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.High, 100, 2015, 3, new DateTime(2015, 3, 1));
             //// Apr
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 30, 2015, 4, new DateTime(2015, 4, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 30, 2015, 4, new DateTime(2015, 4, 1));
@@ -150,7 +164,7 @@ namespace gzWeb.Tests.Models {
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 20, 2015, 5, new DateTime(2015, 5, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 70, 2015, 5, new DateTime(2015, 5, 1));
             // Jun
-            cpRepo.SaveDBCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
+            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
         }
 
         public void CreateTestPlayerLossTransactions(int custId) {
@@ -158,14 +172,14 @@ namespace gzWeb.Tests.Models {
             var gzTrx = new GzTransactionRepo(db);
 
             // Add playing losses for first 6 months of 2015
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 160, creditPcnt: 50, createdOnUTC: new DateTime(2015, 1, 1));
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 120, creditPcnt: 50, createdOnUTC: new DateTime(2015, 2, 1));
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 3, 1));
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50, createdOnUTC: new DateTime(2015, 4, 1));
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50, createdOnUTC: new DateTime(2015, 5, 1));
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2015, 6, 1));
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUTC: new DateTime(2016, 1, 1));
-            gzTrx.SaveDBPlayingLoss(customerId: custId, totPlayinLossAmount: 100, creditPcnt: 50, createdOnUTC: new DateTime(2015, 9, 30));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 160, creditPcnt: 50, createdOnUtc: new DateTime(2015, 1, 1));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 120, creditPcnt: 50, createdOnUtc: new DateTime(2015, 2, 1));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUtc: new DateTime(2015, 3, 1));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50, createdOnUtc: new DateTime(2015, 4, 1));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50, createdOnUtc: new DateTime(2015, 5, 1));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUtc: new DateTime(2015, 6, 1));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUtc: new DateTime(2016, 1, 1));
+            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 100, creditPcnt: 50, createdOnUtc: new DateTime(2015, 9, 30));
         }
 
 
@@ -174,12 +188,12 @@ namespace gzWeb.Tests.Models {
             var gzTrx = new GzTransactionRepo(db);
 
             // Add deposit, withdrawals
-            gzTrx.SaveDBTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
-            gzTrx.SaveDBGzTransaction(customerId: custId, gzTransactionType: TransferTypeEnum.Deposit, amount: 100, createdOnUTC: new DateTime(2015, 7, 15));
-            gzTrx.SaveDBInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
-            gzTrx.SaveDBTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
-            gzTrx.SaveDBInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
-            gzTrx.SaveDBTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
+            gzTrx.SaveDbTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
+            gzTrx.SaveDbGzTransaction(customerId: custId, gzTransactionType: GzTransactionJournalTypeEnum.Deposit, amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
+            gzTrx.SaveDbInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
+            gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
+            gzTrx.SaveDbInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
+            gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
         }
 
         public static int CreateTestCustomer() {
@@ -201,7 +215,7 @@ namespace gzWeb.Tests.Models {
             var newUser = new ApplicationUser();
             Mapper.Map<CustomerDTO, ApplicationUser>(newUserDTO, newUser);
 
-            var db = new ApplicationDbContext();            
+            var db = new ApplicationDbContext();
             var custRepo = new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db)));
             return custRepo.CreateOrUpdateUser(newUser, "1q2w3e");
         }

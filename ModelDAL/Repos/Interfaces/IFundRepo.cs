@@ -7,6 +7,6 @@ namespace gzDAL.Repos.Interfaces
     public interface IFundRepo
     {
         Dictionary<string, float> GetFundsPrices(int year, int month, int day);
-        List<FundQuote> SaveDBDailyFundClosingPrices();
+        List<FundQuote> SaveDbDailyFundClosingPrices();
     }
 }

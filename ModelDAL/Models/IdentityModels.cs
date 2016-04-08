@@ -43,6 +43,8 @@ namespace gzDAL.Models
         [Required]
         public int PlatformCustomerId { get; set; }
 
+        public string Currency { get; set; }
+
         /// <summary>
         /// Must get from Casino Operator
         /// </summary>
@@ -57,7 +59,7 @@ namespace gzDAL.Models
         public decimal LastInvestmentAmount {
             get {
                 return GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
                     .OrderByDescending(t => t.Id)
                     .Select(t => t.Amount)
                     .FirstOrDefault();
@@ -77,7 +79,7 @@ namespace gzDAL.Models
             get {
                 return 
                     GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.CreditedPlayingLoss)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
                     .Select(t => t.Amount)
                     .Sum();
             }
@@ -87,7 +89,7 @@ namespace gzDAL.Models
             get {
                 return 
                     GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.Deposit)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.Deposit)
                     .Select(t => t.Amount)
                     .Sum();
             }
@@ -97,8 +99,8 @@ namespace gzDAL.Models
             get {
                 return 
                     GzTransactions
-                    .Where(t => t.Type.Code == TransferTypeEnum.InvWithdrawal 
-                             || t.Type.Code == TransferTypeEnum.TransferToGaming)
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.InvWithdrawal 
+                             || t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming)
                     .Select(t => t.Amount)
                     .Sum();
             }
@@ -151,7 +153,6 @@ namespace gzDAL.Models
         public DbSet<CurrencyListX> CurrenciesListX { get; set; }
         public DbSet<CurrencyRate> CurrencyRates { get; set; }
         public DbSet<CustFundShare> CustFundShares { get; set; }
-        public DbSet<CustFundSoldShare> CustFundSharesSold { get; set; }
         public DbSet<CustPortfolio> CustPortfolios { get; set; }
         public DbSet<Fund> Funds { get; set; }
         public DbSet<FundPrice> FundPrices { get; set; }

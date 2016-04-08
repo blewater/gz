@@ -66,7 +66,7 @@ namespace gzDAL.ModelUtil {
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <returns></returns>
-        public static string GetPrevYearMonth(int year, int month) {
+        public static string GetPrevMonthInYear(int year, int month) {
 
             var prevMonthDt = new DateTime(year, month, 1).AddMonths(-1);
             return DbExpressions.GetStrYearMonth(prevMonthDt.Year, prevMonthDt.Month);

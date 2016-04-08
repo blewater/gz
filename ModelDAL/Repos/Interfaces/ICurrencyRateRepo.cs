@@ -5,6 +5,6 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface ICurrencyRateRepo
     {
-        List<CurrencyQuote> SaveDBDailyCurrenciesRates();
+        List<CurrencyQuote> SaveDbDailyCurrenciesRates();
     }
 }

@@ -4,9 +4,9 @@ using gzDAL.Repos;
 namespace gzCpcLib.Task {
 
     /// <summary>
-    /// 
+    ///
     /// Update monthly Investment Balances for Customer
-    /// 
+    ///
     /// </summary>
     public class CustInvestmentBalUpd : CpcTask {
 
@@ -20,7 +20,8 @@ namespace gzCpcLib.Task {
         public override void DoTask() {
 
             var db = new ApplicationDbContext();
-            new InvBalanceRepo(db, new CustFundShareRepo(db)).SaveDBCustomersMonthlyBalancesByTrx(CustomerIds, YearMonthsToProc);
+            new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                .SaveDbCustomersMonthlyBalancesByTrx(CustomerIds, YearMonthsToProc);
 
         }
     }

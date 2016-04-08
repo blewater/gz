@@ -33,7 +33,7 @@
             if (_passwordPolicyRegEx.test(password)) {
                 return new { isValid: true };
             } else {
-                return new { isValid: false, error: passwordPolicyError };
+                return new { isValid: false, error: _passwordPolicyError };
             };
         };
 
