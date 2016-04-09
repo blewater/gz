@@ -123,7 +123,7 @@ namespace gzDAL.Repos {
                 // Note this case for repricing (0 cash) or liquidating shares to cash
             } else if (netInvAmount < 0) {
 
-                portfolioFundValues = GetPortfolioSharesValue(customerId, netInvAmount, year, month, currentPortfolioMonth: null);
+                portfolioFundValues = GetPortfolioSharesValue(customerId, netInvAmount, year, month, customerPortfolio: null);
 
             }
 
@@ -139,20 +139,19 @@ namespace gzDAL.Repos {
         /// <param name="cashToInvest">Positive amount of cash to invest by buying shares</param>
         /// <param name="year"></param>
         /// <param name="month"></param>
-        /// <param name="db"></param>
         /// <returns></returns>
         private Dictionary<int, PortfolioFundDTO> GetOwnedFundSharesPortfolioWeights(int customerId, decimal cashToInvest, int year, int month) {
 
-            string currentPortfolioMonth = GetCustPortfYearMonth(customerId, DbExpressions.GetStrYearMonth(year, month), db);
+            var portfolio = GetCustomerPortfolioForMonth(customerId, DbExpressions.GetStrYearMonth(year, month));
 
-            System.Diagnostics.Trace.Assert(currentPortfolioMonth != null, string.Format("No portfolio has been set for customer Id: {0}", customerId));
+            System.Diagnostics.Trace.Assert(portfolio != null, string.Format("No portfolio has been set for customer Id: {0}", customerId));
 
-            if (currentPortfolioMonth == null) {
+            if (portfolio == null) {
 
                 throw new Exception(string.Format("No portfolio has been set for customer Id: {0}", customerId));
             }
 
-            var portfolioFundValues = GetPortfolioSharesValue(customerId, cashToInvest, year, month, currentPortfolioMonth);
+            var portfolioFundValues = GetPortfolioSharesValue(customerId, cashToInvest, year, month, portfolio);
 
             return portfolioFundValues;
         }
@@ -173,16 +172,16 @@ namespace gzDAL.Repos {
         /// <param name="cashToInvest"></param>
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
-        /// <param name="currentPortfolioMonth"></param>
+        /// <param name="customerPortfolio"></param>
         /// <returns>Dictionary of Portfolio DTO</returns>
         private Dictionary<int, PortfolioFundDTO> GetPortfolioSharesValue(
             int customerId, 
             decimal cashToInvest, 
             int yearCurrent, 
             int monthCurrent, 
-            string currentPortfolioMonth) {
+            Portfolio customerPortfolio) {
 
-            if (cashToInvest > 0 && string.IsNullOrEmpty(currentPortfolioMonth)) {
+            if (cashToInvest > 0 && customerPortfolio == null) {
                 
                 throw new Exception("Cannot invest new cash without a valid portfolio");
 
@@ -192,9 +191,9 @@ namespace gzDAL.Repos {
             var customerShares = GetOwnedCustomerFunds(customerId, yearCurrent, monthCurrent);
 
             //Get Portfolio Funds Weights only about to buy shares
-            if (cashToInvest > 0 && !string.IsNullOrEmpty(currentPortfolioMonth)) {
+            if (cashToInvest > 0 && customerPortfolio != null) {
 
-                SetPortfolioFundWeights(customerId, customerShares, currentPortfolioMonth);
+                SetPortfolioFundWeights(customerId, customerShares, customerPortfolio);
             }
 
             SetFundsSharesValue(customerShares, yearCurrent, monthCurrent, cashToInvest);
@@ -305,7 +304,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="customerOwnedFundsDct">The owned customer fund shares if any. Note is 0 on first customer month.</param>
-        /// <param name="currentPortfolioMonth">The month associated with current portfolio</param>
+        /// <param name="customerPortfolio"></param>
         /// <returns>
         /// 
         /// Updated funds collection has updated these values:
@@ -316,9 +315,9 @@ namespace gzDAL.Repos {
         private void SetPortfolioFundWeights(
             int customerId,
             Dictionary<int, PortfolioFundDTO> customerOwnedFundsDct,
-            string currentPortfolioMonth) {
+            Portfolio customerPortfolio) {
 
-            var fundsIQry = GetPortfolioFunds(customerId, currentPortfolioMonth);
+            var fundsIQry = GetPortfolioFunds(customerId, customerPortfolio);
 
             // Match Portfolio Funds with --> Already Owned Customer Funds of In parameter 
             // Update the customer owned fund shares that overlap with their current selected portfolio funds of Step 1
@@ -346,13 +345,13 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="currentPortfolioMonth">The </param>
+        /// <param name="customerPortfolio"></param>
         /// <returns>The funds IQueryable holding PortfolioDTOs</returns>
-        private IQueryable<PortfolioFundDTO> GetPortfolioFunds(int customerId, string currentPortfolioMonth) {
+        private IQueryable<PortfolioFundDTO> GetPortfolioFunds(int customerId, Portfolio customerPortfolio) {
 
             return from pf in db.PortFunds
                 join p in db.CustPortfolios on pf.PortfolioId equals p.PortfolioId
-                where p.CustomerId == customerId && p.YearMonth == currentPortfolioMonth
+                where p.CustomerId == customerId && p.PortfolioId == customerPortfolio.Id
                 select new PortfolioFundDTO {
                     FundId = pf.FundId,
                     PortfolioId = pf.PortfolioId,
@@ -414,18 +413,50 @@ namespace gzDAL.Repos {
         }
 
         /// <summary>
-        /// Get the latest YearMonth of a saved customer portfolio selection
-        /// By business rules there will be a globally default portfolio for all customers
+        /// 
+        /// Get the present in Utc customer selected portfolio.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="db"></param>
         /// <returns></returns>
-        private string GetCustPortfYearMonth(int customerId, string YearMonthStr, ApplicationDbContext db) {
+        public Portfolio GetCurrentCustomerPortfolio(int customerId) {
+
+            return GetCustomerPortfolioForMonth(customerId, DateTime.UtcNow.ToStringYearMonth());
+        }
+
+        /// <summary>
+        /// 
+        /// Get the customer selected portfolio for any given month in their history.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="yearMonthStr"></param>
+        /// <returns></returns>
+        private Portfolio GetCustomerPortfolioForMonth(int customerId, string yearMonthStr) {
+
+            var portfolioMonth = GetCustPortfYearMonth(customerId, yearMonthStr);
+
+            return
+                db.CustPortfolios
+                    .Where(p => p.YearMonth == portfolioMonth)
+                    .Select(cp => cp.Portfolio)
+                    .SingleOrDefault();
+        }
+
+        /// <summary>
+        /// 
+        /// Get the latest YearMonth of a saved customer portfolio selection
+        /// By business rules there will be a globally default portfolio for all customers
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="yearMonthStr">The year month YYYYMM i.e. April 2016 = 201604 for which you want to get the portfolio </param>
+        /// 
+        /// <returns></returns>
+        private string GetCustPortfYearMonth(int customerId, string yearMonthStr) {
 
             return db.CustPortfolios
-                .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, YearMonthStr, StringComparison.Ordinal) <= 0)
+                .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, yearMonthStr, StringComparison.Ordinal) <= 0)
                 .OrderByDescending(p => p.YearMonth)
                 .Select(p => p.YearMonth)
                 .FirstOrDefault();
