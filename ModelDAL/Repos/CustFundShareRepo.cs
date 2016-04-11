@@ -438,7 +438,7 @@ namespace gzDAL.Repos {
 
             return
                 db.CustPortfolios
-                    .Where(p => p.YearMonth == portfolioMonth)
+                    .Where(p => p.YearMonth == portfolioMonth && p.CustomerId == customerId)
                     .Select(cp => cp.Portfolio)
                     .SingleOrDefault();
         }
