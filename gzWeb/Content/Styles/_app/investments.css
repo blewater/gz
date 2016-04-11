@@ -180,6 +180,64 @@
     vertical-align: middle;
 }
 
+
+
+.vintages-per-year {
+    overflow: hidden;
+}
+.vintages-per-year .header {
+    font-weight: bold;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+.vintages-per-year .group {
+    margin-bottom: 30px;
+}
+.vintages-per-year .year {
+    font-weight: bold;
+    font-size: 18px;
+}
+.vintages-per-year .year i {
+    cursor: pointer;
+    line-height: 20px;
+    margin-right: 5px;
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -ms-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+
+.vintages-per-year .group .months {
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -ms-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+    -ms-opacity: 0;
+    opacity: 0;
+}
+.vintages-per-year .group.expanded .months {
+    -ms-opacity: 1;
+    opacity: 1;
+}
+
+.vintages-per-year .group .months .month {
+    height: 20px;
+}
+/*.vintages-per-year .group .months .month {
+    height: 0;
+}
+.vintages-per-year .group.expanded .months .month {
+    height: 20px;
+}*/
+.vintages-per-year .hide {
+   position: absolute !important;
+   top: -9999px !important;
+   left: -9999px !important;
+}
+
+
 @media (max-width: 767px) {
     .investments .summary .investments-balance-amount {
         font-size: 50px;
