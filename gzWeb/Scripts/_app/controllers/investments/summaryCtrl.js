@@ -1,17 +1,23 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'summaryCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', ctrlFactory]);
-    function ctrlFactory($scope, api) {
-        $scope.showAllVintages = function() {
-            // TODO showAllVintages modal
+    APP.controller(ctrlId, ['$scope', 'api', 'message', ctrlFactory]);
+    function ctrlFactory($scope, api, message) {
+        $scope.showAllVintages = function () {
+            message.modal('Vintages history', {
+                nsSize: 'md',
+                //nsStatic: true,
+                nsTemplate: '/partials/messages/showVintages.html',
+                nsCtrl: 'showVintagesCtrl',
+                nsParams: { vintages: $scope.model.Vintages }
+            });
         };
 
         $scope.transferCashToGames = function() {
             api.call(function () {
-                return api.transferCashToGames();
+                return api.transferCashToGames(); 
             }, function (response) {
-                // TODO toastr
+                message.toastr('Your cash was transfered successfully!');
             });
         };
 

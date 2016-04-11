@@ -42,7 +42,7 @@
 
                 function attachBodyHtml(html) {
                     angular.forEach(scope.nsOptions.nsParams, function (value, key) {
-                        templateScope[key] = value.toString();
+                        templateScope[key] = value;//.toString();
                     });
                     templateScope.nsCancel = scope.nsCancel;
                     templateScope.nsOk = scope.nsOk;
@@ -111,11 +111,10 @@
                     if (!angular.isDefined(scope.nsOptions.nsPrompt))
                         scope.nsOptions.nsPrompt = false;
 
-                    if (angular.isDefined(scope.nsOptions.nsTemplate)) {
+                    if (angular.isDefined(scope.nsOptions.nsTemplate))
                         $templateRequest(helpers.ui.getTemplate(scope.nsOptions.nsTemplate)).then(function(html) {
                             attachBodyHtml(html);
                         });
-                    }
                     else
                         attachBodyHtml(scope.nsOptions.nsBody);
 
@@ -128,7 +127,7 @@
                     else
                         $msg.css('width', scope.nsOptions.nsSize);
 
-                    registerHeightWatches();
+                    //registerHeightWatches();
 
                     unregisterCountWatch = scope.$watch('nsCount', function (newValue, oldValue) {
                         if (newValue < oldValue)
@@ -149,20 +148,21 @@
 
                 function registerHeightWatches() {
                     var windowHeight = window.innerHeight;
-                    unregisterMsgTitleHeightWatch = scope.$watch(function () {
-                        return $msgTitle.height();
-                    }, function (newValue, oldValue) {
-                        if (newValue > 0) {
-                            scope.height = $msg.height();
-                        }
-                    });
+                    //unregisterMsgTitleHeightWatch = scope.$watch(function () {
+                    //    return $msgTitle.height();
+                    //}, function (newValue, oldValue) {
+                    //    if (newValue > 0) {
+                    //        scope.height = $msg.height();
+                    //    }
+                    //});
                     unregisterMsgBodyHeightWatch = scope.$watch(function () {
                         return $msgBody.height();
                     }, function (newValue, oldValue) {
                         if (newValue > 0) {
                             $msg.css('height', newValue / windowHeight >= 0.8 ? '100%' : 'auto');
+                            //$msg.css('height', '100%');
                             scope.height = $msg.height();
-                            unregisterMsgBodyHeightWatch();
+                            //unregisterMsgBodyHeightWatch();
                         }
                     });
                 }
@@ -282,8 +282,8 @@
                 scope.$on('$destroy', function () {
                     cancelInterval();
                     unregisterCountWatch();
-                    unregisterMsgTitleHeightWatch();
-                    unregisterMsgBodyHeightWatch();
+                    //unregisterMsgTitleHeightWatch();
+                    //unregisterMsgBodyHeightWatch();
                 });
                 // #endregion
 
