@@ -6,7 +6,7 @@ using System.Web;
 
 namespace gzDAL.ModelUtil {
 
-    static public class DbExpressions {
+    public static class DbExpressions {
 
         /// <summary>
         /// How to truncate milliseconds off of a .NET DateTime
@@ -83,6 +83,16 @@ namespace gzDAL.ModelUtil {
         public static string GetStrYearMonth(int year, int month) {
 
             return year.ToString("0000") + month.ToString("00");
+        }
+
+        /// <summary>
+        /// Convert to string representation YYYYMM of year month i.e. April of 2015 -> "201504"
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string ToStringYearMonth(this DateTime source) {
+
+            return GetStrYearMonth(source.Year, source.Month);
         }
 
         /// <summary>

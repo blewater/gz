@@ -11,6 +11,8 @@ using System.Web.Routing;
 using AutoMapper;
 using gzDAL.Models;
 using gzDAL.DTO;
+using gzDAL.Repos;
+using gzDAL.Repos.Interfaces;
 using SimpleInjector;
 using SimpleInjector.Integration.WebApi;
 
@@ -31,8 +33,7 @@ namespace gzWeb
 
             if (dbMigrateToLatest)
             {
-                Database.SetInitializer(
-                    new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
                 // Initialize to latest version only if not run before
                 new ApplicationDbContext().Database.Initialize(false);
             }
@@ -48,6 +49,7 @@ namespace gzWeb
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
             container.Register<ApplicationDbContext, ApplicationDbContext>(Lifestyle.Scoped);
+            container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
             container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
             container.Verify();
             GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);

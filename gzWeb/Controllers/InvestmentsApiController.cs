@@ -6,6 +6,8 @@ using System.Web.Http;
 using gzDAL.Conf;
 using gzDAL.Models;
 using gzDAL.ModelUtil;
+using gzDAL.Repos;
+using gzDAL.Repos.Interfaces;
 using gzWeb.Configuration;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
@@ -19,9 +21,10 @@ namespace gzWeb.Controllers
     public class InvestmentsApiController : BaseApiController
     {
         #region Constructor
-        public InvestmentsApiController(ApplicationDbContext dbContext)
+        public InvestmentsApiController(ApplicationDbContext dbContext, ICustFundShareRepo custFundShareRepo)
         {
             _dbContext = dbContext;
+            _custFundShareRepo = custFundShareRepo;
         }
         #endregion
         
@@ -100,7 +103,7 @@ namespace gzWeb.Controllers
 
             var model = new PerformanceDataViewModel()
                         {
-                                Currency = "€",
+                                Currency = user.Currency, //"€",
                                 Plans = GetCustomerPlans(user)
                         };
             return OkMsg(model);
@@ -132,23 +135,18 @@ namespace gzWeb.Controllers
 
         private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
         {
-            var yearMonth = DbExpressions.GetStrYearMonth(DateTime.Now.Year, DateTime.Now.Month);
-            var customerPortfolio = _dbContext.CustPortfolios
-                                             .SingleOrDefault(x => x.CustomerId == user.Id &&
-                                                                   x.YearMonth == yearMonth);
+            var customerPortfolio = _custFundShareRepo.GetCurrentCustomerPortfolio(user.Id);
+
             var portfolios = _dbContext.Portfolios
                              .Where(x => x.IsActive);
 
             foreach (var portfolio in portfolios)
             {
-                yield return
-                        CreateFromPrototype(portfolio,
-                                            customerPortfolio,
-                                            customerPortfolio != null && portfolio.Id == customerPortfolio.PortfolioId);
+                yield return CreateFromPrototype(portfolio, customerPortfolio != null && portfolio.Id == customerPortfolio.Id);
             }
         }
 
-        private PlanViewModel CreateFromPrototype(Portfolio x, CustPortfolio custPortfolio, bool active)
+        private PlanViewModel CreateFromPrototype(Portfolio x, bool active)
         {
             var portfolioPrototype = PortfolioConfiguration.GetPortfolioPrototype(x.RiskTolerance);
             return new PlanViewModel
@@ -157,7 +155,7 @@ namespace gzWeb.Controllers
                            Title = portfolioPrototype.Title,
                            Balance = 0, // TODO: get from customer data
                            Color = portfolioPrototype.Color,
-                           Percent = active ? custPortfolio.Weight : 0,
+                           Percent = active ? 100 : 0,
                            ReturnRate = 0, // TODO: ???
                            Selected = active, // TODO: get from customer data
                            Holdings = x.PortFunds.Select(f => new HoldingViewModel
@@ -198,7 +196,9 @@ namespace gzWeb.Controllers
             new VintageViewModel {Date = new DateTime(2016, 2, 1), InvestAmount = 80M, ReturnPercent = 15},
             new VintageViewModel {Date = new DateTime(2016, 3, 1), InvestAmount = 150M, ReturnPercent = 10},
         };
-        
+
+        private ICustFundShareRepo _custFundShareRepo;
+
         #endregion
     }
 }
