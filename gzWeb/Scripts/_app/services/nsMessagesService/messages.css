@@ -111,16 +111,18 @@
 #ns-msgs .msg.msg-notification.msg-preparing,
 /*#ns-msgs .msg.msg-notification.msg-non-static,*/
 #ns-msgs .msg-container:last-child .msg.msg-notification.msg-active {
-    -ms-opacity: 0.7;
-    opacity: 0.7;
+    /*-ms-opacity: 0.7;
+    opacity: 0.7;*/
+    -ms-opacity: 1;
+    opacity: 1;
 
     -webkit-box-shadow: 0 0 10px #ccc;
     -ms-box-shadow: 0 0 10px #ccc;
     box-shadow: 0 0 10px #ccc;
 }
 #ns-msgs .msg-container:last-child .msg.msg-notification.msg-active:hover {
-    -ms-opacity: 1;
-    opacity: 1;
+    /*-ms-opacity: 1;
+    opacity: 1;*/
 
     -webkit-box-shadow: 0 0 10px #555;
     -ms-box-shadow: 0 0 10px #555;
@@ -150,16 +152,19 @@
     opacity: 0;
 }
 #ns-msgs .msg.msg-toastr.msg-active {
-    -ms-opacity: 0.7;
-    opacity: 0.7;
+    /*-ms-opacity: 0.7;
+    opacity: 0.7;*/
+    -ms-opacity: 1;
+    opacity: 1;
+
 
     -webkit-box-shadow: 0 0 10px #ccc;
     -ms-box-shadow: 0 0 10px #ccc;
     box-shadow: 0 0 10px #ccc;
 }
 #ns-msgs .msg.msg-toastr.msg-active:hover {
-    -ms-opacity: 1;
-    opacity: 1;
+    /*-ms-opacity: 1;
+    opacity: 1;*/
 
     -webkit-box-shadow: 0 0 10px #555;
     -ms-box-shadow: 0 0 10px #555;
@@ -174,8 +179,12 @@
 #ns-msgs .msg.msg-xl { width: calc(100% - 40px); }
 
 #ns-msgs .msg .msg-frame {
-    height: 15px;
+    /*height: 15px;*/
     background-color: #f2f2f2;
+}
+#ns-msgs .msg.msg-toastr .msg-frame,
+#ns-msgs .msg.msg-notification .msg-frame {
+    height: 15px;
 }
 #ns-msgs .msg .msg-frame .fa-angle-down,
 #ns-msgs .msg .msg-frame .fa-angle-up,
@@ -203,8 +212,8 @@
 
 #ns-msgs .msg .msg-content {
     min-height: 50px;
-    /*height: 100%;*/
-    height: calc(100% - 25px);
+    height: 100%;
+    /*height: calc(100% - 150px);*/
     margin-bottom: 4px;
 }
 
@@ -272,11 +281,15 @@
 
 #ns-msgs .msg .msg-body {
     padding: 30px 20px;
-    height: calc(100% - 150px);
+    /*height: calc(100% - 150px);*/
+    /*height: 100%;*/
+    /*max-height: calc(100vh - 150px);*/
+    max-height: 80vh;
     min-height: 150px;
     /*text-align: justify;*/
     overflow-y: auto;
     color: #f2f2f2;
+    background-color: #27A95C;
 }
 #ns-msgs .msg .msg-body input[type=text] {
     color: #000;
