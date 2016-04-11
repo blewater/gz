@@ -23,6 +23,46 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// Overloaded (Function): Calculate the Greenzorro & Fund fees on any amount that Greenzorro offered an investment service.
+        /// 
+        /// </summary>
+        /// <param name="liquidationAmount"></param>
+        /// <returns>Total Greenzorro + Fund fees on a investment amount.</returns>
+        public decimal GetWithdrawnFees(decimal liquidationAmount) {
+
+            decimal gzFeesAmount, fundsFeesAmount;
+            return GetWithdrawnFees(liquidationAmount, out gzFeesAmount, out fundsFeesAmount);
+        }
+
+        /// <summary>
+        /// 
+        /// Get the time-stamp of the only (query asks the last in case of duplicate test data)
+        /// liquidation transaction for the customer month's activity.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="yearCurrent"></param>
+        /// <param name="monthCurrent"></param>
+        /// <returns></returns>
+        public DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent) {
+
+            var yearMonthCurrentStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
+
+            var soldPortfolioTimestamp =
+                db.GzTransactions
+                    .Where(t => t.YearMonthCtd == yearMonthCurrentStr
+                                && t.CustomerId == customerId &&
+                                t.Type.Code == GzTransactionJournalTypeEnum.PortfolioLiquidation)
+                    .Select(t => new { t.Id, t.CreatedOnUTC })
+                    .OrderByDescending(t => t.Id)
+                    .Select(t => t.CreatedOnUTC)
+                    .Single();
+
+            return soldPortfolioTimestamp;
+        }
+
+        /// <summary>
+        /// 
         /// Create any type of transaction from those allowed.
         /// Used along with peer API methods for specialized transactions
         /// 
@@ -131,19 +171,6 @@ namespace gzDAL.Repos {
                 (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100;
 
             return gzFeesAmount + fundsFeesAmount;
-        }
-
-        /// <summary>
-        /// 
-        /// Overloaded (Function): Calculate the Greenzorro & Fund fees on any amount that Greenzorro offered an investment service.
-        /// 
-        /// </summary>
-        /// <param name="liquidationAmount"></param>
-        /// <returns>Total Greenzorro + Fund fees on a investment amount.</returns>
-        public decimal GetWithdrawnFees(decimal liquidationAmount) {
-
-            decimal gzFeesAmount, fundsFeesAmount;
-            return GetWithdrawnFees(liquidationAmount, out gzFeesAmount, out fundsFeesAmount);
         }
 
         /// <summary>

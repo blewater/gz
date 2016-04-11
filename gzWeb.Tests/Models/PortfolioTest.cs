@@ -117,9 +117,15 @@ namespace gzWeb.Tests.Models {
 
             int custId = CreateTestCustomer();
 
+            // Last Day of present Month @ 23:00
+            var yearCurrent = DateTime.UtcNow.Year;
+            var monthCurrent = DateTime.UtcNow.Month;
+            var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
+                23, 00, 00);
+
             var db = new ApplicationDbContext();
             var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                .SaveDbSellCustomerPortfolio(custId);
+                .SaveDbSellCustomerPortfolio(custId, lastMonthDay);
 
             Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
         }
