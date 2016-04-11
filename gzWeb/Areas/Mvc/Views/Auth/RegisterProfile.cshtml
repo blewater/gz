@@ -1,0 +1,58 @@
+﻿<div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="col s12 inbg">
+                    <div class="page-header text-center gren_heading">
+                        <h2>Start here!</h2>
+                        <h4>it only takes 45 seconds!</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="green_background_section">
+        <div class="user_icon"><img src="img/user_icon.png"></div>
+        <div class="row martp45">
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 inbg rtcn">
+                    <input placeholder="email@domain.com" id="email_address" name="email_address" type="email" class="validate" autocomplete="off" ng-model="model.email" required
+                           ng-class="{ 'input_danger' : (userForm.email_address.$invalid && !userForm.email_address.$pristine) || !emailValidation.isAvailable }"
+                           ng-focus="resetEmailValidation()" ng-blur="validateEmail(model.email)">
+                    <i class="fa fa-envelope-o"></i>
+                    <div class="help-block" ng-show="userForm.email_address.$invalid &amp;&amp; !userForm.email_address.$pristine">Please enter valid email</div>
+                    <div class="help-block" ng-show="!emailValidation.isAvailable">{{emailValidation.error}}</div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 inbg rtcn">
+                    <input placeholder="username" id="username" name="username" type="text" class="validate" autocomplete="off" ng-model="model.username" required 
+                           ng-class="{ 'input_danger' : (userForm.username.$invalid && !userForm.username.$pristine) || !usernameValidation.isAvailable}"
+                           ng-focus="resetUsernameValidation()" ng-blur="validateUsername(model.username)">
+                    <i class="fa fa-user"></i>
+                    <div class="help-block" ng-show="userForm.username.$invalid &amp;&amp; !userForm.username.$pristine">Username is required.</div>
+                    <div class="help-block" ng-show="!usernameValidation.isAvailable">{{usernameValidation.error}}</div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 inbg rtcn">
+                    <input placeholder="********" id="txt_password" name="txt_password" type="password" class="validate" ng-model="model.password" ng-minlength="3" ng-maxlength="8" required
+                           ng-class="{ 'input_danger' : (userForm.txt_password.$invalid && !userForm.txt_password.$pristine) || !passwordValidation.isValid }"
+                           ng-focus="resetPasswordValidation()" ng-blur="validatePassword(model.password)">
+                    <i class="fa fa-key"></i>
+                    <div class="help-block" ng-show="userForm.txt_password.$invalid &amp;&amp; !userForm.txt_password.$pristine">Password is required.</div>
+                    <div ng-show="userForm.txt_password.$error.minlength" class="help-block">Password is too short.</div>
+                    <div ng-show="userForm.txt_password.$error.maxlength" class="help-block">Password is too long.</div>
+                    <div class="help-block" ng-show="!passwordValidation.isValid">{{passwordValidation.error}}</div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 inbg">
+                    <div class="sub_btn martb text-center">
+                        <a ui-sref-active="active" class="waves-effect waves-light btn" ng-disabled="userForm.$invalid" ng-click="proccedToUserDetails()">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

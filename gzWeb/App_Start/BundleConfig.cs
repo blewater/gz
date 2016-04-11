@@ -110,6 +110,7 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
                 , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
                 , "~/Scripts/_app/controllers/investments/activityCtrl.js"
+                , "~/Scripts/_app/controllers/investments/showVintagesCtrl.js"
                 , "~/Scripts/_app/controllers/games/games1Ctrl.js"
                 , "~/Scripts/_app/controllers/games/games2Ctrl.js"
                 , "~/Scripts/_app/controllers/games/games3Ctrl.js"

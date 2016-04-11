@@ -1,0 +1,147 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div>
+    <div class="row">
+        <div class="col-sm-12 gren_heading">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="col s12 inbg">
+                    <div class="page-header text-center bono">
+                        <div class="top_click col-sm-8">
+                            <div class="col-sm-10 col-sm-offset-1">
+                                <div class="progress progress-striped active text-center" id="bar">
+                                    <div class="bar" style="width: 50%;"></div>
+                                </div>
+                                <span class="round left tick"><i class="fa fa-check"></i></span>
+                                <span class="round center"><i class="fa fa-check"></i></span>
+                                <span class="round rud_rt"><i class="fa fa-check"></i></span>
+                            </div>
+                        </div>
+                        <ul class="cre_taxt">
+                            <li class="mar_lt">1. Create<br>Account</li>
+                            <li class="mar_cent bold">2. Enter<br>Details</li>
+                            <li class="mat_rt">3. Deposite</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="green_background_section">
+        <div class="user_icon"><img src="img/user_icon.png"></div>
+        <div class="row martp45">
+            <div class="cent_alldeta">
+                <div class="wid50 pdrt">
+                    <div class="input-field inbg">
+                        <input placeholder="First Name" id="first_name" name="first_name" type="text" class="validate" autocomplete="off" ng-model="model.firstname" required 
+                               ng-class="{ 'input_danger' : userForm.first_name.$invalid && !userForm.first_name.$pristine }">
+                        <div class="help-block" ng-show="userForm.first_name.$invalid &amp;&amp; !userForm.first_name.$pristine">First Name is required.</div>
+                    </div>
+                </div>
+                <div class="wid50 pdlt">
+                    <div class="input-field inbg">
+                        <input placeholder="Last Name" id="last_name" name="last_name" type="text" class="validate" autocomplete="off" ng-model="user.lastname" required 
+                               ng-class="{ 'input_danger' : userForm.last_name.$invalid && !userForm.last_name.$pristine }">
+                        <div class="help-block" ng-show="userForm.last_name.$invalid &amp;&amp; !userForm.last_name.$pristine">Last Name is required.</div>
+                    </div>
+                </div>
+
+
+                <div class="for_wrap">
+                    <div class="ya_wrap sel">
+                        <select class="validate" name="year" id="year" ng-model="model.yearOfBirth" required>
+                            <option ng-repeat="year in years" value="{{year}}">{{year}}</option>
+                        </select>
+                    </div>
+                    <div class="ya_wrap sel">
+                        <select class="validate" name="month" id="month" ng-model="model.monthOfBirth" required>
+                            <option ng-repeat="month in months" value="{{month.value}}">{{month.display}}</option>
+                        </select>
+                    </div>
+                    <div class="ya_wrap sel">
+                        <select class="validate" name="days" id="days" ng-model="model.dayOfBirth" required>
+                            <option ng-repeat="day in daysOfMonth" value="day">{{day}}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="ya_wrap last_ya sel">
+                        <select class="validate" name="gender" id="gender" ng-model="model.title" required>
+                            <option ng-repeat="title in titles" value="title">{{title}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="input-field inbg">
+                            <input placeholder="Postal Code" id="postal_code" name="postal_code" type="text" class="validate" autocomplete="off" ng-model="user.postal_code" required ng-class="{ 'input_danger' : userForm.postal_code.$invalid && !userForm.postal_code.$pristine }">
+                            <div class="help-block" ng-show="userForm.postal_code.$invalid &amp;&amp; !userForm.postal_code.$pristine">Postal Code is required.</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8 padno">
+                        <div class="input-field inbg">
+                            <input placeholder="City" id="city" name="city" type="text" class="validate" autocomplete="off" ng-model="user.city" required 
+                                   ng-class="{ 'input_danger' : userForm.city.$invalid && !userForm.city.$pristine }">
+                            <div class="help-block" ng-show="userForm.city.$invalid &amp;&amp; !userForm.city.$pristine">City is required.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="for_wrap">
+                        <div class="col-sm-4">
+                            <div class="input-field inbg sel longarow_mob">
+                                <select class="validate" name="currency" id="currency">
+                                    <option>Currency</option>
+                                    <option value="Doller">Doller</option>
+                                    <option value="Euro">Euro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 padno">
+                            <div class="input-field inbg sel longarow">
+                                <select class="validate" name="country" id="country" ng-model="model.country" ng-change="onCountryChanged()">
+                                    <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="">
+                        <div class="col-sm-4">
+                            <div class="input-field inbg sel longarow_mob">
+                                <select class="validate" name="country_code" id="country_code" ng-model="model.phonePrefix">
+                                    <option ng-repeat="phonePrefix in phonePrefixes" value="{{phonePrefix}}">{{phonePrefix}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 padno">
+                            <div class="input-field inbg">
+                                <input placeholder="Telephone" id="telephone" name="telephone" type="number" class="validate" autocomplete="off" ng-model="user.telephone" required ng-class="{ 'input_danger' : userForm.telephone.$invalid && !userForm.telephone.$pristine }">
+                                <div class="help-block" ng-show="userForm.telephone.$invalid &amp;&amp; !userForm.telephone.$pristine">Telephone is required.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chk">
+                    <input type="checkbox" checked="checked" id="filled-in-box" class="filled-in">
+                    <label for="filled-in-box">I have read and agreed the <a href="#">terms & conditions</a></label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="input-field inbg">
+                            <div class="sub_btn text-center">
+                                <a ui-sref-active="active" class="waves-effect waves-light btn" ng-disabled="userForm.$invalid" ng-click="stepTwo()">Next</a>
+                                <!--<a ui-sref="form.paymentMethod" ui-sref-active="active" class="waves-effect waves-light btn">Next</a>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

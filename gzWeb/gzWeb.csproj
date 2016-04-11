@@ -345,8 +345,11 @@
     <Content Include="Content\Styles\bootstrap\bootstrap.min.css" />
     <Content Include="Content\Images\gz_logo.png" />
     <Content Include="Content\Images\gz_logo_sm.png" />
+    <Content Include="Content\Styles\exceptionaire-media.css" />
+    <Content Include="Content\Styles\exceptionaire-style.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
+    <Content Include="Content\Styles\exceptionaire-meterialize.css" />
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
@@ -358,6 +361,7 @@
     <Content Include="Content\Styles\ui-bootstrap\ui-bootstrap-csp.css" />
     <Content Include="favicon.ico" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Styles\Site.css" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.woff2" />
@@ -402,11 +406,16 @@
     <Content Include="Areas\Mvc\Views\Auth\Register.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Login.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_AuthLayout.cshtml" />
+    <Content Include="Areas\Mvc\Views\Auth\RegisterProfile.cshtml" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Areas\Mvc\Views\Auth\RegisterForm.cshtml" />
+    <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
-    <Content Include="Sample.html" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
     <Content Include="Scripts\angular-animate\angular-animate.min.js" />
     <Content Include="Scripts\angular-cookies\angular-cookies.js" />
@@ -440,6 +449,7 @@
     <Content Include="Scripts\d3-tip\d3-tip.js" />
     <Content Include="Scripts\d3\d3.js" />
     <Content Include="Scripts\d3\d3.min.js" />
+    <Content Include="Scripts\exceptionaire-materialize.min.js" />
     <Content Include="Scripts\moment\moment-with-locales.js" />
     <Content Include="Scripts\moment\moment-with-locales.min.js" />
     <Content Include="Scripts\moment\moment.js" />
