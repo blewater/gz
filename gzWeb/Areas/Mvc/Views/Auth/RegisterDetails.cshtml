@@ -51,24 +51,35 @@
 
                 <div class="for_wrap">
                     <div class="ya_wrap sel">
-                        <select class="validate" name="year" id="year" ng-model="model.yearOfBirth" required>
-                            <option ng-repeat="year in years" value="{{year}}">{{year}}</option>
+                        <select class="validate" name="year" id="year"
+                                ng-model="model.yearOfBirth"
+                                ng-options="year for year in years"
+                                ng-change="updateDaysOfMonth(model.yearOfBirth, model.monthOfBirth)"
+                                required>
+                            <option value="" disabled selected>YYYY</option>
                         </select>
                     </div>
                     <div class="ya_wrap sel">
-                        <select class="validate" name="month" id="month" ng-model="model.monthOfBirth" required>
-                            <option ng-repeat="month in months" value="{{month.value}}">{{month.display}}</option>
+                        <select class="validate" name="month" id="month"
+                                ng-model="model.monthOfBirth"
+                                ng-options="month.value as month.display for month in months"
+                                ng-change="updateDaysOfMonth(model.yearOfBirth, model.monthOfBirth)"
+                                required>
+                            <option value="" disabled selected>MM</option>
                         </select>
                     </div>
                     <div class="ya_wrap sel">
-                        <select class="validate" name="days" id="days" ng-model="model.dayOfBirth" required>
-                            <option ng-repeat="day in daysOfMonth" value="day">{{day}}</option>
+                        <select class="validate" name="days" id="days"
+                                ng-model="model.dayOfBirth"
+                                ng-options="day.value as day.display for day in daysOfMonth" 
+                                required>
+                            <option value="" disabled selected>DD</option>
                         </select>
                     </div>
                     
                     <div class="ya_wrap last_ya sel">
                         <select class="validate" name="gender" id="gender" ng-model="model.title" required>
-                            <option ng-repeat="title in titles" value="title">{{title}}</option>
+                            <option ng-repeat="title in titles" value="{{title}}">{{title}}</option>
                         </select>
                     </div>
                 </div>
