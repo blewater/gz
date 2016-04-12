@@ -193,6 +193,11 @@
     cursor: pointer;
     color: #27A95C;
 }
+#ns-msgs .msg .msg-frame .fa-angle-down,
+#ns-msgs .msg .msg-frame .fa-angle-up {
+    font-weight: bold;
+}
+
 #ns-msgs .msg .msg-badge {
     padding: 1px 3px;
     font-size: 10px;
