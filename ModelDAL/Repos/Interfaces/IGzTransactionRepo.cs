@@ -5,6 +5,8 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface IGzTransactionRepo {
 
+        DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent);
+
         decimal GetWithdrawnFees(decimal liquidationAmount);
 
         void SaveDbGzTransaction(int customerId, GzTransactionJournalTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc);

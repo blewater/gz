@@ -24,12 +24,15 @@ namespace gzDAL.Repos {
         #region Fund Shares Selling
 
         /// <summary>
+        /// 
         /// Sell completely a customer's portfolio
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
+        /// <param name="updatedDateTimeUtc">The database creation time-stamp.</param>
         /// <param name="yearCurrent">Optional year value for selling in the past</param>
         /// <param name="monthCurrent">Optional month value for selling in the past</param>
-        public bool SaveDbSellCustomerPortfolio(int customerId, int yearCurrent = 0, int monthCurrent = 0) {
+        public bool SaveDbSellCustomerPortfolio(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0, int monthCurrent = 0) {
 
             // Assume we don't sell shares
             var soldShares = false;
@@ -50,12 +53,12 @@ namespace gzDAL.Repos {
             var portfolioFundsValuesThisMonth = customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(customerId, -1, yearCurrent, monthCurrent);
 
             // Make sure we have shares to sell
-            if (portfolioFundsValuesThisMonth.Sum(f=>f.Value.SharesNum) > 0) {
+            if (portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesNum) > 0) {
 
                 decimal invGainLoss, monthlyBalance;
                 GetSharesBalanceThisMonth(customerId, portfolioFundsValuesThisMonth, yearCurrent, monthCurrent, out monthlyBalance, out invGainLoss);
 
-                SaveDbLiquidateCustomerPortfolio(portfolioFundsValuesThisMonth, customerId, yearCurrent, monthCurrent, monthlyBalance, invGainLoss);
+                SaveDbLiquidateCustomerPortfolio(portfolioFundsValuesThisMonth, customerId, yearCurrent, monthCurrent, monthlyBalance, invGainLoss, updatedDateTimeUtc);
 
                 soldShares = true;
             }
@@ -77,13 +80,15 @@ namespace gzDAL.Repos {
         /// <param name="monthCurrent"></param>
         /// <param name="newMonthlyBalance"></param>
         /// <param name="invGainLoss"></param>
+        /// <param name="updatedDateTimeUtc">Set the desired datetime stamp of the db operations</param>
         private void SaveDbLiquidateCustomerPortfolio(
             Dictionary<int, PortfolioFundDTO> portfolioFunds,
             int customerId,
             int yearCurrent,
             int monthCurrent,
             decimal newMonthlyBalance,
-            decimal invGainLoss) {
+            decimal invGainLoss,
+            DateTime updatedDateTimeUtc) {
 
             ConnRetryConf.TransactWithRetryStrategy(db,
 
@@ -95,13 +100,13 @@ namespace gzDAL.Repos {
                             customerId,
                             newMonthlyBalance,
                             GzTransactionJournalTypeEnum.PortfolioLiquidation,
-                            DateTime.UtcNow);
+                            updatedDateTimeUtc);
 
                     customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(boughtShares: false, customerId: customerId,
                         fundsShares: portfolioFunds,
                         year: yearCurrent,
                         month: monthCurrent,
-                        updatedOnUtc: DateTime.UtcNow);
+                        updatedOnUtc: updatedDateTimeUtc);
 
                     db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
                         new InvBalance {
@@ -111,7 +116,7 @@ namespace gzDAL.Repos {
                             CashBalance = remainingCashAmount,
                             InvGainLoss = invGainLoss,
                             CashInvestment = -remainingCashAmount,
-                            UpdatedOnUTC = DateTime.UtcNow
+                            UpdatedOnUTC = updatedDateTimeUtc
                         });
 
                 });
@@ -166,12 +171,10 @@ namespace gzDAL.Repos {
         private void GetSharesBalanceThisMonth(
             int customerId,
             Dictionary<int, PortfolioFundDTO> portfolioFundsValuesThisMonth,
-            int yearCurrent, 
-            int monthCurrent, 
+            int yearCurrent,
+            int monthCurrent,
             out decimal customerMonthsBalance,
-            out decimal invGainLoss) 
-        
-        {
+            out decimal invGainLoss) {
             var monthlySharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
             var newSharesVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue);
             var prevMonthsSharesPricedNow = monthlySharesValue - newSharesVal;
@@ -301,6 +304,31 @@ namespace gzDAL.Repos {
                 if (monthlyCashToInvest >= 0) {
                     SaveDbCustomerMonthBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
                 }
+
+                ResellPortfolioIfPreviouslyWasSold(customerId, g, yearCurrent, monthCurrent);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Check if the portfolio was previously sold and "resell it" otherwise that information will be lost.
+        /// Relies on the existence of the GzTransactionJournalTypeEnum.PortfolioLiquidation transaction type 
+        /// to trigger reselling.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="monthTransactions"></param>
+        /// <param name="yearCurrent"></param>
+        /// <param name="monthCurrent"></param>
+        private void ResellPortfolioIfPreviouslyWasSold(int customerId, IGrouping<string, GzTransaction> monthTransactions, int yearCurrent, int monthCurrent) {
+
+            if (monthTransactions.Count(t => t.Type.Code == GzTransactionJournalTypeEnum.PortfolioLiquidation) > 0) {
+
+                // -- Or in the rare of a portfolio liquidation support idempotency by reselling the portfolio
+                var soldPortfolioTimestamp = gzTransactionRepo.GetSoldPortfolioTimestamp(customerId, yearCurrent,
+                    monthCurrent);
+
+                SaveDbSellCustomerPortfolio(customerId, soldPortfolioTimestamp, yearCurrent, monthCurrent);
             }
         }
 

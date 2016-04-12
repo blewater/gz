@@ -1,18 +1,131 @@
 ﻿@{
-    Layout = "~/Areas/Mvc/Views/Shared/_AuthLayout.cshtml";
+    Layout = null;
 }
 
-<h1 class="text-center">GREENZORRO</h1>
-<h3 class="text-center">Register</h3>
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>..:: Greenzorro ::..</title>
+    <link type="text/css" href="~/Content/Styles/exceptionaire-meterialize.css" rel="stylesheet" media="screen,projection"/>
+    <link href="~/Content/Styles/font-awesome/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/Styles/font-awesome/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/Styles/bootstrap/bootstrap.css" rel="stylesheet"/>
+    <link href="~/Content/Styles/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/Styles/exceptionaire-media.css" rel="stylesheet" />
+    <link href="~/Content/Styles/exceptionaire-style.css" rel="stylesheet" />
+</head>
 
-<form>
-    <label>EMail:
-        <input type="email" ng-model="model.email" ng-blur="validateEmail(model.email)"/>
-    </label>
-    <label>Password:
-        <input type="password" ng-model="model.password" ng-blur="validatePassword(model.password)" />
-    </label>
-    <label>Date of birth:
-        <input type="date" ng-model="model.dateOfBirth" />
-    </label>
-</form>
+<body ng-app="GZ">
+    <div class="pull-right">
+        <button data-target="modal1" ng-click="stepFirst()" class="btn modal-trigger">Register</button>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal modal-fixed-footer modal-dialog">
+        <a class="btn-floating white waves-effect waves-light btn-large rt_btn" ng-click="stepFirst()"><img src="img/close.png"></a>
+        <div ui-view></div>
+    </div>
+    <!--Import jQuery before materialize.js-->
+    <script src="~/Scripts/jquery/jquery-1.12.0.min.js"></script>
+    <script src="~/Scripts/exceptionaire-materialize.min.js"></script>
+    <script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap/bootstrap.js"></script>
+    <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+    <script src="~/Scripts/moment/moment.min.js"></script>
+    <script src="~/Scripts/angular/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.min.js"></script>
+    <script src="~/Scripts/angular-animate/angular-animate.min.js"></script>
+    <script src="~/Scripts/angular-wamp/angular-wamp.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+            $('.modal-trigger').leanModal();
+        });
+    </script>
+
+    <script type="text/javascript">
+        var APP = angular.module('GZ', ['ngAnimate', 'ui.router', 'vxWamp']);
+        APP.constant('constants', {
+            webeocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
+            fallbackApiUrl: 'https://fb-webapi-stage.everymatrix.com',
+            domainPrefix: 'http://www.greenzorro.com',
+            emailVerificationUrl: 'localhost:63659/activate?key='
+        });
+        APP.config(function ($stateProvider, $urlRouterProvider, $wampProvider, constants) {
+
+            $wampProvider.init({
+                transports: [
+                    { 'type': 'websocket', 'url': constants.webeocketApiUrl },
+                    { 'type': 'longpoll', 'url': constants.fallbackApiUrl }
+                ],
+                url: constants.websocketApiUrl,
+                realm: constants.domainPrefix
+            });
+
+            $stateProvider
+                .state('form', {
+                    url: '/form',
+                    templateUrl: 'RegisterForm',
+                    //controller: 'formController'
+                })
+                .state('form.profile', {
+                    url: '/profile',
+                    templateUrl: 'RegisterProfile'
+                })
+                .state('form.details', {
+                    url: '/details',
+                    templateUrl: 'RegisterDetails'
+                })
+                .state('form.paymentMethod', {
+                    url: '/paymentMethod',
+                    templateUrl: 'form-payment-method.html'
+                })
+                .state('form.paymentDetails', {
+                    url: '/paymentDetails',
+                    templateUrl: 'form-paymentDetails.html'
+                });
+
+            $urlRouterProvider.otherwise('/form/profile');
+
+        });
+        APP.controller('formController', function($scope, $state) {
+                $scope.formData = {};
+                $scope.processForm = function() {
+                    alert('awesome here!');
+                };
+                $scope.processProfile = function() {
+                    alert('awesome!');
+                };
+
+                $scope.stepOne = function() {
+                    if ($scope.userForm.$valid) {
+                        $state.go('form.details');
+                    } else {
+                        return false;
+                    }
+                };
+
+                $scope.stepTwo = function() {
+                    if ($scope.userForm.$valid) {
+                        $state.go('form.paymentMethod');
+                    } else {
+                        return false;
+                    }
+                };
+
+                $scope.stepThree = function() {
+                    if ($scope.userForm.$valid) {
+                        alert("Form submitted.");
+                    } else {
+                        return false;
+                    }
+                };
+            });
+    </script>
+    <script src="~/Scripts/_app/services/emWamp.js"></script>
+    <script src="~/Scripts/_app/controllers/auth/registerCtrl.js"></script>
+</body>
+</html>
