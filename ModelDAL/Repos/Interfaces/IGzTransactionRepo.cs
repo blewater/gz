@@ -5,6 +5,8 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface IGzTransactionRepo {
 
+        bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);
+
         DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent);
 
         decimal GetWithdrawnFees(decimal liquidationAmount);
