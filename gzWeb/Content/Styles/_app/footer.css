@@ -10,3 +10,9 @@ footer {
     line-height: 50px;
     color: #000;
 }
+
+@media (max-width: 767px) {
+    footer {
+        font-size: 11px;
+    }
+}
