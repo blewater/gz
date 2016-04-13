@@ -259,7 +259,16 @@ namespace gzDAL.Repos {
         /// Process All Monthly Customer Balances whether they have transactions or not.
         /// 
         /// </summary>
-        public void SaveDbAllCustomerMonthlyBalances(string startYearMonthStr, string endYearMonthStr) {
+        /// <param name="startYearMonthStr">If null assuming -> GzTransactions.Min(t => t.YearMonthCtd)</param>
+        /// <param name="endYearMonthStr">If null assuming -> GzTransactions.Max(t => t.YearMonthCtd)</param>
+        public void SaveDbAllCustomerMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null) {
+
+            if (string.IsNullOrEmpty(startYearMonthStr)) {
+                startYearMonthStr = _db.GzTransactions.Min(t => t.YearMonthCtd);
+            }
+            if (string.IsNullOrEmpty(endYearMonthStr)) {
+                endYearMonthStr = _db.GzTransactions.Max(t => t.YearMonthCtd);
+            }
 
             while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
 
@@ -326,46 +335,59 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="customerMonthlyTrx"></param>
-        private void SaveDbCustomerMonthlyBalancesByTrx(int customerId, IEnumerable<IGrouping<string, GzTransaction>> customerMonthlyTrx) {
+        /// <param name="customerMonthlyTrxs"></param>
+        private void SaveDbCustomerMonthlyBalancesByTrx(int customerId, IEnumerable<IGrouping<string, GzTransaction>> customerMonthlyTrxs) {
 
             // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
-            foreach (var g in customerMonthlyTrx) {
+            foreach (var customerMonthlyTrx in customerMonthlyTrxs) {
 
                 // Step 3: Calculate monthly cash balances before investment
-                SaveDbCustomerMonthlyBalances(customerId, g);
+                SaveDbCustomerMonthlyBalances(customerId, customerMonthlyTrx);
             }
         }
 
         /// <summary>
         /// 
-        /// Process the investment and cash balance for a single customer on a single month.
+        /// Overloaded: Process the investment and cash balance for a single customer on a single month.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="customerMonthlyTrx"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        private void SaveDbCustomerMonthlyBalances(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrx, int yearCurrent = 0, int monthCurrent = 0) {
+        /// <param name="customerMonthlyTrxs"></param>
+        private void SaveDbCustomerMonthlyBalances(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs) {
+
+            int yearCurrent = 0, monthCurrent = 0;
 
             // Initialize year month if needed
-            if (yearCurrent == 0 && customerMonthlyTrx != null) {
+            if (yearCurrent == 0 && customerMonthlyTrxs != null) {
 
-                yearCurrent = int.Parse(customerMonthlyTrx.Key.Substring(0, 4));
+                yearCurrent = int.Parse(customerMonthlyTrxs.Key.Substring(0, 4));
 
             }
-            if (monthCurrent == 0 && customerMonthlyTrx != null) {
+            if (monthCurrent == 0 && customerMonthlyTrxs != null) {
 
-                monthCurrent = int.Parse(customerMonthlyTrx.Key.Substring(4, 2));
+                monthCurrent = int.Parse(customerMonthlyTrxs.Key.Substring(4, 2));
             }
+
+            SaveDbCustomerMonthlyBalances(customerId, customerMonthlyTrxs, yearCurrent, monthCurrent);
+        }
+
+        /// <summary>
+        /// 
+        /// Overloaded: Process the investment and cash balance for a single customer on a single month.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="customerMonthlyTrxs"></param>
+        /// <param name="yearCurrent"></param>
+        /// <param name="monthCurrent"></param>
+        private void SaveDbCustomerMonthlyBalances(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs, int yearCurrent, int monthCurrent) {
 
             if (yearCurrent == 0 || monthCurrent == 0) {
                 throw new Exception("Cannot have either year or month equal to 0 inside SaveDbCustomerMonthlyBalances()");
             }
 
             // Process
-
-            var monthlyCashToInvest = GetMonthlyCashToInvest(customerMonthlyTrx);
+            var monthlyCashToInvest = GetMonthlyCashToInvest(customerMonthlyTrxs);
 
             if (monthlyCashToInvest >= 0) {
                 SaveDbCustomerMonthBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);

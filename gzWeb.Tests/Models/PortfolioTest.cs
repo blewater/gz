@@ -135,7 +135,7 @@ namespace gzWeb.Tests.Models {
         public void SaveDbUpdAllCustomerBalances() {
             var db = new ApplicationDbContext();
             new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                .SaveDbAllCustomerMonthlyBalances("201401", DateTime.UtcNow.ToStringYearMonth());
+                .SaveDbAllCustomerMonthlyBalances();
         }
 
         [TestMethod]
