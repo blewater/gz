@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzPerformanceGraph', ['$filter', '$location', '$interval', 'helpers', directiveFactory]);
+    APP.directive('gzPerformanceGraph', ['$rootScope', '$filter', '$location', '$interval', 'helpers', directiveFactory]);
 
-    function directiveFactory($filter, $location, $interval, helpers) {
+    function directiveFactory($rootScope, $filter, $location, $interval, helpers) {
         return {
             restrict: 'EA',
             scope: {
@@ -37,9 +37,9 @@
                 }
 
                 var aspect = 2;
-                var margin = { top: 120, right: 20, bottom: 80, left: 100 };
+                //var margin = { top: 120, right: 20, bottom: 80, left: 100 };
                 var canvas = d3.select('#canvas');
-                var canvasWidth, canvasHeight, width, height;
+                var canvasWidth, canvasHeight, width, height, margin, xAxisPosition, yAxisPosition;
                 var now = new Date();
                 var thisYear = now.getFullYear();
                 var x, y, xAxis, yAxis;
@@ -103,10 +103,27 @@
                 }
 
                 function initGraph() {
-                    canvasWidth = canvas.node().getBoundingClientRect().width;
-                    canvasHeight = Math.round(canvasWidth / aspect);
+                    if ($rootScope.xs) {
+                        canvasHeight = 360;
+                        canvasWidth = canvas.node().getBoundingClientRect().width;
+                    } else {
+                        canvasWidth = canvas.node().getBoundingClientRect().width;
+                        canvasHeight = Math.round(canvasWidth / aspect);
+                    }
+                    margin = {
+                        top: (function () { return $rootScope.xs ? 80 : 120; })(),
+                        right: 20,
+                        bottom: (function () { return $rootScope.xs ? 60 : 80; })(),
+                        left: (function () { return $rootScope.xs ? 70 : 100; })()
+                    };
+
                     width = canvasWidth - margin.left - margin.right;
                     height = canvasHeight - margin.top - margin.bottom;
+                    xAxisPosition = { x: 0, y: margin.bottom - 20 };
+                    yAxisPosition = { x: -height / 2, y: -(margin.left - 20) };
+                    //xAxisPosition = { x: 0, y: 60 };
+                    //yAxisPosition = { x: -height / 2, y: -80 };
+
 
                     x = d3.scale.linear()
                         //.domain(d3.extent(this.axisData.x, function (d) { return d; }))
@@ -177,10 +194,12 @@
                     canvas.select("svg").remove();
 
                     var svg = d3.select('#canvas').append("svg")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
+                        .attr("width", canvasWidth)
+                        .attr("height", canvasHeight)
                       .append("g")
-                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                        .attr("transform", function() {
+                            return "translate(" + margin.left + "," + margin.top + ")";
+                        });
 
                     defineGradient("gradient1", 0.4, 0.2, 0);
                     defineGradient("gradient2", 0.3, 0.15, 0);
@@ -201,7 +220,7 @@
 
                     var xAxisTitle = xAxisLabels.append("text")
                         .attr("class", "axis-title")
-                        .attr("transform", "translate(0," + 60 + ")")
+                        .attr("transform", "translate(" + xAxisPosition.x + "," + xAxisPosition.y + ")")
                         .style("text-anchor", "middle")
                         .text("Years");
                     xAxisTitle.attr("x", function () {
@@ -213,7 +232,7 @@
                         .call(yAxis)
                     .append("text")
                         .attr("class", "axis-title")
-                        .attr("transform", "rotate(-90)translate(" + -height / 2 + "," + -80 + ")")
+                        .attr("transform", "rotate(-90)translate(" + yAxisPosition.x + "," + yAxisPosition.y + ")")
                         .attr("y", 6)
                         .attr("dy", ".71em")
                         .style("text-anchor", "middle")

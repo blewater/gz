@@ -655,6 +655,8 @@
         border-top: 2px solid #f2f2f2;
         border-bottom: 2px solid #f2f2f2;
     }
+    .investments .performance #canvas .axis-title { font-size: 1em; }
+    .investments .performance #canvas .axis text { font-size: 8px; }
 }
 /* #endregion */
 

@@ -10,8 +10,8 @@
             firstname: null,
             lastname: null,
             yearOfBirth: null,
-            monthOfBirth: 1,
-            dayOfBirth: 1,
+            monthOfBirth: null,
+            dayOfBirth: null,
             title: 'Mr.',
             postalCode: null,
             city: null,
@@ -44,6 +44,19 @@
             'Mrs.',
             'Miss'
         ];
+
+        $scope.updateDaysOfMonth = function(year, month) {
+            var daysInMonth = moment.utc([year, month-1]).daysInMonth();
+            $scope.daysOfMonth.slice(0, $scope.daysOfMonth.length);
+            for (var m = 1; m <= daysInMonth; m++) {
+                var pad = '00';
+                var str = '' + m;
+                $scope.daysOfMonth.push({
+                    value: m,
+                    display: ('00' + m).substring(0, pad.length - str.length) + str
+                });
+            };
+        };
 
         $scope.usernameValidation = {
             isValidating: false,
@@ -195,19 +208,12 @@
             getCurrencies();
 
             var maxYear = 100;
-            var year = new Date().getFullYear() - 18;
-            $scope.yearOfBirth = year;
+            var year = moment().year();
             do {
                 $scope.years.push(year);
-                //$angular.array($scope.years, year);
                 year--;
                 maxYear--;
             } while (maxYear > 0);
-
-            for (var m = 1; m < 32; m++) {
-                $scope.daysOfMonth.push(m);
-            };
-
         };
 
         init();

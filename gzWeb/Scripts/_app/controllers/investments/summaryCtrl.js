@@ -6,7 +6,6 @@
         $scope.showAllVintages = function () {
             message.modal('Vintages history', {
                 nsSize: 'md',
-                //nsStatic: true,
                 nsTemplate: '/partials/messages/showVintages.html',
                 nsCtrl: 'showVintagesCtrl',
                 nsParams: { vintages: $scope.model.Vintages }
