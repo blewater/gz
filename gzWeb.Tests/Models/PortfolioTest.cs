@@ -11,6 +11,7 @@ using gzDAL.Repos;
 using AutoMapper;
 using gzDAL.DTO;
 using gzDAL.Conf;
+using gzDAL.ModelUtil;
 
 namespace gzWeb.Tests.Models {
     [TestClass]
@@ -131,7 +132,14 @@ namespace gzWeb.Tests.Models {
         }
 
         [TestMethod]
-        public void SaveDbUpdCustomerInvBalances() {
+        public void SaveDbUpdAllCustomerBalances() {
+            var db = new ApplicationDbContext();
+            new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                .SaveDbAllCustomerMonthlyBalances();
+        }
+
+        [TestMethod]
+        public void SaveDbUpdCustomerBalancesByTrx() {
 
             int custId = CreateTestCustomer();
 

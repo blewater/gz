@@ -35,6 +35,20 @@ namespace gzDAL.ModelUtil {
         }
 
         /// <summary>
+        /// 
+        /// DateTime Extension for return the months difference between the 2 dates.
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="subtractMonths"></param>
+        /// <returns></returns>
+        public static int GetMonthsDiff(this DateTime source, DateTime subtractMonths) {
+
+            return MonthDiff(source, subtractMonths);
+        }
+
+
+        /// <summary>
         /// Slack chat 
         /// .6 to round up on our fees calculation. 0 Decimals.
         /// For example: 3.5 --> 3, 3.6 --> 4
@@ -110,8 +124,11 @@ namespace gzDAL.ModelUtil {
         }
 
         /// <summary>
+        /// 
         /// i.e. "20150630" -> new DateTime(2015, 6, 30)
+        /// 
         /// </summary>
+        /// 
         /// <param name="yearMonthDay"></param>
         /// <returns></returns>
         public static DateTime GetDtYearMonthDay(string yearMonthDay) {
@@ -119,5 +136,71 @@ namespace gzDAL.ModelUtil {
                         , int.Parse(yearMonthDay.Substring(4, 2))
                         , int.Parse(yearMonthDay.Substring(6, 2)));
         }
+
+        /// <summary>
+        /// 
+        /// Return the following month in string format YYYYMM i.e. 201604 for April 2016.
+        /// 
+        /// </summary>
+        /// <param name="yearMonthStr"></param>
+        /// <returns></returns>
+        public static string AddMonth(string yearMonthStr) {
+
+            var dtYearMonth = new DateTime(int.Parse(yearMonthStr.Substring(0, 4))
+                        , int.Parse(yearMonthStr.Substring(4, 2)), 1);
+
+            dtYearMonth = dtYearMonth.AddMonths(1);
+
+            return dtYearMonth.ToStringYearMonth();
+        }
+
+        /// <summary>
+        /// 
+        /// Ordinal comparison less than
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public static bool Before(this string source, string to) {
+            return string.Compare(source, to, StringComparison.Ordinal) < 0;
+        }
+
+        /// <summary>
+        /// 
+        /// Ordinal comparison greater than
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public static bool Later(this string source, string to) {
+            return string.Compare(source, to, StringComparison.Ordinal) > 0;
+        }
+
+        /// <summary>
+        /// 
+        /// Ordinal comparison less or equal than
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public static bool BeforeEq(this string source, string to) {
+            return string.Compare(source, to, StringComparison.Ordinal) <= 0;
+        }
+
+        /// <summary>
+        /// 
+        /// Ordinal comparison greater or equal than
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public static bool LaterEq(this string source, string to) {
+            return string.Compare(source, to, StringComparison.Ordinal) >= 0;
+        }
+
     }
 }
