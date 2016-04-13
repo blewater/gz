@@ -412,6 +412,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterForm.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
+    <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />

@@ -3,6 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace gzWeb.Models
 {
+    public class ActivationBindingModel
+    {
+        [Required]
+        public int UserId { get; set; }
+
+        [Required]
+        public string Code{ get; set; }
+    }
+
     public class RegisterBindingModel
     {
         [Required]
