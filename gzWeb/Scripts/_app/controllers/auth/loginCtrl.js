@@ -1,7 +1,7 @@
 ﻿(function () {
-    'use strict';
-    var ctrlId = 'loginCtrl';
-    APP.controller(ctrlId, ['$scope', '$http', 'emWamp', 'localStorageService', ctrlFactory]);
+    "use strict";
+    var ctrlId = "loginCtrl";
+    APP.controller(ctrlId, ["$scope", "$http", "emWamp", "localStorageService", ctrlFactory]);
     function ctrlFactory($scope, $http, emWamp, localStorageService) {
         $scope.model = {
             usernameOrEmail: null,
@@ -10,20 +10,30 @@
 
         $scope.responseMsg = null;
 
-        $scope.login = function() {
-            var gzResponse = gzLogin($scope.model.usernameOrEmail, $scope.model.password);
-            gzResponse.then(function (result) {
-                localStorageService.set("userName", result.data.userName);
-                localStorageService.set("accessToken", result.data.access_token);
-                $scope.responseMsg = "Ok";
-                console.log(result);
-            }, function(result) {
-                console.log(result);
+        $scope.login = function () {
+            $scope.responseMsg = "";
+            var emResponse = emLogin($scope.model.usernameOrEmail, $scope.model.password);
+            emResponse.then(function(emResult) {
+                $scope.responseMsg = angular.toJson(emResult, true);
+
+                var gzResponse = gzLogin($scope.model.usernameOrEmail, $scope.model.password);
+                gzResponse.then(function (gzResult) {
+                    localStorageService.set("userName", gzResult.data.userName);
+                    localStorageService.set("accessToken", gzResult.data.access_token);
+                    $scope.responseMsg += "Ok";
+                    console.log(gzResult);
+                }, function (error) {
+                    console.log(error);
+                });
+
+            }, function(error) {
+                // TODO: ...
+                console.log(error);
             });
         };
 
-        function emLogin() {
-            
+        function emLogin(username, password) {
+            return emWamp.userLogin(username, password);
         };
 
         function gzLogin(username, password) {

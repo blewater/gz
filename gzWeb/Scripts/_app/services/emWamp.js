@@ -50,8 +50,8 @@
             ///         "referrerID": "0fbfcca4166149f6a26798d3a2f90a76"
             ///     }
             /// </parameters>
-            userLogin: function(parameters) {
-                return _call("/user#login", parameters);
+            userLogin: function(usernameOrEmail, password) {
+                return _call("/user#login", { usernameOrEmail: usernameOrEmail, password: password });
             },
 
             /// <summary>
