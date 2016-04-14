@@ -356,6 +356,8 @@ namespace gzWeb.Controllers
                                                code = activationCode
                                        });
             callbackUrl += "&key=";
+            // temp hack
+            callbackUrl = callbackUrl.Replace("Auth", "Mvc/Auth");
             
             return Ok(callbackUrl);
         }
