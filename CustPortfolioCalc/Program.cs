@@ -2,6 +2,8 @@
 using System.Threading;
 using gzCpcLib.Options;
 using gzCpcLib.Task;
+using gzDAL.Models;
+using gzDAL.Repos;
 
 namespace CustPortfoliosCalc {
 
@@ -27,10 +29,17 @@ namespace CustPortfoliosCalc {
 
         private static void ProcessParsedOptions(CpcOptions options) {
 
+            var db = new ApplicationDbContext();
+
             var optionsActions = new OptionsActions(options
                 , new ExchRatesUpd()
                 , new FundsUpd()
-                , new CustInvestmentBalUpd());
+                , new CustomerBalanceUpd(
+                    db, 
+                    new InvBalanceRepo(
+                        db, 
+                        new CustFundShareRepo(db), 
+                        new GzTransactionRepo(db))));
 
             optionsActions.ProcessOptions();
 

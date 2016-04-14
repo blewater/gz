@@ -76,7 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Task\CustInvestmentBalUpd.cs" />
+    <Compile Include="Task\CustomerBalanceUpd.cs" />
     <Compile Include="Task\ICpcTask.cs" />
     <Compile Include="Task\FundsUpd.cs" />
     <Compile Include="Task\CpcTask.cs" />

@@ -14,21 +14,21 @@ namespace gzCpcLib.Options {
     public class OptionsActions {
 
         private readonly CpcOptions cpcOptions;
-        private ExchRatesUpd exchRatesUpd;
-        private FundsUpd fundsUpd;
-        private CustInvestmentBalUpd custInvestBalUpd;
+        private readonly ExchRatesUpd exchRatesUpd;
+        private readonly FundsUpd fundsUpd;
+        private readonly CustomerBalanceUpd customerBalUpd;
 
         public bool IsProcessing { get; private set; }
 
         public OptionsActions(CpcOptions inCpcOptions
             , ExchRatesUpd inExchRatesUpd
             , FundsUpd inFundsUpd
-            , CustInvestmentBalUpd inCustInvestBalUpd) {
+            , CustomerBalanceUpd inCustomerBalUpd) {
 
             this.cpcOptions = inCpcOptions;
             this.exchRatesUpd = inExchRatesUpd;
             this.fundsUpd = inFundsUpd;
-            this.custInvestBalUpd = inCustInvestBalUpd;
+            this.customerBalUpd = inCustomerBalUpd;
         }
 
         public void ProcessOptions() {
@@ -53,12 +53,18 @@ namespace gzCpcLib.Options {
 
                 MergeObs(exchRatesUpd, fundsUpd, "Financial Values Updated.");
 
-            } else if (cpcOptions.CustomersToProc != null) {
+            } else if (cpcOptions.CustomersToProc.Length > 0 || cpcOptions.YearMonthsToProc.Length > 0) {
 
-                custInvestBalUpd.CustomerIds = cpcOptions.CustomersToProc;
-                custInvestBalUpd.YearMonthsToProc = cpcOptions.YearMonthsToProc;
+                customerBalUpd.CustomerIds = cpcOptions.CustomersToProc;
+                customerBalUpd.YearMonthsToProc = cpcOptions.YearMonthsToProc;
 
-                MergeReduceObs(exchRatesUpd, fundsUpd, custInvestBalUpd, "Customers Balances Processed");
+                // Wait for both to complete before moving on: merge
+                MergeReduceObs(exchRatesUpd, fundsUpd, customerBalUpd, "Customers Balances Processed");
+
+            } 
+            else if (cpcOptions.ProcessEverything) {
+
+                MergeReduceObs(exchRatesUpd, fundsUpd, customerBalUpd, "Customers Balances Processed");
 
             } else {
                 Console.WriteLine("No action taken!");
