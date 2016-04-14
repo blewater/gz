@@ -19,6 +19,23 @@
         factory.urls = urls;
         // #endregion
 
+        // #region xdinos refactoring
+        function httpGet(url) {
+
+            var accesstoken = sessionStorage.getItem('accessToken');
+            var authHeaders = {};
+            if (accesstoken) {
+                authHeaders.Authorization = 'Bearer ' + accesstoken;
+            }
+
+            return $http({
+                url: url,
+                method: "GET",
+                headers: authHeaders
+            });
+        }
+        // #endregion
+
         // #region Common
         factory.call = function (apiFn, resolveFn, options) {
             var defaults = {
@@ -51,21 +68,24 @@
 
         // #region Investments
         factory.getSummaryData = function () {
-            return $http.get(urls.investments + 'getSummaryData');
+            //return $http.get(urls.investments + 'getSummaryData');
+            return httpGet(urls.investments + 'getSummaryData');
         };
         factory.transferCashToGames = function () {
             return $http.post(urls.investments + 'transferCashToGames');
         }
 
         factory.getPortfolioData = function () {
-            return $http.get(urls.investments + 'getPortfolioData');
+            //return $http.get(urls.investments + 'getPortfolioData');
+            return httpGet(urls.investments + 'getPortfolioData');
         };
         factory.setPlanSelection = function () {
             return $http.post(urls.investments + 'setPlanSelection');
         }
 
         factory.getPerformanceData = function () {
-            return $http.get(urls.investments + 'getPerformanceData');
+            //return $http.get(urls.investments + 'getPerformanceData');
+            return httpGet(urls.investments + 'getPerformanceData');
         };
         // #endregion
 
