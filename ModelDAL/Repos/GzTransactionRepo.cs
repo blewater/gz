@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
@@ -19,6 +20,23 @@ namespace gzDAL.Repos {
         private readonly ApplicationDbContext _db;
         public GzTransactionRepo(ApplicationDbContext db) {
             this._db = db;
+        }
+
+        /// <summary>
+        /// 
+        /// Get the Customer ids whose transaction activity has been initiated already within a given month
+        /// 
+        /// </summary>
+        /// <param name="thisYearMonth"></param>
+        /// <returns></returns>
+        public IEnumerable<int> GetActiveCustomers(string thisYearMonth) {
+
+            return _db.GzTransactions
+                .Where(t => string.Compare(thisYearMonth, t.YearMonthCtd, StringComparison.Ordinal) >= 0)
+                .OrderBy(t => t.CustomerId)
+                .Select(t => t.CustomerId)
+                .Distinct()
+                .ToList();
         }
 
         /// <summary>
@@ -283,7 +301,7 @@ namespace gzDAL.Repos {
 
                 // Assume CreatedOnUtc remains constant for same transaction
                 // to support idempotent transactions
-                
+
                 t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC },
                     new GzTransaction {
                         CustomerId = customerId,

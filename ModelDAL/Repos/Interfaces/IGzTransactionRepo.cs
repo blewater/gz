@@ -1,9 +1,12 @@
 ﻿using gzDAL.Models;
 using System;
+using System.Collections.Generic;
 
 namespace gzDAL.Repos.Interfaces
 {
     public interface IGzTransactionRepo {
+
+        IEnumerable<int> GetActiveCustomers(string thisYearMonth);
 
         bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);
 
