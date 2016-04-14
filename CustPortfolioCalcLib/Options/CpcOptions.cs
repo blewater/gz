@@ -13,7 +13,7 @@ namespace gzCpcLib.Options
     {
         public bool ParsingSuccess { get; private set; }
 
-        [OptionArray('a', "all",
+        [Option('a', "all",
             HelpText = "Update financial data and process the wholeGreenzorro transaction history")]
         public bool ProcessEverything { get; set; }
 

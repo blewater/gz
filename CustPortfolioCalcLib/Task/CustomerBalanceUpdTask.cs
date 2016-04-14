@@ -12,13 +12,13 @@ namespace gzCpcLib.Task {
     /// Update monthly Investment Balances for Customer
     ///
     /// </summary>
-    public class CustomerBalanceUpd : CpcTask {
+    public class CustomerBalanceUpdTask : CpcTask {
         private readonly ApplicationDbContext _Db;
         private readonly IInvBalanceRepo _invBalanceRepo;
 
         public int[] CustomerIds { get; set; } = new int[0];
 
-        public CustomerBalanceUpd(ApplicationDbContext db, InvBalanceRepo invBalanceRepo) {
+        public CustomerBalanceUpdTask(ApplicationDbContext db, InvBalanceRepo invBalanceRepo) {
 
             this._Db = db;
             this._invBalanceRepo = invBalanceRepo;
