@@ -39,9 +39,9 @@ namespace gzDAL.Models
 
         public virtual ICollection<CustPortfolio> CustPortfolios { get; set; }
 
-        [Index(IsUnique=true)]
-        [Required]
-        public int PlatformCustomerId { get; set; }
+        //[Index(IsUnique=true)]
+        //[Required]
+        public int? PlatformCustomerId { get; set; }
 
         public string Currency { get; set; }
 
