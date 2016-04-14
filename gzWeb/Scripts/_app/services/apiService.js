@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('api', ['$http', '$rootScope', serviceFactory]);
+    APP.factory('api', ['$http', '$rootScope', 'localStorageService', serviceFactory]);
 
-    function serviceFactory($http, $rootScope) {
+    function serviceFactory($http, $rootScope, localStorageService) {
         var factory = {};
 
         // #region Urls
@@ -22,11 +22,11 @@
         // #region xdinos refactoring
         function httpGet(url) {
 
-            var accesstoken = sessionStorage.getItem('accessToken');
+            var accesstoken = localStorageService.get("accessToken");
             var authHeaders = {};
             if (accesstoken) {
-                authHeaders.Authorization = 'Bearer ' + accesstoken;
-            }
+                authHeaders.Authorization = "Bearer " + accesstoken;
+            };
 
             return $http({
                 url: url,
