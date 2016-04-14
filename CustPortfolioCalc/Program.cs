@@ -32,9 +32,9 @@ namespace CustPortfoliosCalc {
             var db = new ApplicationDbContext();
 
             var optionsActions = new OptionsActions(options
-                , new ExchRatesUpd()
-                , new FundsUpd()
-                , new CustomerBalanceUpd(
+                , new ExchRatesUpdTask()
+                , new FundsUpdTask()
+                , new CustomerBalanceUpdTask(
                     db, 
                     new InvBalanceRepo(
                         db, 

@@ -8,7 +8,7 @@ namespace gzCpcLib.Task {
     /// Request latest stock market pricing info for the interested Funds
     /// 
     /// </summary>
-    public class FundsUpd : CpcTask {
+    public class FundsUpdTask : CpcTask {
 
         public override void DoTask() {
 

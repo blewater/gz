@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Linq.Expressions;
 using gzDAL.Conf;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
@@ -32,7 +33,7 @@ namespace gzDAL.Repos {
         public IEnumerable<int> GetActiveCustomers(string thisYearMonth) {
 
             return _db.GzTransactions
-                .Where(t => string.Compare(thisYearMonth, t.YearMonthCtd, StringComparison.Ordinal) >= 0)
+                .Where(BeforeEq(thisYearMonth))
                 .OrderBy(t => t.CustomerId)
                 .Select(t => t.CustomerId)
                 .Distinct()
@@ -317,6 +318,28 @@ namespace gzDAL.Repos {
             _db.SaveChanges();
         }
 
+        /// <summary>
+        /// 
+        /// Expression lambda for increased readability on transactions.YearMonthCtd being before (past) 
+        ///     or same than the incoming string month parameter
+        /// 
+        /// </summary>
+        /// <param name="futureYearMonthStr"></param>
+        /// <returns></returns>
+        private static Expression<Func<GzTransaction, bool>> BeforeEq(string futureYearMonthStr) {
+            return t => string.Compare(t.YearMonthCtd, futureYearMonthStr, StringComparison.Ordinal) <= 0;
+        }
 
+        /// <summary>
+        /// 
+        /// Expression lambda for increased readability on transaction.YearMonthCtd being later (future) 
+        ///     or same than the incoming string month parameter
+        /// 
+        /// </summary>
+        /// <param name="pastYearMonthStr"></param>
+        /// <returns></returns>
+        private static Expression<Func<GzTransaction, bool>> LaterEq(string pastYearMonthStr) {
+            return t => string.Compare(t.YearMonthCtd, pastYearMonthStr, StringComparison.Ordinal) >= 0;
+        }
     }
 }

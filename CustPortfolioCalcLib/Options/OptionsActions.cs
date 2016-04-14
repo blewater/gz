@@ -14,16 +14,16 @@ namespace gzCpcLib.Options {
     public class OptionsActions {
 
         private readonly CpcOptions cpcOptions;
-        private readonly ExchRatesUpd exchRatesUpd;
-        private readonly FundsUpd fundsUpd;
-        private readonly CustomerBalanceUpd customerBalUpd;
+        private readonly ExchRatesUpdTask exchRatesUpd;
+        private readonly FundsUpdTask fundsUpd;
+        private readonly CustomerBalanceUpdTask customerBalUpd;
 
         public bool IsProcessing { get; private set; }
 
         public OptionsActions(CpcOptions inCpcOptions
-            , ExchRatesUpd inExchRatesUpd
-            , FundsUpd inFundsUpd
-            , CustomerBalanceUpd inCustomerBalUpd) {
+            , ExchRatesUpdTask inExchRatesUpd
+            , FundsUpdTask inFundsUpd
+            , CustomerBalanceUpdTask inCustomerBalUpd) {
 
             this.cpcOptions = inCpcOptions;
             this.exchRatesUpd = inExchRatesUpd;
@@ -43,17 +43,20 @@ namespace gzCpcLib.Options {
 
             if (cpcOptions.CurrenciesMarketUpdOnly) {
 
-                SubscribeToObs(exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing : true);
-                        
-            } else if (cpcOptions.StockMarketUpdOnly) {
+                SubscribeToObs(exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing: true);
+
+            }
+            else if (cpcOptions.StockMarketUpdOnly) {
 
                 SubscribeToObs(fundsUpd, "Funds stock values updated.", indicateWhenCompleteProcessing: true);
 
-            } else if (cpcOptions.FinancialValuesUpd) {
+            }
+            else if (cpcOptions.FinancialValuesUpd) {
 
                 MergeObs(exchRatesUpd, fundsUpd, "Financial Values Updated.");
 
-            } else if (cpcOptions.CustomersToProc.Length > 0 || cpcOptions.YearMonthsToProc.Length > 0) {
+            }
+            else if (cpcOptions.ProcessEverything || cpcOptions.CustomersToProc.Length > 0 || cpcOptions.YearMonthsToProc.Length > 0) {
 
                 customerBalUpd.CustomerIds = cpcOptions.CustomersToProc;
                 customerBalUpd.YearMonthsToProc = cpcOptions.YearMonthsToProc;
@@ -61,12 +64,8 @@ namespace gzCpcLib.Options {
                 // Wait for both to complete before moving on: merge
                 MergeReduceObs(exchRatesUpd, fundsUpd, customerBalUpd, "Customers Balances Processed");
 
-            } 
-            else if (cpcOptions.ProcessEverything) {
-
-                MergeReduceObs(exchRatesUpd, fundsUpd, customerBalUpd, "Customers Balances Processed");
-
-            } else {
+            }
+            else {
                 Console.WriteLine("No action taken!");
                 IsProcessing = false;
             }
