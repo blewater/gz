@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "loginCtrl";
-    APP.controller(ctrlId, ["$scope", "$http", "emWamp", "localStorageService", ctrlFactory]);
-    function ctrlFactory($scope, $http, emWamp, localStorageService) {
+    APP.controller(ctrlId, ["$scope", "$http", "emWamp", "api", "localStorageService", ctrlFactory]);
+    function ctrlFactory($scope, $http, emWamp, api, localStorageService) {
         $scope.model = {
             usernameOrEmail: null,
             password: null
@@ -12,7 +12,12 @@
 
         $scope.login = function () {
             $scope.responseMsg = "";
-            var emResponse = emLogin($scope.model.usernameOrEmail, $scope.model.password);
+
+            var emResponse = emLogin({
+                usernameOrEmail: $scope.model.usernameOrEmail,
+                password: $scope.model.password
+            });
+
             emResponse.then(function(emResult) {
                 $scope.responseMsg = angular.toJson(emResult, true);
 
@@ -33,20 +38,11 @@
         };
 
         function emLogin(username, password) {
-            return emWamp.userLogin(username, password);
+            return emWamp.login(username, password);
         };
 
         function gzLogin(username, password) {
-            return $http({
-                url: "/TOKEN",
-                method: "POST",
-                data: $.param({
-                    grant_type: "password",
-                    username: username,
-                    password: password
-                }),
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            });
+            return api.login(username, password);
         };
     }
 })();

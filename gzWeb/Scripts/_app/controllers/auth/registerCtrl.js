@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerCtrl';
-    APP.controller(ctrlId, ['$scope', '$state', '$http', '$filter', 'emWamp', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $state, $http, $filter, emWamp, constants) {
+    APP.controller(ctrlId, ["$scope", "$state", "$http", "$filter", "emWamp", "api", "constants", ctrlFactory]);
+    function ctrlFactory($scope, $state, $http, $filter, emWamp, api, constants) {
         $scope.model = {
             email: null,
             username: null,
@@ -152,8 +152,50 @@
         };
         
         $scope.register = function () {
-        
-            $http.post('/api/Account/Register', {
+
+            var emRegisterQ = emRegister();
+
+            emRegisterQ.then(function(result) {
+                emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password })
+                    .then(function(result) {
+                        gzRegister().then(function(result) {
+                            //api.login($scope.model.username, $scope.model.password)
+                            //    .then(function(result) {
+                            //        // TODO: inform user...
+                            //    }, logError);
+                        }, logError);
+                    }, logError);
+            }, logError);
+        };
+
+        function emRegister(callbackUrl) {
+
+            return emWamp.register({
+                username: $scope.model.username,
+                email: $scope.model.email,
+                alias: $scope.model.username,
+                password: $scope.model.password,
+                firstname: $scope.model.firstname,
+                surname: $scope.model.lastname,
+                birthDate: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]).format('YYYY-MM-DD'),
+                country: $scope.model.country.code,
+                // TOOD: region 
+                // TOOD: personalID 
+                mobilePrefix: $scope.model.phonePrefix,
+                mobile: $scope.model.phoneNumber,
+                currency: $scope.model.currency.code,
+                title: $scope.model.title,
+                city: $scope.model.city,
+                address1: $scope.model.address,
+                address2: '',
+                postalCode: $scope.model.postalCode,
+                language: 'en',
+                emailVerificationURL: callbackUrl
+            });
+        }
+
+        function gzRegister() {
+            return $http.post('/api/Account/Register', {
                 Username: $scope.model.username,
                 Email: $scope.model.email,
                 Password: $scope.model.password,
@@ -171,38 +213,8 @@
                 // TODO: Region ???
                 // TODO: SecurityQuestion ???
                 // TODO: SecurityAnswer ???
-            }).then(function(result) {
-                doRegistrationToEM(result.data);
-            }, logError);
-
-            function doRegistrationToEM(callbackUrl) {
-                console.log(callbackUrl);
-                emWamp.call('/user/account#register', {
-                    username: $scope.model.username,
-                    email: $scope.model.email,
-                    alias: $scope.model.username,
-                    password: $scope.model.password,
-                    firstname: $scope.model.firstname,
-                    surname: $scope.model.lastname,
-                    birthDate: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]).format('YYYY-MM-DD'),
-                    country: $scope.model.country.code,
-                    // TOOD: region 
-                    // TOOD: personalID 
-                    mobilePrefix: $scope.model.phonePrefix,
-                    mobile: $scope.model.phoneNumber,
-                    currency: $scope.model.currency.code,
-                    title: $scope.model.title,
-                    city: $scope.model.city,
-                    address1: $scope.model.address,
-                    address2: '',
-                    postalCode: $scope.model.postalCode,
-                    language: 'en',
-                    emailVerificationURL: callbackUrl
-                })
-                .then(function (result) {
-                }, logError);
-            }
-        };
+            });
+        }
 
         function getPasswordPolicy() {
             emWamp.call('/user/pwd#getPolicy')

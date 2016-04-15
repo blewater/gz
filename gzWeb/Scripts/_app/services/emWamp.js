@@ -33,6 +33,15 @@
 
             call: _call,
 
+            // #region Account
+
+            register: function(parameters) {
+                return _call("/user/account#register", parameters);
+            },
+
+            // #endregion
+
+            // #region Session
             /// <summary>
             /// Login the end-user.
             /// </summary>
@@ -50,8 +59,8 @@
             ///         "referrerID": "0fbfcca4166149f6a26798d3a2f90a76"
             ///     }
             /// </parameters>
-            userLogin: function(usernameOrEmail, password) {
-                return _call("/user#login", { usernameOrEmail: usernameOrEmail, password: password });
+            login: function (parameters) {
+                return _call("/user#login", parameters);
             },
 
             /// <summary>
@@ -69,13 +78,16 @@
             ///     "isEmailVerified": true
             ///     }
             /// </returns>
-            userGetSessionInfo: function() {
+            getSessionInfo: function() {
                 return _call("/user#getSessionInfo");
             },
 
-            userLogout: function() {
+            logout: function() {
                 _call("/user#logout").then(function(result) {}, _logError);
-            },
+            }
+
+            // #endregion
+        // 
         };
 
         $wamp.open();
