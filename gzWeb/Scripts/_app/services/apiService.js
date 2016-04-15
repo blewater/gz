@@ -66,6 +66,19 @@
         };
         // #endregion
 
+        factory.login = function(username, password) {
+            return $http({
+                url: "/TOKEN",
+                method: "POST",
+                data: $.param({
+                    grant_type: "password",
+                    username: username,
+                    password: password
+                }),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            });
+        },
+
         // #region Investments
         factory.getSummaryData = function () {
             //return $http.get(urls.investments + 'getSummaryData');
