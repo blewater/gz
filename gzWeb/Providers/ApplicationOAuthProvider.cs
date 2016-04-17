@@ -37,6 +37,13 @@ namespace gzWeb.Providers
                 return;
             }
 
+            // TODO: in case of ...
+            //if (!user.EmailConfirmed)
+            //{
+            //    context.SetError("invalid_grant", "Account pending approval.");
+            //    return;
+            //}
+
             var oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType);
             var cookiesIdentity = await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
 

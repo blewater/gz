@@ -339,6 +339,8 @@ namespace gzWeb.Controllers
                                LastName = model.LastName,
                                Birthday = model.Birthday,
                                Currency = model.Currency,
+
+                               EmailConfirmed = true,
                        };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
@@ -356,6 +358,8 @@ namespace gzWeb.Controllers
                                                code = activationCode
                                        });
             callbackUrl += "&key=";
+            // temp hack
+            callbackUrl = callbackUrl.Replace("Auth", "Mvc/Auth");
             
             return Ok(callbackUrl);
         }

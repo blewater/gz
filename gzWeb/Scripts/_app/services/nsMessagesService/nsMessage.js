@@ -82,34 +82,32 @@
                         scope.nsOptions.nsTitleShout = scope.isModal;
                     if (!angular.isDefined(scope.nsOptions.nsIconClass)) {
                         switch (scope.nsOptions.nsClass) {
-                            case 'error': scope.nsOptions.nsIconClass = 'fa-ban'; break;
+                            case 'error': scope.nsOptions.nsIconClass = 'fa-times'; break;
                             case 'success': scope.nsOptions.nsIconClass = 'fa-check'; break;
                             case 'warning': scope.nsOptions.nsIconClass = 'fa-exclamation-triangle'; break;
                             case 'info': scope.nsOptions.nsIconClass = 'fa-bell'; break;
-                            case 'prompt': scope.nsOptions.nsIconClass = 'fa-question-circle'; break;
+                            case 'prompt': scope.nsOptions.nsIconClass = 'fa-question'; break;
                             default: scope.nsOptions.nsIconClass = ''; break;
                         }
                     }
                     if (!angular.isDefined(scope.nsOptions.nsIconClassInversed))
                         scope.nsOptions.nsIconClassInversed = false;
                     if (!angular.isDefined(scope.nsOptions.nsCallback))
-                        scope.nsOptions.nsCallback = function () { };
+                        scope.nsOptions.nsCallback = angular.noop;
                     if (!angular.isDefined(scope.nsOptions.nsShowClose))
                         scope.nsOptions.nsShowClose = true;//scope.isModal;
                     if (!angular.isDefined(scope.nsOptions.nsAutoClose))
                         scope.nsOptions.nsAutoClose = scope.isToastr;
                     if (!angular.isDefined(scope.nsOptions.nsAutoCloseDelay))
                         scope.nsOptions.nsAutoCloseDelay = 5000;
-                    if (!angular.isDefined(scope.nsOptions.nsCloseOnClick))
-                        scope.nsOptions.nsCloseOnClick = !scope.isModal;
+                    if (!angular.isDefined(scope.nsOptions.nsCloseOnTitleClick))
+                        scope.nsOptions.nsCloseOnTitleClick = !scope.isModal;
                     if (!angular.isDefined(scope.nsOptions.nsBackdrop))
                         scope.nsOptions.nsBackdrop = scope.isModal;
                     if (!angular.isDefined(scope.nsOptions.nsStatic))
                         scope.nsOptions.nsStatic = scope.isNotification;
                     if (!angular.isDefined(scope.nsOptions.nsSize))
                         scope.nsOptions.nsSize = 'sm';
-                    if (!angular.isDefined(scope.nsOptions.nsPrompt))
-                        scope.nsOptions.nsPrompt = false;
 
                     if (angular.isDefined(scope.nsOptions.nsTemplate))
                         $templateRequest(helpers.ui.getTemplate(scope.nsOptions.nsTemplate)).then(function(html) {
@@ -235,9 +233,8 @@
                     scope.nsCancel('close');
                 };
                 scope.onTitleClick = function () {
-                    if (scope.nsOptions.nsCloseOnClick) {
+                    if (scope.nsOptions.nsCloseOnTitleClick)
                         scope.nsCancel('close');
-                    }
                 };
 
                 scope.close = function () {
