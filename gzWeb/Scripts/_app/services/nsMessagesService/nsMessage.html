@@ -17,7 +17,7 @@
             <i ng-show="showExpandCollapse() && isMinimized()" class="fa fa-angle-up pull-right" ng-click="toggleMinMax()"></i>
         </div>
         <div class="msg-content" ng-show="!isMinimized()">
-            <div class="msg-title-wrap" ng-click="onTitleClick()" ng-style="{ 'cursor': nsOptions.nsCloseOnClick ? 'pointer' : 'default' }">
+            <div class="msg-title-wrap" ng-click="onTitleClick()" ng-style="{ 'cursor': nsOptions.nsCloseOnTitleClick ? 'pointer' : 'default' }">
                 <div class="msg-icon" ng-if="nsOptions.nsIconClass" ng-class="{'msg-icon-inversed': nsOptions.nsIconClassInversed}">
                     <i class="fa fa-lg" ng-class="nsOptions.nsIconClass"></i>
                 </div>
@@ -27,7 +27,7 @@
             </div>
             <div class="msg-body"></div>
             <div ng-show="nsOptions.nsPromptButtons.length > 0" class="msg-prompt-btns pull-right">
-                <button type="button" class="btn-gz" ng-repeat="btn in nsOptions.nsPromptButtons" ng-click="onBtnClick(btn)">{{btn.text}}"</button>
+                <button type="button" class="btn-gz" ng-repeat="btn in nsOptions.nsPromptButtons" ng-click="onBtnClick(btn)">{{btn.text}}</button>
             </div>
         </div>
         <div ng-show="nsOptions.nsAutoClose" class="msg-life" ng-style="{'width': percentage + '%'}"></div>
