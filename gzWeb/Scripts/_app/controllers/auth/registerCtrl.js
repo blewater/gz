@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerCtrl';
-    APP.controller(ctrlId, ['$scope', '$state', 'emWamp', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $state, emWamp, constants) {
+    APP.controller(ctrlId, ["$scope", "$state", "$http", "$filter", "emWamp", "api", "constants", ctrlFactory]);
+    function ctrlFactory($scope, $state, $http, $filter, emWamp, api, constants) {
         $scope.model = {
             email: null,
             username: null,
@@ -13,12 +13,13 @@
             monthOfBirth: null,
             dayOfBirth: null,
             title: 'Mr.',
+            address: null,
             postalCode: null,
             city: null,
             currency: null,
             country: null,
-            phobePrefix: null,
-            phobeNumber: null
+            phonePrefix: null,
+            phoneNumber: null
         };
 
         $scope.years = [];
@@ -140,30 +141,80 @@
 
             return true;
         };
-
+        
         $scope.onCountryChanged = function () {
-            var phonePrefix = '';
-            angular.forEach($scope.countries, function(value) {
-                if (value.code == $scope.model.country)
-                    phonePrefix = value.phonePrefix;
-            });
             $scope.phonePrefixes.splice(0, $scope.phonePrefixes.length);
-            $scope.phonePrefixes.push(phonePrefix);
+            $scope.phonePrefixes.push($scope.model.country.phonePrefix);
+            var foundCurrencies = $filter('filter')($scope.currencies, { code: $scope.model.country.currency });
+            $scope.model.currency = foundCurrencies.length > 0
+                ? foundCurrencies[0]
+                : $filter('filter')($scope.currencies, { code: 'USD' })[0];
+        };
+        
+        $scope.register = function () {
+
+            var emRegisterQ = emRegister();
+
+            emRegisterQ.then(function(result) {
+                emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password })
+                    .then(function(result) {
+                        gzRegister().then(function(result) {
+                            //api.login($scope.model.username, $scope.model.password)
+                            //    .then(function(result) {
+                            //        // TODO: inform user...
+                            //    }, logError);
+                        }, logError);
+                    }, logError);
+            }, logError);
         };
 
-        $scope.register = function(email, password, birthDate, currency) {
-            return emWamp.call('/user/account#register', {
-                    username: email,
-                    email: email,
-                    alias: email,
-                    password: password,
-                    birthDate: birthDate,
-                    currency: currency,
-                    emailVerificationURL: constants.emailVerificationUrl
-                })
-                .then(function(result) {
-                }, logError);
-        };
+        function emRegister(callbackUrl) {
+
+            return emWamp.register({
+                username: $scope.model.username,
+                email: $scope.model.email,
+                alias: $scope.model.username,
+                password: $scope.model.password,
+                firstname: $scope.model.firstname,
+                surname: $scope.model.lastname,
+                birthDate: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]).format('YYYY-MM-DD'),
+                country: $scope.model.country.code,
+                // TOOD: region 
+                // TOOD: personalID 
+                mobilePrefix: $scope.model.phonePrefix,
+                mobile: $scope.model.phoneNumber,
+                currency: $scope.model.currency.code,
+                title: $scope.model.title,
+                city: $scope.model.city,
+                address1: $scope.model.address,
+                address2: '',
+                postalCode: $scope.model.postalCode,
+                language: 'en',
+                emailVerificationURL: callbackUrl
+            });
+        }
+
+        function gzRegister() {
+            return $http.post('/api/Account/Register', {
+                Username: $scope.model.username,
+                Email: $scope.model.email,
+                Password: $scope.model.password,
+                FirstName: $scope.model.firstname,
+                LastName: $scope.model.lastname,
+                Birthday: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]),
+                Currency: $scope.model.currency.code,
+                Title: $scope.model.title,
+                Country: $scope.model.country.code,
+                MobilePrefix: $scope.model.phonePrefix,
+                Mobile: $scope.model.phoneNumber,
+                City: $scope.model.city,
+                Address: $scope.model.address,
+                PostalCode: $scope.model.postalCode,
+                // TODO: Region ???
+                // TODO: SecurityQuestion ???
+                // TODO: SecurityAnswer ???
+            });
+        }
 
         function getPasswordPolicy() {
             emWamp.call('/user/pwd#getPolicy')
@@ -183,6 +234,11 @@
                 .then(function(result) {
                         $scope.currentIpCountry = result.currentIPCountry;
                         $scope.countries = result.countries;
+                        if ($scope.currentIpCountry == null || $scope.currentIpCountry == '' || $scope.currentIpCountry == undefined)
+                            $scope.currentIpCountry = 'GR';
+
+                        $scope.model.country = $filter('filter')($scope.countries, { code: $scope.currentIpCountry })[0];
+                        $scope.onCountryChanged();
                     },
                     logError);
         };

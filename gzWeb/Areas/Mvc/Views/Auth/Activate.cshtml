@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>..:: Greenzorro ::..</title>
+    <link href="~/Content/Styles/font-awesome/font-awesome.css" rel="stylesheet"/>
+    <link href="~/Content/Styles/font-awesome/font-awesome.min.css" rel="stylesheet"/>
+    <link href="~/Content/Styles/bootstrap/bootstrap.css" rel="stylesheet"/>
+    <link href="~/Content/Styles/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body ng-app="GZ">
+    <div ng-controller="activationCtrl">
+
+    </div>
+
+    <script src="~/Scripts/jquery/jquery-1.12.0.min.js"></script>
+    <script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap/bootstrap.js"></script>
+    <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+    <script src="~/Scripts/moment/moment.min.js"></script>
+    <script src="~/Scripts/angular/angular.min.js"></script>
+    <script src="~/Scripts/angular-wamp/angular-wamp.min.js"></script>
+    <script type="text/javascript">
+        var APP = angular.module('GZ', ['vxWamp']);
+        APP.constant('constants', {
+            webeocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
+            fallbackApiUrl: 'https://fb-webapi-stage.everymatrix.com',
+            domainPrefix: 'http://www.greenzorro.com',
+            html5Mode: true
+        });
+        APP.config(function ($wampProvider, $locationProvider, constants) {
+
+            $locationProvider.html5Mode(constants.html5Mode).hashPrefix();
+
+            $wampProvider.init({
+                transports: [
+                    { 'type': 'websocket', 'url': constants.webeocketApiUrl },
+                    { 'type': 'longpoll', 'url': constants.fallbackApiUrl }
+                ],
+                url: constants.websocketApiUrl,
+                realm: constants.domainPrefix
+            });
+        });
+        APP.controller('activationCtrl', function ($scope, emWamp, $http, $location) {
+            var data = $location.search();
+
+            emWamp.call('/user/account#activate', { verificationCode: data.key }).then(function (result) {
+                    $http.post('/api/Account/Activate', { UserId: data.userId, Code: data.code });
+                },
+                function(error) {
+                    console.log(error.desc);
+                    console.log(error.detail);
+                });
+
+
+        });
+    </script>
+    <script src="~/Scripts/_app/services/emWamp.js"></script>
+    <script src="~/Scripts/_app/controllers/auth/registerCtrl.js"></script>
+</body>
+</html>
