@@ -4,12 +4,14 @@ using gzCpcLib.Options;
 using gzCpcLib.Task;
 using gzDAL.Models;
 using gzDAL.Repos;
+using NLog;
 
 namespace CustPortfoliosCalc {
 
     class Program {
 
         const int SleepIntervalMillis = 250;
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         static void Main(string[] args) {
 
@@ -31,15 +33,17 @@ namespace CustPortfoliosCalc {
 
             var db = new ApplicationDbContext();
 
-            var optionsActions = new OptionsActions(options
-                , new ExchRatesUpdTask()
-                , new FundsUpdTask()
-                , new CustomerBalanceUpdTask(
+            var optionsActions = new OptionsActions(
+                options,
+                new ExchRatesUpdTask(),
+                new FundsUpdTask(),
+                new CustomerBalanceUpdTask(
                     db, 
                     new InvBalanceRepo(
                         db, 
                         new CustFundShareRepo(db), 
-                        new GzTransactionRepo(db))));
+                        new GzTransactionRepo(db))),
+                logger);
 
             optionsActions.ProcessOptions();
 

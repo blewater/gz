@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.Remoting.Messaging;
 using gzCpcLib.Task;
+using NLog;
 
 namespace gzCpcLib.Options {
 
@@ -17,25 +18,31 @@ namespace gzCpcLib.Options {
         private readonly ExchRatesUpdTask exchRatesUpd;
         private readonly FundsUpdTask fundsUpd;
         private readonly CustomerBalanceUpdTask customerBalUpd;
+        private readonly Logger logger;
 
         public bool IsProcessing { get; private set; }
 
-        public OptionsActions(CpcOptions inCpcOptions
-            , ExchRatesUpdTask inExchRatesUpd
-            , FundsUpdTask inFundsUpd
-            , CustomerBalanceUpdTask inCustomerBalUpd) {
+        public OptionsActions(CpcOptions inCpcOptions,
+            ExchRatesUpdTask inExchRatesUpd,
+            FundsUpdTask inFundsUpd,
+            CustomerBalanceUpdTask inCustomerBalUpd,
+            Logger inLogger) {
 
             this.cpcOptions = inCpcOptions;
             this.exchRatesUpd = inExchRatesUpd;
             this.fundsUpd = inFundsUpd;
             this.customerBalUpd = inCustomerBalUpd;
+            this.logger = inLogger;
         }
 
         public void ProcessOptions() {
 
             if (!cpcOptions.ParsingSuccess) {
+
+                logger.Trace("Exiting ProcessOptions cpcOptions.ParsingSucces is false");
+
                 // Did not process
-                return ;
+                return;
             }
 
             // Starting to process
@@ -64,9 +71,11 @@ namespace gzCpcLib.Options {
                 // Wait for both to complete before moving on: merge
                 MergeReduceObs(exchRatesUpd, fundsUpd, customerBalUpd, "Customers Balances Processed");
 
+            } else if (cpcOptions.ConsoleOutOnly) {
+                
             }
             else {
-                Console.WriteLine("No action taken!");
+                logger.Trace("No action taken!");
                 IsProcessing = false;
             }
 
@@ -84,7 +93,7 @@ namespace gzCpcLib.Options {
             cpcTask.TaskObservable.Subscribe(
                 _ => {
 
-                    Console.WriteLine(logCompletionMsg);
+                    logger.Info(logCompletionMsg);
                     if (indicateWhenCompleteProcessing) {
                         IsProcessing = false;
                     }
@@ -106,11 +115,11 @@ namespace gzCpcLib.Options {
                 .Subscribe(
                     // OnNext
                     w =>
-                        Console.WriteLine("OnNext"),
+                        logger.Trace("OnNext"),
 
                     // OnCompleted
                     () => {
-                        Console.WriteLine(logCompletionMsg);
+                        logger.Info(logCompletionMsg);
                         IsProcessing = false;
                     }
                 );
@@ -136,11 +145,11 @@ namespace gzCpcLib.Options {
                 .Subscribe(
                     // OnNext
                     w =>
-                        Console.WriteLine("OnNext Final Task"),
+                        logger.Trace("OnNext Final Task"),
 
                     // OnCompleted
                     () => {
-                        Console.WriteLine(logCompletionMsg);
+                        logger.Info(logCompletionMsg);
                         IsProcessing = false;
                     }
                 );
