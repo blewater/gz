@@ -4,3 +4,36 @@
 
 <h1 class="text-center">GREENZORRO</h1>
 <h3 class="text-center">Login</h3>
+
+<table class="table table-bordered table-striped table-condensed">
+    <tr>
+        <td>Email:</td>
+        <td>
+            <input type="text" class="form-control" ng-model="model.usernameOrEmail" />
+        </td>
+    </tr>
+    <tr>
+        <td>Password:</td>
+        <td>
+            <input type="password" class="form-control" ng-model="model.password" />
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            <input type="button" value="Login" class="form-control btn btn-success" ng-click="login()"/>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{{responseMsg}}</td>
+    </tr>
+</table>
