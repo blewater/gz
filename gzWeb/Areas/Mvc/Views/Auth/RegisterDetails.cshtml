@@ -42,7 +42,7 @@
                 </div>
                 <div class="wid50 pdlt">
                     <div class="input-field inbg">
-                        <input placeholder="Last Name" id="last_name" name="last_name" type="text" class="validate" autocomplete="off" ng-model="user.lastname" required 
+                        <input placeholder="Last Name" id="last_name" name="last_name" type="text" class="validate" autocomplete="off" ng-model="model.lastname" required 
                                ng-class="{ 'input_danger' : userForm.last_name.$invalid && !userForm.last_name.$pristine }">
                         <div class="help-block" ng-show="userForm.last_name.$invalid &amp;&amp; !userForm.last_name.$pristine">Last Name is required.</div>
                     </div>
@@ -71,12 +71,12 @@
                     <div class="ya_wrap sel">
                         <select class="validate" name="days" id="days"
                                 ng-model="model.dayOfBirth"
-                                ng-options="day.value as day.display for day in daysOfMonth" 
+                                ng-options="day.value as day.display for day in daysOfMonth"
                                 required>
                             <option value="" disabled selected>DD</option>
                         </select>
                     </div>
-                    
+
                     <div class="ya_wrap last_ya sel">
                         <select class="validate" name="gender" id="gender" ng-model="model.title" required>
                             <option ng-repeat="title in titles" value="{{title}}">{{title}}</option>
@@ -85,15 +85,26 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-sm-12">
+                        <div class="input-field inbg">
+                            <input placeholder="Address" id="address" name="address" type="text" class="validate" autocomplete="off" ng-model="model.address" required
+                                   ng-class="{ 'input_danger' : userForm.address.$invalid && !userForm.address.$pristine }">
+                            <div class="help-block" ng-show="userForm.address.$invalid &amp;&amp; !userForm.address.$pristine">Address is required.</div>
+                        </div>
+                        </div>
+                </div>
+
+                <div class="row">
                     <div class="col-sm-4">
                         <div class="input-field inbg">
-                            <input placeholder="Postal Code" id="postal_code" name="postal_code" type="text" class="validate" autocomplete="off" ng-model="user.postal_code" required ng-class="{ 'input_danger' : userForm.postal_code.$invalid && !userForm.postal_code.$pristine }">
+                            <input placeholder="Postal Code" id="postal_code" name="postal_code" type="text" class="validate" autocomplete="off" ng-model="model.postalCode" required 
+                                   ng-class="{ 'input_danger' : userForm.postal_code.$invalid && !userForm.postal_code.$pristine }">
                             <div class="help-block" ng-show="userForm.postal_code.$invalid &amp;&amp; !userForm.postal_code.$pristine">Postal Code is required.</div>
                         </div>
                     </div>
                     <div class="col-sm-8 padno">
                         <div class="input-field inbg">
-                            <input placeholder="City" id="city" name="city" type="text" class="validate" autocomplete="off" ng-model="user.city" required 
+                            <input placeholder="City" id="city" name="city" type="text" class="validate" autocomplete="off" ng-model="model.city" required 
                                    ng-class="{ 'input_danger' : userForm.city.$invalid && !userForm.city.$pristine }">
                             <div class="help-block" ng-show="userForm.city.$invalid &amp;&amp; !userForm.city.$pristine">City is required.</div>
                         </div>
@@ -104,17 +115,17 @@
                     <div class="for_wrap">
                         <div class="col-sm-4">
                             <div class="input-field inbg sel longarow_mob">
-                                <select class="validate" name="currency" id="currency">
-                                    <option>Currency</option>
-                                    <option value="Doller">Doller</option>
-                                    <option value="Euro">Euro</option>
+                                <select class="validate" name="currency" id="currency"
+                                        ng-model="model.currency"
+                                        ng-options="currency.code for currency in currencies">
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-8 padno">
                             <div class="input-field inbg sel longarow">
-                                <select class="validate" name="country" id="country" ng-model="model.country" ng-change="onCountryChanged()">
-                                    <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
+                                <select class="validate" name="country" id="country" ng-model="model.country"
+                                        ng-options="country.name for country in countries"
+                                        ng-change="onCountryChanged()">
                                 </select>
                             </div>
                         </div>
@@ -125,14 +136,15 @@
                     <div class="">
                         <div class="col-sm-4">
                             <div class="input-field inbg sel longarow_mob">
-                                <select class="validate" name="country_code" id="country_code" ng-model="model.phonePrefix">
-                                    <option ng-repeat="phonePrefix in phonePrefixes" value="{{phonePrefix}}">{{phonePrefix}}</option>
+                                <select class="validate" name="country_code" id="country_code" ng-model="model.phonePrefix"
+                                        ng-options="phonePrefix for phonePrefix in phonePrefixes">
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-8 padno">
                             <div class="input-field inbg">
-                                <input placeholder="Telephone" id="telephone" name="telephone" type="number" class="validate" autocomplete="off" ng-model="user.telephone" required ng-class="{ 'input_danger' : userForm.telephone.$invalid && !userForm.telephone.$pristine }">
+                                <input placeholder="Telephone" id="telephone" name="telephone" type="text" class="validate" autocomplete="off" ng-model="model.phoneNumber" required 
+                                       ng-class="{ 'input_danger' : userForm.telephone.$invalid && !userForm.telephone.$pristine }">
                                 <div class="help-block" ng-show="userForm.telephone.$invalid &amp;&amp; !userForm.telephone.$pristine">Telephone is required.</div>
                             </div>
                         </div>
@@ -146,7 +158,7 @@
                     <div class="col-sm-12">
                         <div class="input-field inbg">
                             <div class="sub_btn text-center">
-                                <a ui-sref-active="active" class="waves-effect waves-light btn" ng-disabled="userForm.$invalid" ng-click="stepTwo()">Next</a>
+                                <a ui-sref-active="active" class="waves-effect waves-light btn" ng-disabled="userForm.$invalid" ng-click="register()">Next</a>
                                 <!--<a ui-sref="form.paymentMethod" ui-sref-active="active" class="waves-effect waves-light btn">Next</a>-->
                             </div>
                         </div>

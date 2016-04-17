@@ -324,6 +324,7 @@ namespace gzWeb.Controllers
         // POST api/Account/Register
 
         [AllowAnonymous]
+        [HttpPost]
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
         {
@@ -338,6 +339,8 @@ namespace gzWeb.Controllers
                                LastName = model.LastName,
                                Birthday = model.Birthday,
                                Currency = model.Currency,
+
+                               EmailConfirmed = true,
                        };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
@@ -345,7 +348,36 @@ namespace gzWeb.Controllers
             if (!result.Succeeded)
                 return GetErrorResult(result);
 
-            return Ok();
+            var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+            var callbackUrl = Url.Link("Default",
+                                       new
+                                       {
+                                               Controller = "Auth",
+                                               Action = "Activate",
+                                               userId = user.Id,
+                                               code = activationCode
+                                       });
+            callbackUrl += "&key=";
+            // temp hack
+            callbackUrl = callbackUrl.Replace("Auth", "Mvc/Auth");
+            
+            return Ok(callbackUrl);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Activate")]
+        public async Task<IHttpActionResult> Activate(ActivationBindingModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (model.UserId == default(int) || string.IsNullOrEmpty(model.Code))
+                return BadRequest();
+
+            var result = await UserManager.ConfirmEmailAsync(model.UserId, model.Code);
+
+            return Ok(result.Succeeded ? "Ok" : "Error");
         }
 
         // TODO: ...

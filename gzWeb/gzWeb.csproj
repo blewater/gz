@@ -249,6 +249,10 @@
     <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.Designer.cs">
       <DependentUpon>201604081406555_Add Currency to ApplicationUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs" />
+    <Compile Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.Designer.cs">
+      <DependentUpon>201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -408,6 +412,7 @@
     <Content Include="Areas\Mvc\Views\Auth\RegisterProfile.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterForm.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
+    <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
@@ -443,6 +448,7 @@
     <Content Include="Scripts\angular-sanitize\angular-sanitize.min.js" />
     <Content Include="Scripts\angular\angular.js" />
     <Content Include="Scripts\angular\angular.min.js" />
+    <Content Include="Scripts\autobahn.min.js" />
     <Content Include="Scripts\d3-tip\d3-tip.js" />
     <Content Include="Scripts\d3\d3.js" />
     <Content Include="Scripts\d3\d3.min.js" />
@@ -476,6 +482,7 @@
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
     <Content Include="Scripts\_app\services\emWamp.js" />
+    <Content Include="Scripts\_app\services\emWamp.test.js" />
     <Content Include="Scripts\_app\services\helpersService.js" />
     <Content Include="Scripts\_app\services\nsMessagesService\nsConfirmCtrl.js" />
     <Content Include="Scripts\_app\services\nsMessagesService\nsPromptCtrl.js" />
@@ -1202,6 +1209,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604081406555_Add Currency to ApplicationUser.resx">
       <DependentUpon>201604081406555_Add Currency to ApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.resx">
+      <DependentUpon>201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

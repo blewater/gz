@@ -47,7 +47,7 @@
     </script>
 
     <script type="text/javascript">
-        var APP = angular.module('GZ', ['ngAnimate', 'ui.router', 'vxWamp']);
+        var APP = angular.module('GZ', ['ngAnimate', 'ui.router', 'vxWamp', 'LocalStorageModule']);
         APP.constant('constants', {
             webeocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
             fallbackApiUrl: 'https://fb-webapi-stage.everymatrix.com',
@@ -125,7 +125,9 @@
                 };
             });
     </script>
+    <script src="~/Scripts/angular-local-storage/angular-local-storage.min.js"></script>
     <script src="~/Scripts/_app/services/emWamp.js"></script>
+    <script src="~/Scripts/_app/services/apiService.js"></script>
     <script src="~/Scripts/_app/controllers/auth/registerCtrl.js"></script>
 </body>
 </html>

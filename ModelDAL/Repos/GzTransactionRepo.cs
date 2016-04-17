@@ -16,9 +16,30 @@ namespace gzDAL.Repos {
     /// 
     /// </summary>
     public class GzTransactionRepo : IGzTransactionRepo {
-        private readonly ApplicationDbContext db;
+        private readonly ApplicationDbContext _db;
         public GzTransactionRepo(ApplicationDbContext db) {
-            this.db = db;
+            this._db = db;
+        }
+
+        /// <summary>
+        /// 
+        /// Return whether a customer has a liquidation transaction in a month
+        /// 
+        /// </summary>
+        /// 
+        /// <param name="yearCurrent"></param>
+        /// <param name="monthCurrent"></param>
+        /// 
+        /// <returns>True: The customer has sold their portfolio. False: if not.</returns>
+        public bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent) {
+
+            var currentYearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
+
+            return _db.GzTransactions
+                .Count(t => t.YearMonthCtd == currentYearMonthStr
+                            && t.Type.Code == GzTransactionJournalTypeEnum.PortfolioLiquidation
+                            && t.CustomerId == customerId)
+                > 0;
         }
 
         /// <summary>
@@ -49,7 +70,7 @@ namespace gzDAL.Repos {
             var yearMonthCurrentStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
 
             var soldPortfolioTimestamp =
-                db.GzTransactions
+                _db.GzTransactions
                     .Where(t => t.YearMonthCtd == yearMonthCurrentStr
                                 && t.CustomerId == customerId &&
                                 t.Type.Code == GzTransactionJournalTypeEnum.PortfolioLiquidation)
@@ -112,7 +133,7 @@ namespace gzDAL.Repos {
 
             }
 
-            ConnRetryConf.TransactWithRetryStrategy(db,
+            ConnRetryConf.TransactWithRetryStrategy(_db,
 
                 () => {
 
@@ -141,7 +162,7 @@ namespace gzDAL.Repos {
             }
 
 
-            ConnRetryConf.TransactWithRetryStrategy(db,
+            ConnRetryConf.TransactWithRetryStrategy(_db,
 
                 () => {
 
@@ -164,11 +185,11 @@ namespace gzDAL.Repos {
 
             gzFeesAmount = liquidationAmount *
                 // COMMISSION_PCNT: Database Configuration Value
-                (decimal)db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100;
+                (decimal)_db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100;
 
             fundsFeesAmount = liquidationAmount *
                 // FUND_FEE_PCNT: Database Configuration Value
-                (decimal)db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100;
+                (decimal)_db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100;
 
             return gzFeesAmount + fundsFeesAmount;
         }
@@ -227,7 +248,7 @@ namespace gzDAL.Repos {
 
             } else {
 
-                ConnRetryConf.TransactWithRetryStrategy(db,
+                ConnRetryConf.TransactWithRetryStrategy(_db,
 
                     () => {
 
@@ -237,7 +258,7 @@ namespace gzDAL.Repos {
                             totPlayinLossAmount * creditPcnt / 100,
                             createdOnUtc,
                             // Db Configuration value
-                            db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
+                            _db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
 
                     });
             }
@@ -258,7 +279,7 @@ namespace gzDAL.Repos {
         private void SaveDbGzTransaction(int customerId, GzTransactionJournalTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc, float? creditPcntApplied) {
 
             //Not thread safe but ok...within a single request context
-            db.GzTransactions.AddOrUpdate(
+            _db.GzTransactions.AddOrUpdate(
 
                 // Assume CreatedOnUtc remains constant for same transaction
                 // to support idempotent transactions
@@ -266,7 +287,7 @@ namespace gzDAL.Repos {
                 t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC },
                     new GzTransaction {
                         CustomerId = customerId,
-                        TypeId = db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
+                        TypeId = _db.GzTransationTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
                         YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
                         Amount = amount,
                         // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
@@ -275,7 +296,7 @@ namespace gzDAL.Repos {
                         CreatedOnUTC = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
                     }
                 );
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
 

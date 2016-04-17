@@ -13,6 +13,11 @@ namespace gzWeb.Areas.Mvc.Controllers
             return View();
         }
 
+        public ActionResult Activate()
+        {
+            return View();
+        }
+
         public PartialViewResult RegisterForm()
         {
             return PartialView("RegisterForm");
