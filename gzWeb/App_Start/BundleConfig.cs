@@ -127,6 +127,8 @@ namespace gzWeb
 
                 , "~/Scripts/_app/services/nsMessagesService/nsMessage.js"
                 , "~/Scripts/_app/services/nsMessagesService/nsMessages.js"
+                , "~/Scripts/_app/services/nsMessagesService/nsPromptCtrl.js"
+                , "~/Scripts/_app/services/nsMessagesService/nsConfirmCtrl.js"
                 , "~/Scripts/_app/services/nsMessagesService/messageService.js"
             ));
             #endregion

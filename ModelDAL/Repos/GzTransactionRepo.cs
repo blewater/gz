@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Linq.Expressions;
 using gzDAL.Conf;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
@@ -19,6 +21,23 @@ namespace gzDAL.Repos {
         private readonly ApplicationDbContext _db;
         public GzTransactionRepo(ApplicationDbContext db) {
             this._db = db;
+        }
+
+        /// <summary>
+        /// 
+        /// Get the Customer ids whose transaction activity has been initiated already within a given month
+        /// 
+        /// </summary>
+        /// <param name="thisYearMonth"></param>
+        /// <returns></returns>
+        public IEnumerable<int> GetActiveCustomers(string thisYearMonth) {
+
+            return _db.GzTransactions
+                .Where(BeforeEq(thisYearMonth))
+                .OrderBy(t => t.CustomerId)
+                .Select(t => t.CustomerId)
+                .Distinct()
+                .ToList();
         }
 
         /// <summary>
@@ -283,7 +302,7 @@ namespace gzDAL.Repos {
 
                 // Assume CreatedOnUtc remains constant for same transaction
                 // to support idempotent transactions
-                
+
                 t => new { t.CustomerId, t.TypeId, t.CreatedOnUTC },
                     new GzTransaction {
                         CustomerId = customerId,
@@ -299,6 +318,28 @@ namespace gzDAL.Repos {
             _db.SaveChanges();
         }
 
+        /// <summary>
+        /// 
+        /// Expression lambda for increased readability on transactions.YearMonthCtd being before (past) 
+        ///     or same than the incoming string month parameter
+        /// 
+        /// </summary>
+        /// <param name="futureYearMonthStr"></param>
+        /// <returns></returns>
+        private static Expression<Func<GzTransaction, bool>> BeforeEq(string futureYearMonthStr) {
+            return t => string.Compare(t.YearMonthCtd, futureYearMonthStr, StringComparison.Ordinal) <= 0;
+        }
 
+        /// <summary>
+        /// 
+        /// Expression lambda for increased readability on transaction.YearMonthCtd being later (future) 
+        ///     or same than the incoming string month parameter
+        /// 
+        /// </summary>
+        /// <param name="pastYearMonthStr"></param>
+        /// <returns></returns>
+        private static Expression<Func<GzTransaction, bool>> LaterEq(string pastYearMonthStr) {
+            return t => string.Compare(t.YearMonthCtd, pastYearMonthStr, StringComparison.Ordinal) >= 0;
+        }
     }
 }

@@ -31,6 +31,33 @@
             $rootScope.nsToastrs = [];
         }
 
+        /**
+         * Opens a message
+         * @param {JSON} options
+         *      option: data type (description - default)
+
+         *      nsSize: 'xs' || 'sm' || 'md' || 'lg' || 'xl' || custom (message box size - 'sm')
+         *      nsClass: 'default' || 'success' || 'error' || 'warning' || 'info' || 'prompt' (styling class - 'default')
+         *      nsType: 'modal' || 'notification' || 'toastr' (message box type - 'modal')
+         *      nsTitle: string (title of the message - '')
+         *      nsTitleShout: boolean (should title be emphatic - false)
+         *      nsBody: string (plain text as message body, in use when no template is being specified - '')
+         *      nsTemplate: string (message body as template url - '')
+         *      nsCtrl: string (id of the controller associated with template - '')
+         *      nsParams: JSON (parameters to pass to controller - {})
+         *      nsIconClass: string (title icon class - '')
+         *      nsIconClassInversed: boolean (inverse icon colors - false)
+         *      nsCallback: function (function to execute upon close - angular.noop)
+         *      nsShowClose: boolean (should show close icon - true)
+         *      nsAutoClose: boolean (should auto close - true when nsType IS 'toastr' else false)
+         *      nsAutoCloseDelay: number (milliseconds to wait before close - 5000)
+         *      nsCloseOnTitleClick: boolean (true when nsType IS NOT 'modal' else false)
+         *      nsBackdrop: boolean (should show backdrop - true when nsType IS 'modal' else false)
+         *      nsStatic: boolean (should not to be closed upon clicking outside - true when nsType IS 'notification' else false)
+         *      nsPromptButtons: JSON array (buttons to show - true when nsType IS 'modal' else false)
+
+         * @return {Promise} open
+         */
         function open(options) {
             options = options || {};
 
@@ -94,7 +121,7 @@
                 nsClass: 'error',
                 nsTitle: 'Error!',
                 nsBody: createErrorMsg(msg),
-                nsIconClass: 'fa-ban',
+                nsIconClass: 'fa-times',
                 nsSize: 'md',
                 nsStatic: true
             };
@@ -132,11 +159,14 @@
 
         function prompt(msg, okCallBack, cancelCallback, options) {
             var defaults = {
+                nsCtrl: 'nsPromptCtrl',
                 nsClass: 'prompt',
-                nsIconClass: 'fa-question-circle',
+                nsIconClass: 'fa-question',
                 nsSize: 'md',
-                nsPrompt: true,
-                nsStatic: true
+                nsStatic: true,
+                nsPromptButtons: [
+                    { text: 'OK', eventKey: "ok" }
+                ]
             };
             var promise = modal(msg, angular.extend(defaults, options));
             promise.then(okCallBack, cancelCallback);
@@ -144,7 +174,7 @@
         function confirm(msg, okCallBack, cancelCallback, options) {
             var defaults = {
                 nsTitle: msg,
-                nsCtrl: 'confirmMessageCtrl',
+                nsCtrl: 'nsConfirmCtrl',
                 nsPromptButtons: [
                     { text: 'Cancel', eventKey: "cancel" },
                     { text: 'OK', eventKey: "ok" }
@@ -154,12 +184,9 @@
         }
         function alert(msg, okCallBack, options) {
             var defaults = {
-                nsIconClass: 'fa-exclamation-circle',
-                nsPromptButtons: [
-                    { text: 'OK', eventKey: "ok" }
-                ]
+                nsIconClass: 'fa-exclamation',
             };
-            confirm(msg, okCallBack, angular.noop, angular.extend(defaults, options));
+            prompt(msg, okCallBack, angular.noop, angular.extend(defaults, options));
         }
     };
 })();
