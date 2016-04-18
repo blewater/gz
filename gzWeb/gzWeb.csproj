@@ -363,6 +363,7 @@
     <Content Include="Content\Styles\_app\header.css" />
     <Content Include="Content\Styles\_app\preloader.css" />
     <Content Include="Content\Styles\ui-bootstrap\ui-bootstrap-csp.css" />
+    <Content Include="EMTestApi.html" />
     <Content Include="favicon.ico" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
