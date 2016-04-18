@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Globalization;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
@@ -224,7 +225,7 @@ namespace gzDAL.Repos {
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
         /// <param name="cashToInvest">Positive cash amount to invest</param>
-        public void SaveDbCustomerMonthBalanceByCashInv(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest) {
+        public void SaveDbCustomerMonthlyBalanceByCashInv(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest) {
 
             decimal monthlyBalance, invGainLoss;
             var portfolioFunds = GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, cashToInvest, out monthlyBalance,
@@ -261,8 +262,9 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="startYearMonthStr">If null assuming -> GzTransactions.Min(t => t.YearMonthCtd)</param>
         /// <param name="endYearMonthStr">If null assuming -> GzTransactions.Max(t => t.YearMonthCtd)</param>
-        public void SaveDbAllCustomerMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null) {
+        public void SaveDbAllCustomersMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null) {
 
+            // Prep in month parameters
             if (string.IsNullOrEmpty(startYearMonthStr)) {
                 startYearMonthStr = _db.GzTransactions.Min(t => t.YearMonthCtd);
             }
@@ -270,80 +272,42 @@ namespace gzDAL.Repos {
                 endYearMonthStr = _db.GzTransactions.Max(t => t.YearMonthCtd);
             }
 
+            // Loop through all the months activity
             while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
 
-                var monthCustomers = _db.GzTransactions
-                    .Where(t => string.Compare(startYearMonthStr, t.YearMonthCtd, StringComparison.Ordinal) >= 0)
-                    .OrderBy(t => t.CustomerId)
-                    .Select(t => t.CustomerId)
-                    .Distinct()
-                    .ToList();
+                var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr);
 
-                foreach (var customerId in monthCustomers) {
+                foreach (var customerId in activeCustomerIds) {
 
-                    var customerMonthlyTrx =
-                        _db.GzTransactions
-                            .Where(t => t.CustomerId == customerId && t.YearMonthCtd == startYearMonthStr)
-                            .GroupBy(t => t.YearMonthCtd)
-                            .SingleOrDefault();
-
-                    var yearCurrent = int.Parse(startYearMonthStr.Substring(0, 4));
-                    var monthCurrent = int.Parse(startYearMonthStr.Substring(4, 2));
-                    SaveDbCustomerMonthlyBalances(customerId, customerMonthlyTrx, yearCurrent, monthCurrent);
+                    SaveDbCustomerMonthlyBalance(customerId, startYearMonthStr);
                 }
 
+                // month ++
                 startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
             }
 
         }
 
         /// <summary>
-        /// Save to Database the calculated customer monthly investment balances
-        ///     for the given months
-        /// -- Or --
-        ///     by all monthly transaction activity of the customer.
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="monthsToProc">Array of YYYYMM values i.e. [201601, 201502]. If null then select all months with this customers transactional activity.</param>
-        public void SaveDbCustomerMonthlyBalancesByTrx(int customerId, string[] monthsToProc = null) {
-
-            IQueryable<IGrouping<string, GzTransaction>> monthlyTrx;
-
-            // Step 1: Retrieve all Transactions by player activity
-            if (monthsToProc == null || monthsToProc.Length == 0) {
-
-                monthlyTrx = _db.GzTransactions.Where(t => t.CustomerId == customerId)
-                    .OrderBy(t => t.YearMonthCtd)
-                    .GroupBy(t => t.YearMonthCtd);
-            }
-            // Add filter condition: given months
-            else {
-
-                monthlyTrx = _db.GzTransactions.Where(t => t.CustomerId == customerId
-                    && monthsToProc.Contains(t.YearMonthCtd))
-                    .OrderBy(t => t.YearMonthCtd)
-                    .GroupBy(t => t.YearMonthCtd);
-            }
-
-            SaveDbCustomerMonthlyBalancesByTrx(customerId, monthlyTrx);
-        }
-
-        /// <summary>
         /// 
-        /// Called by public SaveDbCustomerMonthlyBalancesByTrx after selection of Monthly Transactions:
-        /// To save to Database the calculated customer monthly investment balances
+        /// Overloaded: Process the investment and cash balance for a single customer on a single month.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="customerMonthlyTrxs"></param>
-        private void SaveDbCustomerMonthlyBalancesByTrx(int customerId, IEnumerable<IGrouping<string, GzTransaction>> customerMonthlyTrxs) {
+        /// <param name="thisYearMonth"></param>
+        public void SaveDbCustomerMonthlyBalance(int customerId, string thisYearMonth) {
 
-            // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
-            foreach (var customerMonthlyTrx in customerMonthlyTrxs) {
+            var customerMonthlyTrx =
+                _db.GzTransactions
+                    .Where(t => t.CustomerId == customerId && t.YearMonthCtd == thisYearMonth)
+                    .GroupBy(t => t.YearMonthCtd)
+                    .SingleOrDefault();
 
-                // Step 3: Calculate monthly cash balances before investment
-                SaveDbCustomerMonthlyBalances(customerId, customerMonthlyTrx);
-            }
+            var yearCurrent = int.Parse(thisYearMonth.Substring(0, 4));
+            var monthCurrent = int.Parse(thisYearMonth.Substring(4, 2));
+
+            // Call sibling
+            SaveDbCustomerMonthlyBalance(customerId, customerMonthlyTrx, yearCurrent, monthCurrent);
         }
 
         /// <summary>
@@ -353,7 +317,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="customerMonthlyTrxs"></param>
-        private void SaveDbCustomerMonthlyBalances(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs) {
+        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs) {
 
             int yearCurrent = 0, monthCurrent = 0;
 
@@ -368,7 +332,7 @@ namespace gzDAL.Repos {
                 monthCurrent = int.Parse(customerMonthlyTrxs.Key.Substring(4, 2));
             }
 
-            SaveDbCustomerMonthlyBalances(customerId, customerMonthlyTrxs, yearCurrent, monthCurrent);
+            SaveDbCustomerMonthlyBalance(customerId, customerMonthlyTrxs, yearCurrent, monthCurrent);
         }
 
         /// <summary>
@@ -380,7 +344,7 @@ namespace gzDAL.Repos {
         /// <param name="customerMonthlyTrxs"></param>
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
-        private void SaveDbCustomerMonthlyBalances(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs, int yearCurrent, int monthCurrent) {
+        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs, int yearCurrent, int monthCurrent) {
 
             if (yearCurrent == 0 || monthCurrent == 0) {
                 throw new Exception("Cannot have either year or month equal to 0 inside SaveDbCustomerMonthlyBalances()");
@@ -390,14 +354,14 @@ namespace gzDAL.Repos {
             var monthlyCashToInvest = GetMonthlyCashToInvest(customerMonthlyTrxs);
 
             if (monthlyCashToInvest >= 0) {
-                SaveDbCustomerMonthBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
+                SaveDbCustomerMonthlyBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
             }
 
             if (monthlyCashToInvest == 0) {
                 SaveDbResellCustomerPortfolioIfSoldBefore(customerId, yearCurrent, monthCurrent);
             }
         }
-
+       
         /// <summary>
         /// 
         /// Check if the portfolio was previously sold and "resell it" otherwise that information will be lost.
@@ -470,6 +434,57 @@ namespace gzDAL.Repos {
             return monthlyCashToInvest;
         }
 
+        #region By Transaction
+
+        /// <summary>
+        /// Save to Database the calculated customer monthly investment balances
+        ///     for the given months
+        /// -- Or --
+        ///     by all monthly transaction activity of the customer.
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="monthsToProc">Array of YYYYMM values i.e. [201601, 201502]. If null then select all months with this customers transactional activity.</param>
+        public void SaveDbCustomerMonthlyBalancesByTrx(int customerId, string[] monthsToProc = null) {
+
+            IQueryable<IGrouping<string, GzTransaction>> monthlyTrx;
+
+            // Step 1: Retrieve all Transactions by player activity
+            if (monthsToProc == null || monthsToProc.Length == 0) {
+
+                monthlyTrx = _db.GzTransactions.Where(t => t.CustomerId == customerId)
+                    .OrderBy(t => t.YearMonthCtd)
+                    .GroupBy(t => t.YearMonthCtd);
+            }
+            // Add filter condition: given months
+            else {
+
+                monthlyTrx = _db.GzTransactions.Where(t => t.CustomerId == customerId
+                    && monthsToProc.Contains(t.YearMonthCtd))
+                    .OrderBy(t => t.YearMonthCtd)
+                    .GroupBy(t => t.YearMonthCtd);
+            }
+
+            SaveDbCustomerMonthlyBalancesByTrx(customerId, monthlyTrx);
+        }
+
+        /// <summary>
+        /// 
+        /// Called by public SaveDbCustomerMonthlyBalancesByTrx after selection of Monthly Transactions:
+        /// To save to Database the calculated customer monthly investment balances
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="customerMonthlyTrxs"></param>
+        private void SaveDbCustomerMonthlyBalancesByTrx(int customerId, IEnumerable<IGrouping<string, GzTransaction>> customerMonthlyTrxs) {
+
+            // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
+            foreach (var customerMonthlyTrx in customerMonthlyTrxs) {
+
+                // Step 3: Calculate monthly cash balances before investment
+                SaveDbCustomerMonthlyBalance(customerId, customerMonthlyTrx);
+            }
+        }
+
         /// <summary>
         /// Multiple Customers Version:
         /// Save to Database the calculated customer monthly investment balances
@@ -487,5 +502,8 @@ namespace gzDAL.Repos {
                 SaveDbCustomerMonthlyBalancesByTrx(customerId, yearMonthsToProc);
             }
         }
+
+        #endregion
+
     }
 }

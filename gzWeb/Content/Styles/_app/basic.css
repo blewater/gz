@@ -123,10 +123,10 @@ a { text-decoration:none; }
 button.btn-gz {
     height: 36px;
     line-height: 36px;
-    margin: 7px 0;
+    margin: 7px 5px;
     padding: 0 10px;
     border: 1px solid #27A95C;
-    background: none;
+    background: #f2f2f2;
     -webkit-box-shadow: none;
     -ms-box-shadow: none;
     box-shadow: none;
