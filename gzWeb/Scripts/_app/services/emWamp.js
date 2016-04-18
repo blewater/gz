@@ -95,8 +95,8 @@
         return service;
     };
 
-    APP.factory("emGameService", ["emWamp", emGemeSericeFunction]);
-    function emGemeSericeFunction(emWamp) {
+    APP.factory("emCasino", ["emWamp", emCasinoFunc]);
+    function emCasinoFunc(emWamp) {
 
 
         var _service = {};
@@ -194,4 +194,69 @@
         return _service;
     };
 
+    APP.factory("emBanking", ["emWamp", emBankingFunc]);
+    function emBankingFunc(emWamp) {
+
+        var _service = {};
+
+        /// <summary>
+        /// Query the gaming accounts of the current logged-in user.
+        /// </summary>
+        /// <parameter name="expectBalance">
+        /// Indicates if balance is expected in the response with the account. 
+        /// NOTE, Loading balance is always a heavy operation, avoid loading balance as possible as much.
+        /// </parmater>
+        /// <parameter name="expectBonus">
+        /// Indicates if bonus account is expected in the response. If expectBonus is true, expectBalance has to be true.
+        /// </parmater>
+        _service.getGamingAccounts = function (expectBalance, expectBonus) {
+            return emWamp.call("/user/account#getGamingAccounts",
+            {
+                expectBalance: expectBalance,
+                expectBonus: expectBonus
+            });
+        };
+
+        //
+        // Query the payment methods.
+        //
+        // filterByCountry  [string, optional]
+        // Filter the payment method against country. ISO3166 Alpha2.
+        // currency  [string, optional]
+        // The preferred currency for limitation. ISO 4217 code.
+        _service.getPaymentMethods = function (filterByCountry, currency) {
+            return emWamp.call("/user/deposit#getPaymentMethods", { filterByCountry: filterByCountry, currency: currency });
+        };
+        
+        //
+        // Query the payment method grouped by categories.
+        //
+        // filterByCountry  [string, optional]
+        // Filter the payment method against country. ISO3166 Alpha2.
+        // currency  [string, optional]
+        // The preferred currency for limitation. ISO 4217 code.
+        _service.getCategorizedPagmentMethods = function (filterByCountry, currency) {
+            return emWamp.call("/user/deposit#getCategorizedPagmentMethods", { filterByCountry: filterByCountry, currency: currency });
+        };
+
+        //
+        // Query the recent used payment methods for the current logged-in user.
+        //
+        // currency  [string, optional]
+        // The preferred currency for limitation. ISO 4217 code.
+        _service.getRecentUsedPaymentMethods = function (currency) {
+            return emWamp.call("/user/deposit#getRecentUsedPaymentMethods", { currency: currency });
+        };
+
+        //
+        // Query the configuration of payment method for deposit
+        //
+        // paymentMethodCode  [string, mandatory]
+        // The identifier of the payment method, can be gotten from getCategorizedPagmentMethods.
+        _service.getPaymentMethodCfg = function (paymentMethodCode) {
+            return emWamp.call("/user/deposit#getPaymentMethodCfg", { paymentMethodCode: paymentMethodCode });
+        };
+
+        return _service;
+    };
 })();
