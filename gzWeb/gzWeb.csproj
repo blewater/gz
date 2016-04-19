@@ -350,10 +350,10 @@
     <Content Include="Content\Images\gz_logo.png" />
     <Content Include="Content\Images\gz_logo_sm.png" />
     <Content Include="Content\Styles\exceptionaire-media.css" />
+    <Content Include="Content\Styles\exceptionaire-meterialize.css" />
     <Content Include="Content\Styles\exceptionaire-style.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
-    <Content Include="Content\Styles\exceptionaire-meterialize.css" />
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
@@ -417,6 +417,8 @@
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
+    <Content Include="Partials\messages\login.html" />
+    <Content Include="Partials\messages\registerProfile.html" />
     <Content Include="Partials\messages\showVintages.html" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
     <Content Include="Scripts\angular-animate\angular-animate.min.js" />
@@ -462,6 +464,7 @@
     <Content Include="Scripts\_app\app.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
+    <Content Include="Scripts\_app\controllers\auth\forgotPasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
@@ -1157,6 +1160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Scripts\_app\exceptionaire\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
