@@ -10,14 +10,14 @@
          ng-style="{ 'z-index': getMsgZIndex() }"
          ng-mouseenter="onMouseEnter()"
          ng-mouseleave="onMouseLeave()">
-        <div class="msg-frame" ng-class="{'minimized':isMinimized()}" ng-dblclick="toggleMinMax()">
+        <div class="msg-frame" ng-class="{'msg-minimized':isMinimized()}" ng-dblclick="toggleMinMax()">
             <span ng-if="showBadge()" class="msg-badge pull-left">{{nsIndex + 1}}</span>
-            <i ng-if="showClose()" class="fa fa-close pull-right" ng-click="onCloseClick()"></i>
-            <i ng-show="showExpandCollapse() && !isMinimized()" class="fa fa-angle-down pull-right" ng-click="toggleMinMax()"></i>
-            <i ng-show="showExpandCollapse() && isMinimized()" class="fa fa-angle-up pull-right" ng-click="toggleMinMax()"></i>
+            <i ng-if="showClose()" class="msg-close fa fa-close pull-right" ng-click="onCloseClick()"></i>
+            <i ng-show="showExpandCollapse() && !isMinimized()" class="msg-down fa fa-angle-down pull-right" ng-click="toggleMinMax()"></i>
+            <i ng-show="showExpandCollapse() && isMinimized()" class="msg-up fa fa-angle-up pull-right" ng-click="toggleMinMax()"></i>
         </div>
-        <div class="msg-content" ng-show="!isMinimized()">
-            <div class="msg-title-wrap" ng-click="onTitleClick()" ng-style="{ 'cursor': nsOptions.nsCloseOnTitleClick ? 'pointer' : 'default' }">
+        <div class="msg-content" ng-class="{'msg-with-lifespan': nsOptions.nsAutoClose}" ng-show="!isMinimized()">
+            <div class="msg-title-wrap" ng-click="onTitleClick()" ng-class="{'msg-empty-title': nsOptions.nsTitle.length === 0}" ng-style="{ 'cursor': nsOptions.nsCloseOnTitleClick ? 'pointer' : 'default' }">
                 <div class="msg-icon" ng-if="nsOptions.nsIconClass" ng-class="{'msg-icon-inversed': nsOptions.nsIconClassInversed}">
                     <i class="fa fa-lg" ng-class="nsOptions.nsIconClass"></i>
                 </div>
