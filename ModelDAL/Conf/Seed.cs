@@ -64,6 +64,11 @@ namespace gzDAL.Conf
             var manager = new ApplicationUserManager(new CustomUserStore(context));
             int custId = CreateUpdUser(manager);
 
+            int everyMatrixUserId = 0;
+            var everyMatrixUser = manager.FindByEmail("gz@greenzorro.gr");
+            if (everyMatrixUser != null)
+                everyMatrixUserId = everyMatrixUser.Id;
+
             // Currencies
             CreateUpdCurrenciesList(context);
             context.SaveChanges();
@@ -80,8 +85,17 @@ namespace gzDAL.Conf
             CreateUpdPortfolios(context, custId);
             context.SaveChanges();
 
+            if (everyMatrixUserId > 0) {
+                CreateUpdPortfolios(context, custId);
+                context.SaveChanges();
+            }
+
             // Link now a portfolio for this customer
-            new CustPortfolioRepo(new ApplicationDbContext()).SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            var custPortfolioRepo = new CustPortfolioRepo(context);
+            custPortfolioRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            if (everyMatrixUserId > 0) {
+                custPortfolioRepo.SaveDbCustMonthsPortfolioMix(everyMatrixUserId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            }
 
             // Portfolios - Funds association table
             CreateUpdPortFunds(context);
@@ -94,10 +108,18 @@ namespace gzDAL.Conf
             // gzTransactions
             CreateUpdGzTransaction(context, custId);
             context.SaveChanges();
+            if (everyMatrixUserId > 0) {
+                CreateUpdGzTransaction(context, everyMatrixUserId);
+                context.SaveChanges();
+            }
 
             // Balances
             CalcMonthlyBalances(context, custId);
             context.SaveChanges();
+            if (everyMatrixUserId > 0) {
+                CalcMonthlyBalances(context, everyMatrixUserId);
+                context.SaveChanges();
+            }
         }
 
         /// <summary>
