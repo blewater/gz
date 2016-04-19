@@ -97,7 +97,7 @@
         //      "paymentMethodCode": "MasterCard",
         //      "fields": {
         //          // the following fields are different per each payment method
-        //          // To get the field requirement for specific payment method, use /user/deposit#getPaymentMethodCfg
+        //          // To get the field requirement for specific payment method, use getPaymentMethodCfg
         //
         //          "cardNumber": "5138495125550554",
         //          "cardHolderName": "5138495125550554",
@@ -115,9 +115,22 @@
         // The field requirement is different per different payment method and user. 
         // Within the response of the call getPaymentMethodCfg, the properties of fields.payCardID.registrationFields 
         // contain the information of the fields to register the paycard for each payment method.
+        //
+        // Return
+        //
+        //  {
+        //      "registeredPayCard": {
+        //          "id": 330200,
+        //          "name": "633458...0000",
+        //          "cardExpiryDate": "03/2015",
+        //          "cardHolderName": "6334580500000000"
+        //      }
+        //  }
+        //
         _service.registerPayCard = function(parameter) {
             return emWamp.call("/user/deposit#registerPayCard", parameter);
         };
+
 
         _service.registerPayCardVISA = function(cardNumber, cardHolderName, cardExpiryDate) {
             return emWamp.call("/user/deposit#registerPayCard",
@@ -129,13 +142,8 @@
                     cardExpiryDate: cardExpiryDate
                 }
             });
-        };
-
-        _service.registerPayCardMaestro = function(cardNumber,
-            cardHolderName,
-            cardExpiryDate,
-            cardValidFrom,
-            cardIssueNumber) {
+        };;
+        _service.registerPayCardMaestro = function(cardNumber, cardHolderName, cardExpiryDate, cardValidFrom, cardIssueNumber) {
             return emWamp.call("/user/deposit#registerPayCard",
             {
                 paymentMethodCode: _supportedPaymentMethodCode.Maestro,
@@ -199,7 +207,7 @@
             return emWamp.call("/user/deposit#prepare", parameters);
         };
 
-        _service.prepareVisa = function(gamingAccountId, currency, amount, payCardId, cardSecurityCode) {
+        _service.prepareVISA = function(gamingAccountId, currency, amount, payCardId, cardSecurityCode) {
             return emWamp.call("/user/deposit#prepare",
             {
                 paymentMethodCode: _supportedPaymentMethodCode.VISA,
@@ -239,6 +247,21 @@
                     cardSecurityCode: cardSecurityCode
                 }
             });
+        };
+
+        //
+        // Confirm and process the prepared deposit transaction. this method is only called for the prepared transaction whose status is "setup"
+        //
+        // Return
+        //
+        //  {
+        //      "pid": "7e140c1ea6f24e53890df2dc3d213366",
+        //      "status": "redirection",
+        //      "redirectionForm": "<form id=\"deposit-form\" name=\"deposit-form\" action=\"https://secure.metacharge.com/mcpe/acs\" method=\"post\" target=\"deposit-3rd-iframe\"> <input type=\"hidden\" name=\"PaReq\" value=\"VGVzdE1vZGVUcmFuc2FjdGlvblRlc3RNb2RlVHJhbnNhY3Rpb25UZXN0TW9kZVRyYW5zYWN0aW9uVGVzdE1vZGVUcmFuc2FjdGlvbn5+fn5+fn5+fn5+fn5+fn4=\" /> <input type=\"hidden\" name=\"MD\" value=\"MTUzMTYzNDcxMTUzMTYzNDcxMTUzMTYzNDcxMTUzMTYzNDcxMTUzMTYzNDcx\" /> <input type=\"hidden\" name=\"TermUrl\" value=\"http://localhost:9644/Payment/Postback?_em_dm=www.thrills.com&_em_pid=7e140c1ea6f24e53890df2dc3d213366&_em_sid=3VIZIFGXVWA8&gm_sid=2bd6cdf52cb248cf864c6cb626b6b03f&gm_hc=b1c9143044592cc08b11b785ff5ac1a0d6546ae7&ownw=0\" /> </form>"
+        //  }
+        //
+        _service.confirm = function (pid) {
+            return emWamp.call("/user/deposit#confirm", { pid: pid });
         };
 
         return _service;

@@ -153,7 +153,7 @@
         
         $scope.register = function () {
 
-            var emRegisterQ = emRegister();
+            var emRegisterQ = emRegister("(empty callbackUrl)");
 
             emRegisterQ.then(function(result) {
                 emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password })
