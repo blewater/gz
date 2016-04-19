@@ -11,11 +11,13 @@ namespace CustPortfoliosCalc {
     class Program {
 
         const int SleepIntervalMillis = 250;
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = null;
 
         static void Main(string[] args) {
 
             try {
+                logger = LogManager.GetCurrentClassLogger();
+
                 var options = CpcOptions.ProcArgs(args);
 
                 if (options.ParsingSuccess) {
@@ -26,6 +28,7 @@ namespace CustPortfoliosCalc {
             }
             catch (Exception ex) {
                 var exMsg = ex.Message;
+                throw;
             }
         }
 
