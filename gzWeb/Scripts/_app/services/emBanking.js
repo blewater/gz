@@ -264,6 +264,41 @@
             return emWamp.call("/user/deposit#confirm", { pid: pid });
         };
 
+        //
+        // Query the information for successfully completed deposit transaction
+        //
+        // Return
+        //
+        //  {
+        //      "status": "success",
+        //      "transactionID": 1648350,
+        //      "time": "2013-10-06T09:09:48.327",
+        //      "credit": {
+        //          "currency": "CNY",
+        //          "amount": 100,
+        //          "name": "Casino"
+        //      },
+        //      "debit": {
+        //          "currency": "EUR",
+        //          "amount": 13.02,
+        //          "name": "631234...2345"
+        //      },
+        //      "fees": [ {
+        //          "currency": "CNY",
+        //          "amount": 8.31
+        //      }]
+        //  }
+        // 
+        // status  [string] Indicate the status.
+        //  error : the transaction is failed
+        //  incomplete : the transaction is incomplete
+        //  success : the transaction is completed successfully
+        //
+        // desc  [string] the description for the error, only appears when status = error
+        _service.getTransactionInfo = function(pid) {
+            return emWamp.call("/user/deposit#getTransactionInfo", { pid: pid });
+        };
+
         return _service;
     };
 
