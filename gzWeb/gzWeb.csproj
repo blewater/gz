@@ -463,6 +463,7 @@
     <Content Include="Scripts\_app\app.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
+    <Content Include="Scripts\_app\controllers\games\depositCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
