@@ -37,7 +37,7 @@
          *      option: data type (description - default)
 
          *      nsSize: 'xs' || 'sm' || 'md' || 'lg' || 'xl' || custom (message box size - 'sm')
-         *      nsClass: 'default' || 'success' || 'error' || 'warning' || 'info' || 'prompt' (styling class - 'default')
+         *      nsClass: 'custom' || 'success' || 'error' || 'warning' || 'info' || 'prompt' (styling class - 'custom')
          *      nsType: 'modal' || 'notification' || 'toastr' (message box type - 'modal')
          *      nsTitle: string (title of the message - '')
          *      nsTitleShout: boolean (should title be emphatic - false)
@@ -68,18 +68,20 @@
                 nsReject: deferred.reject
             });
 
-            if (options.nsType === 'modal')
-                $rootScope.nsModals.push(options);
-            else if (options.nsType === 'toastr')
+            if (options.nsType === 'toastr')
                 $rootScope.nsToastrs.splice(0, 0, options);
-            else
+            else if (options.nsType === 'notification')
                 $rootScope.nsNotifications.splice(0, 0, options);
+            else
+                $rootScope.nsModals.push(options);
+
             return promise;
         }
 
         function modal(msg, options) {
             var defaults = {
                 nsType: 'modal',
+                nsClass: 'default',
                 nsTitle: msg
             };
             return open(angular.extend(defaults, options));
@@ -87,7 +89,7 @@
         function notify(msg, options) {
             var defaults = {
                 nsType: 'notification',
-                //nsClass: 'info',
+                nsClass: 'default',
                 nsTitle: msg.Message ? msg.Message : msg
             };
             return open(angular.extend(defaults, options));
@@ -95,6 +97,7 @@
         function toastr(msg, options) {
             var defaults = {
                 nsType: 'toastr',
+                nsClass: 'default',
                 nsTitle: msg.Message ? msg.Message : msg
             };
             return open(angular.extend(defaults, options));

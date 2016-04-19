@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', nsMessage]);
+    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', '$window', nsMessage]);
 
-    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest) {
+    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest, $window) {
         return {
             restrict: 'E',
             replace: true,
@@ -22,7 +22,9 @@
                 var unregisterCountWatch, unregisterMsgTitleHeightWatch, unregisterMsgBodyHeightWatch;
                 var $msg = element.find('.msg');
                 var $msgTitle = element.find('.msg-title');
+                var $msgContent = element.find('.msg-content');
                 var $msgBody = element.find('.msg-body');
+                var widthClass;
                 var templateCtrl;
                 var templateScope = scope.$new();
                 // #endregion
@@ -71,7 +73,7 @@
                     scope.isToastr = scope.nsOptions.nsType === 'toastr';
 
                     if (!angular.isDefined(scope.nsOptions.nsClass))
-                        scope.nsOptions.nsClass = 'default';
+                        scope.nsOptions.nsClass = 'custom';
                     if (!angular.isDefined(scope.nsOptions.nsBody))
                         scope.nsOptions.nsBody = '';
                     //if (!angular.isDefined(scope.nsOptions.nsBodyType))
@@ -120,12 +122,38 @@
                     $msg.addClass('msg-' + scope.nsOptions.nsClass);
                     //$msg.addClass(scope.nsOptions.nsStatic ? 'msg-static' : 'msg-non-static');
 
-                    if (['xs', 'sm', 'md', 'lg', 'xl'].indexOf(scope.nsOptions.nsSize) > -1)
-                        $msg.addClass('msg-' + scope.nsOptions.nsSize);
-                    else
-                        $msg.css('width', scope.nsOptions.nsSize);
+                    var sizeXLPadding = 40;
+                    var sizes = [];
+                    sizes['xs'] = 250;
+                    sizes['sm'] = 400;
+                    sizes['md'] = 800;
+                    sizes['lg'] = 1200;
 
-                    //registerHeightWatches();
+                    function setWidth() {
+                        var width = sizes[scope.nsOptions.nsSize];
+                        if (!angular.isDefined(width) && scope.nsOptions.nsSize.indexOf('px') > -1)
+                            width = scope.nsOptions.nsSize.slice(0, -2);
+
+                        $msg.removeClass(widthClass);
+                        $msg.removeClass('msg-xl');
+                        $msg.css('width', '');
+
+                        if (angular.isDefined(width) && width > angular.element($window).width() - sizeXLPadding)
+                            $msg.addClass('msg-xl');
+                        else {
+                            if (['xs', 'sm', 'md', 'lg', 'xl'].indexOf(scope.nsOptions.nsSize) > -1) {
+                                widthClass = 'msg-' + scope.nsOptions.nsSize;
+                                $msg.addClass(widthClass);
+                            }
+                            else
+                                $msg.css('width', scope.nsOptions.nsSize);
+                        }
+                    }
+                    setWidth();
+
+                    angular.element($window).bind('resize', function () {
+                        setWidth();
+                    });
 
                     unregisterCountWatch = scope.$watch('nsCount', function (newValue, oldValue) {
                         if (newValue < oldValue)
@@ -239,7 +267,7 @@
 
                 scope.close = function () {
                     //console.log('close');
-                    var $nextMsgBody = $('#ns-notifications').find('.msg-container').eq(scope.nsIndex - 1).find('.msg');
+                    var $nextMsgBody = angular.element('#ns-notifications').find('.msg-container').eq(scope.nsIndex - 1).find('.msg');
                     if (scope.nsCount > 1) {
                         $nextMsgBody.addClass('msg-preparing');
                     }

@@ -39,7 +39,7 @@
 #ns-msgs .msg {
     position: fixed;
     max-height: 80%;
-    background-color: #27A95C;
+    background-color: #27a95c;
     border: 1px solid #ccc;
 
     -ms-border-radius: 2px;
@@ -72,7 +72,7 @@
 }
 #ns-msgs .msg.msg-modal.msg-active {
     top: calc(50% - 40px);
-
+    /*top: 50%;*/
     -ms-opacity: 1;
     opacity: 1;
 }
@@ -179,16 +179,15 @@
 #ns-msgs .msg.msg-xl { width: calc(100% - 40px); }
 
 #ns-msgs .msg .msg-frame {
-    /*height: 15px;*/
     background-color: #f2f2f2;
 }
 #ns-msgs .msg.msg-toastr .msg-frame,
 #ns-msgs .msg.msg-notification .msg-frame {
     height: 17px;
 }
-#ns-msgs .msg .msg-frame .fa-angle-down,
-#ns-msgs .msg .msg-frame .fa-angle-up,
-#ns-msgs .msg .msg-frame .fa-close {
+#ns-msgs .msg .msg-frame .msg-down,
+#ns-msgs .msg .msg-frame .msg-up,
+#ns-msgs .msg .msg-frame .msg-close {
     margin: 0 3px 1px;
     cursor: pointer;
     color: #27A95C;
@@ -204,23 +203,23 @@
     -o-transition: all 0.4s linear 0s;
     transition: all 0.4s linear 0s;
 }
-#ns-msgs .msg .msg-frame .fa-angle-down:hover,
-#ns-msgs .msg .msg-frame .fa-angle-up:hover,
-#ns-msgs .msg .msg-frame .fa-close:hover {
+#ns-msgs .msg .msg-frame .msg-down:hover,
+#ns-msgs .msg .msg-frame .msg-up:hover,
+#ns-msgs .msg .msg-frame .msg-close:hover {
     color: #f2f2f2;    
     background-color: #27A95C;
 }
 
 
-#ns-msgs .msg .msg-frame .fa-angle-down,
-#ns-msgs .msg .msg-frame .fa-angle-up {
+#ns-msgs .msg .msg-frame .msg-down,
+#ns-msgs .msg .msg-frame .msg-up {
     font-weight: bold;
 }
 
 #ns-msgs .msg.msg-modal .msg-frame {
     position: relative;    
 }
-#ns-msgs .msg.msg-modal .msg-frame .fa-close {
+#ns-msgs .msg.msg-modal .msg-frame .msg-close {
     position: absolute;
     width: 32px;
     height: 32px;
@@ -254,12 +253,17 @@
     min-height: 50px;
     height: 100%;
     /*height: calc(100% - 150px);*/
+}
+#ns-msgs .msg .msg-content.msg-with-lifespan {
     margin-bottom: 4px;
 }
 
 #ns-msgs .msg .msg-title-wrap {
     text-align: center;
     background-color: #27A95C;
+}
+#ns-msgs .msg .msg-title-wrap.msg-empty-title {
+    height: 0;
 }
 
 #ns-msgs .msg .msg-icon {
@@ -290,6 +294,9 @@
     padding: 20px;
     background-color: #f2f2f2;
 }
+#ns-msgs .msg.msg-modal .msg-title-wrap.msg-empty-title {
+    padding: 0;
+}
 #ns-msgs .msg.msg-modal .msg-title {
     margin: 0 35px;
     color: #27A95C;
@@ -305,21 +312,21 @@
     font-size: 18px;
 }
 
-#ns-msgs .msg .msg-frame.minimized {
+#ns-msgs .msg .msg-frame.msg-minimized {
     background-color: #27A95C;    
 }
-#ns-msgs .msg .msg-frame.minimized .fa-angle-down,
-#ns-msgs .msg .msg-frame.minimized .fa-angle-up,
-#ns-msgs .msg .msg-frame.minimized .fa-close {
+#ns-msgs .msg .msg-frame.msg-minimized .msg-down,
+#ns-msgs .msg .msg-frame.msg-minimized .msg-up,
+#ns-msgs .msg .msg-frame.msg-minimized .msg-close {
     color: #f2f2f2;
 }
-#ns-msgs .msg .msg-frame.minimized .fa-angle-down:hover,
-#ns-msgs .msg .msg-frame.minimized .fa-angle-up:hover,
-#ns-msgs .msg .msg-frame.minimized .fa-close:hover {
+#ns-msgs .msg .msg-frame.msg-minimized .msg-down:hover,
+#ns-msgs .msg .msg-frame.msg-minimized .msg-up:hover,
+#ns-msgs .msg .msg-frame.msg-minimized .msg-close:hover {
     color: #27A95C;    
     background-color: #f2f2f2;
 }
-#ns-msgs .msg .msg-frame.minimized .msg-badge {
+#ns-msgs .msg .msg-frame.msg-minimized .msg-badge {
     color: #27A95C;
     background-color: #f2f2f2;
 }
@@ -383,3 +390,5 @@
     margin-bottom: 3px;
     margin-right: 8px;
 }
+
+#ns-msgs .msg.msg-custom .msg-body { padding: 0;color: #7b7b7b;background-color: #f2f2f2; }
