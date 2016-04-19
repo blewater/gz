@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <link href="Content/Styles/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="Content/Styles/bootstrap/bootstrap-theme.css" rel="stylesheet" />
+</head>
+<body ng-app="emTestApiApp">
+
+<div ng-controller="emTestApiCtrl">
+
+    <table class="table table-bordered table-striped table-condensed">
+        <tr>
+            <td>User Info</td>
+            <td>
+                <pre>{{userInfo | json}}</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>Session Info</td>
+            <td>
+                <pre>{{sessionInfo | json}}</pre>
+            </td>
+        </tr>
+    </table>
+
+    <table class="table table-bordered table-striped table-condensed">
+        <tr ng-repeat="item in actionResults">
+            <td>{{item.label}}</td>
+            <td><pre>{{item.result | json}}</pre></td>
+        </tr>
+    </table>
+
+</div>
+
+    <script src="Scripts/jquery/jquery-1.12.0.js"></script>
+    <script src="Scripts/bootstrap/bootstrap.js"></script>
+    <script>AUTOBAHN_DEBUG = true;</script>
+    <script src="Scripts/autobahn.min.js"></script>
+    <script src="Scripts/angular/angular.js"></script>
+    <script src="Scripts/angular-wamp/angular-wamp.js"></script>
+    <script>
+        var app = angular.module("emTestApiApp", ["vxWamp"]);
+
+        app.config(function($wampProvider) {
+            $wampProvider.init({
+                transports: [
+                    { 'type': 'websocket', 'url': 'wss://webapi-stage.everymatrix.com/v2' },
+                    { 'type': 'longpoll', 'url': 'https://fb-webapi-stage.everymatrix.com' }
+                ],
+                url: 'wss://webapi-stage.everymatrix.com/v2',
+                realm: 'http://www.greenzorro.com'
+            });
+        });
+
+        app.factory("emWamp",
+            function($wamp) {
+
+                var _logError = function(error) {
+                    console.log(error);
+                };
+
+                var _call = function(uri, parameters) {
+                    var callReturn = $wamp.call(uri, [], parameters);
+
+                    var originalFunc = callReturn.then;
+                    callReturn.then = function(successCallback, failureCallback) {
+                        function success(d) {
+                            if (typeof (successCallback) === 'function')
+                                successCallback(d && d.kwargs);
+                        }
+
+                        function error(e) {
+                            if (typeof (failureCallback) === 'function')
+                                failureCallback(e.kwargs);
+                        }
+
+                        return originalFunc.call(callReturn, success, error);
+                    };
+
+                    return callReturn;
+                };
+
+                var service = {
+
+                    call: _call,
+
+                    // #region Account
+
+                    register: function(parameters) {
+                        return _call("/user/account#register", parameters);
+                    },
+
+                    // #endregion
+
+                    // #region Session
+                    /// <summary>
+                    /// Login the end-user.
+                    /// </summary>
+                    /// <parameters>
+                    /// For clasic login:
+                    ///     {
+                    ///         usernameOrEmail: 'xx@xx.com',
+                    ///         password: 'iampwd',
+                    ///         captchaPublicKey: "6LcJ7e4SAAAAAOaigpBV8fDtQlWIDrRPNFHjQRqn",
+                    ///         captchaChallenge: "03AHJ_VutMqFDQyKxHChZ6vF4pi8Zu76IzvP5YCNdZMeOdjVYpY",
+                    ///         captchaResponse: "120"
+                    ///     }
+                    /// For external login:
+                    ///     {
+                    ///         "referrerID": "0fbfcca4166149f6a26798d3a2f90a76"
+                    ///     }
+                    /// </parameters>
+                    login: function(parameters) {
+                        return _call("/user#login", parameters);
+                    },
+
+                    /// <summary>
+                    /// Get current session information.
+                    /// <summary>
+                    /// <returns>
+                    /// {
+                    ///     "isAuthenticated": true,
+                    ///     "firstname": "Bruce",
+                    ///     "surname": "Wliam",
+                    ///     "currency": "EUR",
+                    ///     "userCountry": "AS",
+                    ///     "ipCountry": "ES",
+                    ///     "loginTime": "2014-01-01T00:00:00",
+                    ///     "isEmailVerified": true
+                    ///     }
+                    /// </returns>
+                    getSessionInfo: function() {
+                        return _call("/user#getSessionInfo");
+                    },
+
+                    logout: function() {
+                        _call("/user#logout").then(function(result) {}, _logError);
+                    }
+
+                    // #endregion
+
+                };
+
+                $wamp.open();
+
+                return service;
+            });
+
+        app.controller("emTestApiCtrl",
+            function ($scope, $q, emWamp) {
+
+                var _logError = function (error) {
+                    console.log(error);
+                };
+
+                $scope.userInfo = "";
+                $scope.sessionInfo = "";
+
+                var GamesExpectedFields = {
+                    Slug: 1,
+                    Vendor: 2,
+                    Name: 4,
+                    ShortName: 8,
+                    Description: 16,
+                    AnonymousFunMode: 32,
+                    FunMode: 64,
+                    RealMode: 128,
+                    NewGame: 256,
+                    License: 512,
+                    Popularity: 1024,
+                    Width: 2048,
+                    Height: 4096,
+                    Thumbnail: 8192,
+                    Logo: 16384,
+                    BackgroundImage: 32768,
+                    Url: 65536,
+                    HelpUrl: 131072,
+                    Categories: 262144,
+                    Tags: 524288,
+                    Platforms: 1048576,
+                    RestrictedTerritories: 2097152,
+                    TheoreticalPayOut: 4194304,
+                    BonusContribution: 8388608,
+                    JackpotContribution: 16777216,
+                    FPP: 33554432,
+                    Limitation: 536870912,
+                    Currencies: 8589934592,
+                    Languages: 17179869184
+                };
+
+                var _actions = [
+                    {
+                        label: "getCountries",
+                        action: function () {
+                            return emWamp.call("/user/account#getCountries");
+                        }
+                    },
+                    {
+                        label: "getProfile",
+                        action: function () {
+                            return emWamp.call("/user/account#getProfile");
+                        }
+                    },
+                    //{
+                    //    label: "updateProfile",
+                    //    action: function () {
+                    //        var q = $q.defer();
+                    //        emWamp.call("/user/account#getProfile")
+                    //            .then(function(result) {
+                    //                var obj = angular.fromJson(result).fields;
+                    //                    obj.gender = "M";
+                    //                    obj.phonePrefix = obj.mobilePrefix;
+                    //                    obj.phone = obj.mobile;
+                    //                    obj.securityQuestion = "(empty)";
+                    //                    obj.securityAnswer = "(empty)";
+                    //                    q.resolve(emWamp.call("/user/account#updateProfile", obj));
+                    //                },
+                    //                _logError);
+                    //        return q.promise;
+                    //    }
+                    //},
+                    {
+                        label: "getGamingAccounts",
+                        action: function() {
+                            return emWamp.call("/user/account#getGamingAccounts",
+                            { expectBalance: false, expectBonus: false });
+                        }
+                    },
+                    {
+                        label: "getPaymentMethods",
+                        action: function() {
+                            return emWamp.call("/user/deposit#getPaymentMethods",
+                            { filterByCountry: $scope.sessionInfo.userCountry, currency: $scope.sessionInfo.currency });
+                        }
+                    },
+                    {
+                        label: "getCategorizedPagmentMethods",
+                        action: function() {
+                            return emWamp.call("/user/deposit#getCategorizedPagmentMethods",
+                            { filterByCountry: $scope.sessionInfo.userCountry, currency: $scope.sessionInfo.currency });
+                        }
+                    },
+                    //VISA
+                    {
+                        label: "getPaymentMethodCfg / VISA",
+                        action: function() {
+                            return emWamp.call("/user/deposit#getPaymentMethodCfg",
+                            { paymentMethodCode: "VISA" });
+                        }
+                    },
+
+                    // GAMES
+                    {
+                        label: "getGameCategories",
+                        action: function () {
+                            return emWamp.call("/casino#getGameCategories");
+                        }
+                    },
+                    {
+                        label: "getGames",
+                        action: function () {
+                            return emWamp.call("/casino#getGames",
+                            {
+                                expectedFields: GamesExpectedFields.Slug | GamesExpectedFields.Name | GamesExpectedFields.BackgroundImage
+                            });
+                        }
+                    },
+                    {
+                        label: "getGameVendors",
+                        action: function () {
+                            return emWamp.call("/casino#getGameVendors");
+                        }
+                    },
+                ];
+
+                $scope.actionResults = [];
+
+                emWamp.login({ usernameOrEmail: "xdinos4@nessos.gr", password: "lunat!c7" })
+                    .then(function(result) {
+                            $scope.userInfo = result;
+                            emWamp.getSessionInfo()
+                                .then(function(result) {
+                                        $scope.sessionInfo = result;
+                                        angular.forEach(_actions,
+                                            function(action) {
+                                                action.action()
+                                                    .then(function(actionResult) {
+                                                            $scope.actionResults.push({
+                                                                label: action.label,
+                                                                result: actionResult
+                                                            });
+                                                        },
+                                                        function(error) {
+                                                            $scope.actionResults.push({
+                                                                label: action.label,
+                                                                result: error
+                                                            });
+                                                        });
+                                            });
+                                    },
+                                    _logError);
+                        },
+                        _logError);
+            });
+    </script>
+</body>
+</html>
