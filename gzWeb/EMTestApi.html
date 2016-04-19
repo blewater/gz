@@ -147,6 +147,45 @@
                     //        return emBanking.registerPayCardVISA("4532524980200032", "TEST USER", "04/2021"/*855*/);
                     //    }
                     //},
+                    //{
+                    //    label: "registerPayCardVISA",
+                    //    action: function() {
+                    //        return emBanking.registerPayCardVISA("4302520141576003", "TEST USER", "10/2020" /*855*/);
+                    //    }
+                    //},
+                    {
+                        label: "prepare / confirm VISA",
+                        action: function() {
+                            var gamingAccountId = "7038069";
+                            var currency = "EUR";
+                            var amount = "10";
+                            // 2087353 / 161
+                            // FAKE:2087352 / 855
+                            var payCardId = 2087352;
+                            var cardSecurityCode = "855";
+                            var defer = $q.defer();
+
+
+                            emBanking.prepare({
+                                    paymentMethodCode: emBanking.PaymentMethodCode.VISA,
+                                    fields: {
+                                        gamingAccountID: gamingAccountId,
+                                        currency: currency,
+                                        amount: amount,
+                                        payCardID: payCardId,
+                                        cardSecurityCode: cardSecurityCode,
+                                        bonusCode: ""
+                                    }
+                                })
+                                .then(function(result) {
+                                        defer.resolve(emBanking.confirm(result.pid));
+                                    },
+                                    function(error) { defer.resolve(error) });
+
+                            return defer.promise;
+                            //return emBanking.prepareVISA(gamingAccountId, currency, amount, payCardId, cardSecurityCode);
+                        }
+                    },
                 ];
 
                 var _paymentActionsForMaestro = [
