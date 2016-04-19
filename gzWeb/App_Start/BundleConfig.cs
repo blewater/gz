@@ -117,6 +117,8 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/games/games4Ctrl.js"
 
                 , "~/Scripts/_app/services/emWamp.js"
+                , "~/Scripts/_app/services/emCasino.js"
+                , "~/Scripts/_app/services/emBanking.js"
                 , "~/Scripts/_app/services/authInterceptor.js"
                 , "~/Scripts/_app/services/routeService.js"
                 , "~/Scripts/_app/services/apiService.js"
