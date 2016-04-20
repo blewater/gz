@@ -13,14 +13,28 @@ namespace gzCpcLib.Options
     {
         public bool ParsingSuccess { get; private set; }
 
+        [Option('a', "all",
+            HelpText = "Update financial data and process the wholeGreenzorro transaction history")]
+        public bool ProcessEverything { get; set; }
+
         [OptionArray('m', "month",
             HelpText = "the {yearmonth} YYYYMM value to calculate portfolio i.e. -m 201504 201506")]
-        public string[] YearMonthsToProc { get; set; }
+        public string[] YearMonthsToProc
+        {
+            get { return _yearMonthsToProc; }
+            set { _yearMonthsToProc = value; }
+        }
+        private string[] _yearMonthsToProc = new string[0];
 
         [OptionArray('i', "customerIds",  
             HelpText = "the customer Id(s) to calculate monthly balances."
                 + " These must be integers i.e. -i 5 10 63")]
-        public int[] CustomersToProc { get; set; }
+        public int[] CustomersToProc
+        {
+            get { return _customersToProc; }
+            set { _customersToProc = value;}
+        }
+        private int[] _customersToProc { get; set; }
 
         [Option('c', "console", DefaultValue = false,
             HelpText = "Prints all customer updates to standard output without updating the database.")]

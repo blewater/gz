@@ -1,8 +1,10 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$location', 'constants', 'route', ctrlFactory]);
-    function ctrlFactory($scope, $location, constants, route) {
+    APP.controller(ctrlId, ['$scope', '$location', 'constants', 'route', 'emWamp', ctrlFactory]);
+    function ctrlFactory($scope, $location, constants, route, emWamp) {
+        
+
         $scope.routes = {
             guest: route.getGroup(constants.groupKeys.guest),
             games: route.getGroup(constants.groupKeys.games),

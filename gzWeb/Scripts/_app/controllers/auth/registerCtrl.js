@@ -155,7 +155,7 @@
         
         $scope.register = function () {
 
-            var emRegisterQ = emRegister();
+            var emRegisterQ = emRegister("(empty callbackUrl)");
 
             emRegisterQ.then(function(result) {
                 emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password })
@@ -187,12 +187,15 @@
                 mobile: $scope.model.phoneNumber,
                 currency: $scope.model.currency.code,
                 title: $scope.model.title,
+                gender: "M",
                 city: $scope.model.city,
                 address1: $scope.model.address,
                 address2: '',
                 postalCode: $scope.model.postalCode,
                 language: 'en',
-                emailVerificationURL: callbackUrl
+                emailVerificationURL: callbackUrl,
+                securityQuestion: "(empty security question)",
+                securityAnswer: "(empty security answer)"
             });
         }
 
@@ -213,8 +216,6 @@
                 Address: $scope.model.address,
                 PostalCode: $scope.model.postalCode,
                 // TODO: Region ???
-                // TODO: SecurityQuestion ???
-                // TODO: SecurityAnswer ???
             });
         }
 
