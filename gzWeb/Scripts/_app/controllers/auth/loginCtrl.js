@@ -11,38 +11,44 @@
         $scope.responseMsg = null;
 
         $scope.login = function () {
-            $scope.responseMsg = "";
+            if ($scope.form.$valid) {
+                $scope.invalidCredentials = false;
+                $scope.responseMsg = "";
 
-            var emResponse = emLogin({
-                usernameOrEmail: $scope.model.usernameOrEmail,
-                password: $scope.model.password
-            });
-
-            emResponse.then(function(emResult) {
-                $scope.responseMsg = angular.toJson(emResult, true);
-
-                var gzResponse = gzLogin($scope.model.usernameOrEmail, $scope.model.password);
-                gzResponse.then(function (gzResult) {
-                    localStorageService.set("userName", gzResult.data.userName);
-                    localStorageService.set("accessToken", gzResult.data.access_token);
-                    $scope.responseMsg += "Ok";
-                    console.log(gzResult);
-                }, function (error) {
-                    console.log(error);
+                var emResponse = emWamp.login({
+                    usernameOrEmail: $scope.model.usernameOrEmail,
+                    password: $scope.model.password
                 });
 
-            }, function(error) {
-                // TODO: ...
-                console.log(error);
-            });
+                emResponse.then(function (emResult) {
+                    $scope.responseMsg = angular.toJson(emResult, true);
+
+                    var gzResponse = api.login($scope.model.usernameOrEmail, $scope.model.password);
+                    gzResponse.then(function (gzResult) {
+                        localStorageService.set("userName", gzResult.data.userName);
+                        localStorageService.set("accessToken", gzResult.data.access_token);
+                        $scope.responseMsg += "Ok";
+                        console.log(gzResult);
+                    }, function (error) {
+                        $scope.invalidCredentials = true;
+                        $scope.responseMsg = error;
+                        console.log(error);
+                    });
+
+                }, function (error) {
+                    $scope.invalidCredentials = true;
+                    $scope.responseMsg = error.desc;
+                    console.log(error);
+                });
+            }
         };
 
-        function emLogin(username, password) {
-            return emWamp.login(username, password);
-        };
+        //function emLogin(username, password) {
+        //    return emWamp.login(username, password);
+        //};
 
-        function gzLogin(username, password) {
-            return api.login(username, password);
-        };
+        //function gzLogin(username, password) {
+        //    return (username, password);
+        //};
     }
 })();

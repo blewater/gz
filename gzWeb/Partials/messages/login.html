@@ -1,0 +1,105 @@
+﻿<div class="auth login">
+    <div class="row heading">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 text-center">
+            <h2 class="text-gz">Welcome back!</h2>
+            <h4>enter your credentials</h4>
+        </div>
+    </div>
+    <div class="row content bg-gz">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+            <div class="logo-icon text-center">
+                <img src="/Content/Images/logo.svg">
+            </div>
+        </div>
+        <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group" ng-class="{ 'has-error' : form.$submitted && invalidCredentials}">
+                    <input type="text" placeholder="username / email" id="usernameOrEmail" name="usernameOrEmail" class="form-control" ng-model="model.usernameOrEmail" autocomplete="off" required
+                           ng-class="{ 'danger' : !form.usernameOrEmail.$pristine && invalidCredentials }"
+                           ng-focus="usernameOrEmailFocused = true" ng-blur="usernameOrEmailFocused = false">
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused}">
+                        <i class="fa fa-lg fa-user"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group" ng-class="{ 'has-error' : (form.$submitted && !form.password.$pristine) }">
+                    <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" ng-minlength="3" ng-maxlength="18" required
+                           ng-class="{ 'danger' : !form.password.$pristine && invalidCredentials }"
+                           ng-focus="passwordFocused = true" ng-blur="passwordFocused = false">
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused}">
+                        <i class="fa fa-lg fa-key"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group" ng-class="{ 'has-error' : (form.password.$invalid && !form.password.$pristine) }">
+                    <div class="help-block" ng-class="{'show': form.$submitted && invalidCredentials}">{{responseMsg}}</div>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="btns pull-left">
+                        <a class="text-gz" ng-click="forgotPassword()">Forgot password?</a>
+                    </div>
+                    <div class="btns pull-right">
+                        <button type="submit" class="btn-gz" ng-disabled="form.$invalid" ng-click="login()">Next</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--<div class="register">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="col s12 input_bg">
+                    <div class="page-header text-center gren_heading">
+                        <h2>Start here!</h2>
+                        <h4>it only takes 45 seconds!</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="green_background_section">
+        <div class="user_icon"><img src="img/user_icon.png"></div>
+        <div class="row margin_top45">
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 input_bg right_icons">
+                    <input placeholder="email@domain.com" id="email_address" name="email_address" type="email" class="validate" autocomplete="off" ng-model="user.email" ng-class="{ 'input_danger' : userForm.email_address.$invalid && !userForm.email_address.$pristine }">
+                    <i class="fa fa-envelope-o"></i>
+                    <div class="help-block" ng-show="userForm.email_address.$invalid &amp;&amp; !userForm.email_address.$pristine">Please enter valid email</div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 input_bg right_icons">
+                    <input placeholder="username" id="username" name="username" type="text" class="validate" autocomplete="off" ng-model="user.username" required ng-class="{ 'input_danger' : userForm.username.$invalid && !userForm.username.$pristine }">
+                    <i class="fa fa-user"></i>
+                    <div class="help-block" ng-show="userForm.username.$invalid &amp;&amp; !userForm.username.$pristine">Username is required.</div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 input_bg right_icons">
+                    <input placeholder="********" id="txt_password" name="txt_password" type="password" class="validate" ng-model="user.txt_password" ng-minlength="3" ng-maxlength="8" required ng-class="{ 'input_danger' : userForm.txt_password.$invalid && !userForm.txt_password.$pristine }">
+                    <i class="fa fa-key"></i>
+                    <div class="help-block" ng-show="userForm.txt_password.$invalid &amp;&amp; !userForm.txt_password.$pristine">Password is required.</div>
+                    <div ng-show="userForm.txt_password.$error.minlength" class="help-block">Password is too short.</div>
+                    <div ng-show="userForm.txt_password.$error.maxlength" class="help-block">Password is too long.</div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="input-field col s12 input_bg">
+                    <div class="submit_btn martb text-center">
+                        <a ui-sref-active="active" class="waves-effect waves-light btn" ng-disabled="userForm.$invalid" ng-click="stepOne()">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->
