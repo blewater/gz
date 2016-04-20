@@ -35,6 +35,9 @@ namespace gzWeb
                 , "~/Content/Styles/_app/investments.css"
                 , "~/Content/Styles/_app/games.css"
                 , "~/Scripts/_app/services/nsMessagesService/messages.css"
+                //, "~/Content/Styles/_app/exceptionaire/exceptionaire-meterialize.css"
+                //, "~/Content/Styles/_app/exceptionaire/exceptionaire-style.css"
+                //, "~/Content/Styles/_app/exceptionaire/exceptionaire-media.css"
             ));
             #endregion
             
@@ -101,8 +104,6 @@ namespace gzWeb
 
                 , "~/Scripts/_app/controllers/common/headerCtrl.js"
                 , "~/Scripts/_app/controllers/common/footerCtrl.js"
-                , "~/Scripts/_app/controllers/auth/loginCtrl.js"
-                , "~/Scripts/_app/controllers/auth/registerCtrl.js"
                 , "~/Scripts/_app/controllers/guest/homeCtrl.js"
                 , "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
                 , "~/Scripts/_app/controllers/guest/aboutCtrl.js"
@@ -130,6 +131,12 @@ namespace gzWeb
                 , "~/Scripts/_app/services/nsMessagesService/nsPromptCtrl.js"
                 , "~/Scripts/_app/services/nsMessagesService/nsConfirmCtrl.js"
                 , "~/Scripts/_app/services/nsMessagesService/messageService.js"
+
+                //, "~/Scripts/_app/exceptionaire/exceptionaire-materialize.min.js"
+                , "~/Scripts/_app/controllers/auth/registerCtrl.js"
+                , "~/Scripts/_app/controllers/auth/loginCtrl.js"
+                , "~/Scripts/_app/controllers/auth/forgotPasswordCtrl.js"
+                //, "~/Scripts/_app/controllers/auth/registerDetailsCtrl.js"
             ));
             #endregion
         }

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerCtrl';
-    APP.controller(ctrlId, ["$scope", "$state", "$http", "$filter", "emWamp", "api", "constants", ctrlFactory]);
-    function ctrlFactory($scope, $state, $http, $filter, emWamp, api, constants) {
+    APP.controller(ctrlId, ["$scope", "$http", "$filter", "emWamp", "api", "constants", ctrlFactory]);
+    function ctrlFactory($scope, $http, $filter, emWamp, api, constants) {
         $scope.model = {
             email: null,
             username: null,
@@ -132,14 +132,16 @@
         };
 
         $scope.proccedToUserDetails = function () {
-
-            if ($scope.userForm.$valid) {
-                $state.go('form.details');
-            } else {
-                return false;
+            if ($scope.form.$valid) {
+                
             }
+            //if ($scope.userForm.$valid) {
+            //    $state.go('form.details');
+            //} else {
+            //    return false;
+            //}
 
-            return true;
+            //return true;
         };
         
         $scope.onCountryChanged = function () {
