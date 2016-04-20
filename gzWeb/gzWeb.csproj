@@ -417,8 +417,9 @@
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
+    <Content Include="Partials\messages\forgotPassword.html" />
     <Content Include="Partials\messages\login.html" />
-    <Content Include="Partials\messages\registerProfile.html" />
+    <Content Include="Partials\messages\register.html" />
     <Content Include="Partials\messages\showVintages.html" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
     <Content Include="Scripts\angular-animate\angular-animate.min.js" />
