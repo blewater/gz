@@ -8,7 +8,7 @@ namespace gzCpcLib.Task {
     /// Request latest currency rates from YApi and save to Database
     /// 
     /// </summary>
-    public class ExchRatesUpd : CpcTask {
+    public class ExchRatesUpdTask : CpcTask {
 
         public override void DoTask() {
 

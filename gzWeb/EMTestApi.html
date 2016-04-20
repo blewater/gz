@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <link href="Content/Styles/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="Content/Styles/bootstrap/bootstrap-theme.css" rel="stylesheet" />
+</head>
+<body ng-app="emTestApiApp">
+
+<div ng-controller="emTestApiCtrl">
+
+    <table class="table table-bordered table-striped table-condensed">
+        <tr>
+            <td>User Info</td>
+            <td>
+                <pre>{{userInfo | json}}</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>Session Info</td>
+            <td>
+                <pre>{{sessionInfo | json}}</pre>
+            </td>
+        </tr>
+    </table>
+
+    <table class="table table-bordered table-striped table-condensed">
+        <tr ng-repeat="item in actionResults">
+            <td>{{item.label}}</td>
+            <td><pre>{{item.result | json}}</pre></td>
+        </tr>
+    </table>
+
+</div>
+
+    <script src="Scripts/jquery/jquery-1.12.0.js"></script>
+    <script src="Scripts/bootstrap/bootstrap.js"></script>
+    <script>AUTOBAHN_DEBUG = true;</script>
+    <script src="Scripts/autobahn.min.js"></script>
+    <script src="Scripts/angular/angular.js"></script>
+    <script src="Scripts/angular-wamp/angular-wamp.js"></script>
+
+    <script>
+        var APP = angular.module("emTestApiApp", ["vxWamp"]);
+
+        APP.config(function($wampProvider) {
+            $wampProvider.init({
+                transports: [
+                    { 'type': 'websocket', 'url': 'wss://webapi-stage.everymatrix.com/v2' },
+                    { 'type': 'longpoll', 'url': 'https://fb-webapi-stage.everymatrix.com' }
+                ],
+                url: 'wss://webapi-stage.everymatrix.com/v2',
+                realm: 'http://www.greenzorro.com'
+            });
+        });
+
+        APP.controller("emTestApiCtrl",
+            function($scope, $q, $filter, emWamp, emBanking, emCasino) {
+
+                var _logError = function(error) {
+                    console.log(error);
+                };
+
+                $scope.userInfo = "";
+                $scope.sessionInfo = "";
+
+                var _actions = [
+                    //{
+                    //    label: "getCountries",
+                    //    action: function () {
+                    //        return emWamp.call("/user/account#getCountries");
+                    //    }
+                    //},
+                    {
+                        label: "getProfile",
+                        action: function() {
+                            return emWamp.call("/user/account#getProfile");
+                        }
+                    },
+                    //{
+                    //    label: "updateProfile",
+                    //    action: function () {
+                    //        var q = $q.defer();
+                    //        emWamp.call("/user/account#getProfile")
+                    //            .then(function(result) {
+                    //                var obj = angular.fromJson(result).fields;
+                    //                    obj.gender = "M";
+                    //                    obj.phonePrefix = obj.mobilePrefix;
+                    //                    obj.phone = obj.mobile;
+                    //                    obj.securityQuestion = "(empty)";
+                    //                    obj.securityAnswer = "(empty)";
+                    //                    q.resolve(emWamp.call("/user/account#updateProfile", obj));
+                    //                },
+                    //                _logError);
+                    //        return q.promise;
+                    //    }
+                    //},
+                ];
+
+                var _paymentActions = [
+                    {
+                        label: "getGamingAccounts",
+                        action: function() {
+                            return emWamp.call("/user/account#getGamingAccounts",
+                            { expectBalance: false, expectBonus: false });
+                        }
+                    },
+                    {
+                        label: "getPaymentMethods",
+                        action: function () {
+                            return emWamp.call("/user/deposit#getPaymentMethods",
+                            {
+                                filterByCountry: $scope.sessionInfo.userCountry,
+                                currency: $scope.sessionInfo.currency
+                            });
+                        }
+                    },
+                    {
+                        label: "getSupportedPaymentMethods",
+                        action: function () {
+                            return emBanking
+                                .getSupportedPaymentMethods($scope.sessionInfo.userCountry,
+                                    $scope.sessionInfo
+                                    .currency);
+                        }
+                    },
+                    //{
+                    //    label: "getCategorizedPagmentMethods",
+                    //    action: function() {
+                    //        return emWamp.call("/user/deposit#getCategorizedPagmentMethods",
+                    //        { filterByCountry: $scope.sessionInfo.userCountry, currency: $scope.sessionInfo.currency });
+                    //    }
+                    //},
+                ];
+
+                var _paymentActionsForVISA = [
+                    {
+                        label: "getPaymentMethodCfg / VISA",
+                        action: function() {
+                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.VISA);
+                        }
+                    },
+                    //{
+                    //    label: "registerPayCardVISA",
+                    //    action: function () {
+                    //        return emBanking.registerPayCardVISA("4532524980200032", "TEST USER", "04/2021"/*855*/);
+                    //    }
+                    //},
+                    //{
+                    //    label: "registerPayCardVISA",
+                    //    action: function() {
+                    //        return emBanking.registerPayCardVISA("4302520141576003", "TEST USER", "10/2020" /*855*/);
+                    //    }
+                    //},
+                    {
+                        label: "prepare / confirm VISA",
+                        action: function() {
+                            var gamingAccountId = "7038069";
+                            var currency = "EUR";
+                            var amount = "10";
+                            // 2087353 / 161
+                            // FAKE:2087352 / 855
+                            var payCardId = 2087352;
+                            var cardSecurityCode = "855";
+                            var defer = $q.defer();
+
+
+                            emBanking.prepare({
+                                    paymentMethodCode: emBanking.PaymentMethodCode.VISA,
+                                    fields: {
+                                        gamingAccountID: gamingAccountId,
+                                        currency: currency,
+                                        amount: amount,
+                                        payCardID: payCardId,
+                                        cardSecurityCode: cardSecurityCode,
+                                        bonusCode: ""
+                                    }
+                                })
+                                .then(function(result) {
+                                        defer.resolve(emBanking.confirm(result.pid));
+                                    },
+                                    function(error) { defer.resolve(error) });
+
+                            return defer.promise;
+                            //return emBanking.prepareVISA(gamingAccountId, currency, amount, payCardId, cardSecurityCode);
+                        }
+                    },
+                ];
+
+                var _paymentActionsForMaestro = [
+                    {
+                        label: "getPaymentMethodCfg / Maestro",
+                        action: function () {
+                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.Maestro);
+                        }
+                    },
+                    //{
+                    //    label: "registerPayCardMaestro",
+                    //    action: function () {
+                    //        return emBanking
+                    //            .registerPayCardMaestro(
+                    //                "5892420026086728",
+                    //                "KONSTANTINOS CHATZOPOULOS",
+                    //                "06/2017",
+                    //                "06/2015",
+                    //                "542");
+                    //    }
+                    //}
+                    //{
+                    //    label: "prepareMaestro",
+                    //    action: function () {
+                    //        var gamingAccountId = 7038069;
+                    //        var currency = "EUR";
+                    //        var amount = 10;
+                    //        var payCardId = 2087341; // from registerPayCardMaestro
+                    //        return emBanking.prepareMaestro(gamingAccountId, currency, amount, payCardId, "542");
+                    //    }
+                    //},
+                ];
+
+                var _paymentActionsForMasterCard = [
+                    {
+                        label: "getPaymentMethodCfg / MasterCard",
+                        action: function () {
+                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.MasterCard);
+                        }
+                    },
+                    //{
+                    //    label: "registerPayCardMasterCard",
+                    //    action: function () {
+                    //        return emBanking
+                    //            .registerPayCardMasterCard(
+                    //                "5167320000544858",
+                    //                "KONSTANTINOS CHATZOPOULOS",
+                    //                "10/2017",
+                    //                "10/2015",
+                    //                "542");
+                    //    }
+                    //}
+                ];
+
+                var _casinoActions = [
+                    {
+                        label: "getGameCategories",
+                        action: function () {
+                            return emCasino.getGameCategories();
+                        }
+                    },
+                    {
+                        label: "getGames",
+                        action: function () {
+                            return emCasino.getGames({ expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.BackgroundImage });
+                        }
+                    },
+                    {
+                        label: "getGameVendors",
+                        action: function () {
+                            return emCasino.getGameVendors();
+                        }
+                    },
+                ];
+
+                $scope.actionResults = [];
+
+                function runActions(actionsToRun) {
+                    angular.forEach(actionsToRun,
+                        function(action) {
+                            action.action()
+                                .then(function(actionResult) {
+                                        $scope.actionResults.push({
+                                            label: action.label,
+                                            result: actionResult
+                                        });
+                                    },
+                                    function(error) {
+                                        $scope.actionResults.push({
+                                            label: action.label,
+                                            result: error
+                                        });
+                                    });
+                        });
+                };
+
+                emWamp.login({ usernameOrEmail: "xdinos4@nessos.gr", password: "lunat!c7" })
+                    .then(function(result) {
+                            $scope.userInfo = result;
+                            emWamp.getSessionInfo()
+                                .then(function(result) {
+                                        $scope.sessionInfo = result;
+
+                                        //runActions(_paymentActions);
+                                        //runActions(_paymentActionsForVISA);
+                                        //runActions(_paymentActionsForMaestro);
+                                        //runActions(_paymentActionsForMasterCard);
+                                        runActions(_casinoActions);
+                                    },
+                                    _logError);
+                        },
+                        _logError);
+            });
+    </script>
+    <script src="Scripts/_app/services/emWamp.js"></script>
+    <script src="Scripts/_app/services/emCasino.js"></script>
+    <script src="Scripts/_app/services/emBanking.js"></script>
+</body>
+</html>

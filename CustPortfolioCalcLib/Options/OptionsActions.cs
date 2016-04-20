@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.Remoting.Messaging;
 using gzCpcLib.Task;
+using NLog;
 
 namespace gzCpcLib.Options {
 
@@ -14,28 +15,34 @@ namespace gzCpcLib.Options {
     public class OptionsActions {
 
         private readonly CpcOptions cpcOptions;
-        private ExchRatesUpd exchRatesUpd;
-        private FundsUpd fundsUpd;
-        private CustInvestmentBalUpd custInvestBalUpd;
+        private readonly ExchRatesUpdTask exchRatesUpd;
+        private readonly FundsUpdTask fundsUpd;
+        private readonly CustomerBalanceUpdTask customerBalUpd;
+        private readonly Logger logger;
 
         public bool IsProcessing { get; private set; }
 
-        public OptionsActions(CpcOptions inCpcOptions
-            , ExchRatesUpd inExchRatesUpd
-            , FundsUpd inFundsUpd
-            , CustInvestmentBalUpd inCustInvestBalUpd) {
+        public OptionsActions(CpcOptions inCpcOptions,
+            ExchRatesUpdTask inExchRatesUpd,
+            FundsUpdTask inFundsUpd,
+            CustomerBalanceUpdTask inCustomerBalUpd,
+            Logger inLogger) {
 
             this.cpcOptions = inCpcOptions;
             this.exchRatesUpd = inExchRatesUpd;
             this.fundsUpd = inFundsUpd;
-            this.custInvestBalUpd = inCustInvestBalUpd;
+            this.customerBalUpd = inCustomerBalUpd;
+            this.logger = inLogger;
         }
 
         public void ProcessOptions() {
 
             if (!cpcOptions.ParsingSuccess) {
+
+                logger.Trace("Exiting ProcessOptions cpcOptions.ParsingSucces is false");
+
                 // Did not process
-                return ;
+                return;
             }
 
             // Starting to process
@@ -43,25 +50,32 @@ namespace gzCpcLib.Options {
 
             if (cpcOptions.CurrenciesMarketUpdOnly) {
 
-                SubscribeToObs(exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing : true);
-                        
-            } else if (cpcOptions.StockMarketUpdOnly) {
+                SubscribeToObs(exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing: true);
+
+            }
+            else if (cpcOptions.StockMarketUpdOnly) {
 
                 SubscribeToObs(fundsUpd, "Funds stock values updated.", indicateWhenCompleteProcessing: true);
 
-            } else if (cpcOptions.FinancialValuesUpd) {
+            }
+            else if (cpcOptions.FinancialValuesUpd) {
 
                 MergeObs(exchRatesUpd, fundsUpd, "Financial Values Updated.");
 
-            } else if (cpcOptions.CustomersToProc != null) {
+            }
+            else if (cpcOptions.ProcessEverything || cpcOptions.CustomersToProc.Length > 0 || cpcOptions.YearMonthsToProc.Length > 0) {
 
-                custInvestBalUpd.CustomerIds = cpcOptions.CustomersToProc;
-                custInvestBalUpd.YearMonthsToProc = cpcOptions.YearMonthsToProc;
+                customerBalUpd.CustomerIds = cpcOptions.CustomersToProc;
+                customerBalUpd.YearMonthsToProc = cpcOptions.YearMonthsToProc;
 
-                MergeReduceObs(exchRatesUpd, fundsUpd, custInvestBalUpd, "Customers Balances Processed");
+                // Wait for both to complete before moving on: merge
+                MergeReduceObs(exchRatesUpd, fundsUpd, customerBalUpd, "Customers Balances Processed");
 
-            } else {
-                Console.WriteLine("No action taken!");
+            } else if (cpcOptions.ConsoleOutOnly) {
+                
+            }
+            else {
+                logger.Trace("No action taken!");
                 IsProcessing = false;
             }
 
@@ -79,7 +93,7 @@ namespace gzCpcLib.Options {
             cpcTask.TaskObservable.Subscribe(
                 _ => {
 
-                    Console.WriteLine(logCompletionMsg);
+                    logger.Info(logCompletionMsg);
                     if (indicateWhenCompleteProcessing) {
                         IsProcessing = false;
                     }
@@ -101,11 +115,11 @@ namespace gzCpcLib.Options {
                 .Subscribe(
                     // OnNext
                     w =>
-                        Console.WriteLine("OnNext"),
+                        logger.Trace("OnNext"),
 
                     // OnCompleted
                     () => {
-                        Console.WriteLine(logCompletionMsg);
+                        logger.Info(logCompletionMsg);
                         IsProcessing = false;
                     }
                 );
@@ -131,11 +145,11 @@ namespace gzCpcLib.Options {
                 .Subscribe(
                     // OnNext
                     w =>
-                        Console.WriteLine("OnNext Final Task"),
+                        logger.Trace("OnNext Final Task"),
 
                     // OnCompleted
                     () => {
-                        Console.WriteLine(logCompletionMsg);
+                        logger.Info(logCompletionMsg);
                         IsProcessing = false;
                     }
                 );

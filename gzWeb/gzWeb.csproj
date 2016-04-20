@@ -363,6 +363,7 @@
     <Content Include="Content\Styles\_app\header.css" />
     <Content Include="Content\Styles\_app\preloader.css" />
     <Content Include="Content\Styles\ui-bootstrap\ui-bootstrap-csp.css" />
+    <Content Include="EMTestApi.html" />
     <Content Include="favicon.ico" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -465,6 +466,7 @@
     <Content Include="Scripts\_app\app.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
+    <Content Include="Scripts\_app\controllers\games\depositCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\forgotPasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
@@ -485,6 +487,8 @@
     <Content Include="Scripts\_app\directives\gzPortfolioChart.js" />
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
+    <Content Include="Scripts\_app\services\emBanking.js" />
+    <Content Include="Scripts\_app\services\emCasino.js" />
     <Content Include="Scripts\_app\services\emWamp.js" />
     <Content Include="Scripts\_app\services\emWamp.test.js" />
     <Content Include="Scripts\_app\services\helpersService.js" />
@@ -1161,7 +1165,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\_app\exceptionaire\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
