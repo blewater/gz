@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$location', 'constants', 'route', 'emWamp', 'message', ctrlFactory]);
-    function ctrlFactory($scope, $location, constants, route, emWamp, message) {
+    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'route', 'emWamp', 'message', ctrlFactory]);
+    function ctrlFactory($rootScope, $scope, $location, constants, route, emWamp, message) {
         $scope.routes = {
             guest: route.getGroup(constants.groupKeys.guest),
             games: route.getGroup(constants.groupKeys.games),
@@ -21,13 +21,33 @@
             $location.path($scope.routes.investments[0].path);
         };
 
-        emWamp.getSessionInfo().then(function (response) {
-            $scope.isAuthenticated = response.isAuthenticated;
-            $scope.initials = $scope.isAuthenticated ? response.firstname.substring(0, 1) + response.surname.substring(0, 1) : '';
-            $scope.name = $scope.isAuthenticated ? response.firstname : '';
-        });
+        function updateSessionInfo() {
+            emWamp.getSessionInfo().then(function (response) {
+                $scope.isAuthenticated = response.isAuthenticated;
+                if ($scope.isAuthenticated) {
+                    $scope.initials = response.firstname.substring(0, 1) + response.surname.substring(0, 1);
+                    $scope.name = response.firstname;
+                }
+                else
+                    $location.path(route.getPath(constants.routeKeys.home));
+            });
+        }
+        updateSessionInfo();
 
-        $scope.showLogin = function () {
+        $scope.register = function () {
+            var promise =
+                message.open({
+                    nsType: 'modal',
+                    nsSize: 'md',
+                    nsTemplate: '/partials/messages/register.html',
+                    nsCtrl: 'registerCtrl',
+                    nsStatic: true,
+                });
+            promise.then(function (result) {
+
+            });
+        };
+        $scope.login = function () {
             var promise =
                 message.open({
                     nsType: 'modal',
@@ -40,5 +60,9 @@
 
             });
         };
+
+        $scope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
+            updateSessionInfo();
+        });
     }
 })();

@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emWamp", ["$wamp", emWampFunction]);
-    function emWampFunction($wamp) {
+    APP.factory("emWamp", ['$wamp', 'constants', emWampFunction]);
+    function emWampFunction($wamp, constants) {
 
         var _logError = function(error) {
             console.log(error);
@@ -27,13 +27,6 @@
             };
 
             return callReturn;
-        };
-
-        var _onSessionStateChange = function(args, kwargs, details) {
-            console.log(
-                "sessionStateChange => args: " + angular.toJson(args) +
-                ", kwargs: " + angular.toJson(kwargs) +
-                ", details: " + angular.toJson(details));
         };
 
         var service = {
@@ -229,7 +222,13 @@
             // #endregion
         };
 
-        $wamp.subscribe("/sessionStateChange", _onSessionStateChange);
+        $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
+            $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
+            console.log(
+                "sessionStateChange => args: " + angular.toJson(args) +
+                ", kwargs: " + angular.toJson(kwargs) +
+                ", details: " + angular.toJson(details));
+        });
         $wamp.open();
 
         return service;
