@@ -22,7 +22,7 @@
             }
             else if (rejection.status == 401) {
                 localStorageService.remove(constants.storageKeys.authData);
-                $location.path(route.getPath(constants.routeKeys.login));
+                $location.path(route.getPath(constants.routeKeys.home));
                 return true;
             }
             else

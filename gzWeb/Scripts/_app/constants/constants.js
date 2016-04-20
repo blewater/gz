@@ -16,8 +16,8 @@
         transparency: 'transparency',
         about: 'about',
 
-        login: 'login',
-        register: 'register',
+        //login: 'login',
+        //register: 'register',
 
         games1: 'games1',
         games2: 'games2',
@@ -32,7 +32,7 @@
 
     var groupKeys = {
         guest: 'guest',
-        auth: 'auth',
+        //auth: 'auth',
         games: 'games',
         investments: 'investments'
     };
@@ -71,22 +71,22 @@
     // #endregion
 
     // #region Auth
-    var login = {
-        key: routeKeys.login,
-        group: groupKeys.auth,
-        path: '/login',
-        ctrl: 'loginCtrl',
-        tpl: '/Mvc/Auth/Login',
-        title: 'Login'
-    };
-    var register = {
-        key: routeKeys.register,
-        group: groupKeys.auth,
-        path: '/register',
-        ctrl: 'registerCtrl',
-        tpl: '/Mvc/Auth/Register',
-        title: 'Register'
-    };
+    //var login = {
+    //    key: routeKeys.login,
+    //    group: groupKeys.auth,
+    //    path: '/login',
+    //    ctrl: 'loginCtrl',
+    //    tpl: '/Mvc/Auth/Login',
+    //    title: 'Login'
+    //};
+    //var register = {
+    //    key: routeKeys.register,
+    //    group: groupKeys.auth,
+    //    path: '/register',
+    //    ctrl: 'registerCtrl',
+    //    tpl: '/Mvc/Auth/Register',
+    //    title: 'Register'
+    //};
     // TODO
     //login: '/Mvc/Account/Login',
     //verifyCode: '/Mvc/Account/VerifyCode',
@@ -177,10 +177,10 @@
         transparency: transparency,
         about: about
     };
-    var auth = {
-        login: login,
-        register: register
-    };
+    //var auth = {
+    //    login: login,
+    //    register: register
+    //};
     var games = {
         games1: games1,
         games2: games2,
@@ -195,13 +195,13 @@
     };
     var routesGroups = {
         guest: guest,
-        auth: auth,
+        //auth: auth,
         games: games,
         investments: investments
     };
     var routes = [
         home, transparency, about,
-        login, register,
+        //login, register,
         games1, games2, games3, games4,
         summary, portfolio, performance, activity
     ];
@@ -233,8 +233,9 @@
         storageKeys: {
             randomSuffix: 'randomSuffix',
             authData: 'authData',
-            //username: 'userName',
-            //token: 'accessToken'
+        },
+        events: {
+            SESSION_STATE_CHANGE: 'sessionStageChange'
         }
 
         //msgs: {

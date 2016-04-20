@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="Conf\ConnRetryConf.cs" />
     <Compile Include="DTO\PortfolioFundDTO.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
