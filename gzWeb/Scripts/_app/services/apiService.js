@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('api', ['$http', '$rootScope', 'localStorageService', serviceFactory]);
+    APP.factory('api', ['$http', '$rootScope', 'localStorageService', 'constants', serviceFactory]);
 
-    function serviceFactory($http, $rootScope, localStorageService) {
+    function serviceFactory($http, $rootScope, localStorageService, constants) {
         var factory = {};
 
         // #region Urls
@@ -20,20 +20,20 @@
         // #endregion
 
         // #region xdinos refactoring
-        function httpGet(url) {
+        //function httpGet(url) {
 
-            var accesstoken = localStorageService.get("accessToken");
-            var authHeaders = {};
-            if (accesstoken) {
-                authHeaders.Authorization = "Bearer " + accesstoken;
-            };
+        //    var authData = localStorageService.get(constants.storageKeys.authData);
+        //    var authHeaders = {};
+        //    if (authData) {
+        //        authHeaders.Authorization = "Bearer " + authData.token;
+        //    };
 
-            return $http({
-                url: url,
-                method: "GET",
-                headers: authHeaders
-            });
-        }
+        //    return $http({
+        //        url: url,
+        //        method: "GET",
+        //        headers: authHeaders
+        //    });
+        //}
         // #endregion
 
         // #region Common
@@ -66,39 +66,26 @@
         };
         // #endregion
 
-        factory.login = function(username, password) {
-            return $http({
-                url: "/TOKEN",
-                method: "POST",
-                data: $.param({
-                    grant_type: "password",
-                    username: username,
-                    password: password
-                }),
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            });
-        },
-
         // #region Investments
         factory.getSummaryData = function () {
-            //return $http.get(urls.investments + 'getSummaryData');
-            return httpGet(urls.investments + 'getSummaryData');
+            return $http.get(urls.investments + 'getSummaryData');
+            //return httpGet(urls.investments + 'getSummaryData');
         };
         factory.transferCashToGames = function () {
             return $http.post(urls.investments + 'transferCashToGames');
         }
 
         factory.getPortfolioData = function () {
-            //return $http.get(urls.investments + 'getPortfolioData');
-            return httpGet(urls.investments + 'getPortfolioData');
+            return $http.get(urls.investments + 'getPortfolioData');
+            //return httpGet(urls.investments + 'getPortfolioData');
         };
         factory.setPlanSelection = function () {
             return $http.post(urls.investments + 'setPlanSelection');
         }
 
         factory.getPerformanceData = function () {
-            //return $http.get(urls.investments + 'getPerformanceData');
-            return httpGet(urls.investments + 'getPerformanceData');
+            return $http.get(urls.investments + 'getPerformanceData');
+            //return httpGet(urls.investments + 'getPerformanceData');
         };
         // #endregion
 
@@ -109,6 +96,26 @@
         // #endregion
 
         // #region Auth
+        factory.login = function (usernameOrEmail, password) {
+            var data = "grant_type=password" +
+                       "&username=" + usernameOrEmail +
+                       "&password=" + password;
+            return $http({
+                url: "/TOKEN",
+                method: "POST",
+                data: data,
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            });
+        }
+
+        factory.logout = function () {
+            localStorageService.remove(constants.storageKeys.authData);
+            // TODO
+            //var templates = $filter('toArray')(constants.templates);
+            //for (var i = 0; i < templates.length; i++)
+            //    $templateCache.remove(templates[i]);
+            //message.clear();
+        }
         // #endregion
 
         return factory;

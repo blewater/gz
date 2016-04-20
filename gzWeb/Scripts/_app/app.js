@@ -61,7 +61,7 @@ var APP = (function () {
                 $rootScope.$apply();
             });
 
-            localStorageService.set('randomSuffix', Math.random());
+            localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
             $rootScope.loading = false;
 
             $timeout(function() {

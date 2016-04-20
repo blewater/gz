@@ -230,6 +230,13 @@
             sm_rel_white: { radius: 5, width: 2, length: 4, color: '#fff', position: 'relative', top: '0' },
             sm_rel_green: { radius: 5, width: 2, length: 4, color: '#27A95C', position: 'relative', top: '0' },
         },
+        storageKeys: {
+            randomSuffix: 'randomSuffix',
+            authData: 'authData',
+            //username: 'userName',
+            //token: 'accessToken'
+        }
+
         //msgs: {
         //    required: 'The field is required!',
         //    invalidEmail: 'Invalid e-mail format!'

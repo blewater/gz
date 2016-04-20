@@ -120,10 +120,10 @@
 
         // #region ui
         function getTemplate(templateUrl) {
-            var randomSuffix = localStorageService.get('randomSuffix');
+            var randomSuffix = localStorageService.get(constants.storageKeys.randomSuffix);
             if (!randomSuffix) {
                 randomSuffix = Math.random();
-                localStorageService.set('randomSuffix', randomSuffix);
+                localStorageService.set(constants.storageKeys.randomSuffix, randomSuffix);
             }
 
             var suffix = constants.debugMode ? randomSuffix : 'v.' + constants.version + '_' + randomSuffix;

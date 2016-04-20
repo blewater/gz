@@ -83,7 +83,7 @@
             },
 
             logout: function() {
-                _call("/user#logout").then(function(result) {}, _logError);
+                return _call("/user#logout");
             }
 
             // #endregion
