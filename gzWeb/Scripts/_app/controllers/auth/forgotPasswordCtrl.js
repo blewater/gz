@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "forgotPasswordCtrl";
-    APP.controller(ctrlId, ["$scope", "$http", "emWamp", "api", "localStorageService", ctrlFactory]);
-    function ctrlFactory($scope, $http, emWamp, api, localStorageService) {
+    APP.controller(ctrlId, ['$scope', ctrlFactory]);
+    function ctrlFactory($scope) {
         $scope.model = {
             email: null
         };

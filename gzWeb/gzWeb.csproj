@@ -341,6 +341,7 @@
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
     <Content Include="apple-touch-icon.png" />
+    <Content Include="Content\Images\login.png" />
     <Content Include="Content\Images\nikos.jpg" />
     <Content Include="Content\Images\nikos.png" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.css" />

@@ -22,22 +22,23 @@ namespace gzWeb.Areas.Mvc.Controllers
             //var manager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             //var customer = manager.FindById(User.Identity.GetUserId<int>());
             
-            var showFullName = false;
-            var first = "Manolis";
-            var last = "Marinos";
-            var username = "Nikos";
-            var avatarsPath = "~/Content/Images";
-            var imgName = "nikos.png";
+            //var showFullName = false;
+            //var first = "Manolis";
+            //var last = "Marinos";
+            //var username = "Nikos";
+            //var avatarsPath = "~/Content/Images";
+            //var imgName = "nikos.png";
 
-            var model = new UserInfoViewModel()
-            {
-                IsAuthenticated = true,//HttpContext.User != null && HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated,
-                Name = showFullName ? String.Format("{0}{2}{1}", first, last, String.IsNullOrEmpty(first) || String.IsNullOrEmpty(last) ? String.Empty : " ") : username,
-                Initials = showFullName ? String.Format("{0}{1}", first.Substring(0, 1).ToUpper(), last.Substring(0, 1).ToUpper()) : username.Substring(0, 1).ToUpper(),
-                Img = String.IsNullOrEmpty(imgName) ? String.Empty : Url.Content(Path.Combine(avatarsPath, imgName)),
-                Bg = String.IsNullOrEmpty(imgName) ? GetNewBgColor() : String.Empty
-            };
-            return PartialView("_Header", model);
+            //var model = new UserInfoViewModel()
+            //{
+            //    IsAuthenticated = true,//HttpContext.User != null && HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated,
+            //    Name = showFullName ? String.Format("{0}{2}{1}", first, last, String.IsNullOrEmpty(first) || String.IsNullOrEmpty(last) ? String.Empty : " ") : username,
+            //    Initials = showFullName ? String.Format("{0}{1}", first.Substring(0, 1).ToUpper(), last.Substring(0, 1).ToUpper()) : username.Substring(0, 1).ToUpper(),
+            //    Img = String.IsNullOrEmpty(imgName) ? String.Empty : Url.Content(Path.Combine(avatarsPath, imgName)),
+            //    Bg = String.IsNullOrEmpty(imgName) ? GetNewBgColor() : String.Empty
+            //};
+            //return PartialView("_Header", model);
+            return PartialView("_Header");
         }
         #endregion
         #endregion
