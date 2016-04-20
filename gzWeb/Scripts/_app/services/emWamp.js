@@ -29,6 +29,13 @@
             return callReturn;
         };
 
+        var _onSessionStateChange = function(args, kwargs, details) {
+            console.log(
+                "sessionStateChange => args: " + angular.toJson(args) +
+                ", kwargs: " + angular.toJson(kwargs) +
+                ", details: " + angular.toJson(details));
+        };
+
         var service = {
             call: _call,
 
@@ -222,6 +229,7 @@
             // #endregion
         };
 
+        $wamp.subscribe("/sessionStateChange", _onSessionStateChange);
         $wamp.open();
 
         return service;
