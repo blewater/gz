@@ -39,6 +39,8 @@
          *      nsSize: 'xs' || 'sm' || 'md' || 'lg' || 'xl' || custom (message box size - 'sm')
          *      nsClass: 'custom' || 'success' || 'error' || 'warning' || 'info' || 'prompt' (styling class - 'custom')
          *      nsType: 'modal' || 'notification' || 'toastr' (message box type - 'modal')
+         *      nsIn: 'show' || 'enter-up' || 'enter-down' || 'enter-left' || 'enter-right' || 'slide-up-on' || 'slide-down-on' || 'slide-left-on' || 'slide-right-on' (modals opening transition - 'enter-up')
+         *      nsOut: 'hide' || 'leave-down' || 'leave-up' || 'leave-right' || 'leave-left' || 'slide-down-off' || 'slide-up-off' || 'slide-right-off' || 'slide-left-off' (modals closing transition - 'leave-down')
          *      nsTitle: string (title of the message - '')
          *      nsTitleShout: boolean (should title be emphatic - false)
          *      nsBody: string (plain text as message body, in use when no template is being specified - '')

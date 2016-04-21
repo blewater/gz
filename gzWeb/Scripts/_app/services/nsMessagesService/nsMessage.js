@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', '$window', nsMessage]);
+    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', '$window', 'message', nsMessage]);
 
-    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest, $window) {
+    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest, $window, message) {
         return {
             restrict: 'E',
             replace: true,
@@ -27,11 +27,29 @@
                 var widthClass;
                 var templateCtrl;
                 var templateScope = scope.$new();
+
+                var oppositeTransitions = [];
+                oppositeTransitions['show'] = 'hide';
+                oppositeTransitions['enter-up'] = 'leave-down';
+                oppositeTransitions['enter-down'] = 'leave-up';
+                oppositeTransitions['enter-left'] = 'leave-right';
+                oppositeTransitions['enter-right'] = 'leave-left';
+                oppositeTransitions['slide-left-on'] = 'slide-right-off';
+                oppositeTransitions['slide-right-on'] = 'slide-left-off';
+                oppositeTransitions['slide-up-on'] = 'slide-down-off';
+                oppositeTransitions['slide-down-on'] = 'slide-up-off';
+
+                var sizeXLPadding = 40;
+                var sizes = [];
+                sizes['xs'] = 250;
+                sizes['sm'] = 400;
+                sizes['md'] = 800;
+                sizes['lg'] = 1200;
                 // #endregion
 
                 // #region Methods
-                scope.onBtnClick = function (btn) {
-                    scope.$broadcast('btnClicked', { key: btn.eventKey });
+                scope.onBtnClick = function (key) {
+                    scope.$broadcast('btnClicked', { key: key });
                 };
                 scope.nsCancel = function (reason) {
                     scope.nsOptions.nsReject(reason);
@@ -41,13 +59,33 @@
                     scope.nsOptions.nsResolve(result);
                     scope.close();
                 };
+                scope.nsNext = function (options, data) {
+                    options.nsIn = 'slide-right-on';
+                    options.nsOut = scope.nsOptions.nsOut;
+                    if (data)
+                        options.nsParams = { nsData: data}
+                    scope.nsOptions.nsOut = 'slide-right-off';
+                    scope.close();
+                    message.open(options);
+                };
+                scope.nsBack = function (options, data) {
+                    options.nsIn = 'slide-left-on';
+                    options.nsOut = scope.nsOptions.nsOut;
+                    if (data)
+                        options.nsParams = { nsData: data }
+                    scope.nsOptions.nsOut = 'slide-left-off';
+                    scope.close();
+                    message.open(options);
+                };
 
                 function attachBodyHtml(html) {
                     angular.forEach(scope.nsOptions.nsParams, function (value, key) {
-                        templateScope[key] = value;//.toString();
+                        templateScope[key] = value;
                     });
                     templateScope.nsCancel = scope.nsCancel;
                     templateScope.nsOk = scope.nsOk;
+                    templateScope.nsNext = scope.nsNext;
+                    templateScope.nsBack = scope.nsBack;
                     var ctrlId = scope.nsOptions.nsCtrl;
 
                     if (angular.isDefined(ctrlId))
@@ -63,9 +101,12 @@
 
                     $compile($msgBody.contents())(templateScope);
                 }
-                function init() {
+                function init(options) {
                     scope.percentage = 100;
+
+                    scope.nsOptions = options || scope.nsOptions;
                     scope.nsOptions.nsActive = false;
+
                     if (!angular.isDefined(scope.nsOptions.nsType))
                         scope.nsOptions.nsType = 'modal';
                     scope.isModal = scope.nsOptions.nsType === 'modal';
@@ -111,6 +152,17 @@
                     if (!angular.isDefined(scope.nsOptions.nsSize))
                         scope.nsOptions.nsSize = 'sm';
 
+                    if (scope.isModal) {
+                        if (!angular.isDefined(scope.nsOptions.nsIn))
+                            scope.nsOptions.nsIn = 'enter-up';
+                        if (!angular.isDefined(scope.nsOptions.nsOut))
+                            scope.nsOptions.nsOut = oppositeTransitions[scope.nsOptions.nsIn];
+                    }
+                    else {
+                        scope.nsOptions.nsIn = 'enter-up';
+                        scope.nsOptions.nsOut = 'leave-down';
+                    }
+
                     if (angular.isDefined(scope.nsOptions.nsTemplate))
                         $templateRequest(helpers.ui.getTemplate(scope.nsOptions.nsTemplate)).then(function(html) {
                             attachBodyHtml(html);
@@ -120,14 +172,7 @@
 
                     $msg.addClass('msg-' + scope.nsOptions.nsType);
                     $msg.addClass('msg-' + scope.nsOptions.nsClass);
-                    //$msg.addClass(scope.nsOptions.nsStatic ? 'msg-static' : 'msg-non-static');
-
-                    var sizeXLPadding = 40;
-                    var sizes = [];
-                    sizes['xs'] = 250;
-                    sizes['sm'] = 400;
-                    sizes['md'] = 800;
-                    sizes['lg'] = 1200;
+                    $msg.addClass('msg-' + scope.nsOptions.nsIn);
 
                     function setWidth() {
                         var width = sizes[scope.nsOptions.nsSize];
@@ -160,7 +205,7 @@
                             autoClose();
                     });
                     
-                    $timeout(function () { scope.nsOptions.nsActive = true; }, 0);
+                    scope.nsOptions.nsActive = true;
                     autoClose();
                 };
 
@@ -266,26 +311,26 @@
                 };
 
                 scope.close = function () {
-                    //console.log('close');
-                    var $nextMsgBody = angular.element('#ns-notifications').find('.msg-container').eq(scope.nsIndex - 1).find('.msg');
-                    if (scope.nsCount > 1) {
-                        $nextMsgBody.addClass('msg-preparing');
-                    }
+                    $msg.removeClass('msg-' + scope.nsOptions.nsIn);
+                    $msg.addClass('msg-' + scope.nsOptions.nsOut);
 
-                    $timeout(function () { scope.nsOptions.nsActive = false; }, 0);
+                    var $nextMsgBody = angular.element('#ns-notifications').find('.msg-container').eq(scope.nsIndex - 1).find('.msg');
+                    if (scope.nsCount > 1)
+                        $nextMsgBody.addClass('msg-preparing');
+
+                    scope.nsOptions.nsActive = false;
                     closePromise = $timeout(function () {
                         //cancelInterval();
 
                         $nextMsgBody.removeClass('msg-preparing');
                         if (scope.isModal)
-                            scope.$root.nsModals.pop();
+                            scope.$root.nsModals.splice(scope.nsIndex, 1);
                         else if (scope.isNotification)
                             scope.$root.nsNotifications.splice(scope.nsIndex, 1);
                         else
                             scope.$root.nsToastrs.splice(scope.nsIndex, 1);
 
                         helpers.reflection.checkAndInvokeFunction(scope.nsOptions.nsCallback);
-                        //console.log('remove');
                     }, transitionDuration);
                 }
                 scope.onMouseEnter = function () {
