@@ -33,8 +33,21 @@ namespace gzWeb.Providers
 
             if (user == null)
             {
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
-                return;
+                const string ERROR_TYPE = "invalid_grant";
+                const string ERROR_MSG = "The username/email or password is incorrect.";
+                user = await userManager.FindByEmailAsync(context.UserName);
+                if (user == null)
+                {
+                    context.SetError(ERROR_TYPE, ERROR_MSG);
+                    return;
+                }
+
+                user = await userManager.CheckPasswordAsync(user, context.Password) ? user : null;
+                if (user == null)
+                {
+                    context.SetError(ERROR_TYPE, ERROR_MSG);
+                    return;
+                }
             }
 
             // TODO: in case of ...
