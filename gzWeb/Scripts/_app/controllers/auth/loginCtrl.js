@@ -32,6 +32,7 @@
                         $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE);
                         $scope.nsOk();
                     }, function (error) {
+                        emWamp.logout();
                         $scope.errorMsg = error.data.error_description;
                     });
 
