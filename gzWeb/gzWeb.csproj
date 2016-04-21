@@ -253,6 +253,10 @@
     <Compile Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.Designer.cs">
       <DependentUpon>201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.cs" />
+    <Compile Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.Designer.cs">
+      <DependentUpon>201604211050117_Remove GamBalance in ApplicationUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1223,6 +1227,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.resx">
       <DependentUpon>201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.resx">
+      <DependentUpon>201604211050117_Remove GamBalance in ApplicationUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

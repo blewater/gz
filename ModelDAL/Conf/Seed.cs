@@ -62,12 +62,16 @@ namespace gzDAL.Conf
 
             // Customers
             var manager = new ApplicationUserManager(new CustomUserStore(context));
-            int custId = CreateUpdUser(manager);
+            int custId = SaveDbCreateUser(manager);
 
-            int everyMatrixUserId = 0;
-            var everyMatrixUser = manager.FindByEmail("gz@greenzorro.gr");
-            if (everyMatrixUser != null)
-                everyMatrixUserId = everyMatrixUser.Id;
+            int everyMatrixUserId = SaveDbCreateStageEverymatrixUser(
+                manager, 
+                "gz@gz.com", 
+                "gz2016", 
+                "gz2016!@", 
+                "Joe", 
+                "Blow", 
+                new DateTime(1990, 1, 1));
 
             // Currencies
             CreateUpdCurrenciesList(context);
@@ -148,7 +152,7 @@ namespace gzDAL.Conf
         /// </summary>
         /// <param name="manager"></param>
         /// <returns></returns>
-        private static int CreateUpdUser(ApplicationUserManager manager) {
+        private static int SaveDbCreateUser(ApplicationUserManager manager) {
             // User
             Random rnd = new Random();
             int rndPlatformId = rnd.Next(1, int.MaxValue);
@@ -160,14 +164,55 @@ namespace gzDAL.Conf
                 FirstName = "Joe",
                 LastName = "Smith",
                 Birthday = new DateTime(1990, 1, 1),
-                PlatformCustomerId = rndPlatformId,
-                GamBalance = new decimal(4200.54),
-                GamBalanceUpdOnUTC = DateTime.Now
+                PlatformCustomerId = rndPlatformId
             };
 
             var fUser = manager.FindByEmail(newUser.Email);
             if (fUser == null) {
                 manager.Create(newUser, "1q2w3e");
+            } else {
+                manager.Update(newUser);
+            }
+
+            var custId = manager.FindByEmail(newUser.Email).Id;
+            return custId;
+        }
+
+        /// <summary>
+        /// 
+        /// Create Everymatrix user if not existing in the current database.
+        /// 
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="everyMatrixEmail"></param>
+        /// <param name="everyMatrixUsername"></param>
+        /// <param name="everyMatrixPwd"></param>
+        /// <param name="everyMatrixFirstName"></param>
+        /// <param name="everyMatrixLastName"></param>
+        /// <param name="doB"></param>
+        /// <returns></returns>
+        private static int SaveDbCreateStageEverymatrixUser(
+            ApplicationUserManager manager, 
+            string everyMatrixEmail, 
+            string everyMatrixUsername, 
+            string everyMatrixPwd,
+            string everyMatrixFirstName,
+            string everyMatrixLastName,
+            DateTime doB) {
+
+            // Stage Everymatrix User
+            var newUser = new ApplicationUser() {
+                UserName = everyMatrixUsername,
+                Email = everyMatrixEmail,
+                EmailConfirmed = true,
+                FirstName = everyMatrixFirstName,
+                LastName = everyMatrixLastName,
+                Birthday = doB,
+            };
+
+            var fUser = manager.FindByEmail(newUser.Email);
+            if (fUser == null) {
+                manager.Create(newUser, everyMatrixPwd);
             } else {
                 manager.Update(newUser);
             }
