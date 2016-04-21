@@ -51,9 +51,6 @@ namespace gzDAL.Models
         [Required]
         public bool ActiveCustomerIdInPlatform { get; set; }
 
-        public decimal? GamBalance { get; set; }
-        public DateTime? GamBalanceUpdOnUTC { get; set; }
-
         // Calculated fields
         [NotMapped]
         public decimal LastInvestmentAmount {
