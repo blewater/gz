@@ -49,5 +49,15 @@
         //function gzLogin(username, password) {
         //    return (username, password);
         //};
+
+        $scope.forgotPassword = function () {
+            $scope.nsNext({
+                nsType: 'modal',
+                nsSize: 'sm',
+                nsTemplate: '/partials/messages/forgotPassword.html',
+                nsCtrl: 'forgotPasswordCtrl',
+                nsStatic: true,
+            });
+        };
     }
 })();
