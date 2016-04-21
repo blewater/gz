@@ -16,7 +16,7 @@
 
         factory.responseError = function (rejection) {
             if (rejection.status == 404) {
-                // TODO: craete 404 page
+                // TODO: create 404 page
                 //$location.path(route.getPath(constants.routeKeys.notFound));
                 return true;
             }

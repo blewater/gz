@@ -10,7 +10,9 @@
                 gzPlans: '=',
                 gzCurrency: '@',
             },
-            templateUrl: function () { return helpers.ui.getTemplate('partials/directives/gzPerformanceGraph.html'); },
+            templateUrl: function() {
+                return helpers.ui.getTemplate('partials/directives/gzPerformanceGraph.html');
+            },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 // #region Variables
                 $scope.plans = $scope.gzPlans;
