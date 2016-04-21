@@ -32,7 +32,7 @@
                         $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE);
                         $scope.nsOk();
                     }, function (error) {
-                        $scope.errorMsg = error.desc;
+                        $scope.errorMsg = error.data.error_description;
                     });
 
                 }, function (error) {
