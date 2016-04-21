@@ -4,7 +4,8 @@
     <title></title>
 	<meta charset="utf-8" />
     <link href="Content/Styles/bootstrap/bootstrap.css" rel="stylesheet" />
-    <link href="Content/Styles/bootstrap/bootstrap-theme.css" rel="stylesheet" />
+    <link href="Content/Styles/bootstrap/bootstrap-theme.css" rel="stylesheet"/>
+    <script type="text/javascript" src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit" async defer></script>
 </head>
 <body ng-app="emTestApiApp">
 
@@ -16,12 +17,23 @@
             <td>
                 <pre>{{userInfo | json}}</pre>
             </td>
+            <td></td>
         </tr>
         <tr>
             <td>Session Info</td>
             <td>
                 <pre>{{sessionInfo | json}}</pre>
             </td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td>
+                <div vc-recaptcha key="reCaptchaPublicKey"></div>
+                <input type="button" ng-click="testSendResetPwdEmail()" value="Send Reset Email"/>
+            </td>
+            <td><pre>{{testSendResetPwdEmailResult | json}}</pre></td>
         </tr>
     </table>
 
@@ -40,9 +52,9 @@
     <script src="Scripts/autobahn.min.js"></script>
     <script src="Scripts/angular/angular.js"></script>
     <script src="Scripts/angular-wamp/angular-wamp.js"></script>
-
+    <script src="Scripts/angular-recaptcha/angular-recaptcha.js"></script>
     <script>
-        var APP = angular.module("emTestApiApp", ["vxWamp"]);
+        var APP = angular.module("emTestApiApp", ["vxWamp", "vcRecaptcha"]);
 
         APP.config(function($wampProvider) {
             $wampProvider.init({
@@ -56,7 +68,7 @@
         });
 
         APP.controller("emTestApiCtrl",
-            function($scope, $q, $filter, emWamp, emBanking, emCasino) {
+            function ($scope, $q, $filter, emWamp, emBanking, emCasino, vcRecaptchaService) {
 
                 var _logError = function(error) {
                     console.log(error);
@@ -64,6 +76,23 @@
 
                 $scope.userInfo = "";
                 $scope.sessionInfo = "";
+                $scope.reCaptchaPublicKey = "6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML";
+                $scope.testSendResetPwdEmailResult = "";
+                $scope.testSendResetPwdEmail = function () {
+                    emWamp.sendResetPwdEmail({
+                        email: "xdinos4@nessos.gr",
+                        changePwdURL: "http://localhost:63659/api/resetpwd/",
+                        captchaPublicKey: $scope.reCaptchaPublicKey,
+                        captchaChallenge: "",
+                        captchaResponse: vcRecaptchaService.getResponse()
+                    }).then(function(result) {
+                        $scope.testSendResetPwdEmailResult = result;
+                        vcRecaptchaService.reload();
+                    }, function(error) {
+                        $scope.testSendResetPwdEmailResult = error;
+                        vcRecaptchaService.reload();
+                    });
+                };
 
                 var _actions = [
                     //{
@@ -261,6 +290,30 @@
                     },
                 ];
 
+                var _passwordActions = [
+                    //{
+                    //    label: "changePassword",
+                    //    action: function () {
+                    //        return emWamp.changePassword({
+                    //            oldPassword: "lunat!c7",
+                    //            newPassword: "lunat!c7"
+                    //        });
+                    //    }
+                    //},
+                    //{
+                    //    label: "sendResetPwdEmail",
+                    //    action: function () {
+                    //        return emWamp.sendResetPwdEmail({
+                    //            email: "xdinos4@nessos.gr",
+                    //            changePwdURL: "http://localhost:63659/api/resetpwd/",
+                    //            captchaPublicKey: $scope.reCaptchaPublicKey,
+                    //            captchaChallenge: "",
+                    //            captchaResponse: vcRecaptchaService.getResponse()
+                    //        });
+                    //    }
+                    //},
+                ];
+
                 $scope.actionResults = [];
 
                 function runActions(actionsToRun) {
@@ -293,7 +346,8 @@
                                         //runActions(_paymentActionsForVISA);
                                         //runActions(_paymentActionsForMaestro);
                                         //runActions(_paymentActionsForMasterCard);
-                                        runActions(_casinoActions);
+                                        //runActions(_casinoActions);
+                                        runActions(_passwordActions);
                                     },
                                     _logError);
                         },
