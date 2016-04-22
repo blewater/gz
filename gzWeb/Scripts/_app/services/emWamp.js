@@ -229,6 +229,17 @@
                 ", kwargs: " + angular.toJson(kwargs) +
                 ", details: " + angular.toJson(details));
         });
+
+        //$rootScope.$on("$wamp.open", function (event, session) {
+        //    service.call("/user#login", { usernameOrEmail: 'XXX', password: 'XXX' })
+        //        .then(function(result) {
+        //                console.log(result);
+        //            });
+        //});
+
+        //$rootScope.$on("$wamp.close", function (event, data) {
+        //});
+
         $wamp.open();
 
         return service;
