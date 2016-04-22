@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "forgotPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'chat', ctrlFactory]);
-    function ctrlFactory($scope, chat) {
+    APP.controller(ctrlId, ['$scope', ctrlFactory]);
+    function ctrlFactory($scope) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 

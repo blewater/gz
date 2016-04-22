@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emWamp", ['$wamp', 'constants', emWampFunction]);
-    function emWampFunction($wamp, constants) {
+    APP.factory("emWamp", ['$wamp', '$rootScope', 'constants', emWampFunction]);
+    function emWampFunction($wamp, $rootScope, constants) {
 
         var _logError = function(error) {
             console.log(error);
