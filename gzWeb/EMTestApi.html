@@ -48,7 +48,7 @@
 
     <script src="Scripts/jquery/jquery-1.12.0.js"></script>
     <script src="Scripts/bootstrap/bootstrap.js"></script>
-    <script>AUTOBAHN_DEBUG = true;</script>
+    <!--<script>AUTOBAHN_DEBUG = true;</script>-->
     <script src="Scripts/autobahn.min.js"></script>
     <script src="Scripts/angular/angular.js"></script>
     <script src="Scripts/angular-wamp/angular-wamp.js"></script>
@@ -67,8 +67,14 @@
             });
         });
 
+        APP.constant("constants", {
+            events: {
+                SESSION_STATE_CHANGE: 'sessionStageChange'
+            }
+        });
+
         APP.controller("emTestApiCtrl",
-            function ($scope, $q, $filter, emWamp, emBanking, emCasino, vcRecaptchaService) {
+            function ($scope, $q, $filter, constants, emWamp, emBanking, emCasino, vcRecaptchaService) {
 
                 var _logError = function(error) {
                     console.log(error);
@@ -93,6 +99,21 @@
                         vcRecaptchaService.reload();
                     });
                 };
+
+                //$scope.$on(constants.events.SESSION_STATE_CHANGE, function (args) {
+                //    console.log("args:" + angular.toJson(args));
+                //});
+
+                //$scope.$on("$wamp.open", function(event, session) {
+                //    console.log('We are connected to the WAMP Router!');
+                //    console.log('event: ' + angular.toJson(event));
+                //    console.log('session: ' + angular.toJson(session));
+                //});
+                
+                //$scope.$on("$wamp.close", function (event, data) {
+                //    $scope.reason = data.reason;
+                //    $scope.details = data.details;
+                //});
 
                 var _actions = [
                     //{
@@ -279,13 +300,33 @@
                     {
                         label: "getGames",
                         action: function () {
-                            return emCasino.getGames({ expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.BackgroundImage });
+                            return emCasino.getGames({
+                                filterByVendor: ['NetEnt'],
+                                expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.BackgroundImage,
+                                //pageSize: 10
+                            });
                         }
                     },
                     {
                         label: "getGameVendors",
                         action: function () {
                             return emCasino.getGameVendors();
+                        }
+                    },
+                    {
+                        label: "mostPlayedGames",
+                        action: function () {
+                            return emCasino.getMostPlayedGames(emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.BackgroundImage);
+                        }
+                    },
+                    {
+                        label: "getLaunchUrlRaw",
+                        action: function () {
+                            return emCasino.getLaunchUrlRaw({
+                                slug: "alien-robots",
+                                //tableID: tableId,
+                                realMoney: false
+                            });
                         }
                     },
                 ];
@@ -346,8 +387,8 @@
                                         //runActions(_paymentActionsForVISA);
                                         //runActions(_paymentActionsForMaestro);
                                         //runActions(_paymentActionsForMasterCard);
-                                        //runActions(_casinoActions);
-                                        runActions(_passwordActions);
+                                        runActions(_casinoActions);
+                                        //runActions(_passwordActions);
                                     },
                                     _logError);
                         },
