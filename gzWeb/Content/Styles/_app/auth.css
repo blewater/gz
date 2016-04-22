@@ -96,18 +96,18 @@
     padding: 0 45px;
     text-transform: uppercase;
 }
-.auth .btn-gz:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-/* #endregion */
-
-
-/* #region Login */
-.auth.login  { }
 /* #endregion */
 
 
 /* #region Register */
 .auth.register { }
 /* #endregion */
+
+/* #region Login */
+.auth.login button.login { width: 145px; }
+/* #endregion */
+
+/* #region Login */
+.auth.forgotPassword button.send { width: 170px }
+/* #endregion */
+
