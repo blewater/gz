@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emWamp", ['$wamp', '$rootScope', 'constants', emWampFunction]);
-    function emWampFunction($wamp, $rootScope, constants) {
+    APP.factory("emWamp", ['$wamp', '$rootScope', 'constants', 'localStorageService', emWampFunction]);
+    function emWampFunction($wamp, $rootScope, constants, localStorageService) {
 
         var _logError = function(error) {
             console.log(error);
@@ -222,16 +222,27 @@
             // #endregion
         };
 
-        $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
-            $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
-            console.log(
-                "sessionStateChange => args: " + angular.toJson(args) +
-                ", kwargs: " + angular.toJson(kwargs) +
-                ", details: " + angular.toJson(details));
-        });
+        $wamp.subscribe("/sessionStateChange",
+                function(args, kwargs, details) {
+                    $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
+
+                    console.log(
+                        "sessionStateChange => args: " + angular.toJson(args) +
+                        ", kwargs: " + angular.toJson(kwargs) +
+                        ", details: " + angular.toJson(details));
+                })
+            .then(function (subscription) {
+                    var groupId = localStorageService.get("$client_id$");
+                    _call("/user#setClientIdentity", { groupID: groupId })
+                        .then(function(result) {
+                            localStorageService.set("$client_id$", result.groupID);
+                        },_logError);
+                    //console.log(subscription);
+                },
+                _logError);
 
         //$rootScope.$on("$wamp.open", function (event, session) {
-        //    service.call("/user#login", { usernameOrEmail: 'XXX', password: 'XXX' })
+        //    service.call("/user#login", { usernameOrEmail: 'xdinos4@nessos.gr', password: 'lunat!c7' })
         //        .then(function(result) {
         //                console.log(result);
         //            });

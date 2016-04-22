@@ -52,9 +52,10 @@
     <script src="Scripts/autobahn.min.js"></script>
     <script src="Scripts/angular/angular.js"></script>
     <script src="Scripts/angular-wamp/angular-wamp.js"></script>
+    <script src="Scripts/angular-local-storage/angular-local-storage.js"></script>
     <script src="Scripts/angular-recaptcha/angular-recaptcha.js"></script>
     <script>
-        var APP = angular.module("emTestApiApp", ["vxWamp", "vcRecaptcha"]);
+        var APP = angular.module("emTestApiApp", ["vxWamp", "LocalStorageModule", "vcRecaptcha"]);
 
         APP.config(function($wampProvider) {
             $wampProvider.init({
