@@ -65,9 +65,10 @@ var APP = (function () {
             $rootScope.loading = false;
 
             $timeout(function() {
-                angular.element(document.querySelector('#preloader')).addClass('die');
+                var $preloader = angular.element(document.querySelector('#preloader'));
+                $preloader.addClass('die');
                 $timeout(function () {
-                    angular.element(document.querySelector('#preloader')).remove();//removeClass('die');
+                    $preloader.remove();//removeClass('die');
                 }, 2000);
             }, 1000);
         }

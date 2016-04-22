@@ -16,20 +16,6 @@
     @Styles.Render("~/css/fa")
     @*@Styles.Render("~/css/app_old")*@
     @Styles.Render("~/css/app")
-
-    <!--Start of Zopim Live Chat Script-->
-    <script type="text/javascript">
-        window.$zopim || (function (d, s) {
-            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
-            d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
-                z.set.
-                _.push(o)
-            }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
-            $.src = "//v2.zopim.com/?3ql1n78VIwjWnWgVfrbuXG2sCMcCHPuM"; z.t = +new Date; $.
-            type = "text/javascript"; e.parentNode.insertBefore($, e)
-        })(document, "script");
-    </script>
-    <!--End of Zopim Live Chat Script-->
 </head>
 <body ng-cloak>
     <div class="non-footer">
@@ -49,5 +35,21 @@
     @Scripts.Render("~/js/angular")
     @Scripts.Render("~/js/modules")
     @Scripts.Render("~/js/app")
+
+    <!--Start of Zopim Live Chat Script-->
+    @*<script type="text/javascript">
+        window.$zopim || (function (d, s) {
+            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+            d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                z.set.
+                _.push(o)
+            }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
+            $.src = "//v2.zopim.com/?3ql1n78VIwjWnWgVfrbuXG2sCMcCHPuM"; z.t = +new Date; $.
+            type = "text/javascript"; e.parentNode.insertBefore($, e)
+        })(document, "script");
+    </script>*@
+    <!--End of Zopim Live Chat Script-->
+
+
 </body>
 </html>

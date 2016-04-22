@@ -501,6 +501,7 @@
     <Content Include="Scripts\_app\services\helpersService.js" />
     <Content Include="Scripts\_app\services\nsMessagesService\nsConfirmCtrl.js" />
     <Content Include="Scripts\_app\services\nsMessagesService\nsPromptCtrl.js" />
+    <Content Include="Scripts\_app\services\chatService.js" />
     <Content Include="Scripts\_app\services\routeService.js" />
     <Content Include="Scripts\bootstrap\bootstrap.js" />
     <Content Include="Scripts\bootstrap\bootstrap.min.js" />
