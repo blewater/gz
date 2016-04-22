@@ -95,17 +95,160 @@
         //        pageSize: pageSize,
         //    });
         //};
+        _service.getGames = function (parameters) {
+            return emWamp.call("/casino#getGames", parameters);
+        };
 
         _service.getGameCategories = function () {
             return emWamp.call("/casino#getGameCategories");
         };
 
-        _service.getGames = function (parameters) {
-            return emWamp.call("/casino#getGames", parameters);
-        };
-
         _service.getGameVendors = function () {
             return emWamp.call("/casino#getGameVendors");
+        };
+
+        _service.getMostPlayedGames = function (expectedGameFields) {
+            return emWamp.call("/casino#mostPlayedGames", { expectedGameFields: expectedGameFields });
+        };
+
+        _service.getLastPlayedGames = function (expectedGameFields) {
+            return emWamp.call("/casino#lastPlayedGames", { expectedGameFields: expectedGameFields });
+        };
+
+        _service.getBiggestWinGames = function (expectedGameFields) {
+            return emWamp.call("/casino#biggestWinGames", { expectedGameFields: expectedGameFields });
+        };
+
+        // 
+        // Query the recommended games by user / game
+        //
+        // Parameters
+        //
+        //  {
+        //      recommendedType: "user",
+        //      slug: [], //mandatory when recommendedType is "game"
+        //      platform: "PC",
+        //      expectedGameFields: FIELDS.Slug + FIELDS.ShortName // Integer
+        //  }
+        //
+        // recommendedType [string, mandatory]
+        // Indicates the type to query the recommended games. Possible values : "user" / "game".
+        // 
+        // slug [string array, optional]
+        // Indicates the game's slugs to query the recommended games. Mandatory when recommendedType is 'game'.
+        //
+        // platform [string, optional]
+        // Indicates the platform to query the recommended games. Platform definition can be found in CasinoEngine API Doc, Appendix E.
+        // If this parameter is null, then the games are filtered automatically basing on the client's user-agent string
+        //
+        // expectedGameFields [integer, mandatory]
+        // Indicates the game fields expected in JSON response. Individual field value is defined as below. 
+        // Passing this field with the sum of the expected fields' value.  Fields explanation can be found in CasinoEngine API Doc.
+        //
+        // Return
+        // 
+        //  {
+        //      "games": [{
+        //          "rankId": 1,
+        //          "game": {
+        //              "slug": "wolf-run","shortName": "Wolf Run"
+        //          }
+        //      },
+        //      {
+        //          "rankId": 2,
+        //          "game": {
+        //              "slug": "golden-rush",
+        //              "shortName": "Golden Rush"
+        //          }
+        //      },
+        //  .....
+        //  ]}
+        //
+        // games [array]  : Represents the recommended games, the array is sorted in the ascending order of rankId.
+        //      rankId [string] : rank ID.
+        //      game [JSON object] : the game info
+        //
+        // The returned game fields are controlled by the expectedGameFields parameter.
+        // To get the explanation of the field, please refer to CasinoEngine API Doc.
+        //
+        _service.getRecommendedGames = function (parameters) {
+            return emWamp.call("/casino#getRecommendedGames", parameters);
+        };
+
+        _service.getRecommendedGamesUser = function (slug, expectedGameFields) {
+            return emWamp.call("/casino#getRecommendedGames",
+            {
+                recommendedType: "user",
+                slug: slug,
+                expectedGameFields: expectedGameFields
+            });
+        };
+
+        _service.getRecommendedGamesGame = function (slug, expectedGameFields) {
+            return emWamp.call("/casino#getRecommendedGames",
+            {
+                recommendedType: "game",
+                slug: slug,
+                expectedGameFields: expectedGameFields
+            });
+        };
+
+        //
+        // Check the user status and query the url to launch the casino game.
+        //
+        // Parameters
+        //
+        //  {
+        //      "slug": "",				// String
+        //      "tableID": "",			// String
+        //      "realMoney": false
+        //  }
+        //
+        // slug  [string, mandatory if for casino]
+        // The game slug from /casino#getGames call.
+        //
+        // tableID  [string, mandatory for live casino]
+        // The live casino table id from /casino#getLiveCasinoTables call.
+        // 
+        // realMoney  [bool, optional]
+        // Indicates if launch the game in real money mode or fun mode.
+        //
+        // Return
+        //  {
+        //      "status": 0,
+        //      "statusText": null,
+        //      "url": "http://casino.gammatrix-dev.net/Loader/Start/24/magic-love/?language=en&funMode=True&_sid="
+        //  }
+        //
+        // status  [integer]
+        //  Indicates the status code.
+        //      0 : Success;  
+        //      1 : User is only allowed to withdraw money;
+        //      2 : User's profile is incomplete, should redirect user to profile page to complete the profile
+        //      3 : The country (either IP or profile country) is blocked for this game
+        //      4 : The game is not available for the current user, several reason lists below
+        //          game not supported by current terminal type
+        //          launch a real money game without login
+        //          launch a game in fun mode which does not support fun play.
+        //      5 : The email address is not verified, end-user has to click the link in activation email which will cause /user#activate to be called.
+        //
+        // statusText  [string]
+        // The description of the status.
+        //
+        // url  [string]
+        // The game launch url when status equals to zero
+        //
+        _service.getLaunchUrlRaw = function(parameters) {
+            return emWamp.call("/casino#getLaunchUrl", parameters);
+        };
+
+        _service.getLaunchUrl = function (slug, tableId, realMoney) {
+            return emWamp.call("/casino#getLaunchUrl",
+            {
+                slug: slug,
+                tableID: tableId,
+                realMoney: realMoney
+            });
         };
 
         return _service;
