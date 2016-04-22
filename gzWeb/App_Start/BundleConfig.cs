@@ -124,6 +124,7 @@ namespace gzWeb
                 , "~/Scripts/_app/services/routeService.js"
                 , "~/Scripts/_app/services/apiService.js"
                 , "~/Scripts/_app/services/helpersService.js"
+                , "~/Scripts/_app/services/chatService.js"
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"
                 , "~/Scripts/_app/directives/gzPerformanceGraph.js"

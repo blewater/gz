@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "forgotPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', ctrlFactory]);
-    function ctrlFactory($scope) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'chat', ctrlFactory]);
+    function ctrlFactory($scope, constants, chat) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -11,7 +11,7 @@
         };
 
         $scope.backToLogin = function () {
-            //chat.start();
+            chat.show();
             $scope.nsBack({
                 nsType: 'modal',
                 nsSize: 'sm',

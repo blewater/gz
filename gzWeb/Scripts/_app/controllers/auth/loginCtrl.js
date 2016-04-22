@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "loginCtrl";
-    APP.controller(ctrlId, ['$rootScope', '$scope', 'emWamp', 'api', 'localStorageService', 'constants', ctrlFactory]);
-    function ctrlFactory($rootScope, $scope, emWamp, api, localStorageService, constants) {
+    APP.controller(ctrlId, ['$rootScope', '$scope', 'emWamp', 'api', 'localStorageService', 'constants', 'chat', ctrlFactory]);
+    function ctrlFactory($rootScope, $scope, emWamp, api, localStorageService, constants, chat) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -57,7 +57,7 @@
         //};
 
         $scope.forgotPassword = function () {
-            //chat.stop();
+            chat.hide();
             $scope.nsNext({
                 nsType: 'modal',
                 nsSize: 'sm',
