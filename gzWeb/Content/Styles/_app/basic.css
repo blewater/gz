@@ -149,6 +149,14 @@ button.btn-gz:hover{
 	color:#fff;
     border: 1px solid #fff;
 }
+button.btn-gz:disabled {
+    background: #f2f2f2;
+    color: #27A95C;
+    border: 1px solid #27A95C;
+    cursor: not-allowed;
+    -ms-opacity: 0.5;
+    opacity: 0.5;
+}
 
 button.btn-gz.btn-gz-alt {
     height: 36px;

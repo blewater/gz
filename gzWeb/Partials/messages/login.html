@@ -45,7 +45,12 @@
                         <a class="text-gz" ng-click="forgotPassword()">Forgot password?</a>
                     </div>
                     <div class="btns pull-right">
-                        <button type="submit" class="btn-gz" ng-disabled="form.$invalid" ng-click="login()">Login</button>
+                        <button type="submit" class="btn-gz login" ng-disabled="form.$invalid" ng-click="login()"
+                                ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
+                            <span ng-show="loading && !hovered" class="spinner" us-spinner="spinnerGreen"></span>
+                            <span ng-show="loading && hovered" class="spinner" us-spinner="spinnerWhite"></span>
+                            <span ng-show="!loading">Login</span>
+                        </button>
                     </div>
                 </div>
             </div>
