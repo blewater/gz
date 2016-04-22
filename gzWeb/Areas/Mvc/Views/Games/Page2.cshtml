@@ -3,3 +3,36 @@
 }
 
 <h1 class="text-center">Games Page 2</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <span ng-repeat="category in gameCategories"><input class="btn" value="{{category}}" ng-click="onCategoryChanged(category)"/><span> </span></span>
+    </div>
+</div>
+
+<div class="row" ng-hide="gameLaunchData==null">
+    <div class="col-md-12">
+        <ul>
+            <li>{{gameLaunchData.status}}</li>
+            <li>{{gameLaunchData.statusText}}</li>
+            <li>{{gameLaunchData.url}}</li>
+            <li>{{gameUrl}}</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <ul>
+            <li ng-repeat="game in games">
+                <div>
+                    <img src="{{game.thumbnail}}" />
+                    <input class="btn" value="{{game.name}}" ng-click="onGameSelected(game.slug)" />
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-10" ng-hide="gameLaunchData==null">
+        <iframe width="500" height="400" ng-src="{{gameUrl}}"></iframe>
+    </div>
+</div>
