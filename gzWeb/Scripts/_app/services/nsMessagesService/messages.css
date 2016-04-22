@@ -42,7 +42,6 @@
 #ns-msgs .msg {
     position: fixed;
     max-height: 80%;
-    /*background-color: #27a95c;*/
     background-color: #f2f2f2;
     border: 1px solid #ccc;
 
@@ -357,6 +356,7 @@
 
     -ms-opacity: 0;
     opacity: 0;
+    background-color: #27a95c;
 }
 #ns-msgs .msg.msg-toastr.msg-active {
     /*-ms-opacity: 0.7;
