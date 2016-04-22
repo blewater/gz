@@ -30,26 +30,33 @@ namespace gzWeb.Controllers
         
         #region Actions
         #region Summary
+
         [HttpGet]
         public IHttpActionResult GetSummaryData()
         {
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+
             var now = DateTime.Now;
             var vintages = _dummyVintages;
             var model = new SummaryDataViewModel()
-            {
-                Currency = "€",
-                Culture = "en-US",
-                InvestmentsBalance = 15000,
-                TotalDeposits = 10000,
-                TotalWithdrawals = 30000,
-                GamingBalance = 4000,
-                TotalInvestments = 14000,
-                TotalInvestmentsReturns = 1000,
-                NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
-                LastInvestmentAmount = 1000,
-                StatusAsOf = DateTime.Today,
-                Vintages = vintages.OrderByDescending(x => x.Date.Year).ThenByDescending(x => x.Date.Month).ToList()
-            };
+                        {
+                                Currency = user.Currency,
+                                Culture = "en-US",
+                                InvestmentsBalance = 15000,
+                                TotalDeposits = user.TotalDeposits,
+                                TotalWithdrawals = user.TotalWithdrawals,
+                                GamingBalance = 4000,
+                                TotalInvestments = user.TotalInvestments,
+                                TotalInvestmentsReturns = user.TotalInvestmReturns,
+                                NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
+                                LastInvestmentAmount = user.LastInvestmentAmount,
+                                StatusAsOf = DateTime.Today,
+                                Vintages = vintages.OrderByDescending(x => x.Date.Year)
+                                                   .ThenByDescending(x => x.Date.Month)
+                                                   .ToList()
+                        };
             return OkMsg(model);
         }
 
@@ -74,7 +81,7 @@ namespace gzWeb.Controllers
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
-                                Currency = user.Currency, //"€", // TODO: get from user data
+                                Currency = user.Currency,
                                 NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
                                 NextExpectedInvestment = 15000,
                                 ROI = new ReturnOnInvestmentViewModel {Title = "% Current ROI", Percent = 59},
@@ -101,9 +108,9 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            var model = new PerformanceDataViewModel()
+            var model = new PerformanceDataViewModel
                         {
-                                Currency = user.Currency, //"€",
+                                Currency = user.Currency,
                                 Plans = GetCustomerPlans(user)
                         };
             return OkMsg(model);
