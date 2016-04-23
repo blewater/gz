@@ -18,10 +18,37 @@ namespace gzDAL.Repos
             this.db = db;
         }
 
-        public CurrencyRate GetLastCurrencyRate(string currency)
+        /// <summary>
+        /// 
+        /// Get latest currency exchange rate from USD to input parameter CurrencyCodeTo.
+        /// 
+        /// </summary>
+        /// <param name="currencyCodeTo"></param>
+        /// <returns></returns>
+        public decimal GetLastCurrencyRateFromUSD(string currencyCodeTo)
         {
-            var code = String.Format("{0}USD", currency.ToUpperInvariant());
-            return db.CurrencyRates.Where(x => x.FromTo == code).OrderBy(x=>x.TradeDateTime).First();
+            var code = String.Format("USD{0}", currencyCodeTo.ToUpperInvariant());
+            return db.CurrencyRates
+                .Where(x => x.FromTo == code)
+                .OrderByDescending(x => x.Id)
+                .Select(r => r.rate)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// 
+        /// Get latest currency exchange rate to convert from input parameter CurrencyCodeFrom to USD.
+        /// 
+        /// </summary>
+        /// <param name="currencyCodeFrom"></param>
+        /// <returns></returns>
+        public decimal GetLastCurrencyRateToUSD(string currencyCodeFrom) {
+            var code = String.Format("{0}USD", currencyCodeFrom.ToUpperInvariant());
+            return db.CurrencyRates
+                .Where(x => x.FromTo == code)
+                .OrderByDescending(x => x.Id)
+                .Select(r => r.rate)
+                .FirstOrDefault();
         }
 
         public List<CurrencyQuote> SaveDbDailyCurrenciesRates() {

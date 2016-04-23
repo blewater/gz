@@ -65,6 +65,7 @@ namespace gzDAL.Conf
             int custId = SaveDbCreateUser(manager);
 
             int everyMatrixUserId = SaveDbCreateStageEverymatrixUser(
+                context,
                 manager, 
                 "gz@gz.com", 
                 "gz2016", 
@@ -183,6 +184,7 @@ namespace gzDAL.Conf
         /// Create Everymatrix user if not existing in the current database.
         /// 
         /// </summary>
+        /// <param name="db"></param>
         /// <param name="manager"></param>
         /// <param name="everyMatrixEmail"></param>
         /// <param name="everyMatrixUsername"></param>
@@ -192,6 +194,7 @@ namespace gzDAL.Conf
         /// <param name="doB"></param>
         /// <returns></returns>
         private static int SaveDbCreateStageEverymatrixUser(
+            ApplicationDbContext db,
             ApplicationUserManager manager, 
             string everyMatrixEmail, 
             string everyMatrixUsername, 
@@ -200,24 +203,19 @@ namespace gzDAL.Conf
             string everyMatrixLastName,
             DateTime doB) {
 
-            // Stage Everymatrix User
-            var newUser = new ApplicationUser() {
-                UserName = everyMatrixUsername,
-                Email = everyMatrixEmail,
-                EmailConfirmed = true,
-                FirstName = everyMatrixFirstName,
-                LastName = everyMatrixLastName,
-                Birthday = doB,
-            };
+            db.Users.AddOrUpdate(
+                c => new {c.Email},
+                new ApplicationUser() {
+                    UserName = everyMatrixUsername,
+                    Email = everyMatrixEmail,
+                    EmailConfirmed = true,
+                    FirstName = everyMatrixFirstName,
+                    LastName = everyMatrixLastName,
+                    Birthday = doB,
+                    Currency = "SEK"
+                });
 
-            var fUser = manager.FindByEmail(newUser.Email);
-            if (fUser == null) {
-                manager.Create(newUser, everyMatrixPwd);
-            } else {
-                manager.Update(newUser);
-            }
-
-            var custId = manager.FindByEmail(newUser.Email).Id;
+            var custId = manager.FindByEmail(everyMatrixEmail).Id;
             return custId;
         }
 
