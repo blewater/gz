@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
+using gzDAL;
 using gzDAL.Conf;
 using gzDAL.Models;
 using gzDAL.ModelUtil;
@@ -10,6 +11,7 @@ using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
 using gzWeb.Configuration;
 using gzWeb.Models;
+using gzWeb.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using NLog.LayoutRenderers;
@@ -21,10 +23,13 @@ namespace gzWeb.Controllers
     public class InvestmentsApiController : BaseApiController
     {
         #region Constructor
-        public InvestmentsApiController(ApplicationDbContext dbContext, ICustFundShareRepo custFundShareRepo)
+        public InvestmentsApiController(ApplicationDbContext dbContext, 
+            ICustFundShareRepo custFundShareRepo,
+            ICurrencyRateRepo currencyRateRepo)
         {
             _dbContext = dbContext;
             _custFundShareRepo = custFundShareRepo;
+            _currencyRateRepo = currencyRateRepo;
         }
         #endregion
         
@@ -38,20 +43,24 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
+            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
+            var rate = _currencyRateRepo.GetLastCurrencyRate(userCurrency.ISOSymbol);
+            var toFromRate = 1M/rate.rate;
+
             var now = DateTime.Now;
             var vintages = _dummyVintages;
             var model = new SummaryDataViewModel()
                         {
-                                Currency = user.Currency,
+                                Currency = userCurrency.Symbol,
                                 Culture = "en-US",
-                                InvestmentsBalance = 15000,
-                                TotalDeposits = user.TotalDeposits,
-                                TotalWithdrawals = user.TotalWithdrawals,
-                                GamingBalance = 4000,
-                                TotalInvestments = user.TotalInvestments,
-                                TotalInvestmentsReturns = user.TotalInvestmReturns,
+                                InvestmentsBalance = Math.Round(toFromRate*15000, 2),
+                                TotalDeposits = Math.Round(toFromRate*user.TotalDeposits, 2),
+                                TotalWithdrawals = Math.Round(toFromRate*user.TotalWithdrawals, 2),
+                                GamingBalance = Math.Round(toFromRate*4000, 2),
+                                TotalInvestments = Math.Round(toFromRate*user.TotalInvestments, 2),
+                                TotalInvestmentsReturns = Math.Round(toFromRate*user.TotalInvestmReturns, 2),
                                 NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
-                                LastInvestmentAmount = user.LastInvestmentAmount,
+                                LastInvestmentAmount = Math.Round(toFromRate*user.LastInvestmentAmount, 2),
                                 StatusAsOf = DateTime.Today,
                                 Vintages = vintages.OrderByDescending(x => x.Date.Year)
                                                    .ThenByDescending(x => x.Date.Month)
@@ -81,7 +90,7 @@ namespace gzWeb.Controllers
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
-                                Currency = user.Currency,
+                                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                                 NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
                                 NextExpectedInvestment = 15000,
                                 ROI = new ReturnOnInvestmentViewModel {Title = "% Current ROI", Percent = 59},
@@ -110,7 +119,7 @@ namespace gzWeb.Controllers
 
             var model = new PerformanceDataViewModel
                         {
-                                Currency = user.Currency,
+                                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                                 Plans = GetCustomerPlans(user)
                         };
             return OkMsg(model);
@@ -174,6 +183,9 @@ namespace gzWeb.Controllers
         }
         
         #region Fields
+
+        private readonly ICurrencyRateRepo _currencyRateRepo;
+        private readonly ICustFundShareRepo _custFundShareRepo;
         private readonly ApplicationDbContext _dbContext;
         #endregion
 
@@ -203,8 +215,6 @@ namespace gzWeb.Controllers
             new VintageViewModel {Date = new DateTime(2016, 2, 1), InvestAmount = 80M, ReturnPercent = 15},
             new VintageViewModel {Date = new DateTime(2016, 3, 1), InvestAmount = 150M, ReturnPercent = 10},
         };
-
-        private ICustFundShareRepo _custFundShareRepo;
 
         #endregion
     }

@@ -50,6 +50,7 @@ namespace gzWeb
             container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
             container.Register<ApplicationDbContext, ApplicationDbContext>(Lifestyle.Scoped);
             container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
+            container.Register<ICurrencyRateRepo, CurrencyRateRepo>(Lifestyle.Scoped);
             container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
             container.Verify();
             GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);

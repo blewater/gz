@@ -18,6 +18,12 @@ namespace gzDAL.Repos
             this.db = db;
         }
 
+        public CurrencyRate GetLastCurrencyRate(string currency)
+        {
+            var code = String.Format("{0}USD", currency.ToUpperInvariant());
+            return db.CurrencyRates.Where(x => x.FromTo == code).OrderBy(x=>x.TradeDateTime).First();
+        }
+
         public List<CurrencyQuote> SaveDbDailyCurrenciesRates() {
 
             var currenciesList = db.CurrenciesListX.Select(c => c.From + c.To).ToList();
