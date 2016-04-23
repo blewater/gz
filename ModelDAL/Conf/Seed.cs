@@ -234,6 +234,9 @@ namespace gzDAL.Conf
         }
 
         private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
+
+            var usd = "USD";
+
             context.CurrenciesListX.AddOrUpdate(
                 c => new { c.From, c.To },
                 new CurrencyListX {
@@ -259,6 +262,30 @@ namespace gzDAL.Conf
                 },
                 new CurrencyListX {
                     From = "SEK", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "AUD", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "CAD", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "CHF", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "DKK", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "EUR", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "GBP", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "NOK", UpdatedOnUTC = DateTime.UtcNow
+                },
+                new CurrencyListX {
+                    From = usd, To = "SEK", UpdatedOnUTC = DateTime.UtcNow
                 }
                 );
         }
