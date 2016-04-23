@@ -21,7 +21,7 @@ namespace gzDAL.Repos
         public CurrencyRate GetLastCurrencyRate(string currency)
         {
             var code = String.Format("{0}USD", currency.ToUpperInvariant());
-            return db.CurrencyRates.Where(x => x.FromTo == code).OrderBy(x=>x.TradeDateTime).First();
+            return db.CurrencyRates.Where(x => x.FromTo == code).OrderByDescending(x=>x.TradeDateTime).First();
         }
 
         public List<CurrencyQuote> SaveDbDailyCurrenciesRates() {
