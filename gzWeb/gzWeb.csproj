@@ -267,7 +267,6 @@
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\AccountApiController.cs" />
     <Compile Include="Controllers\InvestmentsApiController.cs" />
-    <Compile Include="Controllers\TestGMServerApiController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
