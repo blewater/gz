@@ -53,7 +53,7 @@ namespace gzWeb.Controllers
                         {
                                 Currency = userCurrency.Symbol,
                                 Culture = "en-US",
-                                InvestmentsBalance = Math.Round(toFromRate*15000, 2),
+                                InvestmentsBalance = Math.Round(toFromRate*user.InvBalance, 2),
                                 TotalDeposits = Math.Round(toFromRate*user.TotalDeposits, 2),
                                 TotalWithdrawals = Math.Round(toFromRate*user.TotalWithdrawals, 2),
                                 GamingBalance = Math.Round(toFromRate*4000, 2),
