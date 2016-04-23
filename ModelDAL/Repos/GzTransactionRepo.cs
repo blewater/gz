@@ -5,6 +5,7 @@ using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Linq.Expressions;
 using gzDAL.Conf;
+using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
@@ -21,6 +22,25 @@ namespace gzDAL.Repos {
         private readonly ApplicationDbContext _db;
         public GzTransactionRepo(ApplicationDbContext db) {
             this._db = db;
+        }
+
+        /// <summary>
+        /// 
+        /// Get a customer's vintages.
+        /// 
+        /// Note viewModels have been moved to gzWeb so we return a DTO.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public IEnumerable<VintageDto> GetCustomerVintages(int customerId) {
+
+            return _db.GzTransactions
+                .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
+                .GroupBy(t => t.YearMonthCtd)
+                .OrderByDescending(t => t.Key)
+                .Select(g => new VintageDto() {YearMonthStr = g.Key, InvestAmount = g.Sum(t => t.Amount)})
+                .ToList();
         }
 
         /// <summary>

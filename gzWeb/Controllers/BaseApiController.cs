@@ -9,6 +9,7 @@ namespace gzWeb.Controllers
 {
     public class BaseApiController : ApiController
     {
+
         private ApplicationUserManager _userManager;
         protected ApplicationUserManager UserManager
         {
@@ -16,7 +17,7 @@ namespace gzWeb.Controllers
             {
                 return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             }
-            private set
+            set
             {
                 _userManager = value;
             }

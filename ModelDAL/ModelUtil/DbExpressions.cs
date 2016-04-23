@@ -125,6 +125,34 @@ namespace gzDAL.ModelUtil {
 
         /// <summary>
         /// 
+        /// Get the first weekday day of the next month.
+        /// For example if DateTime.UtcNow return April 23 2016...
+        /// GetNextMonthsFirstWeekday() returns May 2nd 2016 (Monday)
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static DateTime GetNextMonthsFirstWeekday() {
+
+            DateTime nextMonthFirstWeekday;
+
+            var nextMonth = DateTime.UtcNow.AddMonths(1);
+            var nextMonthFirstDay = nextMonthFirstWeekday = new DateTime(nextMonth.Year, nextMonth.Month, 1);
+
+            // Exclude weekend days
+            if (nextMonthFirstDay.DayOfWeek == DayOfWeek.Saturday) {
+
+                nextMonthFirstWeekday = nextMonthFirstDay.AddDays(2);
+
+            } else if (nextMonthFirstDay.DayOfWeek == DayOfWeek.Sunday) {
+
+                nextMonthFirstWeekday = nextMonthFirstDay.AddDays(1);
+            }
+
+            return nextMonthFirstWeekday;
+        }
+
+        /// <summary>
+        /// 
         /// i.e. "20150630" -> new DateTime(2015, 6, 30)
         /// 
         /// </summary>
