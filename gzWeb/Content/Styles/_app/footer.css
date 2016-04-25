@@ -10,6 +10,38 @@ footer {
     line-height: 50px;
     color: #000;
 }
+footer a {
+    color: #fff;
+    text-decoration: none;
+    padding: 3px;
+    text-align: center;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    -ms-opacity: 0.7;
+    opacity: 0.7;
+    position: relative;
+}
+
+footer a:hover {
+    color: #fff;
+    text-decoration: none;
+    -ms-opacity: 1;
+    opacity: 1;
+}
+
+footer .pull-left a {
+    margin-right: 10px;
+}
+footer .pull-right a {
+    margin-left: 10px;
+}
+footer .pull-right a i {
+    width: 18px;
+    height: 18px;
+}
 
 @media (max-width: 767px) {
     footer {
