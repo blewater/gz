@@ -40,7 +40,7 @@ namespace gzWeb.Tests.Controllers {
             var user = manager.FindByEmail("gz@gz.com");
 
             // Act
-            IHttpActionResult result = controller.GetSummaryData(user);
+            IHttpActionResult result = controller.GetSummaryDataByUser(user);
             return result;
         }
 
@@ -51,7 +51,7 @@ namespace gzWeb.Tests.Controllers {
 
             // Act
             IHttpActionResult result =
-                controller.GetSummaryData(new ApplicationUserManager(new CustomUserStore(db))) as IHttpActionResult;
+                controller.GetSummaryDataByUserManager(new ApplicationUserManager(new CustomUserStore(db))) as IHttpActionResult;
             return result;
         }
 
