@@ -53,6 +53,7 @@
                                 .then(function(txResult) {
                                         if (txResult.status === "success") {
                                             // TODO: show receipt page ...
+                                            emBanking.sendReceiptEmail(txResult.pid, "");
                                         } else if (txResult.status === "incomplete") {
                                             // TODO: show transaction is not completed
                                         } else if (txResult.status === "pending") {

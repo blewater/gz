@@ -230,7 +230,7 @@ namespace gzWeb.Tests.Models {
             Mapper.Map<CustomerDTO, ApplicationUser>(newUserDTO, newUser);
 
             var db = new ApplicationDbContext();
-            var custRepo = new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db)));
+            var custRepo = new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db), null));
             return custRepo.CreateOrUpdateUser(newUser, "1q2w3e");
         }
     }

@@ -1,10 +1,12 @@
-﻿using System.Web.Http;
+﻿using System.Net;
+using System.Web.Http;
 using AutoMapper;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.Models;
 using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
+using gzWeb.Contracts;
 using gzWeb.Controllers;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
@@ -21,27 +23,20 @@ namespace gzWeb.Tests.Controllers {
             // Assert
             Assert.IsNotNull(result);
         }
+        
 
         [TestMethod]
-        public void InvestmentSummaryDataWithUser() {
-
-            var result = GetSummaryDataWithUser();
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        private static IHttpActionResult GetSummaryDataWithUser() {
+        public void GetSummaryDataWithUser() {
 
             InvestmentsApiController controller;
             var db = CreateInvestmentsApiController(out controller);
 
-            var manager = new ApplicationUserManager(new CustomUserStore(db));
+            var manager = new ApplicationUserManager(new CustomUserStore(db), null);
             var user = manager.FindByEmail("gz@gz.com");
 
             // Act
-            IHttpActionResult result = controller.GetSummaryData(user);
-            return result;
+            var result = ((IInvestmentsApi)controller).GetSummaryData(user);
+            Assert.IsNotNull(result);
         }
 
         private static IHttpActionResult GetSummaryData() {
@@ -50,8 +45,7 @@ namespace gzWeb.Tests.Controllers {
             var db = CreateInvestmentsApiController(out controller);
 
             // Act
-            IHttpActionResult result =
-                controller.GetSummaryData(new ApplicationUserManager(new CustomUserStore(db))) as IHttpActionResult;
+            IHttpActionResult result = controller.GetSummaryData();
             return result;
         }
 
@@ -75,7 +69,8 @@ namespace gzWeb.Tests.Controllers {
                 gzTransactionRepo,
                 custFundShareRepo,
                 currencyRateRepo,
-                mapper);
+                mapper,
+                new ApplicationUserManager(new CustomUserStore(db), null));
             return db;
         }
     }
