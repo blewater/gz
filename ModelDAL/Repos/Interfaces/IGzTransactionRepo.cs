@@ -1,10 +1,13 @@
 ﻿using gzDAL.Models;
 using System;
 using System.Collections.Generic;
+using gzDAL.DTO;
 
 namespace gzDAL.Repos.Interfaces
 {
     public interface IGzTransactionRepo {
+
+        IEnumerable<VintageDto> GetCustomerVintages(int customerId);
 
         IEnumerable<int> GetActiveCustomers(string thisYearMonth);
 

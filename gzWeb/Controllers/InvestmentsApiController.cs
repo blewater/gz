@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
+using System.Web;
 using System.Web.Http;
+using AutoMapper;
+using gzDAL;
 using gzDAL.Conf;
+using gzDAL.DTO;
 using gzDAL.Models;
 using gzDAL.ModelUtil;
 using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
 using gzWeb.Configuration;
 using gzWeb.Models;
+using gzWeb.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using NLog.LayoutRenderers;
@@ -21,43 +27,86 @@ namespace gzWeb.Controllers
     public class InvestmentsApiController : BaseApiController
     {
         #region Constructor
-        public InvestmentsApiController(ApplicationDbContext dbContext, ICustFundShareRepo custFundShareRepo)
+        public InvestmentsApiController(
+            ApplicationDbContext dbContext,
+            IInvBalanceRepo invBalanceRepo,
+            IGzTransactionRepo gzTransactionRepo,
+            ICustFundShareRepo custFundShareRepo,
+            ICurrencyRateRepo currencyRateRepo,
+            IMapper mapper)
         {
             _dbContext = dbContext;
+            _invBalanceRepo = invBalanceRepo;
+            _gzTransactionRepo = gzTransactionRepo;
             _custFundShareRepo = custFundShareRepo;
+            _currencyRateRepo = currencyRateRepo;
+            _mapper = mapper;
         }
         #endregion
         
         #region Actions
         #region Summary
 
+        /// <summary>
+        /// 
+        /// Unit Testable wrapper of [HttpGet] GetSummaryData
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <returns></returns>
+        public IHttpActionResult GetSummaryData(ApplicationUserManager userManager) {
+
+            this.UserManager = userManager;
+            return GetSummaryData();
+        }
+
+        /// <summary>
+        /// 
+        /// Unit Testable wrapper of [HttpGet] GetSummaryData
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public IHttpActionResult GetSummaryData(ApplicationUser user) {
+
+            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
+            var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+
+            //var vintages = _dummyVintages;
+            var customerVintages = _gzTransactionRepo.GetCustomerVintages(user.Id);
+            var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+
+            var model = new SummaryDataViewModel() {
+                Currency = userCurrency.Symbol,
+                Culture = "en-GB",
+                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
+                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalDeposits),
+                TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalWithdrawals),
+
+                //TODO: from the EveryMatrix Web API
+                GamingBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate),
+
+                TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalInvestments),
+
+                // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
+                TotalInvestmentsReturns = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalInvestmentReturns),
+
+                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
+                LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.LastInvestmentAmount),
+                StatusAsOf = _invBalanceRepo.GetLastUpdatedDateTime(user.Id),
+                Vintages = vintages
+            };
+            return OkMsg(model);
+        }
+
         [HttpGet]
-        public IHttpActionResult GetSummaryData()
-        {
+        public IHttpActionResult GetSummaryData() {
+
             var user = UserManager.FindById(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            var now = DateTime.Now;
-            var vintages = _dummyVintages;
-            var model = new SummaryDataViewModel()
-                        {
-                                Currency = user.Currency,
-                                Culture = "en-US",
-                                InvestmentsBalance = 15000,
-                                TotalDeposits = user.TotalDeposits,
-                                TotalWithdrawals = user.TotalWithdrawals,
-                                GamingBalance = 4000,
-                                TotalInvestments = user.TotalInvestments,
-                                TotalInvestmentsReturns = user.TotalInvestmReturns,
-                                NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
-                                LastInvestmentAmount = user.LastInvestmentAmount,
-                                StatusAsOf = DateTime.Today,
-                                Vintages = vintages.OrderByDescending(x => x.Date.Year)
-                                                   .ThenByDescending(x => x.Date.Month)
-                                                   .ToList()
-                        };
-            return OkMsg(model);
+            return GetSummaryData(user);
         }
 
         [HttpPost]
@@ -81,7 +130,7 @@ namespace gzWeb.Controllers
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
-                                Currency = user.Currency,
+                                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                                 NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
                                 NextExpectedInvestment = 15000,
                                 ROI = new ReturnOnInvestmentViewModel {Title = "% Current ROI", Percent = 59},
@@ -110,7 +159,7 @@ namespace gzWeb.Controllers
 
             var model = new PerformanceDataViewModel
                         {
-                                Currency = user.Currency,
+                                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                                 Plans = GetCustomerPlans(user)
                         };
             return OkMsg(model);
@@ -174,7 +223,14 @@ namespace gzWeb.Controllers
         }
         
         #region Fields
+
+        private readonly IMapper _mapper;
+        private readonly IInvBalanceRepo _invBalanceRepo;
+        private readonly IGzTransactionRepo _gzTransactionRepo;
+        private readonly ICurrencyRateRepo _currencyRateRepo;
+        private readonly ICustFundShareRepo _custFundShareRepo;
         private readonly ApplicationDbContext _dbContext;
+
         #endregion
 
         #region Dummy Data
@@ -203,8 +259,6 @@ namespace gzWeb.Controllers
             new VintageViewModel {Date = new DateTime(2016, 2, 1), InvestAmount = 80M, ReturnPercent = 15},
             new VintageViewModel {Date = new DateTime(2016, 3, 1), InvestAmount = 150M, ReturnPercent = 10},
         };
-
-        private ICustFundShareRepo _custFundShareRepo;
 
         #endregion
     }

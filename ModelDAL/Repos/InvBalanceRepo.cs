@@ -22,6 +22,28 @@ namespace gzDAL.Repos {
             this._gzTransactionRepo = gzTransactionRepo;
         }
 
+        /// <summary>
+        /// 
+        /// Return in UTC last updated value of the customer's investment balance calculation
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public DateTime GetLastUpdatedDateTime(int customerId) {
+
+            DateTime lastUpdated = _db.InvBalances
+                .Where(i => i.CustomerId == customerId)
+                .OrderByDescending(i => i.Id)
+                .Select(i => i.UpdatedOnUTC)
+                .FirstOrDefault();
+
+            if (lastUpdated.Year == 1) {
+                lastUpdated = DateTime.Today;
+            }
+
+            return lastUpdated;
+        }
+
         #region Fund Shares Selling
 
         /// <summary>

@@ -51,7 +51,8 @@ namespace gzDAL.Models
         [Required]
         public bool ActiveCustomerIdInPlatform { get; set; }
 
-        // Calculated fields
+#region Calculated fields
+
         [NotMapped]
         public decimal LastInvestmentAmount {
             get {
@@ -63,7 +64,7 @@ namespace gzDAL.Models
             }
         }
         [NotMapped]
-        public decimal TotalInvestmReturns {
+        public decimal TotalInvestmentReturns {
             get {
                 return 
                     InvBalances
@@ -102,6 +103,8 @@ namespace gzDAL.Models
                     .Sum();
             }
         }
+        
+#endregion
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager, string authenticationType)
         {
