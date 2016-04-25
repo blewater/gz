@@ -34,7 +34,7 @@ namespace gzWeb
                 , "~/Content/Styles/_app/auth.css"
                 , "~/Content/Styles/_app/investments.css"
                 , "~/Content/Styles/_app/games.css"
-                , "~/Scripts/_app/services/nsMessagesService/messages.css"
+                , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
                 //, "~/Content/Styles/_app/exceptionaire/exceptionaire-meterialize.css"
                 //, "~/Content/Styles/_app/exceptionaire/exceptionaire-style.css"
                 //, "~/Content/Styles/_app/exceptionaire/exceptionaire-media.css"
@@ -91,6 +91,7 @@ namespace gzWeb
                 , "~/Scripts/angular-count-to/angular-count-to.min.js"
                 , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
                 , "~/Scripts/angular-wamp/angular-wamp.js" // TODO: "~/Scripts/angular-wamp/angular-wamp.min.js"
+                , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 //, "~/Scripts/_modules/styleInjector.js"
@@ -128,18 +129,21 @@ namespace gzWeb
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"
                 , "~/Scripts/_app/directives/gzPerformanceGraph.js"
+                , "~/Scripts/_app/directives/gzCheckBox.js"
+                , "~/Scripts/_app/directives/gzSelect.js"
 
-                , "~/Scripts/_app/services/nsMessagesService/nsMessage.js"
-                , "~/Scripts/_app/services/nsMessagesService/nsMessages.js"
-                , "~/Scripts/_app/services/nsMessagesService/nsPromptCtrl.js"
-                , "~/Scripts/_app/services/nsMessagesService/nsConfirmCtrl.js"
-                , "~/Scripts/_app/services/nsMessagesService/messageService.js"
+                , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
+                , "~/Scripts/_app/services/nsMessageService/nsMessages.js"
+                , "~/Scripts/_app/services/nsMessageService/nsPromptCtrl.js"
+                , "~/Scripts/_app/services/nsMessageService/nsConfirmCtrl.js"
+                , "~/Scripts/_app/services/nsMessageService/nsMessageService.js"
 
                 //, "~/Scripts/_app/exceptionaire/exceptionaire-materialize.min.js"
                 , "~/Scripts/_app/controllers/auth/registerCtrl.js"
                 , "~/Scripts/_app/controllers/auth/loginCtrl.js"
                 , "~/Scripts/_app/controllers/auth/forgotPasswordCtrl.js"
-                //, "~/Scripts/_app/controllers/auth/registerDetailsCtrl.js"
+                , "~/Scripts/_app/controllers/auth/registerStartCtrl.js"
+                , "~/Scripts/_app/controllers/auth/registerDetailsCtrl.js"
             ));
             #endregion
         }
