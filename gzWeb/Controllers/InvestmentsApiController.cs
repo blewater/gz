@@ -54,7 +54,7 @@ namespace gzWeb.Controllers
         /// </summary>
         /// <param name="userManager"></param>
         /// <returns></returns>
-        public IHttpActionResult GetSummaryData(ApplicationUserManager userManager) {
+        public IHttpActionResult GetSummaryDataByUserManager(ApplicationUserManager userManager) {
 
             this.UserManager = userManager;
             return GetSummaryData();
@@ -67,7 +67,7 @@ namespace gzWeb.Controllers
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public IHttpActionResult GetSummaryData(ApplicationUser user) {
+        public IHttpActionResult GetSummaryDataByUser(ApplicationUser user) {
 
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
@@ -106,7 +106,7 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            return GetSummaryData(user);
+            return GetSummaryDataByUser(user);
         }
 
         [HttpPost]
