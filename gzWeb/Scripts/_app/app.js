@@ -26,6 +26,7 @@ var APP = (function () {
         , 'countTo'
         , 'FBAngular'
         , 'vxWamp'
+        , 'ngAutocomplete'
     ]);
 
     app.run([
