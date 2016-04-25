@@ -1,0 +1,16 @@
+﻿<span class="gz-select">
+    <span ng-if="gzLoading()"
+          class="loading-spinner"
+          us-spinner="spinnerOptions">
+    </span>
+    <select name="{{gzName}}"
+            class="form-control"
+            ng-model="gzModel"
+            ng-options="item as getDisplay(item) for item in gzCollection track by getId(item)"
+            ng-change="onSelectionChange()"
+            ng-disabled="isDisabled()"
+            ng-required="isRequired"
+            ng-class="{ 'danger' : gzError(), 'selected': gzModel }">
+        <option ng-show="hasPrompt" value="" class="prompt">{{gzPrompt}}</option>
+    </select>
+</span>
