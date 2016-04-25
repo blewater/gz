@@ -5,9 +5,6 @@
     function serviceFactory($window, $timeout, $compile, $templateRequest, constants, localStorageService) {
         var service = {
             reflection: {
-                isFunction: isFunction,
-                isObject: isObject,
-                checkAndInvokeFunction: checkAndInvokeFunction,
                 hasValue: hasValue,
                 getProperty: getProperty,
                 getPropertyOrSelf: getPropertyOrSelf
@@ -36,16 +33,6 @@
         return service;
 
         // #region reflection
-        function isObject(o) {
-            return o && typeof o == 'object';
-        }
-        function isFunction(f) {
-            return f && typeof f == 'function';
-        }
-        function checkAndInvokeFunction(f) {
-            if (isFunction(f))
-                f();
-        }
         function hasValue(variable) {
             return variable !== undefined && variable != null;
         }
@@ -107,7 +94,8 @@
         }
         function applyWithDelay(array, func, delay, callback) {
             if (array.length === 0)
-                checkAndInvokeFunction(callback);
+                if (angular.isFunction(callback))
+                    callback();
             else {
                 func(array[0]);
                 $timeout(function () {

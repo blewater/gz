@@ -4,13 +4,15 @@
 
 <h1 class="text-center">GREENZORRO</h1>
 <h3 class="text-center">Casino and Investment platform</h3>
+<h6 class="text-center">v @typeof(MvcApplication).Assembly.GetName().Version</h6>
 <!--<a href="@Url.Action("Register","Auth")" target="_self">Register</a>-->
 @*<button type="button" class="btn-gz" ng-click="register()">Register</button>*@
 
 <div class="hidden">
     <h4><u>Playground</u></h4>
     <div style="margin-top: 20px;">
-        <button type="button" class="btn-gz" ng-click="register()">Register</button>
+        <button type="button" class="btn-gz" ng-click="registerStart()">Register Start</button>
+        <button type="button" class="btn-gz" ng-click="registerDetails()">Register Details</button>
         <button type="button" class="btn-gz" ng-click="login()">Login</button>
         <button type="button" class="btn-gz" ng-click="logout()">Logout</button>
         <button type="button" class="btn-gz" ng-click="forgot()">Forgot</button>

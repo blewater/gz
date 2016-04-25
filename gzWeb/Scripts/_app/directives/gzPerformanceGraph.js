@@ -46,6 +46,8 @@
                 var thisYear = now.getFullYear();
                 var x, y, xAxis, yAxis;
                 var avg, area, area2, area3;
+                var bisectDate = d3.bisector(function (d) { return d.x; }).left;
+
                 // #endregion
 
                 // #region Methods
@@ -254,6 +256,47 @@
                         .datum(data)
                         .attr("class", "line")
                         .attr("d", avg(data));
+
+                    var handler = svg.append("g");
+                    handler.append("circle")
+                        .attr("cy", 60)
+                        .attr("cx", 100)
+                        .attr("r", 10)
+                        .style("fill", "#27A95C");
+                    handler.append("circle")
+                        .attr("cy", 60)
+                        .attr("cx", 100)
+                        .attr("r", 4)
+                        .style("fill", "#fff");
+
+                    handler.append("path")
+                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                        .attr("transform", "translate(100, 40)")                        
+                        .style('stroke', '#ddd')
+                        .style('stroke-width', '1')
+                        .style("fill", "rgba(255, 255, 255, 0.8)");
+
+                    handler.append("path")
+                        .attr("d", d3.svg.symbol().type("triangle-down").size(function () { return 25; }))
+                        .attr("transform", "translate(100, 80)")
+                        .style('stroke', '#ddd')
+                        .style('stroke-width', '1')
+                        .style("fill", "rgba(255, 255, 255, 0.8)");
+
+                    handler.append("path")
+                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                        .attr("transform", "translate(120, 60)rotate(90)")
+                        .style('stroke', '#ddd')
+                        .style('stroke-width', '1')
+                        .style("fill", "rgba(255, 255, 255, 0.8)");
+
+                    handler.append("path")
+                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                        .attr("transform", "translate(80, 60)rotate(-90)")
+                        .style('stroke', '#ddd')
+                        .style('stroke-width', '1')
+                        .style("fill", "rgba(255, 255, 255, 0.8)");
+
                 }
 
                 function setClock() {

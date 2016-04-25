@@ -13,23 +13,25 @@
         </div>
         <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group" ng-class="{ 'has-error' : form.$submitted && errorMsg }">
+                <div class="form-group">
                     <input type="text" placeholder="username / email" id="usernameOrEmail" name="usernameOrEmail" class="form-control" ng-model="model.usernameOrEmail" autocomplete="off" required
-                           ng-class="{ 'danger' : !form.usernameOrEmail.$pristine && errorMsg }"
+                           ng-class="{ 'empty': !model.usernameOrEmail, 'danger' : !form.usernameOrEmail.$pristine && errorMsg }"
                            ng-focus="usernameOrEmailFocused = true" ng-blur="usernameOrEmailFocused = false">
-                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused}">
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused || form.usernameOrEmail.$valid}">
                         <i class="fa fa-lg fa-user"></i>
                     </span>
+                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.usernameOrEmail.$valid}" />
                 </div>
             </div>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group" ng-class="{ 'has-error' : (form.$submitted && !form.password.$pristine) }">
+                <div class="form-group">
                     <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" ng-minlength="3" ng-maxlength="18" required
-                           ng-class="{ 'danger' : !form.password.$pristine && errorMsg }"
+                           ng-class="{ 'empty': !model.password, 'danger' : !form.password.$pristine && errorMsg }"
                            ng-focus="passwordFocused = true" ng-blur="passwordFocused = false">
-                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused}">
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
+                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.password.$valid}" />
                 </div>
             </div>
 
@@ -45,12 +47,25 @@
                         <a class="text-gz" ng-click="forgotPassword()">Forgot password?</a>
                     </div>
                     <div class="btns pull-right">
-                        <button type="submit" class="btn-gz login" ng-disabled="form.$invalid" ng-click="login()"
+                        <button type="submit" class="btn-gz login" ng-disabled="form.$invalid"
                                 ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                             <span ng-show="loading && !hovered" class="spinner" us-spinner="spinnerGreen"></span>
                             <span ng-show="loading && hovered" class="spinner" us-spinner="spinnerWhite"></span>
                             <span ng-show="!loading">Login</span>
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <hr />
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="text-center">Not a member?</div>
+                    <div class="btns text-center">
+                        <button type="submit" class="btn-gz" ng-click="signup()">Sign up now</button>
                     </div>
                 </div>
             </div>

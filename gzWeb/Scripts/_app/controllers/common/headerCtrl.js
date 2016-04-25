@@ -22,6 +22,7 @@
         };
 
         function updateSessionInfo() {
+            //$scope.isAuthenticated = true;
             emWamp.getSessionInfo().then(function (response) {
                 $scope.isAuthenticated = response.isAuthenticated;
                 if ($scope.isAuthenticated) {
@@ -39,9 +40,9 @@
                 message.open({
                     nsType: 'modal',
                     nsSize: 'md',
-                    nsTemplate: '/partials/messages/register.html',
-                    nsCtrl: 'registerCtrl',
-                    nsStatic: true,
+                    nsTemplate: '/partials/messages/registerStart.html',
+                    nsCtrl: 'registerStartCtrl',
+                    nsStatic: true
                 });
             promise.then(function (result) {
 

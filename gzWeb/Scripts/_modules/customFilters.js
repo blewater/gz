@@ -2,10 +2,7 @@
     'use strict';
     angular.module('customFilters', [])
         .filter('partition', ['$cacheFactory', partition])
-        .filter('rangeFromToStep', rangeFromToStep)
-        .filter('rangeFromTo', rangeFromTo)
-        .filter('rangeTo', rangeTo)
-        .filter('rangeToStep', rangeToStep)
+        .filter('getRange', range)
         .filter('regex', regex)
         .filter('pad', pad)
         .filter('type', ['$filter', dataType])
@@ -37,31 +34,17 @@
     // #endregion
 
     // #region range
-    var range = function (input, from, to, step) {
-        from = parseInt(from);
-        to = parseInt(to);
-        step = parseInt(step);
-        while (from + step <= to)
-            input[input.length] = from += step;
-        return input;
-    };
-    function rangeFromToStep() {
-        return range;
-    };
-    function rangeFromTo() {
-        return function (input, from, to) {
-            return range(input, from, to, 1);
-        };
-    };
-    function rangeTo() {
-        return function (input, to) {
-            return range(input, 0, to, 1);
-        };
-    };
-    function rangeToStep() {
-        return function (input, to, step) {
-            return range(input, 0, to, step);
-        };
+    function range() {
+        return function(array, to, from, step, reverse) {
+            to = parseInt(to);
+            from = parseInt(from) || 0;
+            step = parseInt(step) || 1;
+            for (var i = from; i <= to; i += step)
+                array.push(i);
+            return reverse
+                ? array.slice().reverse()
+                : array;
+        }
     };
     // #endregion
 
