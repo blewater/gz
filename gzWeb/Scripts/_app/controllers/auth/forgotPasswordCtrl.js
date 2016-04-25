@@ -20,10 +20,13 @@
                 nsStatic: true,
             });
         };
+        
         $scope.sendInstructions = function () {
-            if ($scope.form.$valid) {
-                //$scope.loading = true;
-            }
+            if ($scope.form.$valid)
+                sendInstructions();
         };
+        function sendInstructions(){
+            
+        }
     }
 })();
