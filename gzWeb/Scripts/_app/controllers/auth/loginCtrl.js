@@ -13,41 +13,42 @@
 
         $scope.responseMsg = null;
 
-        $scope.login = function () {
-            if ($scope.form.$valid) {
-                $scope.loading = true;
-                $scope.errorMsg = "";
-                //emWamp.logout().then(function() {
-                //    api.logout();
+        $scope.submit = function () {
+            if ($scope.form.$valid)
+                login();
+        };
+        function login(){
+            $scope.loading = true;
+            $scope.errorMsg = "";
+            //emWamp.logout().then(function() {
+            //    api.logout();
 
-                //});
-                var emResponse = emWamp.login({
-                    usernameOrEmail: $scope.model.usernameOrEmail,
-                    password: $scope.model.password
-                });
+            //});
+            var emResponse = emWamp.login({
+                usernameOrEmail: $scope.model.usernameOrEmail,
+                password: $scope.model.password
+            });
 
-                emResponse.then(function (emResult) {
-                    var gzResponse = api.login($scope.model.usernameOrEmail, $scope.model.password);
-                    gzResponse.then(function (gzResult) {
-                        localStorageService.set(constants.storageKeys.authData, {
-                            username: gzResult.data.userName,
-                            token: gzResult.data.access_token
-                        });
-                        $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE);
-                        $scope.nsOk();
-                        $scope.loading = false;
-                    }, function (error) {
-                        emWamp.logout();
-                        $scope.errorMsg = error.data.error_description;
-                        $scope.loading = false;
+            emResponse.then(function (emResult) {
+                var gzResponse = api.login($scope.model.usernameOrEmail, $scope.model.password);
+                gzResponse.then(function (gzResult) {
+                    localStorageService.set(constants.storageKeys.authData, {
+                        username: gzResult.data.userName,
+                        token: gzResult.data.access_token
                     });
+                    $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE);
+                    $scope.nsOk();
+                    $scope.loading = false;
                 }, function (error) {
-                    $scope.errorMsg = error.desc;
+                    emWamp.logout();
+                    $scope.errorMsg = error.data.error_description;
                     $scope.loading = false;
                 });
-            }
-        };
-
+            }, function (error) {
+                $scope.errorMsg = error.desc;
+                $scope.loading = false;
+            });
+        }
         //function emLogin(username, password) {
         //    return emWamp.login(username, password);
         //};
@@ -63,7 +64,17 @@
                 nsSize: 'sm',
                 nsTemplate: '/partials/messages/forgotPassword.html',
                 nsCtrl: 'forgotPasswordCtrl',
-                nsStatic: true,
+                nsStatic: true
+            });
+        };
+
+        $scope.signup = function () {
+            $scope.nsNext({
+                nsType: 'modal',
+                nsSize: 'md',
+                nsTemplate: '/partials/messages/registerStart.html',
+                nsCtrl: 'registerStartCtrl',
+                nsStatic: true
             });
         };
     }

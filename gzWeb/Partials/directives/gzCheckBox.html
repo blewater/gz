@@ -1,0 +1,8 @@
+﻿<div class="gz-checkbox" ng-class="{'disabled': gzDisabled()}">
+    <i class="fa fa-lg" ng-click="onClick()" ng-class="{
+       'fa-square-o': !getValue(),
+       'fa-check-square-o': getValue()
+    }">
+    </i>
+    <label class="control-label" ng-click="onClick()" ng-transclude></label>
+</div>

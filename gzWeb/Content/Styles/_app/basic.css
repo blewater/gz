@@ -189,6 +189,46 @@ button.btn-gz.btn-gz-alt:hover{
 
 
 
+
+/* #region checkbox */
+.gz-checkbox { }
+.gz-checkbox i.fa { width: 20px; cursor: pointer; color: #fff; }
+.gz-checkbox label.control-label { cursor: pointer;font-weight: normal; }
+.gz-checkbox.disabled { color: #ddd; }
+.gz-checkbox.disabled  i.fa { cursor: not-allowed; }
+.gz-checkbox.disabled label.control-label { cursor: not-allowed; }
+/* #endregion */
+
+
+
+/* #region select */
+.gz-select select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    background: url('../../Images/select_arrow_down.png') no-repeat right;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+
+.gz-select select.form-control[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+.gz-select select option { color: #000; }
+.gz-select select option.prompt { color: #aaa; }
+.gz-select select.selected { color: #000; }
+.gz-select .loading-spinner {
+    z-index: 1000;
+}
+/* #endregion */
+
+
+
+
 /* #region Conditional Styling */
 
 /**************** XΧS ********************/

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'homeCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', ctrlFactory]);
-    function ctrlFactory($scope, message) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp) {
         // #region Playground
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -23,46 +23,51 @@
             });
         };
 
-        $scope.register = function () {
-            var promise =
-                message.open({
-                    nsType: 'modal',
-                    nsSize: 'md',
-                    nsTemplate: '/partials/messages/register.html',
-                    nsCtrl: 'registerCtrl',
-                    nsStatic: true,
-                });
-            promise.then(function(result) {
-                
+        $scope.registerStart = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: 'md',
+                nsTemplate: '/partials/messages/registerStart.html',
+                nsCtrl: 'registerStartCtrl',
+                nsStatic: true,
+            });
+        };
+        $scope.registerDetails = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: 'md',
+                nsTemplate: '/partials/messages/registerDetails.html',
+                nsCtrl: 'registerDetailsCtrl',
+                nsStatic: true,
+                nsParams: {
+                    startModel: {
+                        email: 'email',
+                        username: 'username',
+                        password: 'password'
+                    }
+                }
             });
         };
         $scope.login = function () {
-            var promise =
-                message.open({
-                    nsType: 'modal',
-                    nsSize: 'sm',
-                    nsTemplate: '/partials/messages/login.html',
-                    nsCtrl: 'loginCtrl',
-                    nsStatic: true,
-                });
-            promise.then(function(result) {
-                
+            message.open({
+                nsType: 'modal',
+                nsSize: 'sm',
+                nsTemplate: '/partials/messages/login.html',
+                nsCtrl: 'loginCtrl',
+                nsStatic: true,
             });
         };
         $scope.forgot = function () {
-            var promise =
-                message.open({
-                    nsType: 'modal',
-                    nsSize: 'sm',
-                    nsTemplate: '/partials/messages/forgotPassword.html',
-                    nsCtrl: 'forgotPasswordCtrl',
-                    nsStatic: true,
-                });
-            promise.then(function (result) {
-
+            message.open({
+                nsType: 'modal',
+                nsSize: 'sm',
+                nsTemplate: '/partials/messages/forgotPassword.html',
+                nsCtrl: 'forgotPasswordCtrl',
+                nsStatic: true,
             });
         };
         $scope.logout = function () {
+            emWamp.logout();
         };
         // #endregion
     }
