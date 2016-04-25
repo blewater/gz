@@ -13,7 +13,7 @@
                 nsCount: '='
             },
             templateUrl: function () {
-                return helpers.ui.getTemplate('scripts/_app/services/nsMessagesService/nsMessage.html');
+                return helpers.ui.getTemplate('scripts/_app/services/nsMessageService/nsMessage.html');
             },
             link: function (scope, element, attrs) {
                 // #region Variables
@@ -59,20 +59,16 @@
                     scope.nsOptions.nsResolve(result);
                     scope.close();
                 };
-                scope.nsNext = function (options, data) {
+                scope.nsNext = function (options) {
                     options.nsIn = 'slide-right-on';
                     options.nsOut = scope.nsOptions.nsOut;
-                    if (data)
-                        options.nsParams = { nsData: data}
                     scope.nsOptions.nsOut = 'slide-right-off';
                     scope.close();
                     message.open(options);
                 };
-                scope.nsBack = function (options, data) {
+                scope.nsBack = function (options) {
                     options.nsIn = 'slide-left-on';
                     options.nsOut = scope.nsOptions.nsOut;
-                    if (data)
-                        options.nsParams = { nsData: data }
                     scope.nsOptions.nsOut = 'slide-left-off';
                     scope.close();
                     message.open(options);
@@ -330,7 +326,8 @@
                         else
                             scope.$root.nsToastrs.splice(scope.nsIndex, 1);
 
-                        helpers.reflection.checkAndInvokeFunction(scope.nsOptions.nsCallback);
+                        if (angular.isFunction(scope.nsOptions.nsCallback))
+                            scope.nsOptions.nsCallback();
                     }, transitionDuration);
                 }
                 scope.onMouseEnter = function () {
