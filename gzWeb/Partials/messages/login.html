@@ -20,23 +20,27 @@
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused || form.usernameOrEmail.$valid}">
                         <i class="fa fa-lg fa-user"></i>
                     </span>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.usernameOrEmail.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.usernameOrEmail.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
-                    <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" ng-minlength="3" ng-maxlength="18" required
+                    <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" required
                            ng-class="{ 'empty': !model.password, 'danger' : !form.password.$pristine && errorMsg }"
                            ng-focus="passwordFocused = true" ng-blur="passwordFocused = false">
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.password.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.password.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group" ng-class="{ 'has-error' : (form.password.$invalid && !form.password.$pristine) }">
+                <div class="form-group">
                     <div class="help-block" ng-class="{'show': form.$submitted && errorMsg}">{{errorMsg}}</div>
                 </div>
             </div>
