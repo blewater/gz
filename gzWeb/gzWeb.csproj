@@ -245,6 +245,7 @@
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Configuration\PortfolioConfiguration.cs" />
+    <Compile Include="Contracts\IInvestmentsApi.cs" />
     <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.cs" />
     <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.Designer.cs">
       <DependentUpon>201604081406555_Add Currency to ApplicationUser.cs</DependentUpon>

@@ -10,18 +10,12 @@ namespace gzWeb.Controllers
     public class BaseApiController : ApiController
     {
 
-        private ApplicationUserManager _userManager;
-        protected ApplicationUserManager UserManager
+        public BaseApiController(ApplicationUserManager userManager)
         {
-            get
-            {
-                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            set
-            {
-                _userManager = value;
-            }
+            UserManager = userManager;
         }
+        
+        protected ApplicationUserManager UserManager { get; }
 
         protected internal OkWithMessageResult OkMsg(object obj, string message = "", bool showStackTrace = true)
         {

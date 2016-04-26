@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Mvc;
 using gzWeb.Providers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -8,6 +9,8 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using gzDAL.Models;
 using gzDAL.Conf;
+using Microsoft.Owin.Security.DataProtection;
+using SimpleInjector;
 
 namespace gzWeb {
     public partial class Startup {
@@ -16,12 +19,12 @@ namespace gzWeb {
 
         public static string PublicClientId { get; private set; }
 
-
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
-        public void ConfigureAuth(IAppBuilder app) {
+        public void ConfigureAuth(IAppBuilder app, Container container)
+        {
             // Configure the db context, user manager and signin manager to use a single instance per request
-            app.CreatePerOwinContext(ApplicationDbContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            //app.CreatePerOwinContext(() => DependencyResolver.Current.GetService<ApplicationUserManager>());
+            //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
 
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
@@ -36,9 +39,13 @@ namespace gzWeb {
                                    Provider = new ApplicationOAuthProvider(PublicClientId),
                                    AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                                    AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
-                                   // In production mode set AllowInsecureHttp = false
-                                   AllowInsecureHttp = true
-                           };
+                // In production mode set AllowInsecureHttp = false
+#if DEBUG
+                AllowInsecureHttp = true
+#else
+                AllowInsecureHttp = false
+#endif
+            };
 
             // Enable the application to use bearer tokens to authenticate users
             app.UseOAuthBearerTokens(OAuthOptions);

@@ -14,6 +14,7 @@ using gzDAL.ModelUtil;
 using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
 using gzWeb.Configuration;
+using gzWeb.Contracts;
 using gzWeb.Models;
 using gzWeb.Utilities;
 using Microsoft.AspNet.Identity;
@@ -24,7 +25,7 @@ namespace gzWeb.Controllers
 {
     [Authorize]
     // TODO: [RoutePrefix("api/Investments")]
-    public class InvestmentsApiController : BaseApiController
+    public class InvestmentsApiController : BaseApiController, IInvestmentsApi
     {
         #region Constructor
         public InvestmentsApiController(
@@ -33,7 +34,8 @@ namespace gzWeb.Controllers
             IGzTransactionRepo gzTransactionRepo,
             ICustFundShareRepo custFundShareRepo,
             ICurrencyRateRepo currencyRateRepo,
-            IMapper mapper)
+            IMapper mapper,
+            ApplicationUserManager userManager):base(userManager)
         {
             _dbContext = dbContext;
             _invBalanceRepo = invBalanceRepo;
@@ -45,30 +47,21 @@ namespace gzWeb.Controllers
         #endregion
         
         #region Actions
+
         #region Summary
+        
+        [HttpGet]
+        public IHttpActionResult GetSummaryData() {
 
-        /// <summary>
-        /// 
-        /// Unit Testable wrapper of [HttpGet] GetSummaryData
-        /// 
-        /// </summary>
-        /// <param name="userManager"></param>
-        /// <returns></returns>
-        public IHttpActionResult GetSummaryDataByUserManager(ApplicationUserManager userManager) {
-
-            this.UserManager = userManager;
-            return GetSummaryData();
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+            
+            return OkMsg(((IInvestmentsApi)this).GetSummaryData(user));
         }
 
-        /// <summary>
-        /// 
-        /// Unit Testable wrapper of [HttpGet] GetSummaryData
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public IHttpActionResult GetSummaryDataByUser(ApplicationUser user) {
-
+        SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user)
+        {
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
 
@@ -76,7 +69,8 @@ namespace gzWeb.Controllers
             var customerVintages = _gzTransactionRepo.GetCustomerVintages(user.Id);
             var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
 
-            var model = new SummaryDataViewModel() {
+            return new SummaryDataViewModel
+            {
                 Currency = userCurrency.Symbol,
                 Culture = "en-GB",
                 InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
@@ -96,17 +90,6 @@ namespace gzWeb.Controllers
                 StatusAsOf = _invBalanceRepo.GetLastUpdatedDateTime(user.Id),
                 Vintages = vintages
             };
-            return OkMsg(model);
-        }
-
-        [HttpGet]
-        public IHttpActionResult GetSummaryData() {
-
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
-            if (user == null)
-                return OkMsg(new object(), "User not found!");
-
-            return GetSummaryDataByUser(user);
         }
 
         [HttpPost]
