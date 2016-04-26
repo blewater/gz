@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'route', 'emWamp', 'message', ctrlFactory]);
-    function ctrlFactory($rootScope, $scope, $location, constants, route, emWamp, message) {
+    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'route', 'emWamp', 'message', 'api', ctrlFactory]);
+    function ctrlFactory($rootScope, $scope, $location, constants, route, emWamp, message, api) {
         $scope.routes = {
             guest: route.getGroup(constants.groupKeys.guest),
             games: route.getGroup(constants.groupKeys.games),
@@ -13,43 +13,35 @@
         }
 
         $scope.backToGames = function () {
-            $scope.gamesMode = !$scope.gamesMode;
+            $scope.gamesMode = true;
             $location.path($scope.routes.games[0].path);
         };
         $scope.toInvestments = function () {
-            $scope.gamesMode = !$scope.gamesMode;
+            $scope.gamesMode = false;
             $location.path($scope.routes.investments[0].path);
         };
 
         function updateSessionInfo() {
-            //$scope.isAuthenticated = true;
+            var wasAuthenticated = $scope.isAuthenticated;
             emWamp.getSessionInfo().then(function (response) {
                 $scope.isAuthenticated = response.isAuthenticated;
                 if ($scope.isAuthenticated) {
                     $scope.initials = response.firstname.substring(0, 1) + response.surname.substring(0, 1);
                     $scope.name = response.firstname;
+                    if (!wasAuthenticated)
+                        $scope.backToGames();
                 }
-                else
+                else if (wasAuthenticated === true)
                     $location.path(route.getPath(constants.routeKeys.home));
+            }, function() {
+                $scope.isAuthenticated = false;
+                $location.path(route.getPath(constants.routeKeys.home));
             });
         }
         updateSessionInfo();
 
-        $scope.register = function () {
-            var promise =
-                message.open({
-                    nsType: 'modal',
-                    nsSize: 'md',
-                    nsTemplate: '/partials/messages/registerStart.html',
-                    nsCtrl: 'registerStartCtrl',
-                    nsStatic: true
-                });
-            promise.then(function (result) {
-
-            });
-        };
         $scope.login = function () {
-            var promise =
+            var loginPromise =
                 message.open({
                     nsType: 'modal',
                     nsSize: 'sm',
@@ -57,9 +49,13 @@
                     nsCtrl: 'loginCtrl',
                     nsStatic: true,
                 });
-            promise.then(function (result) {
-
+            loginPromise.then(function() {
+                $scope.isAuthenticated = true;
             });
+        };
+        $scope.logout = function () {
+            emWamp.logout();
+            api.logout();
         };
 
         $scope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
