@@ -1,8 +1,14 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDetailsCtrl';
-    APP.controller(ctrlId, ['$scope', '$http', '$filter', 'emWamp', 'message', ctrlFactory]);
-    function ctrlFactory($scope, $http, $filter, emWamp, message) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$http', '$filter', 'emWamp', 'message', 'api', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $http, $filter, emWamp, message, api) {
+        var titles = {
+            mr: { display: 'Mr.', gender: 'M' },
+            ms: { display: 'Ms.', gender: 'F' },
+            mrs: { display: 'Mrs.', gender: 'F' },
+            miss: { display: 'Miss', gender: 'F' }
+        };
         $scope.model = {
             email: $scope.startModel.email,
             username: $scope.startModel.username,
@@ -110,7 +116,7 @@
 
         function loadTitles() {
             $scope.loadingTitles = true;
-            $scope.titles = ['Mr.', 'Ms.', 'Mrs.', 'Miss'];
+            $scope.titles = $filter('map')($filter('toArray')(titles), function(t) { return t.display; });
             $scope.loadingTitles = false;
         }
 
@@ -187,17 +193,15 @@
         };
         
         function register() {
-            var emRegisterQ = emRegister("(empty callbackUrl)");
-            emRegisterQ.then(function(result) {
-                emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password })
-                    .then(function(result) {
-                        gzRegister().then(function(result) {
-                            //api.login($scope.model.username, $scope.model.password)
-                            //    .then(function(result) {
-                            //        // TODO: inform user...
-                            //    }, logError);
+            var emPromise = emRegister("http://localhost/activate/");
+            emPromise.then(function(emRegisterResult) {
+                emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password }).then(function (emLoginResult) {
+                    gzRegister().then(function(gzRegisterResult) {
+                        api.login($scope.model.username, $scope.model.password).then(function (gzLoginResult) {
+                            $scope.nsOk($scope.model);
                         }, logError);
                     }, logError);
+                }, logError);
             }, logError);
         };
 
@@ -209,7 +213,7 @@
                 password: $scope.model.password,
                 firstname: $scope.model.firstname,
                 surname: $scope.model.lastname,
-                birthDate: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]).format('YYYY-MM-DD'),
+                birthDate: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]).format('YYYY-MM-DD'),
                 country: $scope.model.country.code,
                 // TOOD: region 
                 // TOOD: personalID 
@@ -217,7 +221,7 @@
                 mobile: $scope.model.phoneNumber,
                 currency: $scope.model.currency.code,
                 title: $scope.model.title,
-                gender: "M",
+                gender: $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender,
                 city: $scope.model.city,
                 address1: $scope.model.address,
                 address2: '',
@@ -236,7 +240,7 @@
                 Password: $scope.model.password,
                 FirstName: $scope.model.firstname,
                 LastName: $scope.model.lastname,
-                Birthday: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]),
+                Birthday: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]),
                 Currency: $scope.model.currency.code,
                 Title: $scope.model.title,
                 Country: $scope.model.country.code,

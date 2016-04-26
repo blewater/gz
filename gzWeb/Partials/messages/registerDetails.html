@@ -40,17 +40,19 @@
                         <div class="col-xs-12 col-sm-6">
                             <input type="text" placeholder="First Name" id="firstname" name="firstname" class="form-control" autocomplete="off" ng-model="model.firstname" required
                                    ng-class="{ 'empty': !model.firstname, 'danger' : form.firstname.$invalid && !form.firstname.$pristine }"
-                                   ng-focus="firstnameFocused = true" ng-blur="firstnameFocused = false">
+                                   ng-focus="firstnameFocused = true" ng-blur="firstnameFocused = false" cs-capitalize-first>
                             <div class="help-block" ng-class="{'show': firstnameFocused && form.firstname.$error.required}">First name is required</div>
                         </div>
                         <div class="col-xs-12 col-sm-6">
                             <input type="text" placeholder="Last Name" id="lastname" name="lastname" class="form-control" autocomplete="off" ng-model="model.lastname" required
                                    ng-class="{ 'empty': !model.lastname, 'danger' : form.lastname.$invalid && !form.lastname.$pristine }"
-                                   ng-focus="lastnameFocused = true" ng-blur="lastnameFocused = false">
+                                   ng-focus="lastnameFocused = true" ng-blur="lastnameFocused = false" cs-capitalize-first>
                             <div class="help-block" ng-class="{'show': lastnameFocused && form.lastname.$error.required}">Last name is required</div>
                         </div>
                     </div>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.firstname.$valid && form.lastname.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.firstname.$valid && form.lastname.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
 
@@ -80,7 +82,9 @@
                             <div class="help-block" ng-class="{'show': !form.title.$pristine && form.title.$error.required}">Title is required</div>
                         </div>
                     </div>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.year.$valid && form.month.$valid && form.day.$valid && form.title.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.year.$valid && form.month.$valid && form.day.$valid && form.title.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
 
@@ -89,9 +93,11 @@
                     <input type="text" placeholder="Address" id="address" name="address" class="form-control" autocomplete="off" ng-model="model.address" required
                            ng-class="{ 'empty': !model.address, 'danger': form.address.$invalid && !form.address.$pristine }"
                            ng-focus="addressFocused = true" ng-blur="addressFocused = false"
-                           ng-autocomplete options="{types: 'address', country: model.country.code, watchEnter: true}">
+                           ng-autocomplete options="{types: 'address', country: model.country.code, watchEnter: true}" cs-capitalize-first>
                     <div class="help-block" ng-class="{'show': addressFocused && form.address.$error.required}">Address is required</div>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.address.$valid && form.address.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.address.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
 
@@ -109,7 +115,9 @@
                             <div class="help-block" ng-class="{'show': !form.country.$pristine && form.country.$error.required}">Country is required</div>
                         </div>
                     </div>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.currency.$valid && form.country.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.currency.$valid && form.country.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
 
@@ -126,11 +134,13 @@
                             <input type="text" placeholder="City" id="city" name="city" class="form-control" autocomplete="off" ng-model="model.city" required
                                    ng-class="{ 'empty': !model.city, 'danger': form.city.$invalid && !form.city.$pristine }"
                                    ng-focus="cityFocused = true" ng-blur="cityFocused = false"
-                                   ng-autocomplete options="{types: '(cities)', country: model.country.code, watchEnter: true}">
+                                   ng-autocomplete options="{types: '(cities)', country: model.country.code, watchEnter: true}" cs-capitalize-first>
                             <div class="help-block" ng-class="{'show': cityFocused && form.city.$error.required}">City is required</div>
                         </div>
                     </div>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.postalCode.$valid && form.city.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.postalCode.$valid && form.city.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
 
@@ -150,7 +160,7 @@
                                 </ul>
                             </div>
                             <!--<gz-select gz-name="phonePrefix" gz-model="model.phonePrefix" gz-collection="phonePrefixes" gz-prompt="-" gz-loading="loadingPhonePrefixes"
-                                       gz-required gz-id="code" gz-display="name" gz-error="!form.phonePrefix.$pristine && form.phonePrefix.$error.required"></gz-select>-->
+                                   gz-required gz-id="code" gz-display="name" gz-error="!form.phonePrefix.$pristine && form.phonePrefix.$error.required"></gz-select>-->
                             <!--<div class="help-block" ng-class="{'show': !form.phonePrefix.$pristine && form.phonePrefix.$error.required}">Phone prefix is required</div>-->
                         </div>
                         <div class="col-xs-12 col-sm-8">
@@ -161,7 +171,9 @@
                             <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required}">Phone number is required</div>
                         </div>
                     </div>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': model.phonePrefix && form.phoneNumber.$valid}" />
+                    <div class="field-ok" ng-class="{'show': model.phonePrefix && form.phoneNumber.$valid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                 </div>
             </div>
 
