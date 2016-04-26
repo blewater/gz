@@ -1,4 +1,35 @@
-﻿<header ng-controller="headerCtrl">
+﻿@*<header ng-controller="headerCtrl">
+    <div class="container-fluid">
+        <a id="logo" class="navbar-brand" href="/">
+            <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
+            <h2 class="visible-lg">GREENZORRO</h2>
+        </a>
+        <div class="links">
+            <nav class="cl-effect">
+                <ul ng-if="!isAuthenticated" class="links-guest">
+                    <li ng-repeat="route in routes.guest">
+                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                    </li>
+                </ul>
+                <ul ng-if="isAuthenticated" class="links-games" ng-show="gamesMode">
+                    <li ng-repeat="route in routes.games">
+                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                    </li>
+                </ul>
+                <ul ng-if="isAuthenticated" class="links-investments" ng-hide="gamesMode">
+                    <li ng-repeat="route in routes.investments">
+                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>*@
+
+
+
+
+<header ng-controller="headerCtrl">
     <nav class="navbar navbar-default navbar-static-top" ng-class="{'navbar-initial': !scrolled}">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -18,16 +49,9 @@
                 <span ng-if="isAuthenticated" class="user-info">
                     <span class="user-avatar">
                         <span class="user-initials img-circle">{{initials}}</span>
-                        @*@if (String.IsNullOrEmpty(Model.Img))
-                {
-                    <span class="user-initials img-circle">@Model.Initials</span>
-                }
-                else
-                {
-                    <img class="user-img img-circle" src="@Model.Img" alt="User Image" />
-                }*@
                     </span>
                     <span class="user-name">{{name}}</span>
+                    <a ng-click="logout()">Logout</a>
                 </span>
                 <div class="nav-links-btns">
                     <div class="links">
@@ -54,9 +78,6 @@
                             <img src="@Url.Content("~/Content/Images/login.png")" />
                             <p>LOGIN</p>
                         </a>
-                        @*<a ng-if="!isAuthrenticated" class="nav-btn-login" ng-click="register()">
-                            <p>SIGN UP</p>
-                        </a>*@
                         <a ng-if="isAuthenticated" class="nav-btn-games" ng-show="gamesMode" ng-click="toInvestments()">
                             <img src="@Url.Content("~/Content/Images/diagram.svg")" />
                             <p>TO INVESTMENTS</p>
