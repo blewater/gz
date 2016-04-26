@@ -1,8 +1,9 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerStartCtrl';
-    APP.controller(ctrlId, ["$scope", "$http", "$filter", "emWamp", "api", "constants", ctrlFactory]);
-    function ctrlFactory($scope, $http, $filter, emWamp, api, constants) {
+    APP.controller(ctrlId, ["$scope", "$http", "$filter", "emWamp", "$timeout", ctrlFactory]);
+    function ctrlFactory($scope, $http, $filter, emWamp, $timeout) {
+        $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#fff', position: 'absolute', top: '50%', right: 0 };
         $scope.model = {
             email: null,
             username: null,
@@ -23,17 +24,24 @@
         $scope.validateEmail = function (email) {
             if (!$scope.emailValidation.isValidating) {
                 $scope.emailValidation.isValidating = true;
-                return emWamp.call('/user/account#validateEmail', { email: email })
-                    .then(function (result) {
-                        $scope.emailValidation.isValidating = false;
-                        $scope.emailValidation.isAvailable = result.isAvailable;
-                        $scope.emailValidation.error = result.error;
-                    }, function (error) {
-                        $scope.emailValidation.isValidating = false;
-                        logError(error);
-                    });
+                emWamp.call('/user/account#validateEmail', { email: email }).then(function (result) {
+                    $scope.emailValidation.isValidating = false;
+                    $scope.emailValidation.isAvailable = result.isAvailable;
+                    $scope.emailValidation.error = result.error;
+                }, function (error) {
+                    $scope.emailValidation.isValidating = false;
+                    logError(error);
+                });
             }
         };
+        $scope.onEmailFocus = function () {
+            $scope.emailFocused = true;
+            //$scope.resetEmailValidation();
+        }
+        $scope.onEmailBlur = function () {
+            $scope.emailFocused = false;
+            $scope.validateEmail($scope.model.email);
+        }
         // #endregion
 
         // #region Username
@@ -49,17 +57,29 @@
         };
         $scope.validateUsername = function (username) {
             if (!$scope.usernameValidation.isValidating) {
-                return emWamp.call('/user/account#validateUsername', { username: username })
-                    .then(function (result) {
+                //$scope.usernameValidation.isAvailable = true;
+                $scope.usernameValidation.error = '';
+                $scope.usernameValidation.isValidating = true;
+                emWamp.call('/user/account#validateUsername', { username: username }).then(function (result) {
+                    $timeout(function() {
                         $scope.usernameValidation.isValidating = false;
                         $scope.usernameValidation.isAvailable = result.isAvailable;
                         $scope.usernameValidation.error = result.error;
-                    }, function (error) {
-                        $scope.usernameValidation.isValidating = false;
-                        logError(error);
-                    });
+                    }, 0);
+                }, function (error) {
+                    $scope.usernameValidation.isValidating = false;
+                    logError(error);
+                });
             }
         };
+        $scope.onUsernameFocus = function () {
+            $scope.usernameFocused = true;
+            //$scope.resetUsernameValidation();
+        }
+        $scope.onUsernameBlur = function () {
+            $scope.usernameFocused = false;
+            $scope.validateUsername($scope.model.username);
+        }
         // #endregion
 
         // #region Password
@@ -67,11 +87,10 @@
         var _passwordPolicyError = '';
 
         function getPasswordPolicy() {
-            emWamp.call('/user/pwd#getPolicy')
-                .then(function (result) {
-                    _passwordPolicyRegEx = new RegExp(result.regularExpression);
-                    _passwordPolicyError = result.message;
-                }, logError);
+            emWamp.call('/user/pwd#getPolicy').then(function (result) {
+                _passwordPolicyRegEx = new RegExp(result.regularExpression);
+                _passwordPolicyError = result.message;
+            }, logError);
         };
 
         $scope.passwordValidation = {
@@ -91,9 +110,16 @@
                 $scope.passwordValidation.error = _passwordPolicyError;
             };
         };
+        $scope.onPasswordFocus = function () {
+            $scope.passwordFocused = true;
+            //$scope.resetPasswordValidation();
+        }
+        $scope.onPasswordBlur = function () {
+            $scope.passwordFocused = false;
+            $scope.validatePassword($scope.model.password);
+        }
         // #endregion
-
-
+        
         $scope.backToLogin = function () {
             $scope.nsBack({
                 nsType: 'modal',
@@ -118,77 +144,9 @@
             });
         }
 
-        //$scope.register = function () {
-        //    var emRegisterQ = emRegister("(empty callbackUrl)");
-        //    emRegisterQ.then(function(result) {
-        //        emWamp.login({
-        //            usernameOrEmail: $scope.model.username,
-        //            password: $scope.model.password
-        //        })
-        //        .then(function(result) {
-        //            gzRegister().then(function(result) {
-        //                //api.login($scope.model.username, $scope.model.password)
-        //                //    .then(function(result) {
-        //                //        // TODO: inform user...
-        //                //    }, logError);
-        //            }, logError);
-        //        }, logError);
-        //    }, logError);
-        //};
-
-        //function emRegister(callbackUrl) {
-        //    return emWamp.register({
-        //        username: $scope.model.username,
-        //        email: $scope.model.email,
-        //        alias: $scope.model.username,
-        //        password: $scope.model.password,
-        //        firstname: $scope.model.firstname,
-        //        surname: $scope.model.lastname,
-        //        birthDate: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]).format('YYYY-MM-DD'),
-        //        country: $scope.model.country.code,
-        //        // TOOD: region 
-        //        // TOOD: personalID 
-        //        mobilePrefix: $scope.model.phonePrefix,
-        //        mobile: $scope.model.phoneNumber,
-        //        currency: $scope.model.currency.code,
-        //        title: $scope.model.title,
-        //        gender: "M",
-        //        city: $scope.model.city,
-        //        address1: $scope.model.address,
-        //        address2: '',
-        //        postalCode: $scope.model.postalCode,
-        //        language: 'en',
-        //        emailVerificationURL: callbackUrl,
-        //        securityQuestion: "(empty security question)",
-        //        securityAnswer: "(empty security answer)"
-        //    });
-        //}
-
-        //function gzRegister() {
-        //    return $http.post('/api/Account/Register', {
-        //        Username: $scope.model.username,
-        //        Email: $scope.model.email,
-        //        Password: $scope.model.password,
-        //        FirstName: $scope.model.firstname,
-        //        LastName: $scope.model.lastname,
-        //        Birthday: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth - 1, $scope.model.dayOfBirth]),
-        //        Currency: $scope.model.currency.code,
-        //        Title: $scope.model.title,
-        //        Country: $scope.model.country.code,
-        //        MobilePrefix: $scope.model.phonePrefix,
-        //        Mobile: $scope.model.phoneNumber,
-        //        City: $scope.model.city,
-        //        Address: $scope.model.address,
-        //        PostalCode: $scope.model.postalCode,
-        //        // TODO: Region ???
-        //    });
-        //}
-
-
         function logError(error) {
             console.log(error);
         };
-
 
         function init() {
             getPasswordPolicy();
