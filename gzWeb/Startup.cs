@@ -53,26 +53,30 @@ namespace gzWeb
                 cfg.CreateMap<VintageDto, VintageViewModel>();
             });
 
+
             var config = new HttpConfiguration();
+            ConfigureAuth(app, null);
             var container = InitializeSimpleInjector(app, config, mapperConfiguration);
 
             WebApiConfig.Register(config);
             app.UseWebApi(config);
-            ConfigureAuth(app, container);
+
+            app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
         }
 
-        private Container InitializeSimpleInjector(IAppBuilder app, HttpConfiguration config, MapperConfiguration automapperConfig)
+        private static Container InitializeSimpleInjector(IAppBuilder app, HttpConfiguration config, MapperConfiguration automapperConfig)
         {
             var container = new Container();
-            container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
+            //container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
+            container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
 
             app.Use(async (context, next) =>
-            {
-                using (var scope = container.BeginExecutionContextScope())
-                {
-                    await next();
-                }
-            });
+                          {
+                              using (container.BeginExecutionContextScope())
+                              {
+                                  await next();
+                              }
+                          });
 
             //app.Use(async (context, next) =>
             //              {
@@ -84,8 +88,11 @@ namespace gzWeb
 
             container.RegisterSingleton<MapperConfiguration>(automapperConfig);
             container.Register<IMapper>(() => automapperConfig.CreateMapper(container.GetInstance));
+            if ((string) app.Properties["host.AppMode"]=="development")
+                app.SetDataProtectionProvider(new DpapiDataProtectionProvider());
 
-            container.RegisterSingleton(app);
+            //container.RegisterSingleton(app);
+            container.Register(() => app.GetDataProtectionProvider(), Lifestyle.Scoped);
             container.Register<ApplicationDbContext>(Lifestyle.Scoped);
             //container.Register<ApplicationSignInManager>(Lifestyle.Scoped);
             container.Register<ApplicationUserManager>(Lifestyle.Scoped);
@@ -108,6 +115,7 @@ namespace gzWeb
             container.Register<IInvBalanceRepo, InvBalanceRepo>(Lifestyle.Scoped);
             container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);
             container.RegisterWebApiControllers(config);
+            
             container.Verify();
 
             config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);

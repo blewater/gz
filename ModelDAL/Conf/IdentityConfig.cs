@@ -32,7 +32,7 @@ namespace gzDAL.Conf
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser, int>
     {
-        public ApplicationUserManager(IUserStore<ApplicationUser, int> store, IAppBuilder app)
+        public ApplicationUserManager(IUserStore<ApplicationUser, int> store, IDataProtectionProvider dataProtectionProvider)
                 : base(store)
         {
             // Configure validation logic for usernames
@@ -74,7 +74,7 @@ namespace gzDAL.Conf
                                       });
             EmailService = new EmailService();
             SmsService = new SmsService();
-            var dataProtectionProvider = app.GetDataProtectionProvider();
+            //var dataProtectionProvider = app.GetDataProtectionProvider();
             if (dataProtectionProvider != null)
                 UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser, int>(dataProtectionProvider.Create("ASP.NET Identity"));
         }
