@@ -42,7 +42,7 @@ namespace gzWeb
     {
         public void Configuration(IAppBuilder app)
         {
-            AreaRegistration.RegisterAllAreas();
+            //AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -52,23 +52,16 @@ namespace gzWeb
                 cfg.CreateMap<ApplicationUser, CustomerDTO>();
                 cfg.CreateMap<VintageDto, VintageViewModel>();
             });
-            
-            var container = InitializeSimpleInjector(app, mapperConfiguration);
-            
-            // Check from web.config or Azure settings if db needs to be init
-            bool dbMigrateToLatest = bool.Parse(ConfigurationManager.AppSettings["MigrateDatabaseToLatestVersion"]);
 
-            if (dbMigrateToLatest)
-            {
-                Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
-                // Initialize to latest version only if not run before
-                new ApplicationDbContext().Database.Initialize(false);
-            }
-            
+            var config = new HttpConfiguration();
+            var container = InitializeSimpleInjector(app, config, mapperConfiguration);
+
+            WebApiConfig.Register(config);
+            app.UseWebApi(config);
             ConfigureAuth(app, container);
         }
 
-        private Container InitializeSimpleInjector(IAppBuilder app, MapperConfiguration automapperConfig)
+        private Container InitializeSimpleInjector(IAppBuilder app, HttpConfiguration config, MapperConfiguration automapperConfig)
         {
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
@@ -91,35 +84,36 @@ namespace gzWeb
 
             container.RegisterSingleton<MapperConfiguration>(automapperConfig);
             container.Register<IMapper>(() => automapperConfig.CreateMapper(container.GetInstance));
-            
 
+            container.RegisterSingleton(app);
             container.Register<ApplicationDbContext>(Lifestyle.Scoped);
-            container.Register<ApplicationSignInManager>(Lifestyle.Scoped);
+            //container.Register<ApplicationSignInManager>(Lifestyle.Scoped);
             container.Register<ApplicationUserManager>(Lifestyle.Scoped);
-            container.Register<IDataProtectionProvider>(app.GetDataProtectionProvider, Lifestyle.Scoped);
             
             //container.Register<IAuthenticationManager>(() => DependencyResolver.Current.GetService<IOwinContextProvider>().CurrentContext.Authentication, Lifestyle.Scoped);
-            container.Register(() =>
-                               {
-                                   if (HttpContext.Current != null &&
-                                       HttpContext.Current.Items["owin.Environment"] == null && 
-                                       container.IsVerifying)
-                                   {
-                                       return new OwinContext().Authentication;
-                                   }
-                                   return HttpContext.Current.GetOwinContext().Authentication;
-                               }, Lifestyle.Scoped);
+            //container.Register(() =>
+            //                   {
+            //                       return container.GetInstance<IOwinContextProvider>().CurrentContext.Authentication;
+            //                       //if (HttpContext.Current != null &&
+            //                       //    HttpContext.Current.Items["owin.Environment"] == null && 
+            //                       //    container.IsVerifying)
+            //                       //{
+            //                       //    return new OwinContext().Authentication;
+            //                       //}
+            //                       //return HttpContext.Current.GetOwinContext().Authentication;
+            //                   }, Lifestyle.Scoped);
             container.Register<IUserStore<ApplicationUser, int>, CustomUserStore>(Lifestyle.Scoped);
             container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
             container.Register<ICurrencyRateRepo, CurrencyRateRepo>(Lifestyle.Scoped);
             container.Register<IInvBalanceRepo, InvBalanceRepo>(Lifestyle.Scoped);
             container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);
-            container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
+            container.RegisterWebApiControllers(config);
             container.Verify();
 
-            GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
+            config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
+            //GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
 
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            //GlobalConfiguration.Configure(WebApiConfig.Register);
 
             return container;
         }

@@ -28,6 +28,18 @@ namespace gzWeb
     {
         protected void Application_Start()
         {
+            AreaRegistration.RegisterAllAreas();
+
+            // Check from web.config or Azure settings if db needs to be init
+            bool dbMigrateToLatest = bool.Parse(ConfigurationManager.AppSettings["MigrateDatabaseToLatestVersion"]);
+
+            if (dbMigrateToLatest)
+            {
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
+                // Initialize to latest version only if not run before
+                new ApplicationDbContext().Database.Initialize(false);
+            }
+
             // Method body should be kept empty; please put any initializations in Startup.cs
         }
     }
