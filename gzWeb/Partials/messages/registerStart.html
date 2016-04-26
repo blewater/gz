@@ -16,14 +16,17 @@
                 <div class="form-group">
                     <input type="email" placeholder="email@domain.com" id="email" name="email" class="form-control" autocomplete="off" ng-model="model.email" required
                            ng-class="{ 'empty': !model.email, 'danger' : (form.email.$invalid && !form.email.$pristine) || !emailValidation.isAvailable }"
-                           ng-focus="emailFocused = true;resetEmailValidation();" ng-blur="emailFocused = false;validateEmail(model.email);">
+                           ng-focus="onEmailFocus();" ng-blur="onEmailBlur()">
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':emailFocused || form.email.$valid}">
                         <i class="fa fa-lg fa-envelope-o"></i>
                     </span>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.email.$valid}" />
+                    <div class="field-ok" ng-class="{'show': (form.email.$valid && emailValidation.isAvailable) || emailValidation.isValidating}">
+                        <img ng-show="form.email.$valid && emailValidation.isAvailable && !emailValidation.isValidating" src="../../Content/Images/check.svg" />
+                        <span ng-show="emailValidation.isValidating" class="loading-spinner" us-spinner="spinnerOptions"></span>
+                    </div>
                     <div class="help-block" ng-class="{'show': emailFocused && form.email.$error.required}">Email address is required</div>
                     <div class="help-block" ng-class="{'show': emailFocused && form.email.$error.email}">Please enter a valid Email address</div>
-                    <div class="help-block" ng-class="{'show': emailFocused && !emailValidation.isAvailable}">{{emailValidation.error}}</div>
+                    <div class="help-block" ng-class="{'show': emailFocused && emailValidation.error}">{{emailValidation.error}}</div>
                 </div>
             </div>
 
@@ -31,29 +34,32 @@
                 <div class="form-group">
                     <input type="text" placeholder="username" id="username" name="username" class="form-control" autocomplete="off" ng-model="model.username" required
                            ng-class="{ 'empty': !model.username, 'danger' : (form.username.$invalid && !form.username.$pristine) || !usernameValidation.isAvailable}"
-                           ng-focus="usernameFocused = true;resetUsernameValidation();" ng-blur="usernameFocused = false;validateUsername(model.username);">
+                           ng-focus="onUsernameFocus()" ng-blur="onUsernameBlur()">
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameFocused || form.username.$valid}">
                         <i class="fa fa-lg fa-user"></i>
                     </span>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.username.$valid}" />
+                    <div class="field-ok" ng-class="{'show': (form.username.$valid && usernameValidation.isAvailable) || usernameValidation.isValidating}">
+                        <img ng-show="form.username.$valid && usernameValidation.isAvailable && !usernameValidation.isValidating" src="../../Content/Images/check.svg" />
+                        <span ng-show="usernameValidation.isValidating" class="loading-spinner" us-spinner="spinnerOptions"></span>
+                    </div>
                     <div class="help-block" ng-class="{'show': usernameFocused && form.username.$error.required}">Username is required.</div>
-                    <div class="help-block" ng-class="{'show': usernameFocused && !usernameValidation.isAvailable}">{{usernameValidation.error}}</div>
+                    <div class="help-block" ng-class="{'show': usernameFocused && usernameValidation.error}">{{usernameValidation.error}}</div>
                 </div>
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
-                    <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" ng-minlength="3" ng-maxlength="18" required
-                           ng-class="{ 'empty': !model.password, 'danger' : (form.password.$invalid && form.password.$dirty) || !passwordValidation.isValid }"
-                           ng-focus="passwordFocused = true;resetPasswordValidation();" ng-blur="passwordFocused = false;validatePassword(model.password);">
+                    <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" required
+                           ng-class="{ 'empty': !model.password, 'danger' : (form.password.$invalid && !form.password.$pristine) || !passwordValidation.isValid }"
+                           ng-focus="onPasswordFocus();" ng-blur="onPasswordBlur()">
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
-                    <img src="../../Content/Images/check.svg" class="field-ok" ng-class="{'show': form.password.$valid}" />
+                    <div class="field-ok" ng-class="{'show': form.password.$valid && passwordValidation.isValid}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
                     <div class="help-block" ng-class="{'show': passwordFocused && form.password.$error.required}">Password is required.</div>
-                    <div class="help-block" ng-class="{'show': passwordFocused && form.password.$error.minlength}">Password is too short.</div>
-                    <div class="help-block" ng-class="{'show': passwordFocused && form.password.$error.maxlength}">Password is too long.</div>
-                    <div class="help-block" ng-class="{'show': passwordFocused && !passwordValidation.isValid}">{{passwordValidation.error}}</div>
+                    <div class="help-block" ng-class="{'show': passwordFocused && !form.password.$error.required && passwordValidation.error}">{{passwordValidation.error}}</div>
                 </div>
             </div>
 
@@ -63,7 +69,7 @@
                         <a class="text-gz" ng-click="backToLogin()">Already a member?</a>
                     </div>
                     <div class="btns pull-right">
-                        <button type="submit" class="btn-gz" ng-disabled="form.$invalid">Next</button>
+                        <button type="submit" class="btn-gz" ng-disabled="form.$invalid || !emailValidation.isAvailable || !usernameValidation.isAvailable || !passwordValidation.isValid">Next</button>
                     </div>
                 </div>
             </div>
