@@ -21,12 +21,13 @@ namespace gzWeb.Controllers
 {
     [Authorize]
     [RoutePrefix("api/Account")]
-    public class AccountApiController : ApiController
+    public class AccountApiController : BaseApiController
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
 
-        public AccountApiController()
+        public AccountApiController(ApplicationUserManager userManager)
+                : base(userManager)
         {
         }
 
@@ -35,18 +36,6 @@ namespace gzWeb.Controllers
         //    UserManager = userManager;
         //    AccessTokenFormat = accessTokenFormat;
         //}
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
 
         // TODO: public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
@@ -348,20 +337,19 @@ namespace gzWeb.Controllers
             if (!result.Succeeded)
                 return GetErrorResult(result);
 
-            var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-            var callbackUrl = Url.Link("Default",
-                                       new
-                                       {
-                                               Controller = "Auth",
-                                               Action = "Activate",
-                                               userId = user.Id,
-                                               code = activationCode
-                                       });
-            callbackUrl += "&key=";
-            // temp hack
-            callbackUrl = callbackUrl.Replace("Auth", "Mvc/Auth");
+            //var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+            //var callbackUrl = Url.Link("MvcRoute",
+            //                           new
+            //                           {
+            //                                   Controller = "Auth",
+            //                                   Action = "Activate",
+            //                                   userId = user.Id,
+            //                                   code = activationCode
+            //                           });
+            //callbackUrl += "&key=";
             
-            return Ok(callbackUrl);
+            //return Ok(callbackUrl);
+            return Ok();
         }
 
         [AllowAnonymous]

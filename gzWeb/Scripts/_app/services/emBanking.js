@@ -299,6 +299,14 @@
             return emWamp.call("/user/deposit#getTransactionInfo", { pid: pid });
         };
 
+        _service.sendReceiptEmail = function(pid, receiptHtml) {
+            return emWamp.call("/user/deposit#sendReceiptEmail",
+            {
+                pid:pid,
+                receiptHtml: receiptHtml
+            });
+        };
+
         return _service;
     };
 

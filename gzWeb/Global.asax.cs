@@ -17,6 +17,8 @@ using gzDAL.Repos.Interfaces;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.DataProtection;
 using SimpleInjector;
 using SimpleInjector.Integration.WebApi;
 
@@ -27,10 +29,6 @@ namespace gzWeb
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // Check from web.config or Azure settings if db needs to be init
             bool dbMigrateToLatest = bool.Parse(ConfigurationManager.AppSettings["MigrateDatabaseToLatestVersion"]);
@@ -42,29 +40,7 @@ namespace gzWeb
                 new ApplicationDbContext().Database.Initialize(false);
             }
 
-            //Automapper
-            var mapperConfiguration = new MapperConfiguration(cfg => {
-                cfg.CreateMap<ApplicationUser, CustomerDTO>();
-                cfg.CreateMap<VintageDto, VintageViewModel>();
-            });
-
-            InitializeSimpleInjector(mapperConfiguration);
-        }
-
-        private void InitializeSimpleInjector(MapperConfiguration automapperConfig)
-        {
-            var container = new Container();
-            container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
-            container.RegisterSingleton<MapperConfiguration>(automapperConfig);
-            container.Register<IMapper>(() => automapperConfig.CreateMapper(container.GetInstance));
-            container.Register<ApplicationDbContext, ApplicationDbContext>(Lifestyle.Scoped);
-            container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
-            container.Register<ICurrencyRateRepo, CurrencyRateRepo>(Lifestyle.Scoped);
-            container.Register<IInvBalanceRepo, InvBalanceRepo>(Lifestyle.Scoped);
-            container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);
-            container.RegisterWebApiControllers(GlobalConfiguration.Configuration);
-            container.Verify();
-            GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
+            // Method body should be kept empty; please put any initializations in Startup.cs
         }
     }
 }

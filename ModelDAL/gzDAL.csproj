@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conf\ConnRetryConf.cs" />
+    <Compile Include="Conf\IdentityConfig.cs" />
     <Compile Include="CurrencyHelper.cs" />
     <Compile Include="DTO\PortfolioFundDTO.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
@@ -113,7 +114,6 @@
     <Compile Include="Models\GzTransaction.cs" />
     <Compile Include="Repos\GzTransactionRepo.cs" />
     <Compile Include="Models\GzTransactionType.cs" />
-    <Compile Include="Conf\IdentityConfig.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InvBalance.cs" />
     <Compile Include="Repos\Interfaces\IInvBalanceRepo.cs" />
