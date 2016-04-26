@@ -25,7 +25,9 @@ footer a {
     position: relative;
 }
 
-footer a:hover {
+footer a:hover,
+footer a:active,
+footer a:visited {
     color: #fff;
     text-decoration: none;
     -ms-opacity: 1;
