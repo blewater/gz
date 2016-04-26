@@ -344,6 +344,9 @@
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
     <Content Include="apple-touch-icon.png" />
+    <Content Include="Areas\Mvc\Views\Guest\Home.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Content\Images\login.png" />
     <Content Include="Content\Images\nikos.jpg" />
     <Content Include="Content\Images\nikos.png" />
@@ -408,7 +411,6 @@
     <Content Include="Areas\Mvc\Views\web.config" />
     <Content Include="Areas\Mvc\Views\Guest\Transparency.cshtml" />
     <Content Include="Areas\Mvc\Views\Guest\About.cshtml" />
-    <Content Include="Areas\Mvc\Views\Guest\Home.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_GamesLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
@@ -421,6 +423,8 @@
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
+    <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
+    <Content Include="Areas\Mvc\Views\Guest\FAQ.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
@@ -484,6 +488,9 @@
     <Content Include="Scripts\_app\controllers\auth\registerDetailsCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\depositCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\forgotPasswordCtrl.js" />
+    <Content Include="Scripts\_app\controllers\guest\faqCtrl.js" />
+    <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
+    <Content Include="Scripts\_app\controllers\guest\playgroundCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\showVintagesCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
@@ -499,7 +506,6 @@
     <Content Include="Scripts\_app\controllers\games\games3Ctrl.js" />
     <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
-    <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
     <Content Include="Scripts\_app\directives\gzPerformanceGraph.js" />

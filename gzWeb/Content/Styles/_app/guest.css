@@ -3,24 +3,25 @@
 
 /* #region Common */
 .guest {
-    padding-top: 80px;
 }
 /* #endregion */
-
 
 /* #region Home */
 .guest .home {
 }
 /* #endregion */
 
-
 /* #region Transparency */
 .guest .transparency {
 }
 /* #endregion */
 
-
 /* #region About */
 .guest .about {
+}
+/* #endregion */
+
+/* #region FAQ*/
+.guest .faq {
 }
 /* #endregion */
