@@ -1,6 +1,5 @@
 ﻿@charset "utf-8";
 
-
 /* #region Common */
 .auth {
     /*padding-top: 80px;*/
@@ -78,8 +77,8 @@
 .auth .help-block {
     color: #232323;
     font-size: 13px;
-    margin-bottom: 0;
     margin-top: 0;
+    margin-bottom: 0;
     height: 0;
     -ms-opacity: 0;
     opacity: 0;
@@ -93,6 +92,7 @@
 
 .auth .help-block.show {
     height: 18px;
+    margin-top: 5px;
     margin-bottom: 5px;
     -ms-opacity: 1;
     opacity: 1;
@@ -116,7 +116,9 @@
     right: -50px;
     top: 0;
     margin-top: 12px;
-    
+    width: 24px;
+    height: 24px;
+
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -ms-transition: all 0.5s ease;
