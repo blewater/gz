@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using Microsoft.Owin.Hosting;
+using Microsoft.Owin.Security.DataProtection;
 
 namespace gzWeb.Tests
 {
@@ -19,7 +20,10 @@ namespace gzWeb.Tests
         private SelfHostServer(Uri uri)
         {
             _uri = uri;
-            _disposable = WebApp.Start<gzWeb.Startup>(uri.AbsoluteUri);
+            var startOptions = new StartOptions();
+            startOptions.Urls.Add(_uri.AbsoluteUri);
+            startOptions.Settings.Add("UnitTest.security.DataProtectionProvider","");
+            _disposable = WebApp.Start<gzWeb.Startup>(startOptions);
         }
 
         public void Dispose()
