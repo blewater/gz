@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
+using Owin;
 
 namespace gzDAL.Conf
 {
@@ -31,8 +32,7 @@ namespace gzDAL.Conf
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser, int>
     {
-        public ApplicationUserManager(IUserStore<ApplicationUser, int> store,
-                                      IDataProtectionProvider dataProtectionProvider)
+        public ApplicationUserManager(IUserStore<ApplicationUser, int> store, IAppBuilder app)
                 : base(store)
         {
             // Configure validation logic for usernames
@@ -74,6 +74,7 @@ namespace gzDAL.Conf
                                       });
             EmailService = new EmailService();
             SmsService = new SmsService();
+            var dataProtectionProvider = app.GetDataProtectionProvider();
             if (dataProtectionProvider != null)
                 UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser, int>(dataProtectionProvider.Create("ASP.NET Identity"));
         }
