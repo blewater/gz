@@ -18,5 +18,15 @@ namespace gzWeb.Areas.Mvc.Controllers
         {
             return View();
         }
+
+        public ActionResult FAQ()
+        {
+            return View();
+        }
+
+        public ActionResult Playground()
+        {
+            return View();
+        }
     }
 }

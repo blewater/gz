@@ -108,6 +108,8 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/guest/homeCtrl.js"
                 , "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
                 , "~/Scripts/_app/controllers/guest/aboutCtrl.js"
+                , "~/Scripts/_app/controllers/guest/faqCtrl.js"
+                , "~/Scripts/_app/controllers/guest/playgroundCtrl.js"
                 , "~/Scripts/_app/controllers/investments/summaryCtrl.js"
                 , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
                 , "~/Scripts/_app/controllers/investments/performanceCtrl.js"

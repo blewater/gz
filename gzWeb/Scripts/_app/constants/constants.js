@@ -3,21 +3,14 @@
 
     // #region Routes
     var area = '/Mvc';
-    //var areaCtrls = {
-    //    guest: area + '/Guest',
-    //    auth: area + '/Auth',
-    //    games: area + '/Games',
-    //    investments: area + '/Investments'
-    //};
 
     // #region Keys
     var routeKeys = {
         home: 'home',
         transparency: 'transparency',
         about: 'about',
-
-        //login: 'login',
-        //register: 'register',
+        faq: 'faq',
+        playground: 'playground',
 
         games1: 'games1',
         games2: 'games2',
@@ -32,7 +25,6 @@
 
     var groupKeys = {
         guest: 'guest',
-        //auth: 'auth',
         games: 'games',
         investments: 'investments'
     };
@@ -41,7 +33,7 @@
     // #region Guest
     var home = {
         key: routeKeys.home,
-        group: groupKeys.guest,
+        //group: groupKeys.guest,
         path: '/',
         ctrl: 'homeCtrl',
         tpl: '/Mvc/Guest/Home',
@@ -56,49 +48,29 @@
         title: 'Transparency'
     };
     var about = {
-        key: routeKeys.transparency,
+        key: routeKeys.about,
         group: groupKeys.guest,
         path: '/about',
         ctrl: 'aboutCtrl',
         tpl: '/Mvc/Guest/About',
         title: 'About'
     };
-    //var guest = {
-    //    home: home,
-    //    transparency: transparency,
-    //    about: about
-    //}
-    // #endregion
-
-    // #region Auth
-    //var login = {
-    //    key: routeKeys.login,
-    //    group: groupKeys.auth,
-    //    path: '/login',
-    //    ctrl: 'loginCtrl',
-    //    tpl: '/Mvc/Auth/Login',
-    //    title: 'Login'
-    //};
-    //var register = {
-    //    key: routeKeys.register,
-    //    group: groupKeys.auth,
-    //    path: '/register',
-    //    ctrl: 'registerCtrl',
-    //    tpl: '/Mvc/Auth/Register',
-    //    title: 'Register'
-    //};
-    // TODO
-    //login: '/Mvc/Account/Login',
-    //verifyCode: '/Mvc/Account/VerifyCode',
-    //register: '/Mvc/Account/Register',
-    //confirmEmail: '/Mvc/Account/ConfirmEmail',
-    //forgotPassword: '/Mvc/Account/ForgotPassword',
-    //resetPassword: '/Mvc/Account/ResetPassword',
-    //resetPasswordConfirmation: '/Mvc/Account/ResetPasswordConfirmation',
-    //sendCode: '/Mvc/Account/SendCode',
-    ////...
-    //verifyPhoneNumber: '/Mvc/Manage/VerifyPhoneNumber',
-
+    var faq = {
+        key: routeKeys.faq,
+        //group: groupKeys.guest,
+        path: '/faq',
+        ctrl: 'faqCtrl',
+        tpl: '/Mvc/Guest/FAQ',
+        title: 'FAQ'
+    };
+    var playground = {
+        key: routeKeys.playground,
+        //group: groupKeys.guest,
+        path: '/playground',
+        ctrl: 'playgroundCtrl',
+        tpl: '/Mvc/Guest/Playground',
+        title: 'Playground'
+    };
     // #endregion
 
     // #region Games
@@ -177,10 +149,6 @@
         transparency: transparency,
         about: about
     };
-    //var auth = {
-    //    login: login,
-    //    register: register
-    //};
     var games = {
         games1: games1,
         games2: games2,
@@ -200,7 +168,7 @@
         investments: investments
     };
     var routes = [
-        home, transparency, about,
+        home, transparency, about, faq, playground,
         //login, register,
         games1, games2, games3, games4,
         summary, portfolio, performance, activity
