@@ -26,7 +26,7 @@
         $scope.registerStart = function () {
             message.open({
                 nsType: 'modal',
-                nsSize: 'md',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/registerStart.html',
                 nsCtrl: 'registerStartCtrl',
                 nsStatic: true,
@@ -35,7 +35,7 @@
         $scope.registerDetails = function () {
             message.open({
                 nsType: 'modal',
-                nsSize: 'md',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/registerDetails.html',
                 nsCtrl: 'registerDetailsCtrl',
                 nsStatic: true,
@@ -51,7 +51,7 @@
         $scope.login = function () {
             message.open({
                 nsType: 'modal',
-                nsSize: 'sm',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/login.html',
                 nsCtrl: 'loginCtrl',
                 nsStatic: true,
@@ -60,7 +60,7 @@
         $scope.forgot = function () {
             message.open({
                 nsType: 'modal',
-                nsSize: 'sm',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/forgotPassword.html',
                 nsCtrl: 'forgotPasswordCtrl',
                 nsStatic: true,

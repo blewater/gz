@@ -61,7 +61,7 @@
             chat.hide();
             $scope.nsNext({
                 nsType: 'modal',
-                nsSize: 'sm',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/forgotPassword.html',
                 nsCtrl: 'forgotPasswordCtrl',
                 nsStatic: true
@@ -71,7 +71,7 @@
         $scope.signup = function () {
             $scope.nsNext({
                 nsType: 'modal',
-                nsSize: 'md',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/registerStart.html',
                 nsCtrl: 'registerStartCtrl',
                 nsStatic: true

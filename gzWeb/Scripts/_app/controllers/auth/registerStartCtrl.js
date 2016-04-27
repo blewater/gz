@@ -123,7 +123,7 @@
         $scope.backToLogin = function () {
             $scope.nsBack({
                 nsType: 'modal',
-                nsSize: 'sm',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/login.html',
                 nsCtrl: 'loginCtrl',
                 nsStatic: true,
@@ -136,7 +136,7 @@
         function proccedToUserDetails(){
             $scope.nsNext({
                 nsType: 'modal',
-                nsSize: 'md',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/registerDetails.html',
                 nsCtrl: 'registerDetailsCtrl',
                 nsStatic: true,

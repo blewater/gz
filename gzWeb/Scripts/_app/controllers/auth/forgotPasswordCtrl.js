@@ -14,7 +14,7 @@
             chat.show();
             $scope.nsBack({
                 nsType: 'modal',
-                nsSize: 'sm',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/login.html',
                 nsCtrl: 'loginCtrl',
                 nsStatic: true,
