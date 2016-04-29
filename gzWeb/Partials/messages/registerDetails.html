@@ -2,7 +2,22 @@
     <div class="row heading">
         <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
             <div class="steps">
-                <div ng-repeat="step in steps" class="col-xs-4 centered step-number"
+                <div class="col-xs-12 progress-wrap">
+                    <uib-progressbar value="50"></uib-progressbar>
+                </div>
+                <div ng-repeat="step in steps" class="col-xs-4 centered">
+                     <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
+                        <i class="fa step-icon" ng-class="{
+                            'fa-check-circle-o': $index < currentStep,
+                            'fa-dot-circle-o': $index === currentStep,
+                            'fa-circle-thin': $index > currentStep
+                        }"></i>
+                        <i class="fa fa-circle step-icon-bg"></i>
+                        <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
+                     </div>
+                </div>
+                
+                <!--<div ng-repeat="step in steps" class="col-xs-4 centered step"
                      ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
                     <span class="line line-left" ng-class="{
                             'hidden':$index === 0,
@@ -15,6 +30,7 @@
                         'fa-dot-circle-o': $index === currentStep,
                         'fa-circle-thin': $index > currentStep
                     }"></i>
+                    <i class="fa fa-circle step-icon-bg"></i>
                     <span class="line line-right" ng-class="{
                             'hidden':$index === steps.length - 1,
                             'before':$index < currentStep,
@@ -22,7 +38,7 @@
                           }">
                     </span>
                     <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
