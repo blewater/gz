@@ -48,6 +48,7 @@
                 }
             });
         };
+        $scope.registerDetails();
         $scope.login = function () {
             message.open({
                 nsType: 'modal',
