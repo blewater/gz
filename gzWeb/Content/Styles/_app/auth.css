@@ -169,15 +169,43 @@
 .auth.register { }
 .auth.register .steps {
     margin-top: 5px;
+    position: relative;
 }
 
-.auth.register .steps .step-number {
+.auth.register .steps .progress-wrap {
+    position: absolute;    
+    width: 100%;
+    height: 22px;
+}
+.auth.register .steps .progress-wrap .progress {
+    width: 66.7%;
+    height: 2px;
+    margin: 0 auto 20px;
+    background-color: #BEE6CE;
+    -ms-border-radius: 0;
+    border-radius: 0;
+    background-image: none;
+    -webkit-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
+}
+
+.auth.register .steps .progress-wrap .progress .progress-bar {
+    background-color: #27A95C;
+    background-image: none;
+    -webkit-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
+}
+
+/*
+.auth.register .steps .step {
     position: relative;
     height: 22px;
     margin-bottom: 10px;
 }
 
-.auth.register .steps .step-number .line {
+.auth.register .steps .step .line {
     position: absolute;
     width: 50%;
     top: 50%;
@@ -192,44 +220,74 @@
     -o-transition:all 0.6s ease 0s;
     transition:all 0.6s ease 0s;
 }
-.auth.register .steps .step-number .line.line-left {
+.auth.register .steps .step .line.line-left {
     left: 0;
 }
-.auth.register .steps .step-number .line.line-right {
+.auth.register .steps .step .line.line-right {
     right: 0;
 }
-.auth.register .steps .step-number .line.before {
+.auth.register .steps .step .line.before {
     background-color: #27A95C;
 }
-.auth.register .steps .step-number .line.after {
+.auth.register .steps .step .line.after {
     background-color: #BEE6CE;
 }
+*/
 
-.auth.register .steps .step-number .step-icon {
+.auth.register .steps .step {
+    position: absolute;    
+    width: 100%;
+    top: 0;
+}
+.auth.register .steps .step .step-icon {
     position: absolute;
-    font-size: 26px;
+    font-size: 1.5em;
+    top: -6px;
+    left: calc(50% - 9px);
+
     line-height: 14px;
-    top: calc(50% - 6px);
-    left: calc(50% - 10px);
-    background: #F2F2F2;
     color: #BEE6CE;
-    z-index: 2;
+    z-index: 3;
 
     -webkit-transition:all 0.6s ease 0s;
     -moz-transition:all 0.6s ease 0s;
     -ms-transition:all 0.6s ease 0s;
     -o-transition:all 0.6s ease 0s;
     transition:all 0.6s ease 0s;
+    top: -6px;
+    transition: all 0.6s ease 0s;
 }
-.auth.register .steps .step-number.visited .step-icon {
+.auth.register .steps .step.visited .step-icon {
     color: #27A95C;
 }
-.auth.register .steps .step-number.current .step-icon {
-    font-size: 30px;
+.auth.register .steps .step.current .step-icon {
+    font-size: 2em;
+    left: calc(50% - 13px);
     color: #27A95C;
 }
 
-.auth.register .steps .step-number .step-title {
+.auth.register .steps .step .step-icon-bg {
+    position: absolute;
+    font-size: 1.4em;
+    line-height: 14px;
+    top: -6px;
+    left: calc(50% - 8px);
+    color: #f2f2f2;
+    z-index: 2;
+
+    -webkit-transition:all 0.6s ease 0s;
+    -moz-transition:all 0.6s ease 0s;
+    -ms-transition:all 0.6s ease 0s;
+    -o-transition:all 0.6s ease 0s;
+    transition:all 0.6s ease 0s;    
+}
+.auth.register .steps .step.current .step-icon-bg {
+    font-size: 1.8em;
+    left: calc(50% - 12px);
+}
+
+
+.auth.register .steps .step .step-title {
     color: #27A95C;
     -ms-opacity: 0.4;
     opacity: 0.4;
@@ -239,13 +297,13 @@
     width: 80px;
 }
 
-.auth.register .steps .step-number.visited .step-title {
+.auth.register .steps .step.visited .step-title {
     color: #27A95C;
     -ms-opacity: 1;
     opacity: 1;
 }
 
-.auth.register .steps .step-number.current .step-title {
+.auth.register .steps .step.current .step-title {
     color: #27A95C;
     font-weight: bold;
     font-size: 16px;
