@@ -127,11 +127,16 @@
     -ms-opacity: 0;
     opacity: 0;
 }
-
 .auth .field-ok.show {
     -ms-opacity: 1;
     opacity: 1;
 }
+@media (max-width: 767px) {
+    .auth .field-ok {
+        right: -40px;
+    }
+}
+
 
 /*.auth .gz-select select option { color: #7b7b7b; }
 .auth .gz-select select option.prompt { color: #ddd; }
