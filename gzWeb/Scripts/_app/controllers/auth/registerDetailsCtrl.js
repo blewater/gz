@@ -33,8 +33,8 @@
         // #region steps
         $scope.currentStep = 1;
         $scope.steps = [
-            { title: "Create Account" },
-            { title: "Enter Details" },
+            { title: "Account Details" },
+            { title: "Personal Details" },
             { title: "Deposit" }
         ];
         // #endregion
