@@ -316,22 +316,26 @@
     opacity: 1;
 }
 
-.auth.register #phonePrefix {
+.auth.register #phonePrefix button {
     background: url('../../Images/select_arrow_down.png') no-repeat right;
     background-color: #ffffff;
     cursor: pointer;
 }
-.auth.register #phonePrefix.empty {
+.auth.register #phonePrefix button.empty {
     background-color: #eaf6ef;
 }
-.auth.register .content ul.dropdown-menu > li > a {
+.auth.register #phonePrefix ul.dropdown-menu > li > a {
     color: #000;
 }
-.auth.register .open > .dropdown-menu {
+.auth.register #phonePrefix ul.dropdown-menu > li.active > a {
+    background-color: #27A95C;
+    background-image: none;
+    color: #fff;
+}
+.auth.register #phonePrefix.open > ul.dropdown-menu {
     max-height: 200px;
     overflow-y: auto;
 }
-
 
 .auth.register a.terms {
     font-weight: bold;
