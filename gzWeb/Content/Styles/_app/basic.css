@@ -192,7 +192,7 @@ button.btn-gz.btn-gz-alt:hover{
 
 /* #region checkbox */
 .gz-checkbox { }
-.gz-checkbox i.fa { width: 20px; cursor: pointer; color: #fff; }
+.gz-checkbox i.fa { width: 20px; cursor: pointer; color: #fff; text-align: left; }
 .gz-checkbox label.control-label { cursor: pointer;font-weight: normal; }
 .gz-checkbox.disabled { color: #ddd; }
 .gz-checkbox.disabled  i.fa { cursor: not-allowed; }
