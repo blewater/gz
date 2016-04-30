@@ -47,10 +47,7 @@
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
-                    <div class="btns pull-left">
-                        <a class="text-gz" ng-click="forgotPassword()">Forgot password?</a>
-                    </div>
-                    <div class="btns pull-right">
+                    <div class="btns text-center">
                         <button type="submit" class="btn-gz login" ng-disabled="form.$invalid"
                                 ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                             <span ng-show="loading && !hovered" class="spinner" us-spinner="spinnerGreen"></span>
@@ -58,12 +55,13 @@
                             <span ng-show="!loading">Login</span>
                         </button>
                     </div>
+                    <div class="btns text-center">
+                        <a class="text-gz" ng-click="forgotPassword()">Forgot password?</a>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <hr />
-            </div>
+            <div class="col-xs-12 splitter"></div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
