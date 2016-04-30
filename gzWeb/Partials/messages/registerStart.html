@@ -65,11 +65,19 @@
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group text-center">
-                    <div class="btns pull-left">
-                        <a class="text-gz" ng-click="backToLogin()">Already a member?</a>
-                    </div>
-                    <div class="btns pull-right">
+                    <div class="btns">
                         <button type="submit" class="btn-gz" ng-disabled="form.$invalid || !emailValidation.isAvailable || !usernameValidation.isAvailable || !passwordValidation.isValid">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 splitter"></div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="text-center">Already a member?</div>
+                    <div class="btns text-center">
+                        <button type="submit" class="btn-gz" ng-click="signup()">Login now</button>
                     </div>
                 </div>
             </div>
