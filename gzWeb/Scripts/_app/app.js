@@ -27,6 +27,7 @@ var APP = (function () {
         , 'FBAngular'
         , 'vxWamp'
         , 'ngAutocomplete'
+        , 'vcRecaptcha'
     ]);
 
     app.run([
@@ -68,9 +69,7 @@ var APP = (function () {
             $timeout(function() {
                 var $preloader = angular.element(document.querySelector('#preloader'));
                 $preloader.addClass('die');
-                $timeout(function () {
-                    $preloader.remove();//removeClass('die');
-                }, 2000);
+                $timeout(function () { $preloader.remove(); }, 2000);
             }, 1000);
         }
     ]);
