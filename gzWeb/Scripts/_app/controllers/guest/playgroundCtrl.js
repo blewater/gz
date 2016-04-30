@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, chat) {
         // #region Playground
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -48,7 +48,6 @@
                 }
             });
         };
-        $scope.registerDetails();
         $scope.login = function () {
             message.open({
                 nsType: 'modal',
@@ -69,6 +68,12 @@
         };
         $scope.logout = function () {
             emWamp.logout();
+        };
+        $scope.showChat = function() {
+            chat.show();
+        };
+        $scope.hideChat = function() {
+            chat.hide();
         };
         // #endregion
     }
