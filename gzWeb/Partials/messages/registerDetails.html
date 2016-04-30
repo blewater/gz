@@ -16,29 +16,6 @@
                         <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
                      </div>
                 </div>
-                
-                <!--<div ng-repeat="step in steps" class="col-xs-4 centered step"
-                     ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
-                    <span class="line line-left" ng-class="{
-                            'hidden':$index === 0,
-                            'before':$index <= currentStep,
-                            'after':$index > currentStep
-                          }">
-                    </span>
-                    <i class="fa step-icon" ng-class="{
-                        'fa-check-circle-o': $index < currentStep,
-                        'fa-dot-circle-o': $index === currentStep,
-                        'fa-circle-thin': $index > currentStep
-                    }"></i>
-                    <i class="fa fa-circle step-icon-bg"></i>
-                    <span class="line line-right" ng-class="{
-                            'hidden':$index === steps.length - 1,
-                            'before':$index < currentStep,
-                            'after':$index >= currentStep
-                          }">
-                    </span>
-                    <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
-                </div>-->
             </div>
         </div>
     </div>
@@ -164,20 +141,16 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-xs-12 col-sm-4">
-                            <div class="btn-group dropup full-width" uib-dropdown>
-                                <button id="phonePrefix" type="button" class="form-control" uib-dropdown-toggle
-                                        ng-class="{'empty': !model.phonePrefix}">
+                            <div id="phonePrefix" class="btn-group dropup full-width" uib-dropdown on-toggle="setDropdownOffset(open)">
+                                <button type="button" class="form-control" uib-dropdown-toggle ng-class="{'empty': !model.phonePrefix}">
                                     <div class="full-width text-left">{{model.phonePrefix}}</div>
                                 </button>
                                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="phonePrefix">
-                                    <li role="menuitem" ng-repeat="prefix in phonePrefixes">
-                                        <a ng-click="model.phonePrefix = prefix.code">{{prefix.name}}</a>
+                                    <li role="menuitem" ng-repeat="prefix in phonePrefixes" ng-class="{'active': prefix.active}">
+                                        <a ng-click="onPhonePrefixSelected($index)">{{prefix.name}}</a>
                                     </li>
                                 </ul>
                             </div>
-                            <!--<gz-select gz-name="phonePrefix" gz-model="model.phonePrefix" gz-collection="phonePrefixes" gz-prompt="-" gz-loading="loadingPhonePrefixes"
-                                   gz-required gz-id="code" gz-display="name" gz-error="!form.phonePrefix.$pristine && form.phonePrefix.$error.required"></gz-select>-->
-                            <!--<div class="help-block" ng-class="{'show': !form.phonePrefix.$pristine && form.phonePrefix.$error.required}">Phone prefix is required</div>-->
                         </div>
                         <div class="col-xs-12 col-sm-8">
                             <input type="text" placeholder="Phone Number" id="phoneNumber" name="phoneNumber" class="form-control" autocomplete="off" ng-model="model.phoneNumber" required

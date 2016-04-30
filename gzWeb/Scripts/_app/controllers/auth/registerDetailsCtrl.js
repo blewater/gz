@@ -139,9 +139,10 @@
                 $scope.model.country = $filter('filter')($scope.countries, { code: $scope.currentIpCountry })[0];
                 $scope.phonePrefixes = $filter('map')($scope.countries, function(c) {
                     return {
+                        country: c.code,
                         code: c.phonePrefix,
                         name: c.name + " (" + c.phonePrefix + ")"
-                    }
+                    };
                 });
                 $scope.onCountrySelected($scope.currentIpCountry);
                 $scope.loadingCountries = false;
@@ -153,10 +154,27 @@
             loadYears(country);
             //if ($scope.phonePrefixes.indexOf(country.phonePrefix) === -1)
             //    $scope.phonePrefixes.push(country.phonePrefix);
-            $scope.model.phonePrefix = country.phonePrefix;
+            //$scope.model.phonePrefix = country.phonePrefix;
+            $scope.onPhonePrefixSelected($filter('map')($scope.phonePrefixes, function(x) { return x.country; }).indexOf(country.code));
             if ($scope.currencies.length > 0)
                 selectCurrency($scope.currencies, country);
         };
+        $scope.onPhonePrefixSelected = function (prefixIndex){
+            for (var i = 0; i < $scope.phonePrefixes.length; i++)
+                $scope.phonePrefixes[i].active = false;
+            $scope.phonePrefixes[prefixIndex].active = true;
+            $scope.model.phonePrefix = $scope.phonePrefixes[prefixIndex].code;
+        }
+        $scope.setDropdownOffset = function(isOpen){
+            if (isOpen){
+                var $menu = $('#phonePrefix.open > ul.dropdown-menu');
+                var $items = $menu.find('li');
+                var $active = $menu.find('li.active');
+                var index = $items.index($active);
+                $menu.scrollTop(index * $active.height());            
+                
+            }
+        }
         
         $scope.currencies = [];
         function loadCurrencies() {
