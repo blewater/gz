@@ -204,7 +204,8 @@
         },
         events: {
             SESSION_STATE_CHANGE: 'sessionStageChange'
-        }
+        },
+        reCaptchaPublicKey: '6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML'
 
         //msgs: {
         //    required: 'The field is required!',

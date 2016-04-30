@@ -92,6 +92,7 @@ namespace gzWeb
                 , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
                 , "~/Scripts/angular-wamp/angular-wamp.js" // TODO: "~/Scripts/angular-wamp/angular-wamp.min.js"
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
+                , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 //, "~/Scripts/_modules/styleInjector.js"
