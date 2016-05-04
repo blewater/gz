@@ -179,6 +179,8 @@
     border-bottom: 1px dashed #fff;
     margin-bottom: 15px;
 }
+
+.auth .recaptcha-wrap > div > div { margin: 0 auto; }
 /* #endregion */
 
 
@@ -363,7 +365,6 @@
 
 /* #region Forgot Password */
 .auth.forgot-password button.send { width: 280px; }
-.auth.forgot-password .recaptcha-wrap > div > div { margin: 0 auto; }
 /* #endregion */
 
 /* #region Reset Password */
