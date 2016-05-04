@@ -25,7 +25,7 @@
         $scope.validateEmail = function (email) {
             if (!$scope.emailValidation.isValidating) {
                 $scope.emailValidation.isValidating = true;
-                emWamp.call('/user/account#validateEmail', { email: email }).then(function (result) {
+                emWamp.validateEmail(email).then(function (result) {
                     $scope.emailValidation.isValidating = false;
                     $scope.emailValidation.isAvailable = result.isAvailable;
                     $scope.emailValidation.error = result.error;
@@ -61,7 +61,7 @@
                 //$scope.usernameValidation.isAvailable = true;
                 $scope.usernameValidation.error = '';
                 $scope.usernameValidation.isValidating = true;
-                emWamp.call('/user/account#validateUsername', { username: username }).then(function (result) {
+                emWamp.validateUsername(username).then(function (result) {
                     $timeout(function() {
                         $scope.usernameValidation.isValidating = false;
                         $scope.usernameValidation.isAvailable = result.isAvailable;
@@ -88,7 +88,7 @@
         var _passwordPolicyError = '';
 
         function getPasswordPolicy() {
-            emWamp.call('/user/pwd#getPolicy').then(function (result) {
+            emWamp.getPasswordPolicy().then(function (result) {
                 //_passwordPolicyRegEx = new RegExp("(?=.*[0-9]+)(?=.*[A-Za-z]+)(?=.*[*:%!~]+).{8,20}");
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;

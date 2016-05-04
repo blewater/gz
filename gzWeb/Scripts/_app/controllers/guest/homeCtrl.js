@@ -5,6 +5,7 @@
     function ctrlFactory($scope, $location, message) {
         function readResetKey() {
             var urlParams = $location.search();
+            var resetPwdCode = urlParams.resetCode;
             var resetPwdKey = urlParams.resetKey;
             console.log(resetPwdKey);
             if (resetPwdKey) {
@@ -14,7 +15,10 @@
                     nsTemplate: '/partials/messages/resetPassword.html',
                     nsCtrl: 'resetPasswordCtrl',
                     nsStatic: true,
-                    nsParams: { resetKey: resetPwdKey }
+                    nsParams: {
+                        resetCode: resetPwdCode,
+                        resetKey: resetPwdKey
+                    }
                 });
             }
         }
