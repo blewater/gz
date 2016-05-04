@@ -31,6 +31,9 @@
 
         var service = {
             call: _call,
+            open: function() {
+                $wamp.open();
+            },
 
             // #region Account
 
@@ -128,7 +131,7 @@
             },
 
             logout: function() {
-                return _call("/user#logout");
+                _call("/user#logout");
             },
 
             // #endregion
@@ -292,8 +295,12 @@
 
         $wamp.subscribe("/sessionStateChange",
                 function(args, kwargs, details) {
-                    $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
+                    //if (kwargs.code !== 0) {
+                    //    $wamp.open();
+                    //}
 
+                    $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
+                    
                     console.log(
                         "SESSION_STATE_CHANGE => args: " + angular.toJson(args) +
                         ", kwargs: " + angular.toJson(kwargs) +

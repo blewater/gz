@@ -55,13 +55,14 @@ namespace gzWeb
 
 
             var config = new HttpConfiguration();
-            ConfigureAuth(app, null);
+            
             var container = InitializeSimpleInjector(app, config, mapperConfiguration);
+            ConfigureAuth(app, () => container.GetInstance<ApplicationUserManager>());
 
             WebApiConfig.Register(config);
             app.UseWebApi(config);
 
-            app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
+            //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
         }
 
         private static Container InitializeSimpleInjector(IAppBuilder app, HttpConfiguration config, MapperConfiguration automapperConfig)

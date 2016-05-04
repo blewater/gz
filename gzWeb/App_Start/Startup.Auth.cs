@@ -20,7 +20,7 @@ namespace gzWeb {
         public static string PublicClientId { get; private set; }
 
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
-        public void ConfigureAuth(IAppBuilder app, Container container)
+        public void ConfigureAuth(IAppBuilder app, Func<ApplicationUserManager> userManagerFactory)
         {
             // Configure the db context, user manager and signin manager to use a single instance per request
             //app.CreatePerOwinContext(() => DependencyResolver.Current.GetService<ApplicationUserManager>());
@@ -36,7 +36,7 @@ namespace gzWeb {
             OAuthOptions = new OAuthAuthorizationServerOptions
                            {
                                    TokenEndpointPath = new PathString("/Token"),
-                                   Provider = new ApplicationOAuthProvider(PublicClientId),
+                                   Provider = new ApplicationOAuthProvider(PublicClientId, userManagerFactory),
                                    AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                                    AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
                 // In production mode set AllowInsecureHttp = false
