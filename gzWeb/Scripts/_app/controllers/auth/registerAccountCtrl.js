@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'registerStartCtrl';
+    var ctrlId = 'registerAccountCtrl';
     APP.controller(ctrlId, ["$scope", "$filter", "emWamp", "$timeout", ctrlFactory]);
     function ctrlFactory($scope, $filter, emWamp, $timeout) {
         $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#fff', position: 'absolute', top: '50%', right: 0 };

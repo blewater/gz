@@ -23,12 +23,12 @@
             });
         };
 
-        $scope.registerStart = function () {
+        $scope.registerAccount = function () {
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerStart.html',
-                nsCtrl: 'registerStartCtrl',
+                nsTemplate: '/partials/messages/registerAccount.html',
+                nsCtrl: 'registerAccountCtrl',
                 nsStatic: true,
             });
         };
@@ -46,6 +46,15 @@
                         password: 'password'
                     }
                 }
+            });
+        };
+        $scope.selectPayment = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/registerSelectPayment.html',
+                nsCtrl: 'registerSelectPaymentCtrl',
+                nsStatic: true
             });
         };
         $scope.login = function () {

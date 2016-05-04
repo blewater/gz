@@ -62,8 +62,8 @@
             $scope.nsNext({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerStart.html',
-                nsCtrl: 'registerStartCtrl',
+                nsTemplate: '/partials/messages/registerAccount.html',
+                nsCtrl: 'registerAccountCtrl',
                 nsStatic: true
             });
         };
