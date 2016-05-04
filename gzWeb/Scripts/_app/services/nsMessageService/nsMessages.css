@@ -393,12 +393,12 @@
 }
 #ns-msgs .msg.msg-toastr .msg-frame,
 #ns-msgs .msg.msg-notification .msg-frame {
-    height: 17px;
+    height: 18px;
 }
 #ns-msgs .msg .msg-frame .msg-down,
 #ns-msgs .msg .msg-frame .msg-up,
 #ns-msgs .msg .msg-frame .msg-close {
-    margin: 0 3px 1px;
+    margin: 1px 3px;
     cursor: pointer;
     color: #27A95C;
     background-color: #f2f2f2;
@@ -464,12 +464,13 @@
 }
 
 #ns-msgs .msg .msg-frame.msg-minimized {
-    background-color: #27A95C;    
+    background-color: #27A95C;
 }
 #ns-msgs .msg .msg-frame.msg-minimized .msg-down,
 #ns-msgs .msg .msg-frame.msg-minimized .msg-up,
 #ns-msgs .msg .msg-frame.msg-minimized .msg-close {
     color: #f2f2f2;
+    background-color: #27A95C;
 }
 #ns-msgs .msg .msg-frame.msg-minimized .msg-down:hover,
 #ns-msgs .msg .msg-frame.msg-minimized .msg-up:hover,
@@ -542,6 +543,8 @@
 #ns-msgs .msg.msg-notification .msg-title-wrap,
 #ns-msgs .msg.msg.msg-toastr .msg-title-wrap {
     min-height: 50px;
+    text-align: left;
+    font-size: 11px;
 }
 
 #ns-msgs .msg .msg-title.msg-title-shout {
