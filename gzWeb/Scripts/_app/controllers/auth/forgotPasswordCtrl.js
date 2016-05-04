@@ -47,9 +47,9 @@
             });
 
             promise.then(function(resetCode) {
-                    var changePwdUrl = $location.protocol() + "://" + $location.host();
-                    if ($location.port() > 0)
-                        changePwdUrl += ":" + $location.port();
+            var changePwdUrl = $location.protocol() + "://" + $location.host();
+            if ($location.port() > 0)
+                changePwdUrl += ":" + $location.port();
 
                     changePwdUrl += "?";
                     changePwdUrl += "resetCode=";
@@ -57,20 +57,20 @@
                     changePwdUrl += "&";
                     changePwdUrl += "resetKey=";
 
-                    emWamp.sendResetPwdEmail({
-                            email: $scope.model.email,
-                            changePwdURL: changePwdUrl,
-                            captchaPublicKey: $scope.reCaptchaPublicKey,
-                            captchaChallenge: "",
-                            captchaResponse: vcRecaptchaService.getResponse()
+            emWamp.sendResetPwdEmail({
+                email: $scope.model.email,
+                changePwdURL: changePwdUrl,
+                captchaPublicKey: $scope.reCaptchaPublicKey,
+                captchaChallenge: "",
+                captchaResponse: vcRecaptchaService.getResponse()
                         })
                         .then(function(result) {
-                                $scope.waiting = false;
+                $scope.waiting = false;
                                 message.notify("You will receive an email at '" +
                                     $scope.model.email +
                                     "' that will guide you through the reset password process.");
-                                //vcRecaptchaService.reload();
-                                $scope.nsOk(true);
+                //vcRecaptchaService.reload();
+                $scope.nsOk(true);
                             },
                             function(error) {
                                 $scope.waiting = false;
@@ -79,10 +79,10 @@
                             });
                 },
                 function(error) {
-                    $scope.waiting = false;
-                    $scope.sendResetPasswordEmailError = error;
-                    vcRecaptchaService.reload();
-                });
+                $scope.waiting = false;
+                $scope.sendResetPasswordEmailError = error.desc;
+                vcRecaptchaService.reload();
+            });
         }
     }
 })();

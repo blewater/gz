@@ -88,10 +88,10 @@
                                 }
                             })
                             .then(function(gzResult) {
-                                    $scope.waiting = false;
-                                    message.toastr("Your password has been reset successfully!");
-                                    $location.search('');
-                                    $scope.nsOk(true);
+                $scope.waiting = false;
+                message.toastr("Your password has been reset successfully!");
+                $location.search('');
+                $scope.nsOk(true);
                                 },
                                 function(error) {
                                     $scope.model.isKeyAvailable = false;
@@ -100,10 +100,10 @@
                                 });
                     },
                     function(error) {
-                        $scope.model.isKeyAvailable = false;
-                        $scope.waiting = false;
-                        console.log(error);
-                    });
+                $scope.model.isKeyAvailable = false;
+                $scope.waiting = false;
+                console.log(error);
+            });
         }
 
         function checkResetKeyAvailability() {
