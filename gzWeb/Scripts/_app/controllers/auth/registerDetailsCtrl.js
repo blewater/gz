@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDetailsCtrl';
-    APP.controller(ctrlId, ['$scope', '$http', '$filter', 'emWamp', 'message', 'api', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $http, $filter, emWamp, message, api, constants) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emWamp', 'api', 'message', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emWamp, api, message, constants) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -58,8 +58,6 @@
         }
         $scope.onYearSelected = function (year) {
             loadMonths($scope.model.country, year);
-            //if ($scope.model.monthOfBirth)
-            //    loadDays(year, $scope.model.monthOfBirth);
         };
 
         function loadMonths(country, year) {
@@ -86,8 +84,6 @@
         }
         $scope.onMonthSelected = function (month) {
             loadDays($scope.model.country, $scope.model.yearOfBirth, month);
-            //if ($scope.model.yearOfBirth)
-            //    loadDays($scope.model.yearOfBirth, month);
         };
 
         $scope.daysOfMonth = [];
@@ -110,9 +106,6 @@
             };
             if (dayOfBirth && $filter('map')($scope.daysOfMonth, function (d) { return d.value; }).indexOf(dayOfBirth.value) !== -1)
                 $scope.model.dayOfBirth = dayOfBirth;
-
-            //if ($scope.daysOfMonth.indexOf(dayOfBirth) !== -1)
-            //    $scope.model.dayOfBirth = dayOfBirth;
 
             $scope.loadingDays = false;
         }
@@ -145,16 +138,13 @@
                 $scope.onCountrySelected($scope.currentIpCountry);
                 $scope.loadingCountries = false;
             }, function(error) {
-                console.log(error);
+                console.log(error.desc);
             });
         };
         $scope.onCountrySelected = function (countryCode) {
             var country = $filter('filter')($scope.countries, { code: countryCode })[0];
 
             loadYears(country);
-            //if ($scope.phonePrefixes.indexOf(country.phonePrefix) === -1)
-            //    $scope.phonePrefixes.push(country.phonePrefix);
-            //$scope.model.phonePrefix = country.phonePrefix;
             $scope.onPhonePrefixSelected($filter('map')($scope.phonePrefixes, function(x) { return x.country; }).indexOf(country.code));
             if ($scope.currencies.length > 0)
                 selectCurrency($scope.currencies, country);
@@ -172,7 +162,6 @@
                 var $active = $menu.find('li.active');
                 var index = $items.index($active);
                 $menu.scrollTop(index * $active.height());            
-                
             }
         }
         
@@ -185,7 +174,7 @@
                     selectCurrency($scope.currencies, $scope.model.country);
                 $scope.loadingCurrencies = false;
             }, function(error) {
-                console.log(error);
+                console.log(error.desc);
             });
         };
 
@@ -234,7 +223,7 @@
                 });
             }, function (emRegisterError) {
                 $scope.waiting = false;
-                console.log(emRegisterError);
+                console.log(emRegisterError.desc);
             });
         };
 
@@ -267,7 +256,7 @@
         }
 
         function gzRegister() {
-            return $http.post('/api/Account/Register', {
+            return api.register({
                 Username: $scope.model.username,
                 Email: $scope.model.email,
                 Password: $scope.model.password,
@@ -287,7 +276,7 @@
         }
         // #endregion
 
-        // #region Terms and conditions
+        // #region terms and conditions
         $scope.readTerms = function(){
             var promise = message.modal("Terms and conditions", {
                 nsSize: 'xl',

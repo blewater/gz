@@ -20,10 +20,7 @@
         function login(){
             $scope.waiting = true;
             $scope.errorMsg = "";
-            //emWamp.logout().then(function() {
-            //    api.logout();
 
-            //});
             var emResponse = emWamp.login({
                 usernameOrEmail: $scope.model.usernameOrEmail,
                 password: $scope.model.password
@@ -31,6 +28,7 @@
 
             emResponse.then(function (emResult) {
                 var gzResponse = api.login($scope.model.usernameOrEmail, $scope.model.password);
+
                 gzResponse.then(function (gzResult) {
                     localStorageService.set(constants.storageKeys.authData, {
                         username: gzResult.data.userName,
@@ -49,13 +47,6 @@
                 $scope.waiting = false;
             });
         }
-        //function emLogin(username, password) {
-        //    return emWamp.login(username, password);
-        //};
-
-        //function gzLogin(username, password) {
-        //    return (username, password);
-        //};
 
         $scope.forgotPassword = function () {
             $scope.nsNext({
