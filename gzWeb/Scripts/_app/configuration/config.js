@@ -6,7 +6,8 @@
             $routeProvider.when(constants.routes[i].path, {
                 controller: constants.routes[i].ctrl,
                 templateUrl: constants.routes[i].tpl,
-                title: constants.routes[i].title
+                title: constants.routes[i].title,
+                reloadOnSearch: constants.routes[i].reloadOnSearch || true
             });
         $routeProvider.otherwise({ redirectTo: '/' });
 
