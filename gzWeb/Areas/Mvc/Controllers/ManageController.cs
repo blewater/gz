@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -12,6 +13,7 @@ using gzDAL.Conf;
 namespace gzWeb.Areas.Mvc.Controllers
 {
     [Authorize]
+    [Obsolete]
     public class ManageController : Controller
     {
         private ApplicationSignInManager _signInManager;

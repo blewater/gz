@@ -26,7 +26,7 @@ namespace gzWeb.Tests.Controllers
         [OneTimeSetUp]
         public virtual void OneTimeSetUp()
         {
-            Server = SelfHostServer.Start(new Uri("http://localhost:9090"));
+            //Server = SelfHostServer.Start(new Uri("http://localhost:9090"));
             //TransactionScope=new TransactionScope();
         }
 
@@ -34,7 +34,7 @@ namespace gzWeb.Tests.Controllers
         public virtual void OneTimeTearDown()
         {
             //TransactionScope.Dispose();
-            Server.Dispose();
+            //Server.Dispose();
         }
     }
 
@@ -83,17 +83,17 @@ namespace gzWeb.Tests.Controllers
         [Test]
         public async Task ShouldNotFailWithValidModel()
         {
-            //var response = await TestServer.Create<gzWeb.Startup>()
-            //                         .HttpClient.PostJsonAsync("/api/Account/Register", new RegisterBindingModel
-            //                         {
-            //                             Username = "username",
-            //                             Email = "email@email.com",
-            //                             Password = "1234567",
-            //                             FirstName = "FirstName",
-            //                             LastName = "LastName",
-            //                             Birthday = new DateTime(1975, 10, 13),
-            //                             Currency = "EUR",
-            //                         });
+            var response = await TestServer.Create<gzWeb.Startup>()
+                                     .HttpClient.PostJsonAsync("/api/Account/Register", new RegisterBindingModel
+                                     {
+                                         Username = "username",
+                                         Email = "email@email.com",
+                                         Password = "1234567",
+                                         FirstName = "FirstName",
+                                         LastName = "LastName",
+                                         Birthday = new DateTime(1975, 10, 13),
+                                         Currency = "EUR",
+                                     });
 
             //var response = await Client.PostJsonAsync("/api/Account/Register", new RegisterBindingModel
             //{
