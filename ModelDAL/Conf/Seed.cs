@@ -61,7 +61,8 @@ namespace gzDAL.Conf
             CreateUpdConfiguationRow(context);
 
             // Customers
-            var manager = new ApplicationUserManager(new CustomUserStore(context), null);
+            var manager = new ApplicationUserManager(new CustomUserStore(context),
+                                                     new DataProtectionProviderFactory(() => null));
             int custId = SaveDbCreateUser(manager);
 
             int everyMatrixUserId = SaveDbCreateStageEverymatrixUser(
