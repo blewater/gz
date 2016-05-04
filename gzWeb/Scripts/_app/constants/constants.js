@@ -204,7 +204,10 @@
             authData: 'authData',
         },
         events: {
-            SESSION_STATE_CHANGE: 'sessionStageChange'
+            SESSION_STATE_CHANGE: 'sessionStageChange',
+            ACCOUNT_BALANCE_CHANGED: 'accountBalanceChanged',
+            DEPOSIT_STATUS_CHANGED: 'depositStatusChanged',
+            WITHDRAW_STATUS_CHANGED: 'withdrawStatusChanged'
         },
         reCaptchaPublicKey: '6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML'
 
