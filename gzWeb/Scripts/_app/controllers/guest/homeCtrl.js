@@ -3,12 +3,12 @@
     var ctrlId = 'homeCtrl';
     APP.controller(ctrlId, ['$scope', '$location', 'message', ctrlFactory]);
     function ctrlFactory($scope, $location, message) {
-        function readResetKey() {
+        function readResetPwdKeys() {
             var urlParams = $location.search();
-            var resetPwdCode = urlParams.resetCode;
-            var resetPwdKey = urlParams.resetKey;
-            console.log(resetPwdKey);
-            if (resetPwdKey) {
+            var gzResetKey = urlParams.gzKey;
+            var emResetKey = urlParams.emKey;
+            console.log(emResetKey);
+            if (emResetKey) {
                 message.open({
                     nsType: 'modal',
                     nsSize: '600px',
@@ -16,15 +16,15 @@
                     nsCtrl: 'resetPasswordCtrl',
                     nsStatic: true,
                     nsParams: {
-                        resetCode: resetPwdCode,
-                        resetKey: resetPwdKey
+                        gzKey: gzResetKey,
+                        emKey: emResetKey
                     }
                 });
             }
         }
 
         function init() {
-            readResetKey();
+            readResetPwdKeys();
         }
         init();
     }

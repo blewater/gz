@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerStartCtrl';
-    APP.controller(ctrlId, ["$scope", "$http", "$filter", "emWamp", "$timeout", ctrlFactory]);
-    function ctrlFactory($scope, $http, $filter, emWamp, $timeout) {
+    APP.controller(ctrlId, ["$scope", "$filter", "emWamp", "$timeout", ctrlFactory]);
+    function ctrlFactory($scope, $filter, emWamp, $timeout) {
         $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#fff', position: 'absolute', top: '50%', right: 0 };
         $scope.model = {
             email: null,
@@ -31,13 +31,12 @@
                     $scope.emailValidation.error = result.error;
                 }, function (error) {
                     $scope.emailValidation.isValidating = false;
-                    logError(error);
+                    console.log(error.desc);
                 });
             }
         };
         $scope.onEmailFocus = function () {
             $scope.emailFocused = true;
-            //$scope.resetEmailValidation();
         }
         $scope.onEmailBlur = function () {
             $scope.emailFocused = false;
@@ -58,7 +57,6 @@
         };
         $scope.validateUsername = function (username) {
             if (!$scope.usernameValidation.isValidating) {
-                //$scope.usernameValidation.isAvailable = true;
                 $scope.usernameValidation.error = '';
                 $scope.usernameValidation.isValidating = true;
                 emWamp.validateUsername(username).then(function (result) {
@@ -69,13 +67,12 @@
                     }, 0);
                 }, function (error) {
                     $scope.usernameValidation.isValidating = false;
-                    logError(error);
+                    console.log(error.desc);
                 });
             }
         };
         $scope.onUsernameFocus = function () {
             $scope.usernameFocused = true;
-            //$scope.resetUsernameValidation();
         }
         $scope.onUsernameBlur = function () {
             $scope.usernameFocused = false;
@@ -92,11 +89,12 @@
                 //_passwordPolicyRegEx = new RegExp("(?=.*[0-9]+)(?=.*[A-Za-z]+)(?=.*[*:%!~]+).{8,20}");
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
-            }, logError);
+            }, function(error) {
+                console.log(error.desc);
+            });
         };
 
         $scope.passwordValidation = {
-            //isValidating: false,
             isValid: undefined,
             error: ''
         };
@@ -114,7 +112,6 @@
         };
         $scope.onPasswordFocus = function () {
             $scope.passwordFocused = true;
-            //$scope.resetPasswordValidation();
         }
         $scope.onPasswordBlur = function () {
             $scope.passwordFocused = false;
@@ -162,10 +159,6 @@
                 }
             });
         }
-
-        function logError(error) {
-            console.log(error);
-        };
 
         function init() {
             getPasswordPolicy();

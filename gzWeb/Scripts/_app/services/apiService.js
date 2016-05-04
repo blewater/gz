@@ -116,6 +116,31 @@
             //    $templateCache.remove(templates[i]);
             //message.clear();
         }
+
+        factory.register = function (parameters) {
+            return $http.post('/api/Account/Register', parameters);
+        }
+
+        factory.forgotPassword = function (email) {
+            return $http({
+                url: 'api/Account/ForgotPassword',
+                method: 'POST',
+                data: { Email: email }
+            });
+        }
+
+        factory.resetPassword = function (parameters) {
+            return $http({
+                url: 'api/Account/ResetPassword',
+                method: 'POST',
+                data: {
+                    Email: email,
+                    Password: $scope.model.password,
+                    ConfirmPassword: $scope.model.password,
+                    Code: $scope.model.code
+                }
+            });
+        }
         // #endregion
 
         return factory;
