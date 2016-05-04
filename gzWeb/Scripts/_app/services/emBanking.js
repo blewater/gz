@@ -7,13 +7,13 @@
 
         var _service = {};
 
-        var _supportedPaymentMethodCode = {
+        var _supportedPaymentMethodCodes = {
             VISA: "VISA",
             Maestro: "Maestro",
             MasterCard: "MasterCard"
         };
 
-        _service.PaymentMethodCode = _supportedPaymentMethodCode;
+        _service.PaymentMethodCode = _supportedPaymentMethodCodes;
 
         /// <summary>
         /// Query the gaming accounts of the current logged-in user.
@@ -32,6 +32,80 @@
                 expectBonus: expectBonus
             });
         };
+        
+        //
+        // Query the transaction history for current logged-in user with specific conditions.
+        //
+        // Parameter
+        //
+        //  {
+        //      "type": "Deposit",
+        //      "startTime": "2012-04-04T16:00:00.000Z",
+        //      "endTime": "2014-03-13T15:59:00.000Z",
+        //      "pageIndex": 1,
+        //      "pageSize": 20
+        //  }
+        //
+        // type  [string, mandatory]
+        // Indicates the type of transactions to be queried
+        //      Deposit : Query successful deposit transactions. (https://help.gammatrix-dev.net/help/deposittransactions.html)
+        //      Withdraw : Query withdraw transactions including those are pending or in-progress. (https://help.gammatrix-dev.net/help/withdrawtransactions.html)
+        //      Transfer : Query transfer between accounts transactions including those are failed, pending or successful. (https://help.gammatrix-dev.net/help/TransferbetweenAccounts1.html)
+        //      BuddyTransfer : Query successful buddy transfer transactions. (https://help.gammatrix-dev.net/help/BuddyTransfer1.html)
+        //
+        // startTime  [string, mandatory]
+        // The start time of the range to filter the transactions. This parameter should be presented in ISO 8601 spec in UTC time.
+        //
+        // endTime  [string, mandatory]
+        // The end time of the range to filter the transactions. This parameter should be presented in ISO 8601 spec in UTC time.
+        // 
+        // pageIndex  [integer, mandatory]
+        // The page index of the result. 1 means first page. Check remark section below for details.
+        // 
+        // pageSize  [integer, mandatory]
+        // The page size of the result. Check remark section below for details.
+        //
+        // Return
+        //  {
+        //      "transactions": [ ... ],
+        //      "currentPageIndex": 1,
+        //      "totalRecordCount": 46,
+        //      "totalPageCount": 3
+        //  }
+        //
+        // transactions  [array]
+        // An array contains JSON objects, each of them represents an individual transaction record.
+        // The format is different per each transaction type. Please click the link for each type above and see details
+        //
+        // currentPageIndex  [integer]
+        // The current page index of the returned records.
+        // 
+        // totalRecordCount  [integer]
+        // The total number of the records for this transaction query.
+        // 
+        // totalPageCount  [integer]
+        // The total number of the pages  for this transaction query.
+        //
+        _service.getTransactionHistory = function(type, startTime, endTime, pageIndex, pageSize) {
+            return emWamp.call("/user#getTransactionHistory",
+            {
+                type: type,
+                startTime: startTime,
+                endTime: endTime,
+                pageIndex: pageIndex,
+                pageSize: pageSize
+            });
+        };
+
+        _service.watchBalance = function () {
+            return emWamp.call("/user/account#watchBalance");
+        };
+
+        _service.unwatchBalance = function () {
+            return emWamp.call("/user/account#unwatchBalance");
+        };
+
+        // #region Deposit
 
         //
         // Query the payment methods.
@@ -50,7 +124,7 @@
             emWamp.call("/user/deposit#getPaymentMethods", { filterByCountry: filterByCountry, currency: currency })
                 .then(function(result) {
                     var paymentMethods = [];
-                    angular.forEach(_supportedPaymentMethodCode,
+                    angular.forEach(_supportedPaymentMethodCodes,
                         function(key, value) {
                             paymentMethods.push(result.paymentMethods[key]);
                         });
@@ -135,7 +209,7 @@
         _service.registerPayCardVISA = function(cardNumber, cardHolderName, cardExpiryDate) {
             return emWamp.call("/user/deposit#registerPayCard",
             {
-                paymentMethodCode: _supportedPaymentMethodCode.VISA,
+                paymentMethodCode: _supportedPaymentMethodCodes.VISA,
                 fields: {
                     cardNumber: cardNumber,
                     cardHolderName: cardHolderName,
@@ -146,7 +220,7 @@
         _service.registerPayCardMaestro = function(cardNumber, cardHolderName, cardExpiryDate, cardValidFrom, cardIssueNumber) {
             return emWamp.call("/user/deposit#registerPayCard",
             {
-                paymentMethodCode: _supportedPaymentMethodCode.Maestro,
+                paymentMethodCode: _supportedPaymentMethodCodes.Maestro,
                 fields: {
                     cardNumber: cardNumber,
                     cardHolderName: cardHolderName,
@@ -164,7 +238,7 @@
             cardIssueNumber) {
             return emWamp.call("/user/deposit#registerPayCard",
             {
-                paymentMethodCode: _supportedPaymentMethodCode.MasterCard,
+                paymentMethodCode: _supportedPaymentMethodCodes.MasterCard,
                 fields: {
                     cardNumber: cardNumber,
                     cardHolderName: cardHolderName,
@@ -210,7 +284,7 @@
         _service.prepareVISA = function(gamingAccountId, currency, amount, payCardId, cardSecurityCode) {
             return emWamp.call("/user/deposit#prepare",
             {
-                paymentMethodCode: _supportedPaymentMethodCode.VISA,
+                paymentMethodCode: _supportedPaymentMethodCodes.VISA,
                 fields: {
                     gamingAccountID: gamingAccountId,
                     currency: currency,
@@ -224,7 +298,7 @@
         _service.prepareMaestro = function(gamingAccountId, currency, amount, payCardId, cardSecurityCode) {
             return emWamp.call("/user/deposit#prepare",
             {
-                paymentMethodCode: _supportedPaymentMethodCode.Maestro,
+                paymentMethodCode: _supportedPaymentMethodCodes.Maestro,
                 fields: {
                     gamingAccountID: gamingAccountId,
                     currency: currency,
@@ -238,7 +312,7 @@
         _service.prepareMasterCard = function(gamingAccountId, currency, amount, payCardId, cardSecurityCode) {
             return emWamp.call("/user/deposit#prepare",
             {
-                paymentMethodCode: _supportedPaymentMethodCode.MasterCard,
+                paymentMethodCode: _supportedPaymentMethodCodes.MasterCard,
                 fields: {
                     gamingAccountID: gamingAccountId,
                     currency: currency,
@@ -307,6 +381,8 @@
             });
         };
 
+        // #endregion Deposit
+        
         return _service;
     };
 
