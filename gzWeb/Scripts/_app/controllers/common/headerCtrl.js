@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'route', 'emWamp', 'message', 'api', ctrlFactory]);
-    function ctrlFactory($rootScope, $scope, $location, constants, route, emWamp, message, api) {
+    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'route', 'emWamp', 'message', 'api', '$window', ctrlFactory]);
+    function ctrlFactory($rootScope, $scope, $location, constants, route, emWamp, message, api, $window) {
         $scope.routes = {
             guest: route.getGroup(constants.groupKeys.guest),
             games: route.getGroup(constants.groupKeys.games),
@@ -58,11 +58,10 @@
             api.logout();
         };
 
-        //$scope.$on("$wamp.close", function(event, data) {
-        //     //$scope.reason = data.reason;
-        //     //$scope.details = data.details;
-        //    emWamp.open();
-        //});
+        $scope.$on("$wamp.close", function (event, data) {
+            //$location.path('/');
+            $window.location.href = '/';
+        });
 
         $scope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
             updateSessionInfo();
