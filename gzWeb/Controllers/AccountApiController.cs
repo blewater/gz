@@ -15,6 +15,7 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using gzDAL.Conf;
 using gzDAL.Models;
+using gzWeb.Areas.Mvc.Models;
 using gzWeb.Models;
 
 namespace gzWeb.Controllers
@@ -31,6 +32,7 @@ namespace gzWeb.Controllers
         {
         }
 
+        #region accessTokenFormat Constructor
         //public AccountApiController(ApplicationUserManager userManager, ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         //{
         //    UserManager = userManager;
@@ -38,8 +40,18 @@ namespace gzWeb.Controllers
         //}
 
         // TODO: public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
+        #endregion
 
-        // TODO: ...
+        // POST api/Account/Logout
+        [Route("Logout")]
+        public IHttpActionResult Logout()
+        {
+            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            return Ok();
+        }
+
+        #region TODO: UserInfo/ManageInfo
+
         //// GET api/Account/UserInfo
         //[HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         //[Route("UserInfo")]
@@ -55,15 +67,6 @@ namespace gzWeb.Controllers
         //    };
         //}
 
-        // POST api/Account/Logout
-        [Route("Logout")]
-        public IHttpActionResult Logout()
-        {
-            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-            return Ok();
-        }
-
-        // TODO: ...
         //// GET api/Account/ManageInfo?returnUrl=%2F&generateState=true
         //[Route("ManageInfo")]
         //public async Task<ManageInfoViewModel> GetManageInfo(string returnUrl, bool generateState = false)
@@ -104,7 +107,8 @@ namespace gzWeb.Controllers
         //    };
         //}
 
-        // TODO: ...
+        #endregion
+
         // POST api/Account/ChangePassword
         [Route("ChangePassword")]
         public async Task<IHttpActionResult> ChangePassword(ChangePasswordBindingModel model)
@@ -144,7 +148,24 @@ namespace gzWeb.Controllers
             return Ok();
         }
 
-        // TODO: ...
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("ForgotPassword")]
+        public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await UserManager.FindByNameAsync(model.Email);
+            if (user == null || !await UserManager.IsEmailConfirmedAsync(user.Id))
+                return BadRequest();
+            
+            // If we got this far, something failed, redisplay form
+            return Ok(await UserManager.GeneratePasswordResetTokenAsync(user.Id));
+        }
+
+        #region TODO: ExternalLogin
+
         //// POST api/Account/AddExternalLogin
         //[Route("AddExternalLogin")]
         //public async Task<IHttpActionResult> AddExternalLogin(AddExternalLoginBindingModel model)
@@ -183,7 +204,6 @@ namespace gzWeb.Controllers
         //    return Ok();
         //}
 
-        // TODO: ...
         //// POST api/Account/RemoveLogin
         //[Route("RemoveLogin")]
         //public async Task<IHttpActionResult> RemoveLogin(RemoveLoginBindingModel model)
@@ -213,7 +233,6 @@ namespace gzWeb.Controllers
         //    return Ok();
         //}
 
-        // TODO: ...
         //// GET api/Account/ExternalLogin
         //[OverrideAuthentication]
         //[HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
@@ -268,7 +287,6 @@ namespace gzWeb.Controllers
         //    return Ok();
         //}
 
-        // TODO: ...
         //// GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
         //[AllowAnonymous]
         //[Route("ExternalLogins")]
@@ -310,8 +328,41 @@ namespace gzWeb.Controllers
         //    return logins;
         //}
 
-        // POST api/Account/Register
+        //// POST api/Account/RegisterExternal
+        //[OverrideAuthentication]
+        //[HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        //[Route("RegisterExternal")]
+        //public async Task<IHttpActionResult> RegisterExternal(RegisterExternalBindingModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
+        //    var info = await Authentication.GetExternalLoginInfoAsync();
+        //    if (info == null)
+        //    {
+        //        return InternalServerError();
+        //    }
+
+        //    var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+
+        //    IdentityResult result = await UserManager.CreateAsync(user);
+        //    if (!result.Succeeded)
+        //    {
+        //        return GetErrorResult(result);
+        //    }
+
+        //    result = await UserManager.AddLoginAsync(user.Id, info.Login);
+        //    if (!result.Succeeded)
+        //    {
+        //        return GetErrorResult(result);
+        //    }
+        //    return Ok();
+        //}
+        #endregion
+
+        // POST api/Account/Register
         [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
@@ -367,41 +418,7 @@ namespace gzWeb.Controllers
 
             return Ok(result.Succeeded ? "Ok" : "Error");
         }
-
-        // TODO: ...
-        //// POST api/Account/RegisterExternal
-        //[OverrideAuthentication]
-        //[HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
-        //[Route("RegisterExternal")]
-        //public async Task<IHttpActionResult> RegisterExternal(RegisterExternalBindingModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var info = await Authentication.GetExternalLoginInfoAsync();
-        //    if (info == null)
-        //    {
-        //        return InternalServerError();
-        //    }
-
-        //    var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
-
-        //    IdentityResult result = await UserManager.CreateAsync(user);
-        //    if (!result.Succeeded)
-        //    {
-        //        return GetErrorResult(result);
-        //    }
-
-        //    result = await UserManager.AddLoginAsync(user.Id, info.Login);
-        //    if (!result.Succeeded)
-        //    {
-        //        return GetErrorResult(result);
-        //    }
-        //    return Ok();
-        //}
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing && _userManager != null)
