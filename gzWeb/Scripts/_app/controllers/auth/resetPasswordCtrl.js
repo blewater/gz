@@ -18,9 +18,9 @@
         var _passwordPolicyError = '';
 
         function getPasswordPolicy() {
-            emWamp.call('/user/pwd#getPolicy').then(function (result) {
-                _passwordPolicyRegEx = new RegExp("(?=.*[0-9]+)(?=.*[A-Za-z]+)(?=.*[*:%!~]+).{8,20}");
-                //_passwordPolicyRegEx = new RegExp(result.regularExpression);
+            emWamp.getPasswordPolicy().then(function (result) {
+                //_passwordPolicyRegEx = new RegExp("(?=.*[0-9]+)(?=.*[A-Za-z]+)(?=.*[*:%!~]+).{8,20}");
+                _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
             }, function(error) {
                 console.log(error);
