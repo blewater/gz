@@ -58,6 +58,12 @@
             api.logout();
         };
 
+        //$scope.$on("$wamp.close", function(event, data) {
+        //     //$scope.reason = data.reason;
+        //     //$scope.details = data.details;
+        //    emWamp.open();
+        //});
+
         $scope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
             updateSessionInfo();
         });

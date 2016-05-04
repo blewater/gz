@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using gzDAL.Conf;
 using gzDAL.Models;
 using Microsoft.AspNet.Identity.Owin;
@@ -13,22 +14,25 @@ namespace gzWeb.Providers
 {
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
+        private readonly Func<ApplicationUserManager> _userManagerFactory;
         private readonly string _publicClientId;
 
-        public ApplicationOAuthProvider(string publicClientId)
+        public ApplicationOAuthProvider(string publicClientId, Func<ApplicationUserManager> userManagerFactory)
         {
             if (publicClientId == null)
-            {
                 throw new ArgumentNullException("publicClientId");
-            }
 
             _publicClientId = publicClientId;
+            _userManagerFactory = userManagerFactory;
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+            //var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+            //var userManager = context.OwinContext.Get<ApplicationUserManager>();
+            //var userManager = DependencyResolver.Current.GetService<ApplicationUserManager>();
 
+            var userManager = _userManagerFactory();
             var user = await userManager.FindAsync(context.UserName, context.Password);
 
             if (user == null)
