@@ -1,13 +1,14 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "resetPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'message', '$location', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, message, $location) {
+    APP.controller(ctrlId, ['$scope', '$http', 'constants', 'emWamp', 'message', '$location', ctrlFactory]);
+    function ctrlFactory($scope, $http, constants, emWamp, message, $location) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
         $scope.model = {
             key: $scope.resetKey,
+            code: $scope.resetCode,
             isKeyAvailable: undefined,
             password: undefined,
             confirmPassword: undefined
@@ -18,7 +19,7 @@
         var _passwordPolicyError = '';
 
         function getPasswordPolicy() {
-            emWamp.call('/user/pwd#getPolicy').then(function (result) {
+            emWamp.getPasswordPolicy().then(function (result) {
                 //_passwordPolicyRegEx = new RegExp("(?=.*[0-9]+)(?=.*[A-Za-z]+)(?=.*[*:%!~]+).{8,20}");
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
@@ -74,12 +75,31 @@
         };
         function reset(){
             $scope.waiting = true;
-            emWamp.resetPassword($scope.model.key, $scope.model.password).then(function(result) {
+            emWamp.resetPassword($scope.model.key, $scope.model.password)
+                .then(function(emResult) {
+                        $http({
+                            url: 'api/Account/ResetPassword',
+                                method: 'POST',
+                                data: {
+                                    Email: $scope.model.email,
+                                    Password: $scope.model.password,
+                                    ConfirmPassword: $scope.model.password,
+                                    Code: $scope.model.code
+                                }
+                            })
+                            .then(function(gzResult) {
                 $scope.waiting = false;
                 message.toastr("Your password has been reset successfully!");
                 $location.search('');
                 $scope.nsOk(true);
-            }, function(error) {
+                                },
+                                function(error) {
+                                    $scope.model.isKeyAvailable = false;
+                                    $scope.waiting = false;
+                                    console.log(error);
+                                });
+                    },
+                    function(error) {
                 $scope.model.isKeyAvailable = false;
                 $scope.waiting = false;
                 console.log(error);
