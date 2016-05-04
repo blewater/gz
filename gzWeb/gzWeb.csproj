@@ -518,7 +518,9 @@
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
     <Content Include="Scripts\_app\services\emBanking.js" />
+    <Content Include="Scripts\_app\services\emBankingWithdraw.js" />
     <Content Include="Scripts\_app\services\emCasino.js" />
+    <Content Include="Scripts\_app\services\emResponsibleGaming.js" />
     <Content Include="Scripts\_app\services\emWamp.js" />
     <Content Include="Scripts\_app\services\emWamp.test.js" />
     <Content Include="Scripts\_app\services\helpersService.js" />
