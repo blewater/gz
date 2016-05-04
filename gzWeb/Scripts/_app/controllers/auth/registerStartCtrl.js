@@ -7,7 +7,8 @@
         $scope.model = {
             email: null,
             username: null,
-            password: null
+            password: null,
+            confirmPassword: null
         };
 
         // #region Email
@@ -88,6 +89,7 @@
 
         function getPasswordPolicy() {
             emWamp.call('/user/pwd#getPolicy').then(function (result) {
+                //_passwordPolicyRegEx = new RegExp("(?=.*[0-9]+)(?=.*[A-Za-z]+)(?=.*[*:%!~]+).{8,20}");
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
             }, logError);
@@ -95,7 +97,7 @@
 
         $scope.passwordValidation = {
             //isValidating: false,
-            isValid: true,
+            isValid: undefined,
             error: ''
         };
         $scope.resetPasswordValidation = function() {
@@ -118,6 +120,17 @@
             $scope.passwordFocused = false;
             $scope.validatePassword($scope.model.password);
         }
+
+        $scope.passwordValidOnce = false;
+        var unregisterIsPasswordValidWatch = $scope.$watch(function () {
+            return $scope.form.password.$dirty && $scope.form.password.$valid && $scope.passwordValidation.isValid === true;
+        }, function (newValue, oldValue) {
+            if (newValue === true) {
+                $scope.passwordValidOnce = true;
+                unregisterIsPasswordValidWatch();
+            }
+        });
+
         // #endregion
         
         $scope.backToLogin = function () {
@@ -140,7 +153,13 @@
                 nsTemplate: '/partials/messages/registerDetails.html',
                 nsCtrl: 'registerDetailsCtrl',
                 nsStatic: true,
-                nsParams: { startModel: $scope.model }
+                nsParams: {
+                    startModel: {
+                        email: $scope.model.email,
+                        username: $scope.model.username,
+                        password: $scope.model.password
+                    }
+                }
             });
         }
 
