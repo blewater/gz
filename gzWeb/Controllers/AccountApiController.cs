@@ -156,12 +156,31 @@ namespace gzWeb.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null || !await UserManager.IsEmailConfirmedAsync(user.Id))
                 return BadRequest();
             
             // If we got this far, something failed, redisplay form
             return Ok(await UserManager.GeneratePasswordResetTokenAsync(user.Id));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("ResetPassword")]
+        public async Task<IHttpActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return BadRequest();
+
+            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            if (!result.Succeeded)
+                return BadRequest();
+            
+            return Ok();
         }
 
         #region TODO: ExternalLogin
