@@ -87,7 +87,7 @@
         $scope.validateEmail = function (email) {
             if (!$scope.emailValidation.isValidating) {
                 $scope.emailValidation.isValidating = true;
-                return emWamp.call('/user/account#validateEmail', { email: email })
+                return emWamp.validateEmail(email)
                     .then(function (result) {
                         $scope.emailValidation.isValidating = false;
                         $scope.emailValidation.isAvailable = result.isAvailable;
@@ -106,7 +106,7 @@
         };
         $scope.validateUsername = function (username) {
             if (!$scope.usernameValidation.isValidating) {
-                return emWamp.call('/user/account#validateUsername', { username: username })
+                return emWamp.validateUsername(username)
                     .then(function (result) {
                         $scope.usernameValidation.isValidating = false;
                         $scope.usernameValidation.isAvailable = result.isAvailable;
@@ -220,7 +220,7 @@
         }
 
         function getPasswordPolicy() {
-            emWamp.call('/user/pwd#getPolicy')
+            emWamp.getPasswordPolicy()
                 .then(function(result) {
                         _passwordPolicyRegEx = new RegExp(result.regularExpression);
                         _passwordPolicyError = result.message;
@@ -229,11 +229,7 @@
         };
 
         function getCountries() {
-            emWamp.call('/user/account#getCountries', {
-                    expectRegions: false, // true
-                    filterByCountry: '',
-                    excludeDenyRegistrationCountry: false //true
-                })
+            emWamp.getCountries(false /*true*/, "", false /*true*/)
                 .then(function(result) {
                         $scope.currentIpCountry = result.currentIPCountry;
                         $scope.countries = result.countries;
@@ -247,7 +243,7 @@
         };
 
         function getCurrencies() {
-            emWamp.call('/user/account#getCurrencies')
+            emWamp.getCurrencies()
                 .then(function(result) {
                         $scope.currencies = result;
                     },

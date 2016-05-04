@@ -34,13 +34,55 @@
 
             // #region Account
 
+            validateUsername: function(username) {
+                return _call("/user/account#validateUsername", { username: username });
+            },
+
+            validateEmail: function (email) {
+                return _call("/user/account#validateEmail", { email: email });
+            },
+
             register: function(parameters) {
                 return _call("/user/account#register", parameters);
+            },
+
+            //
+            // Get the country list to populate the registration form or profile form.
+            //
+            // Parameter
+            //  {
+            //      expectRegions: true,
+            //      filterByCountry: '',
+            //      excludeDenyRegistrationCountry: true
+            //  }
+            //
+            // 
+            // expectRegions: [boolean, optional]
+            // Indicates if the region list should be included in the response for each country.  
+            // 
+            // filterByCountry: [string, optional]
+            // Filter the country by country code (ISO3166 Alpha2).  
+            //
+            // excludeDenyRegistrationCountry: [boolean, optional]
+            // Indicate if the response should exclude the countries which deny gambling.
+            //
+            getCountries: function (expectRegions, filterByCountry, excludeDenyRegistrationCountry) {
+                return _call("/user/account#getCountries",
+                {
+                    expectRegions: expectRegions,
+                    filterByCountry: filterByCountry,
+                    excludeDenyRegistrationCountry: excludeDenyRegistrationCountry
+                });
+            },
+
+            getCurrencies: function () {
+                return _call("/user/account#getCurrencies");
             },
 
             // #endregion
 
             // #region Session
+
             /// <summary>
             /// Login the end-user.
             /// </summary>
@@ -60,6 +102,10 @@
             /// </parameters>
             login: function(parameters) {
                 return _call("/user#login", parameters);
+            },
+
+            acceptTC: function() {
+                return _call("/user#acceptTC");
             },
 
             /// <summary>
@@ -118,6 +164,26 @@
             //
             // End-user fills the new password and click submit, then /user/pwd#reset method is called with the key & the new password.
             //
+
+            //
+            // Get the password policy for client-side validation.
+            //
+            // Return
+            //
+            //  {
+            //      "regularExpression": "(?=.*\\d+)(?=.*[A-Za-z]+).{8,20}",
+            //      "message": "Password must contain at least1 letter and 1 digit, and its minimal length is 8."
+            //  }
+            //
+            // regularExpression [string]
+            // The regular expression configured in back-end.
+            // 
+            // message [string]
+            // The message for the password requirement.
+            //
+            getPasswordPolicy: function() {
+                return _call("/user/pwd#getPolicy");
+            },
 
             //
             // Change the password of the current logged-in user.
@@ -217,7 +283,7 @@
             // which can be retrieved from /user/pwd#getPolicy method.
             resetPassword: function(key, password) {
                 return _call("/user/pwd#reset", { key: key, password: password });
-            },
+            }
 
             // #endregion
         };
@@ -240,16 +306,6 @@
                     //console.log(subscription);
                 },
                 _logError);
-
-        //$rootScope.$on("$wamp.open", function (event, session) {
-        //    service.call("/user#login", { usernameOrEmail: 'xdinos4@nessos.gr', password: 'lunat!c7' })
-        //        .then(function(result) {
-        //                console.log(result);
-        //            });
-        //});
-
-        //$rootScope.$on("$wamp.close", function (event, data) {
-        //});
 
         $wamp.open();
 

@@ -125,12 +125,7 @@
         $scope.phonePrefixes = [];
         function loadCountries() {
             $scope.loadingCountries = true;
-            emWamp.call('/user/account#getCountries', {
-                expectRegions: false, // true
-                filterByCountry: '',
-                excludeDenyRegistrationCountry: false //true
-            })
-            .then(function(result) {
+            emWamp.getCountries(false /*true*/, '', false /*true*/).then(function(result) {
                 $scope.currentIpCountry = result.currentIPCountry;
                 $scope.countries = result.countries;
                 if ($scope.currentIpCountry == null || $scope.currentIpCountry == '' || $scope.currentIpCountry == undefined)
@@ -179,8 +174,7 @@
         $scope.currencies = [];
         function loadCurrencies() {
             $scope.loadingCurrencies = true;
-            emWamp.call('/user/account#getCurrencies')
-                .then(function (result) {
+            emWamp.getCurrencies().then(function (result) {
                     $scope.currencies = result;
                     if ($scope.model.country !== null)
                         selectCurrency($scope.currencies, $scope.model.country);
