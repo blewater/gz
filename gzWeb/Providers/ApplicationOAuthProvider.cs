@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 using gzDAL.Conf;
-using gzDAL.Models;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
