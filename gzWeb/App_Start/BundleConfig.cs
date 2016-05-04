@@ -145,6 +145,7 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/auth/registerCtrl.js"
                 , "~/Scripts/_app/controllers/auth/loginCtrl.js"
                 , "~/Scripts/_app/controllers/auth/forgotPasswordCtrl.js"
+                , "~/Scripts/_app/controllers/auth/resetPasswordCtrl.js"
                 , "~/Scripts/_app/controllers/auth/registerStartCtrl.js"
                 , "~/Scripts/_app/controllers/auth/registerDetailsCtrl.js"
             ));

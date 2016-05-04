@@ -1,8 +1,11 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDetailsCtrl';
-    APP.controller(ctrlId, ['$scope', '$rootScope', '$http', '$filter', 'emWamp', 'message', 'api', ctrlFactory]);
-    function ctrlFactory($scope, $rootScope, $http, $filter, emWamp, message, api) {
+    APP.controller(ctrlId, ['$scope', '$http', '$filter', 'emWamp', 'message', 'api', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, $http, $filter, emWamp, message, api, constants) {
+        $scope.spinnerGreen = constants.spinners.sm_rel_green;
+        $scope.spinnerWhite = constants.spinners.sm_rel_white;
+
         var titles = {
             mr: { display: 'Mr.', gender: 'M' },
             ms: { display: 'Ms.', gender: 'F' },
@@ -141,7 +144,9 @@
                 });
                 $scope.onCountrySelected($scope.currentIpCountry);
                 $scope.loadingCountries = false;
-            }, logError);
+            }, function(error) {
+                console.log(error);
+            });
         };
         $scope.onCountrySelected = function (countryCode) {
             var country = $filter('filter')($scope.countries, { code: countryCode })[0];
@@ -175,11 +180,13 @@
         function loadCurrencies() {
             $scope.loadingCurrencies = true;
             emWamp.getCurrencies().then(function (result) {
-                    $scope.currencies = result;
-                    if ($scope.model.country !== null)
-                        selectCurrency($scope.currencies, $scope.model.country);
-                    $scope.loadingCurrencies = false;
-                }, logError);
+                $scope.currencies = result;
+                if ($scope.model.country !== null)
+                    selectCurrency($scope.currencies, $scope.model.country);
+                $scope.loadingCurrencies = false;
+            }, function(error) {
+                console.log(error);
+            });
         };
 
         function selectCurrency(currencies, country) {
@@ -205,16 +212,30 @@
         };
         
         function register() {
+            $scope.waiting = true;
             var emPromise = emRegister("http://localhost/activate/");
             emPromise.then(function(emRegisterResult) {
                 emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password }).then(function (emLoginResult) {
                     gzRegister().then(function(gzRegisterResult) {
                         api.login($scope.model.username, $scope.model.password).then(function (gzLoginResult) {
+                            $scope.waiting = false;
                             $scope.nsOk($scope.model);
-                        }, logError);
-                    }, logError);
-                }, logError);
-            }, logError);
+                        }, function(gzLoginError) {
+                            $scope.waiting = false;
+                            console.log(gzLoginError);
+                        });
+                    }, function(gzRegisterError) {
+                        $scope.waiting = false;
+                        console.log(gzRegisterError);
+                    });
+                }, function (emLoginError) {
+                    $scope.waiting = false;
+                    console.log(emLoginError);
+                });
+            }, function (emRegisterError) {
+                $scope.waiting = false;
+                console.log(emRegisterError);
+            });
         };
 
         function emRegister(callbackUrl) {
@@ -265,10 +286,6 @@
             });
         }
         // #endregion
-
-        function logError(error) {
-            console.log(error);
-        };
 
         // #region Terms and conditions
         $scope.readTerms = function(){

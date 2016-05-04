@@ -49,24 +49,40 @@
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
-                    <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" required
-                           ng-class="{ 'empty': !model.password, 'danger' : (form.password.$invalid && !form.password.$pristine) || !passwordValidation.isValid }"
+                    <input type="password" placeholder="password" id="password" name="password" class="form-control" ng-model="model.password" required
+                           ng-class="{ 'empty': !model.password, 'danger' : (form.password.$invalid && !form.password.$pristine) || passwordValidation.isValid === false }"
                            ng-focus="onPasswordFocus();" ng-blur="onPasswordBlur()">
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
-                    <div class="field-ok" ng-class="{'show': form.password.$valid && passwordValidation.isValid}">
+                    <div class="field-ok" ng-class="{'show': form.password.$valid && passwordValidation.isValid === true}">
                         <img src="../../Content/Images/check.svg" />
                     </div>
                     <div class="help-block" ng-class="{'show': passwordFocused && form.password.$error.required}">Password is required.</div>
-                    <div class="help-block" ng-class="{'show': passwordFocused && !form.password.$error.required && passwordValidation.error}">{{passwordValidation.error}}</div>
+                    <div class="help-block help-block-3x" ng-class="{'show': passwordFocused && !form.password.$error.required && passwordValidation.isValid === false}">{{passwordValidation.error}}</div>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-show="passwordValidOnce">
+                <div class="form-group">
+                    <input type="password" placeholder="confirm password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="model.confirmPassword" required
+                           ng-class="{ 'empty': !model.confirmPassword, 'danger' : model.confirmPassword !== model.password }"
+                           ng-focus="confirmPasswordFocused = true;" ng-blur="confirmPasswordFocused = false;">
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':confirmPasswordFocused || (form.password.$valid && model.confirmPassword === model.password)}">
+                        <i class="fa fa-lg fa-key"></i>
+                    </span>
+                    <div class="field-ok" ng-class="{'show': form.password.$valid && passwordValidation.isValid && model.confirmPassword === model.password}">
+                        <img src="../../Content/Images/check.svg" />
+                    </div>
+                    <div class="help-block" ng-class="{'show': confirmPasswordFocused && form.confirmPassword.$error.required}">Confirm Password is required.</div>
+                    <div class="help-block help-block-2x" ng-class="{'show': confirmPasswordFocused && !form.confirmPassword.$error.required && model.confirmPassword !== model.password}">Password did not match, double check so both fields have the same password.</div>
                 </div>
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group text-center">
                     <div class="btns">
-                        <button type="submit" class="btn-gz" ng-disabled="form.$invalid || !emailValidation.isAvailable || !usernameValidation.isAvailable || !passwordValidation.isValid">Next</button>
+                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !emailValidation.isAvailable || !usernameValidation.isAvailable || !passwordValidation.isValid">Next</button>
                     </div>
                 </div>
             </div>
