@@ -37,7 +37,8 @@
         path: '/',
         ctrl: 'homeCtrl',
         tpl: '/Mvc/Guest/Home',
-        title: 'Home'
+        title: 'Home',
+        reloadOnSearch: false
     };
     var transparency = {
         key: routeKeys.transparency,

@@ -288,7 +288,7 @@
                     return scope.isNotification;
                 };
                 scope.isMinimized = function () {
-                    return scope.$root.nsNotificationsMinimized;
+                    return scope.isNotification && scope.$root.nsNotificationsMinimized;
                 };
                 scope.toggleMinMax = function () {
                     scope.$root.nsNotificationsMinimized = !scope.$root.nsNotificationsMinimized;

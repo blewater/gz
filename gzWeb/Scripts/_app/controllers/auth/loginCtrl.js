@@ -18,7 +18,7 @@
                 login();
         };
         function login(){
-            $scope.loading = true;
+            $scope.waiting = true;
             $scope.errorMsg = "";
             //emWamp.logout().then(function() {
             //    api.logout();
@@ -38,15 +38,15 @@
                     });
                     $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE);
                     $scope.nsOk();
-                    $scope.loading = false;
+                    $scope.waiting = false;
                 }, function (error) {
                     emWamp.logout();
                     $scope.errorMsg = error.data.error_description;
-                    $scope.loading = false;
+                    $scope.waiting = false;
                 });
             }, function (error) {
                 $scope.errorMsg = error.desc;
-                $scope.loading = false;
+                $scope.waiting = false;
             });
         }
         //function emLogin(username, password) {

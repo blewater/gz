@@ -432,6 +432,7 @@
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
+    <Content Include="Partials\messages\resetPassword.html" />
     <Content Include="Partials\messages\forgotPassword.html" />
     <Content Include="Partials\messages\registerDetails.html" />
     <Content Include="Partials\messages\terms.html" />
@@ -485,6 +486,7 @@
     <Content Include="Scripts\_app\app.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
+    <Content Include="Scripts\_app\controllers\auth\resetPasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerStartCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDetailsCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\depositCtrl.js" />

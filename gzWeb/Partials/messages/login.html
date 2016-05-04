@@ -50,9 +50,9 @@
                     <div class="btns text-center">
                         <button type="submit" class="btn-gz login" ng-disabled="form.$invalid"
                                 ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
-                            <span ng-show="loading && !hovered" class="spinner" us-spinner="spinnerGreen"></span>
-                            <span ng-show="loading && hovered" class="spinner" us-spinner="spinnerWhite"></span>
-                            <span ng-show="!loading">Login</span>
+                            <span ng-show="waiting && !hovered" class="spinner" us-spinner="spinnerGreen"></span>
+                            <span ng-show="waiting && hovered" class="spinner" us-spinner="spinnerWhite"></span>
+                            <span ng-show="!waiting">Login</span>
                         </button>
                     </div>
                     <div class="btns text-center">
