@@ -89,8 +89,10 @@ namespace gzWeb
 
             container.RegisterSingleton<MapperConfiguration>(automapperConfig);
             container.Register<IMapper>(() => automapperConfig.CreateMapper(container.GetInstance));
+#if TEST
             if ((string) app.Properties["host.AppMode"] == "development")
                 app.SetDataProtectionProvider(new DpapiDataProtectionProvider());
+#endif
 
             //container.RegisterSingleton(app);
             container.Register(() => app.GetDataProtectionProvider(), Lifestyle.Scoped);
@@ -117,7 +119,7 @@ namespace gzWeb
             container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);
             container.RegisterWebApiControllers(config);
             
-            container.Verify();
+            //container.Verify();
 
             config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
             //GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
