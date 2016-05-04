@@ -56,7 +56,7 @@
                 $scope.nsOk(true);
             }, function(error) {
                 $scope.waiting = false;
-                $scope.sendResetPasswordEmailError = error;
+                $scope.sendResetPasswordEmailError = error.desc;
                 vcRecaptchaService.reload();
             });
         }

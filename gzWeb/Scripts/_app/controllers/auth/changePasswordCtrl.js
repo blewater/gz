@@ -1,15 +1,15 @@
 ﻿(function () {
     "use strict";
-    var ctrlId = "resetPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'message', '$location', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, message, $location) {
+    var ctrlId = "changePasswordCtrl";
+    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'message', 'vcRecaptchaService', ctrlFactory]);
+    function ctrlFactory($scope, constants, emWamp, message, vcRecaptchaService) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
+        $scope.reCaptchaPublicKey = constants.reCaptchaPublicKey;
 
         $scope.model = {
-            key: $scope.resetKey,
-            isKeyAvailable: undefined,
-            password: undefined,
+            oldPassword: undefined,
+            newPassword: undefined,
             confirmPassword: undefined
         }
         
@@ -19,7 +19,6 @@
 
         function getPasswordPolicy() {
             emWamp.call('/user/pwd#getPolicy').then(function (result) {
-                //_passwordPolicyRegEx = new RegExp("(?=.*[0-9]+)(?=.*[A-Za-z]+)(?=.*[*:%!~]+).{8,20}");
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
             }, function(error) {
@@ -39,17 +38,17 @@
                 $scope.passwordValidation.error = _passwordPolicyError;
             };
         };
-        $scope.onPasswordFocus = function () {
-            $scope.passwordFocused = true;
+        $scope.onNewPasswordFocus = function () {
+            $scope.newPasswordFocused = true;
         }
-        $scope.onPasswordBlur = function () {
-            $scope.passwordFocused = false;
-            $scope.validatePassword($scope.model.password);
+        $scope.onNewPasswordBlur = function () {
+            $scope.newPasswordFocused = false;
+            $scope.validatePassword($scope.model.newPassword);
         }
 
         $scope.passwordValidOnce = false;
         var unregisterIsPasswordValidWatch = $scope.$watch(function () {
-            return $scope.form.password.$dirty && $scope.form.password.$valid && $scope.passwordValidation.isValid === true;
+            return $scope.form.newPassword.$dirty && $scope.form.newPassword.$valid && $scope.passwordValidation.isValid === true;
         }, function (newValue, oldValue) {
             if (newValue === true) {
                 $scope.passwordValidOnce = true;
@@ -57,47 +56,32 @@
             }
         });
         // #endregion
-
-        $scope.forgotPassword = function () {
-            $scope.nsNext({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '/partials/messages/forgotPassword.html',
-                nsCtrl: 'forgotPasswordCtrl',
-                nsStatic: true
-            });
-        };
         
         $scope.submit = function () {
             if ($scope.form.$valid)
-                reset();
+                change();
         };
-        function reset(){
+        function change(){
             $scope.waiting = true;
-            emWamp.resetPassword($scope.model.key, $scope.model.password).then(function(result) {
+            emWamp.changePassword({
+                oldPassword: $scope.model.oldPassword,
+                newPassword: $scope.model.newPassword,
+                captchaPublicKey: $scope.reCaptchaPublicKey,
+                captchaChallenge: "",
+                captchaResponse: vcRecaptchaService.getResponse()
+            }).then(function(result) {
                 $scope.waiting = false;
-                message.toastr("Your password has been reset successfully!");
-                $location.search('');
+                message.toastr("Your password has been changed successfully!");
                 $scope.nsOk(true);
             }, function(error) {
-                $scope.model.isKeyAvailable = false;
                 $scope.waiting = false;
-                console.log(error);
-            });
-        }
-
-        function checkResetKeyAvailability() {
-            emWamp.isResetPwdKeyAvailable($scope.model.key).then(function (result) {
-                $scope.model.isKeyAvailable = result;
-                getPasswordPolicy();
-            }, function (error) {
-                $scope.model.isKeyAvailable = false;
-                console.log(error);
+                $scope.changePasswordError = error.desc;
+                vcRecaptchaService.reload();
             });
         }
 
         function init() {
-            checkResetKeyAvailability();
+            getPasswordPolicy();
         };
         init();
     }
