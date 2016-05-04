@@ -98,6 +98,12 @@
     -ms-opacity: 1;
     opacity: 1;
 }
+.auth .help-block.help-block-2x.show {
+    height: 36px;
+}
+.auth .help-block.help-block-3x.show {
+    height: 54px;
+}
 
 .auth .btns {
     /*margin: 30px auto;*/
@@ -347,14 +353,25 @@
     font-weight: bold;
     text-decoration: underline;
 }
+
+.auth.register button.next { width: 140px; }
 /* #endregion */
 
 /* #region Login */
-/*.auth.login button.login { width: 145px; }*/
+.auth.login button.login { width: 147px; }
 /* #endregion */
 
-/* #region Login */
-/*.auth.forgot button.send { width: 170px; }*/
+/* #region Forgot Password */
+.auth.forgot-password button.send { width: 280px; }
+.auth.forgot-password .recaptcha-wrap > div > div { margin: 0 auto; }
+/* #endregion */
+
+/* #region Reset Password */
+.auth.reset-password button.submit { width: 160px; }
+/* #endregion */
+
+/* #region Change Password */
+.auth.change-password button.submit { width: 160px; }
 /* #endregion */
 
 .pac-container {

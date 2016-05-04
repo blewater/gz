@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp, chat) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, chat, $location) {
         // #region Playground
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -66,14 +66,38 @@
                 nsStatic: true,
             });
         };
+        $scope.reset = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/resetPassword.html',
+                nsCtrl: 'resetPasswordCtrl',
+                nsStatic: true,
+            });
+        };
+        $scope.change = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/changePassword.html',
+                nsCtrl: 'changePasswordCtrl',
+                nsStatic: true,
+            });
+        };
         $scope.logout = function () {
             emWamp.logout();
         };
-        $scope.showChat = function() {
+
+        $scope.showChat = function () {
             chat.show();
         };
         $scope.hideChat = function() {
             chat.hide();
+        };
+
+        $scope.url = function () {
+            var url = $location.protocol() + "://" + $location.host() + ":" + $location.port();
+            message.toastr(url);
         };
         // #endregion
     }
