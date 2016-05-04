@@ -88,7 +88,7 @@ namespace gzWeb
 
             container.RegisterSingleton<MapperConfiguration>(automapperConfig);
             container.Register<IMapper>(() => automapperConfig.CreateMapper(container.GetInstance));
-            if ((string) app.Properties["host.AppMode"]=="development")
+            if ((string) app.Properties["host.AppMode"] == "development")
                 app.SetDataProtectionProvider(new DpapiDataProtectionProvider());
 
             //container.RegisterSingleton(app);
