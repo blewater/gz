@@ -35,7 +35,8 @@ namespace gzWeb.Tests.Controllers
             InvestmentsApiController controller;
             var db = CreateInvestmentsApiController(out controller);
 
-            var manager = new ApplicationUserManager(new CustomUserStore(db), null);
+            var manager = new ApplicationUserManager(new CustomUserStore(db),
+                                                     new DataProtectionProviderFactory(() => null));
             var user = manager.FindByEmail("gz@gz.com");
 
             // Act
@@ -76,7 +77,7 @@ namespace gzWeb.Tests.Controllers
                     custFundShareRepo,
                     currencyRateRepo,
                     mapper,
-                    new ApplicationUserManager(new CustomUserStore(db), null));
+                    new ApplicationUserManager(new CustomUserStore(db), new DataProtectionProviderFactory(() => null)));
             return db;
         }
     }
