@@ -335,15 +335,11 @@
             }
 
             // #endregion
-
             
         };
 
         $wamp.subscribe("/sessionStateChange",
                 function(args, kwargs, details) {
-                    //if (kwargs.code !== 0) {
-                    //    $wamp.open();
-                    //}
 
                     $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
                     
