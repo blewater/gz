@@ -149,7 +149,8 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/auth/changePasswordCtrl.js"
                 , "~/Scripts/_app/controllers/auth/registerAccountCtrl.js"
                 , "~/Scripts/_app/controllers/auth/registerDetailsCtrl.js"
-                , "~/Scripts/_app/controllers/auth/registerSelectPaymentCtrl.js"
+                , "~/Scripts/_app/controllers/auth/registerPaymentMethodsCtrl.js"
+                , "~/Scripts/_app/controllers/auth/registerDepositCtrl.js"
             ));
             #endregion
         }

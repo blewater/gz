@@ -211,8 +211,8 @@
                             $scope.nsNext({
                                 nsType: 'modal',
                                 nsSize: '600px',
-                                nsTemplate: '/partials/messages/registerSelectPayment.html',
-                                nsCtrl: 'registerSelectPaymentCtrl',
+                                nsTemplate: '/partials/messages/registerPaymentMethods.html',
+                                nsCtrl: 'registerPaymentMethodsCtrl',
                                 nsStatic: true,
                                 nsParams: { accountModel: $scope.model }
                             });
