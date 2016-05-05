@@ -10,7 +10,8 @@
         var _supportedPaymentMethodCodes = {
             VISA: "VISA",
             Maestro: "Maestro",
-            MasterCard: "MasterCard"
+            MasterCard: "MasterCard",
+            Trustly: "MoneyMatrix_Trustly"
         };
 
         _service.PaymentMethodCode = _supportedPaymentMethodCodes;
