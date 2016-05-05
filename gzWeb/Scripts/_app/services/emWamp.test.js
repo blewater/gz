@@ -2,6 +2,7 @@
 /// <reference path="../../autobahn.min.js" />
 
 /// <reference path="../../angular/angular.js" />
+/// <reference path="../../angular-autocomplete/ngAutocomplete.js" />
 /// <reference path="../../angular/angular-mocks.js" />
 /// <reference path="../../angular-route/angular-route.js" />
 /// <reference path="../../angular-resource/angular-resource.js" />
@@ -15,6 +16,7 @@
 /// <reference path="../../angular-match-media/match-media.js" />
 /// <reference path="../../angular-local-storage/angular-local-storage.js" />
 /// <reference path="../../angular-count-to/angular-count-to.min.js" />
+/// <reference path="../../angular-recaptcha/angular-recaptcha.min.js" />
 /// <reference path="../../angular-wamp/angular-wamp.js" />
 /// <reference path="../../angular-fullscreen/angular-fullscreen.js" />
 /// <reference path="../app.js" />
@@ -31,14 +33,6 @@
 describe("emWamp service", function () {
     var emWamp;
     var originalTimeout;
-    
-    //beforeAll(function (done) {
-    //    module("GZ");
-    //    inject(function($injector) {
-    //        emWamp = $injector.get("emWamp");
-    //    });
-    //    done();
-    //});
 
     beforeEach(function() {
         module("GZ");
@@ -68,38 +62,105 @@ describe("emWamp service", function () {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
     });
 
-    //beforeEach(function (done) {
-    //    module("GZ");
-    //    inject(function ($injector) {
-    //        emWamp = $injector.get("emWamp");
-    //    });
-    //    done();
-    //});
+    it("should login valid user",
+        function(done) {
+            emWamp.login({ usernameOrEmail: 'gz2016', password: 'gz2016!@' })
+                .then(function (result) {
+                        expect(result).toBeDefined();
+                        expect(result.hasToAcceptTC).toBeDefined();
+                        expect(result.minorChangeInTC).toBeDefined();
+                        expect(result.majorChangeInTC).toBeDefined();
+                        expect(result.isEmailVerified).toBeDefined();
+                        expect(result.isProfileIncomplete).toBeDefined();
+                        expect(result.roles).toBeDefined();
+                        expect(result.hasToEnterCaptcha).toBeDefined();
+                        expect(result.hasToChangePassword).toBeDefined();
+                        expect(result.loginCount).toBeDefined();
+                        expect(result.registrationTime).toBeDefined();
+                        expect(result.lastLoginTime).toBeDefined();
+                        done();
+                    },
+                    function() {
+                        expect(false).toBe(true);
+                        done();
+                    });
+            flush();
+        });
 
-    it("should work", function (done) {
-        emWamp.userLogin({ usernameOrEmail: 'xdinos1@nessos.gr', password: 'lunat!c7' })
-            .then(function (result) {
-                console.log(result);
-                expect(true).toBe(true);
-                done();
-            }, function() {
-                expect(false).toBe(true);
-                done();
-            });
-        flush();
-    });
+    it("should getSessionInfo",
+        function(done) {
+            emWamp.login({ usernameOrEmail: 'gz2016', password: 'gz2016!@' })
+                .then(function (_) {
+                        emWamp.getSessionInfo()
+                            .then(function(result) {
+                                    expect(result).toBeDefined();
+                                    expect(result.isAuthenticated).toBeDefined();
+                                    expect(result.isAuthenticated).toBe(true);
+                                    expect(result.firstname).toBeDefined();
+                                    expect(result.surname).toBeDefined();
+                                    expect(result.currency).toBeDefined();
+                                    expect(result.userCountry).toBeDefined();
+                                    expect(result.ipCountry).toBeDefined();
+                                    expect(result.loginTime).toBeDefined();
+                                    expect(result.isEmailVerified).toBeDefined();
+                                    done();
+                                },
+                                function(error) {
+                                    expect(false).toBe(true);
+                                    done();
+                                });
+                    },
+                    function(error) {
+                        expect(false).toBe(true);
+                        done();
+                    });
+            flush();
+        });
 
-    it("should work 2", function (done) {
-        expect(true).toBe(true);
-        done();
-        //emWamp.userGetSessionInfo()
-        //    .then(function (result) {
-        //        expect(true).toBe(true);
-        //        done();
-        //    }, function () {
-        //        expect(false).toBe(true);
-        //        done();
-        //    });
-        //flush();
-    });
+    it("should not login invalid user",
+        function(done) {
+            emWamp.login({ usernameOrEmail: 'xxddxx', password: 'gz2016!@' })
+                .then(function(result) {
+                        expect(false).toBe(true);
+                        done();
+                    },
+                    function(error) {
+                        expect(error).toBeDefined();
+                        expect(error.desc).toBeDefined();
+                        expect(error.desc).toBe('The login failed. Please check your username and password.');
+                        done();
+                    });
+            flush();
+        });
+
+    it("should return a list of countries",
+        function(done) {
+            emWamp.getCountries()
+                .then(function (result) {
+                        expect(result.currentIPCountry).toBeDefined();
+                        expect(result.countries).toBeDefined();
+                        done();
+                    },
+                    function (error) {
+                        expect(false).toBe(true);
+                        done();
+                    });
+            flush();
+        });
+
+    it("should return a list of currencies",
+        function(done) {
+            emWamp.getCurrencies()
+                .then(function(result) {
+                        expect(result).toBeDefined();
+                        expect(Array.isArray(result)).toBe(true);
+                        done();
+                    },
+                    function(error) {
+                        expect(false).toBe(true);
+                        done();
+                    });
+            flush();
+        });
+
 })
