@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,6 +12,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using gzDAL.Conf;
 using gzDAL.Models;
+using gzWeb.Areas.Mvc.Models;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Testing;
@@ -63,21 +66,30 @@ namespace gzWeb.Tests.Controllers
 
     public static class HttpClientExtensions
     {
-        public static async Task<HttpResponseMessage> PostJsonAsync<TPayload>(this HttpClient @this, string relativeUri, TPayload payload)
+        public static async Task<HttpResponseMessage> PostJsonAsync<TValue>(this HttpClient @this, string relativeUri, TValue value)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, relativeUri);
-            var json = JsonConvert.SerializeObject(payload);
+            var json = JsonConvert.SerializeObject(value);
             request.Content = new StringContent(json);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             return await @this.SendAsync(request);
         }
+
+        //public static async Task<HttpResponseMessage> PostAsync<TPayload>(this HttpClient @this, string relativeUri, TPayload payload)
+        //{
+        //    var request = new HttpRequestMessage(HttpMethod.Post, relativeUri);
+        //    var json = JsonConvert.SerializeObject(payload);
+        //    request.Content = new StringContent(json);
+        //    request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+        //    return await @this.SendAsync(request);
+        //}
     }
 
     [TestFixture]
     public class AccountApiControllerTests : BaseApiControllerTests
     {
-
         [SetUp]
         public void SetUp()
         {
@@ -88,40 +100,151 @@ namespace gzWeb.Tests.Controllers
         {
         }
 
+        #region Account/Login
+
         [Test]
+        [Category("Account/Login")]
         public async Task LoginShouldPass()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "/Token");
-            request.Content = new StringContent("grant_type=password&username=testuser&password=gz2016!@");
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-
-            var response = await Client.SendAsync(request);
+            var response = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", "testuser"),
+                                                                                    new KeyValuePair<string, string>("password", "gz2016!@"),
+                                                                            }));
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Test]
+        [Category("Account/Login")]
         public async Task LoginShouldFailWithWrongUser()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "/Token");
-            request.Content = new StringContent("grant_type=password&username=nouser&password=gz2016!@");
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-
-            var response = await Client.SendAsync(request);
+            var response = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", "unknown"),
+                                                                                    new KeyValuePair<string, string>("password", "gz2016!@"),
+                                                                            }));
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Test]
+        [Category("Account/Login")]
         public async Task LoginShouldFailWithWrongPassword()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "/Token");
-            request.Content = new StringContent("grant_type=password&username=testuser&password=gz2016");
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-
-            var response = await Client.SendAsync(request);
-
+            var response = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", "testuser"),
+                                                                                    new KeyValuePair<string, string>("password", "wrongpassword"),
+                                                                            }));
+            
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        #endregion
+
+        [Test]
+        public async Task ForgotPasswordShouldGeneratePasswordResetToken()
+        {
+            await Client.PostJsonAsync("/api/Account/Register",
+                                        new RegisterBindingModel
+                                        {
+                                                Username = "username",
+                                                Email = "email@email.com",
+                                                Password = "1234567",
+                                                FirstName = "FirstName",
+                                                LastName = "LastName",
+                                                Birthday = new DateTime(1975, 10, 13),
+                                                Currency = "EUR",
+                                        });
+
+            using (var dbContext = new ApplicationDbContext())
+            {
+                var user = dbContext.Users.Single(x => x.UserName == "username");
+                Assert.NotNull(user);
+
+                var response = await Client.PostJsonAsync("/api/Account/ForgotPassword", new ForgotPasswordViewModel { Email = user.Email });
+                Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+                var code = await response.Content.ReadAsStringAsync();
+                Assert.IsTrue(!String.IsNullOrEmpty(code));
+
+                dbContext.Users.Remove(user);
+                dbContext.SaveChanges();
+            }
+        }
+
+        [Test]
+        public async Task ForgotPasswordShouldFailIfUserNotExists()
+        {
+            var response = await Client.PostJsonAsync("/api/Account/ForgotPassword", new ForgotPasswordViewModel { Email = "unknown@where.com" });
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Test]
+        public async Task ResetPasswordShouldResetPassword()
+        {
+            await Client.PostJsonAsync("/api/Account/Register",
+                                        new RegisterBindingModel
+                                        {
+                                            Username = "username",
+                                            Email = "email@email.com",
+                                            Password = "1234567",
+                                            FirstName = "FirstName",
+                                            LastName = "LastName",
+                                            Birthday = new DateTime(1975, 10, 13),
+                                            Currency = "EUR",
+                                        });
+            using (var dbContext = new ApplicationDbContext())
+            {
+                var user = dbContext.Users.Single(x => x.UserName == "username");
+                Assert.NotNull(user);
+
+                var forgotPasswordResponse = await Client.PostJsonAsync("/api/Account/ForgotPassword", new ForgotPasswordViewModel { Email = user.Email });
+                Assert.AreEqual(HttpStatusCode.OK, forgotPasswordResponse.StatusCode);
+
+                var code = await forgotPasswordResponse.Content.ReadAsStringAsync();
+                Assert.IsTrue(!String.IsNullOrEmpty(code));
+                code = code.Trim('"');
+
+                var resetPasswordResponse = await Client.PostJsonAsync("/api/Account/ResetPassword", new ResetPasswordViewModel
+                                                                                        {
+                                                                                                Code = code,
+                                                                                                Email = user.Email,
+                                                                                                Password = "7654321",
+                                                                                                ConfirmPassword = "7654321",
+                                                                                        });
+                Assert.AreEqual(HttpStatusCode.OK, resetPasswordResponse.StatusCode);
+
+                var loginResponse = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", user.Email),
+                                                                                    new KeyValuePair<string, string>("password", "7654321"),
+                                                                            }));
+
+                Assert.AreEqual(HttpStatusCode.OK, loginResponse.StatusCode);
+
+                var failedLoginResponse = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", user.Email),
+                                                                                    new KeyValuePair<string, string>("password", "1234567"),
+                                                                            }));
+
+                Assert.AreEqual(HttpStatusCode.BadRequest, failedLoginResponse.StatusCode);
+
+                dbContext.Users.Remove(user);
+                dbContext.SaveChanges();
+            }
         }
 
         [Test]
@@ -130,6 +253,9 @@ namespace gzWeb.Tests.Controllers
             var response = await Client.PostJsonAsync("/api/Account/Register", new RegisterBindingModel {Username = "username"});
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+
+            using (var dbContext = new ApplicationDbContext())
+                Assert.IsFalse(dbContext.Users.Any(x => x.UserName == "username"));
         }
 
         [Test]
@@ -148,6 +274,15 @@ namespace gzWeb.Tests.Controllers
                                                       });
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+            using (var dbContext = new ApplicationDbContext())
+            {
+                var user = dbContext.Users.Single(x => x.UserName == "username");
+                Assert.NotNull(user);
+
+                dbContext.Users.Remove(user);
+                dbContext.SaveChanges();
+            }
         }
     }
 }
