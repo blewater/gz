@@ -29,10 +29,24 @@ namespace gzDAL.Conf
         }
     }
 
+    public class DataProtectionProviderFactory
+    {
+        public DataProtectionProviderFactory(Func<IDataProtectionProvider> factory)
+        {
+            _factory = factory;
+        }
+        public IDataProtectionProvider Get()
+        {
+            return _factory();
+        }
+
+        private readonly Func<IDataProtectionProvider> _factory;
+    }
+
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser, int>
     {
-        public ApplicationUserManager(IUserStore<ApplicationUser, int> store, IDataProtectionProvider dataProtectionProvider)
+        public ApplicationUserManager(IUserStore<ApplicationUser, int> store, DataProtectionProviderFactory dataProtectionProviderFactory)
                 : base(store)
         {
             // Configure validation logic for usernames
@@ -74,7 +88,7 @@ namespace gzDAL.Conf
                                       });
             EmailService = new EmailService();
             SmsService = new SmsService();
-            //var dataProtectionProvider = app.GetDataProtectionProvider();
+            var dataProtectionProvider = dataProtectionProviderFactory.Get();
             if (dataProtectionProvider != null)
                 UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser, int>(dataProtectionProvider.Create("ASP.NET Identity"));
         }

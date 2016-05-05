@@ -20,10 +20,7 @@ namespace gzWeb.Tests
         private SelfHostServer(Uri uri)
         {
             _uri = uri;
-            var startOptions = new StartOptions();
-            startOptions.Urls.Add(_uri.AbsoluteUri);
-            startOptions.Settings.Add("UnitTest.security.DataProtectionProvider","");
-            _disposable = WebApp.Start<gzWeb.Startup>(startOptions);
+            _disposable = WebApp.Start<gzWeb.Startup>(_uri.AbsoluteUri);
         }
 
         public void Dispose()
