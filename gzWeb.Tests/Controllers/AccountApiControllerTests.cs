@@ -11,12 +11,34 @@ using System.Web.Mvc;
 using gzDAL.Conf;
 using gzDAL.Models;
 using gzWeb.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Testing;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace gzWeb.Tests.Controllers
 {
+    public class DatabaseInitializer : DropCreateDatabaseAlways<ApplicationDbContext>
+    {
+        protected override void Seed(ApplicationDbContext context)
+        {
+            var manager = new ApplicationUserManager(new CustomUserStore(context), new DataProtectionProviderFactory(() => null));
+            var user = new ApplicationUser
+                       {
+                               UserName = "testuser",
+                               Email = "testuser@gz.com",
+                               FirstName = "test",
+                               LastName = "user",
+                               Birthday = new DateTime(1975, 10, 13),
+                               Currency = "EUR",
+
+                               EmailConfirmed = true,
+                       };
+
+            var result = manager.Create(user, "gz2016!@");
+        }
+    }
+
     public abstract class BaseApiControllerTests
     {
         protected SelfHostServer Server { get; private set; }
@@ -26,6 +48,10 @@ namespace gzWeb.Tests.Controllers
         public virtual void OneTimeSetUp()
         {
             Server = SelfHostServer.Start(new Uri("http://localhost:9090"));
+
+            Database.SetInitializer(new DatabaseInitializer());
+            using (var db = new ApplicationDbContext())
+                db.Database.Initialize(false);
         }
 
         [OneTimeTearDown]
@@ -60,6 +86,42 @@ namespace gzWeb.Tests.Controllers
         [TearDown]
         public void TearDown()
         {
+        }
+
+        [Test]
+        public async Task LoginShouldPass()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/Token");
+            request.Content = new StringContent("grant_type=password&username=testuser&password=gz2016!@");
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+
+            var response = await Client.SendAsync(request);
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Test]
+        public async Task LoginShouldFailWithWrongUser()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/Token");
+            request.Content = new StringContent("grant_type=password&username=nouser&password=gz2016!@");
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+
+            var response = await Client.SendAsync(request);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Test]
+        public async Task LoginShouldFailWithWrongPassword()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/Token");
+            request.Content = new StringContent("grant_type=password&username=testuser&password=gz2016");
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+
+            var response = await Client.SendAsync(request);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Test]
