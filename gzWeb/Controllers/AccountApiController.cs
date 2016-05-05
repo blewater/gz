@@ -160,7 +160,6 @@ namespace gzWeb.Controllers
             if (user == null || !await UserManager.IsEmailConfirmedAsync(user.Id))
                 return BadRequest();
             
-            // If we got this far, something failed, redisplay form
             return Ok(await UserManager.GeneratePasswordResetTokenAsync(user.Id));
         }
 

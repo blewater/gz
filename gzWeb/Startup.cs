@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Data.Entity;
+using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.Http;
@@ -90,24 +91,12 @@ namespace gzWeb
             container.RegisterSingleton<MapperConfiguration>(automapperConfig);
             container.Register<IMapper>(() => automapperConfig.CreateMapper(container.GetInstance));
 
-            //container.RegisterSingleton(app);
+            if (ConfigurationManager.AppSettings.AllKeys.Any(x => x == "UNIT_TEST"))
+                app.SetDataProtectionProvider(new DpapiDataProtectionProvider());
+
             container.RegisterSingleton(new DataProtectionProviderFactory(app.GetDataProtectionProvider));
             container.Register<ApplicationDbContext>(Lifestyle.Scoped);
-            //container.Register<ApplicationSignInManager>(Lifestyle.Scoped);
             container.Register<ApplicationUserManager>(Lifestyle.Scoped);
-            
-            //container.Register<IAuthenticationManager>(() => DependencyResolver.Current.GetService<IOwinContextProvider>().CurrentContext.Authentication, Lifestyle.Scoped);
-            //container.Register(() =>
-            //                   {
-            //                       return container.GetInstance<IOwinContextProvider>().CurrentContext.Authentication;
-            //                       //if (HttpContext.Current != null &&
-            //                       //    HttpContext.Current.Items["owin.Environment"] == null && 
-            //                       //    container.IsVerifying)
-            //                       //{
-            //                       //    return new OwinContext().Authentication;
-            //                       //}
-            //                       //return HttpContext.Current.GetOwinContext().Authentication;
-            //                   }, Lifestyle.Scoped);
             container.Register<IUserStore<ApplicationUser, int>, CustomUserStore>(Lifestyle.Scoped);
             container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
             container.Register<ICurrencyRateRepo, CurrencyRateRepo>(Lifestyle.Scoped);
@@ -118,9 +107,6 @@ namespace gzWeb
             container.Verify();
 
             config.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
-            //GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
-
-            //GlobalConfiguration.Configure(WebApiConfig.Register);
 
             return container;
         }
