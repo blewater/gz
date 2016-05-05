@@ -75,7 +75,7 @@
         //  maximumDate [string] : The maximum date of the date selector, only exists when "dateSelector" is true.
         //
         _service.coolOffGetCfg = function () {
-            emWamp.call("/user/coolOff#getCfg");
+            return emWamp.call("/user/coolOff#getCfg");
         };
 
         //
@@ -107,7 +107,7 @@
         //  and will not be reactivated under any circumstances during the cool-off period.
         //
         _service.coolOffEnable = function (reason, unsatisfiedReason, period) {
-            emWamp.call("/user/coolOff#enable",
+            return emWamp.call("/user/coolOff#enable",
             {
                 reason: reason,
                 unsatisfiedReason: unsatisfiedReason,
@@ -160,7 +160,7 @@
         //  minimumDate [string] : The minimum date of the date selector, only exists when "dateSelector" is true.
         //
         _service.selfExclusionGetCfg = function () {
-            emWamp.call("/user/selfExclusion#getCfg");
+            return emWamp.call("/user/selfExclusion#getCfg");
         };
 
         //
@@ -187,7 +187,7 @@
         // Front-end implementation may hide certain option (i.e. hide "Permanent" option) as needed.
         //
         _service.selfExclusionEnable = function (period) {
-            emWamp.call("/user/selfExclusion#enable", { period: period });
+            return emWamp.call("/user/selfExclusion#enable", { period: period });
         };
 
         // #region Limits (https://help.gammatrix-dev.net/help/Limits.html)
@@ -300,7 +300,7 @@
         // https://help.gammatrix-dev.net/help/getCfg2.html
         // 
         _service.realityCheckGetCfg = function () {
-            emWamp.call("/user/realityCheck#getCfg");
+            return emWamp.call("/user/realityCheck#getCfg");
         };
 
         //
@@ -309,7 +309,7 @@
         // https://help.gammatrix-dev.net/help/set.html
         // 
         _service.realityCheckSet = function (value) {
-            emWamp.call("/user/realityCheck#set", { value: value });
+            return emWamp.call("/user/realityCheck#set", { value: value });
         };
 
         //
@@ -318,7 +318,7 @@
         // https://help.gammatrix-dev.net/help/get.html
         // 
         _service.realityCheckGet = function () {
-            emWamp.call("/user/realityCheck#get");
+            return emWamp.call("/user/realityCheck#get");
         };
 
         // #endregion
