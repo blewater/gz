@@ -31,9 +31,7 @@
 
         var service = {
             call: _call,
-            open: function() {
-                $wamp.open();
-            },
+            
 
             // #region Account
 
@@ -128,6 +126,14 @@
             /// </returns>
             getSessionInfo: function() {
                 return _call("/user#getSessionInfo");
+            },
+
+            getProfile: function() {
+                return _call("/user/account#getProfile");
+            },
+
+            updateProfile: function () {
+                return _call("/user/account#updateProfile");
             },
 
             logout: function() {
