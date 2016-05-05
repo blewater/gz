@@ -1,4 +1,4 @@
-﻿<div class="auth register">
+﻿<div class="auth register register-payment-methods">
     <div class="row heading">
         <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
             <div class="steps">
@@ -25,23 +25,24 @@
                 <img src="/Content/Images/logo.svg">
             </div>
         </div>
-        <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
-
+        <div>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="text-center">
                     Select deposit method
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-xs-6">
-                        </div>
-                        <div class="col-xs-6">
-                        </div>
+                        <span class="payment-method col-xs-6" ng-repeat="method in paymentMethods">
+                            <span class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"
+                                  uib-tooltip="{{method.name}}" tooltip-class="payment-method-tooltip"
+                                  ng-attr-tooltip-placement="{{$index % 2 === 0 ? 'auto left' : 'auto right' }}">
+                            </span>
+                        </span>
                     </div>
                 </div>
             </div>
             
-            <div class="col-xs-12 splitter"></div>
+            <div class="col-xs-12 splitter clearfix"></div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
@@ -50,6 +51,6 @@
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
