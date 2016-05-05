@@ -208,7 +208,14 @@
                     gzRegister().then(function(gzRegisterResult) {
                         api.login($scope.model.username, $scope.model.password).then(function (gzLoginResult) {
                             $scope.waiting = false;
-                            $scope.nsOk($scope.model);
+                            $scope.nsNext({
+                                nsType: 'modal',
+                                nsSize: '600px',
+                                nsTemplate: '/partials/messages/registerSelectPayment.html',
+                                nsCtrl: 'registerSelectPaymentCtrl',
+                                nsStatic: true,
+                                nsParams: { accountModel: $scope.model }
+                            });
                         }, function(gzLoginError) {
                             $scope.waiting = false;
                             console.log(gzLoginError);
