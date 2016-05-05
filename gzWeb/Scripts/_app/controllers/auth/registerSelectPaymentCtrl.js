@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerSelectPaymentCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emWamp', 'api', 'message', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emWamp, api, message, constants) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'message', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, message, constants) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         
@@ -17,6 +17,15 @@
 
         // #region init
         function loadPaymentMethods() {
+            emWamp.getSessionInfo().then(function(sessionInfo) {
+                emBanking.getSupportedPaymentMethods(sessionInfo.userCountry, sessionInfo.currency).then(function (paymentMethods) {
+                    $scope.paymentMethods = paymentMethods;
+                }, function(error) {
+                    console.log(error.desc);
+                });
+            }, function(error) {
+                console.log(error.desc);
+            });
         }
 
         function init() {
@@ -25,12 +34,8 @@
         // #endregion
 
         // #region register
-        $scope.submit = function () {
-            if ($scope.form.$valid)
-                register();
-        };
-        
-        function register() {
+        $scope.selectPaymentMethod = function (method) {
+
         };
         // #endregion
 
