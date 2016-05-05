@@ -80,6 +80,54 @@
                 return _call("/user/account#getCurrencies");
             },
 
+            getProfile: function () {
+                return _call("/user/account#getProfile");
+            },
+
+            updateProfile: function () {
+                return _call("/user/account#updateProfile");
+            },
+
+            //
+            // This is the first step for logged-in user to change email. Click (https://help.gammatrix-dev.net/help/Email.html) to view the flow explanation.
+            //
+            // https://help.gammatrix-dev.net/help/sendVerificationEmailToNewMailbo.html
+            //
+            // Remarks
+            // Initially, end-user is not asked for captcha test when changing email. However, if end-user made too many failed attempts with incorrect password, 
+            // they have to pass the captcha test. If captcha test is required but not all the 3 parameters (captchaPublicKey / captchaChallenge / captchaResponse) 
+            // are indicated in the request, this method will return corresponding value.
+            //
+            // The suggested front-end logic is:
+            // After the HTML page is loaded, captcha is not loaded by default. Call this method with the parameters, certainly captchaPublicKey / captchaChallenge / captchaResponse 
+            // are default to null when captcha is not loaded.
+            // If the return value indicates that the captcha test is required, front-end loads the captcha and let the end-user try again.
+            // 
+            // If the return value is true, two emails are sent out.
+            // One email is sent to the original mailbox, to inform that the email is being changed.
+            // The other email is sent to the new mailbox for verification. 
+            //
+            sendVerificationEmailToNewMailbox: function (email, password, emailVerificationURL, captchaPublicKey, captchaChallenge, captchaResponse) {
+                return _call("/user/email#sendVerificationEmailToNewMailbox",
+                {
+                    email: email,
+                    password: password,
+                    emailVerificationURL: emailVerificationURL,
+                    captchaPublicKey: captchaPublicKey,
+                    captchaChallenge: captchaChallenge,
+                    captchaResponse: captchaResponse
+                });
+            },
+
+            //
+            // This is the 2nd step for change email procedure. Click (https://help.gammatrix-dev.net/help/Email.html) to view the flow explanation.
+            //
+            // https://help.gammatrix-dev.net/help/verifyNewEmail.html
+            //
+            verifyNewEmail: function(key, email) {
+                return _call("/user/email#verifyNewEmail", { key: key, email: email });
+            },
+
             // #endregion
 
             // #region Session
@@ -126,14 +174,6 @@
             /// </returns>
             getSessionInfo: function() {
                 return _call("/user#getSessionInfo");
-            },
-
-            getProfile: function() {
-                return _call("/user/account#getProfile");
-            },
-
-            updateProfile: function () {
-                return _call("/user/account#updateProfile");
             },
 
             logout: function() {
