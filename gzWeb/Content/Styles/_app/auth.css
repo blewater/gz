@@ -382,8 +382,8 @@
     box-shadow: 0 0 8px #fff;
 }
 
-.auth.register.register-payment-methods .payment-method .tooltip.payment-method-tooltip {
-    margin-top: 0;
+/*.auth.register.register-payment-methods .payment-method .tooltip.payment-method-tooltip {
+    margin-left: 0;
 }
 .auth.register.register-payment-methods .payment-method .tooltip.payment-method-tooltip .tooltip-inner {
     color: #27A95C;
@@ -393,12 +393,17 @@
     box-shadow: 0 6px 12px rgba(39,169,93,.2);
 }
 
+.auth.register.register-payment-methods .payment-method .tooltip.payment-method-tooltip .tooltip-arrow {
+    border-top-color: #f2f2f2;
+}
 .auth.register.register-payment-methods .payment-method:nth-of-type(even) .tooltip.payment-method-tooltip .tooltip-arrow {
     border-right-color: #f2f2f2;
 }
 .auth.register.register-payment-methods .payment-method:nth-of-type(odd) .tooltip.payment-method-tooltip .tooltip-arrow {
     border-left-color: #f2f2f2;
-}
+}*/
+
+
 .auth.register.register-deposit .selected-method .method-icon img {
     height: 26px;
     margin-bottom: 10px;
@@ -414,8 +419,7 @@
 }
 .auth.register.register-payment-methods {
 }
-.auth.register.register-deposit {
-}
+.auth.register.register-deposit button.deposit { width: 170px; }
 /* #endregion */
 
 /* #region Login */
