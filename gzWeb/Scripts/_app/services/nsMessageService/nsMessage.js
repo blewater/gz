@@ -60,16 +60,16 @@
                     scope.close();
                 };
                 scope.nsNext = function (options) {
-                    options.nsIn = 'slide-right-on';
+                    options.nsIn = 'slide-left-on';
                     options.nsOut = scope.nsOptions.nsOut;
-                    scope.nsOptions.nsOut = 'slide-right-off';
+                    scope.nsOptions.nsOut = 'slide-left-off';
                     scope.close();
                     message.open(options);
                 };
                 scope.nsBack = function (options) {
-                    options.nsIn = 'slide-left-on';
+                    options.nsIn = 'slide-right-on';
                     options.nsOut = scope.nsOptions.nsOut;
-                    scope.nsOptions.nsOut = 'slide-left-off';
+                    scope.nsOptions.nsOut = 'slide-right-off';
                     scope.close();
                     message.open(options);
                 };
