@@ -357,6 +357,25 @@
 }
 
 .auth.register button.next { width: 140px; }
+
+.auth.register .payment-method:nth-of-type(even) {
+    text-align: left;
+}
+.auth.register .payment-method:nth-of-type(odd) {
+    text-align: right;
+}
+.auth.register .payment-method img {
+    margin: 20px 15px;
+    cursor: pointer;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+.auth.register .payment-method img:hover {
+    -webkit-box-shadow: 0 0 8px #fff;
+    -ms-box-shadow: 0 0 8px #fff;
+    box-shadow: 0 0 8px #fff;
+}
+
 /* #endregion */
 
 /* #region Login */
