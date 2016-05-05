@@ -42,6 +42,14 @@ namespace gzWeb.Tests.Controllers
         }
     }
 
+    public class LoginResult
+    {
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public int expires_in { get; set; }
+        public string userName { get; set; }
+    }
+
     public abstract class BaseApiControllerTests
     {
         protected SelfHostServer Server { get; private set; }
@@ -73,6 +81,17 @@ namespace gzWeb.Tests.Controllers
             request.Content = new StringContent(json);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
+            return await @this.SendAsync(request);
+        }
+
+        public static async Task<HttpResponseMessage> PostJsonAuthAsync<TValue>(this HttpClient @this, string relativeUri, string token, TValue value)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, relativeUri);
+            var json = JsonConvert.SerializeObject(value);
+            request.Headers.Add("authorization", String.Format("Bearer {0}", token));
+            request.Content = new StringContent(json);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            
             return await @this.SendAsync(request);
         }
 
@@ -247,6 +266,71 @@ namespace gzWeb.Tests.Controllers
             }
         }
 
+        [Test]
+        public async Task ChangePasswordShouldChangePassword()
+        {
+            await Client.PostJsonAsync("/api/Account/Register",
+                                        new RegisterBindingModel
+                                        {
+                                            Username = "username",
+                                            Email = "email@email.com",
+                                            Password = "1234567",
+                                            FirstName = "FirstName",
+                                            LastName = "LastName",
+                                            Birthday = new DateTime(1975, 10, 13),
+                                            Currency = "EUR",
+                                        });
+
+            using (var dbContext = new ApplicationDbContext())
+            {
+                var user = dbContext.Users.Single(x => x.UserName == "username");
+                Assert.NotNull(user);
+
+                var firstLoginResponse = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", user.Email),
+                                                                                    new KeyValuePair<string, string>("password", "1234567"),
+                                                                            }));
+                Assert.AreEqual(HttpStatusCode.OK, firstLoginResponse.StatusCode);
+                var loginResult = JsonConvert.DeserializeObject<LoginResult>(await firstLoginResponse.Content.ReadAsStringAsync());
+
+                var changePasswordResponse = await Client.PostJsonAuthAsync("/api/Account/ChangePassword",
+                                                                            loginResult.access_token,
+                                                                            new ChangePasswordBindingModel
+                                                                            {
+                                                                                    OldPassword = "1234567",
+                                                                                    NewPassword = "7654321",
+                                                                                    ConfirmPassword = "7654321"
+                                                                            });
+                Assert.AreEqual(HttpStatusCode.OK, changePasswordResponse.StatusCode);
+
+
+                var loginResponse = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", user.Email),
+                                                                                    new KeyValuePair<string, string>("password", "7654321"),
+                                                                            }));
+
+                Assert.AreEqual(HttpStatusCode.OK, loginResponse.StatusCode);
+
+                var failedLoginResponse = await Client.PostAsync("/Token",
+                                                  new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                    new KeyValuePair<string, string>("grant_type", "password"),
+                                                                                    new KeyValuePair<string, string>("username", user.Email),
+                                                                                    new KeyValuePair<string, string>("password", "1234567"),
+                                                                            }));
+
+                Assert.AreEqual(HttpStatusCode.BadRequest, failedLoginResponse.StatusCode);
+
+                dbContext.Users.Remove(user);
+                dbContext.SaveChanges();
+            }
+        }
         [Test]
         public async Task ShouldFailWithInvalidModel()
         {
