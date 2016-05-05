@@ -434,7 +434,8 @@
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
     <Content Include="Partials\messages\changePassword.html" />
-    <Content Include="Partials\messages\registerSelectPayment.html" />
+    <Content Include="Partials\messages\registerDeposit.html" />
+    <Content Include="Partials\messages\registerPaymentMethods.html" />
     <Content Include="Partials\messages\resetPassword.html" />
     <Content Include="Partials\messages\forgotPassword.html" />
     <Content Include="Partials\messages\registerDetails.html" />
@@ -490,7 +491,8 @@
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\auth\changePasswordCtrl.js" />
-    <Content Include="Scripts\_app\controllers\auth\registerSelectPaymentCtrl.js" />
+    <Content Include="Scripts\_app\controllers\auth\registerDepositCtrl.js" />
+    <Content Include="Scripts\_app\controllers\auth\registerPaymentMethodsCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\resetPasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerAccountCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDetailsCtrl.js" />

@@ -1,11 +1,8 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'registerSelectPaymentCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'message', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, message, constants) {
-        $scope.spinnerGreen = constants.spinners.sm_rel_green;
-        $scope.spinnerWhite = constants.spinners.sm_rel_white;
-        
+    var ctrlId = 'registerPaymentMethodsCtrl';
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'message', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, message) {        
         // #region steps
         $scope.currentStep = 2;
         $scope.steps = [
@@ -33,9 +30,19 @@
         };
         // #endregion
 
-        // #region register
+        // #region selectPaymentMethod
         $scope.selectPaymentMethod = function (method) {
-
+            $scope.nsNext({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/registerDeposit.html',
+                nsCtrl: 'registerDepositCtrl',
+                nsStatic: true,
+                nsParams: {
+                    accountModel: $scope.accountModel,
+                    paymentMethod: method
+                }
+            });
         };
         // #endregion
 

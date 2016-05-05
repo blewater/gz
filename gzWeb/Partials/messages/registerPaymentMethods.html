@@ -1,4 +1,4 @@
-﻿<div class="auth register">
+﻿<div class="auth register register-payment-methods">
     <div class="row heading">
         <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
             <div class="steps">
@@ -32,9 +32,12 @@
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods">
-                            <span ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></span>
-                        </div>
+                        <span class="payment-method col-xs-6" ng-repeat="method in paymentMethods">
+                            <span class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"
+                                  uib-tooltip="{{method.name}}" tooltip-class="payment-method-tooltip"
+                                  ng-attr-tooltip-placement="{{$index % 2 === 0 ? 'auto left' : 'auto right' }}">
+                            </span>
+                        </span>
                     </div>
                 </div>
             </div>
