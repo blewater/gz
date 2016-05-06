@@ -239,6 +239,14 @@
                     },
                 ];
 
+                var _paymentActionsForMoneyMatrix_Trustly = [
+                    {
+                        label: "getPaymentMethodCfg / MoneyMatrix_Trustly",
+                        action: function() {
+                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.Trustly);
+                        }
+                    },
+                ];
                 var _paymentActionsForMaestro = [
                     {
                         label: "getPaymentMethodCfg / Maestro",
@@ -384,11 +392,12 @@
                                 .then(function(result) {
                                         $scope.sessionInfo = result;
 
-                                        //runActions(_paymentActions);
+                                        runActions(_paymentActions);
                                         //runActions(_paymentActionsForVISA);
+                                        runActions(_paymentActionsForMoneyMatrix_Trustly);
                                         //runActions(_paymentActionsForMaestro);
                                         //runActions(_paymentActionsForMasterCard);
-                                        runActions(_casinoActions);
+                                        //runActions(_casinoActions);
                                         //runActions(_passwordActions);
                                     },
                                     _logError);

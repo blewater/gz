@@ -491,6 +491,7 @@
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\auth\changePasswordCtrl.js" />
+    <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDepositCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerPaymentMethodsCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\resetPasswordCtrl.js" />
