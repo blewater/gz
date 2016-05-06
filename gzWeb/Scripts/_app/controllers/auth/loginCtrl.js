@@ -5,18 +5,19 @@
     function ctrlFactory($rootScope, $scope, emWamp, api, localStorageService, constants) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
+        $scope.waiting = false;
+        $scope.responseMsg = null;
 
         $scope.model = {
             usernameOrEmail: null,
             password: null
         };
 
-        $scope.responseMsg = null;
-
         $scope.submit = function () {
             if ($scope.form.$valid)
                 login();
         };
+
         function login(){
             $scope.waiting = true;
             $scope.errorMsg = "";

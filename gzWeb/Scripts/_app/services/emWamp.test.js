@@ -2,8 +2,8 @@
 /// <reference path="../../autobahn.min.js" />
 
 /// <reference path="../../angular/angular.js" />
-/// <reference path="../../angular-autocomplete/ngAutocomplete.js" />
 /// <reference path="../../angular/angular-mocks.js" />
+/// <reference path="../../angular-autocomplete/ngAutocomplete.js" />
 /// <reference path="../../angular-route/angular-route.js" />
 /// <reference path="../../angular-resource/angular-resource.js" />
 /// <reference path="../../angular-sanitize/angular-sanitize.js" />
@@ -53,8 +53,10 @@ describe("emWamp service", function () {
         inject(function(_emWamp_) {
             emWamp = _emWamp_;
         });
+
         originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+        
         flush();
     });
 
@@ -82,6 +84,22 @@ describe("emWamp service", function () {
                     },
                     function() {
                         expect(false).toBe(true);
+                        done();
+                    });
+            flush();
+        });
+
+    it("should not login invalid user",
+        function (done) {
+            emWamp.login({ usernameOrEmail: 'xxddxx', password: 'gz2016!@' })
+                .then(function (result) {
+                    expect(false).toBe(true);
+                    done();
+                },
+                    function (error) {
+                        expect(error).toBeDefined();
+                        expect(error.desc).toBeDefined();
+                        expect(error.desc).toBe('The login failed. Please check your username and password.');
                         done();
                     });
             flush();
@@ -116,23 +134,7 @@ describe("emWamp service", function () {
                     });
             flush();
         });
-
-    it("should not login invalid user",
-        function(done) {
-            emWamp.login({ usernameOrEmail: 'xxddxx', password: 'gz2016!@' })
-                .then(function(result) {
-                        expect(false).toBe(true);
-                        done();
-                    },
-                    function(error) {
-                        expect(error).toBeDefined();
-                        expect(error.desc).toBeDefined();
-                        expect(error.desc).toBe('The login failed. Please check your username and password.');
-                        done();
-                    });
-            flush();
-        });
-
+    
     it("should return a list of countries",
         function(done) {
             emWamp.getCountries()

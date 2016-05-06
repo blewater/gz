@@ -6,7 +6,7 @@
                     <uib-progressbar value="100"></uib-progressbar>
                 </div>
                 <div ng-repeat="step in steps" class="col-xs-4 centered">
-                     <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
+                    <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
                         <i class="fa step-icon" ng-class="{
                             'fa-check-circle-o': $index < currentStep,
                             'fa-dot-circle-o': $index === currentStep,
@@ -14,7 +14,7 @@
                         }"></i>
                         <i class="fa fa-circle step-icon-bg"></i>
                         <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
-                     </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -32,16 +32,19 @@
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <span class="payment-method col-xs-6" ng-repeat="method in paymentMethods">
-                            <span class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"
-                                  uib-tooltip="{{method.name}}" tooltip-class="payment-method-tooltip"
-                                  ng-attr-tooltip-placement="{{$index % 2 === 0 ? 'auto left' : 'auto right' }}">
-                            </span>
-                        </span>
+                        <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods" ng-init="open=true">
+                            <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)">
+                            </div>
+                        </div>
+                        <!--
+                            uib-tooltip="{{method.name}}" tooltip-class="payment-method-tooltip"
+                            ng-attr-tooltip-placement="{{$index % 2 === 0 ? 'auto left' : 'auto right' }}"
+                            ng-attr-title="{{method.name}}"
+                        -->
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-xs-12 splitter clearfix"></div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
