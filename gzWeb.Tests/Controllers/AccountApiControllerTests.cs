@@ -50,8 +50,10 @@ namespace gzWeb.Tests.Controllers
         public string userName { get; set; }
     }
 
-    public abstract class BaseApiControllerTests
-    {
+    public abstract class BaseApiControllerTests {
+
+        protected const string UnitTestDb = "gzTestDb";
+
         protected SelfHostServer Server { get; private set; }
         protected HttpClient Client { get { return Server.Client; } }
 
@@ -61,7 +63,7 @@ namespace gzWeb.Tests.Controllers
             Server = SelfHostServer.Start(new Uri("http://localhost:9090"));
 
             Database.SetInitializer(new DatabaseInitializer());
-            using (var db = new ApplicationDbContext())
+            using (var db = new ApplicationDbContext(UnitTestDb))
                 db.Database.Initialize(false);
         }
 
@@ -183,7 +185,7 @@ namespace gzWeb.Tests.Controllers
                                                 Currency = "EUR",
                                         });
 
-            using (var dbContext = new ApplicationDbContext())
+            using (var dbContext = new ApplicationDbContext(UnitTestDb))
             {
                 var user = dbContext.Users.Single(x => x.UserName == "username");
                 Assert.NotNull(user);
@@ -220,7 +222,7 @@ namespace gzWeb.Tests.Controllers
                                             Birthday = new DateTime(1975, 10, 13),
                                             Currency = "EUR",
                                         });
-            using (var dbContext = new ApplicationDbContext())
+            using (var dbContext = new ApplicationDbContext(UnitTestDb))
             {
                 var user = dbContext.Users.Single(x => x.UserName == "username");
                 Assert.NotNull(user);
@@ -281,7 +283,7 @@ namespace gzWeb.Tests.Controllers
                                             Currency = "EUR",
                                         });
 
-            using (var dbContext = new ApplicationDbContext())
+            using (var dbContext = new ApplicationDbContext(UnitTestDb))
             {
                 var user = dbContext.Users.Single(x => x.UserName == "username");
                 Assert.NotNull(user);
@@ -338,7 +340,7 @@ namespace gzWeb.Tests.Controllers
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
-            using (var dbContext = new ApplicationDbContext())
+            using (var dbContext = new ApplicationDbContext(UnitTestDb))
                 Assert.IsFalse(dbContext.Users.Any(x => x.UserName == "username"));
         }
 
@@ -359,7 +361,7 @@ namespace gzWeb.Tests.Controllers
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            using (var dbContext = new ApplicationDbContext())
+            using (var dbContext = new ApplicationDbContext(UnitTestDb))
             {
                 var user = dbContext.Users.Single(x => x.UserName == "username");
                 Assert.NotNull(user);
