@@ -31,7 +31,7 @@ namespace gzDAL.Conf
 
             //http://stackoverflow.com/questions/815586/entity-framework-using-transactions-or-savechangesfalse-and-acceptallchanges
             using (var sqlLogFile = new StreamWriter(tempSQLLogPath)) {
-                using (ApplicationDbContext context = new ApplicationDbContext()) {
+                using (ApplicationDbContext context = new ApplicationDbContext(null)) {
                     context.Database.Log = sqlLogFile.Write;
                     // Decided against enclosing in a all encompassing transactions because of frequent failures due to the schema volatility and the need to get immediate feedback on the failure
                     // using (var dbContextTransaction = context.Database.BeginTransaction()) {
@@ -65,16 +65,6 @@ namespace gzDAL.Conf
                                                      new DataProtectionProviderFactory(() => null));
             int custId = SaveDbCreateUser(manager);
 
-            int everyMatrixUserId = SaveDbCreateStageEverymatrixUser(
-                context,
-                manager, 
-                "gz@gz.com", 
-                "gz2016", 
-                "gz2016!@", 
-                "Joe", 
-                "Blow", 
-                new DateTime(1990, 1, 1));
-
             // Currencies
             CreateUpdCurrenciesList(context);
             context.SaveChanges();
@@ -91,17 +81,9 @@ namespace gzDAL.Conf
             CreateUpdPortfolios(context, custId);
             context.SaveChanges();
 
-            if (everyMatrixUserId > 0) {
-                CreateUpdPortfolios(context, custId);
-                context.SaveChanges();
-            }
-
             // Link now a portfolio for this customer
             var custPortfolioRepo = new CustPortfolioRepo(context);
             custPortfolioRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
-            if (everyMatrixUserId > 0) {
-                custPortfolioRepo.SaveDbCustMonthsPortfolioMix(everyMatrixUserId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
-            }
 
             // Portfolios - Funds association table
             CreateUpdPortFunds(context);
@@ -114,18 +96,10 @@ namespace gzDAL.Conf
             // gzTransactions
             CreateUpdGzTransaction(context, custId);
             context.SaveChanges();
-            if (everyMatrixUserId > 0) {
-                CreateUpdGzTransaction(context, everyMatrixUserId);
-                context.SaveChanges();
-            }
 
             // Balances
             CalcMonthlyBalances(context, custId);
             context.SaveChanges();
-            if (everyMatrixUserId > 0) {
-                CalcMonthlyBalances(context, everyMatrixUserId);
-                context.SaveChanges();
-            }
         }
 
         /// <summary>
