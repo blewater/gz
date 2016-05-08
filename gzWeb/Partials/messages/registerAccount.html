@@ -20,10 +20,7 @@
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':emailFocused || form.email.$valid}">
                         <i class="fa fa-lg fa-envelope-o"></i>
                     </span>
-                    <div class="field-ok" ng-class="{'show': (form.email.$valid && emailValidation.isAvailable) || emailValidation.isValidating}">
-                        <img ng-show="form.email.$valid && emailValidation.isAvailable && !emailValidation.isValidating" src="../../Content/Images/check.svg" />
-                        <span ng-show="emailValidation.isValidating" class="loading-spinner" us-spinner="spinnerOptions"></span>
-                    </div>
+                    <gz-field-ok gz-when="form.email.$valid && emailValidation.isAvailable" gz-loading="emailValidation.isValidating"></gz-field-ok>
                     <div class="help-block" ng-class="{'show': emailFocused && form.email.$error.required}">Email address is required</div>
                     <div class="help-block" ng-class="{'show': emailFocused && form.email.$error.email}">Please enter a valid Email address</div>
                     <div class="help-block" ng-class="{'show': emailFocused && emailValidation.error}">{{emailValidation.error}}</div>
@@ -38,10 +35,7 @@
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameFocused || form.username.$valid}">
                         <i class="fa fa-lg fa-user"></i>
                     </span>
-                    <div class="field-ok" ng-class="{'show': (form.username.$valid && usernameValidation.isAvailable) || usernameValidation.isValidating}">
-                        <img ng-show="form.username.$valid && usernameValidation.isAvailable && !usernameValidation.isValidating" src="../../Content/Images/check.svg" />
-                        <span ng-show="usernameValidation.isValidating" class="loading-spinner" us-spinner="spinnerOptions"></span>
-                    </div>
+                    <gz-field-ok gz-when="form.username.$valid && usernameValidation.isAvailable" gz-loading="usernameValidation.isValidating"></gz-field-ok>
                     <div class="help-block" ng-class="{'show': usernameFocused && form.username.$error.required}">Username is required.</div>
                     <div class="help-block" ng-class="{'show': usernameFocused && usernameValidation.error}">{{usernameValidation.error}}</div>
                 </div>
@@ -55,9 +49,7 @@
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
-                    <div class="field-ok" ng-class="{'show': form.password.$valid && passwordValidation.isValid === true}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.password.$valid && passwordValidation.isValid === true"></gz-field-ok>
                     <div class="help-block" ng-class="{'show': passwordFocused && form.password.$error.required}">Password is required.</div>
                     <div class="help-block help-block-3x" ng-class="{'show': passwordFocused && !form.password.$error.required && passwordValidation.isValid === false}">{{passwordValidation.error}}</div>
                 </div>
@@ -71,9 +63,7 @@
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':confirmPasswordFocused || (form.password.$valid && model.confirmPassword === model.password)}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
-                    <div class="field-ok" ng-class="{'show': form.password.$valid && passwordValidation.isValid && model.confirmPassword === model.password}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.password.$valid && passwordValidation.isValid && model.confirmPassword === model.password"></gz-field-ok>
                     <div class="help-block" ng-class="{'show': confirmPasswordFocused && form.confirmPassword.$error.required}">Confirm Password is required.</div>
                     <div class="help-block help-block-2x" ng-class="{'show': confirmPasswordFocused && !form.confirmPassword.$error.required && model.confirmPassword !== model.password}">Password did not match, double check so both fields have the same password.</div>
                 </div>

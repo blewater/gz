@@ -15,9 +15,7 @@
                         </gz-select>
                     </div>
                 </div>
-                <div class="field-ok" ng-class="{'show': form.cardNumber.$valid}">
-                    <img src="../../Content/Images/check.svg" />
-                </div>
+                <gz-field-ok gz-when="form.cardNumber.$valid"></gz-field-ok>
             </div>
         </div>        
     </div>
@@ -47,9 +45,7 @@
                         <div class="help-block" ng-class="{'show': !form.cardNumber.$pristine && form.cardNumber.$error.required}">Card Number is required</div>
                     </div>
                 </div>
-                <div class="field-ok" ng-class="{'show': form.cardNumber.$valid}">
-                    <img src="../../Content/Images/check.svg" />
-                </div>
+                <gz-field-ok gz-when="form.cardNumber.$valid"></gz-field-ok>
             </div>
         </div>
 
@@ -65,9 +61,7 @@
                         <div class="help-block" ng-class="{'show': !form.cardHolderName.$pristine && form.cardHolderName.$error.required}">Card Holder Name is required</div>
                     </div>
                 </div>
-                <div class="field-ok" ng-class="{'show': form.cardHolderName.$valid}">
-                    <img src="../../Content/Images/check.svg" />
-                </div>
+                <gz-field-ok gz-when="form.cardHolderName.$valid"></gz-field-ok>
             </div>
         </div>
 
@@ -100,9 +94,7 @@
                         <div class="help-block" ng-class="{'show': !form.cardSecurityNumber.$pristine && !form.cardSecurityNumber.$error.required && form.cardSecurityNumber.$invalid}">Card Security Number must be 3 digits long</div>
                     </div>
                 </div>
-                <div class="field-ok" ng-class="{'show': form.cardExpiryMonth.$valid && form.cardExpiryYear.$valid && form.cardSecurityNumber.$valid}">
-                    <img src="../../Content/Images/check.svg" />
-                </div>
+                <gz-field-ok gz-when="form.cardExpiryMonth.$valid && form.cardExpiryYear.$valid && form.cardSecurityNumber.$valid"></gz-field-ok>
             </div>
         </div>
 
@@ -126,9 +118,7 @@
                         <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}</div>
                     </div>
                 </div>
-                <div class="field-ok" ng-class="{'show': form.amount.$valid}">
-                    <img src="../../Content/Images/check.svg" />
-                </div>
+                <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
             </div>
         </div>        
     </div>

@@ -135,6 +135,7 @@ namespace gzWeb
                 , "~/Scripts/_app/directives/gzPerformanceGraph.js"
                 , "~/Scripts/_app/directives/gzCheckBox.js"
                 , "~/Scripts/_app/directives/gzSelect.js"
+                , "~/Scripts/_app/directives/gzFieldOk.js"
 
                 , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.js"

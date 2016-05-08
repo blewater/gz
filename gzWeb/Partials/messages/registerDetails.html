@@ -43,9 +43,7 @@
                             <div class="help-block" ng-class="{'show': lastnameFocused && form.lastname.$error.required}">Last name is required</div>
                         </div>
                     </div>
-                    <div class="field-ok" ng-class="{'show': form.firstname.$valid && form.lastname.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.firstname.$valid && form.lastname.$valid"></gz-field-ok>
                 </div>
             </div>
 
@@ -75,9 +73,7 @@
                             <div class="help-block" ng-class="{'show': !form.title.$pristine && form.title.$error.required}">Title is required</div>
                         </div>
                     </div>
-                    <div class="field-ok" ng-class="{'show': form.year.$valid && form.month.$valid && form.day.$valid && form.title.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.year.$valid && form.month.$valid && form.day.$valid && form.title.$valid"></gz-field-ok>
                 </div>
             </div>
 
@@ -88,9 +84,7 @@
                            ng-focus="addressFocused = true" ng-blur="addressFocused = false"
                            ng-autocomplete options="{types: 'address', country: model.country.code, watchEnter: true}" cs-capitalize-first>
                     <div class="help-block" ng-class="{'show': addressFocused && form.address.$error.required}">Address is required</div>
-                    <div class="field-ok" ng-class="{'show': form.address.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.address.$valid"></gz-field-ok>
                 </div>
             </div>
 
@@ -108,9 +102,7 @@
                             <div class="help-block" ng-class="{'show': !form.country.$pristine && form.country.$error.required}">Country is required</div>
                         </div>
                     </div>
-                    <div class="field-ok" ng-class="{'show': form.currency.$valid && form.country.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.currency.$valid && form.country.$valid"></gz-field-ok>
                 </div>
             </div>
 
@@ -131,9 +123,7 @@
                             <div class="help-block" ng-class="{'show': cityFocused && form.city.$error.required}">City is required</div>
                         </div>
                     </div>
-                    <div class="field-ok" ng-class="{'show': form.postalCode.$valid && form.city.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.postalCode.$valid && form.city.$valid"></gz-field-ok>
                 </div>
             </div>
 
@@ -160,9 +150,7 @@
                             <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required}">Phone number is required</div>
                         </div>
                     </div>
-                    <div class="field-ok" ng-class="{'show': model.phonePrefix && form.phoneNumber.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="model.phonePrefix && form.phoneNumber.$valid"></gz-field-ok>
                 </div>
             </div>
 
