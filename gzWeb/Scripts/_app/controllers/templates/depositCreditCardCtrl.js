@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, iso4217) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emBanking, $q, iso4217) {
         var thisYear = moment().year();
         var maxYear = thisYear + 30;
 
