@@ -430,6 +430,7 @@
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
+    <Content Include="Partials\directives\gzFieldOk.html" />
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
@@ -496,6 +497,7 @@
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\auth\changePasswordCtrl.js" />
+    <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDepositCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerPaymentMethodsCtrl.js" />

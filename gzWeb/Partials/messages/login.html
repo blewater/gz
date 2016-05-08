@@ -20,9 +20,7 @@
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused || form.usernameOrEmail.$valid}">
                         <i class="fa fa-lg fa-user"></i>
                     </span>
-                    <div class="field-ok" ng-class="{'show': form.usernameOrEmail.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.usernameOrEmail.$valid"></gz-field-ok>
                 </div>
             </div>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
@@ -33,9 +31,7 @@
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
-                    <div class="field-ok" ng-class="{'show': form.password.$valid}">
-                        <img src="../../Content/Images/check.svg" />
-                    </div>
+                    <gz-field-ok gz-when="form.password.$valid"></gz-field-ok>
                 </div>
             </div>
 
