@@ -344,6 +344,7 @@
 }
 .auth.register #phonePrefix ul.dropdown-menu > li > a {
     color: #000;
+    text-decoration: none;
 }
 .auth.register #phonePrefix ul.dropdown-menu > li.active > a {
     background-color: #27A95C;
