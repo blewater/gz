@@ -31,7 +31,8 @@
                     Select deposit method
                 </div>
                 <div class="form-group">
-                    <div class="row">
+                    <span us-spinner="spinnerWhite" ng-if="initializing"></span>
+                    <div class="row" ng-if="!initializing">
                         <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods" ng-init="open=true">
                             <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)">
                             </div>

@@ -1,8 +1,10 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerPaymentMethodsCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'message', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, message) {        
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, constants) {
+        $scope.spinnerWhite = constants.spinners.sm_rel_white;
+
         // #region steps
         $scope.currentStep = 2;
         $scope.steps = [
@@ -12,17 +14,31 @@
         ];
         // #endregion
 
+        $scope.accountModel = $scope.accountModel || undefined;
+        $scope.sessionInfo = $scope.sessionInfo || undefined;
+        $scope.paymentMethods = $scope.paymentMethods || undefined;
+        $scope.gamingAccounts = $scope.gamingAccounts || undefined;
+
         // #region init
         function loadPaymentMethods() {
-            emWamp.getSessionInfo().then(function(sessionInfo) {
-                emBanking.getSupportedPaymentMethods(sessionInfo.userCountry, sessionInfo.currency).then(function (paymentMethods) {
-                    $scope.paymentMethods = paymentMethods;
+            if (!$scope.sessionInfo) {
+                $scope.initializing = true;
+                emWamp.getSessionInfo().then(function (sessionInfo) {
+                    $scope.sessionInfo = sessionInfo;
+                    if (!$scope.paymentMethods) {
+                        emBanking.getSupportedPaymentMethods(sessionInfo.userCountry, sessionInfo.currency).then(function(paymentMethods) {
+                            $scope.paymentMethods = paymentMethods;
+                            $scope.initializing = false;
+                        }, function (error) {
+                            console.log(error.desc);
+                            $scope.initializing = false;
+                        });
+                    }
                 }, function(error) {
                     console.log(error.desc);
+                    $scope.initializing = false;
                 });
-            }, function(error) {
-                console.log(error.desc);
-            });
+            }
         }
 
         function init() {
@@ -40,7 +56,10 @@
                 nsStatic: true,
                 nsParams: {
                     accountModel: $scope.accountModel,
-                    paymentMethod: method
+                    sessionInfo: $scope.sessionInfo,
+                    paymentMethods: $scope.paymentMethods,
+                    gamingAccounts: $scope.gamingAccounts,
+                    selectedMethod: method
                 }
             });
         };
