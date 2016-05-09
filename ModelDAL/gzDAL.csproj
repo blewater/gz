@@ -94,12 +94,14 @@
   <ItemGroup>
     <Compile Include="Conf\ConnRetryConf.cs" />
     <Compile Include="Conf\IdentityConfig.cs" />
+    <Compile Include="Conf\TestSeeder.cs" />
     <Compile Include="CurrencyHelper.cs" />
     <Compile Include="DTO\PortfolioFundDTO.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
+    <Compile Include="Models\TestDbContext.cs" />
     <Compile Include="Repos\CurrencyRateRepo.cs" />
     <Compile Include="Models\CustFundShare.cs" />
     <Compile Include="Repos\CustFundShareRepo.cs" />
