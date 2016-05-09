@@ -17,6 +17,8 @@ namespace gzWeb.Tests.Controllers
     [TestClass]
     public class InvestmentsApiControllerTest
     {
+        protected const string UnitTestDb = "gzTestDb";
+
         [TestMethod]
         public void InvestmentSummaryDataUserNull()
         {
@@ -58,7 +60,7 @@ namespace gzWeb.Tests.Controllers
         private static ApplicationDbContext CreateInvestmentsApiController(out InvestmentsApiController controller)
         {
 
-            ApplicationDbContext db = new ApplicationDbContext();
+            ApplicationDbContext db = new ApplicationDbContext(UnitTestDb);
             ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(db);
             IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
             IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);

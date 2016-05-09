@@ -145,9 +145,64 @@ namespace gzDAL.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, CustomRole, int,
         CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
+
+        /// <summary>
+        /// 
+        /// Default Constructor to support Update-Database migration script
+        /// 
+        /// </summary>
         public ApplicationDbContext()
-            : base("gzDevDb")
+
+            : this(null) 
         {
+        }
+
+
+        /// <summary>
+        /// 
+        /// Injection friendly constructor allowing the passing of an explicit connection string or allow the compiled mode to 
+        /// dictate it.
+        /// 
+        /// </summary>
+        /// <param name="connectionString">
+        /// 
+        ///     Null is allowed and means:
+        /// 
+        ///         In Debug mode --> Construct using the "gzDevDb" connection string.
+        /// 
+        ///         If in Release mode --> Construct using "gzPrdDb" connection string.
+        /// 
+        /// </param>
+        public ApplicationDbContext(string connectionString)
+
+            : base(GetCompileModeConnString(connectionString)) 
+        {
+        }
+
+
+        /// <summary>
+        /// 
+        /// When a connectionString is null the compile mode
+        ///     (DEBUG||Release) mode dictates it:
+        /// 
+        /// </summary>
+        /// <returns>
+        ///     Same value if not null
+        /// -- or
+        ///     DEBUG -> "gzDevDb"
+        /// -- or
+        ///     Release -> "gzPrdDb"
+        /// </returns>
+        private static string GetCompileModeConnString(string connectionString) {
+
+            if (connectionString == null)
+#if DEBUG
+                connectionString = "gzDevDb";
+#else
+                connectionString = "gzPrdDb";
+#endif
+
+            return connectionString;
         }
 
         public DbSet<CurrencyListX> CurrenciesListX { get; set; }
