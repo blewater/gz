@@ -28,6 +28,7 @@ var APP = (function () {
         , 'vxWamp'
         , 'ngAutocomplete'
         , 'vcRecaptcha'
+        , 'isoCurrency'
     ]);
 
     app.run([

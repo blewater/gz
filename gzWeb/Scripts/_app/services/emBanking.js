@@ -14,6 +14,19 @@
             Trustly: "MoneyMatrix_Trustly"
         };
 
+        // #region Payment Methods Fields
+        var _creditCardsFields = { templateUrl: '/partials/templates/depositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
+        var _trustlyFields = { templateUrl: '/partials/templates/depositTrustly.html', ctrlId: 'depositTrustlyCtrl' }
+        var _paymentMethodsFields = [];
+        _paymentMethodsFields[_supportedPaymentMethodCodes.VISA] = _creditCardsFields;
+        _paymentMethodsFields[_supportedPaymentMethodCodes.Maestro] = _creditCardsFields;
+        _paymentMethodsFields[_supportedPaymentMethodCodes.MasterCard] = _creditCardsFields;
+        _paymentMethodsFields[_supportedPaymentMethodCodes.Trustly] = _trustlyFields;
+        _service.getPaymentMethodFields = function (paymentMethodCode) {
+            return _paymentMethodsFields[paymentMethodCode];
+        };
+        // #endregion
+
         _service.PaymentMethodCode = _supportedPaymentMethodCodes;
 
         /// <summary>

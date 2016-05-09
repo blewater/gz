@@ -93,6 +93,7 @@ namespace gzWeb
                 , "~/Scripts/angular-wamp/angular-wamp.js" // TODO: "~/Scripts/angular-wamp/angular-wamp.min.js"
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
+                , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 //, "~/Scripts/_modules/styleInjector.js"
@@ -134,6 +135,7 @@ namespace gzWeb
                 , "~/Scripts/_app/directives/gzPerformanceGraph.js"
                 , "~/Scripts/_app/directives/gzCheckBox.js"
                 , "~/Scripts/_app/directives/gzSelect.js"
+                , "~/Scripts/_app/directives/gzFieldOk.js"
 
                 , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.js"
@@ -151,6 +153,9 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/auth/registerDetailsCtrl.js"
                 , "~/Scripts/_app/controllers/auth/registerPaymentMethodsCtrl.js"
                 , "~/Scripts/_app/controllers/auth/registerDepositCtrl.js"
+
+                , "~/Scripts/_app/controllers/templates/depositCreditCardCtrl.js"
+                , "~/Scripts/_app/controllers/templates/depositTrustlyCtrl.js"
             ));
             #endregion
         }

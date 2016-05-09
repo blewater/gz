@@ -27,18 +27,33 @@
         </div>
         <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group">                    
-                    <div class="selected-method">
-                        <span class="method-icon" ng-bind-html="paymentMethod.icon"></span>
-                        <span class="method-name">{{paymentMethod.name}}</span>
+                <div class="form-group">
+                    <div class="payment-method">
+                        <div>
+                            <span class="method-icon" ng-bind-html="selectedMethod.icon"></span>
+                            <span class="method-name">{{selectedMethod.name}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="initializing">
+                <div class="form-group">
+                    <span us-spinner="spinnerWhite"></span>
+                </div>
+            </div>
             
+            <div id="depositFields" ng-if="!initializing"></div>
+
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <div class="btns text-center">
-                        <button type="submit" class="btn-gz">Deposit</button>
+                        <button type="submit" class="btn-gz deposit" ng-disabled="form.$invalid"
+                                ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
+                            <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
+                            <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
+                            <span ng-show="!waiting">Deposit</span>
+                        </button>
                     </div>
                 </div>
             </div>
