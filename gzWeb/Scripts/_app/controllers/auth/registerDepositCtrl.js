@@ -47,12 +47,13 @@
             var depositFields = emBanking.getPaymentMethodFields(paymentMethodCode);
             var depositTemplateUrl = depositFields.templateUrl;
             var depositCtrlId = depositFields.ctrlId;
-            $templateRequest(helpers.ui.getTemplate(depositTemplateUrl)).then(function (depositHtml) {
-                var $depositFields = angular.element('#depositFields');
+            $templateRequest(helpers.ui.getTemplate(depositTemplateUrl)).then(function (depositHtml) {                
+                var $depositFields = $('#depositFields');
+                $depositFields.contents().remove();
                 $depositFields.html(depositHtml);
                 var depositCtrl = $controller(depositCtrlId, { $scope: $scope });
                 $depositFields.children().data('$ngControllerController', depositCtrl);
-                $compile($depositFields.contents())($scope);
+                $compile($depositFields.contents())($scope);                    
             });
         }
 
