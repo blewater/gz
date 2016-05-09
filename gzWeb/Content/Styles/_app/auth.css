@@ -442,8 +442,12 @@
 }
 .auth.register.register-details {
 }
-.auth.register.register-payment-methods {
+.auth.register.register-payment-methods .initializing-spinner {
+    margin-top: 30px;
+    height: 30px;    
 }
+
+
 .auth.register.register-deposit button.deposit { width: 170px; }
 /* #endregion */
 

@@ -77,7 +77,7 @@
         function deposit() {
             $scope.readFields().then(function(fields) {
                 emBanking.prepare({
-                    paymentMethodCode: $scope.selectedMethod,
+                    paymentMethodCode: $scope.selectedMethod.code,
                     fields: fields
                 }).then(function(prepareResult) {
                     $scope.pid = prepareResult.pid;
@@ -95,11 +95,12 @@
                         confirmPromise.then(function () {
                             emBanking.confirm($scope.pid).then(function (confirmResult) {
                                 if (confirmResult.status === "success") {
-                                    emBanking.getTransactionInfo().then(function (transactionResult) {
+                                    emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
                                         if (transactionResult.status === "success") {
                                             // TODO: show receipt page ...
-                                            message.notify("You have made the deposit successfully!");
-                                            emBanking.sendReceiptEmail(transactionResult.pid, "");
+                                            var msg = "You have made the deposit successfully!";
+                                            message.notify(msg);
+                                            emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                             $scope.nsOk(true);
                                         } else if (transactionResult.status === "incomplete") {
                                             // TODO: show transaction is not completed
