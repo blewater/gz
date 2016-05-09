@@ -59,7 +59,8 @@ namespace gzDAL.Conf
             // Customers
             var manager = new ApplicationUserManager(new CustomUserStore(context),
                                                      new DataProtectionProviderFactory(() => null));
-            int custId = SaveDbCreateUser(manager, context);
+            int custId = SaveDbCreateUser(manager, context, TestUserJoe(manager));
+            int evuserCustId = SaveDbCreateUser(manager, context, TestEveryMatrixUser(manager));
 
             // Currencies
             CreateUpdCurrenciesList(context);
@@ -125,10 +126,16 @@ namespace gzDAL.Conf
         /// Add or Update existing test users
         /// </summary>
         /// <returns></returns>
-        private static int SaveDbCreateUser(ApplicationUserManager manager, ApplicationDbContext context) {
+        private static int SaveDbCreateUser(ApplicationUserManager manager, ApplicationDbContext context, ApplicationUser newUser) {
             // User
-            Random rnd = new Random();
-            int rndPlatformId = rnd.Next(1, int.MaxValue);
+            context.Users.AddOrUpdate(c => new { c.Email }, newUser);
+            context.SaveChanges();
+
+            var custId = context.Users.Where(u => u.Email == newUser.Email).Select(u => u.Id).Single();
+            return custId;
+        }
+
+        private static ApplicationUser TestUserJoe(ApplicationUserManager manager) {
 
             var newUser = new ApplicationUser() {
                 UserName = "joe@mymail.com",
@@ -137,54 +144,24 @@ namespace gzDAL.Conf
                 FirstName = "Joe",
                 LastName = "Smith",
                 Birthday = new DateTime(1990, 1, 1),
-                PasswordHash = manager.PasswordHasher.HashPassword("1q2w3e"),
-                PlatformCustomerId = rndPlatformId
+                PasswordHash = manager.PasswordHasher.HashPassword("1q2w3e")
             };
-
-            context.Users.AddOrUpdate(c => new { c.Email }, newUser);
-            context.SaveChanges();
-
-            var custId = context.Users.Where(u => u.Email == newUser.Email).Select(u => u.Id).Single();
-            return custId;
+            return newUser;
         }
 
-        /// <summary>
-        /// 
-        /// Create Everymatrix user if not existing in the current database.
-        /// 
-        /// </summary>
-        /// <param name="db"></param>
-        /// <param name="manager"></param>
-        /// <param name="everyMatrixEmail"></param>
-        /// <param name="everyMatrixUsername"></param>
-        /// <param name="everyMatrixPwd"></param>
-        /// <param name="everyMatrixFirstName"></param>
-        /// <param name="everyMatrixLastName"></param>
-        /// <param name="doB"></param>
-        /// <returns></returns>
-        private static int SaveDbCreateStageEverymatrixUser(
-            ApplicationDbContext db,
-            string everyMatrixEmail, 
-            string everyMatrixUsername, 
-            string everyMatrixPwd,
-            string everyMatrixFirstName,
-            string everyMatrixLastName,
-            DateTime doB) {
+        private static ApplicationUser TestEveryMatrixUser(ApplicationUserManager manager) {
 
-            db.Users.AddOrUpdate(
-                c => new {c.Email},
-                new ApplicationUser() {
-                    UserName = everyMatrixUsername,
-                    Email = everyMatrixEmail,
-                    EmailConfirmed = true,
-                    FirstName = everyMatrixFirstName,
-                    LastName = everyMatrixLastName,
-                    Birthday = doB,
-                    Currency = "SEK"
-                });
-
-            var custId = db.Users.Where(u => u.Email == everyMatrixEmail).Select(u => u.Id).Single();
-            return custId;
+            var newUser = new ApplicationUser() {
+                UserName = "testuser",
+                Email = "testuser@gz.com",
+                EmailConfirmed = true,
+                FirstName = "test",
+                LastName = "user",
+                Birthday = new DateTime(1975, 10, 13),
+                Currency = "EUR",
+                PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
+            };
+            return newUser;
         }
 
         /// <summary>
@@ -196,7 +173,6 @@ namespace gzDAL.Conf
 
             new InvBalanceRepo(context, new CustFundShareRepo(context), new GzTransactionRepo(context))
                 .SaveDbCustomerMonthlyBalancesByTrx(custId);
-
         }
 
         private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
