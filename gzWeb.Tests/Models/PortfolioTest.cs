@@ -84,16 +84,17 @@ namespace gzWeb.Tests.Models {
         /// </summary>
         [TestMethod]
         public void PortfolioReturns() {
-            var db = new ApplicationDbContext();
-            var portfolioLines = new PortfolioRepository(db).GetPortfolioRetLines();
+            using (var db = new ApplicationDbContext(null)) {
+                var portfolioLines = new PortfolioRepository(db).GetPortfolioRetLines();
 
-            foreach (var l in portfolioLines) {
-                Console.WriteLine(l);
+                foreach (var l in portfolioLines) {
+                    Console.WriteLine(l);
+                }
             }
         }
         [TestMethod]
         public void SaveDailyCurrenciesRates() {
-            var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext());
+            var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext(null));
             var quotes = currencyRateRepo.SaveDbDailyCurrenciesRates();
 
             Assert.IsNotNull(quotes);
@@ -103,21 +104,23 @@ namespace gzWeb.Tests.Models {
         }
         [TestMethod]
         public void SaveDailyFundClosingPrice() {
-            var db = new ApplicationDbContext();
-            var fundRepo = new FundRepo(db);
-            var quotes = fundRepo.SaveDbDailyFundClosingPrices();
+            using (var db = new ApplicationDbContext(null)) {
+                var fundRepo = new FundRepo(db);
+                var quotes = fundRepo.SaveDbDailyFundClosingPrices();
 
-            Assert.IsNotNull(quotes);
+                Assert.IsNotNull(quotes);
 
-            //Assert we have a closing price for first symbol
-            Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
+                //Assert we have a closing price for first symbol
+                Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
+            }
         }
 
         [TestMethod]
         public void SaveDbUpdAllCustomerBalances() {
-            var db = new ApplicationDbContext();
-            new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                .SaveDbAllCustomersMonthlyBalances();
+            using (var db = new ApplicationDbContext(null)) {
+                new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                    .SaveDbAllCustomersMonthlyBalances();
+            }
         }
 
     }

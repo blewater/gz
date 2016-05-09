@@ -1,16 +1,18 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using gzDAL.Models;
+﻿using System.Data.Entity;
+using NUnit.Framework;
 using gzDAL.Conf;
+using gzDAL.Models;
 
 namespace gzWeb.Tests.Models {
-    [TestClass]
+    [TestFixture]
     public class SeedTest {
-        [TestMethod]
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp() {
+            Database.SetInitializer<ApplicationDbContext>(null);
+        }
+        
+        [Test]
         public void SeedData() {
 
             // Null means no exception

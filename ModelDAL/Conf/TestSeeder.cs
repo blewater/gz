@@ -2,24 +2,23 @@
 using gzDAL.Repos;
 using Microsoft.AspNet.Identity;
 using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 
-namespace gzDAL.Conf
-{
+namespace gzDAL.Conf {
 
     /// <summary>
-    /// Seed class moved here from migrations.configuration
-    /// Use the line below inside configuration.seed:
+    /// Unit Testing Seed class
     /// 
-    ///         Conf.Seed.GenData();
+    ///         Conf.TestSeeder.GenData();
     /// 
     /// If need be here's
     /// how to Truncate tables
     /// http://stackoverflow.com/questions/24209220/ef6-code-first-drop-tables-not-entire-database-when-model-changes
     /// </summary>
-    public class Seed {
+    public class TestSeeder {
 
         public static string GenData() {
 
@@ -29,9 +28,11 @@ namespace gzDAL.Conf
             // Tracing log location + name i.e. C:\Users\Mario\AppData\Local\Temp\sqlLogFile.log
             var tempSQLLogPath = Path.GetTempPath() + "sqlLogFile.log";
 
+            Database.SetInitializer<TestDbContext>(null);
+
             //http://stackoverflow.com/questions/815586/entity-framework-using-transactions-or-savechangesfalse-and-acceptallchanges
             using (var sqlLogFile = new StreamWriter(tempSQLLogPath)) {
-                using (ApplicationDbContext context = new ApplicationDbContext()) {
+                using (TestDbContext context = new TestDbContext()) {
                     context.Database.Log = sqlLogFile.Write;
                     // Decided against enclosing in a all encompassing transactions because of frequent failures due to the schema volatility and the need to get immediate feedback on the failure
                     try {
@@ -51,16 +52,14 @@ namespace gzDAL.Conf
         /// Calling AddUpdData on all domain objects.
         /// </summary>
         /// <param name="context"></param>
-        private static void AddUpdData(ApplicationDbContext context) {
-            
+        private static void AddUpdData(TestDbContext context) {
+
             // GzConfigurations
             CreateUpdConfiguationRow(context);
 
-            // Customers
             var manager = new ApplicationUserManager(new CustomUserStore(context),
                                                      new DataProtectionProviderFactory(() => null));
-            int custId = SaveDbCreateUser(manager, context, TestUserJoe(manager));
-            int evuserCustId = SaveDbCreateUser(manager, context, TestEveryMatrixUser(manager));
+            int custId = SaveDbCreateUser(manager, context);
 
             // Currencies
             CreateUpdCurrenciesList(context);
@@ -103,7 +102,7 @@ namespace gzDAL.Conf
         /// Insert or Update the gzConfiguration Constants in a single row
         /// </summary>
         /// <param name="context"></param>
-        private static void CreateUpdConfiguationRow(ApplicationDbContext context) {
+        private static void CreateUpdConfiguationRow(TestDbContext context) {
 
             var dbConf = new GzConfiguration();
 
@@ -125,9 +124,21 @@ namespace gzDAL.Conf
         /// <summary>
         /// Add or Update existing test users
         /// </summary>
+        /// <param name="manager"></param>
         /// <returns></returns>
-        private static int SaveDbCreateUser(ApplicationUserManager manager, ApplicationDbContext context, ApplicationUser newUser) {
-            // User
+        private static int SaveDbCreateUser(ApplicationUserManager manager, TestDbContext context) {
+
+            var newUser = new ApplicationUser() {
+                UserName = "testuser",
+                Email = "testuser@gz.com",
+                FirstName = "test",
+                LastName = "user",
+                Birthday = new DateTime(1975, 10, 13),
+                Currency = "EUR",
+                EmailConfirmed = true,
+                PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
+            };
+
             context.Users.AddOrUpdate(c => new { c.Email }, newUser);
             context.SaveChanges();
 
@@ -135,33 +146,44 @@ namespace gzDAL.Conf
             return custId;
         }
 
-        private static ApplicationUser TestUserJoe(ApplicationUserManager manager) {
+        /// <summary>
+        /// 
+        /// Create Everymatrix user if not existing in the current database.
+        /// 
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="manager"></param>
+        /// <param name="everyMatrixEmail"></param>
+        /// <param name="everyMatrixUsername"></param>
+        /// <param name="everyMatrixPwd"></param>
+        /// <param name="everyMatrixFirstName"></param>
+        /// <param name="everyMatrixLastName"></param>
+        /// <param name="doB"></param>
+        /// <returns></returns>
+        private static int SaveDbCreateStageEverymatrixUser(
+            TestDbContext db,
+            ApplicationUserManager manager,
+            string everyMatrixEmail,
+            string everyMatrixUsername,
+            string everyMatrixPwd,
+            string everyMatrixFirstName,
+            string everyMatrixLastName,
+            DateTime doB) {
 
-            var newUser = new ApplicationUser() {
-                UserName = "joe@mymail.com",
-                Email = "joe@mymail.com",
-                EmailConfirmed = true,
-                FirstName = "Joe",
-                LastName = "Smith",
-                Birthday = new DateTime(1990, 1, 1),
-                PasswordHash = manager.PasswordHasher.HashPassword("1q2w3e")
-            };
-            return newUser;
-        }
+            db.Users.AddOrUpdate(
+                c => new { c.Email },
+                new ApplicationUser() {
+                    UserName = everyMatrixUsername,
+                    Email = everyMatrixEmail,
+                    EmailConfirmed = true,
+                    FirstName = everyMatrixFirstName,
+                    LastName = everyMatrixLastName,
+                    Birthday = doB,
+                    Currency = "SEK"
+                });
 
-        private static ApplicationUser TestEveryMatrixUser(ApplicationUserManager manager) {
-
-            var newUser = new ApplicationUser() {
-                UserName = "testuser",
-                Email = "testuser@gz.com",
-                EmailConfirmed = true,
-                FirstName = "test",
-                LastName = "user",
-                Birthday = new DateTime(1975, 10, 13),
-                Currency = "EUR",
-                PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
-            };
-            return newUser;
+            var custId = manager.FindByEmail(everyMatrixEmail).Id;
+            return custId;
         }
 
         /// <summary>
@@ -169,20 +191,21 @@ namespace gzDAL.Conf
         /// </summary>
         /// <param name="context"></param>
         /// <param name="custId"></param>
-        private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
+        private static void CalcMonthlyBalances(TestDbContext context, int custId) {
 
             new InvBalanceRepo(context, new CustFundShareRepo(context), new GzTransactionRepo(context))
                 .SaveDbCustomerMonthlyBalancesByTrx(custId);
+
         }
 
-        private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
+        private static void CreateUpdCurrenciesList(TestDbContext context) {
 
             var usd = "USD";
 
             context.CurrenciesListX.AddOrUpdate(
                 c => new { c.From, c.To },
                 new CurrencyListX {
-                    From = "AUD", UpdatedOnUTC=DateTime.UtcNow
+                    From = "AUD", UpdatedOnUTC = DateTime.UtcNow
                 },
                 new CurrencyListX {
                     From = "CAD", UpdatedOnUTC = DateTime.UtcNow
@@ -232,7 +255,7 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdFunds(ApplicationDbContext context) {
+        private static void CreateUpdFunds(TestDbContext context) {
             context.Funds.AddOrUpdate(
                 f => f.Symbol,
                 new Fund {
@@ -259,7 +282,7 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdFundsPrices(ApplicationDbContext context) {
+        private static void CreateUpdFundsPrices(TestDbContext context) {
             context.FundPrices.AddOrUpdate(
                 f => new { f.FundId, f.YearMonthDay },
 
@@ -360,7 +383,7 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdPortfolios(ApplicationDbContext context, int custId) {
+        private static void CreateUpdPortfolios(TestDbContext context, int custId) {
 
             context.Portfolios.AddOrUpdate(
                 p => p.RiskTolerance,
@@ -382,7 +405,7 @@ namespace gzDAL.Conf
 
         }
 
-        private static void CreateUpdPortFunds(ApplicationDbContext context) {
+        private static void CreateUpdPortFunds(TestDbContext context) {
             context.PortFunds.AddOrUpdate(
                 p => new { p.PortfolioId, p.FundId },
                 // LOW
@@ -553,7 +576,7 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdGzTransaction(ApplicationDbContext context, int custId) {
+        private static void CreateUpdGzTransaction(TestDbContext context, int custId) {
 
             var trxRepo = new GzTransactionRepo(context);
 
@@ -665,7 +688,7 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdTranxType(ApplicationDbContext context) {
+        private static void CreateUpdTranxType(TestDbContext context) {
             context.GzTransationTypes.AddOrUpdate(
                 t => t.Code,
                 new GzTransactionType {
@@ -679,7 +702,7 @@ namespace gzDAL.Conf
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.TransferToGaming,
                     Description = "Customer transfers to gaming account."
-                }, 
+                },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.CasinoWithdrawal,
                     Description = "Losses due to playing in Casino, Betting etc."

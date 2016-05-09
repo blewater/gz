@@ -6,39 +6,23 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web.Http;
 using System.Web.Mvc;
-using gzDAL.Conf;
 using gzDAL.Models;
 using gzWeb.Areas.Mvc.Models;
 using gzWeb.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Testing;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace gzWeb.Tests.Controllers
 {
-    public class DatabaseInitializer : DropCreateDatabaseAlways<ApplicationDbContext>
-    {
-        protected override void Seed(ApplicationDbContext context)
-        {
-            var manager = new ApplicationUserManager(new CustomUserStore(context), new DataProtectionProviderFactory(() => null));
-            var user = new ApplicationUser
-                       {
-                               UserName = "testuser",
-                               Email = "testuser@gz.com",
-                               FirstName = "test",
-                               LastName = "user",
-                               Birthday = new DateTime(1975, 10, 13),
-                               Currency = "EUR",
+    public class DatabaseInitializer : DropCreateDatabaseAlways<ApplicationDbContext> {
+        protected override void Seed(ApplicationDbContext context) {
 
-                               EmailConfirmed = true,
-                       };
-
-            var result = manager.Create(user, "gz2016!@");
+            gzDAL.Conf.Seed.GenData();
         }
     }
 
@@ -50,19 +34,22 @@ namespace gzWeb.Tests.Controllers
         public string userName { get; set; }
     }
 
-    public abstract class BaseApiControllerTests
-    {
+    public abstract class BaseApiControllerTests {
+
         protected SelfHostServer Server { get; private set; }
         protected HttpClient Client { get { return Server.Client; } }
 
-        [OneTimeSetUp]
-        public virtual void OneTimeSetUp()
-        {
-            Server = SelfHostServer.Start(new Uri("http://localhost:9090"));
+        protected const string UnitTestDb = "gzTestDb";
 
-            Database.SetInitializer(new DatabaseInitializer());
-            using (var db = new ApplicationDbContext())
-                db.Database.Initialize(false);
+        [OneTimeSetUp]
+        public virtual void OneTimeSetUp() {
+
+            Server = SelfHostServer.Start("http://localhost");
+
+            //Database.SetInitializer<ApplicationDbContext>(new CreateDatabaseIfNotExists<ApplicationDbContext>());
+            Database.SetInitializer<ApplicationDbContext>(null);
+            gzDAL.Conf.Seed.GenData();
+
         }
 
         [OneTimeTearDown]
@@ -123,8 +110,8 @@ namespace gzWeb.Tests.Controllers
 
         [Test]
         [Category("Account/Login")]
-        public async Task LoginShouldPass()
-        {
+        public async Task LoginShouldPass() {
+
             var response = await Client.PostAsync("/Token",
                                                   new FormUrlEncodedContent(new[]
                                                                             {
@@ -359,7 +346,7 @@ namespace gzWeb.Tests.Controllers
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            using (var dbContext = new ApplicationDbContext())
+            using (var dbContext = new ApplicationDbContext(UnitTestDb))
             {
                 var user = dbContext.Users.Single(x => x.UserName == "username");
                 Assert.NotNull(user);
