@@ -58,9 +58,19 @@
             api.logout();
         };
 
+        $scope.deposit = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/registerPaymentMethods.html',
+                nsCtrl: 'registerPaymentMethodsCtrl',
+                nsStatic: true
+            });
+        };
+
         $scope.$on("$wamp.close", function (event, data) {
             //$location.path('/');
-            $window.location.href = '/';
+            //$window.location.href = '/';
         });
 
         $scope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {

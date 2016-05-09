@@ -430,6 +430,7 @@
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
+    <Content Include="Partials\directives\gzFieldOk.html" />
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
@@ -439,10 +440,13 @@
     <Content Include="Partials\messages\resetPassword.html" />
     <Content Include="Partials\messages\forgotPassword.html" />
     <Content Include="Partials\messages\registerDetails.html" />
+    <Content Include="Partials\messages\confirmDeposit.html" />
     <Content Include="Partials\messages\terms.html" />
     <Content Include="Partials\messages\login.html" />
     <Content Include="Partials\messages\registerAccount.html" />
     <Content Include="Partials\messages\showVintages.html" />
+    <Content Include="Partials\templates\depositCreditCard.html" />
+    <Content Include="Partials\templates\depositTrustly.html" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
     <Content Include="Scripts\angular-animate\angular-animate.min.js" />
     <Content Include="Scripts\angular-autocomplete\ngAutocomplete.js" />
@@ -452,6 +456,8 @@
     <Content Include="Scripts\angular-filter\angular-filter.js" />
     <Content Include="Scripts\angular-filter\angular-filter.min.js" />
     <Content Include="Scripts\angular-fullscreen\angular-fullscreen.js" />
+    <Content Include="Scripts\angular-iso-currency\isoCurrency.js" />
+    <Content Include="Scripts\angular-iso-currency\isoCurrency.min.js" />
     <Content Include="Scripts\angular-local-storage\angular-local-storage.js" />
     <Content Include="Scripts\angular-local-storage\angular-local-storage.min.js" />
     <Content Include="Scripts\angular-match-media\match-media.js" />
@@ -491,12 +497,14 @@
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\auth\changePasswordCtrl.js" />
+    <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDepositCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerPaymentMethodsCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\resetPasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerAccountCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDetailsCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\depositCreditCardCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\depositCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\forgotPasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\faqCtrl.js" />
@@ -517,6 +525,7 @@
     <Content Include="Scripts\_app\controllers\games\games3Ctrl.js" />
     <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\depositTrustlyCtrl.js" />
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
     <Content Include="Scripts\_app\directives\gzPerformanceGraph.js" />
