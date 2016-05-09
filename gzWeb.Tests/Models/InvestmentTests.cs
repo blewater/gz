@@ -12,16 +12,8 @@ namespace gzWeb.Tests.Models {
     [TestFixture]
     public class InvestmentTests {
         [Test]
-        public void TestMethod() {
-
-            // TODO: Add your test code here
-            Assert.Pass("Your first passing test");
-
-        }
-
-        [Test]
         public void CreateTestCustomerPortfolioSelections(int custId) {
-            var db = new ApplicationDbContext();
+            var db = new ApplicationDbContext(null);
             var cpRepo = new CustPortfolioRepo(db);
 
             /*** For phase I we test only single portfolio selections ***/
@@ -58,11 +50,14 @@ namespace gzWeb.Tests.Models {
             var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
                 23, 00, 00);
 
-            var db = new ApplicationDbContext();
-            var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                .SaveDbSellCustomerPortfolio(custId, lastMonthDay);
+            using (var db = new ApplicationDbContext(null)) {
 
-            Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
+                var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                    .SaveDbSellCustomerPortfolio(custId, lastMonthDay);
+
+                Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
+
+            }
         }
 
         [Test]
@@ -76,7 +71,7 @@ namespace gzWeb.Tests.Models {
             CreateTestPlayerLossTransactions(custId);
             CreateTestPlayerDepositWidthdrawnTransactions(custId);
 
-            var db = new ApplicationDbContext();
+            var db = new ApplicationDbContext(null);
             new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
                 .SaveDbCustomerMonthlyBalancesByTrx(custId);
         }
@@ -86,7 +81,7 @@ namespace gzWeb.Tests.Models {
 
             string[] customerEmails = new string[] { "info@nessos.gr" };
 
-            using (ApplicationDbContext context = new ApplicationDbContext()) {
+            using (ApplicationDbContext context = new ApplicationDbContext(null)) {
 
                 var manager = new ApplicationUserManager(new CustomUserStore(context),
                     new DataProtectionProviderFactory(() => null));
@@ -109,31 +104,42 @@ namespace gzWeb.Tests.Models {
         }
 
         public void CreateTestPlayerDepositWidthdrawnTransactions(int custId) {
-            var db = new ApplicationDbContext();
-            var gzTrx = new GzTransactionRepo(db);
+            using (var db = new ApplicationDbContext(null)) {
+                var gzTrx = new GzTransactionRepo(db);
 
-            // Add deposit, withdrawals
-            gzTrx.SaveDbTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
-            gzTrx.SaveDbGzTransaction(customerId: custId, gzTransactionType: GzTransactionJournalTypeEnum.Deposit, amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
-            gzTrx.SaveDbInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
-            gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
-            gzTrx.SaveDbInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
-            gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
+                // Add deposit, withdrawals
+                gzTrx.SaveDbTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
+                gzTrx.SaveDbGzTransaction(customerId: custId, gzTransactionType: GzTransactionJournalTypeEnum.Deposit,
+                    amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
+                gzTrx.SaveDbInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
+                gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
+                gzTrx.SaveDbInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
+                gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
+            }
         }
 
         public void CreateTestPlayerLossTransactions(int custId) {
-            var db = new ApplicationDbContext();
-            var gzTrx = new GzTransactionRepo(db);
+            using (var db = new ApplicationDbContext(null)) {
+                var gzTrx = new GzTransactionRepo(db);
 
-            // Add playing losses for first 6 months of 2015
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 160, creditPcnt: 50, createdOnUtc: new DateTime(2015, 1, 1));
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 120, creditPcnt: 50, createdOnUtc: new DateTime(2015, 2, 1));
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUtc: new DateTime(2015, 3, 1));
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50, createdOnUtc: new DateTime(2015, 4, 1));
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50, createdOnUtc: new DateTime(2015, 5, 1));
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUtc: new DateTime(2015, 6, 1));
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50, createdOnUtc: new DateTime(2016, 1, 1));
-            gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 100, creditPcnt: 50, createdOnUtc: new DateTime(2015, 9, 30));
+                // Add playing losses for first 6 months of 2015
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 160, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2015, 1, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 120, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2015, 2, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2015, 3, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2015, 4, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2015, 5, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2015, 6, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2016, 1, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 100, creditPcnt: 50,
+                    createdOnUtc: new DateTime(2015, 9, 30));
+            }
         }
 
         public static int CreateTestCustomer() {
@@ -155,7 +161,7 @@ namespace gzWeb.Tests.Models {
             var newUser = new ApplicationUser();
             Mapper.Map<CustomerDTO, ApplicationUser>(newUserDTO, newUser);
 
-            var db = new ApplicationDbContext();
+            var db = new ApplicationDbContext(null);
             var custRepo =
                     new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db),
                                                                 new DataProtectionProviderFactory(() => null)));

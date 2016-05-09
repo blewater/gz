@@ -95,7 +95,7 @@ namespace gzWeb
                 app.SetDataProtectionProvider(new DpapiDataProtectionProvider());
 
             container.RegisterSingleton(new DataProtectionProviderFactory(app.GetDataProtectionProvider));
-            container.Register<ApplicationDbContext>(()=>new ApplicationDbContext(null), Lifestyle.Scoped);
+            container.Register(()=>new ApplicationDbContext(), Lifestyle.Scoped);
             container.Register<ApplicationUserManager>(Lifestyle.Scoped);
             container.Register<IUserStore<ApplicationUser, int>, CustomUserStore>(Lifestyle.Scoped);
             container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
