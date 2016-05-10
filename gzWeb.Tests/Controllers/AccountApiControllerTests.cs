@@ -19,10 +19,10 @@ using NUnit.Framework;
 
 namespace gzWeb.Tests.Controllers
 {
-    public class DatabaseInitializer : DropCreateDatabaseAlways<ApplicationDbContext> {
-        protected override void Seed(ApplicationDbContext context) {
+    public class DatabaseInitializer : DropCreateDatabaseAlways<TestDbContext> {
+        protected override void Seed(TestDbContext context) {
 
-            gzDAL.Conf.Seed.GenData();
+            gzDAL.Conf.TestSeeder.GenData();
         }
     }
 
@@ -46,7 +46,10 @@ namespace gzWeb.Tests.Controllers
 
             Server = SelfHostServer.Start("http://localhost");
 
-            //Database.SetInitializer<ApplicationDbContext>(new CreateDatabaseIfNotExists<ApplicationDbContext>());
+            // Uncomment following line and comment next 2 if wanting to test with TestDb
+            // Replace also ApplicationDbContext with TestDbContext
+            //Database.SetInitializer<TestDbContext>(new DatabaseInitializer());
+
             Database.SetInitializer<ApplicationDbContext>(null);
             gzDAL.Conf.Seed.GenData();
 
@@ -330,8 +333,15 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public async Task ShouldNotFailWithValidModel()
-        {
+        public async Task ShouldNotFailWithValidModel() {
+
+            var db = new ApplicationDbContext();
+            var user = db.Users.SingleOrDefault(u => u.Email == "email@email.com");
+            if (user != null) {
+                db.Users.Remove(user);
+                db.SaveChanges();
+            }
+
             var response = await Client.PostJsonAsync("/api/Account/Register",
                                                       new RegisterBindingModel
                                                       {
@@ -346,9 +356,9 @@ namespace gzWeb.Tests.Controllers
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            using (var dbContext = new ApplicationDbContext(UnitTestDb))
+            using (var dbContext = new ApplicationDbContext())
             {
-                var user = dbContext.Users.Single(x => x.UserName == "username");
+                user = dbContext.Users.Single(x => x.UserName == "username");
                 Assert.NotNull(user);
 
                 dbContext.Users.Remove(user);
