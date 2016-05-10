@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('authInterceptor', ['$q', '$location', 'localStorageService', 'constants', 'route', authInterceptor]);
+    APP.factory('authInterceptor', ['$q', '$location', 'localStorageService', 'constants', authInterceptor]);
 
-    function authInterceptor($q, $location, localStorageService, constants, route) {
+    function authInterceptor($q, $location, localStorageService, constants) {
         var factory = {};
 
         factory.request = function (config) {
@@ -22,7 +22,7 @@
             }
             else if (rejection.status == 401) {
                 localStorageService.remove(constants.storageKeys.authData);
-                $location.path(route.getPath(constants.routeKeys.home));
+                $location.path(constants.routes.home.path);
                 return true;
             }
             else

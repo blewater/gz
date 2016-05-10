@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <gz-select gz-model="model.selectedCreditCard" gz-collection="existingCreditCards" gz-prompt="--Select Credit Card--" gz-loading="loadingCreditCards"
-                                   gz-id="id" gz-display="name" gz-change="onCreditCardSelected(id)">
+                                   gz-display="name" gz-change="onCreditCardSelected(id)">
                         </gz-select>
                     </div>
                 </div>
@@ -37,15 +37,16 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-12">
-                        <input type="text" placeholder="card number" id="cardNumber" name="cardNumber" class="form-control" autocomplete="off" ng-model="model.cardNumber" required
+                        <input type="text" placeholder="card number" id="cardNumber" name="cardNumber" class="form-control" autocomplete="off" ng-model="model.cardNumber"
                                ng-class="{ 'empty': !model.cardNumber, 'danger' : form.cardNumber.$invalid && !form.cardNumber.$pristine }"
+                               ng-disabled="model.existingCard" ng-required="!model.existingCard"
                                ng-focus="cardNumberFocused = true;" ng-blur="cardNumberFocused = false;">
                     </div>
                     <div class="col-xs-12">
                         <div class="help-block" ng-class="{'show': !form.cardNumber.$pristine && form.cardNumber.$error.required}">Card Number is required</div>
                     </div>
                 </div>
-                <gz-field-ok gz-when="form.cardNumber.$valid"></gz-field-ok>
+                <gz-field-ok gz-when="form.cardNumber.$valid && !model.existingCard"></gz-field-ok>
             </div>
         </div>
 
@@ -55,13 +56,14 @@
                     <div class="col-xs-12">
                         <input type="text" placeholder="card holder name" id="cardHolderName" name="cardHolderName" class="form-control" autocomplete="off" ng-model="model.cardHolderName" required
                                ng-class="{ 'empty': !model.cardHolderName, 'danger' : form.cardHolderName.$invalid && !form.cardHolderName.$pristine }"
+                               ng-disabled="model.existingCard" ng-required="!model.existingCard"
                                ng-focus="cardHolderNameFocused = true;" ng-blur="cardHolderNameFocused = false;">
                     </div>
                     <div class="col-xs-12">
                         <div class="help-block" ng-class="{'show': !form.cardHolderName.$pristine && form.cardHolderName.$error.required}">Card Holder Name is required</div>
                     </div>
                 </div>
-                <gz-field-ok gz-when="form.cardHolderName.$valid"></gz-field-ok>
+                <gz-field-ok gz-when="form.cardHolderName.$valid && !model.existingCard"></gz-field-ok>
             </div>
         </div>
 
@@ -70,19 +72,19 @@
                 <div class="row">
                     <div class="col-xs-4">
                         <gz-select gz-name="cardExpiryMonth" gz-model="model.cardExpiryMonth" gz-collection="months" gz-prompt="MM" gz-loading="loadingMonths"
-                                   gz-required gz-id="value" gz-display="display" gz-error="!form.cardExpiryMonth.$pristine && form.cardExpiryMonth.$error.required">
+                                   gz-required gz-disabled="model.existingCard" gz-id="value" gz-display="display" gz-error="!form.cardExpiryMonth.$pristine && form.cardExpiryMonth.$error.required">
                         </gz-select>
                     </div>
                     <div class="col-xs-4">
                         <gz-select gz-name="cardExpiryYear" gz-model="model.cardExpiryYear" gz-collection="years" gz-prompt="YY" gz-loading="loadingYears" gz-change="onYearSelected(id)"
-                                   gz-required gz-id="value" gz-display="display" gz-error="!form.cardExpiryYear.$pristine && form.cardExpiryYear.$error.required">
+                                   gz-required gz-disabled="model.existingCard" gz-id="value" gz-display="display" gz-error="!form.cardExpiryYear.$pristine && form.cardExpiryYear.$error.required">
                         </gz-select>
                     </div>
                     <div class="col-xs-4">
                         <!--ng-minlength="3" ng-maxlength="3"-->
                         <input type="password" placeholder="CVC" id="cardSecurityNumber" name="cardSecurityNumber" class="form-control" autocomplete="off" ng-model="model.cardSecurityNumber" required
                                ng-class="{ 'empty': !model.cardSecurityNumber, 'danger' : form.cardSecurityNumber.$invalid && !form.cardSecurityNumber.$pristine }"
-                               ng-pattern="/^[0-9]{3}$/"
+                               ng-pattern="/^[0-9]{3}$/" required
                                ng-focus="cardSecurityNumberFocused = true;" ng-blur="cardSecurityNumberFocused = false;">
                         <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':cardSecurityNumberFocused || form.cardSecurityNumber.$valid}">
                             <i class="fa fa-lg fa-credit-card"></i>
@@ -94,7 +96,7 @@
                         <div class="help-block" ng-class="{'show': !form.cardSecurityNumber.$pristine && !form.cardSecurityNumber.$error.required && form.cardSecurityNumber.$invalid}">Card Security Number must be 3 digits long</div>
                     </div>
                 </div>
-                <gz-field-ok gz-when="form.cardExpiryMonth.$valid && form.cardExpiryYear.$valid && form.cardSecurityNumber.$valid"></gz-field-ok>
+                <gz-field-ok gz-when="(form.cardExpiryMonth.$valid && form.cardExpiryYear.$valid && form.cardSecurityNumber.$valid && !model.existingCard) || (form.cardSecurityNumber.$valid && model.existingCard)"></gz-field-ok>
             </div>
         </div>
 
@@ -110,7 +112,7 @@
                     <div class="col-xs-12">
                         <input type="number" placeholder="{{amountPlaceholder}}" id="amount" name="amount" class="form-control" autocomplete="off" ng-model="model.amount" required
                                ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
-                               min="{{accountLimits.min}}" max="{{accountLimits.max}}"
+                               required min="{{accountLimits.min}}" max="{{accountLimits.max}}"                               
                                ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
                     </div>
                     <div class="col-xs-12">

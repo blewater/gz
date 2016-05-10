@@ -7,7 +7,7 @@
         var maxYear = thisYear + 30;
 
         $scope.model = {
-            id: undefined,
+            selectExisting: undefined,
             cardNumber: undefined,
             cardHolderName: undefined,
             cardSecurityNumber: undefined,
@@ -59,11 +59,16 @@
         }
 
         $scope.onCreditCardSelected = function (card) {
-            $scope.model.id = card.id;
-            $scope.model.cardNumber = card.name;
-            $scope.model.cardHolderName = card.cardHolderName;
-            $scope.model.cardExpiryYear = parseInt(card.cardExpiryDate.slice(0, 2));
-            $scope.model.cardExpiryMonth = parseInt(card.cardExpiryDate.slice(0, -4));
+            $scope.model.existingCard = card;
+            // if (card) {
+            //     $scope.model.id = card.id;
+            //     $scope.model.cardNumber = card.name;
+            //     $scope.model.cardHolderName = card.cardHolderName;
+            //     $scope.model.cardExpiryYear = parseInt(card.cardExpiryDate.slice(0, 2));
+            //     $scope.model.cardExpiryMonth = parseInt(card.cardExpiryDate.slice(0, -4));
+            // }
+            // else {                
+            // }
         };
 
         function loadCreditCardInfo() {
@@ -84,30 +89,31 @@
             loadCreditCardInfo();
         };
 
-        function getFields() {
+        function getFields(id) {
             return {
                 gamingAccountID: $scope.gamingAccount.id,
-                currency: $scope.currency.code,
+                currency: $scope.currency,
                 amount: $scope.model.amount,
-                payCardID: $scope.model.id
+                payCardID: id,
+                cardSecurityCode: $scope.model.cardSecurityNumber
             };
         }
 
         $scope.readFields = function () {
             var q = $q.defer();
-            if ($scope.model.id)
-                q.resolve(getFields());
+            if ($scope.model.existingCard){
+                q.resolve(getFields($scope.model.existingCard.id));
+            }
             else {
                 emBanking.registerPayCard({
-                    paymentMethodCode: $scope.selectedMethod,
+                    paymentMethodCode: $scope.selectedMethod.code,
                     fields: {
                         cardNumber: $scope.model.cardNumber,
                         cardHolderName: $scope.model.cardHolderName,
-                        cardExpiryDate: $scope.model.cardExpiryMonth.value + "/" + $scope.model.cardExpiryYear.value
+                        cardExpiryDate: $scope.model.cardExpiryMonth.display + "/" + $scope.model.cardExpiryYear.value
                     }
                 }).then(function(result) {
-                    $scope.model.id = result.id;
-                    q.resolve(getFields());
+                    q.resolve(getFields(result.id));
                 }, function (error) {
                     q.reject(error);
                 });
