@@ -110,7 +110,7 @@
                     fields: {
                         cardNumber: $scope.model.cardNumber,
                         cardHolderName: $scope.model.cardHolderName,
-                        cardExpiryDate: $scope.model.cardExpiryMonth.value + "/" + $scope.model.cardExpiryYear.value
+                        cardExpiryDate: $scope.model.cardExpiryMonth.display + "/" + $scope.model.cardExpiryYear.value
                     }
                 }).then(function(result) {
                     q.resolve(getFields(result.id));
