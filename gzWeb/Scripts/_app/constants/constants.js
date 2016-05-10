@@ -2,71 +2,40 @@
     'use strict';
 
     // #region Routes
-    var area = '/Mvc';
-
-    // #region Keys
-    var routeKeys = {
-        home: 'home',
-        transparency: 'transparency',
-        about: 'about',
-        faq: 'faq',
-        playground: 'playground',
-
-        games1: 'games1',
-        games2: 'games2',
-        games3: 'games3',
-        games4: 'games4',
-
-        summary: 'summary',
-        portfolio: 'portfolio',
-        performance: 'performance',
-        activity: 'activity',
-    };
-
-    var groupKeys = {
-        guest: 'guest',
-        games: 'games',
-        investments: 'investments'
-    };
-    // #endregion
+    var routes = {};
 
     // #region Guest
-    var home = {
-        key: routeKeys.home,
-        //group: groupKeys.guest,
+    routes.home = {
+        key: 'home',
         path: '/',
         ctrl: 'homeCtrl',
         tpl: '/Mvc/Guest/Home',
         title: 'Home',
         reloadOnSearch: false
     };
-    var transparency = {
-        key: routeKeys.transparency,
-        group: groupKeys.guest,
+    routes.transparency = {
+        key: 'transparency',
         path: '/transparency',
         ctrl: 'transparencyCtrl',
         tpl: '/Mvc/Guest/Transparency',
         title: 'Transparency'
     };
-    var about = {
-        key: routeKeys.about,
-        group: groupKeys.guest,
+    routes.about = {
+        key: 'about',
         path: '/about',
         ctrl: 'aboutCtrl',
         tpl: '/Mvc/Guest/About',
         title: 'About'
     };
-    var faq = {
-        key: routeKeys.faq,
-        //group: groupKeys.guest,
+    routes.faq = {
+        key: 'faq',
         path: '/faq',
         ctrl: 'faqCtrl',
         tpl: '/Mvc/Guest/FAQ',
         title: 'FAQ'
     };
-    var playground = {
-        key: routeKeys.playground,
-        //group: groupKeys.guest,
+    routes.playground = {
+        key: 'playground',
         path: '/playground',
         ctrl: 'playgroundCtrl',
         tpl: '/Mvc/Guest/Playground',
@@ -75,68 +44,39 @@
     // #endregion
 
     // #region Games
-    var games1 = {
-        key: routeKeys.games1,
-        group: groupKeys.games,
+    routes.games = {
+        key: 'games',
         path: '/games',
-        ctrl: 'games1Ctrl',
-        tpl: '/Mvc/Games/Page1',
-        title: 'Games 1'
-    };
-    var games2 = {
-        key: routeKeys.games2,
-        group: groupKeys.games,
-        path: '/games2',
-        ctrl: 'games2Ctrl',
-        tpl: '/Mvc/Games/Page2',
-        title: 'Games 2'
-    };
-    var games3 = {
-        key: routeKeys.games3,
-        group: groupKeys.games,
-        path: '/games3',
-        ctrl: 'games3Ctrl',
-        tpl: '/Mvc/Games/Page3',
-        title: 'Games 3'
-    };
-    var games4 = {
-        key: routeKeys.games4,
-        group: groupKeys.games,
-        path: '/games4',
-        ctrl: 'games4Ctrl',
-        tpl: '/Mvc/Games/Page4',
-        title: 'Games 4'
+        ctrl: 'gamesCtrl',
+        tpl: '/Mvc/Games/Games',
+        title: 'Games'
     };
     // #endregion
 
     // #region Investments
-    var summary = {
-        key: routeKeys.summary,
-        group: groupKeys.investments,
+    routes.summary = {
+        key: 'summary',
         path: '/summary',
         ctrl: 'summaryCtrl',
         tpl: '/Mvc/Investments/Summary',
         title: 'Summary'
     };
-    var portfolio = {
-        key: routeKeys.portfolio,
-        group: groupKeys.investments,
+    routes.portfolio = {
+        key: 'portfolio',
         path: '/portfolio',
         ctrl: 'portfolioCtrl',
         tpl: '/Mvc/Investments/Portfolio',
         title: 'Portfolio'
     };
-    var performance = {
-        key: routeKeys.performance,
-        group: groupKeys.investments,
+    routes.performance = {
+        key: 'performance',
         path: '/performance',
         ctrl: 'performanceCtrl',
         tpl: '/Mvc/Investments/Performance',
         title: 'Performance'
     };
-    var activity = {
-        key: routeKeys.activity,
-        group: groupKeys.investments,
+    routes.activity = {
+        key: 'activity',
         path: '/activity',
         ctrl: 'activityCtrl',
         tpl: '/Mvc/Investments/Activity',
@@ -144,37 +84,10 @@
     };
     // #endregion
 
-    // #region Groups
-    var guest = {
-        home: home,
-        transparency: transparency,
-        about: about
-    };
-    var games = {
-        games1: games1,
-        games2: games2,
-        games3: games3,
-        games4: games4
-    };
-    var investments = {
-        summary: summary,
-        portfolio: portfolio,
-        performance: performance,
-        activity: activity
-    };
-    var routesGroups = {
-        guest: guest,
-        //auth: auth,
-        games: games,
-        investments: investments
-    };
-    var routes = [
-        home, transparency, about, faq, playground,
-        //login, register,
-        games1, games2, games3, games4,
-        summary, portfolio, performance, activity
-    ];
-    // #endregion
+    var all = [];
+    for (var key in routes)
+        all.push(routes[key]);
+    routes.all = all;
     // #endregion
 
     APP.constant("constants", {
@@ -188,11 +101,8 @@
         domainPrefix: 'http://www.greenzorro.com',
         emailVerificationUrl: 'localhost:63659/activate?key=',
 
-        area: area,
-        routeKeys: routeKeys,
-        groupKeys: groupKeys,
+        area: "/Mvc",
         routes: routes,
-        routesGroups: routesGroups,
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
