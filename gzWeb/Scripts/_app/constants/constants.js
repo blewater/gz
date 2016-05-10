@@ -119,7 +119,8 @@
             DEPOSIT_STATUS_CHANGED: 'depositStatusChanged',
             WITHDRAW_STATUS_CHANGED: 'withdrawStatusChanged'
         },
-        reCaptchaPublicKey: '6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML'
+        reCaptchaPublicKey: '6Ld5ZB8TAAAAAI1QlCbPCo-OnYi6EyR-lL2GrFyH'
+        //reCaptchaPublicKey: '6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML'
 
         //msgs: {
         //    required: 'The field is required!',
