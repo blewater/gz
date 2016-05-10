@@ -2,12 +2,13 @@
     'use strict';
 
     APP.config(['$routeProvider', '$locationProvider', 'constants', function($routeProvider, $locationProvider, constants) {
-        for (var i = 0; i < constants.routes.length; i++)
-            $routeProvider.when(constants.routes[i].path, {
-                controller: constants.routes[i].ctrl,
-                templateUrl: constants.routes[i].tpl,
-                title: constants.routes[i].title,
-                reloadOnSearch: constants.routes[i].reloadOnSearch || true
+        var routes = constants.routes.all;
+        for (var i = 0; i < routes.length; i++)
+            $routeProvider.when(routes[i].path, {
+                controller: routes[i].ctrl,
+                templateUrl: routes[i].tpl,
+                title: routes[i].title,
+                reloadOnSearch: routes[i].reloadOnSearch || true
             });
         $routeProvider.otherwise({ redirectTo: '/' });
 
@@ -29,8 +30,7 @@
         }]);
     }]);
 
-    APP.config(['$wampProvider', 'constants', function ($wampProvider, constants) {
-        
+    APP.config(['$wampProvider', 'constants', function ($wampProvider, constants) {        
         $wampProvider.init({
             transports: [
                 { 'type': 'websocket', 'url': constants.webeocketApiUrl },
