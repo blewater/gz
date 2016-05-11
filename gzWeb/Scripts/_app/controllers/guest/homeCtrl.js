@@ -7,7 +7,6 @@
             var urlParams = $location.search();
             var gzResetKey = urlParams.gzKey;
             var emResetKey = urlParams.emKey;
-            console.log(emResetKey);
             if (emResetKey) {
                 message.open({
                     nsType: 'modal',
