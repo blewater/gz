@@ -1,7 +1,7 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emCasino", ["emWamp", emCasinoFunc]);
+    APP.factory("emCasino", ['emWamp', emCasinoFunc]);
     function emCasinoFunc(emWamp) {
 
         var _service = {};
