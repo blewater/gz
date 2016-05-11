@@ -1,7 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,13 +15,13 @@ using gzDAL.Conf;
 using gzDAL.ModelUtil;
 
 namespace gzWeb.Tests.Models {
-    [TestClass]
+    [TestFixture]
     public class PortfolioTest {
 
-        [ClassInitialize]
-        public static void PortfolioTestInitialize(TestContext context)
+        [OneTimeSetUp]
+        public void PortfolioTestInitialize()
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<CustomerDTO, ApplicationUser>());
+            Database.SetInitializer<ApplicationDbContext>(null);
         }
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace gzWeb.Tests.Models {
         /// Asserts taken from calculator on https://smartasset.com/investing/investment-calculator#iw7vdcEJRj
         ///
         /// </summary>
-        [TestMethod]
+        [Test]
         public void TimeWeightedReturnCalc() {
 
             // Case 1
@@ -82,7 +83,7 @@ namespace gzWeb.Tests.Models {
         /// <summary>
         /// Get the Apr returns based on the 3 year or 5 year returns whichever is greater
         /// </summary>
-        [TestMethod]
+        [Test]
         public void PortfolioReturns() {
             using (var db = new ApplicationDbContext(null)) {
                 var portfolioLines = new PortfolioRepository(db).GetPortfolioRetLines();
@@ -92,7 +93,7 @@ namespace gzWeb.Tests.Models {
                 }
             }
         }
-        [TestMethod]
+        [Test]
         public void SaveDailyCurrenciesRates() {
             var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext(null));
             var quotes = currencyRateRepo.SaveDbDailyCurrenciesRates();
@@ -102,7 +103,7 @@ namespace gzWeb.Tests.Models {
             //Assert we have a closing price for first symbol
             Assert.IsTrue(quotes[0].TradeDateTime.HasValue);
         }
-        [TestMethod]
+        [Test]
         public void SaveDailyFundClosingPrice() {
             using (var db = new ApplicationDbContext(null)) {
                 var fundRepo = new FundRepo(db);
@@ -114,14 +115,5 @@ namespace gzWeb.Tests.Models {
                 Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
             }
         }
-
-        [TestMethod]
-        public void SaveDbUpdAllCustomerBalances() {
-            using (var db = new ApplicationDbContext(null)) {
-                new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                    .SaveDbAllCustomersMonthlyBalances();
-            }
-        }
-
     }
 }

@@ -320,7 +320,7 @@ namespace gzDAL.Repos {
             var fundsIQry = GetPortfolioFunds(customerId, customerPortfolio);
 
             // Match Portfolio Funds with --> Already Owned Customer Funds of In parameter 
-            // Update the customer owned fund shares that overlap with their current selected portfolio funds of Step 1
+            // Update the customer owned fund shares that overlap with their currently selected portfolio funds
             // the weight of which will be used to allocate cash for the current month
             foreach (var fundItem in fundsIQry) {
 

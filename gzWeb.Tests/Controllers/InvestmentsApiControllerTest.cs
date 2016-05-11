@@ -39,7 +39,7 @@ namespace gzWeb.Tests.Controllers
 
             var manager = new ApplicationUserManager(new CustomUserStore(db),
                                                      new DataProtectionProviderFactory(() => null));
-            var user = manager.FindByEmail("gz@gz.com");
+            var user = manager.FindByEmail("testuser@gz.com");
 
             // Act
             var result = ((IInvestmentsApi) controller).GetSummaryData(user);

@@ -1,17 +1,25 @@
 ﻿using NUnit.Framework;
 using System;
-using AutoMapper;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
+using System.Linq;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.Models;
 using gzDAL.Repos;
 using Microsoft.AspNet.Identity;
 using Assert = NUnit.Framework.Assert;
+using System.Collections.Generic;
 
 namespace gzWeb.Tests.Models {
     [TestFixture]
     public class InvestmentTests {
-        [Test]
+
+        [OneTimeSetUp]
+        public void Setup() {
+            Database.SetInitializer<ApplicationDbContext>(null);
+        }
+
         public void CreateTestCustomerPortfolioSelections(int custId) {
             var db = new ApplicationDbContext(null);
             var cpRepo = new CustPortfolioRepo(db);
@@ -42,15 +50,15 @@ namespace gzWeb.Tests.Models {
         [Test]
         public void SaveDbSellPortfolio() {
 
-            int custId = CreateTestCustomer();
-
-            // Last Day of present Month @ 23:00
-            var yearCurrent = DateTime.UtcNow.Year;
-            var monthCurrent = DateTime.UtcNow.Month;
-            var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
-                23, 00, 00);
-
             using (var db = new ApplicationDbContext(null)) {
+
+                var custId = CreateTestCustomer(db, TestUser6Month(db));
+
+                // Last Day of present Month @ 23:00
+                var yearCurrent = DateTime.UtcNow.Year;
+                var monthCurrent = DateTime.UtcNow.Month;
+                var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
+                    23, 00, 00);
 
                 var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
                     .SaveDbSellCustomerPortfolio(custId, lastMonthDay);
@@ -63,32 +71,45 @@ namespace gzWeb.Tests.Models {
         [Test]
         public void SaveDbUpdCustomerBalancesByTrx() {
 
-            int custId = CreateTestCustomer();
+            using (var db = new ApplicationDbContext(null)) {
 
-            // Add invested Customer Portfolio
-            CreateTestCustomerPortfolioSelections(custId);
+                CreateTestCustomer(db, TestUser6Month(db));
+                CreateTestCustomer(db, TestInfo(db));
+                CreateTestCustomer(db, TestUser(db));
 
-            CreateTestPlayerLossTransactions(custId);
-            CreateTestPlayerDepositWidthdrawnTransactions(custId);
+                var custIdList = db.Users
+                    .Where(u => new List<string>() {
 
-            var db = new ApplicationDbContext(null);
-            new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                .SaveDbCustomerMonthlyBalancesByTrx(custId);
+                        "6month@allocation.com",
+                        "info@nessos.gr",
+                        "testuser@gz.com"
+
+                    }.Contains(u.Email)).Select(u=>u.Id).ToList();
+
+                foreach (var custId in custIdList) {
+
+                    // Add invested Customer Portfolio
+                    CreateTestCustomerPortfolioSelections(custId);
+
+                    CreateTestPlayerLossTransactions(custId);
+                    CreateTestPlayerDepositWidthdrawnTransactions(custId);
+
+                    new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                        .SaveDbCustomerMonthlyBalancesByTrx(custId);
+                }
+            }
         }
 
         [Test]
         public void SaveDbUpdEveryMatrixUserBalancesByTrx() {
 
-            string[] customerEmails = new string[] { "info@nessos.gr" };
+            string[] customerEmails = new string[] { "info@nessos.gr", "testuser@gz.com" };
 
             using (ApplicationDbContext context = new ApplicationDbContext(null)) {
 
-                var manager = new ApplicationUserManager(new CustomUserStore(context),
-                    new DataProtectionProviderFactory(() => null));
-
                 foreach (var customerEmail in customerEmails) {
 
-                    var custId = manager.FindByEmail(customerEmail).Id;
+                    var custId = context.Users.Where(u => u.Email == customerEmail).Select(u => u.Id).Single();
 
                     // Add invested Customer Portfolio
                     CreateTestCustomerPortfolioSelections(custId);
@@ -142,30 +163,80 @@ namespace gzWeb.Tests.Models {
             }
         }
 
-        public static int CreateTestCustomer() {
+        [Test]
+        public void SaveDbUpdAllCustomerBalances() {
+            using (var db = new ApplicationDbContext(null)) {
+                new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                    .SaveDbAllCustomersMonthlyBalances();
+            }
+        }
 
-            Random rnd = new Random();
-            int rndPlatformId = rnd.Next(1, int.MaxValue);
+        private int CreateTestCustomer(ApplicationDbContext db, ApplicationUser newUser) {
 
-            var newUserDTO = new CustomerDTO() {
+            db.Users.AddOrUpdate(c => new { c.Email }, newUser);
+            db.SaveChanges();
+
+            var custId = db.Users.Where(u => u.Email == newUser.Email).Select(u => u.Id).Single();
+            return custId;
+        }
+
+#region TestUsers
+
+        private ApplicationUser TestInfo(ApplicationDbContext db) {
+
+            var manager = new ApplicationUserManager(new CustomUserStore(db),
+                new DataProtectionProviderFactory(() => null));
+
+            var newUser = new ApplicationUser {
+                UserName = "infonesos",
+                Email = "info@nessos.gr",
+                FirstName = "Info",
+                LastName = "Nessos",
+                Birthday = new DateTime(1975, 10, 13),
+                Currency = "EUR",
+                PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@"),
+                EmailConfirmed = true
+            };
+            return newUser;
+        }
+
+        private ApplicationUser TestUser6Month(ApplicationDbContext db) {
+
+            var manager = new ApplicationUserManager(new CustomUserStore(db),
+                new DataProtectionProviderFactory(() => null));
+
+            var newUser = new ApplicationUser() {
                 UserName = "6month@allocation.com",
                 Email = "6month@allocation.com",
                 EmailConfirmed = true,
                 FirstName = "Six",
                 LastName = "Month",
                 Birthday = new DateTime(1990, 1, 1),
-                PlatformCustomerId = rndPlatformId,
-                GamBalance = new decimal(4200.54),
-                GamBalanceUpdOnUTC = DateTime.UtcNow
+                Currency = "EUR",
+                PasswordHash = manager.PasswordHasher.HashPassword("1q2w3e")
             };
-            var newUser = new ApplicationUser();
-            Mapper.Map<CustomerDTO, ApplicationUser>(newUserDTO, newUser);
-
-            var db = new ApplicationDbContext(null);
-            var custRepo =
-                    new CustomerRepo(new ApplicationUserManager(new CustomUserStore(db),
-                                                                new DataProtectionProviderFactory(() => null)));
-            return custRepo.CreateOrUpdateUser(newUser, "1q2w3e");
+            return newUser;
         }
+
+        private ApplicationUser TestUser(ApplicationDbContext db) {
+
+            var manager = new ApplicationUserManager(new CustomUserStore(db),
+                new DataProtectionProviderFactory(() => null));
+
+            var newUser = new ApplicationUser {
+                UserName = "testuser",
+                Email = "testuser@gz.com",
+                FirstName = "test",
+                LastName = "user",
+                Birthday = new DateTime(1975, 10, 13),
+                Currency = "EUR",
+                PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@"),
+                EmailConfirmed = true
+            };
+            return newUser;
+        }
+
+#endregion
+
     }
 }
