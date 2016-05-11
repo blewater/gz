@@ -13,7 +13,7 @@
                     <img src="@Url.Content("~/Content/Images/line.svg")" alt="Line" />
                 </div>
                 <div class="investments-balance-descr">
-                    Your investment balance
+                    Investment balance
                 </div>
             </div>
         </div>
@@ -27,13 +27,13 @@
                 <div class="overview-box">
                     <div class="half">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">You have invested</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">Invested</div>
                             <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestments | currency : model.Currency : 0}}</div>
                         </div>
                     </div>
                     <div class="half">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">You have gained</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">Gained</div>
                             <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestmentsReturns | currency : model.Currency : 0}}</div>
                         </div>
                     </div>
@@ -42,16 +42,16 @@
                     <div class="vintages-box-table">
                         <div class="vintages-box-table-head">
                             <div class="row">
-                                <div class="col-xs-4 text-left">Vintage</div>
-                                <div class="col-xs-4 text-right">Invested</div>
-                                <div class="col-xs-4 text-right">Return</div>
+                                <div class="col-xs-12 text-left"><b>Investment vintages</b></div>
+                                <!--<div class="col-xs-6 text-left">Vintage</div>
+                                <div class="col-xs-6 text-right">Invested</div>-->
                             </div>
                         </div>
                         <div class="vintages-box-table-body">
                             <div class="row" ng-repeat="vintage in lastVintages">
-                                <div class="col-xs-4 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                                <div class="col-xs-4 text-right">{{vintage.InvestAmount | currency : model.Currency : 0}}</div>
-                                <div class="col-xs-4 text-right"><span ng-if="vintage.returnPercent > 0">+</span>{{vintage.ReturnPercent}}%</div>
+                                <div class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
+                                <div class="col-xs-6 text-right">{{vintage.InvestAmount | currency : model.Currency : 0}}</div>
+                                <!--<div class="col-xs-4 text-right"><span ng-if="vintage.returnPercent > 0">+</span>{{vintage.ReturnPercent}}%</div>-->
                             </div>
                         </div>
                         <div class="vintages-box-table-foot">
@@ -88,12 +88,16 @@
                                 <div class="col-xs-6 text-right">{{model.TotalWithdrawals | currency : model.Currency : 0}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-6 text-left">Balance</div>
+                                <div class="col-xs-6 text-left">Current Balance</div>
                                 <div class="col-xs-6 text-right">{{model.GamingBalance | currency : model.Currency : 0}}</div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="back-to-games bg-gz visible-lg" ng-click="backToGames()">
+                    <img src="@Url.Content("~/Content/Images/games_white.svg")" alt="Games" />
+                    <span>BACK TO GAMES</span>
+                </div>            
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-lg-3">
@@ -136,16 +140,26 @@
                         </div>
                     </div>
                 </div>
-                <div class="transfer-cash hidden-sm hidden-md" ng-click="transferCashToGames()">
+                <div class="withdraw visible-lg" ng-click="withdraw()">
                     <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
-                    <span>TRANSFER CASH TO GAMES</span>
+                    <span>WITHDRAW</span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="transfer-cash visible-sm visible-md" ng-click="transferCashToGames()">
-        <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
-        <span>TRANSFER CASH TO GAMES</span>
+    <div class="row hidden-lg">
+        <div class="col-xs-12 col-sm-6 col-sm-push-6">
+            <div class="withdraw" ng-click="withdraw()">
+                <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
+                <span>WITHDRAW</span>
+            </div>            
+        </div>
+        <div class="col-xs-12 col-sm-6 col-sm-pull-6">
+            <div class="back-to-games" ng-click="backToGames()">
+                <img src="@Url.Content("~/Content/Images/games_white.svg")" alt="Games" />
+                <span>BACK TO GAMES</span>
+            </div>            
+        </div>
     </div>
 </div>
 
