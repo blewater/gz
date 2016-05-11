@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Data.Entity;
+using System.Net;
 using System.Web.Http;
 using AutoMapper;
 using gzDAL.Conf;
@@ -10,16 +11,21 @@ using gzWeb.Contracts;
 using gzWeb.Controllers;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace gzWeb.Tests.Controllers
 {
-    [TestClass]
+    [TestFixture]
     public class InvestmentsApiControllerTest
     {
         protected const string UnitTestDb = "gzTestDb";
 
-        [TestMethod]
+        [OneTimeSetUp]
+        public void Setup() {
+            Database.SetInitializer<ApplicationDbContext>(null);
+        }
+
+        [Test]
         public void InvestmentSummaryDataUserNull()
         {
 
@@ -30,7 +36,7 @@ namespace gzWeb.Tests.Controllers
         }
 
 
-        [TestMethod]
+        [Test]
         public void GetSummaryDataWithUser()
         {
 
@@ -39,7 +45,7 @@ namespace gzWeb.Tests.Controllers
 
             var manager = new ApplicationUserManager(new CustomUserStore(db),
                                                      new DataProtectionProviderFactory(() => null));
-            var user = manager.FindByEmail("testuser@gz.com");
+            var user = manager.FindByEmail("info@nessos.gr");
 
             // Act
             var result = ((IInvestmentsApi) controller).GetSummaryData(user);
@@ -60,7 +66,7 @@ namespace gzWeb.Tests.Controllers
         private static ApplicationDbContext CreateInvestmentsApiController(out InvestmentsApiController controller)
         {
 
-            ApplicationDbContext db = new ApplicationDbContext(UnitTestDb);
+            ApplicationDbContext db = new ApplicationDbContext();
             ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(db);
             IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
             IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);
