@@ -17,7 +17,7 @@
         factory.responseError = function (rejection) {
             if (rejection.status == 404) {
                 // TODO: create 404 page
-                //$location.path(route.getPath(constants.routeKeys.notFound));
+                //$location.path(constants.routes.notFound.path);
                 return true;
             }
             else if (rejection.status == 401) {
@@ -27,10 +27,6 @@
             }
             else
                 return $q.reject(rejection);
-            //if (rejection.status === 401) {
-            //    $location.path(route.getPath(constants.routeKeys.login));
-            //}
-            //return $q.reject(rejection);
         }
         return factory;
     };
