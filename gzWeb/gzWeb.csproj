@@ -369,6 +369,7 @@
     <Content Include="Content\Styles\_app\basic.css" />
     <Content Include="Content\Styles\_app\guest.css" />
     <Content Include="Content\Styles\_app\games.css" />
+    <Content Include="Content\Styles\_app\headerNew.css" />
     <Content Include="Content\Styles\_app\investments.css" />
     <Content Include="Content\Styles\_app\header.css" />
     <Content Include="Content\Styles\_app\preloader.css" />
@@ -499,6 +500,9 @@
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\auth\changePasswordCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\footerCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
+    <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDepositCtrl.js" />
@@ -517,14 +521,10 @@
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
-    <Content Include="Scripts\_app\controllers\games\games4Ctrl.js" />
-    <Content Include="Scripts\_app\controllers\common\footerCtrl.js" />
-    <Content Include="Scripts\_app\controllers\common\headerCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\footerNewCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\loginCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerCtrl.js" />
-    <Content Include="Scripts\_app\controllers\games\games1Ctrl.js" />
-    <Content Include="Scripts\_app\controllers\games\games2Ctrl.js" />
-    <Content Include="Scripts\_app\controllers\games\games3Ctrl.js" />
     <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\depositTrustlyCtrl.js" />
@@ -544,7 +544,6 @@
     <Content Include="Scripts\_app\services\nsMessageService\nsConfirmCtrl.js" />
     <Content Include="Scripts\_app\services\nsMessageService\nsPromptCtrl.js" />
     <Content Include="Scripts\_app\services\chatService.js" />
-    <Content Include="Scripts\_app\services\routeService.js" />
     <Content Include="Scripts\bootstrap\bootstrap.js" />
     <Content Include="Scripts\bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\angular\angular.min.js.map" />
@@ -1204,14 +1203,12 @@
     <Content Include="Scripts\kendo\2015.3.1111\kendo.angular.min.js.map" />
     <Content Include="Scripts\kendo\2015.3.1111\jquery.min.map" />
     <Content Include="Areas\Mvc\Views\Investments\Summary.cshtml" />
-    <Content Include="Views\Shared\_Header.cshtml" />
+    <Content Include="Views\Shared\_HeaderNew.cshtml" />
     <Content Include="Views\Shared\_Footer.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Performance.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Areas\Mvc\Views\Games\Page4.cshtml" />
-    <Content Include="Areas\Mvc\Views\Games\Page1.cshtml" />
-    <Content Include="Areas\Mvc\Views\Games\Page2.cshtml" />
-    <Content Include="Areas\Mvc\Views\Games\Page3.cshtml" />
+    <Content Include="Areas\Mvc\Views\Games\Games.cshtml" />
+    <Content Include="Views\Shared\_Header.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

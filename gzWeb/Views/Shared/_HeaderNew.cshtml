@@ -1,0 +1,199 @@
+﻿<header class="nav-header" ng-controller="headerNewCtrl">
+    <div class="container-fluid">
+        <a class="nav-brand" href="/">
+            <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
+            <span class="brand-name">GREENZORRO</span>
+        </a>
+        <a class="nav-toggle" ng-click="toggleOpenClose()">
+            <span class="sr-only">Toggle navigation</span>
+            <i class="toggle-icon fa" ng-class="{'fa-bars': !opened, 'fa-times': opened}"></i>
+            <span class="toggle-label hidden">Menu</span>
+        </a>
+
+        <nav class="nav-drawer">
+            Test
+        </nav>
+
+        @*<nav class="underline-effect">
+            <ul>
+                <li ng-repeat="route in routes.guest">
+                    <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                </li>
+            </ul>
+        </nav>*@
+    </div>
+
+
+
+    @*
+        <nav class="navbar navbar-default navbar-static-top" ng-class="{'navbar-initial': !scrolled}">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a id="logo" class="navbar-brand" href="/">
+                        <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
+                        <h2 class="visible-lg">GREENZORRO</h2>
+                    </a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse-section">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar icon-top-bar"></span>
+                        <span class="icon-bar icon-middle-bar"></span>
+                        <span class="icon-bar icon-bottom-bar"></span>
+                    </button>
+                </div>
+
+                <div class="collapse navbar-collapse " id="header-collapse-section">
+                    <span ng-if="isAuthenticated" class="user-info">
+                        <span class="user-avatar">
+                            <span class="user-initials img-circle">{{initials}}</span>
+                        </span>
+                        <span class="user-name">{{name}}</span>
+                        <a ng-click="logout()">Logout</a>
+                    </span>
+                    <div class="nav-links-btns">
+                        <div class="links">
+                            <nav class="cl-effect">
+                                <ul ng-if="!isAuthenticated" class="links-guest">
+                                    <li ng-repeat="route in routes.guest">
+                                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                                    </li>
+                                </ul>
+                                <ul ng-if="isAuthenticated" class="links-games" ng-show="gamesMode">
+                                    <li>
+                                        <button type="button" class="btn-gz btn-gz-alt" ng-click="withdraw()">
+                                            WITHDRAW
+                                        </button>
+                                        <button type="button" class="btn-gz btn-gz-alt" ng-click="deposit()">
+                                            DEPOSIT
+                                        </button>
+                                    </li>
+                                </ul>
+                                <ul ng-if="isAuthenticated" class="links-investments" ng-hide="gamesMode">
+                                    <li ng-repeat="route in routes.investment">
+                                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="nav-btns hidden">
+                            <a ng-if="!isAuthenticated" class="nav-btn-login" ng-click="login()">
+                                <img src="@Url.Content("~/Content/Images/login.png")" />
+                                <p>LOGIN</p>
+                            </a>
+                            <a ng-if="isAuthenticated" class="nav-btn-games" ng-show="gamesMode" ng-click="toInvestments()">
+                                <img src="@Url.Content("~/Content/Images/diagram.svg")" />
+                                <p>TO INVESTMENTS</p>
+                            </a>
+                            <a ng-if="isAuthenticated" class="nav-btn-investments" ng-hide="gamesMode" ng-click="backToGames()">
+                                <img src="@Url.Content("~/Content/Images/games.svg")" />
+                                <p>BACK TO GAMES</p>
+                            </a>
+                        </div>
+                        <div class="pull-right">
+                            <button type="button" ng-if="!isAuthenticated" class="btn-gz btn-gz-alt nav-btn-login" ng-click="login()">
+                                LOGIN
+                            </button>
+                            <button type="button" ng-if="!isAuthenticated" class="btn-gz nav-btn-login" ng-click="signup()">
+                                SIGNUP
+                            </button>
+                            <div ng-if="isAuthenticated" class="switch">
+                                <a ng-class="{'on':gamesMode, 'off':!gamesMode}" ng-click="!gamesMode || toInvestments()">
+                                    <img ng-src="{{gamesMode ? investmentsImgOn : investmentsImgOff}}" />
+                                </a>
+                                <a ng-class="{'on':!gamesMode, 'off':gamesMode}" ng-click="gamesMode || backToGames()">
+                                    <img ng-src="{{gamesMode ? gamesImgOff : gamesImgOn}}" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    *@
+
+
+
+
+
+
+    @*<div class="navbar-header">
+            <a id="logo" class="navbar-brand" href="/">
+                <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
+                <h2 class="visible-lg">GREENZORRO</h2>
+            </a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse-section">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar icon-top-bar"></span>
+                <span class="icon-bar icon-middle-bar"></span>
+                <span class="icon-bar icon-bottom-bar"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse " id="header-collapse-section">
+            <span ng-if="isAuthenticated" class="user-info">
+                <span class="user-avatar">
+                    <span class="user-initials img-circle">{{initials}}</span>
+                </span>
+                <span class="user-name">{{name}}</span>
+                <a ng-click="logout()">Logout</a>
+                <a ng-click="deposit()">Deposit</a>
+            </span>
+            <div class="nav-links-btns">
+                <div class="links">
+                    <nav class="cl-effect">
+                        <ul ng-if="!isAuthenticated" class="links-guest">
+                            <li ng-repeat="route in routes.guest">
+                                <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                            </li>
+                        </ul>
+                        <ul ng-if="isAuthenticated" class="links-games" ng-show="gamesMode">
+                            <li>
+                                <button type="button" class="btn-gz btn-gz-alt" ng-click="withdraw()">
+                                    WITHDRAW
+                                </button>
+                                <button type="button" class="btn-gz btn-gz-alt" ng-click="deposit()">
+                                    DEPOSIT
+                                </button>
+                            </li>
+                        </ul>
+                        <ul ng-if="isAuthenticated" class="links-investments" ng-hide="gamesMode">
+                            <li ng-repeat="route in routes.investments">
+                                <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="nav-btns hidden">
+                    <a ng-if="!isAuthenticated" class="nav-btn-login" ng-click="login()">
+                        <img src="@Url.Content("~/Content/Images/login.png")" />
+                        <p>LOGIN</p>
+                    </a>
+                    <a ng-if="isAuthenticated" class="nav-btn-games" ng-show="gamesMode" ng-click="toInvestments()">
+                        <img src="@Url.Content("~/Content/Images/diagram.svg")" />
+                        <p>TO INVESTMENTS</p>
+                    </a>
+                    <a ng-if="isAuthenticated" class="nav-btn-investments" ng-hide="gamesMode" ng-click="backToGames()">
+                        <img src="@Url.Content("~/Content/Images/games.svg")" />
+                        <p>BACK TO GAMES</p>
+                    </a>
+                </div>
+                <div class="pull-right">
+                    <button type="button" ng-if="!isAuthenticated" class="btn-gz btn-gz-alt nav-btn-login" ng-click="login()">
+                        LOGIN
+                    </button>
+                    <button type="button" ng-if="!isAuthenticated" class="btn-gz nav-btn-login" ng-click="signup()">
+                        SIGNUP
+                    </button>
+                    <div ng-if="isAuthenticated" class="switch">
+                        <a ng-class="{'on':gamesMode, 'off':!gamesMode}" ng-click="backToGames()">
+                            <img ng-src="{{gamesMode ? investmentsImgOff : investmentsImgOn}}" />
+                        </a>
+                        <a ng-class="{'on':!gamesMode, 'off':gamesMode}" ng-click="toInvestments()">
+                            <img ng-src="{{gamesMode ? gamesImgOn : gamesImgOff}}" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+</header>
+
+

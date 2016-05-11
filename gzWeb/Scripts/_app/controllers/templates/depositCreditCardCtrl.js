@@ -113,7 +113,7 @@
                         cardExpiryDate: $scope.model.cardExpiryMonth.display + "/" + $scope.model.cardExpiryYear.value
                     }
                 }).then(function(result) {
-                    q.resolve(getFields(result.id));
+                    q.resolve(getFields(result.registeredPayCard.id));
                 }, function (error) {
                     q.reject(error);
                 });
