@@ -30,7 +30,7 @@ namespace gzDAL.Repos
             var code = String.Format("USD{0}", currencyCodeTo.ToUpperInvariant());
             return db.CurrencyRates
                 .Where(x => x.FromTo == code)
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.TradeDateTime)
                 .Select(r => r.rate)
                 .FirstOrDefault();
         }
@@ -46,7 +46,7 @@ namespace gzDAL.Repos
             var code = String.Format("{0}USD", currencyCodeFrom.ToUpperInvariant());
             return db.CurrencyRates
                 .Where(x => x.FromTo == code)
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.TradeDateTime)
                 .Select(r => r.rate)
                 .FirstOrDefault();
         }

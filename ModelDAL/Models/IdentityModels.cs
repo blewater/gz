@@ -29,7 +29,7 @@ namespace gzDAL.Models
         public decimal InvBalance {
             get {
                 return InvBalances
-                    .OrderByDescending(b => b.Id)
+                    .OrderByDescending(b => b.YearMonth)
                     .Select(b => b.Balance)
                     .FirstOrDefault();
             }
@@ -58,7 +58,7 @@ namespace gzDAL.Models
             get {
                 return GzTransactions
                     .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
-                    .OrderByDescending(t => t.Id)
+                    .OrderByDescending(t => t.YearMonthCtd)
                     .Select(t => t.Amount)
                     .FirstOrDefault();
             }
