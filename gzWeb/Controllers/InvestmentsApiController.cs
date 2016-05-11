@@ -65,11 +65,15 @@ namespace gzWeb.Controllers
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
 
-            //var vintages = _dummyVintages;
-            var customerVintages = _gzTransactionRepo.GetCustomerVintages(user.Id);
+            var customerVintages = _gzTransactionRepo
+                .GetCustomerVintages(user.Id)
+                .Select(v => new VintageDto() {
+                    InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
+                    YearMonthStr = v.YearMonthStr
+                }).ToList();
             var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
 
-            return new SummaryDataViewModel
+            var summaryDvm = new SummaryDataViewModel
             {
                 Currency = userCurrency.Symbol,
                 Culture = "en-GB",
@@ -90,6 +94,8 @@ namespace gzWeb.Controllers
                 StatusAsOf = _invBalanceRepo.GetLastUpdatedDateTime(user.Id),
                 Vintages = vintages
             };
+
+            return summaryDvm;
         }
 
         [HttpPost]
