@@ -1,18 +1,18 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'summaryCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', 'message', ctrlFactory]);
-    function ctrlFactory($scope, api, message) {
+    APP.controller(ctrlId, ['$scope', 'api', 'message', '$location', 'constants', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, api, message, $location, constants, $filter) {
         $scope.showAllVintages = function () {
             message.modal('Vintages history', {
-                nsSize: 'md',
+                nsSize: '600px',
                 nsTemplate: '/partials/messages/showVintages.html',
                 nsCtrl: 'showVintagesCtrl',
-                nsParams: { vintages: $scope.model.Vintages }
+                nsParams: { vintages: $scope.vintages }
             });
         };
 
-        $scope.transferCashToGames = function() {
+        $scope.withdraw = function() {
             api.call(function () {
                 return api.transferCashToGames(); 
             }, function (response) {
@@ -20,13 +20,30 @@
             });
         };
 
-        function init() {
+        $scope.backToGames = function() {
+            $location.path(constants.routes.games.path);
+        };
+
+        function getSummaryData() {
             api.call(function () {
                 return api.getSummaryData();
             }, function (response) {
                 $scope.model = response.Result;
-                $scope.lastVintages = $scope.model.Vintages.slice(0, 3);
-            });
+                $scope.vintages = $filter('map')($scope.model.Vintages, function (v) {
+                    v.Year = parseInt(v.YearMonthStr.slice(0, 4));
+                    v.Month = parseInt(v.YearMonthStr.slice(-2));
+                    v.Date = new Date(v.Year, v.Month);
+                    // v.Date = new Date(v.Date);
+                    // v.Year = v.Date.getFullYear();
+                    // v.Month = v.Date.getMonth();
+                    return v;
+                });
+                $scope.lastVintages = $scope.vintages.slice(0, 3);
+            });            
+        }
+
+        function init() {
+            getSummaryData();
         }
         init();
     }
