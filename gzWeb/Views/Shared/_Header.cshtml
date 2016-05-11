@@ -1,35 +1,4 @@
-﻿@*<header ng-controller="headerCtrl">
-    <div class="container-fluid">
-        <a id="logo" class="navbar-brand" href="/">
-            <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
-            <h2 class="visible-lg">GREENZORRO</h2>
-        </a>
-        <div class="links">
-            <nav class="cl-effect">
-                <ul ng-if="!isAuthenticated" class="links-guest">
-                    <li ng-repeat="route in routes.guest">
-                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
-                    </li>
-                </ul>
-                <ul ng-if="isAuthenticated" class="links-games" ng-show="gamesMode">
-                    <li ng-repeat="route in routes.games">
-                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
-                    </li>
-                </ul>
-                <ul ng-if="isAuthenticated" class="links-investments" ng-hide="gamesMode">
-                    <li ng-repeat="route in routes.investments">
-                        <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-</header>*@
-
-
-
-
-<header ng-controller="headerCtrl">
+﻿<header ng-controller="headerCtrl">
     <nav class="navbar navbar-default navbar-static-top" ng-class="{'navbar-initial': !scrolled}">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -52,7 +21,6 @@
                     </span>
                     <span class="user-name">{{name}}</span>
                     <a ng-click="logout()">Logout</a>
-                    <a ng-click="deposit()">Deposit</a>
                 </span>
                 <div class="nav-links-btns">
                     <div class="links">
@@ -62,19 +30,24 @@
                                     <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                                 </li>
                             </ul>
-                            <ul ng-if="isAuthenticated" class="links-games" ng-show="gamesMode">
-                                <li ng-repeat="route in routes.games">
-                                    <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
+                            <ul ng-if="isAuthenticated" class="links-games" ng-show="gamesMode" style="margin-top: 0;">
+                                <li>
+                                    <button type="button" class="btn-gz btn-gz-alt" ng-click="withdraw()">
+                                        WITHDRAW
+                                    </button>
+                                    <button type="button" class="btn-gz btn-gz-alt" ng-click="deposit()">
+                                        DEPOSIT
+                                    </button>
                                 </li>
                             </ul>
                             <ul ng-if="isAuthenticated" class="links-investments" ng-hide="gamesMode">
-                                <li ng-repeat="route in routes.investments">
+                                <li ng-repeat="route in routes.investment">
                                     <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
-                    <div class="nav-btns">
+                    <div class="nav-btns hidden">
                         <a ng-if="!isAuthenticated" class="nav-btn-login" ng-click="login()">
                             <img src="@Url.Content("~/Content/Images/login.png")" />
                             <p>LOGIN</p>
@@ -87,6 +60,22 @@
                             <img src="@Url.Content("~/Content/Images/games.svg")" />
                             <p>BACK TO GAMES</p>
                         </a>
+                    </div>
+                    <div class="pull-right">
+                        <button type="button" ng-if="!isAuthenticated" class="btn-gz btn-gz-alt nav-btn-login" ng-click="login()">
+                            LOGIN
+                        </button>
+                        <button type="button" ng-if="!isAuthenticated" class="btn-gz nav-btn-login" ng-click="signup()">
+                            SIGNUP
+                        </button>
+                        <div ng-if="isAuthenticated" class="switch">
+                            <a ng-class="{'on':gamesMode, 'off':!gamesMode}" ng-click="!gamesMode || toInvestments()">
+                                <img ng-src="{{gamesMode ? investmentsImgOn : investmentsImgOff}}" />
+                            </a>
+                            <a ng-class="{'on':!gamesMode, 'off':gamesMode}" ng-click="gamesMode || backToGames()">
+                                <img ng-src="{{gamesMode ? gamesImgOff : gamesImgOn}}" />
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

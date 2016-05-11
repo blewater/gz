@@ -76,6 +76,7 @@
         };
 
         function deposit() {
+            $scope.waiting = true;
             $scope.readFields().then(function(fields) {
                 emBanking.prepare({
                     paymentMethodCode: $scope.selectedMethod.code,
@@ -84,13 +85,11 @@
                     $scope.pid = prepareResult.pid;
                     if (prepareResult.status === "setup") {
                         // TODO: show confirmation page
-                        var confirmPromise = message.modal("Please confirm...", {
+                        var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
                             nsSize: 'md',
                             nsTemplate: '/partials/messages/confirmDeposit.html',
                             //nsCtrl: 'confirmDepositCtrl',
-                            nsParams: {
-                                
-                            },
+                            nsParams: { fields: fields },
                             nsStatic: true
                         });
                         confirmPromise.then(function () {
@@ -102,6 +101,7 @@
                                             var msg = "You have made the deposit successfully!";
                                             message.notify(msg);
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
+                                            $scope.waiting = false;
                                             $scope.nsOk(true);
                                         } else if (transactionResult.status === "incomplete") {
                                             // TODO: show transaction is not completed
@@ -121,6 +121,7 @@
                                     // TODO: log error ???
                                 }
                             }, function (error) {
+                                $scope.waiting = false;
                                 console.log(error.desc);
                             });
                         });
@@ -128,12 +129,15 @@
                         // TODO: redirection ...
                     } else {
                         // TODO: log error ???
+                        $scope.waiting = false;
                         console.log("Unexpected payment method prepare status");
                     }
                 }, function(error) {
+                    $scope.waiting = false;
                     console.log(error.desc);
                 });
             }, function(error) {
+                $scope.waiting = false;
                 console.log(error.desc);
             });
         };
