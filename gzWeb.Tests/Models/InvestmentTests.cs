@@ -101,24 +101,34 @@ namespace gzWeb.Tests.Models {
         }
 
         [Test]
-        public void SaveDbUpdEveryMatrixUserBalancesByTrx() {
+        public void SaveDbAfterCleanTrxTblUpdBalancesByTrx() {
 
             string[] customerEmails = new string[] { "info@nessos.gr", "testuser@gz.com" };
 
-            using (ApplicationDbContext context = new ApplicationDbContext(null)) {
+            using (ApplicationDbContext db = new ApplicationDbContext(null)) {
 
                 foreach (var customerEmail in customerEmails) {
 
-                    var custId = context.Users.Where(u => u.Email == customerEmail).Select(u => u.Id).Single();
+                    int? custId = db.Users
+                        .Where(u => u.Email == customerEmail)
+                        .Select(u => u.Id)
+                        .SingleOrDefault();
 
-                    // Add invested Customer Portfolio
-                    CreateTestCustomerPortfolioSelections(custId);
+                    if (custId.HasValue) {
 
-                    CreateTestPlayerLossTransactions(custId);
-                    CreateTestPlayerDepositWidthdrawnTransactions(custId);
+                        db.Database.ExecuteSqlCommand("Delete GzTransactions Where CustomerId = " + custId.Value);
 
-                    new InvBalanceRepo(context, new CustFundShareRepo(context), new GzTransactionRepo(context))
-                        .SaveDbCustomerMonthlyBalancesByTrx(custId);
+                        // Add invested Customer Portfolio
+                        CreateTestCustomerPortfolioSelections(custId.Value);
+
+                        CreateTestPlayerLossTransactions(custId.Value);
+
+                        // Create Deposit only Transactions
+                        CreateTestPlayerDepositTransactions(custId.Value);
+
+                        new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                            .SaveDbCustomerMonthlyBalancesByTrx(custId.Value);
+                    }
 
                 }
             }
@@ -136,6 +146,16 @@ namespace gzWeb.Tests.Models {
                 gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
                 gzTrx.SaveDbInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
                 gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
+            }
+        }
+
+        public void CreateTestPlayerDepositTransactions(int custId) {
+            using (var db = new ApplicationDbContext(null)) {
+                var gzTrx = new GzTransactionRepo(db);
+
+                // Add deposit, withdrawals
+                gzTrx.SaveDbGzTransaction(customerId: custId, gzTransactionType: GzTransactionJournalTypeEnum.Deposit,
+                    amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
             }
         }
 
