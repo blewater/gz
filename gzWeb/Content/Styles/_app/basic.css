@@ -22,6 +22,12 @@ body {
     background: #F2F2F2;
     overflow-x: hidden;
 }
+.content-wrap {
+    position: relative;
+    height: 100%;
+    overflow-x: hidden;
+}
+
 .view-container {
     padding-top: 100px;
 }
@@ -129,7 +135,6 @@ button.btn-gz {
     -ms-box-shadow: none;
     box-shadow: none;
     outline: none;
-    color: #27A95C;
     font-weight: 300;
     font-size: 16px;
     letter-spacing: 1px;
@@ -147,7 +152,8 @@ button.btn-gz {
 button.btn-gz:hover{
 	background:#27A95C;
 	color:#fff;
-    border: 1px solid #fff;
+    border: 1px solid #f2f2f2;
+    /*text-decoration: underline;*/
 }
 button.btn-gz:disabled {
     background: #f2f2f2;
@@ -178,11 +184,11 @@ button.btn-gz.btn-gz-alt {
     transition: background 0.3s ease;
 
     background: #27A95C;
-    color: #fff;
-    border: 1px solid #fff;
+    color: #f2f2f2;
+    border: 1px solid #f2f2f2;
 }
 button.btn-gz.btn-gz-alt:hover{
-    background: #f2f2f2;
+    background: #fff;
     color: #27A95C;
     border: 1px solid #27A95C;
 }

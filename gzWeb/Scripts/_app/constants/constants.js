@@ -84,10 +84,12 @@
     };
     // #endregion
 
+    // #region All
     var all = [];
     for (var key in routes)
         all.push(routes[key]);
     routes.all = all;
+    // #endregion
     // #endregion
 
     APP.constant("constants", {
