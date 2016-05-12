@@ -127,7 +127,7 @@ namespace gzWeb.Tests.Models {
                         CreateTestPlayerDepositTransactions(custId.Value);
 
                         new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                            .SaveDbCustomerMonthlyBalancesByTrx(custId.Value);
+                            .SaveDbAllCustomerMonthlyBalances(custId.Value);
                     }
 
                 }

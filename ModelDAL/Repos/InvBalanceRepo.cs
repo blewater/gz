@@ -247,7 +247,7 @@ namespace gzDAL.Repos {
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
         /// <param name="cashToInvest">Positive cash amount to invest</param>
-        public void SaveDbCustomerMonthlyBalanceByCashInv(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest) {
+        private void SaveDbCustomerMonthlyBalanceByCashInv(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest) {
 
             decimal monthlyBalance, invGainLoss;
             var portfolioFunds = GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, cashToInvest, out monthlyBalance,
@@ -279,6 +279,32 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// Process All Monthly Balances for a customer whether they have transactions or not.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="startYearMonthStr"></param>
+        /// <param name="endYearMonthStr"></param>
+        public void SaveDbAllCustomerMonthlyBalances(
+            int customerId, 
+            string startYearMonthStr = null, 
+            string endYearMonthStr = null) {
+
+            // Prep in month parameters
+            startYearMonthStr = GetTrxMinMaxMonths(startYearMonthStr, ref endYearMonthStr);
+
+            // Loop through all the months activity
+            while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
+
+                SaveDbCustomerMonthlyBalance(customerId, startYearMonthStr);
+
+                // month ++
+                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+            }
+        }
+
+        /// <summary>
+        /// 
         /// Process All Monthly Customer Balances whether they have transactions or not.
         /// 
         /// </summary>
@@ -287,12 +313,7 @@ namespace gzDAL.Repos {
         public void SaveDbAllCustomersMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null) {
 
             // Prep in month parameters
-            if (string.IsNullOrEmpty(startYearMonthStr)) {
-                startYearMonthStr = _db.GzTransactions.Min(t => t.YearMonthCtd);
-            }
-            if (string.IsNullOrEmpty(endYearMonthStr)) {
-                endYearMonthStr = _db.GzTransactions.Max(t => t.YearMonthCtd);
-            }
+            startYearMonthStr = GetTrxMinMaxMonths(startYearMonthStr, ref endYearMonthStr);
 
             // Loop through all the months activity
             while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
@@ -308,6 +329,17 @@ namespace gzDAL.Repos {
                 startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
             }
 
+        }
+
+        private string GetTrxMinMaxMonths(string startYearMonthStr, ref string endYearMonthStr) {
+
+            if (string.IsNullOrEmpty(startYearMonthStr)) {
+                startYearMonthStr = _db.GzTransactions.Min(t => t.YearMonthCtd);
+            }
+            if (string.IsNullOrEmpty(endYearMonthStr)) {
+                endYearMonthStr = _db.GzTransactions.Max(t => t.YearMonthCtd);
+            }
+            return startYearMonthStr;
         }
 
         /// <summary>
