@@ -62,6 +62,76 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// Data method to enforce the 6? month lock-in period before allowed withdrawals.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId) {
+
+            string prompt = "First available withdraw on: ";
+
+            DateTime eligibleWithdrawDate;
+            int lockInDays;
+            bool okToWithdraw = IsWithdrawalEligible(customerId, out eligibleWithdrawDate, out lockInDays);
+
+            var retValues = new WithdrawEligibilityDTO() {
+                LockInDays = lockInDays,
+                EligibleWithdrawDate = eligibleWithdrawDate,
+                OkToWithdraw = okToWithdraw,
+                Prompt = prompt
+            };
+
+            return retValues;
+        }
+
+        /// <summary>
+        /// 
+        /// Biz logic for withdrawal eligibility
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="eligibleWithdrawDate"></param>
+        /// <param name="lockInDays"></param>
+        /// <returns></returns>
+        private bool IsWithdrawalEligible(int customerId, out DateTime eligibleWithdrawDate, out int lockInDays) {
+
+            lockInDays = _db.GzConfigurations.Select(c => c.LOCK_IN_NUM_DAYS).Single();
+
+            DateTime earliestLoss = _db.GzTransactions.Where(
+                t => t.CustomerId == customerId && t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
+                .OrderByDescending(t => t.Id)
+                .Select(t => t.CreatedOnUTC)
+                .FirstOrDefault();
+
+            if (earliestLoss.Year == 1) {
+                earliestLoss = DateTime.UtcNow;
+            }
+
+            eligibleWithdrawDate = earliestLoss.AddDays(lockInDays);
+
+            bool okToWithdraw = eligibleWithdrawDate < DateTime.UtcNow;
+            return okToWithdraw;
+        }
+
+        /// <summary>
+        /// 
+        /// Enable or disable the withdrawal button
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public bool GetEnabledWithdraw(int customerId) {
+
+            DateTime eligibleWithdrawDate;
+            int lockInDays;
+            bool okToWithdraw = IsWithdrawalEligible(customerId, out eligibleWithdrawDate, out lockInDays);
+
+            return okToWithdraw;
+        }
+
+        /// <summary>
+        /// 
         /// Return whether a customer has a liquidation transaction in a month
         /// 
         /// </summary>

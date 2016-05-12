@@ -49,6 +49,12 @@ namespace gzWeb.Models
         public decimal LastInvestmentAmount { get; set; }
         public DateTime StatusAsOf { get; set; }
         public IList<VintageViewModel> Vintages { get; set; }
+
+        // Withdrawal eligibility props
+        public int LockInDays { get; set; }
+        public bool OkToWithdraw { get; set; }
+        public DateTime EligibleWithdrawDate { get; set; }
+        public string Prompt { get; set; }
     }
 
     public class PortfolioDataViewModel

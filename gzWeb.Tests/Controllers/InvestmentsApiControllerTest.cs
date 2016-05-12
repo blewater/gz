@@ -39,7 +39,6 @@ namespace gzWeb.Tests.Controllers
         [Test]
         public void GetSummaryDataWithUser()
         {
-
             InvestmentsApiController controller;
             var db = CreateInvestmentsApiController(out controller);
 
@@ -50,6 +49,9 @@ namespace gzWeb.Tests.Controllers
             // Act
             var result = ((IInvestmentsApi) controller).GetSummaryData(user);
             Assert.IsNotNull(result);
+
+            var gainLossDiff = result.TotalInvestmentsReturns - (result.InvestmentsBalance - result.TotalInvestments);
+            Assert.IsTrue(gainLossDiff == 0);
         }
 
         private static IHttpActionResult GetSummaryData()

@@ -64,6 +64,7 @@ namespace gzWeb.Controllers
         {
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+            var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(user.Id);
 
             var customerVintages = _gzTransactionRepo
                 .GetCustomerVintages(user.Id)
@@ -92,7 +93,13 @@ namespace gzWeb.Controllers
                 NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                 LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.LastInvestmentAmount),
                 StatusAsOf = _invBalanceRepo.GetLastUpdatedDateTime(user.Id),
-                Vintages = vintages
+                Vintages = vintages,
+
+                // Withdrawal eligibility
+                LockInDays = withdrawalEligibility.LockInDays,
+                EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
+                OkToWithdraw = withdrawalEligibility.OkToWithdraw,
+                Prompt = withdrawalEligibility.Prompt
             };
 
             return summaryDvm;
@@ -101,10 +108,11 @@ namespace gzWeb.Controllers
         [HttpPost]
         public IHttpActionResult TransferCashToGames()
         {
-            return OkMsg(() =>
-            {
-                
-            });
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+
+            return OkMsg(() => _gzTransactionRepo.GetEnabledWithdraw(user.Id));
         }
         #endregion
 
