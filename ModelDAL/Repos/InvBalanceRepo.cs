@@ -279,13 +279,13 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Process All Monthly Balances for a customer whether they have transactions or not.
+        /// Process All Monthly Balances for a single customer whether they have transactions or not.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="startYearMonthStr"></param>
-        /// <param name="endYearMonthStr"></param>
-        public void SaveDbAllCustomerMonthlyBalances(
+        /// <param name="startYearMonthStr">If null assuming -> GzTransactions.Min(t => t.YearMonthCtd)</param>
+        /// <param name="endYearMonthStr">If null assuming -> Now</param>
+        public void SaveDbCustomerAllMonthlyBalances(
             int customerId, 
             string startYearMonthStr = null, 
             string endYearMonthStr = null) {
@@ -309,24 +309,14 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="startYearMonthStr">If null assuming -> GzTransactions.Min(t => t.YearMonthCtd)</param>
-        /// <param name="endYearMonthStr">If null assuming -> GzTransactions.Max(t => t.YearMonthCtd)</param>
+        /// <param name="endYearMonthStr">If null assuming -> Now</param>
         public void SaveDbAllCustomersMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null) {
 
-            // Prep in month parameters
-            startYearMonthStr = GetTrxMinMaxMonths(startYearMonthStr, ref endYearMonthStr);
+            var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr);
 
-            // Loop through all the months activity
-            while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
+            foreach (var customerId in activeCustomerIds) {
 
-                var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr);
-
-                foreach (var customerId in activeCustomerIds) {
-
-                    SaveDbCustomerMonthlyBalance(customerId, startYearMonthStr);
-                }
-
-                // month ++
-                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+                SaveDbCustomerAllMonthlyBalances(customerId, startYearMonthStr, endYearMonthStr);
             }
 
         }
@@ -337,7 +327,7 @@ namespace gzDAL.Repos {
                 startYearMonthStr = _db.GzTransactions.Min(t => t.YearMonthCtd);
             }
             if (string.IsNullOrEmpty(endYearMonthStr)) {
-                endYearMonthStr = _db.GzTransactions.Max(t => t.YearMonthCtd);
+                endYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
             }
             return startYearMonthStr;
         }
