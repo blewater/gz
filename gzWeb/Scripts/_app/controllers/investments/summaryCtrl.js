@@ -29,20 +29,13 @@
                 return api.getSummaryData();
             }, function (response) {
                 $scope.model = response.Result;
-
-                $scope.model.CanWithdraw = false;
-                $scope.model.WithdrawMsg = "First available withdraw on:";
-                $scope.model.WithdrawDate = new Date(2017, 1, 1);
-
-                $scope.vintages = $filter('map')($scope.model.Vintages, function (v) {
+                var mappedVintages = $filter('map')($scope.model.Vintages, function (v) {
                     v.Year = parseInt(v.YearMonthStr.slice(0, 4));
                     v.Month = parseInt(v.YearMonthStr.slice(-2));
-                    v.Date = new Date(v.Year, v.Month);
-                    // v.Date = new Date(v.Date);
-                    // v.Year = v.Date.getFullYear();
-                    // v.Month = v.Date.getMonth();
+                    v.Date = new Date(v.Year, v.Month - 1);
                     return v;
                 });
+                $scope.vintages = $filter('orderBy')(mappedVintages, 'Date', true);
                 $scope.lastVintages = $scope.vintages.slice(0, 3);
             });            
         }
