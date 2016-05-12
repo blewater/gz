@@ -197,8 +197,6 @@
     color: #000;
     text-align: center;
     margin-top: 10px;
-    -ms-opacity: 0;
-    opacity: 0;
 
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
@@ -206,9 +204,8 @@
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-.investments .summary .withdraw-msg.show {
-    -ms-opacity: 1;
-    opacity: 1;
+.investments .summary .withdraw-msg i {
+    margin-right: 5px;
 }
 
 
