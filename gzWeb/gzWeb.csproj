@@ -244,6 +244,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
+    <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Configuration\PortfolioConfiguration.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
     <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.cs" />
