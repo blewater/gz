@@ -176,12 +176,42 @@
     -ms-opacity: 0.8;
     opacity: 0.8;
 }
+.investments .summary .withdraw.disabled {
+    border-color: #e1e1e1;
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+.investments .summary .withdraw.disabled:hover {
+    background-color: #ddd;
+    -ms-opacity: 1;
+    opacity: 1;
+}
 
 .investments .summary .withdraw img {
     padding-right: 15px;
     margin-top: -3px;
     vertical-align: middle;
 }
+.investments .summary .withdraw-msg {
+    font-size: 11px;
+    color: #000;
+    text-align: center;
+    margin-top: 10px;
+    -ms-opacity: 0;
+    opacity: 0;
+
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+.investments .summary .withdraw-msg.show {
+    -ms-opacity: 1;
+    opacity: 1;
+}
+
+
 
 
 .investments .summary .back-to-games {
