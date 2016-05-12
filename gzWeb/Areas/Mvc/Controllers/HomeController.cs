@@ -1,10 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Web;
 using System.Web.Mvc;
-using gzWeb.Areas.Mvc.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace gzWeb.Areas.Mvc.Controllers
 {
