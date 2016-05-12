@@ -97,7 +97,7 @@
                 <div class="back-to-games bg-gz visible-lg" ng-click="backToGames()">
                     <img src="@Url.Content("~/Content/Images/games_white.svg")" alt="Games" />
                     <span>BACK TO GAMES</span>
-                </div>            
+                </div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-lg-3">
@@ -135,30 +135,40 @@
                             <div class="row">
                                 <div class="col-xs-12 text-left">
                                     *Status as of {{model.StatusAsOf | date : 'MMM d, h:mm a'}} - 50% of net losses (cach in - cash out - investment balance)
-                               </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="withdraw visible-lg" ng-click="withdraw()">
-                    <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
-                    <span>WITHDRAW</span>
+                <div class="visible-lg">
+                    <div class="withdraw" ng-click="!model.CanWithdraw || withdraw()" ng-class="{'disabled': !model.CanWithdraw}"
+                         ng-mouseenter="withdrawHovered = true;" ng-mouseleave="withdrawHovered = false;">
+                        <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
+                        <span>WITHDRAW</span>
+                    </div>
+                    <div class="withdraw-msg" ng-class="{'show': withdrawHovered}">
+                        {{model.WithdrawMsg}} {{model.WithdrawDate | ordinalDate : 'd MMM yy'}}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row hidden-lg">
         <div class="col-xs-12 col-sm-6 col-sm-push-6">
-            <div class="withdraw" ng-click="withdraw()">
-                <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
+            <div class="withdraw" ng-click="!model.CanWithdraw || withdraw()" ng-class="{'disabled': !model.CanWithdraw}"
+                 ng-mouseenter="withdrawHovered = true;" ng-mouseleave="withdrawHovered = false;">
+                <img src=" @Url.Content("~/Content/Images/cash.svg") " alt=" cash" />
                 <span>WITHDRAW</span>
-            </div>            
+            </div>
+            <div class="withdraw-msg" ng-class="{'show': withdrawHovered}">
+                {{model.WithdrawMsg}} {{model.WithdrawDate | ordinalDate : 'd MMM yy'}}
+            </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-sm-pull-6">
             <div class="back-to-games" ng-click="backToGames()">
                 <img src="@Url.Content("~/Content/Images/games_white.svg")" alt="Games" />
                 <span>BACK TO GAMES</span>
-            </div>            
+            </div>
         </div>
     </div>
 </div>
