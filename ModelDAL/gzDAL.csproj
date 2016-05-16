@@ -97,6 +97,7 @@
     <Compile Include="Conf\TestSeeder.cs" />
     <Compile Include="CurrencyHelper.cs" />
     <Compile Include="DTO\PortfolioFundDTO.cs" />
+    <Compile Include="DTO\PortfolioReturnsDTO.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
     <Compile Include="Models\GzConfiguration.cs" />
