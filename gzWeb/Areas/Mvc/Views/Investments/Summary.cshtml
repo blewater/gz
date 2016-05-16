@@ -141,13 +141,13 @@
                     </div>
                 </div>
                 <div class="visible-lg">
-                    <div class="withdraw" ng-click="!model.CanWithdraw || withdraw()" ng-class="{'disabled': !model.CanWithdraw}"
-                         ng-mouseenter="withdrawHovered = true;" ng-mouseleave="withdrawHovered = false;">
+                    <div class="withdraw" ng-click="!model.OkToWithdraw  || withdraw()" ng-class="{'disabled': !model.OkToWithdraw }">
                         <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
                         <span>WITHDRAW</span>
                     </div>
-                    <div class="withdraw-msg" ng-class="{'show': withdrawHovered}">
-                        {{model.WithdrawMsg}} {{model.WithdrawDate | ordinalDate : 'd MMM yy'}}
+                    <div class="withdraw-msg">
+                        <i class="fa fa-exclamation-triangle text-warning"></i>
+                        <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
                     </div>
                 </div>
             </div>
@@ -155,13 +155,13 @@
     </div>
     <div class="row hidden-lg">
         <div class="col-xs-12 col-sm-6 col-sm-push-6">
-            <div class="withdraw" ng-click="!model.CanWithdraw || withdraw()" ng-class="{'disabled': !model.CanWithdraw}"
-                 ng-mouseenter="withdrawHovered = true;" ng-mouseleave="withdrawHovered = false;">
+            <div class="withdraw" ng-click="!model.OkToWithdraw  || withdraw()" ng-class="{'disabled': !model.OkToWithdraw }">
                 <img src=" @Url.Content("~/Content/Images/cash.svg") " alt=" cash" />
                 <span>WITHDRAW</span>
             </div>
-            <div class="withdraw-msg" ng-class="{'show': withdrawHovered}">
-                {{model.WithdrawMsg}} {{model.WithdrawDate | ordinalDate : 'd MMM yy'}}
+            <div class="withdraw-msg">
+                <i class="fa fa-exclamation-triangle text-warning"></i>
+                <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-sm-pull-6">
