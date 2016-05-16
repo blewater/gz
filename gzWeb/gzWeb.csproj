@@ -259,6 +259,10 @@
     <Compile Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.Designer.cs">
       <DependentUpon>201604211050117_Remove GamBalance in ApplicationUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605161506044_Add fund YTD.cs" />
+    <Compile Include="Migrations\201605161506044_Add fund YTD.Designer.cs">
+      <DependentUpon>201605161506044_Add fund YTD.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -683,6 +687,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.resx">
       <DependentUpon>201604211050117_Remove GamBalance in ApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605161506044_Add fund YTD.resx">
+      <DependentUpon>201605161506044_Add fund YTD.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
