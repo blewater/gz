@@ -44,7 +44,7 @@
                     if (wasAuthenticated === false)
                         $scope.backToGames();
                 }
-                else if (wasAuthenticated === undefined || wasAuthenticated === true)
+                else if (wasAuthenticated === true)
                     $location.path(constants.routes.home.path);
             }, function() {
                 $scope.isAuthenticated = false;
