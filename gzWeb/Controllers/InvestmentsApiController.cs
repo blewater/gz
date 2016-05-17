@@ -108,14 +108,19 @@ namespace gzWeb.Controllers
             return summaryDvm;
         }
 
-        [HttpPost]
-        public IHttpActionResult TransferCashToGames()
+        [HttpGet] public IHttpActionResult GetVintagesWithSellingValues()
         {
             var user = UserManager.FindById(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            return OkMsg(() => _gzTransactionRepo.GetEnabledWithdraw(user.Id));
+            return OkMsg(() => _dummyVintages);
+        }
+        [HttpPost]
+        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
+        {
+            // TODO Actual withdraw and return remaining vintages
+            return OkMsg(() => vintages);
         }
         #endregion
 
@@ -237,27 +242,27 @@ namespace gzWeb.Controllers
         
         private static IList<VintageViewModel> _dummyVintages = new[]
         {
-            new VintageViewModel {Date = new DateTime(2014, 7, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2014, 8, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2014, 9, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2014, 10, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2014, 11, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2014, 12, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 1, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 2, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 3, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 4, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 5, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 6, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 7, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 8, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 9, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 10, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 11, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2015, 12, 1), InvestAmount = 100M, ReturnPercent = 10},
-            new VintageViewModel {Date = new DateTime(2016, 1, 1), InvestAmount = 200M, ReturnPercent = -5},
-            new VintageViewModel {Date = new DateTime(2016, 2, 1), InvestAmount = 80M, ReturnPercent = 15},
-            new VintageViewModel {Date = new DateTime(2016, 3, 1), InvestAmount = 150M, ReturnPercent = 10},
+            new VintageViewModel {YearMonthStr = "201407", InvestAmount = 100M, SellingValue = 102M },
+            new VintageViewModel {YearMonthStr = "201408", InvestAmount = 100M, SellingValue = 109M },
+            new VintageViewModel {YearMonthStr = "201409", InvestAmount = 100M, SellingValue = 107M },
+            new VintageViewModel {YearMonthStr = "201410", InvestAmount = 100M, SellingValue = 112M },
+            new VintageViewModel {YearMonthStr = "201411", InvestAmount = 100M, SellingValue = 111M, SellThisMonth = true },
+            new VintageViewModel {YearMonthStr = "201412", InvestAmount = 100M, SellingValue = 106M },
+            new VintageViewModel {YearMonthStr = "201501", InvestAmount = 100M, SellingValue = 107M },
+            new VintageViewModel {YearMonthStr = "201502", InvestAmount = 100M, SellingValue = 103M },
+            new VintageViewModel {YearMonthStr = "201503", InvestAmount = 100M, SellingValue = 105M, SellThisMonth = true},
+            new VintageViewModel {YearMonthStr = "201504", InvestAmount = 100M, SellingValue = 105M },
+            new VintageViewModel {YearMonthStr = "201505", InvestAmount = 100M, SellingValue = 102M },
+            new VintageViewModel {YearMonthStr = "201506", InvestAmount = 100M, SellingValue = 106M },
+            new VintageViewModel {YearMonthStr = "201507", InvestAmount = 100M, SellingValue = 107M },
+            new VintageViewModel {YearMonthStr = "201508", InvestAmount = 100M, SellingValue = 109M },
+            new VintageViewModel {YearMonthStr = "201509", InvestAmount = 100M, SellingValue = 100M },
+            new VintageViewModel {YearMonthStr = "201510", InvestAmount = 100M, SellingValue = 106M },
+            new VintageViewModel {YearMonthStr = "201511", InvestAmount = 100M, SellingValue = 108M },
+            new VintageViewModel {YearMonthStr = "201512", InvestAmount = 100M, SellingValue = 105M },
+            new VintageViewModel {YearMonthStr = "201601", InvestAmount = 200M, SellingValue = 204M },
+            new VintageViewModel {YearMonthStr = "201602", InvestAmount = 80M, SellingValue = 93M },
+            new VintageViewModel {YearMonthStr = "201603", InvestAmount = 150M, SellingValue = 158M },
         };
 
         #endregion
