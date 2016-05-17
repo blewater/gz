@@ -23,10 +23,12 @@
         factory.readAuthData = function () {
             factory.data = localStorageService.get(constants.storageKeys.authData) || noAuthData;
 
-            //if (factory.data.isGamer)
-            //    $location.path(constants.routes.games.path);
-            //else if (factory.data.isGamer)
-            //    $location.path(constants.routes.games.path);
+            if ($location.path() === constants.routes.home.path) {
+                if (factory.data.isGamer)
+                    $location.path(constants.routes.games.path);
+                else if (factory.data.isInvestor)
+                    $location.path(constants.routes.summary.path);
+            }
         }
 
         function storeAuthData() {
