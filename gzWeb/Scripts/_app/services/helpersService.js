@@ -54,7 +54,7 @@
         }
         function any(array, predicate) {
             var predicateSucceeded = false;
-            if (array.length > 0 && isFunction(predicate)) {
+            if (array.length > 0 && angular.isFunction(predicate)) {
                 for (var i = 0; i < array.length; i++) {
                     if (predicate(array[i])) {
                         predicateSucceeded = true;
@@ -66,7 +66,7 @@
         }
         function all(array, predicate) {
             var predicateSucceeded = false;
-            if (array.length > 0 && isFunction(predicate)) {
+            if (array.length > 0 && angular.isFunction(predicate)) {
                 predicateSucceeded = true;
                 for (var i = 0; i < array.length; i++) {
                     if (!predicate(array[i])) {

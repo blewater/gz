@@ -61,6 +61,9 @@ namespace gzWeb.Providers
             var cookiesIdentity = await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
 
             var properties = CreateProperties(user.UserName);
+            properties.Dictionary.Add("firstname", user.FirstName);
+            properties.Dictionary.Add("lastname", user.LastName);
+            properties.Dictionary.Add("currency", user.Currency);
             var ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);

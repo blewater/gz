@@ -1,12 +1,13 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "resetPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'api', 'message', '$location', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, api, message, $location) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', '$location', ctrlFactory]);
+    function ctrlFactory($scope, constants, emWamp, auth, message, $location) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
         $scope.model = {
+            email: $scope.email,
             emKey: $scope.emKey,
             gzKey: $scope.gzKey,
             isKeyAvailable: undefined,
@@ -74,26 +75,15 @@
         };
         function reset(){
             $scope.waiting = true;
-            emWamp.resetPassword($scope.model.emKey, $scope.model.password).then(function(emResult) {
-                api.resetPassword({
-                    Email: $scope.model.email,
-                    Password: $scope.model.password,
-                    ConfirmPassword: $scope.model.confirmPassword,
-                    Code: $scope.model.gzKey
-                }).then(function(gzResult) {
-                    $scope.waiting = false;
-                    message.toastr("Your password has been reset successfully!");
-                    $location.search('');
-                    $scope.nsOk(true);
-                }, function(error) {
-                    $scope.model.isKeyAvailable = false;
-                    $scope.waiting = false;
-                    console.log(error);
-                });
+            auth.resetPassword($scope.model).then(function (response) {
+                $scope.waiting = false;
+                message.toastr("Your password has been reset successfully!");
+                $location.search('');
+                $scope.nsOk(true);
             }, function(error) {
                 $scope.model.isKeyAvailable = false;
                 $scope.waiting = false;
-                console.log(error.desc);
+                console.log(error);
             });
         }
 

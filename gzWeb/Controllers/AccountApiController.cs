@@ -417,8 +417,16 @@ namespace gzWeb.Controllers
             //callbackUrl += "&key=";
             
             //return Ok(callbackUrl);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("RevokeRegistration")]
+        public async Task<IHttpActionResult> RevokeRegistration()
+        {
             return Ok();
         }
+
 
         [AllowAnonymous]
         [HttpPost]

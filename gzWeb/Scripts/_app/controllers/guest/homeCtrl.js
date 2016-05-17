@@ -5,6 +5,7 @@
     function ctrlFactory($scope, $location, message) {
         function readResetPwdKeys() {
             var urlParams = $location.search();
+            var email = urlParams.email;
             var gzResetKey = urlParams.gzKey;
             var emResetKey = urlParams.emKey;
             if (emResetKey) {
@@ -15,6 +16,7 @@
                     nsCtrl: 'resetPasswordCtrl',
                     nsStatic: true,
                     nsParams: {
+                        email: email,
                         gzKey: gzResetKey,
                         emKey: emResetKey
                     }

@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "forgotPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'vcRecaptchaService', 'emWamp', 'api', 'message', '$location', ctrlFactory]);
-    function ctrlFactory($scope, constants, vcRecaptchaService, emWamp, api, message, $location) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'vcRecaptchaService', 'emWamp', 'auth', 'message', '$location', ctrlFactory]);
+    function ctrlFactory($scope, constants, vcRecaptchaService, emWamp, auth, message, $location) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = constants.reCaptchaPublicKey;
@@ -37,40 +37,13 @@
         };
         function sendInstructions(){
             $scope.waiting = true;
-
-            api.forgotPassword($scope.model.email).then(function (gzResetKey) {
-                var changePwdUrl = $location.protocol() + "://" + $location.host();
-                if ($location.port() > 0)
-                    changePwdUrl += ":" + $location.port();
-
-                changePwdUrl += "?";
-                changePwdUrl += "gzKey=";
-                changePwdUrl += gzResetKey;
-                changePwdUrl += "&";
-                changePwdUrl += "emKey=";
-
-                emWamp.sendResetPwdEmail({
-                    email: $scope.model.email,
-                    changePwdURL: changePwdUrl,
-                    captchaPublicKey: $scope.reCaptchaPublicKey,
-                    captchaChallenge: "",
-                    captchaResponse: vcRecaptchaService.getResponse()
-                }).then(function(result) {
-                    $scope.waiting = false;
-                    message.notify("You will receive an email at '" +
-                                    $scope.model.email +
-                                    "' that will guide you through the reset password process.");
-                    //vcRecaptchaService.reload();
-                    $scope.nsOk(true);
-                }, function(error) {
-                    $scope.waiting = false;
-                    $scope.sendResetPasswordEmailError = error.desc;
-                    vcRecaptchaService.reload();
-                });
+            auth.forgotPassword($scope.model.email).then(function (result) {
+                $scope.waiting = false;
+                message.notify("You will receive an email at '" + $scope.model.email + "' that will guide you through the reset password process.");
+                $scope.nsOk(true);
             }, function(error) {
                 $scope.waiting = false;
                 $scope.sendResetPasswordEmailError = error;
-                vcRecaptchaService.reload();
             });
         }
     }

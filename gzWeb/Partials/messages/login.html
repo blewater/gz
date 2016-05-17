@@ -16,7 +16,7 @@
                 <div class="form-group">
                     <input type="text" placeholder="username / email" id="usernameOrEmail" name="usernameOrEmail" class="form-control" ng-model="model.usernameOrEmail" autocomplete="off" required
                            ng-class="{ 'empty': !model.usernameOrEmail, 'danger' : !form.usernameOrEmail.$pristine && errorMsg }"
-                           ng-focus="usernameOrEmailFocused = true" ng-blur="usernameOrEmailFocused = false">
+                           ng-focus="usernameOrEmailFocused = true" ng-blur="usernameOrEmailFocused = false" autofocus>
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused || form.usernameOrEmail.$valid}">
                         <i class="fa fa-lg fa-user"></i>
                     </span>

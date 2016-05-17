@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp, chat, $location) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, chat, $location, auth) {
         // #region Playground
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -94,7 +94,7 @@
             });
         };
         $scope.logout = function () {
-            emWamp.logout();
+            auth.logout();
         };
 
         $scope.showChat = function () {
