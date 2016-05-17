@@ -8,7 +8,8 @@
                 controller: routes[i].ctrl,
                 templateUrl: routes[i].tpl,
                 title: routes[i].title,
-                reloadOnSearch: routes[i].reloadOnSearch || true
+                reloadOnSearch: routes[i].reloadOnSearch || true,
+                roles: routes[i].roles || [constants.roles.guest]
             });
         $routeProvider.otherwise({ redirectTo: '/' });
 
@@ -33,7 +34,7 @@
     APP.config(['$wampProvider', 'constants', function ($wampProvider, constants) {        
         $wampProvider.init({
             transports: [
-                { 'type': 'websocket', 'url': constants.webeocketApiUrl },
+                { 'type': 'websocket', 'url': constants.webSocketApiUrl },
                 { 'type': 'longpoll', 'url': constants.fallbackApiUrl }
             ],
             url: constants.websocketApiUrl,
