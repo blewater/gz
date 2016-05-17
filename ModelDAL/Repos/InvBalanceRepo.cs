@@ -46,6 +46,35 @@ namespace gzDAL.Repos {
 
         #region Fund Shares Selling
 
+        private decimal GetVintageSellingValue(int customerId, string yearMonthStr) {
+
+            decimal monthlySharesValue = 0;
+
+            int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
+                monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
+
+            decimal invGainLoss, monthlyBalance;
+            GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, -1, out monthlyBalance,
+                out invGainLoss);
+
+            monthlySharesValue = monthlyBalance - _gzTransactionRepo.GetWithdrawnFees(monthlyBalance);
+
+            return monthlySharesValue;
+        }
+
+        public IEnumerable<VintageDto> GetCustomerVintagesSellingValue(int customerId) {
+
+            var customerVintages = _gzTransactionRepo
+                .GetCustomerVintages(customerId)
+                .Select(v => new VintageDto() {
+                     SellingValue = GetVintageSellingValue(customerId, v.YearMonthStr),
+                     InvestAmount = v.InvestAmount,
+                     YearMonthStr = v.YearMonthStr
+                 }).ToList();
+
+            return customerVintages;
+        }
+
         /// <summary>
         /// 
         /// Sell completely a customer's portfolio
@@ -197,7 +226,8 @@ namespace gzDAL.Repos {
             int yearCurrent,
             int monthCurrent,
             out decimal customerMonthsBalance,
-            out decimal invGainLoss) {
+            out decimal invGainLoss) 
+        {
             var monthlySharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
             var newSharesVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue);
             var prevMonthsSharesPricedNow = monthlySharesValue - newSharesVal;

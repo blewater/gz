@@ -42,7 +42,17 @@ namespace gzDAL.Repos {
                 .OrderByDescending(t => t.Key)
                 .Select(g => new VintageDto() {
                     YearMonthStr = g.Key,
-                    InvestAmount = g.Sum(t => t.Amount)
+                    InvestAmount = g.Sum(t => t.Amount),
+                    SellThisMonth = 
+                        (
+                            (DateTime.UtcNow - g.Max(t => t.CreatedOnUTC))
+                                .TotalDays 
+                            / 
+                            _db.GzConfigurations
+                                .Select(c => c.LOCK_IN_NUM_DAYS)
+                                .Single()
+                        )
+                            > 1
                 })
                 .ToList();
         }

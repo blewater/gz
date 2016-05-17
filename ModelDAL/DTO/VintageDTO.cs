@@ -9,5 +9,6 @@ namespace gzDAL.DTO {
         public string YearMonthStr { get; set; }
         public decimal InvestAmount { get; set; }
         public decimal SellingValue { get; set; }
+        public bool SellThisMonth { get; set; }
     }
 }
