@@ -13,6 +13,7 @@
                 chunk: chunk,
                 any: any,
                 all: all,
+                aggregate: aggregate,
                 shuffle: shuffle,
                 swap: swap,
                 applyWithDelay: applyWithDelay
@@ -76,6 +77,12 @@
                 }
             }
             return predicateSucceeded;
+        }
+        function aggregate(array, seed, func) {
+            if (array.length > 0 && angular.isFunction(func))
+                for (var i = 0; i < array.length; i++)
+                    seed = func(seed, array[i]);
+            return seed;
         }
         function shuffle(array) {
             var n = array.length;
