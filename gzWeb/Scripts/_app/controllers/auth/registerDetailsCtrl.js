@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDetailsCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emWamp', 'api', 'message', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emWamp, api, message, constants) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emWamp', 'auth', 'message', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emWamp, auth, message, constants) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -202,85 +202,81 @@
         
         function register() {
             $scope.waiting = true;
-            var emPromise = emRegister("http://localhost/activate/");
-            emPromise.then(function(emRegisterResult) {
-                emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password }).then(function (emLoginResult) {
-                    gzRegister().then(function(gzRegisterResult) {
-                        api.login($scope.model.username, $scope.model.password).then(function (gzLoginResult) {
-                            $scope.waiting = false;
-                            $scope.nsNext({
-                                nsType: 'modal',
-                                nsSize: '600px',
-                                nsTemplate: '/partials/messages/registerPaymentMethods.html',
-                                nsCtrl: 'registerPaymentMethodsCtrl',
-                                nsStatic: true,
-                                nsParams: { accountModel: $scope.model }
-                            });
-                        }, function(gzLoginError) {
-                            $scope.waiting = false;
-                            console.log(gzLoginError);
-                        });
-                    }, function(gzRegisterError) {
-                        $scope.waiting = false;
-                        console.log(gzRegisterError);
-                    });
-                }, function (emLoginError) {
-                    $scope.waiting = false;
-                    console.log(emLoginError);
-                });
-            }, function (emRegisterError) {
-                $scope.waiting = false;
-                console.log(emRegisterError.desc);
-            });
-        };
-
-        function emRegister(callbackUrl) {
-            return emWamp.register({
+            var dateOfBirth = moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]);
+            var gender = $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender;
+            var parameters = {
                 username: $scope.model.username,
                 email: $scope.model.email,
                 alias: $scope.model.username,
                 password: $scope.model.password,
                 firstname: $scope.model.firstname,
-                surname: $scope.model.lastname,
-                birthDate: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]).format('YYYY-MM-DD'),
+                lastname: $scope.model.lastname,
+                dateOfBirth: dateOfBirth,
+                dateOfBirthFormatted: dateOfBirth.format('YYYY-MM-DD'),
                 country: $scope.model.country.code,
-                // TOOD: region 
-                // TOOD: personalID 
+                // TODO: region 
+                // TODO: personalID 
                 mobilePrefix: $scope.model.phonePrefix,
                 mobile: $scope.model.phoneNumber,
                 currency: $scope.model.currency.code,
                 title: $scope.model.title,
-                gender: $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender,
+                gender: gender,
                 city: $scope.model.city,
                 address1: $scope.model.address,
                 address2: '',
                 postalCode: $scope.model.postalCode,
                 language: 'en',
-                emailVerificationURL: callbackUrl,
+                emailVerificationURL: "http://localhost/activate/",
                 securityQuestion: "(empty security question)",
                 securityAnswer: "(empty security answer)"
+            };
+            auth.register(parameters).then(function () {
+                $scope.waiting = false;
+                $scope.nsNext({
+                    nsType: 'modal',
+                    nsSize: '600px',
+                    nsTemplate: '/partials/messages/registerPaymentMethods.html',
+                    nsCtrl: 'registerPaymentMethodsCtrl',
+                    nsStatic: true,
+                    nsParams: { accountModel: $scope.model }
+                });
+            }, function(error) {
+                $scope.waiting = false;
+                message.notify(error);
             });
-        }
 
-        function gzRegister() {
-            return api.register({
-                Username: $scope.model.username,
-                Email: $scope.model.email,
-                Password: $scope.model.password,
-                FirstName: $scope.model.firstname,
-                LastName: $scope.model.lastname,
-                Birthday: moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]),
-                Currency: $scope.model.currency.code,
-                Title: $scope.model.title,
-                Country: $scope.model.country.code,
-                MobilePrefix: $scope.model.phonePrefix,
-                Mobile: $scope.model.phoneNumber,
-                City: $scope.model.city,
-                Address: $scope.model.address,
-                PostalCode: $scope.model.postalCode,
-                // TODO: Region ???
-            });
-        }
+
+            //var emPromise = emRegister();
+            //emPromise.then(function(emRegisterResult) {
+            //    emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password }).then(function (emLoginResult) {
+            //        gzRegister().then(function(gzRegisterResult) {
+            //            auth.login($scope.model.username, $scope.model.password).then(function (gzLoginResult) {
+            //                $scope.waiting = false;
+            //                $scope.nsNext({
+            //                    nsType: 'modal',
+            //                    nsSize: '600px',
+            //                    nsTemplate: '/partials/messages/registerPaymentMethods.html',
+            //                    nsCtrl: 'registerPaymentMethodsCtrl',
+            //                    nsStatic: true,
+            //                    nsParams: { accountModel: $scope.model }
+            //                });
+            //            }, function(gzLoginError) {
+            //                $scope.waiting = false;
+            //                console.log(gzLoginError);
+            //            });
+            //        }, function(gzRegisterError) {
+            //            $scope.waiting = false;
+            //            console.log(gzRegisterError);
+            //        });
+            //    }, function (emLoginError) {
+            //        $scope.waiting = false;
+            //        console.log(emLoginError);
+            //    });
+            //}, function (emRegisterError) {
+            //    $scope.waiting = false;
+            //    console.log(emRegisterError.desc);
+            //});
+        };
         // #endregion
 
         // #region terms and conditions
