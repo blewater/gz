@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'emWamp', 'message', 'api', '$window', ctrlFactory]);
-    function ctrlFactory($rootScope, $scope, $location, constants, emWamp, message, api, $window) {
+    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'message', '$window', 'auth', ctrlFactory]);
+    function ctrlFactory($rootScope, $scope, $location, constants, message, $window, auth) {
         var imgDir = "../../Content/Images/";
         $scope.gamesImgOn = imgDir + "games_white.svg";
         $scope.gamesImgOff = imgDir + "games.svg";
@@ -34,36 +34,13 @@
             $location.path(constants.routes.summary.path);
         };
 
-        function updateSessionInfo() {
-            var wasAuthenticated = $scope.isAuthenticated;
-            emWamp.getSessionInfo().then(function (response) {
-                $scope.isAuthenticated = response.isAuthenticated;
-                if ($scope.isAuthenticated) {
-                    $scope.initials = response.firstname.substring(0, 1) + response.surname.substring(0, 1);
-                    $scope.name = response.firstname;
-                    if (wasAuthenticated === false)
-                        $scope.backToGames();
-                }
-                else if (wasAuthenticated === true)
-                    $location.path(constants.routes.home.path);
-            }, function() {
-                $scope.isAuthenticated = false;
-                $location.path(constants.routes.home.path);
-            });
-        }
-        updateSessionInfo();
-
         $scope.login = function () {
-            var loginPromise =
-                message.open({
-                    nsType: 'modal',
-                    nsSize: '600px',
-                    nsTemplate: '/partials/messages/login.html',
-                    nsCtrl: 'loginCtrl',
-                    nsStatic: true
-                });
-            loginPromise.then(function() {
-                $scope.isAuthenticated = true;
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/login.html',
+                nsCtrl: 'loginCtrl',
+                nsStatic: true
             });
         };
         $scope.signup = function () {
@@ -76,8 +53,7 @@
             });
         };
         $scope.logout = function () {
-            emWamp.logout();
-            api.logout();
+            auth.logout();
         };
 
         $scope.deposit = function () {
@@ -89,14 +65,36 @@
                 nsStatic: true
             });
         };
+        $scope.withdraw = function () {
+            //message.open({
+            //    nsType: 'modal',
+            //    nsSize: '600px',
+            //    nsTemplate: '/partials/messages/registerPaymentMethods.html',
+            //    nsCtrl: 'registerPaymentMethodsCtrl',
+            //    nsStatic: true
+            //});
+        };
 
         $scope.$on("$wamp.close", function (event, data) {
             //$location.path('/');
             //$window.location.href = '/';
         });
 
-        $scope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
-            updateSessionInfo();
-        });
+        function updateAuthorizationInfo () {
+            $scope.authData = auth.data;
+            $scope.name = auth.data.firstname;
+            $scope.fullname = auth.data.firstname + " " + auth.data.lastname;
+            if ($scope.authData.isGamer || $scope.authData.isInvestor)
+                $scope.initials = $scope.authData.firstname.slice(0, 1) + $scope.authData.lastname.slice(0, 1);
+
+            if ($scope.authData.isGamer)
+                $scope.gamesMode = true;
+            else if ($scope.authData.isInvestor)
+                $scope.gamesMode = false;
+            else
+                $scope.gamesMode = undefined;
+        }
+        updateAuthorizationInfo();
+        $scope.$on(constants.events.AUTH_CHANGED, updateAuthorizationInfo);
     }
 })();
