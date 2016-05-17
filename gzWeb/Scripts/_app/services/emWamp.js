@@ -332,80 +332,81 @@
             // which can be retrieved from /user/pwd#getPolicy method.
             resetPassword: function(key, password) {
                 return _call("/user/pwd#reset", { key: key, password: password });
-            }
-
+            },
             // #endregion
-            
+
+            // #region Init
+            init: init
+            // #endregion
         };
 
-        $wamp.subscribe("/sessionStateChange",
-                function(args, kwargs, details) {
+        function init() {
+            if ($wamp.connection.isOpen)
+                return;
 
-                    $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
-                    
-                    console.log(
-                        "SESSION_STATE_CHANGE => args: " + angular.toJson(args) +
-                        ", kwargs: " + angular.toJson(kwargs) +
-                        ", details: " + angular.toJson(details));
-                })
-            .then(function (subscription) {
-                    var groupId = localStorageService.get("$client_id$");
-                    _call("/user#setClientIdentity", { groupID: groupId })
-                        .then(function(result) {
-                            localStorageService.set("$client_id$", result.groupID);
-                        },_logError);
+            $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
+                $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
+                console.log(
+                    "SESSION_STATE_CHANGE => args: " + angular.toJson(args) +
+                    ", kwargs: " + angular.toJson(kwargs) +
+                    ", details: " + angular.toJson(details));
+            }).then(function (subscription) {
+                var groupId = localStorageService.get("$client_id$");
+                if (groupId === undefined) {
+                    _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
+                        localStorageService.set("$client_id$", result.groupID);
+                    }, _logError);
                     //console.log(subscription);
-                },
-                _logError);
+                }
+            }, _logError);
 
-        // -------------------------------------------------------------------
-        // This event is fired when the account balance is changed.
-        // -------------------------------------------------------------------
-        //
-        // -------------------------------------------------------------------
-        // Parameters
-        // -------------------------------------------------------------------
-        //  {
-        //      "id" : 5510090,
-        //      "vendor" : "CasinoWallet",
-        //      "type" : "Deposit",
-        //      "amount" : 50,
-        //      "bonusAmount": 100
-        //  }
-        //
-        // id [integer] 
-        // the id of the balance-changed account
-        //
-        // vendor [string] 
-        // the vendor of the account. please use this field to find specific account.
-        //
-        // type [string] 
-        // a string represents the transaction type which triggers the balance change
-        //      Deposit
-        //      Withdraw
-        //      Transfer
-        //      User2User
-        //      Vendor2User
-        //      User2Vendor
-        //      WalletCredit
-        //      WalletDebit
-        //      Refund
-        //
-        // amount [number]
-        // the amount of the account.
-        //
-        // bonusAmount [number]
-        // the bonus amount of the account
-        //
-        // -------------------------------------------------------------------
-        // Remark
-        // -------------------------------------------------------------------
-        // This event is fired when the account balance is changed. 
-        // Only the connection which called /user/account/watchBalance receives the notification on balance change.
-        // This feature is only available after it is configured in GmCore, please ask your integration manager for details.
-        // -------------------------------------------------------------------
-        $wamp.subscribe("/account/balanceChanged",
-            function(args, kwargs, details) {
+            // -------------------------------------------------------------------
+            // This event is fired when the account balance is changed.
+            // -------------------------------------------------------------------
+            //
+            // -------------------------------------------------------------------
+            // Parameters
+            // -------------------------------------------------------------------
+            //  {
+            //      "id" : 5510090,
+            //      "vendor" : "CasinoWallet",
+            //      "type" : "Deposit",
+            //      "amount" : 50,
+            //      "bonusAmount": 100
+            //  }
+            //
+            // id [integer] 
+            // the id of the balance-changed account
+            //
+            // vendor [string] 
+            // the vendor of the account. please use this field to find specific account.
+            //
+            // type [string] 
+            // a string represents the transaction type which triggers the balance change
+            //      Deposit
+            //      Withdraw
+            //      Transfer
+            //      User2User
+            //      Vendor2User
+            //      User2Vendor
+            //      WalletCredit
+            //      WalletDebit
+            //      Refund
+            //
+            // amount [number]
+            // the amount of the account.
+            //
+            // bonusAmount [number]
+            // the bonus amount of the account
+            //
+            // -------------------------------------------------------------------
+            // Remark
+            // -------------------------------------------------------------------
+            // This event is fired when the account balance is changed. 
+            // Only the connection which called /user/account/watchBalance receives the notification on balance change.
+            // This feature is only available after it is configured in GmCore, please ask your integration manager for details.
+            // -------------------------------------------------------------------
+            $wamp.subscribe("/account/balanceChanged", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED, kwargs);
 
                 console.log(
@@ -414,11 +415,10 @@
                     ", details: " + angular.toJson(details));
             });
 
-        //
-        // This event is fired when the deposit transaction status is changed in 3rd-party site.
-        //
-        $wamp.subscribe("/deposit/statusChanged",
-            function (args, kwargs, details) {
+            //
+            // This event is fired when the deposit transaction status is changed in 3rd-party site.
+            //
+            $wamp.subscribe("/deposit/statusChanged", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.DEPOSIT_STATUS_CHANGED, kwargs);
 
                 console.log(
@@ -427,11 +427,10 @@
                     ", details: " + angular.toJson(details));
             });
 
-        //
-        // This event is fired when the deposit transaction status is changed in 3rd-party site.
-        //
-        $wamp.subscribe("/withdraw/statusChanged",
-            function (args, kwargs, details) {
+            //
+            // This event is fired when the deposit transaction status is changed in 3rd-party site.
+            //
+            $wamp.subscribe("/withdraw/statusChanged", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.WITHDRAW_STATUS_CHANGED, kwargs);
 
                 console.log(
@@ -440,7 +439,10 @@
                     ", details: " + angular.toJson(details));
             });
 
-        $wamp.open();
+            $wamp.open();
+        }
+
+        init();
 
         return service;
     };
