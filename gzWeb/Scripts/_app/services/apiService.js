@@ -87,15 +87,20 @@
         factory.getSummaryData = function () {
             return $http.get(urls.investments + 'getSummaryData');
         };
-        factory.transferCashToGames = function () {
-            return $http.post(urls.investments + 'transferCashToGames');
+        factory.getVintagesWithSellingValues = function () {
+            return $http.get(urls.investments + 'getVintagesWithSellingValues');
+        };
+        factory.withdrawVintages = function (vintages) {
+            return $http.post(urls.investments + 'withdrawVintages', vintages);
         }
+
         factory.getPortfolioData = function () {
             return $http.get(urls.investments + 'getPortfolioData');
         };
         factory.setPlanSelection = function () {
             return $http.post(urls.investments + 'setPlanSelection');
         }
+
         factory.getPerformanceData = function () {
             return $http.get(urls.investments + 'getPerformanceData');
         };

@@ -258,6 +258,14 @@
     font-weight: bold;
     font-size: 18px;
 }
+.summary-vintages .total {
+    font-weight: bold;
+    font-size: 18px;
+}
+.summary-vintages .total.amount {
+    padding-right: 35px;
+}
+
 .summary-vintages .year i {
     cursor: pointer;
     line-height: 20px;
@@ -286,6 +294,23 @@
 .summary-vintages .group .months .month {
     height: 20px;
 }
+.summary-vintages .group .months .month:hover {
+    background-color: #17994c;
+}
+.summary-vintages .group .months .month.sold {
+    -ms-opacity: 0.3;
+    opacity: 0.3;
+}
+.summary-vintages .group .months .month.sold > div {
+    text-decoration: line-through;
+}
+.summary-vintages .group .months .month.sold > div:last-of-type {
+    text-decoration: none;
+}
+.summary-vintages .group .months .month.selected {
+    background-color: #17994c;
+}
+
 /*.summary-vintages .group .months .month {
     height: 0;
 }
@@ -298,6 +323,9 @@
    left: -9999px !important;
 }
 
+.summary-vintages button[type='submit'] {
+    margin-top: 30px;
+}
 
 @media (max-width: 767px) {
     .investments .summary .investments-balance-amount {
