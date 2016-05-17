@@ -121,7 +121,7 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
                 , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
                 , "~/Scripts/_app/controllers/investments/activityCtrl.js"
-                , "~/Scripts/_app/controllers/investments/showVintagesCtrl.js"
+                , "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
                 , "~/Scripts/_app/controllers/games/gamesCtrl.js"
                 , "~/Scripts/_app/controllers/auth/registerCtrl.js"
                 , "~/Scripts/_app/controllers/auth/loginCtrl.js"

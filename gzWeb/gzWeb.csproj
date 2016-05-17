@@ -447,7 +447,7 @@
     <Content Include="Partials\messages\terms.html" />
     <Content Include="Partials\messages\login.html" />
     <Content Include="Partials\messages\registerAccount.html" />
-    <Content Include="Partials\messages\showVintages.html" />
+    <Content Include="Partials\messages\summaryVintages.html" />
     <Content Include="Partials\templates\depositCreditCard.html" />
     <Content Include="Partials\templates\depositTrustly.html" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
@@ -516,7 +516,7 @@
     <Content Include="Scripts\_app\controllers\guest\faqCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\playgroundCtrl.js" />
-    <Content Include="Scripts\_app\controllers\investments\showVintagesCtrl.js" />
+    <Content Include="Scripts\_app\controllers\investments\summaryVintagesCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
