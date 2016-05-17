@@ -73,7 +73,7 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId) {
 
-            string prompt = "First available withdraw on: ";
+            string prompt = "First available withdrawal on: ";
 
             DateTime eligibleWithdrawDate;
             int lockInDays;

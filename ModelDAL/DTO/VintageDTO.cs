@@ -8,5 +8,6 @@ namespace gzDAL.DTO {
     public class VintageDto {
         public string YearMonthStr { get; set; }
         public decimal InvestAmount { get; set; }
+        public decimal SellingValue { get; set; }
     }
 }
