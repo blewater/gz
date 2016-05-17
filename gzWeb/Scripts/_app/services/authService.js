@@ -23,10 +23,12 @@
         factory.readAuthData = function () {
             factory.data = localStorageService.get(constants.storageKeys.authData) || noAuthData;
 
-            //if (factory.data.isGamer)
-            //    $location.path(constants.routes.games.path);
-            //else if (factory.data.isGamer)
-            //    $location.path(constants.routes.games.path);
+            if ($location.path() === constants.routes.home.path) {
+                if (factory.data.isGamer)
+                    $location.path(constants.routes.games.path);
+                else if (factory.data.isInvestor)
+                    $location.path(constants.routes.summary.path);
+            }
         }
 
         function storeAuthData() {
@@ -122,6 +124,7 @@
             emWamp.init();
             checkSessionInfo();
             clearInvestmentData();
+            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
 
             // TODO
             //var templates = $filter('toArray')(constants.templates);
@@ -147,6 +150,7 @@
                 factory.data.lastname = gzLoginResult.data.lastname;
                 factory.data.currency = gzLoginResult.data.currency;
                 storeAuthData();
+                $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                 q.resolve(gzLoginResult);
             }, function (error) {
                 q.reject(error.data.error_description);
@@ -175,10 +179,11 @@
                 //factory.data.push(emLoginResult.roles[i]);
                 //storeAuthData();
 
-                $location.path(constants.routes.games.path);
                 gzLogin(usernameOrEmail, password).then(function () {
+                    $location.path(constants.routes.games.path);
                     q.resolve({ emLogin: true, gzLogin: true });
                 }, function(gzLoginError) {
+                    $location.path(constants.routes.games.path);
                     q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
                 });
             }, function (emLoginError) {
