@@ -138,11 +138,13 @@ namespace gzWeb
                 , "~/Scripts/_app/directives/gzCheckBox.js"
                 , "~/Scripts/_app/directives/gzSelect.js"
                 , "~/Scripts/_app/directives/gzFieldOk.js"
+                , "~/Scripts/_app/directives/gzAuthAccess.js"
 
                 , "~/Scripts/_app/services/emWamp.js"
                 , "~/Scripts/_app/services/emCasino.js"
                 , "~/Scripts/_app/services/emBanking.js"
                 , "~/Scripts/_app/services/authInterceptor.js"
+                , "~/Scripts/_app/services/authService.js"
                 , "~/Scripts/_app/services/apiService.js"
                 , "~/Scripts/_app/services/helpersService.js"
                 , "~/Scripts/_app/services/chatService.js"
