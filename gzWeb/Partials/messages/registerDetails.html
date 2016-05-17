@@ -33,14 +33,14 @@
                         <div class="col-xs-12 col-sm-6">
                             <input type="text" placeholder="First Name" id="firstname" name="firstname" class="form-control" autocomplete="off" ng-model="model.firstname" required
                                    ng-class="{ 'empty': !model.firstname, 'danger' : form.firstname.$invalid && !form.firstname.$pristine }"
-                                   ng-focus="firstnameFocused = true" ng-blur="firstnameFocused = false" cs-capitalize-first>
-                            <div class="help-block" ng-class="{'show': firstnameFocused && form.firstname.$error.required}">First name is required</div>
+                                   ng-focus="firstnameFocused = true" ng-blur="firstnameFocused = false" cs-capitalize-first autofocus>
+                            <div class="help-block" ng-class="{'show': firstnameFocused && form.firstname.$error.required && !form.firstname.$pristine}">First name is required</div>
                         </div>
                         <div class="col-xs-12 col-sm-6">
                             <input type="text" placeholder="Last Name" id="lastname" name="lastname" class="form-control" autocomplete="off" ng-model="model.lastname" required
                                    ng-class="{ 'empty': !model.lastname, 'danger' : form.lastname.$invalid && !form.lastname.$pristine }"
                                    ng-focus="lastnameFocused = true" ng-blur="lastnameFocused = false" cs-capitalize-first>
-                            <div class="help-block" ng-class="{'show': lastnameFocused && form.lastname.$error.required}">Last name is required</div>
+                            <div class="help-block" ng-class="{'show': lastnameFocused && form.lastname.$error.required && !form.lastname.$pristine}">Last name is required</div>
                         </div>
                     </div>
                     <gz-field-ok gz-when="form.firstname.$valid && form.lastname.$valid"></gz-field-ok>
@@ -83,7 +83,7 @@
                            ng-class="{ 'empty': !model.address, 'danger': form.address.$invalid && !form.address.$pristine }"
                            ng-focus="addressFocused = true" ng-blur="addressFocused = false"
                            ng-autocomplete options="{types: 'address', country: model.country.code, watchEnter: true}" cs-capitalize-first>
-                    <div class="help-block" ng-class="{'show': addressFocused && form.address.$error.required}">Address is required</div>
+                    <div class="help-block" ng-class="{'show': addressFocused && form.address.$error.required && !form.address.$pristine}">Address is required</div>
                     <gz-field-ok gz-when="form.address.$valid"></gz-field-ok>
                 </div>
             </div>
@@ -113,14 +113,14 @@
                             <input type="text" placeholder="Postal Code" id="postalCode" name="postalCode" class="form-control" autocomplete="off" ng-model="model.postalCode" required
                                    ng-class="{ 'empty': !model.postalCode, 'danger': form.postalCode.$invalid && !form.postalCode.$pristine }"
                                    ng-focus="postalCodeFocused = true" ng-blur="postalCodeFocused = false">
-                            <div class="help-block" ng-class="{'show': postalCodeFocused && form.postalCode.$error.required}">Postal code is required</div>
+                            <div class="help-block" ng-class="{'show': postalCodeFocused && form.postalCode.$error.required && !form.postalCode.$pristine}">Postal code is required</div>
                         </div>
                         <div class="col-xs-12 col-sm-8">
                             <input type="text" placeholder="City" id="city" name="city" class="form-control" autocomplete="off" ng-model="model.city" required
                                    ng-class="{ 'empty': !model.city, 'danger': form.city.$invalid && !form.city.$pristine }"
                                    ng-focus="cityFocused = true" ng-blur="cityFocused = false"
                                    ng-autocomplete options="{types: '(cities)', country: model.country.code, watchEnter: true}" cs-capitalize-first>
-                            <div class="help-block" ng-class="{'show': cityFocused && form.city.$error.required}">City is required</div>
+                            <div class="help-block" ng-class="{'show': cityFocused && form.city.$error.required && !form.city.$pristine}">City is required</div>
                         </div>
                     </div>
                     <gz-field-ok gz-when="form.postalCode.$valid && form.city.$valid"></gz-field-ok>
@@ -147,7 +147,7 @@
                                    ng-class="{ 'empty': !model.phoneNumber, 'danger': form.phoneNumber.$invalid && !form.phoneNumber.$pristine }"
                                    ng-focus="phoneNumberFocused = true" ng-blur="phoneNumberFocused = false"
                                    cs-pattern-restrict="^[0-9]*$">
-                            <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required}">Phone number is required</div>
+                            <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Phone number is required</div>
                         </div>
                     </div>
                     <gz-field-ok gz-when="model.phonePrefix && form.phoneNumber.$valid"></gz-field-ok>
