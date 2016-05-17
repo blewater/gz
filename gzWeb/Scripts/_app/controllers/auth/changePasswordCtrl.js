@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "changePasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'api', 'message', 'vcRecaptchaService', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, api, message, vcRecaptchaService) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', 'vcRecaptchaService', ctrlFactory]);
+    function ctrlFactory($scope, constants, emWamp, auth, message, vcRecaptchaService) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = constants.reCaptchaPublicKey;
@@ -63,29 +63,13 @@
         };
         function change(){
             $scope.waiting = true;
-            emWamp.changePassword({
-                oldPassword: $scope.model.oldPassword,
-                newPassword: $scope.model.newPassword,
-                captchaPublicKey: $scope.reCaptchaPublicKey,
-                captchaChallenge: "",
-                captchaResponse: vcRecaptchaService.getResponse()
-            }).then(function (emResult) {
-                api.changePassword({
-                    OldPassword: $scope.model.oldPassword,
-                    NewPassword: $scope.model.newPassword,
-                    ConfirmPassword: $scope.model.confirmPassword
-                }).then(function (gzResult) {
-                    $scope.waiting = false;
-                    message.toastr("Your password has been changed successfully!");
-                    $scope.nsOk(true);
-                }, function (error) {
-                    $scope.waiting = false;
-                    $scope.changePasswordError = error;
-                });
-            }, function(error) {
+            auth.changePassword($scope.model.oldPassword, $scope.model.newPassword, $scope.model.confirmPassword).then(function (result) {
                 $scope.waiting = false;
-                $scope.changePasswordError = error.desc;
-                vcRecaptchaService.reload();
+                message.toastr("Your password has been changed successfully!");
+                $scope.nsOk(true);
+            }, function (error) {
+                $scope.waiting = false;
+                $scope.changePasswordError = error;
             });
         }
 

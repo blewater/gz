@@ -15,22 +15,15 @@
             </div>
 
             <div class="collapse navbar-collapse " id="header-collapse-section">
-                <span ng-if="isAuthenticated" class="user-info">
-                    <span class="user-avatar">
-                        <span class="user-initials img-circle">{{initials}}</span>
-                    </span>
-                    <span class="user-name">{{name}}</span>
-                    <a ng-click="logout()">Logout</a>
-                </span>
                 <div class="nav-links-btns">
                     <div class="links">
                         <nav class="cl-effect">
-                            <ul ng-if="!isAuthenticated" class="links-guest">
+                            <ul gz-authorize="guest" gz-match="exact" class="links-guest">
                                 <li ng-repeat="route in routes.guest">
                                     <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                                 </li>
                             </ul>
-                            <ul ng-if="isAuthenticated" class="links-games" ng-show="gamesMode" style="margin-top: 0;">
+                            <ul gz-authorize="gamer" class="links-games" ng-show="gamesMode" style="margin-top: 0;">
                                 <li>
                                     <button type="button" class="btn-gz btn-gz-alt" ng-click="withdraw()">
                                         WITHDRAW
@@ -40,7 +33,7 @@
                                     </button>
                                 </li>
                             </ul>
-                            <ul ng-if="isAuthenticated" class="links-investments" ng-hide="gamesMode">
+                            <ul gz-authorize="investor" class="links-investments" ng-hide="gamesMode">
                                 <li ng-repeat="route in routes.investment">
                                     <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                                 </li>
@@ -62,13 +55,28 @@
                         </a>
                     </div>
                     <div class="pull-right">
-                        <button type="button" ng-if="!isAuthenticated" class="btn-gz btn-gz-alt nav-btn-login" ng-click="login()">
+                        <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz btn-gz-alt nav-btn-login" ng-click="login()">
                             LOGIN
                         </button>
-                        <button type="button" ng-if="!isAuthenticated" class="btn-gz nav-btn-login" ng-click="signup()">
+                        <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz nav-btn-login" ng-click="signup()">
                             SIGNUP
                         </button>
-                        <div ng-if="isAuthenticated" class="switch">
+                        <span gz-authorize="gamer,investor" class="user-info">
+                            @*<span class="user-name">{{name}}</span>*@
+                            <span class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                  ng-mouseover="avatarHovered = true;" ng-mouseleave="avatarHovered = false;">
+                                <span class="user-initials img-circle">
+                                    <span class="user-initials-text">{{initials}}</span>
+                                    <i class="fa fa-angle-down" ng-class="{'appear':avatarHovered}"></i>
+                                </span>
+                            </span>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="user-dropdown">
+                                <li class="text-center"><h5><b>{{fullname}}</b></h5></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a ng-click="logout()">Logout</a></li>
+                            </ul>
+                        </span>
+                        <div gz-authorize="gamer,investor" gz-match="all" class="switch">
                             <a ng-class="{'on':gamesMode, 'off':!gamesMode}" ng-click="!gamesMode || toInvestments()">
                                 <img ng-src="{{gamesMode ? investmentsImgOn : investmentsImgOff}}" />
                             </a>
@@ -81,6 +89,18 @@
             </div>
         </div>
     </nav>
+    <div>
+        <div>firstname: {{authData.firstname}}</div>
+        <div>lastname: {{authData.lastname}}</div>
+        <div>currency: {{authData.currency}}</div>
+        <div>username: {{authData.username}}</div>
+        <div>roles: {{authData.roles}}</div>
+        <div>token: {{authData.token.substr(0, 20)}}...</div>
+        <div>isGuest: {{authData.isGuest}}</div>
+        <div>isGamer: {{authData.isGamer}}</div>
+        <div>isInvestor: {{authData.isInvestor}}</div>
+        <div>gamesMode: {{gamesMode}}</div>        
+    </div>
 </header>
 
 

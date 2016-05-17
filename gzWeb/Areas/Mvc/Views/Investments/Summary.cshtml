@@ -3,6 +3,24 @@
     Layout = "~/Areas/Mvc/Views/Shared/_InvestmentsLayout.cshtml";
 }
 
+<script type="text/ng-template" id="withdrawTpl.html">
+    <div class="withdraw" ng-click="!model.OkToWithdraw  || withdraw()" ng-class="{'disabled': !model.OkToWithdraw }">
+        <img src="@Url.Content("~/Content/Images/cash.svg")" alt=" cash" />
+        <span>WITHDRAW</span>
+    </div>
+    <div class="withdraw-msg" ng-if="!model.OkToWithdraw">
+        <i class="fa fa-exclamation-triangle text-warning"></i>
+        <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
+    </div>        
+</script>
+
+<script type="text/ng-template" id="backToGamesTpl.html">
+    <div class="back-to-games" ng-click="backToGames()">
+        <img src="@Url.Content("~/Content/Images/games_white.svg")" alt="Games" />
+        <span>BACK TO GAMES</span>
+    </div>
+</script>
+
 <div class="summary">
     <div class="row">
         <div class="col-xs-12">
@@ -43,15 +61,12 @@
                         <div class="vintages-box-table-head">
                             <div class="row">
                                 <div class="col-xs-12 text-left"><b>Investment vintages</b></div>
-                                <!--<div class="col-xs-6 text-left">Vintage</div>
-                                <div class="col-xs-6 text-right">Invested</div>-->
                             </div>
                         </div>
                         <div class="vintages-box-table-body">
                             <div class="row" ng-repeat="vintage in lastVintages">
                                 <div class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
                                 <div class="col-xs-6 text-right">{{vintage.InvestAmount | currency : model.Currency : 0}}</div>
-                                <!--<div class="col-xs-4 text-right"><span ng-if="vintage.returnPercent > 0">+</span>{{vintage.ReturnPercent}}%</div>-->
                             </div>
                         </div>
                         <div class="vintages-box-table-foot">
@@ -94,10 +109,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="back-to-games bg-gz visible-lg" ng-click="backToGames()">
-                    <img src="@Url.Content("~/Content/Images/games_white.svg")" alt="Games" />
-                    <span>BACK TO GAMES</span>
-                </div>
+                <div class="visible-lg" ng-include src="'backToGamesTpl.html'"></div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-lg-3">
@@ -140,35 +152,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="visible-lg">
-                    <div class="withdraw" ng-click="!model.OkToWithdraw  || withdraw()" ng-class="{'disabled': !model.OkToWithdraw }">
-                        <img src="@Url.Content("~/Content/Images/cash.svg")" alt="Cash" />
-                        <span>WITHDRAW</span>
-                    </div>
-                    <div class="withdraw-msg">
-                        <i class="fa fa-exclamation-triangle text-warning"></i>
-                        <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
-                    </div>
-                </div>
+                <div class="visible-lg" ng-include src="'withdrawTpl.html'"></div>
             </div>
         </div>
     </div>
     <div class="row hidden-lg">
-        <div class="col-xs-12 col-sm-6 col-sm-push-6">
-            <div class="withdraw" ng-click="!model.OkToWithdraw  || withdraw()" ng-class="{'disabled': !model.OkToWithdraw }">
-                <img src=" @Url.Content("~/Content/Images/cash.svg") " alt=" cash" />
-                <span>WITHDRAW</span>
-            </div>
-            <div class="withdraw-msg">
-                <i class="fa fa-exclamation-triangle text-warning"></i>
-                <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
-            </div>
+        <div class="col-xs-12 col-sm-6 col-sm-push-6" ng-include src="'withdrawTpl.html'">
         </div>
-        <div class="col-xs-12 col-sm-6 col-sm-pull-6">
-            <div class="back-to-games" ng-click="backToGames()">
-                <img src="@Url.Content("~/Content/Images/games_white.svg")" alt="Games" />
-                <span>BACK TO GAMES</span>
-            </div>
+        <div class="col-xs-12 col-sm-6 col-sm-pull-6" ng-include src="'backToGamesTpl.html'">
         </div>
     </div>
 </div>

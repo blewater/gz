@@ -243,22 +243,22 @@
 
 
 
-.vintages-per-year {
+.summary-vintages {
     overflow: hidden;
 }
-.vintages-per-year .header {
+.summary-vintages .header {
     font-weight: bold;
     margin-bottom: 30px;
     font-size: 16px;
 }
-.vintages-per-year .group {
+.summary-vintages .group {
     margin-bottom: 30px;
 }
-.vintages-per-year .year {
+.summary-vintages .year {
     font-weight: bold;
     font-size: 18px;
 }
-.vintages-per-year .year i {
+.summary-vintages .year i {
     cursor: pointer;
     line-height: 20px;
     margin-right: 5px;
@@ -269,7 +269,7 @@
     transition: all 0.4s ease-in-out;
 }
 
-.vintages-per-year .group .months {
+.summary-vintages .group .months {
     -webkit-transition: all 0.4s ease-in-out;
     -moz-transition: all 0.4s ease-in-out;
     -ms-transition: all 0.4s ease-in-out;
@@ -278,21 +278,21 @@
     -ms-opacity: 0;
     opacity: 0;
 }
-.vintages-per-year .group.expanded .months {
+.summary-vintages .group.expanded .months {
     -ms-opacity: 1;
     opacity: 1;
 }
 
-.vintages-per-year .group .months .month {
+.summary-vintages .group .months .month {
     height: 20px;
 }
-/*.vintages-per-year .group .months .month {
+/*.summary-vintages .group .months .month {
     height: 0;
 }
-.vintages-per-year .group.expanded .months .month {
+.summary-vintages .group.expanded .months .month {
     height: 20px;
 }*/
-.vintages-per-year .hide {
+.summary-vintages .hide {
    position: absolute !important;
    top: -9999px !important;
    left: -9999px !important;

@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'showVintagesCtrl';
+    var ctrlId = 'summaryVintagesCtrl';
     APP.controller(ctrlId, ['$scope', '$filter', '$timeout', ctrlFactory]);
     function ctrlFactory($scope, $filter, $timeout) {
         function init() {

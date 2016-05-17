@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDepositCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'api', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, api, $filter, message, constants, $compile, $controller, $templateRequest, helpers) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -29,14 +29,20 @@
         function getPaymentMethodCfg() {
             if (!$scope.paymentMethodCfg) {
                 $scope.initializing = true;
-                emBanking.getPaymentMethodCfg($scope.selectedMethod.code).then(function(paymentMethodCfgResult) {
+                emBanking.getPaymentMethodCfg($scope.selectedMethod.code).then(function (paymentMethodCfgResult) {
                     $scope.paymentMethodCfg = paymentMethodCfgResult;
                     attachDepositFields($scope.paymentMethodCfg.paymentMethodCode);
                     $scope.initializing = false;
-                }, function(error) {
+                }, function (error) {
                     console.log(error.desc);
                     $scope.initializing = false;
                 });
+
+                //emWamp.getSessionInfo().then(function (sessionInfo) {
+                //    if (sessionInfo.isAuthenticated) {
+                //    } else {
+                //    }
+                //});
             }
             else {
                 attachDepositFields($scope.paymentMethodCfg.paymentMethodCode);

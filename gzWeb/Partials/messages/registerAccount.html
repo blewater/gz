@@ -16,13 +16,13 @@
                 <div class="form-group">
                     <input type="email" placeholder="email@domain.com" id="email" name="email" class="form-control" autocomplete="off" ng-model="model.email" required
                            ng-class="{ 'empty': !model.email, 'danger' : (form.email.$invalid && !form.email.$pristine) || !emailValidation.isAvailable }"
-                           ng-focus="onEmailFocus();" ng-blur="onEmailBlur()">
+                           ng-focus="onEmailFocus();" ng-blur="onEmailBlur()" autofocus>
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':emailFocused || form.email.$valid}">
                         <i class="fa fa-lg fa-envelope-o"></i>
                     </span>
                     <gz-field-ok gz-when="form.email.$valid && emailValidation.isAvailable" gz-loading="emailValidation.isValidating"></gz-field-ok>
-                    <div class="help-block" ng-class="{'show': emailFocused && form.email.$error.required}">Email address is required</div>
-                    <div class="help-block" ng-class="{'show': emailFocused && form.email.$error.email}">Please enter a valid Email address</div>
+                    <div class="help-block" ng-class="{'show': emailFocused && !emailValidation.error && form.email.$error.required && !form.email.$pristine}">Email address is required</div>
+                    <div class="help-block" ng-class="{'show': emailFocused && !emailValidation.error && form.email.$error.email}">Please enter a valid Email address</div>
                     <div class="help-block" ng-class="{'show': emailFocused && emailValidation.error}">{{emailValidation.error}}</div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                         <i class="fa fa-lg fa-user"></i>
                     </span>
                     <gz-field-ok gz-when="form.username.$valid && usernameValidation.isAvailable" gz-loading="usernameValidation.isValidating"></gz-field-ok>
-                    <div class="help-block" ng-class="{'show': usernameFocused && form.username.$error.required}">Username is required.</div>
+                    <div class="help-block" ng-class="{'show': usernameFocused && form.username.$error.required && !form.username.$pristine}">Username is required.</div>
                     <div class="help-block" ng-class="{'show': usernameFocused && usernameValidation.error}">{{usernameValidation.error}}</div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                         <i class="fa fa-lg fa-key"></i>
                     </span>
                     <gz-field-ok gz-when="form.password.$valid && passwordValidation.isValid === true"></gz-field-ok>
-                    <div class="help-block" ng-class="{'show': passwordFocused && form.password.$error.required}">Password is required.</div>
+                    <div class="help-block" ng-class="{'show': passwordFocused && form.password.$error.required && !form.password.$pristine}">Password is required.</div>
                     <div class="help-block help-block-3x" ng-class="{'show': passwordFocused && !form.password.$error.required && passwordValidation.isValid === false}">{{passwordValidation.error}}</div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                         <i class="fa fa-lg fa-key"></i>
                     </span>
                     <gz-field-ok gz-when="form.password.$valid && passwordValidation.isValid && model.confirmPassword === model.password"></gz-field-ok>
-                    <div class="help-block" ng-class="{'show': confirmPasswordFocused && form.confirmPassword.$error.required}">Confirm Password is required.</div>
+                    <div class="help-block" ng-class="{'show': confirmPasswordFocused && form.confirmPassword.$error.required && !form.confirmPassword.$pristine}">Confirm Password is required.</div>
                     <div class="help-block help-block-2x" ng-class="{'show': confirmPasswordFocused && !form.confirmPassword.$error.required && model.confirmPassword !== model.password}">Password did not match, double check so both fields have the same password.</div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 <div class="form-group">
                     <div class="text-center">Already a member?</div>
                     <div class="btns text-center">
-                        <button type="submit" class="btn-gz" ng-click="signup()">Login now</button>
+                        <button type="submit" class="btn-gz" ng-click="backToLogin()">Login now</button>
                     </div>
                 </div>
             </div>

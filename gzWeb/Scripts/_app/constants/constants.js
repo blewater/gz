@@ -1,6 +1,15 @@
 ﻿(function () {
     'use strict';
 
+    // #region Roles
+    var roles = {
+        guest: 'guest',
+        gamer: 'gamer',
+        investor: 'investor',
+        admin: 'admin'
+    }
+    // #endregion
+
     // #region Routes
     var routes = {};
 
@@ -49,7 +58,8 @@
         path: '/games',
         ctrl: 'gamesCtrl',
         tpl: '/Mvc/Games/Games',
-        title: 'Games'
+        title: 'Games',
+        roles: [roles.gamer]
     };
     // #endregion
 
@@ -59,28 +69,32 @@
         path: '/summary',
         ctrl: 'summaryCtrl',
         tpl: '/Mvc/Investments/Summary',
-        title: 'Summary'
+        title: 'Summary',
+        roles: [roles.investor]
     };
     routes.portfolio = {
         key: 'portfolio',
         path: '/portfolio',
         ctrl: 'portfolioCtrl',
         tpl: '/Mvc/Investments/Portfolio',
-        title: 'Portfolio'
+        title: 'Portfolio',
+        roles: [roles.investor]
     };
     routes.performance = {
         key: 'performance',
         path: '/performance',
         ctrl: 'performanceCtrl',
         tpl: '/Mvc/Investments/Performance',
-        title: 'Performance'
+        title: 'Performance',
+        roles: [roles.investor]
     };
     routes.activity = {
         key: 'activity',
         path: '/activity',
         ctrl: 'activityCtrl',
         tpl: '/Mvc/Investments/Activity',
-        title: 'Activity'
+        title: 'Activity',
+        roles: [roles.investor]
     };
     // #endregion
 
@@ -98,13 +112,14 @@
         debugMode: true,
         html5Mode: true,
 
-        webeocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
+        webSocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
         fallbackApiUrl: 'https://fb-webapi-stage.everymatrix.com',
         domainPrefix: 'http://www.greenzorro.com',
         emailVerificationUrl: 'localhost:63659/activate?key=',
 
         area: "/Mvc",
         routes: routes,
+        roles: roles,
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
@@ -116,12 +131,15 @@
             authData: 'authData',
         },
         events: {
+            AUTH_CHANGED: 'authChanged',
             SESSION_STATE_CHANGE: 'sessionStageChange',
             ACCOUNT_BALANCE_CHANGED: 'accountBalanceChanged',
             DEPOSIT_STATUS_CHANGED: 'depositStatusChanged',
             WITHDRAW_STATUS_CHANGED: 'withdrawStatusChanged'
         },
-        reCaptchaPublicKey: '6Ld5ZB8TAAAAAI1QlCbPCo-OnYi6EyR-lL2GrFyH'
+
+        reCaptchaPublicKey: '6Ld2ZB8TAAAAAFPviZAHanWXdifnC88VuM0DdsWO'
+        //reCaptchaPublicKey: '6Ld5ZB8TAAAAAI1QlCbPCo-OnYi6EyR-lL2GrFyH'
         //reCaptchaPublicKey: '6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML'
 
         //msgs: {

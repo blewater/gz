@@ -6,13 +6,25 @@
         $scope.showAllVintages = function () {
             message.modal('Vintages history', {
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/showVintages.html',
-                nsCtrl: 'showVintagesCtrl',
-                nsParams: { vintages: $scope.vintages }
+                nsTemplate: '/partials/messages/summaryVintages.html',
+                nsCtrl: 'summaryVintagesCtrl',
+                nsParams: {
+                    vintages: $scope.vintages,
+                    currency: $scope.model.Currency
+                }
             });
         };
 
         $scope.withdraw = function() {
+            //message.modal('Available Portfolios for withdrawal', {
+            //    nsSize: '600px',
+            //    nsTemplate: '/partials/messages/summaryWithdraw.html',
+            //    nsCtrl: 'summaryWithdrawCtrl',
+            //    nsParams: {
+            //        vintages: $scope.vintages,
+            //        currency: $scope.model.Currency
+            //    }
+            //});
             api.call(function () {
                 return api.transferCashToGames(); 
             }, function (response) {
