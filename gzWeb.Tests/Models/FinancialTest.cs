@@ -1,22 +1,12 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using gzDAL.Models;
-using System.Diagnostics;
 using gzDAL.Repos;
-using AutoMapper;
-using gzDAL.DTO;
-using gzDAL.Conf;
-using gzDAL.ModelUtil;
 
 namespace gzWeb.Tests.Models {
     [TestFixture]
-    public class PortfolioTest {
+    public class FinancialTest {
 
         [OneTimeSetUp]
         public void PortfolioTestInitialize()

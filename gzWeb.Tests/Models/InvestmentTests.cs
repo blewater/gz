@@ -48,6 +48,34 @@ namespace gzWeb.Tests.Models {
         }
 
         [Test]
+        public void VintagesSellingValues() {
+            using (var db = new ApplicationDbContext(null)) {
+
+                var custIdList = db.Users
+                    .Where(u => new List<string>() {
+
+                        "6month@allocation.com",
+                        "info@nessos.gr",
+                        "testuser@gz.com"
+
+                    }.Contains(u.Email)).Select(u => u.Id).ToList();
+
+                foreach (var custId in custIdList) {
+
+                    var trxRepo = new GzTransactionRepo(db);
+
+                    var customerVintages = trxRepo.GetCustomerVintages(custId);
+
+                    foreach (var customerVintage in customerVintages) {
+
+                        var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), trxRepo)
+                            .GetCustomerVintagesSellingValue(custId);
+                    }
+                }
+            }
+        }
+
+        [Test]
         public void SaveDbSellPortfolio() {
 
             using (var db = new ApplicationDbContext(null)) {

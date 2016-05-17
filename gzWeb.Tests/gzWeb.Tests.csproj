@@ -149,7 +149,7 @@
     <Compile Include="Controllers\AccountApiControllerTests.cs" />
     <Compile Include="Controllers\InvestmentsApiControllerTest.cs" />
     <Compile Include="Helpers\FundsTest.cs" />
-    <Compile Include="Models\PortfolioTest.cs" />
+    <Compile Include="Models\FinancialTest.cs" />
     <Compile Include="Models\SeedTest.cs" />
     <Compile Include="Models\InvestmentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
