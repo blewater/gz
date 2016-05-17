@@ -20,8 +20,9 @@
             }, logError);
        };
 
-        $scope.onGameSelected = function(slug) {
-            emCasino.getLaunchUrl(slug, null, false).then(function(result) {
+        $scope.onGameSelected = function (slug) {
+            var playForRealMoney = true;
+            emCasino.getLaunchUrl(slug, null, true).then(function(result) {
                 $scope.gameLaunchData = result;
                 $scope.gameUrl = $sce.trustAsResourceUrl(result.url);
             }, logError);
