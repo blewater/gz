@@ -32,10 +32,12 @@ var APP = (function () {
     ]);
 
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants) {
+        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth',
+        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth) {
             $rootScope.$on('$routeChangeStart', function(event, next, current) {
                 $rootScope.loading = true;
+                if (next && !auth.authorize(next.roles))
+                    $location.path(constants.routes.home.path);
             });
 
             $rootScope.$on('$routeChangeSuccess', function() {
@@ -66,6 +68,7 @@ var APP = (function () {
 
             localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
             $rootScope.loading = false;
+            auth.readAuthData();
 
             $timeout(function() {
                 var $preloader = angular.element(document.querySelector('#preloader'));
