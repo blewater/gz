@@ -20,19 +20,16 @@
 
         function login(){
             $scope.waiting = true;
-            $scope.errorMsg = "";
+            $scope.emErrorMsg = "";
+            $scope.gzErrorMsg = "";
 
             auth.login($scope.model.usernameOrEmail, $scope.model.password).then(function (response) {
                 $scope.waiting = false;
                 if (response.emLogin === true && response.gzLogin === true)
                     $scope.nsOk();
                 else {
-                    if (response.emLogin === false)
-                        $scope.errorMsg += response.emError;
-                    if (response.emLogin === false && response.gzLogin === false)
-                        $scope.errorMsg += "<br/>";
-                    if (response.gzLogin === false)
-                        $scope.errorMsg += response.gzError;
+                    $scope.emErrorMsg = response.emError;
+                    $scope.gzErrorMsg = response.gzError;
                 }
             });
         }
