@@ -23,7 +23,7 @@
 }
 
 .navbar-brand {
-    padding: 7px;
+    padding: 7px 0;
     width: 100%;
 }
 .navbar > .container .navbar-brand,
