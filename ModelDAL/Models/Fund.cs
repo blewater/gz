@@ -15,8 +15,7 @@ namespace gzDAL.Models {
         public string HoldingName { get; set; }
 
         [Required]
-        public float ThreeYrReturnPcnt { get; set; }
-        public float FiveYrReturnPcnt { get; set; }
+        public float YearToDate { get; set; }
 
         public virtual ICollection<PortFund> PortFunds { get; set; }
 

@@ -154,7 +154,7 @@
                         label: "getGamingAccounts",
                         action: function() {
                             return emWamp.call("/user/account#getGamingAccounts",
-                            { expectBalance: false, expectBonus: false });
+                            { expectBalance: true, expectBonus: false });
                         }
                     },
                     {
@@ -385,7 +385,8 @@
                         });
                 };
 
-                emWamp.login({ usernameOrEmail: "xdinos4@nessos.gr", password: "lunat!c7" })
+                //emWamp.login({ usernameOrEmail: "xdinos4@nessos.gr", password: "lunat!c7" })
+                emWamp.login({ usernameOrEmail: "info@nessos.gr", password: "gz2016!@" })
                     .then(function(result) {
                             $scope.userInfo = result;
                             emWamp.getSessionInfo()

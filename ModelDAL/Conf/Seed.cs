@@ -236,25 +236,25 @@ namespace gzDAL.Conf
             context.Funds.AddOrUpdate(
                 f => f.Symbol,
                 new Fund {
-                    HoldingName = "iShares MUB", Symbol = "MUB", ThreeYrReturnPcnt = 2.81f, FiveYrReturnPcnt = 5.25f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "iShares MUB", Symbol = "MUB", YearToDate = 1.91f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
                 },
                 new Fund {
-                    HoldingName = "Schwab SCHP", Symbol = "SCHP", ThreeYrReturnPcnt = -2.34f, FiveYrReturnPcnt = 2.39f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Schwab SCHP", Symbol = "SCHP", YearToDate = 4.76f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
                 },
                 new Fund {
-                    HoldingName = "State Street XLE", Symbol = "XLE", ThreeYrReturnPcnt = -3.27f, FiveYrReturnPcnt = -0.42f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "State Street XLE", Symbol = "XLE", YearToDate = 12.70f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VEA", Symbol = "VEA", ThreeYrReturnPcnt = 4.5f, FiveYrReturnPcnt = 3.48f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VEA", Symbol = "VEA", YearToDate = 0.42f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VIG", Symbol = "VIG", ThreeYrReturnPcnt = 11.63f, FiveYrReturnPcnt = 10.52f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VIG", Symbol = "VIG", YearToDate = 4.67f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VTI", Symbol = "VTI", ThreeYrReturnPcnt = 14.66f, FiveYrReturnPcnt = 12.13f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VTI", Symbol = "VTI", YearToDate = 1.64f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VWO", Symbol = "VWO", ThreeYrReturnPcnt = -7.17f, FiveYrReturnPcnt = -4.98f, UpdatedOnUTC = new DateTime(2016, 1, 22, 12, 2, 0)
+                    HoldingName = "Vanguard VWO", Symbol = "VWO", YearToDate = 6.97f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
                 }
                 );
         }

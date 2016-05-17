@@ -36,10 +36,14 @@ namespace gzDAL.Repos {
         public IEnumerable<VintageDto> GetCustomerVintages(int customerId) {
 
             return _db.GzTransactions
-                .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
+                .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss 
+                    && t.CustomerId == customerId)
                 .GroupBy(t => t.YearMonthCtd)
                 .OrderByDescending(t => t.Key)
-                .Select(g => new VintageDto() {YearMonthStr = g.Key, InvestAmount = g.Sum(t => t.Amount)})
+                .Select(g => new VintageDto() {
+                    YearMonthStr = g.Key,
+                    InvestAmount = g.Sum(t => t.Amount)
+                })
                 .ToList();
         }
 

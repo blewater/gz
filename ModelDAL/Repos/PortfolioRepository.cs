@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using gzDAL.DTO;
 using gzDAL.Models;
 using gzDAL.Repos.Interfaces;
 
@@ -18,14 +19,43 @@ namespace gzDAL.Repos
             this.db = db;
         }
 
+        /// <summary>
+        /// 
+        /// Calculate the year to date rate for all portfolios.
+        /// 
+        /// Note this method returns inactive portfolios.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<PortfolioReturnsDTO> GetPortfolioReturns() {
+
+            var portfolioRates = new List<PortfolioReturnsDTO>();
+
+            foreach (var p in db.Portfolios.OrderBy(p=>p.RiskTolerance).ThenByDescending(p=>p.IsActive).ToList()) {
+
+                var r = p.PortFunds.Select(f => f.Weight * f.Fund.YearToDate / 100).Sum();
+                portfolioRates.Add(new PortfolioReturnsDTO() {
+
+                    PortfolioId = p.Id,
+                    RoI = r,
+                    RiskEnumValue = p.RiskTolerance,
+                    IsActive = p.IsActive
+                    
+                });
+            }
+
+            return portfolioRates;
+        }
+
         public IList<string> GetPortfolioRetLines() {
 
             List<string> portfolioRetLine = new List<string>();
 
-            foreach (var p in db.Portfolios.ToList()) {
+            var portfoliosRates = GetPortfolioReturns();
 
-                var r = p.PortFunds.Select(f => f.Weight * Math.Max(f.Fund.ThreeYrReturnPcnt, f.Fund.FiveYrReturnPcnt)/100).Sum();
-                portfolioRetLine.Add(p.RiskTolerance.ToString() + " portfolio return " + r + "%");
+            foreach (var p in portfoliosRates) {
+
+                portfolioRetLine.Add("Portfolio Id: " + p.PortfolioId + ", Risk: " + p.RiskEnumValue.ToString() + ", Is active: " + p.IsActive + ", portfolio RoI: " + p.RoI + "%");
             }
 
             return portfolioRetLine;
