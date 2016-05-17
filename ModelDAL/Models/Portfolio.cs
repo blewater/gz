@@ -22,7 +22,7 @@ namespace gzDAL.Models {
         High
     }
 
-    /// A collection of funds...weighted (from Conservartive to High Stakes).
+    /// A collection of funds...weighted (from Conservative to High Stakes).
     /// Many to Many with Funds with additional fields in association table PortFund
     /// Design http://stackoverflow.com/questions/7050404/create-code-first-many-to-many-with-additional-fields-in-association-table
     public class Portfolio {

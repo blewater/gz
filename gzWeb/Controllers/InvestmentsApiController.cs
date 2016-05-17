@@ -68,10 +68,13 @@ namespace gzWeb.Controllers
 
             var customerVintages = _gzTransactionRepo
                 .GetCustomerVintages(user.Id)
+
+                // Convert to User currency
                 .Select(v => new VintageDto() {
                     InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
                     YearMonthStr = v.YearMonthStr
                 }).ToList();
+
             var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
 
             var summaryDvm = new SummaryDataViewModel
