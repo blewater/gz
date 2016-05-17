@@ -503,7 +503,9 @@
     <Content Include="Scripts\_app\controllers\templates\footerCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />
+    <Content Include="Scripts\_app\directives\gzAuthAccess.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
+    <Content Include="Scripts\_app\services\authService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\auth\registerDepositCtrl.js" />
     <Content Include="Scripts\_app\controllers\auth\registerPaymentMethodsCtrl.js" />
