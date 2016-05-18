@@ -87,8 +87,8 @@
             });
         }
 
-        function getGamingBalance() {
-            if (!factory.data.balance) {
+        function getGamingAccount() {
+            if (!factory.data.gamingAccount) {
                 emBanking.getGamingAccounts(true, false).then(function (result) {
                     factory.data.gamingAccount = result.accounts[0];
                     storeAuthData();
@@ -106,7 +106,7 @@
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
             if (args.code === 0) {
                 checkSessionInfo();
-                getGamingBalance();
+                getGamingAccount();
                 $location.path(constants.routes.games.path);
             }
             else {

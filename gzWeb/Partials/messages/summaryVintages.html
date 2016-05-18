@@ -20,22 +20,21 @@
                 'height': group.isCollapsed ? 0 : group.length * 20,
                 'display': group.hide ? 'none' : 'block'
             }">
-                <div class="month" ng-repeat="vintage in group"
-                     ng-class="{'sold': vintage.Sold,'selected': vintage.SellThisMonth && !vintage.Sold}">
+                <div class="month" ng-repeat="vintage in group" ng-class="{'sold': canWithdraw && vintage.Sold, 'locked': canWithdraw && vintage.Locked, 'selected': vintage.Selected}">
                     <div ng-if="!canWithdraw" class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
                     <div ng-if="!canWithdraw" class="col-xs-6 text-right">{{vintage.InvestAmount | currency : currency : 0}}</div>
                     <div ng-if="canWithdraw" class="col-xs-2 text-left">{{vintage.Date | date : 'MMMM'}}</div>
                     <div ng-if="canWithdraw" class="col-xs-4 text-right">{{vintage.InvestAmount | currency : currency : 0}}</div>
                     <div ng-if="canWithdraw" class="col-xs-4 text-right">{{vintage.SellingValue | currency : currency : 0}}</div>
                     <div ng-if="canWithdraw" class="col-xs-2 text-right">
-                        <gz-check-box gz-model="vintage" gz-value="SellThisMonth" gz-disabled="vintage.Sold"></gz-check-box>
+                        <gz-check-box gz-model="vintage" gz-value="Selected" gz-disabled="vintage.Sold || vintage.Locked"></gz-check-box>
                     </div>
                 </div>
             </div>
         </div>
         
         <div ng-if="canWithdraw" class="row">
-            <div class="col-xs-6 text-left total">Total gain</div>
+            <div class="col-xs-6 text-left total">Total gains from sales</div>
             <div class="col-xs-6 text-right total amount">{{totalGain() | currency : currency : 0}}</div>
         </div>
 

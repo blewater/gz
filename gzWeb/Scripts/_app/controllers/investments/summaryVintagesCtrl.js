@@ -31,13 +31,13 @@
 
         $scope.thereIsNoSelectedVintage = function() {
             return helpers.array.all(getFlattened(), function (v) {
-                return !v.SellThisMonth || v.Sold;
+                return v.Selected === false;
             });
         };
 
         $scope.totalGain = function () {
             var flattened = getFlattened();
-            var selected = $filter('where')(flattened, {'SellThisMonth': true, 'Sold': false});
+            var selected = $filter('where')(flattened, {'Selected': true});
             return helpers.array.aggregate(selected, 0, function (s, v) {
                 return s + (v.SellingValue - v.InvestAmount);
             });

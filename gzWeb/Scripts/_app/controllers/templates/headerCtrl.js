@@ -107,7 +107,9 @@
         $scope.$on(constants.events.AUTH_CHANGED, updateAuthorizationInfo);
 
         function readAuthData() {
-            $scope.gamingBalance = auth.data.gamingAccount.amount;
+            $scope.hasGamingBalance = auth.data.gamingAccount !== undefined;
+            if ($scope.hasGamingBalance)
+                $scope.gamingBalance = auth.data.gamingAccount.amount;
             $scope.currency = auth.data.currency;
         }
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {

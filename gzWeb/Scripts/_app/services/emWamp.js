@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emWamp", ['$wamp', '$rootScope', 'constants', 'localStorageService', emWampFunction]);
-    function emWampFunction($wamp, $rootScope, constants, localStorageService) {
+    APP.factory("emWamp", ['$wamp', '$rootScope', '$log', 'constants', 'localStorageService', emWampFunction]);
+    function emWampFunction($wamp, $rootScope, $log, constants, localStorageService) {
 
         var _logError = function(error) {
             console.log(error);
@@ -146,7 +146,8 @@
             ///         "referrerID": "0fbfcca4166149f6a26798d3a2f90a76"
             ///     }
             /// </parameters>
-            login: function(parameters) {
+            login: function (parameters) {
+                JL("emWamp").info("login attempt for user: " + parameters.usernameOrEmail);
                 return _call("/user#login", parameters);
             },
 
@@ -356,17 +357,14 @@
 
             $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
-                console.log(
-                    "SESSION_STATE_CHANGE => args: " + angular.toJson(args) +
-                    ", kwargs: " + angular.toJson(kwargs) +
-                    ", details: " + angular.toJson(details));
+                $log.log("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
+                JL("emWamp").trace("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
             }).then(function (subscription) {
                 var groupId = localStorageService.get("$client_id$");
                 if (groupId !== undefined) {
                     _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
                         localStorageService.set("$client_id$", result.groupID);
                     }, _logError);
-                    //console.log(subscription);
                 }
             }, _logError);
 
