@@ -11,8 +11,6 @@
         <i class="fa fa-exclamation-triangle text-warning"></i>
         <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
     </div>        
-
-
 </script>
 
 <script type="text/ng-template" id="backToGamesTpl.html">
@@ -70,8 +68,7 @@
                                 <div class="col-xs-6 text-right">{{vintage.InvestAmount | currency : model.Currency : 0}}</div>
                             </div>
                             <div class="row" ng-if="vintages.length === 0">
-                                <div class="col-xs-6 text-left">{{now | date : 'MMMM'}}</div>
-                                <div class="col-xs-6 text-right">{{0 | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-12 text-left">No vintages yet.</div>
                             </div>
                         </div>
                         <div class="vintages-box-table-foot" ng-if="vintages.length > 3">
@@ -100,16 +97,17 @@
                         </div>
                         <div class="side-box-table-body">
                             <div class="row">
-                                <div class="col-xs-6 text-left">Cash In</div>
-                                <div class="col-xs-6 text-right">{{model.TotalDeposits | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-9 text-left">Cash In</div>
+                                <div class="col-xs-3 text-right">{{model.TotalDeposits | currency : model.Currency : 0}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-6 text-left">Cash Out</div>
-                                <div class="col-xs-6 text-right">{{model.TotalWithdrawals | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-9 text-left">Cash Out</div>
+                                <div class="col-xs-3 text-right">{{model.TotalWithdrawals | currency : model.Currency : 0}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-6 text-left">@*Current*@ Balance</div>
-                                <div class="col-xs-6 text-right">{{gamingBalance | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-9 text-left">Gaming Balance</div>
+                                <div ng-if="hasGamingBalance" class="col-xs-3 text-right">{{gamingBalance | currency : model.Currency : 0}}</div>
+                                <div ng-if="!hasGamingBalance" class="col-xs-3 text-right"><i>offline</i></div>
                             </div>
                         </div>
                     </div>

@@ -8,17 +8,19 @@ namespace gzWeb.Models
         public string YearMonthStr { get; set; }
         public decimal InvestAmount { get; set; }
         public decimal SellingValue { get; set; }
-        public bool SellThisMonth { get; set; }
+        public bool Locked { get; set; }
+        public bool Sold { get; set; }
+        public bool Selected { get; set; }
     }
 
     public class PlanViewModel
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public double ReturnRate { get; set; }
+        public double ROI { get; set; }
         public string Color { get; set; }
-        public decimal Balance { get; set; }
-        public double Percent { get; set; }
+        public decimal UserBalance { get; set; }
+        public double AllocationPercent { get; set; }
         public bool Selected { get; set; }
         public IEnumerable<HoldingViewModel> Holdings { get; set; }
     }
