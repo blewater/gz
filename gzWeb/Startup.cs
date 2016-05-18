@@ -14,10 +14,12 @@ using gzDAL.Models;
 using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
 using gzWeb.Models;
+using JSNLog;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
+using NLog.Owin.Logging;
 using Owin;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
@@ -62,6 +64,9 @@ namespace gzWeb
 
             WebApiConfig.Register(config);
             app.UseWebApi(config);
+
+            app.UseJSNLog();
+            app.UseNLog();
 
             //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
         }
