@@ -334,20 +334,14 @@
 
             // #region Balance
             watchBalance : function (account, callback) {
-                return $wamp.call("/user/account#watchBalance", {
-                    id: account.id,
-                    vendor: account.vendor
-                }).then(function(result) {
+                return $wamp.call("/user/account#watchBalance"/*, { id: account.id, vendor: account.vendor }*/).then(function(result) {
                     $wamp.subscribe("/account/balanceChanged", function (data) {
                         callback(data);
                     });
                 });
             },
             unwatchBalance: function (account) {
-                return $wamp.call("/user/account#unwatchBalance", {
-                    id: account.id,
-                    vendor: account.vendor
-                });
+                return $wamp.call("/user/account#unwatchBalance"/*, { id: account.id, vendor: account.vendor }*/);
             },
             // #endregion
 
@@ -368,7 +362,7 @@
                     ", details: " + angular.toJson(details));
             }).then(function (subscription) {
                 var groupId = localStorageService.get("$client_id$");
-                if (groupId === undefined) {
+                if (groupId !== undefined) {
                     _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
                         localStorageService.set("$client_id$", result.groupID);
                     }, _logError);
