@@ -55,6 +55,15 @@
         $scope.logout = function () {
             auth.logout();
         };
+        $scope.changePassword = function() {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/changePassword.html',
+                nsCtrl: 'changePasswordCtrl',
+                nsStatic: true,
+            });
+        };
 
         $scope.deposit = function () {
             message.open({
@@ -96,5 +105,19 @@
         }
         updateAuthorizationInfo();
         $scope.$on(constants.events.AUTH_CHANGED, updateAuthorizationInfo);
+
+        function readAuthData() {
+            $scope.gamingBalance = auth.data.gamingAccount.amount;
+            $scope.currency = auth.data.currency;
+        }
+        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
+            readAuthData();
+            $scope.$apply();
+        });
+
+        function init() {
+            readAuthData();
+        }
+        init();
     }
 })();

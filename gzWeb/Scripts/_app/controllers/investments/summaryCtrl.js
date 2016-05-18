@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'summaryCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', 'message', '$location', 'constants', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, api, message, $location, constants, $filter) {
+    APP.controller(ctrlId, ['$scope', 'api', 'message', '$location', 'constants', '$filter', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, api, message, $location, constants, $filter, auth) {
         var sellingValuesFetched = false;
 
         $scope.openVintages = function(title, vintages, canWithdraw) {
@@ -52,7 +52,7 @@
                 });
             }, function(error) {
                 for (var i = 0; i < $scope.vintages.length; i++)
-                    $scope.vintages[i].SellThisMonth = false;
+                    $scope.vintages[i].SellThisMonth = $scope.vintages[i].Sold;
             });
         }
 
@@ -81,11 +81,19 @@
             });            
         }
 
+        function readAuthData() {
+            $scope.gamingBalance = auth.data.gamingAccount.amount;
+        }
+        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
+            readAuthData();
+            $scope.$apply();
+        });
+
         function init() {
             getSummaryData();
+            readAuthData();
             $scope.now = new Date();
         }
-
         init();
     }
 })();

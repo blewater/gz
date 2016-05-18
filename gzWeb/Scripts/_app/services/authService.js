@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$route', 'emWamp', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$route', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', authService]);
 
-    function authService($rootScope, $http, $q, $location, $route, emWamp, api, constants, localStorageService, helpers, vcRecaptchaService) {
+    function authService($rootScope, $http, $q, $location, $route, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService) {
         var factory = {};
 
         // #region AuthData
@@ -11,6 +11,7 @@
             firstname: "",
             lastname: "",
             currency: "",
+            gamingAccount: undefined,
             username: "",
             token: "",
             roles: [constants.roles.guest],
@@ -21,7 +22,7 @@
         };
         
         factory.readAuthData = function () {
-            factory.data = localStorageService.get(constants.storageKeys.authData) || noAuthData;
+            factory.data = angular.extend(noAuthData, (localStorageService.get(constants.storageKeys.authData) || {}));
 
             if ($location.path() === constants.routes.home.path) {
                 if (factory.data.isGamer)
@@ -40,6 +41,7 @@
             if (gamerIndex > -1)
                 factory.data.roles.splice(gamerIndex, 1);
             factory.data.isGamer = false;
+            factory.data.gamingAccount = undefined;
             if (!factory.data.isInvestor) {
                 factory.data.firstname = "";
                 factory.data.lastname = "";
@@ -84,13 +86,32 @@
                 $rootScope.$broadcast(constants.events.AUTH_CHANGED);
             });
         }
+
+        function getGamingBalance() {
+            if (!factory.data.balance) {
+                emBanking.getGamingAccounts(true, false).then(function (result) {
+                    factory.data.gamingAccount = result.accounts[0];
+                    storeAuthData();
+                    emWamp.watchBalance(factory.data.gamingAccount, function (data) {
+                        factory.data.gamingAccount.amount = data.amount;
+                        storeAuthData();
+                        $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
+                    });
+                }, function (error) {
+                    console.log(error.desc);
+                });
+            }
+        }
+
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
             if (args.code === 0) {
                 checkSessionInfo();
+                getGamingBalance();
                 $location.path(constants.routes.games.path);
             }
             else {
                 // TODO Check all other codes
+                emWamp.unwatchBalance(factory.data.gamingAccount);
                 clearGamingData();
                 emWamp.init();
                 $rootScope.$broadcast(constants.events.AUTH_CHANGED);
@@ -312,6 +333,7 @@
                 vcRecaptchaService.reload();
                 q.reject(error);
             });
+            return q.promise;
         }
         // #endregion
 
