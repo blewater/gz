@@ -333,6 +333,7 @@
                 vcRecaptchaService.reload();
                 q.reject(error);
             });
+            return q.promise;
         }
         // #endregion
 
