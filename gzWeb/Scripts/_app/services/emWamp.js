@@ -32,9 +32,7 @@
         var service = {
             call: _call,
             
-
             // #region Account
-
             validateUsername: function(username) {
                 return _call("/user/account#validateUsername", { username: username });
             },
@@ -127,7 +125,6 @@
             verifyNewEmail: function(key, email) {
                 return _call("/user/email#verifyNewEmail", { key: key, email: email });
             },
-
             // #endregion
 
             // #region Session
@@ -335,6 +332,25 @@
             },
             // #endregion
 
+            // #region Balance
+            watchBalance : function (account, callback) {
+                return $wamp.call("/user/account#watchBalance", {
+                    id: account.id,
+                    vendor: account.vendor
+                }).then(function(result) {
+                    $wamp.subscribe("/account/balanceChanged", function (data) {
+                        callback(data);
+                    });
+                });
+            },
+            unwatchBalance: function (account) {
+                return $wamp.call("/user/account#unwatchBalance", {
+                    id: account.id,
+                    vendor: account.vendor
+                });
+            },
+            // #endregion
+
             // #region Init
             init: init
             // #endregion
@@ -406,14 +422,14 @@
             // Only the connection which called /user/account/watchBalance receives the notification on balance change.
             // This feature is only available after it is configured in GmCore, please ask your integration manager for details.
             // -------------------------------------------------------------------
-            $wamp.subscribe("/account/balanceChanged", function (args, kwargs, details) {
-                $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED, kwargs);
+            //$wamp.subscribe("/account/balanceChanged", function (args, kwargs, details) {
+            //    $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED, kwargs);
 
-                console.log(
-                    "ACCOUNT_BALANCE_CHANGED => args: " + angular.toJson(args) +
-                    ", kwargs: " + angular.toJson(kwargs) +
-                    ", details: " + angular.toJson(details));
-            });
+            //    console.log(
+            //        "ACCOUNT_BALANCE_CHANGED => args: " + angular.toJson(args) +
+            //        ", kwargs: " + angular.toJson(kwargs) +
+            //        ", details: " + angular.toJson(details));
+            //});
 
             //
             // This event is fired when the deposit transaction status is changed in 3rd-party site.
