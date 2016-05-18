@@ -17,15 +17,16 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// Player deposit to their casino account. 
-        /// Informational only
+        /// Customer deposit to their casino account. 
+        /// Informational purpose only.
         /// 
         /// </summary>
         Deposit = 1,
 
         /// <summary>
         /// 
-        /// Player withdrawal from their investment account.
+        /// "Reserved for future use. Customer withdrawal from their Greenzorro account 
+        /// to their banking account." 
         /// Generate fees transactions: FundFee, Commission (4%)
         /// 
         /// </summary>
@@ -40,22 +41,23 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// Player withdrawal from their casino account. 
-        /// Informational only
+        /// Player cash withdrawal from their casino account. 
+        /// Informational purpose only.
         /// 
         /// </summary>
         CasinoWithdrawal = 4,
 
         /// <summary>
         /// 
-        /// Convert portfolio to cash
+        /// Liquidate all customer's funds to cash. 
+        /// Typical Transaction when closing a customer's account.
         /// 
         /// </summary>
-        PortfolioLiquidation = 5,
+        FullCustomerFundsLiquidation = 5,
 
         /// <summary>
         /// 
-        /// Total Casino losses.
+        /// Customer Casino loss.
         /// We credit a percentage i.e. 50% from this amount.
         /// <see cref="CreditedPlayingLoss"/>
         /// 
@@ -74,7 +76,7 @@ namespace gzDAL.Models {
         /// <summary>
         /// 
         /// Fund fees: 2.5%
-        /// Deducted from the investment cash when withdrawn cash
+        /// Deducted from the customer investment when withdrawing cash.
         /// 
         /// </summary>
         FundFee = 8,
@@ -82,10 +84,23 @@ namespace gzDAL.Models {
         /// <summary>
         /// 
         /// Greenzorro fees: 1.5%
-        /// Deducted from the investment cash when withdrawn cash
+        /// Deducted from the customer investment when withdrawing cash.
         /// 
         /// </summary>
         GzFees = 9,
+
+        /// <summary>
+        /// 
+        /// The realized Greenzorro profit or loss by the actual purchase of customer shares 
+        /// after the month's end.
+        /// It is the total difference between 
+        /// 
+        /// "Bought Funds Prices" * "Monthly Customer Shares"
+        ///         - 
+        /// "Customer Shares" * "Funds Prices" credited to the customer's Account
+        /// 
+        /// </summary>
+        GzActualTrxProfitOrLoss = 10
     }
 
     /// <summary>
@@ -101,7 +116,7 @@ namespace gzDAL.Models {
         [Index(IsUnique=true), Required]
         public GzTransactionJournalTypeEnum Code { get; set; }
 
-        [StringLength(128)]
+        [StringLength(300), Required]
         public string Description { get; set; }
 
         public virtual ICollection<GzTransaction> GzTransactions { get; set; }
