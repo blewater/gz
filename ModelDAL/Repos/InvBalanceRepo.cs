@@ -151,7 +151,7 @@ namespace gzDAL.Repos {
                         _gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
                             customerId,
                             newMonthlyBalance,
-                            GzTransactionJournalTypeEnum.PortfolioLiquidation,
+                            GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation,
                             updatedDateTimeUtc);
 
                     _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(boughtShares: false, customerId: customerId,
@@ -489,7 +489,7 @@ namespace gzDAL.Repos {
 
             var monthlyLiquidationAmount =
                 monthlyTrxGrouping.Sum(
-                    t => t.Type.Code == GzTransactionJournalTypeEnum.PortfolioLiquidation ? t.Amount : 0);
+                    t => t.Type.Code == GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation ? t.Amount : 0);
 
             // Reduce fees by the fees amount corresponding to the portfolio liquidation
             if (monthlyLiquidationAmount > 0) {

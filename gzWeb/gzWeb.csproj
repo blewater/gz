@@ -301,6 +301,10 @@
     <Compile Include="Migrations\201605161506044_Add fund YTD.Designer.cs">
       <DependentUpon>201605161506044_Add fund YTD.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605181742395_Increase Description Len TransactionType.cs" />
+    <Compile Include="Migrations\201605181742395_Increase Description Len TransactionType.Designer.cs">
+      <DependentUpon>201605181742395_Increase Description Len TransactionType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -733,6 +737,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605161506044_Add fund YTD.resx">
       <DependentUpon>201605161506044_Add fund YTD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605181742395_Increase Description Len TransactionType.resx">
+      <DependentUpon>201605181742395_Increase Description Len TransactionType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -169,7 +169,7 @@ namespace gzDAL.Repos {
 
             return _db.GzTransactions
                 .Count(t => t.YearMonthCtd == currentYearMonthStr
-                            && t.Type.Code == GzTransactionJournalTypeEnum.PortfolioLiquidation
+                            && t.Type.Code == GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation
                             && t.CustomerId == customerId)
                 > 0;
         }
@@ -205,7 +205,7 @@ namespace gzDAL.Repos {
                 _db.GzTransactions
                     .Where(t => t.YearMonthCtd == yearMonthCurrentStr
                                 && t.CustomerId == customerId &&
-                                t.Type.Code == GzTransactionJournalTypeEnum.PortfolioLiquidation)
+                                t.Type.Code == GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation)
                     .Select(t => new { t.Id, t.CreatedOnUTC })
                     .OrderByDescending(t => t.Id)
                     .Select(t => t.CreatedOnUTC)
