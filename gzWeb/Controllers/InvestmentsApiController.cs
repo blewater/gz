@@ -120,7 +120,8 @@ namespace gzWeb.Controllers
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
         {
             // TODO Actual withdraw and return remaining vintages
-            return OkMsg(() => vintages);
+            var updatedVintages = vintages;
+            return OkMsg(() => updatedVintages);
         }
         #endregion
 
@@ -214,10 +215,10 @@ namespace gzWeb.Controllers
                    {
                            Id = x.Id,
                            Title = portfolioPrototype.Title,
-                           Balance = 0, // TODO: get from customer data
+                           UserBalance = 0, // TODO: get from customer data
                            Color = portfolioPrototype.Color,
-                           Percent = active ? 100 : 0,
-                           ReturnRate = 0, // TODO: ???
+                           AllocationPercent = active ? 100 : 0,
+                           ROI = 0, // TODO: ???
                            Selected = active, // TODO: get from customer data
                            Holdings = x.PortFunds.Select(f => new HoldingViewModel
                                                               {
@@ -242,23 +243,23 @@ namespace gzWeb.Controllers
         
         private static IList<VintageViewModel> _dummyVintages = new[]
         {
-            new VintageViewModel {YearMonthStr = "201407", InvestAmount = 100M, SellingValue = 102M },
-            new VintageViewModel {YearMonthStr = "201408", InvestAmount = 100M, SellingValue = 109M },
-            new VintageViewModel {YearMonthStr = "201409", InvestAmount = 100M, SellingValue = 107M },
-            new VintageViewModel {YearMonthStr = "201410", InvestAmount = 100M, SellingValue = 112M },
-            new VintageViewModel {YearMonthStr = "201411", InvestAmount = 100M, SellingValue = 111M, SellThisMonth = true },
+            new VintageViewModel {YearMonthStr = "201407", InvestAmount = 100M, SellingValue = 102M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201408", InvestAmount = 100M, SellingValue = 109M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201409", InvestAmount = 100M, SellingValue = 107M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201410", InvestAmount = 100M, SellingValue = 112M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201411", InvestAmount = 100M, SellingValue = 111M, Locked = true },
             new VintageViewModel {YearMonthStr = "201412", InvestAmount = 100M, SellingValue = 106M },
             new VintageViewModel {YearMonthStr = "201501", InvestAmount = 100M, SellingValue = 107M },
             new VintageViewModel {YearMonthStr = "201502", InvestAmount = 100M, SellingValue = 103M },
-            new VintageViewModel {YearMonthStr = "201503", InvestAmount = 100M, SellingValue = 105M, SellThisMonth = true},
+            new VintageViewModel {YearMonthStr = "201503", InvestAmount = 100M, SellingValue = 105M, Sold = true},
             new VintageViewModel {YearMonthStr = "201504", InvestAmount = 100M, SellingValue = 105M },
             new VintageViewModel {YearMonthStr = "201505", InvestAmount = 100M, SellingValue = 102M },
             new VintageViewModel {YearMonthStr = "201506", InvestAmount = 100M, SellingValue = 106M },
-            new VintageViewModel {YearMonthStr = "201507", InvestAmount = 100M, SellingValue = 107M },
+            new VintageViewModel {YearMonthStr = "201507", InvestAmount = 100M, SellingValue = 107M, Sold = true },
             new VintageViewModel {YearMonthStr = "201508", InvestAmount = 100M, SellingValue = 109M },
             new VintageViewModel {YearMonthStr = "201509", InvestAmount = 100M, SellingValue = 100M },
             new VintageViewModel {YearMonthStr = "201510", InvestAmount = 100M, SellingValue = 106M },
-            new VintageViewModel {YearMonthStr = "201511", InvestAmount = 100M, SellingValue = 108M },
+            new VintageViewModel {YearMonthStr = "201511", InvestAmount = 100M, SellingValue = 108M, Sold = true },
             new VintageViewModel {YearMonthStr = "201512", InvestAmount = 100M, SellingValue = 105M },
             new VintageViewModel {YearMonthStr = "201601", InvestAmount = 200M, SellingValue = 204M },
             new VintageViewModel {YearMonthStr = "201602", InvestAmount = 80M, SellingValue = 93M },

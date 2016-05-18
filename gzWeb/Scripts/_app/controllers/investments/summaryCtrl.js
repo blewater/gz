@@ -52,7 +52,7 @@
                 });
             }, function(error) {
                 for (var i = 0; i < $scope.vintages.length; i++)
-                    $scope.vintages[i].SellThisMonth = $scope.vintages[i].Sold;
+                    $scope.vintages[i].Selected = false;
             });
         }
 
@@ -65,7 +65,6 @@
                 v.Year = parseInt(v.YearMonthStr.slice(0, 4));
                 v.Month = parseInt(v.YearMonthStr.slice(-2));
                 v.Date = new Date(v.Year, v.Month - 1);
-                v.Sold = v.SellThisMonth;
                 return v;
             });
             var ordered = $filter('orderBy')(mappedVintages, 'Date', true);
@@ -80,9 +79,10 @@
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
         }
-
         function readAuthData() {
-            $scope.gamingBalance = auth.data.gamingAccount.amount;
+            $scope.hasGamingBalance = auth.data.gamingAccount !== undefined;
+            if ($scope.hasGamingBalance)
+                $scope.gamingBalance = auth.data.gamingAccount.amount;
         }
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
             readAuthData();
@@ -92,7 +92,6 @@
         function init() {
             getSummaryData();
             readAuthData();
-            $scope.now = new Date();
         }
         init();
     }
