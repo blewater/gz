@@ -454,7 +454,7 @@ namespace gzDAL.Repos {
             return db.CustFundShares
                 .Where(c => c.CustomerId == customerId 
                                 /* Before */
-                    && c.YearMonth.Before(currentYearMonStr))
+                    && string.Compare(c.YearMonth, currentYearMonStr, StringComparison.Ordinal) < 0)
                 .OrderByDescending(c => c.YearMonth)
                 .Select(c => c.YearMonth)
                 .FirstOrDefault();
