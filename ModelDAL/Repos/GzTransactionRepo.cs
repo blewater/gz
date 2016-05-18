@@ -20,6 +20,7 @@ namespace gzDAL.Repos {
     /// </summary>
     public class GzTransactionRepo : IGzTransactionRepo {
         private readonly ApplicationDbContext _db;
+
         public GzTransactionRepo(ApplicationDbContext db) {
             this._db = db;
         }
@@ -35,16 +36,34 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public IEnumerable<VintageDto> GetCustomerVintages(int customerId) {
 
-            return _db.GzTransactions
+            var lockInDays = _db.GzConfigurations
+                .Select(c => c.LOCK_IN_NUM_DAYS)
+                .Single();
+
+            var vintagesList = _db.GzTransactions
                 .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss 
                     && t.CustomerId == customerId)
                 .GroupBy(t => t.YearMonthCtd)
                 .OrderByDescending(t => t.Key)
-                .Select(g => new VintageDto() {
+                .Select(g => new {
                     YearMonthStr = g.Key,
-                    InvestAmount = g.Sum(t => t.Amount)
+                    InvestAmount = g.Sum(t => t.Amount),
+                    VintageDate = g.Max(t => t.CreatedOnUTC)
+                })
+                /** 
+                 * The 2 staged select approach with AsEnumerable 
+                 *  generates a single select statement vs 
+                 *  a one select approach 
+                 */
+                .AsEnumerable()
+                .Select(t => new VintageDto() {
+                    YearMonthStr = t.YearMonthStr,
+                    InvestAmount = t.InvestAmount,
+                    SellThisMonth = (DateTime.UtcNow - t.VintageDate).TotalDays - lockInDays >= 0
                 })
                 .ToList();
+
+            return vintagesList;
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using gzDAL.Conf;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
+using NLog;
 
 namespace gzWeb.Providers
 {
@@ -12,6 +13,7 @@ namespace gzWeb.Providers
     {
         private readonly Func<ApplicationUserManager> _userManagerFactory;
         private readonly string _publicClientId;
+        private readonly Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public ApplicationOAuthProvider(string publicClientId, Func<ApplicationUserManager> userManagerFactory)
         {
@@ -24,6 +26,8 @@ namespace gzWeb.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            _logger.Trace("/TOKEN");
+
             //var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
             //var userManager = context.OwinContext.Get<ApplicationUserManager>();
             //var userManager = DependencyResolver.Current.GetService<ApplicationUserManager>();
