@@ -96,5 +96,13 @@
         }
         updateAuthorizationInfo();
         $scope.$on(constants.events.AUTH_CHANGED, updateAuthorizationInfo);
+
+        $scope.gamingBalance = auth.data.gamingAccount.amount;
+        $scope.currency = auth.data.currency;
+        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
+            $scope.gamingBalance = auth.data.gamingAccount.amount;
+            $scope.currency = auth.data.currency;
+            $scope.$apply();
+        });
     }
 })();
