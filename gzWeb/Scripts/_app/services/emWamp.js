@@ -368,7 +368,7 @@
                     ", details: " + angular.toJson(details));
             }).then(function (subscription) {
                 var groupId = localStorageService.get("$client_id$");
-                if (groupId === undefined) {
+                if (groupId !== undefined) {
                     _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
                         localStorageService.set("$client_id$", result.groupID);
                     }, _logError);
