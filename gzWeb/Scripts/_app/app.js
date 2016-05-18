@@ -29,6 +29,7 @@ var APP = (function () {
         , 'ngAutocomplete'
         , 'vcRecaptcha'
         , 'isoCurrency'
+        //, 'logToServer'
     ]);
 
     app.run([

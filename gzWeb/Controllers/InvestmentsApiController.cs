@@ -72,7 +72,8 @@ namespace gzWeb.Controllers
                 // Convert to User currency
                 .Select(v => new VintageDto() {
                     InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
-                    YearMonthStr = v.YearMonthStr
+                    YearMonthStr = v.YearMonthStr,
+                    SellThisMonth = v.SellThisMonth
                 }).ToList();
 
             var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
