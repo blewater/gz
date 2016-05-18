@@ -356,7 +356,7 @@
 
             $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
-                console.log(
+                JL("jsLogger").trace(
                     "SESSION_STATE_CHANGE => args: " + angular.toJson(args) +
                     ", kwargs: " + angular.toJson(kwargs) +
                     ", details: " + angular.toJson(details));
@@ -366,7 +366,6 @@
                     _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
                         localStorageService.set("$client_id$", result.groupID);
                     }, _logError);
-                    //console.log(subscription);
                 }
             }, _logError);
 
