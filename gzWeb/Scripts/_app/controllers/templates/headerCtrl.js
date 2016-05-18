@@ -55,6 +55,15 @@
         $scope.logout = function () {
             auth.logout();
         };
+        $scope.changePassword = function() {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/changePassword.html',
+                nsCtrl: 'changePasswordCtrl',
+                nsStatic: true,
+            });
+        };
 
         $scope.deposit = function () {
             message.open({
