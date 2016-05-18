@@ -7,7 +7,6 @@
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
     <link href="/apple-touch-icon.png" rel="apple-touch-icon-precomposed" />
-
     <title ng-if="!documentTitle">Greenzorro</title>
     <title ng-if="documentTitle">{{documentTitle}}</title>
     <base href="/" />
@@ -33,11 +32,13 @@
     <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz" type="text/javascript"></script>
     <script src="https://maps.googleapis.com/maps/api/js?libraries=places" type="text/javascript"></script>
     <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit" type="text/javascript" async defer></script>
+    @Html.Raw(JSNLog.JavascriptLogging.Configure())
     @Scripts.Render("~/js/plugins")
     @Scripts.Render("~/js/bootstrap")
     @Scripts.Render("~/js/d3")
     @Scripts.Render("~/js/angular")
     @Scripts.Render("~/js/modules")
+    @*<script src="~/Scripts/jsnlog/logToServer.js"></script>*@
     @Scripts.Render("~/js/app")
 </body>
 </html>

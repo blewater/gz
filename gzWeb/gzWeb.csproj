@@ -534,6 +534,7 @@
     <Content Include="Scripts\exceptionaire-materialize.min.js" />
     <Content Include="Scripts\jsnlog\jsnlog.js" />
     <Content Include="Scripts\jsnlog\jsnlog.min.js" />
+    <Content Include="Scripts\jsnlog\logToServer.js" />
     <Content Include="Scripts\moment\moment-with-locales.js" />
     <Content Include="Scripts\moment\moment-with-locales.min.js" />
     <Content Include="Scripts\moment\moment.js" />
