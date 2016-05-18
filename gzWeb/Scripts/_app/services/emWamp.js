@@ -334,17 +334,17 @@
 
             // #region Balance
             watchBalance : function (account, callback) {
-                return emWamp.call("/user/account#watchBalance", {
+                return $wamp.call("/user/account#watchBalance", {
                     id: account.id,
                     vendor: account.vendor
                 }).then(function(result) {
-                    emWamp.subscribe("/account/balanceChanged", function (data) {
+                    $wamp.subscribe("/account/balanceChanged", function (data) {
                         callback(data);
                     });
                 });
             },
             unwatchBalance: function (account) {
-                return emWamp.call("/user/account#unwatchBalance", {
+                return $wamp.call("/user/account#unwatchBalance", {
                     id: account.id,
                     vendor: account.vendor
                 });
