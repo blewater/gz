@@ -48,7 +48,8 @@ namespace gzDAL.Repos {
                 .Select(g => new {
                     YearMonthStr = g.Key,
                     InvestAmount = g.Sum(t => t.Amount),
-                    VintageDate = g.Max(t => t.CreatedOnUTC)
+                    VintageDate = g.Max(t => t.CreatedOnUTC),
+                    Sold = g.Any(t => t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming)
                 })
                 /** 
                  * The 2 staged select approach with AsEnumerable 
@@ -59,7 +60,8 @@ namespace gzDAL.Repos {
                 .Select(t => new VintageDto() {
                     YearMonthStr = t.YearMonthStr,
                     InvestAmount = t.InvestAmount,
-                    SellThisMonth = (DateTime.UtcNow - t.VintageDate).TotalDays - lockInDays >= 0
+                    Locked = (DateTime.UtcNow - t.VintageDate).TotalDays - lockInDays >= 0,
+                    Sold = t.Sold
                 })
                 .ToList();
 

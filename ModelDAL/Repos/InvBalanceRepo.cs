@@ -53,15 +53,40 @@ namespace gzDAL.Repos {
             int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
                 monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
 
-            decimal invGainLoss, monthlyBalance;
-            GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, -1, out monthlyBalance,
-                out invGainLoss);
+            var soldValue =
+                _db.GzTransactions
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming
+                                && t.YearMonthCtd == yearMonthStr
+                                && t.CustomerId == customerId)
+                    .Sum(t => t.Amount);
 
-            monthlySharesValue = monthlyBalance - _gzTransactionRepo.GetWithdrawnFees(monthlyBalance);
+            // If not sold calculate it now
+            if (soldValue == 0) {
+
+                decimal invGainLoss, monthlyBalance;
+                GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, -1, out monthlyBalance,
+                    out invGainLoss);
+
+                monthlySharesValue = monthlyBalance - _gzTransactionRepo.GetWithdrawnFees(monthlyBalance);
+            }
+            else {
+                monthlySharesValue = soldValue + _gzTransactionRepo.GetWithdrawnFees(soldValue);
+            }
 
             return monthlySharesValue;
         }
 
+        /// <summary>
+        /// 
+        /// Get the vintages with the selling value calculated if not sold
+        /// 
+        /// -- or
+        /// 
+        /// their selling value when they were sold.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
         public IEnumerable<VintageDto> GetCustomerVintagesSellingValue(int customerId) {
 
             var customerVintages = _gzTransactionRepo
@@ -69,7 +94,9 @@ namespace gzDAL.Repos {
                 .Select(v => new VintageDto() {
                      SellingValue = GetVintageSellingValue(customerId, v.YearMonthStr),
                      InvestAmount = v.InvestAmount,
-                     YearMonthStr = v.YearMonthStr
+                     YearMonthStr = v.YearMonthStr,
+                     Locked = v.Locked,
+                     Sold = v.Sold
                  }).ToList();
 
             return customerVintages;

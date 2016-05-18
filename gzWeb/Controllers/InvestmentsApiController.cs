@@ -62,8 +62,8 @@ namespace gzWeb.Controllers
 
         SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user)
         {
-            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
-            var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+            CurrencyInfo userCurrency;
+            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(user.Id);
 
             var customerVintages = _gzTransactionRepo
@@ -73,7 +73,8 @@ namespace gzWeb.Controllers
                 .Select(v => new VintageDto() {
                     InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
                     YearMonthStr = v.YearMonthStr,
-                    SellThisMonth = v.SellThisMonth
+                    Locked = v.Locked,
+                    Sold = v.Sold
                 }).ToList();
 
             var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
@@ -109,13 +110,39 @@ namespace gzWeb.Controllers
             return summaryDvm;
         }
 
+        private decimal GetUserCurrencyRate(ApplicationUser user, out CurrencyInfo userCurrency) {
+
+            userCurrency = CurrencyHelper.GetSymbol(user.Currency);
+            var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+            return usdToUserRate;
+        }
+
+        /// <summary>
+        /// Get the Vintages Selling Values
+        /// </summary>
+        /// <returns></returns>
         [HttpGet] public IHttpActionResult GetVintagesWithSellingValues()
         {
             var user = UserManager.FindById(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            return OkMsg(() => _dummyVintages);
+            CurrencyInfo userCurrency;
+            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+
+            var customerVintages = _invBalanceRepo
+            .GetCustomerVintagesSellingValue(user.Id)
+
+            // Convert to User currency
+            .Select(v => new VintageDto() {
+                YearMonthStr = v.YearMonthStr,
+                InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
+                SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
+                Locked = v.Locked,
+                Sold = v.Sold
+            }).ToList();
+
+            return OkMsg(() => customerVintages);
         }
         [HttpPost]
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
