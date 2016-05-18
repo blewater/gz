@@ -22,7 +22,7 @@
 
         $scope.onGameSelected = function (slug) {
             var playForRealMoney = true;
-            emCasino.getLaunchUrl(slug, null, true).then(function(result) {
+            emCasino.getLaunchUrl(slug, null, playForRealMoney).then(function (result) {
                 $scope.gameLaunchData = result;
                 $scope.gameUrl = $sce.trustAsResourceUrl(result.url);
             }, logError);
