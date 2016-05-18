@@ -8,6 +8,7 @@
         $scope.mostPlayedGames = [];
         $scope.gameLaunchData = null;
         $scope.gameUrl = null;
+        $scope.playForRealMoney = true;
         
         $scope.onCategoryChanged = function (category) {
             emCasino.getGames({
@@ -18,11 +19,10 @@
             }).then(function (result) {
                 $scope.games = result.games;
             }, logError);
-       };
+        };
 
         $scope.onGameSelected = function (slug) {
-            var playForRealMoney = true;
-            emCasino.getLaunchUrl(slug, null, playForRealMoney).then(function (result) {
+            emCasino.getLaunchUrl(slug, null, $scope.playForRealMoney).then(function (result) {
                 $scope.gameLaunchData = result;
                 $scope.gameUrl = $sce.trustAsResourceUrl(result.url);
             }, logError);
