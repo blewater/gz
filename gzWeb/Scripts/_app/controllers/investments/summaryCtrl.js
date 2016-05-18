@@ -81,16 +81,19 @@
             });            
         }
 
+        function readAuthData() {
+            $scope.gamingBalance = auth.data.gamingAccount.amount;
+        }
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
-            $scope.model.GamingBalance = auth.data.gamingAccount.amount;
+            readAuthData();
             $scope.$apply();
         });
 
         function init() {
             getSummaryData();
+            readAuthData();
             $scope.now = new Date();
         }
-
         init();
     }
 })();
