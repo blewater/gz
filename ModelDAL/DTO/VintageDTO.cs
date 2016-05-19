@@ -12,5 +12,6 @@ namespace gzDAL.DTO {
         public bool Locked { get; set; }
         public bool Sold { get; set; }
         public bool Selected { get; set; }
+        public int LastInvestmentId { get; set; }
     }
 }

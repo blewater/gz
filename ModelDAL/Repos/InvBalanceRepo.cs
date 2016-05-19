@@ -46,7 +46,7 @@ namespace gzDAL.Repos {
 
         #region Fund Shares Selling
 
-        private decimal GetVintageSellingValue(int customerId, string yearMonthStr) {
+        private decimal GetVintageSellingValue(int customerId, string yearMonthStr, int lastInvestmentId) {
 
             decimal monthlySharesValue = 0;
 
@@ -56,12 +56,14 @@ namespace gzDAL.Repos {
             var soldValue =
                 _db.GzTransactions
                     .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming
+                                && t.ParentTrxId == lastInvestmentId
                                 && t.YearMonthCtd == yearMonthStr
-                                && t.CustomerId == customerId)
-                    .Sum(t => t.Amount);
+                                && t.CustomerId == customerId
+                                )
+                    .Sum(t => (decimal?)t.Amount);
 
             // If not sold calculate it now
-            if (soldValue == 0) {
+            if (!soldValue.HasValue) {
 
                 decimal invGainLoss, monthlyBalance;
                 GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, -1, out monthlyBalance,
@@ -70,7 +72,7 @@ namespace gzDAL.Repos {
                 monthlySharesValue = monthlyBalance - _gzTransactionRepo.GetWithdrawnFees(monthlyBalance);
             }
             else {
-                monthlySharesValue = soldValue + _gzTransactionRepo.GetWithdrawnFees(soldValue);
+                monthlySharesValue = soldValue.Value;
             }
 
             return monthlySharesValue;
@@ -92,7 +94,10 @@ namespace gzDAL.Repos {
             var customerVintages = _gzTransactionRepo
                 .GetCustomerVintages(customerId)
                 .Select(v => new VintageDto() {
-                     SellingValue = GetVintageSellingValue(customerId, v.YearMonthStr),
+                     SellingValue = GetVintageSellingValue(
+                         customerId, 
+                         v.YearMonthStr, 
+                         v.LastInvestmentId),
                      InvestAmount = v.InvestAmount,
                      YearMonthStr = v.YearMonthStr,
                      Locked = v.Locked,

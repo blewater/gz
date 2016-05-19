@@ -195,7 +195,7 @@ namespace gzDAL.Repos {
                 SetPortfolioFundWeights(customerId, customerShares, customerPortfolio);
             }
 
-            SetFundsSharesValue(customerShares, yearCurrent, monthCurrent, cashToInvest);
+            SetFundsSharesBalance(customerShares, yearCurrent, monthCurrent, cashToInvest);
 
             return customerShares;
         }
@@ -213,21 +213,24 @@ namespace gzDAL.Repos {
 
             var customerShares = GetMonthsBoughtFundsShares(customerId, yearCurrent, monthCurrent);
 
-            SetFundsSharesValue(customerShares, yearCurrent, monthCurrent, 0);
+            SetFundsSharesLatestValue(customerShares);
 
             return customerShares;
         }
 
         /// <summary>
-        /// Convert cash --> funds shares
-        /// Calculate all the funds shares metrics and save them in the input collection
+        /// Convert cash --> funds shares within the month's market prices
+        /// 1. Convert previous funds balance in this month's market prices
+        /// 2. Convert the new monthly cash investment to fund shares
+        /// 3. Add 1+2 = for this month's balance
+        /// Save the collection of total fund shares data in a dictionary.
         /// </summary>
         /// <param name="db"></param>
         /// <param name="portfolioFundValues"></param>
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="cashToInvest"></param>
-        private void SetFundsSharesValue(
+        private void SetFundsSharesBalance(
                 Dictionary<int, PortfolioFundDTO> portfolioFundValues,
                 int year,
                 int month,
@@ -243,8 +246,7 @@ namespace gzDAL.Repos {
                 decimal prevMonShares = pfund.Value.SharesNum;
 
                 // Calculate the current fund shares value
-                string lastTradeDay;
-                FundPrice fundPrice = GetFundPrice(year, month, fundId, out lastTradeDay);
+                FundPrice fundPrice = GetFundPriceForCurrentMonth(year, month, fundId);
                 decimal existingFundSharesVal = prevMonShares * (decimal)fundPrice.ClosingPrice;
 
                 // Calculate new cash --> to shares investment
@@ -255,7 +257,38 @@ namespace gzDAL.Repos {
                 var thisMonthsSharesNum = prevMonShares + newsharesNum;
                 var thisMonthsSharesVal = cashPerFund + existingFundSharesVal;
 
-                SaveDtoPortFundShares(pfund.Value, cashPerFund, lastTradeDay, fundPrice, newsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
+                SaveDtoPortFundShares(pfund.Value, cashPerFund, fundPrice.YearMonthDay, fundPrice, newsharesNum, thisMonthsSharesNum, thisMonthsSharesVal);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Calculate the latest funds prices of the In parameter shares collection.
+        /// 
+        /// To be used for selling shares not for calculating balances.
+        /// 
+        /// </summary>
+        /// <param name="portfolioFundValues"></param>
+        private void SetFundsSharesLatestValue(
+                Dictionary<int, PortfolioFundDTO> portfolioFundValues) {
+
+            // Process the portfolio funds and any additional customer owned funds
+            foreach (var pfund in portfolioFundValues) {
+
+                var fundId = pfund.Value.FundId;
+
+                // Get previous from the queried CustomerFund
+                decimal thisMonShares = pfund.Value.SharesNum;
+
+                // Calculate the current fund shares value
+                FundPrice fundPrice = GetLatestFundPrice(fundId);
+                decimal existingFundSharesVal = thisMonShares * (decimal)fundPrice.ClosingPrice;
+
+                // Calculate this month current fund value including the new cash investment
+                var thisMonthsSharesNum = thisMonShares;
+                var thisMonthsSharesVal = existingFundSharesVal;
+
+                SaveDtoPortFundShares(pfund.Value, 0, fundPrice.YearMonthDay, fundPrice, 0, thisMonthsSharesNum, thisMonthsSharesVal);
             }
         }
 
@@ -264,17 +297,15 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="year"></param>
         /// <param name="month"></param>
-        /// <param name="db"></param>
         /// <param name="fundId"></param>
-        /// <param name="lastTradeDay"></param>
         /// <returns></returns>
-        private FundPrice GetFundPrice(int year, int month, int fundId, out string lastTradeDay) {
+        private FundPrice GetFundPriceForCurrentMonth(int year, int month, int fundId) {
 
             FundPrice fundPriceToRet = null;
 
             //Find last trade day
             var lastMonthDay = new DateTime(year, month, 1).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
-            lastTradeDay = db.FundPrices
+            var lastTradeDay = db.FundPrices
                 .Where(fp => fp.FundId == fundId
                 && string.Compare(fp.YearMonthDay, lastMonthDay, StringComparison.Ordinal) <= 0)
                 .OrderByDescending(fp => fp.YearMonthDay)
@@ -285,6 +316,26 @@ namespace gzDAL.Repos {
             // Find latest closing price
             fundPriceToRet = db.FundPrices
                 .Single(fp => fp.FundId == fundId && fp.YearMonthDay == locLastTradeDay);
+
+            return fundPriceToRet;
+        }
+
+        /// <summary>
+        /// 
+        /// Gets the latest stored fund price for a traded fund share.
+        /// 
+        /// </summary>
+        /// <param name="fundId"></param>
+        /// <returns></returns>
+        private FundPrice GetLatestFundPrice(int fundId) {
+
+            FundPrice fundPriceToRet = null;
+
+            // Find latest closing price
+            fundPriceToRet = db.FundPrices
+                .Where(f => f.FundId == fundId)
+                .OrderByDescending(f => f.YearMonthDay)
+                .First();
 
             return fundPriceToRet;
         }
