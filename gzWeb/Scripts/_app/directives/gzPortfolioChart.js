@@ -12,16 +12,16 @@
                 //gzAggressive: '=',
                 //gzAverage: '='
                 gzPlans: '=',
-                gzRoi: '='
+                //gzRoi: '='
             },
             link: function (scope, element, attrs) {
                 //var plans = [
-                //    { text: scope.gzAggressive.Title, percent: scope.gzAggressive.Percent, color: '#227B46' },
-                //    { text: scope.gzModerate.Title, percent: scope.gzModerate.Percent, color: '#64BF89' },
-                //    { text: scope.gzConservative.Title, percent: scope.gzConservative.Percent, color: '#B4DCC4' }
+                //    { text: scope.gzAggressive.Title, percent: scope.gzAggressive.AllocationPercent, color: '#227B46' },
+                //    { text: scope.gzModerate.Title, percent: scope.gzModerate.AllocationPercent, color: '#64BF89' },
+                //    { text: scope.gzConservative.Title, percent: scope.gzConservative.AllocationPercent, color: '#B4DCC4' }
                 //];
                 var plans = scope.gzPlans;
-                var roi = scope.gzRoi;
+                //var roi = scope.gzRoi;
 
                 var root = d3.select(element[0]);
                 var rootWidth = root.node().getBoundingClientRect().width;
@@ -52,7 +52,7 @@
                             .padAngle(0.02);
 
                 var pie = d3.layout.pie()
-                    .value(function (d) { return d.Percent; })
+                    .value(function (d) { return d.AllocationPercent; })
                     .sort(function (d, i) { return i; });
 
                 function showTooltip(text) {
@@ -130,7 +130,7 @@
                         });
                         return duration * totalPercent / 100;
                     })
-                    .duration(function(d, i) { return duration * d.data.Percent / 100; })
+                    .duration(function (d, i) { return duration * d.data.AllocationPercent / 100; })
                     .ease('linear')
                     .attrTween('d', function(d) {
                         var interpolateAngle = d3.interpolate(d.startAngle, d.endAngle);
@@ -155,40 +155,40 @@
                         var c = arc.centroid(d);
                         return "translate(" + c[0]*0.8 + "," + c[1]*0.8 + ")";
                     })
-                    .text(function (d) { return d.data.Percent; });
+                    .text(function (d) { return d.data.AllocationPercent; });
 
-                group.append("text")
-                    .style("text-anchor", "middle")
-                    .attr("font-weight", "bold")
-                    .style("font-size", "0px")
-                    .attr("fill", "#27A95C")
-                    .on("mouseover", function () {
-                        showTooltip(roi.Title);
-                        d3.select(this)
-                            .transition()
-                            .delay(duration / 4)
-                            .duration(duration / 2)
-                            .style("font-size", "45px")
-                            .attr("dy", ".38em");
-                    })
-                    .on("mouseout", function () {
-                        hideTooltip();
-                        d3.select(this)
-                            .transition()
-                            .delay(duration / 4)
-                            .duration(duration / 2)
-                            .style("font-size", "38px")
-                            .attr("dy", ".35em");
-                    })
-                    .on("mousemove", moveTooltip)
-                    .transition()
-                    .delay(duration * 3)
-                    .duration(duration * 2)
-                    .ease('elastic')
-                    .style("font-size", "38px")
-                    .attr("dy", ".35em")
-                    .text(roi.Percent)
-                ;
+                //group.append("text")
+                //    .style("text-anchor", "middle")
+                //    .attr("font-weight", "bold")
+                //    .style("font-size", "0px")
+                //    .attr("fill", "#27A95C")
+                //    .on("mouseover", function () {
+                //        showTooltip(roi.Title);
+                //        d3.select(this)
+                //            .transition()
+                //            .delay(duration / 4)
+                //            .duration(duration / 2)
+                //            .style("font-size", "45px")
+                //            .attr("dy", ".38em");
+                //    })
+                //    .on("mouseout", function () {
+                //        hideTooltip();
+                //        d3.select(this)
+                //            .transition()
+                //            .delay(duration / 4)
+                //            .duration(duration / 2)
+                //            .style("font-size", "38px")
+                //            .attr("dy", ".35em");
+                //    })
+                //    .on("mousemove", moveTooltip)
+                //    .transition()
+                //    .delay(duration * 3)
+                //    .duration(duration * 2)
+                //    .ease('elastic')
+                //    .style("font-size", "38px")
+                //    .attr("dy", ".35em")
+                //    .text(roi.Percent)
+                //;
             }
         };
     }

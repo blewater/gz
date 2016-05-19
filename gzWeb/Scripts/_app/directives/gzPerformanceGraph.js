@@ -28,13 +28,13 @@
                 for (var t = 0; t < totalYears; t++) {
                     data.push({
                         x: t,
-                        y111: project($scope.principalAmount, $scope.plan.ReturnRate + $scope.plan.ReturnRate * divergence * 3, t, $scope.annualContribution),
-                        y11: project($scope.principalAmount, $scope.plan.ReturnRate + $scope.plan.ReturnRate * divergence * 2, t, $scope.annualContribution),
-                        y1: project($scope.principalAmount, $scope.plan.ReturnRate + $scope.plan.ReturnRate * divergence, t, $scope.annualContribution),
-                        y: project($scope.principalAmount, $scope.plan.ReturnRate, t, $scope.annualContribution),
-                        y0: project($scope.principalAmount, $scope.plan.ReturnRate - $scope.plan.ReturnRate * divergence, t, $scope.annualContribution),
-                        y00: project($scope.principalAmount, $scope.plan.ReturnRate - $scope.plan.ReturnRate * divergence * 2, t, $scope.annualContribution),
-                        y000: project($scope.principalAmount, $scope.plan.ReturnRate - $scope.plan.ReturnRate * divergence * 3, t, $scope.annualContribution)
+                        y111: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 3, t, $scope.annualContribution),
+                        y11: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
+                        y1: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence, t, $scope.annualContribution),
+                        y: project($scope.principalAmount, $scope.plan.ROI, t, $scope.annualContribution),
+                        y0: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence, t, $scope.annualContribution),
+                        y00: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
+                        y000: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 3, t, $scope.annualContribution)
                     });
                 }
 
@@ -60,7 +60,7 @@
                 }
 
                 $scope.calculateProjection = function () {
-                    var projection = project($scope.principalAmount, $scope.plan.ReturnRate, $scope.year, $scope.annualContribution);
+                    var projection = project($scope.principalAmount, $scope.plan.ROI, $scope.year, $scope.annualContribution);
                     $scope.projectedValue = projection.amount;
                     $scope.profit = projection.profit;
                 }

@@ -49,7 +49,6 @@ namespace gzWeb.Controllers
         #region Actions
 
         #region Summary
-        
         [HttpGet]
         public IHttpActionResult GetSummaryData() {
 
@@ -81,14 +80,14 @@ namespace gzWeb.Controllers
 
             var summaryDvm = new SummaryDataViewModel
             {
-                Currency = userCurrency.Symbol,
-                Culture = "en-GB",
+                //Currency = userCurrency.Symbol,
+                //Culture = "en-GB",
                 InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
                 TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalDeposits),
                 TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalWithdrawals),
 
                 //TODO: from the EveryMatrix Web API
-                GamingBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate),
+                //GamingBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate),
 
                 TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalInvestments),
 
@@ -168,17 +167,17 @@ namespace gzWeb.Controllers
         public IHttpActionResult GetPortfolioData()
         {
             var user = UserManager.FindById(User.Identity.GetUserId<int>());
-            if (user == null) 
+            if (user == null)
                 return OkMsg(new object(), "User not found!");
-            
+
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
-                                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
-                                NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
-                                NextExpectedInvestment = 15000,
-                                ROI = new ReturnOnInvestmentViewModel {Title = "% Current ROI", Percent = 59},
-                                Plans = GetCustomerPlans(user)
+                            //Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
+                            NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
+                            NextExpectedInvestment = 15000,
+                            //ROI = new ReturnOnInvestmentViewModel { Title = "% Current ROI", Percent = 59 },
+                            Plans = GetCustomerPlans(user)
                         };
             return OkMsg(model);
         }
@@ -303,7 +302,48 @@ namespace gzWeb.Controllers
             new VintageViewModel {YearMonthStr = "201602", InvestAmount = 80M, SellingValue = 93M },
             new VintageViewModel {YearMonthStr = "201603", InvestAmount = 150M, SellingValue = 158M },
         };
+        private static IList<HoldingViewModel> _dummyHoldings = new[]
+        {
+            new HoldingViewModel() {Name = "Vanguard VTI", Weight = 8},
+            new HoldingViewModel() {Name = "Vanguard VEA", Weight = 5},
+            new HoldingViewModel() {Name = "Vanguard VWO", Weight = 5},
+            new HoldingViewModel() {Name = "Vanguard VIG", Weight = 15},
+            new HoldingViewModel() {Name = "State Street XLE", Weight = 7},
+            new HoldingViewModel() {Name = "Schwab SCHP", Weight = 25},
+            new HoldingViewModel() {Name = "State Street XLE", Weight = 35}
+        };
 
+        private static PlanViewModel _dummyAggressive = new PlanViewModel()
+        {
+            Title = "Aggressive",
+            Selected = false,
+            AllocationPercent = 34,
+            UserBalance = 1500,
+            ROI = 0.1,
+            Color = "#227B46",
+            Holdings = _dummyHoldings
+        };
+        private static PlanViewModel _dummyModerate = new PlanViewModel()
+        {
+            Title = "Moderate",
+            Selected = true,
+            AllocationPercent = 23,
+            UserBalance = 1500,
+            ROI = 0.07,
+            Color = "#64BF89",
+            Holdings = _dummyHoldings
+        };
+        private static PlanViewModel _dummyConservative = new PlanViewModel()
+        {
+            Title = "Conservative",
+            Selected = false,
+            AllocationPercent = 43,
+            UserBalance = 1500,
+            ROI = 0.04,
+            Color = "#B4DCC4",
+            Holdings = _dummyHoldings
+        };
+        private static IList<PlanViewModel> _dummyPlans = new[] { _dummyConservative, _dummyModerate, _dummyAggressive };
         #endregion
     }
 }
