@@ -693,39 +693,43 @@ namespace gzDAL.Conf {
                 t => t.Code,
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.Deposit,
-                    Description = "Customer Bank Deposit."
+                    Description = "Customer deposit to their casino account. Informational purpose only."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.InvWithdrawal,
-                    Description = "Customer withdrawals of any excess funds to their banking account."
+                    Description = "Reserved for future use. Customer withdrawal from their Greenzorro account to their banking account. Generate fees transactions: FundFee, Commission (4%)"
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.TransferToGaming,
-                    Description = "Customer transfers to gaming account."
-                },
+                    Description = "Liquidate a single month's customer's investment(vintage) and transfer cash to their casino account. Greenzorro will follow up operationally with a Greenzorro debit of banking cash to credit the casino's customer's banking account."
+                }, 
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.CasinoWithdrawal,
-                    Description = "Losses due to playing in Casino, Betting etc."
+                    Description = "Player cash withdrawal from their casino account. Informational purpose only"
                 },
                 new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.PortfolioLiquidation,
-                    Description = "Liquidating or converting the customer portfolio to cash."
+                    Code = GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation,
+                    Description = "Liquidate all customer\'s funds to cash. Typical Transaction when closing a customer\'s account."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.PlayingLoss,
-                    Description = "Losses due to playing in Casino, Betting etc."
+                    Description = "Customer Casino loss. We credit a percentage i.e. 50% from this amount; see CreditedPlayingLoss."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.CreditedPlayingLoss,
-                    Description = "Losses credited to players account after a 50% deduction."
+                    Description = "Player Loss credited to a customer\'s Greenzorro account after a 50% deduction. See PlayingLoss for the whole amount."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.FundFee,
-                    Description = "Any fees by the Fund itself i.e. 0.5%."
+                    Description = "Fund fees: 2.5%. Deducted from the customer investment when withdrawing cash."
                 },
                 new GzTransactionType {
                     Code = GzTransactionJournalTypeEnum.GzFees,
-                    Description = "Commissions (1.5% = 2.5%) Profit for GreenZorro."
+                    Description = "Greenzorro fees: 1.5%. Deducted from the customer investment when withdrawing cash. Profit for GreenZorro."
+                },
+                new GzTransactionType {
+                    Code = GzTransactionJournalTypeEnum.GzActualTrxProfitOrLoss,
+                    Description = "The realized Greenzorro profit or loss by the actual purchase of customer shares after the month\'s end. It is the total difference between \"Bought Funds Prices\" * \"Monthly Customer Shares\" - \"Customer Shares\" * \"Funds Prices\" credited to the customer\'s Account."
                 }
                 );
         }
