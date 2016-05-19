@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
 using AutoMapper;
@@ -39,19 +41,36 @@ namespace gzWeb.Tests.Controllers
         [Test]
         public void GetSummaryDataWithUser()
         {
-            InvestmentsApiController controller;
-            var db = CreateInvestmentsApiController(out controller);
+            InvestmentsApiController investmentsApiController;
+            var db = CreateInvestmentsApiController(out investmentsApiController);
 
             var manager = new ApplicationUserManager(new CustomUserStore(db),
                                                      new DataProtectionProviderFactory(() => null));
-            var user = manager.FindByEmail("info@nessos.gr");
+            var user = manager.FindByEmail("6month@allocation.com");
 
             // Act
-            var result = ((IInvestmentsApi) controller).GetSummaryData(user);
+            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user);
             Assert.IsNotNull(result);
 
             var gainLossDiff = result.TotalInvestmentsReturns - (result.InvestmentsBalance - result.TotalInvestments);
             Assert.IsTrue(gainLossDiff == 0);
+        }
+
+        [Test]
+        public void GetVintagesSellingValues() {
+            InvestmentsApiController investmentsApiController;
+            var db = CreateInvestmentsApiController(out investmentsApiController);
+
+            var manager = new ApplicationUserManager(new CustomUserStore(db),
+                                                     new DataProtectionProviderFactory(() => null));
+            var user = manager.FindByEmail("6month@allocation.com");
+
+            // Act
+            
+            var vintages = investmentsApiController.GetVintagesSellingValuesByUser(user);
+            foreach (var vintageViewModel in vintages) {
+                Assert.IsNotNull(vintageViewModel.SellingValue);
+            }
         }
 
         private static IHttpActionResult GetSummaryData()
@@ -75,7 +94,7 @@ namespace gzWeb.Tests.Controllers
             ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(db);
 
             var config = new MapperConfiguration(cfg => {
-                                                            cfg.CreateMap<VintageDto, VintageViewModel>();
+                cfg.CreateMap<VintageDto, VintageViewModel>();
             });
             var mapper = config.CreateMapper();
 

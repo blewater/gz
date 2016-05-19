@@ -127,6 +127,13 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
+            var userVintages = GetVintagesSellingValuesByUser(user);
+
+            return OkMsg(() => userVintages);
+        }
+
+        public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user) {
+
             CurrencyInfo userCurrency;
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
 
@@ -142,8 +149,11 @@ namespace gzWeb.Controllers
                 Sold = v.Sold
             }).ToList();
 
-            return OkMsg(() => customerVintages);
+            var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+            return vintages;
         }
+
+
         [HttpPost]
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
         {
