@@ -244,38 +244,6 @@
                 $scope.waiting = false;
                 message.notify(error);
             });
-
-
-            //var emPromise = emRegister();
-            //emPromise.then(function(emRegisterResult) {
-            //    emWamp.login({ usernameOrEmail: $scope.model.username, password: $scope.model.password }).then(function (emLoginResult) {
-            //        gzRegister().then(function(gzRegisterResult) {
-            //            auth.login($scope.model.username, $scope.model.password).then(function (gzLoginResult) {
-            //                $scope.waiting = false;
-            //                $scope.nsNext({
-            //                    nsType: 'modal',
-            //                    nsSize: '600px',
-            //                    nsTemplate: '/partials/messages/registerPaymentMethods.html',
-            //                    nsCtrl: 'registerPaymentMethodsCtrl',
-            //                    nsStatic: true,
-            //                    nsParams: { accountModel: $scope.model }
-            //                });
-            //            }, function(gzLoginError) {
-            //                $scope.waiting = false;
-            //                console.log(gzLoginError);
-            //            });
-            //        }, function(gzRegisterError) {
-            //            $scope.waiting = false;
-            //            console.log(gzRegisterError);
-            //        });
-            //    }, function (emLoginError) {
-            //        $scope.waiting = false;
-            //        console.log(emLoginError);
-            //    });
-            //}, function (emRegisterError) {
-            //    $scope.waiting = false;
-            //    console.log(emRegisterError.desc);
-            //});
         };
         // #endregion
 

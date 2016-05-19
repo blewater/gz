@@ -232,8 +232,8 @@
                 country: parameters.country,
                 // TODO: region 
                 // TODO: personalID 
-                mobilePrefix: parameters.phonePrefix,
-                mobile: parameters.phoneNumber,
+                mobilePrefix: parameters.mobilePrefix,
+                mobile: parameters.mobileNumber,
                 currency: parameters.currency,
                 title: parameters.title,
                 gender: parameters.gender,
@@ -259,8 +259,8 @@
                 Currency: parameters.currency,
                 Title: parameters.title,
                 Country: parameters.country,
-                MobilePrefix: parameters.phonePrefix,
-                Mobile: parameters.phoneNumber,
+                MobilePrefix: parameters.mobilePrefix,
+                Mobile: parameters.mobileNumber,
                 City: parameters.city,
                 Address: parameters.address1,
                 PostalCode: parameters.postalCode,
