@@ -46,6 +46,13 @@ namespace gzDAL.Repos {
 
         #region Fund Shares Selling
 
+        /// <summary>
+        /// 
+        /// Calculate the vintage in latest fund market value unless it has been sold which case returns that value
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
         private decimal GetVintageSellingValue(int customerId, string yearMonthStr, int lastInvestmentId) {
 
             decimal monthlySharesValue = 0;
@@ -383,6 +390,16 @@ namespace gzDAL.Repos {
 
         }
 
+        /// <summary>
+        /// 
+        /// Set default transaction processing months
+        /// minimum: earliest transaction month
+        /// maximum: the present month.
+        /// 
+        /// </summary>
+        /// <param name="startYearMonthStr"></param>
+        /// <param name="endYearMonthStr"></param>
+        /// <returns></returns>
         private string GetTrxMinMaxMonths(string startYearMonthStr, ref string endYearMonthStr) {
 
             if (string.IsNullOrEmpty(startYearMonthStr)) {
