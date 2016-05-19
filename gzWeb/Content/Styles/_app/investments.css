@@ -471,11 +471,26 @@
     margin: 20px 0;
     height: 150px;
 }
-.investments .portfolio .portfolio-plans .plan .details .holding-name {
+.investments .portfolio .portfolio-plans .plan .details .heading {
+    text-decoration: underline;
+    margin-bottom: 5px;
+}
+.investments .portfolio .portfolio-plans .plan .details .holding {
+}
+.investments .portfolio .portfolio-plans .plan .details .holding .holding-name {
+}
+.investments .portfolio .portfolio-plans .plan .details .holding .holding-weight {
+}
+.investments .portfolio .portfolio-plans .plan .details .hr {
+    margin: 5px auto;
+    width: 10%;
+    border: 0;
+    border-top: 1px solid #000;
+}
+.investments .portfolio .portfolio-plans .plan .details .expected-roi {
     font-weight: bold;
 }
-.investments .portfolio .portfolio-plans .plan .details .holding-weight {
-}
+
 
 
 .investments .portfolio .portfolio-plans .plan img {

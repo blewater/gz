@@ -4,6 +4,8 @@
     APP.controller(ctrlId, ['$scope', '$filter', '$timeout', 'helpers', ctrlFactory]);
     function ctrlFactory($scope, $filter, $timeout, helpers) {
         function init() {
+            for (var i = 0; i < $scope.vintages.length; i++)
+                $scope.vintages[i].Selected = $scope.vintages[i].Sold;
             var grouped = $filter('groupBy')($scope.vintages, 'Year');
             var array = $filter('toArray')(grouped, true);
             var result = $filter('orderBy')(array, '$key', true);
@@ -37,14 +39,17 @@
 
         $scope.totalGain = function () {
             var flattened = getFlattened();
-            var selected = $filter('where')(flattened, {'Selected': true});
+            var selected = $filter('where')(flattened, {'Selected': true, 'Sold': false});
             return helpers.array.aggregate(selected, 0, function (s, v) {
                 return s + (v.SellingValue - v.InvestAmount);
             });
         };
 
-        $scope.withdraw = function() {
-            $scope.nsOk(getFlattened());
+        $scope.withdraw = function () {
+            var flattened = getFlattened();
+            for (var i = 0; i < flattened.length; i++)
+                flattened[i].Selected = flattened[i].Selected && !flattened[i].Sold;
+            $scope.nsOk(flattened);
         };
     }
 })();
