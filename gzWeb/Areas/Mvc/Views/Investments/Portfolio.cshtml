@@ -26,13 +26,15 @@
                             <div class="title text-left">{{plan.Title}}</div>
                         </div>
                         <div class="col-xs-4">
-                            <div class="balance text-center">{{plan.Balance | currency : model.Currency : 0}}</div>
+                            <div class="balance text-center">{{plan.UserBalance | isoCurrency : currency : 0}}</div>
                         </div>
                         <div class="col-xs-4">
                             <div class="selection text-right">
                                 <button type="button" ng-disabled="plan.Selected" ng-click="selectPlan(plan)" ng-mouseenter="plan.selectHovered = true" ng-mouseleave="plan.selectHovered = false">
                                     <span ng-show="plan.Selected">
-                                        <i class="fa fa-lg fa-check-circle" title="Current"></i>
+                                        <span>Selected</span>
+                                        <i class="fa fa fa-check-circle"></i>
+                                        @*<i class="fa fa-lg fa-check-circle" title="Current"></i>*@
                                     </span>
                                     <span ng-show="!plan.Selected">
                                         <span ng-show="plan.selecting && !plan.selectHovered" class="spinner" us-spinner="spinnerGreen"></span>
@@ -45,7 +47,7 @@
                         <img src="@Url.Content("~/Content/Images/open.svg")" alt="Expand/Collapse" ng-click="plan.expanded = !plan.expanded" />
                     </div>
                     <div class="details">
-                        <div>
+                        <div class="row heading">
                             <div class="col-xs-7 text-left">
                                 <div><u>Holding Name</u></div>
                             </div>
@@ -53,14 +55,22 @@
                                 <div><u>Port. Weight</u></div>
                             </div>                            
                         </div>
-                        <div ng-repeat="holding in plan.Holdings">
+                        <div class="row holding" ng-repeat="holding in plan.Holdings">
                             <div class="col-xs-7 text-left">
                                 <div class="holding-name">{{holding.Name}}</div>
                             </div>
                             <div class="col-xs-5 text-right">
                                 <div class="holding-weight">{{holding.Weight | number : 2}}%</div>
                             </div>
-                            
+                        </div>
+                        <div class="hr"></div>
+                        <div class="row expected-roi">
+                            <div class="col-xs-7 text-left">
+                                <div>Expected annual Return on Investment</div>
+                            </div>
+                            <div class="col-xs-5 text-right">
+                                <div>{{plan.ROI | number : 2}}%</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -74,7 +84,7 @@
                             Next expected investment:
                         </div>
                         <div class="side-box-table-body">
-                            <div class="balance text-gz">{{model.NextExpectedInvestment | currency : model.Currency : 0}}</div>
+                            <div class="balance text-gz">{{model.NextExpectedInvestment | isoCurrency : currency : 0}}</div>
                         </div>
                     </div>
                     <div class="side-box-table">
@@ -97,12 +107,11 @@
                     <div id="portfolio-chart" ng-if="model"
                          gz-portfolio-chart
                          gz-plans="model.Plans"
-                         gz-roi="model.ROI"
-                         @*gz-conservative="model.Plans[2]"
+                         @*gz-roi="model.ROI"
+                         gz-conservative="model.Plans[2]"
                          gz-moderate="model.Plans[1]"
                          gz-aggressive="model.Plans[0]"
-                         gz-average="model.AvgPercent"*@
-                         >
+                         gz-average="model.AvgPercent"*@>
                     </div>
                 </div>
             </div>

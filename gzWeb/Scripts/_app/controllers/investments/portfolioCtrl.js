@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'portfolioCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'api', 'constants', 'message', ctrlFactory]);
-    function ctrlFactory($scope, $filter, api, constants, message) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'api', 'constants', 'message', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $filter, api, constants, message, auth) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.thereIsExpanded = function () {
@@ -22,12 +22,25 @@
             });
         }
 
-        function init() {
+        function loadPortfolioData() {
             api.call(function () {
                 return api.getPortfolioData();
             }, function (response) {
                 $scope.model = response.Result;
             });
+        }
+
+        function loadAuthData() {
+            $scope.currency = auth.data.currency;
+        }
+        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
+            loadAuthData();
+            $scope.$apply();
+        });
+
+        function init() {
+            loadPortfolioData();
+            loadAuthData();
         }
         init();
     }

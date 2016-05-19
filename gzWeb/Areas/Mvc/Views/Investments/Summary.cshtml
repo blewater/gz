@@ -26,7 +26,7 @@
             <div class="text-center">
                 <div class="investments-balance-amount text-gz">
                     <img src="@Url.Content("~/Content/Images/line.svg")" alt="Line" />
-                    <span>{{model.InvestmentsBalance | currency : model.Currency : 0}}</span>
+                    <span>{{model.InvestmentsBalance | isoCurrency : currency : 0}}</span>
                     <img src="@Url.Content("~/Content/Images/line.svg")" alt="Line" />
                 </div>
                 <div class="investments-balance-descr">
@@ -45,13 +45,13 @@
                     <div class="half">
                         <div class="row">
                             <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">Invested</div>
-                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestments | currency : model.Currency : 0}}</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestments | isoCurrency : currency : 0}}</div>
                         </div>
                     </div>
                     <div class="half">
                         <div class="row">
                             <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-left': !xs}">Gained</div>
-                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestmentsReturns | currency : model.Currency : 0}}</div>
+                            <div class="col-xs-12 col-sm-6" ng-class="{'text-center': xs, 'text-right': !xs}">{{model.TotalInvestmentsReturns | isoCurrency : currency : 0}}</div>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                         <div class="vintages-box-table-body">
                             <div class="row" ng-repeat="vintage in vintages.slice(0, 3)" ng-if="vintages.length > 0">
                                 <div class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                                <div class="col-xs-6 text-right">{{vintage.InvestAmount | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-6 text-right">{{vintage.InvestAmount | isoCurrency : currency : 0}}</div>
                             </div>
                             <div class="row" ng-if="vintages.length === 0">
                                 <div class="col-xs-12 text-left">No vintages yet.</div>
@@ -98,15 +98,15 @@
                         <div class="side-box-table-body">
                             <div class="row">
                                 <div class="col-xs-9 text-left">Cash In</div>
-                                <div class="col-xs-3 text-right">{{model.TotalDeposits | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-3 text-right">{{model.TotalDeposits | isoCurrency : currency : 0}}</div>
                             </div>
                             <div class="row">
                                 <div class="col-xs-9 text-left">Cash Out</div>
-                                <div class="col-xs-3 text-right">{{model.TotalWithdrawals | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-3 text-right">{{model.TotalWithdrawals | isoCurrency : currency : 0}}</div>
                             </div>
                             <div class="row">
                                 <div class="col-xs-9 text-left">Gaming Balance</div>
-                                <div ng-if="hasGamingBalance" class="col-xs-3 text-right">{{gamingBalance | currency : model.Currency : 0}}</div>
+                                <div ng-if="hasGamingBalance" class="col-xs-3 text-right">{{gamingBalance | isoCurrency : currency : 0}}</div>
                                 <div ng-if="!hasGamingBalance" class="col-xs-3 text-right"><i>offline</i></div>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
                         </div>
                         <div class="side-box-table-body">
                             <div class="row">
-                                <div class="col-xs-12 text-left">{{model.LastInvestmentAmount | currency : model.Currency : 0}}</div>
+                                <div class="col-xs-12 text-left">{{model.LastInvestmentAmount | isoCurrency : currency : 0}}</div>
                             </div>
                         </div>
                     </div>

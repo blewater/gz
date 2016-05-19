@@ -14,7 +14,7 @@
                 nsParams: {
                     vintages: vintages,
                     canWithdraw: canWithdraw,
-                    currency: $scope.model.Currency
+                    currency: $scope.currency
                 }
             });
         };
@@ -44,7 +44,7 @@
                     return api.withdrawVintages(updatedVintages);
                 }, function (withdrawResponse) {
                     if (withdrawResponse.Ok) {
-                        $scope.vintages = withdrawResponse.Result;
+                        $scope.vintages = processVintages(withdrawResponse.Result);
                         message.notify('Your wallet balance has been updated. Please check your casino account over the next few days.');
                     }
                     else
@@ -71,7 +71,7 @@
             return ordered;
         }
 
-        function getSummaryData() {
+        function loadSummaryData() {
             api.call(function () {
                 return api.getSummaryData();
             }, function (response) {
@@ -79,19 +79,20 @@
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
         }
-        function readAuthData() {
+        function loadAuthData() {
             $scope.hasGamingBalance = auth.data.gamingAccount !== undefined;
             if ($scope.hasGamingBalance)
                 $scope.gamingBalance = auth.data.gamingAccount.amount;
+            $scope.currency = auth.data.currency;
         }
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
-            readAuthData();
+            loadAuthData();
             $scope.$apply();
         });
 
         function init() {
-            getSummaryData();
-            readAuthData();
+            loadSummaryData();
+            loadAuthData();
         }
         init();
     }
