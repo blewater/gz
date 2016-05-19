@@ -446,7 +446,7 @@ namespace gzDAL.Repos {
                 from c in db.CustFundShares
                 where c.CustomerId == customerId
                     && c.SharesNum > 0
-                    && c.YearMonth == (lastFundsHoldingMonth)
+                    && c.YearMonth == lastFundsHoldingMonth
                 select new PortfolioFundDTO {
                     FundId = c.FundId,
                     PortfolioId = 0,
@@ -462,6 +462,8 @@ namespace gzDAL.Repos {
         /// 
         /// Get the *Purchased* (NewShares) for a month.
         /// 
+        /// Used when selling a month's vintage.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="yearCurrent"></param>
@@ -475,12 +477,12 @@ namespace gzDAL.Repos {
             var ownedFunds = (
                 from c in db.CustFundShares
                 where c.CustomerId == customerId
-                    && c.SharesNum > 0
-                    && c.YearMonth == (lastFundsHoldingMonth)
+                    && c.YearMonth == lastFundsHoldingMonth
                 select new PortfolioFundDTO {
                     FundId = c.FundId,
                     PortfolioId = 0,
                     Weight = 0,
+                    // Save the new shares bought during the month
                     SharesNum = c.NewSharesNum.Value
                 })
                 .ToDictionary(f => f.FundId);
