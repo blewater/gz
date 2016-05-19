@@ -116,14 +116,30 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Sell completely a customer's portfolio
+        /// Sell any vintages marked for selling. They are sold at the fund prices current
+        /// as of this method call.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintages"></param>
+        /// <returns></returns>
+        public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+
+            return vintages;
+        }
+
+        /// <summary>
+        /// 
+        /// Sell completely a customer's owned funds shares.
+        /// 
+        /// Supports selling shares in previous months respective the fund prices of those months.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="updatedDateTimeUtc">The database creation time-stamp.</param>
         /// <param name="yearCurrent">Optional year value for selling in the past</param>
         /// <param name="monthCurrent">Optional month value for selling in the past</param>
-        public bool SaveDbSellCustomerPortfolio(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0, int monthCurrent = 0) {
+        public bool SaveDbSellAllCustomerFundsShares(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0, int monthCurrent = 0) {
 
             // Assume we don't sell shares
             var soldShares = false;
@@ -140,8 +156,8 @@ namespace gzDAL.Repos {
                 throw new Exception("Cannot sell the customer's (id: " + customerId + ") portfolio in the future.");
             }
 
-            // Trigger selling full portfolio by asking -$1 off of it.
-            var portfolioFundsValuesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(customerId, -1, yearCurrent, monthCurrent);
+            // Calculate the value of the fund shares
+            var portfolioFundsValuesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(customerId, 0, yearCurrent, monthCurrent);
 
             // Make sure we have shares to sell
             if (portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesNum) > 0) {
@@ -504,7 +520,7 @@ namespace gzDAL.Repos {
                 var soldPortfolioTimestamp = _gzTransactionRepo.GetSoldPortfolioTimestamp(customerId, yearCurrent,
                     monthCurrent);
 
-                SaveDbSellCustomerPortfolio(customerId, soldPortfolioTimestamp, yearCurrent, monthCurrent);
+                SaveDbSellAllCustomerFundsShares(customerId, soldPortfolioTimestamp, yearCurrent, monthCurrent);
             }
         }
 

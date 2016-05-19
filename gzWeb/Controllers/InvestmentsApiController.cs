@@ -59,6 +59,13 @@ namespace gzWeb.Controllers
             return OkMsg(((IInvestmentsApi)this).GetSummaryData(user));
         }
 
+        /// <summary>
+        /// 
+        /// Get the summary user data converted to the user currency.
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user)
         {
             CurrencyInfo userCurrency;
@@ -76,7 +83,7 @@ namespace gzWeb.Controllers
                     Sold = v.Sold
                 }).ToList();
 
-            var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+            var vintagesVMs = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
 
             var summaryDvm = new SummaryDataViewModel
             {
@@ -97,7 +104,7 @@ namespace gzWeb.Controllers
                 NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                 LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.LastInvestmentAmount),
                 StatusAsOf = _invBalanceRepo.GetLastUpdatedDateTime(user.Id),
-                Vintages = vintages,
+                Vintages = vintagesVMs,
 
                 // Withdrawal eligibility
                 LockInDays = withdrawalEligibility.LockInDays,
@@ -109,6 +116,14 @@ namespace gzWeb.Controllers
             return summaryDvm;
         }
 
+        /// <summary>
+        /// 
+        /// Get the user currency and exchange rate from dollar to user.
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userCurrency"></param>
+        /// <returns></returns>
         private decimal GetUserCurrencyRate(ApplicationUser user, out CurrencyInfo userCurrency) {
 
             userCurrency = CurrencyHelper.GetSymbol(user.Currency);
@@ -117,7 +132,9 @@ namespace gzWeb.Controllers
         }
 
         /// <summary>
-        /// Get the Vintages Selling Values
+        /// 
+        /// HttpGet the Vintages with their Selling Values calculated
+        /// 
         /// </summary>
         /// <returns></returns>
         [HttpGet] public IHttpActionResult GetVintagesWithSellingValues()
@@ -131,6 +148,13 @@ namespace gzWeb.Controllers
             return OkMsg(() => userVintages);
         }
 
+        /// <summary>
+        /// 
+        /// Get the customer vintages with their selling value converted to the user currency.
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user) {
 
             CurrencyInfo userCurrency;
@@ -156,8 +180,16 @@ namespace gzWeb.Controllers
         [HttpPost]
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
         {
+            var vintagesDtos = vintages.Select(v => 
+                _mapper.Map<VintageViewModel, VintageDto>(v))
+                .ToList();
+
+            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(
+                    User.Identity.GetUserId<int>(), vintagesDtos)
+                .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
+                .ToList();
+
             // TODO Actual withdraw and return remaining vintages
-            var updatedVintages = vintages;
             return OkMsg(() => updatedVintages);
         }
         #endregion

@@ -89,7 +89,7 @@ namespace gzWeb.Tests.Models {
                     23, 00, 00);
 
                 var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                    .SaveDbSellCustomerPortfolio(custId, lastMonthDay);
+                    .SaveDbSellAllCustomerFundsShares(custId, lastMonthDay);
 
                 Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
 
