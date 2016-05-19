@@ -143,11 +143,11 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-8">
-                            <input type="text" placeholder="Phone Number" id="phoneNumber" name="phoneNumber" class="form-control" autocomplete="off" ng-model="model.phoneNumber" required
+                            <input type="text" placeholder="Mobile Number" id="phoneNumber" name="phoneNumber" class="form-control" autocomplete="off" ng-model="model.phoneNumber" required
                                    ng-class="{ 'empty': !model.phoneNumber, 'danger': form.phoneNumber.$invalid && !form.phoneNumber.$pristine }"
                                    ng-focus="phoneNumberFocused = true" ng-blur="phoneNumberFocused = false"
                                    cs-pattern-restrict="^[0-9]*$">
-                            <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Phone number is required</div>
+                            <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Mobile number is required</div>
                         </div>
                     </div>
                     <gz-field-ok gz-when="model.phonePrefix && form.phoneNumber.$valid"></gz-field-ok>
