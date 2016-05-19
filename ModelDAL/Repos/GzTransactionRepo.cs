@@ -61,7 +61,7 @@ namespace gzDAL.Repos {
                 .Select(t => new VintageDto() {
                     YearMonthStr = t.YearMonthStr,
                     InvestAmount = t.InvestAmount,
-                    Locked = (DateTime.UtcNow - t.VintageDate).TotalDays - lockInDays >= 0,
+                    Locked = lockInDays - (DateTime.UtcNow - t.VintageDate).TotalDays > 0,
                     Sold = t.Sold,
                     LastInvestmentId = t.MaxInvestmentId
                 })
