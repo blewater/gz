@@ -9,7 +9,7 @@ namespace gzDAL.Repos.Interfaces
 
         IEnumerable<VintageDto> GetCustomerVintages(int customerId);
 
-        IEnumerable<int> GetActiveCustomers(string thisYearMonth);
+        IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
 
         bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);
 

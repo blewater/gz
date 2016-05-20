@@ -209,7 +209,7 @@ namespace gzDAL.Repos {
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetMonthsBoughtFundsValue(int customerId, int yearCurrent, int monthCurrent) {
+        public Dictionary<int, PortfolioFundDTO> GetMonthsBoughtFundsValue(int customerId, int yearCurrent, int monthCurrent) {
 
             var customerShares = GetMonthsBoughtFundsShares(customerId, yearCurrent, monthCurrent);
 
