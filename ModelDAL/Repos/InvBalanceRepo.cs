@@ -72,11 +72,16 @@ namespace gzDAL.Repos {
             // If not sold calculate it now
             if (!soldValue.HasValue) {
 
-                decimal invGainLoss, monthlyBalance;
-                GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, -1, out monthlyBalance,
-                    out invGainLoss);
+                var fundSharesThisMonth = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
+                        customerId,
+                        yearCurrent,
+                        monthCurrent);
 
-                monthlySharesValue = monthlyBalance - _gzTransactionRepo.GetWithdrawnFees(monthlyBalance);
+                var monthsNewSharesValue = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
+
+                monthlySharesValue =
+                    DbExpressions.RoundCustomerBalanceAmount(monthsNewSharesValue -
+                                                             _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesValue));
             }
             else {
                 monthlySharesValue = soldValue.Value;
@@ -397,7 +402,9 @@ namespace gzDAL.Repos {
         /// <param name="endYearMonthStr">If null assuming -> Now</param>
         public void SaveDbAllCustomersMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null) {
 
-            var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr);
+            startYearMonthStr = GetTrxMinMaxMonths(startYearMonthStr, ref endYearMonthStr);
+
+            var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr, endYearMonthStr);
 
             foreach (var customerId in activeCustomerIds) {
 
@@ -415,7 +422,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="startYearMonthStr"></param>
         /// <param name="endYearMonthStr"></param>
-        /// <returns></returns>
+        /// <returns>earliest StartYearMonth</returns>
         private string GetTrxMinMaxMonths(string startYearMonthStr, ref string endYearMonthStr) {
 
             if (string.IsNullOrEmpty(startYearMonthStr)) {

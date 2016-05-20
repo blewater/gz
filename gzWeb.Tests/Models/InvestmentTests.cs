@@ -219,6 +219,19 @@ namespace gzWeb.Tests.Models {
             }
         }
 
+        [Test]
+        public void SaveDbUpdOneCustomerOneMonthBalance() {
+            using (var db = new ApplicationDbContext(null)) {
+                new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                    .SaveDbCustomerMonthlyBalance(
+                    /** 6month User **/
+                        db.Users.Where(u => u.Email == "6month@allocation.com")
+                        .Select(u => u.Id)
+                            /** Update month balance 201506 **/
+                        .Single(), "201506");
+            }
+        }
+
         private int CreateTestCustomer(ApplicationDbContext db, ApplicationUser newUser) {
 
             db.Users.AddOrUpdate(c => new { c.Email }, newUser);

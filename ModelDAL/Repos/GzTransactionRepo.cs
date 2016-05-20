@@ -72,19 +72,28 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Get the Customer ids whose transaction activity has been initiated already within a given month
+        /// Get the Customer ids whose transaction activity has been initiated already 
+        /// within a range of months
         /// 
         /// </summary>
-        /// <param name="thisYearMonth"></param>
+        /// <param name="startYearMonthStr"></param>
+        /// <param name="endYearMonthStr"></param>
         /// <returns></returns>
-        public IEnumerable<int> GetActiveCustomers(string thisYearMonth) {
+        public IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr) {
 
-            return _db.GzTransactions
-                .Where(BeforeEq(thisYearMonth))
+            if (string.IsNullOrEmpty(startYearMonthStr) && string.IsNullOrEmpty(endYearMonthStr)) {
+                throw new Exception("startYearMonth and endYearMonth cannot be empty or null");
+            }
+
+            var customerIds = _db.GzTransactions
+                .Where(LaterEq(startYearMonthStr))
+                .Where(BeforeEq(endYearMonthStr))
                 .OrderBy(t => t.CustomerId)
                 .Select(t => t.CustomerId)
                 .Distinct()
                 .ToList();
+
+            return customerIds;
         }
 
         /// <summary>
