@@ -137,25 +137,25 @@ namespace gzWeb.Tests.Models {
 
                 foreach (var customerEmail in customerEmails) {
 
-                    int? custId = db.Users
+                    int custId = db.Users
                         .Where(u => u.Email == customerEmail)
                         .Select(u => u.Id)
                         .SingleOrDefault();
 
-                    if (custId.HasValue) {
+                    if (custId != 0) {
 
-                        db.Database.ExecuteSqlCommand("Delete GzTransactions Where CustomerId = " + custId.Value);
+                        db.Database.ExecuteSqlCommand("Delete GzTransactions Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
-                        CreateTestCustomerPortfolioSelections(custId.Value);
+                        CreateTestCustomerPortfolioSelections(custId);
 
-                        CreateTestPlayerLossTransactions(custId.Value);
+                        CreateTestPlayerLossTransactions(custId);
 
                         // Create Deposit only Transactions
-                        CreateTestPlayerDepositTransactions(custId.Value);
+                        CreateTestPlayerDepositTransactions(custId);
 
                         new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
-                            .SaveDbCustomerAllMonthlyBalances(custId.Value);
+                            .SaveDbCustomerAllMonthlyBalances(custId);
                     }
 
                 }
