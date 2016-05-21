@@ -335,37 +335,45 @@
 
             // #region Balance
             watchBalance : function (account, callback) {
-                return $wamp.call("/user/account#watchBalance"/*, { id: account.id, vendor: account.vendor }*/).then(function(result) {
+                return $wamp.call("/user/account#watchBalance").then(function(result) {
                     $wamp.subscribe("/account/balanceChanged", function (data) {
                         callback(data);
                     });
                 });
             },
             unwatchBalance: function (account) {
-                return $wamp.call("/user/account#unwatchBalance"/*, { id: account.id, vendor: account.vendor }*/);
+                return $wamp.call("/user/account#unwatchBalance");
             },
             // #endregion
 
             // #region Init
-            init: init
+            init: _init
             // #endregion
         };
 
-        function init() {
-            if ($wamp.connection.isOpen)
-                return;
+        function _init() {
+            //if ($wamp.connection.isOpen)
+            //    return;
 
             $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
+                $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
                 $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
                 $log.log("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
                 JL("emWamp").trace("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
             }).then(function (subscription) {
-                var groupId = localStorageService.get("$client_id$");
-                if (groupId !== undefined) {
-                    _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
-                        localStorageService.set("$client_id$", result.groupID);
-                    }, _logError);
-                }
+                var groupId = localStorageService.get(constants.storageKeys.clientId);
+                _call("/user#setClientIdentity", { groupID: groupId || "" }).then(function (result) {
+                    $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
+                    localStorageService.set(constants.storageKeys.clientId, result.groupID);
+                }, _logError);
+                //var groupId = localStorageService.get(constants.storageKeys.clientId);
+                //message.toastr('stored client id: ' + groupId);
+                //if (groupId !== undefined) {
+                //    _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
+                //        message.toastr('new client id: ' + result.groupID);
+                //        localStorageService.set(constants.storageKeys.clientId, result.groupID);
+                //    }, _logError);
+                //}
             }, _logError);
 
             // -------------------------------------------------------------------
@@ -449,8 +457,6 @@
 
             $wamp.open();
         }
-
-        init();
 
         return service;
     };

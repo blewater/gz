@@ -35,47 +35,52 @@ var APP = (function () {
     app.run([
         '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth',
         function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth) {
-            $rootScope.$on('$routeChangeStart', function(event, next, current) {
-                $rootScope.loading = true;
-                if (next && !auth.authorize(next.roles))
-                    $location.path(constants.routes.home.path);
-            });
+            auth.init();
 
-            $rootScope.$on('$routeChangeSuccess', function() {
-                $rootScope.loading = false; 
-                $rootScope.documentTitle = constants.title;
-                if ($route.current.$$route && $route.current.$$route.title) {
-                    $rootScope.title = $route.current.$$route.title;
-                    $rootScope.documentTitle += " - " + $rootScope.title;
-                }
-            });
+            $rootScope.$on(constants.events.ON_INIT, function () {
+                $rootScope.initialized = true;
 
-            $rootScope.xs = screenSize.on('xs', function(match) { $rootScope.xs = match; });
-            $rootScope.sm = screenSize.on('sm', function(match) { $rootScope.sm = match; });
-            $rootScope.md = screenSize.on('md', function(match) { $rootScope.md = match; });
-            $rootScope.lg = screenSize.on('lg', function(match) { $rootScope.lg = match; });
-            $rootScope.size = screenSize.get();
-            screenSize.on('xs,sm,md,lg', function() {
+                $rootScope.$on('$routeChangeStart', function (event, next, current) {
+                    $rootScope.loading = true;
+                    if (next && !auth.authorize(next.roles))
+                        $location.path(constants.routes.home.path);
+                });
+
+                $rootScope.$on('$routeChangeSuccess', function () {
+                    $rootScope.loading = false;
+                    $rootScope.documentTitle = constants.title;
+                    if ($route.current.$$route && $route.current.$$route.title) {
+                        $rootScope.title = $route.current.$$route.title;
+                        $rootScope.documentTitle += " - " + $rootScope.title;
+                    }
+                });
+
+                $rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
+                $rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
+                $rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
+                $rootScope.lg = screenSize.on('lg', function (match) { $rootScope.lg = match; });
                 $rootScope.size = screenSize.get();
+                screenSize.on('xs,sm,md,lg', function () {
+                    $rootScope.size = screenSize.get();
+                });
+
+                $rootScope.scrolled = false;
+                $rootScope.scrollOffset = 0;
+                angular.element($window).bind("scroll", function () {
+                    $rootScope.scrolled = this.pageYOffset > 0;
+                    $rootScope.scrollOffset = this.pageYOffset;
+                    $rootScope.$apply();
+                });
+
+                localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
+                $rootScope.loading = false;
+
+                $timeout(function () {
+                    var $preloader = angular.element(document.querySelector('#preloader'));
+                    $preloader.addClass('die');
+                    $timeout(function () { $preloader.remove(); }, 2000);
+                }, 1000);
             });
-
-            $rootScope.scrolled = false;
-            $rootScope.scrollOffset = 0;
-            angular.element($window).bind("scroll", function() {
-                $rootScope.scrolled = this.pageYOffset > 0;
-                $rootScope.scrollOffset = this.pageYOffset;
-                $rootScope.$apply();
-            });
-
-            localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
-            $rootScope.loading = false;
-            auth.readAuthData();
-
-            $timeout(function() {
-                var $preloader = angular.element(document.querySelector('#preloader'));
-                $preloader.addClass('die');
-                $timeout(function () { $preloader.remove(); }, 2000);
-            }, 1000);
         }
     ]);
     return app;

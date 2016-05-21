@@ -1,8 +1,10 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'performanceCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, api, auth) {
+    APP.controller(ctrlId, ['$scope', '$controller', 'api', ctrlFactory]);
+    function ctrlFactory($scope, $controller, api) {
+        $controller('authCtrl', { $scope: $scope });
+
         function loadPerformanceData() {
             api.call(function () {
                 return api.getPerformanceData();
@@ -12,17 +14,17 @@
         }
 
         function loadAuthData() {
-            $scope.currency = auth.data.currency;
+            $scope.currency = $scope._authData.currency;
         }
+
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
             loadAuthData();
             $scope.$apply();
         });
 
-        function init() {
+        $scope._init('performance', function () {
             loadPerformanceData();
             loadAuthData();
-        }
-        init();
+        });
     }
 })();

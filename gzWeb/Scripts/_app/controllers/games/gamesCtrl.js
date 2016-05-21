@@ -1,8 +1,10 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gamesCtrl';
-    APP.controller(ctrlId, ['$scope', '$sce', 'emCasino', ctrlFactory]);
-    function ctrlFactory($scope, $sce, emCasino) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$sce', 'emCasino', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $sce, emCasino) {
+        $controller('authCtrl', { $scope: $scope });
+
         $scope.games = [];
         $scope.gameCategories = [];
         $scope.mostPlayedGames = [];
@@ -52,14 +54,12 @@
             }, logError);
         };
         
-        function init() {
+        $scope._init('games', function () {
             getGameCategories();
             getMostPlayedGames();
             $scope.onCategoryChanged("VIDEOPOKERS");
-        };
+        });
 
-        init();
-        
         function logError(error) {
             console.log(error);
         };
