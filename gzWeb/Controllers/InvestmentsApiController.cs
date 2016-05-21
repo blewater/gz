@@ -133,12 +133,16 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
+            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
+            var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+            var investmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*user.InvBalance);
+
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
                             //Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                             NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
-                            NextExpectedInvestment = 15000,
+                            NextExpectedInvestment = investmentsBalance,
                             //ROI = new ReturnOnInvestmentViewModel { Title = "% Current ROI", Percent = 59 },
                             Plans = GetCustomerPlans(user)
                         };
