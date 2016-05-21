@@ -10,7 +10,9 @@ namespace gzDAL.Repos.Interfaces
 
         IEnumerable<VintageDto> GetCustomerVintagesSellingValue(int customerId);
 
-        bool SaveDbSellCustomerPortfolio(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0,
+        IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages);
+
+        bool SaveDbSellAllCustomerFundsShares(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0,
             int monthCurrent = 0);
 
         void SaveDbCustomerAllMonthlyBalances(int customerId, string startYearMonthStr = null, string endYearMonthStr = null);

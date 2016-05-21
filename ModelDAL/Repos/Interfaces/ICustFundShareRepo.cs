@@ -5,10 +5,13 @@ using gzDAL.DTO;
 
 namespace gzDAL.Repos.Interfaces
 {
-    public interface ICustFundShareRepo
-    {
+    public interface ICustFundShareRepo {
+        Dictionary<int, PortfolioFundDTO> GetMonthsBoughtFundsValue(int customerId, int yearCurrent, int monthCurrent);
+
         Dictionary<int, PortfolioFundDTO> GetMonthlyFundSharesAfterBuyingSelling(int customerId, decimal netInvAmount, int year, int month);
-        void SaveDbMonthlyCustomerFundShares(bool boughtShares, int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUtc);
+
         Portfolio GetCurrentCustomerPortfolio(int customerId);
+
+        void SaveDbMonthlyCustomerFundShares(bool boughtShares, int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUtc);
     }
 }

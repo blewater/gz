@@ -10,7 +10,7 @@ namespace gzDAL.Models {
 
     /// <summary>
     /// Transfers between Casino <--> Greenzorro accounts, Casino <--> Customer bank account, 
-    /// Greenzorro <--> Customer Bank account ? (requires special communication with casino as the intermediatery
+    /// Greenzorro <--> Customer Bank account ? (requires special communication with casino as the intermediary
     /// </summary>
     public class GzTransaction {
 
@@ -30,14 +30,15 @@ namespace gzDAL.Models {
         public int TypeId { get; set; }
         public virtual GzTransactionType Type { get; set; }
 
+        //http://stackoverflow.com/questions/4811194/what-is-the-syntax-for-self-referencing-foreign-keys-in-ef-code-first
+        public int? ParentTrxId { get; set; }
+        [ForeignKey("ParentTrxId")]
+        public virtual GzTransaction ParentTrx { get; set; }
+
         // For Type:CreditedPlayingLoss -> the credit percentage for playing losses i.e. 50 for half
         public float? CreditPcntApplied { get; set; }
 
-        public int? CurrencyRateId { get; set; }
-        [ForeignKey("CurrencyRateId")]
-        public virtual CurrencyRate CurrencyRateToUSD { get; set; }
-
-        [Index, Required]
+        [Required]
         public DateTime CreatedOnUTC { get; set; }
 
         public decimal Amount { get; set; }
