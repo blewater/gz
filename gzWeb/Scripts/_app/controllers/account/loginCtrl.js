@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "loginCtrl";
-    APP.controller(ctrlId, ['$rootScope', '$scope', 'emWamp', 'auth', 'localStorageService', 'constants', ctrlFactory]);
-    function ctrlFactory($rootScope, $scope, emWamp, auth, localStorageService, constants) {
+    APP.controller(ctrlId, ['$rootScope', '$scope', 'emWamp', 'auth', 'localStorageService', 'constants', 'message', ctrlFactory]);
+    function ctrlFactory($rootScope, $scope, emWamp, auth, localStorageService, constants, message) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.waiting = false;
@@ -20,17 +20,22 @@
 
         function login(){
             $scope.waiting = true;
-            $scope.emErrorMsg = "";
-            $scope.gzErrorMsg = "";
+            $scope.errorMsg = "";
 
             auth.login($scope.model.usernameOrEmail, $scope.model.password).then(function (response) {
                 $scope.waiting = false;
-                if (response.emLogin === true && response.gzLogin === true)
+                if (response.emLogin === false && response.gzLogin === false)
+                    $scope.errorMsg = "The login failed. Please check your username/email and password.";
+                else
                     $scope.nsOk();
-                else {
-                    $scope.emErrorMsg = response.emError;
-                    $scope.gzErrorMsg = response.gzError;
-                }
+
+                if (response.emLogin === false)
+                    message.notify("We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<b>Retry to connect</b>​ button.");
+                if (response.gzLogin === false)
+                    message.notify("We have experienced technical difficulty in accessing your investment pages. Please try again later by pressing the ​<b>Retry to connect</b>​ button.");
+
+                //$scope.emErrorMsg = response.emError;
+                //$scope.gzErrorMsg = response.gzError;
             });
         }
 

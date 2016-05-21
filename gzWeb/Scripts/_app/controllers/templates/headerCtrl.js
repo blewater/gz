@@ -1,8 +1,10 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$rootScope', '$scope', '$location', 'constants', 'message', '$window', 'auth', ctrlFactory]);
-    function ctrlFactory($rootScope, $scope, $location, constants, message, $window, auth) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'constants', 'message', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, constants, message, auth) {
+        $controller('authCtrl', { $scope: $scope });
+
         var imgDir = "../../Content/Images/";
         $scope.gamesImgOn = imgDir + "games_white.svg";
         $scope.gamesImgOff = imgDir + "games.svg";
@@ -84,42 +86,38 @@
             //});
         };
 
-        $scope.$on("$wamp.close", function (event, data) {
-            //$location.path('/');
-            //$window.location.href = '/';
-        });
-
         function updateAuthorizationInfo () {
-            $scope.authData = auth.data;
-            $scope.name = auth.data.firstname;
-            $scope.fullname = auth.data.firstname + " " + auth.data.lastname;
-            if ($scope.authData.isGamer || $scope.authData.isInvestor)
-                $scope.initials = $scope.authData.firstname.slice(0, 1) + $scope.authData.lastname.slice(0, 1);
+            $scope.authData = $scope._authData;
+            $scope.name = $scope._authData.firstname;
+            $scope.fullname = $scope._authData.firstname + " " + $scope._authData.lastname;
+            if ($scope._authData.isGamer || $scope._authData.isInvestor)
+                $scope.initials = $scope._authData.firstname.slice(0, 1) + $scope._authData.lastname.slice(0, 1);
 
-            if ($scope.authData.isGamer)
+            if ($scope._authData.isGamer)
                 $scope.gamesMode = true;
-            else if ($scope.authData.isInvestor)
+            else if ($scope._authData.isInvestor)
                 $scope.gamesMode = false;
             else
                 $scope.gamesMode = undefined;
         }
-        updateAuthorizationInfo();
+
+        function loadAuthData() {
+            $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
+            if ($scope.hasGamingBalance)
+                $scope.gamingBalance = $scope._authData.gamingAccount.amount;
+            $scope.currency = $scope._authData.currency;
+        }
+
         $scope.$on(constants.events.AUTH_CHANGED, updateAuthorizationInfo);
 
-        function readAuthData() {
-            $scope.hasGamingBalance = auth.data.gamingAccount !== undefined;
-            if ($scope.hasGamingBalance)
-                $scope.gamingBalance = auth.data.gamingAccount.amount;
-            $scope.currency = auth.data.currency;
-        }
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
-            readAuthData();
+            loadAuthData();
             $scope.$apply();
         });
 
-        function init() {
-            readAuthData();
-        }
-        init();
+        $scope._init('header', function () {
+            loadAuthData();
+            updateAuthorizationInfo();
+        });
     }
 })();

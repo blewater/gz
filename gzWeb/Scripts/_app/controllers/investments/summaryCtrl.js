@@ -1,8 +1,10 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'summaryCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', 'message', '$location', 'constants', '$filter', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, api, message, $location, constants, $filter, auth) {
+    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'message', '$location', 'constants', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, $controller, api, message, $location, constants, $filter) {
+        $controller('authCtrl', { $scope: $scope });
+
         var sellingValuesFetched = false;
 
         $scope.openVintages = function(title, vintages, canWithdraw) {
@@ -79,21 +81,22 @@
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
         }
+
         function loadAuthData() {
-            $scope.hasGamingBalance = auth.data.gamingAccount !== undefined;
+            $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
             if ($scope.hasGamingBalance)
-                $scope.gamingBalance = auth.data.gamingAccount.amount;
-            $scope.currency = auth.data.currency;
+                $scope.gamingBalance = $scope._authData.gamingAccount.amount;
+            $scope.currency = $scope._authData.currency;
         }
+
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
             loadAuthData();
             $scope.$apply();
         });
 
-        function init() {
+        $scope._init('summary', function() {
             loadSummaryData();
             loadAuthData();
-        }
-        init();
+        });
     }
 })();

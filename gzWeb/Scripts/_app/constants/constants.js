@@ -129,8 +129,11 @@
         storageKeys: {
             randomSuffix: 'randomSuffix',
             authData: 'authData',
+            clientId: '$client_id$'
         },
         events: {
+            ON_INIT: 'onInit',
+            CONNECTION_INITIATED: 'connectionInitiated',
             AUTH_CHANGED: 'authChanged',
             SESSION_STATE_CHANGE: 'sessionStageChange',
             ACCOUNT_BALANCE_CHANGED: 'accountBalanceChanged',

@@ -1,4 +1,4 @@
-﻿<header ng-controller="headerCtrl">
+﻿<header ng-controller="headerCtrl" class="relative">
     <nav class="navbar navbar-default navbar-static-top" ng-class="{'navbar-initial': !scrolled}">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -91,18 +91,27 @@
             </div>
         </div>
     </nav>
-    <div>
-        <div>firstname: {{authData.firstname}}</div>
-        <div>lastname: {{authData.lastname}}</div>
-        <div>currency: {{authData.currency}}</div>
-        <div>username: {{authData.username}}</div>
-        <div>roles: {{authData.roles}}</div>
-        <div>token: {{authData.token.substr(0, 20)}}...</div>
-        <div>isGuest: {{authData.isGuest}}</div>
-        <div>isGamer: {{authData.isGamer}}</div>
-        <div>isInvestor: {{authData.isInvestor}}</div>
-        <div>gamesMode: {{gamesMode}}</div>
-        <div>balance: {{authData.gamingAccount.amount}}</div>
+    <div style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; width: 300px;margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;"
+         ng-style="{'height': collapsed ? '30px' : auto}">
+        <i ng-show="!collapsed" class="fa fa-angle-up pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>
+        <i ng-show="collapsed" class="fa fa-angle-down pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>
+        <div ng-show="!collapsed">
+            <div ng-click="collapsed = !collapsed;" style="cursor: pointer;"><i><u>hide authentication data</u></i></div>
+            <div>firstname: {{authData.firstname}}</div>
+            <div>lastname: {{authData.lastname}}</div>
+            <div>currency: {{authData.currency}}</div>
+            <div>username: {{authData.username}}</div>
+            <div>roles: {{authData.roles}}</div>
+            <div>token: {{authData.token.substr(0, 20)}}...</div>
+            <div>isGuest: {{authData.isGuest}}</div>
+            <div>isGamer: {{authData.isGamer}}</div>
+            <div>isInvestor: {{authData.isInvestor}}</div>
+            <div>gamesMode: {{gamesMode}}</div>
+            <div>balance: {{authData.gamingAccount.amount}}</div>
+        </div>
+        <div ng-show="collapsed">
+            <div ng-click="collapsed = !collapsed;" style="cursor: pointer;"><i><u>show authentication data</u></i></div>
+        </div>
     </div>
 </header>
 
