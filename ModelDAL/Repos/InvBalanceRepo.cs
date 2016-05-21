@@ -46,30 +46,74 @@ namespace gzDAL.Repos {
 
         #region Fund Shares Selling
 
-        private decimal GetVintageSellingValue(int customerId, string yearMonthStr) {
+        /// <summary>
+        /// 
+        /// Calculate the vintage in latest fund market value unless it has been sold which case returns that value
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        private decimal GetVintageSellingValue(int customerId, string yearMonthStr, int lastInvestmentId) {
 
             decimal monthlySharesValue = 0;
 
             int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
                 monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
 
-            decimal invGainLoss, monthlyBalance;
-            GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, -1, out monthlyBalance,
-                out invGainLoss);
+            var soldValue =
+                _db.GzTransactions
+                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming
+                                && t.ParentTrxId == lastInvestmentId
+                                && t.YearMonthCtd == yearMonthStr
+                                && t.CustomerId == customerId
+                                )
+                    .Sum(t => (decimal?)t.Amount);
 
-            monthlySharesValue = monthlyBalance - _gzTransactionRepo.GetWithdrawnFees(monthlyBalance);
+            // If not sold calculate it now
+            if (!soldValue.HasValue) {
+
+                var fundSharesThisMonth = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
+                        customerId,
+                        yearCurrent,
+                        monthCurrent);
+
+                var monthsNewSharesValue = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
+
+                monthlySharesValue =
+                    DbExpressions.RoundCustomerBalanceAmount(monthsNewSharesValue -
+                                                             _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesValue));
+            }
+            else {
+                monthlySharesValue = soldValue.Value;
+            }
 
             return monthlySharesValue;
         }
 
+        /// <summary>
+        /// 
+        /// Get the vintages with the selling value calculated if not sold
+        /// 
+        /// -- or
+        /// 
+        /// their selling value when they were sold.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
         public IEnumerable<VintageDto> GetCustomerVintagesSellingValue(int customerId) {
 
             var customerVintages = _gzTransactionRepo
                 .GetCustomerVintages(customerId)
                 .Select(v => new VintageDto() {
-                     SellingValue = GetVintageSellingValue(customerId, v.YearMonthStr),
+                     SellingValue = GetVintageSellingValue(
+                         customerId, 
+                         v.YearMonthStr, 
+                         v.LastInvestmentId),
                      InvestAmount = v.InvestAmount,
-                     YearMonthStr = v.YearMonthStr
+                     YearMonthStr = v.YearMonthStr,
+                     Locked = v.Locked,
+                     Sold = v.Sold
                  }).ToList();
 
             return customerVintages;
@@ -77,14 +121,30 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Sell completely a customer's portfolio
+        /// Sell any vintages marked for selling. They are sold at the fund prices current
+        /// as of this method call.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintages"></param>
+        /// <returns></returns>
+        public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+
+            return vintages;
+        }
+
+        /// <summary>
+        /// 
+        /// Sell completely a customer's owned funds shares.
+        /// 
+        /// Supports selling shares in previous months respective the fund prices of those months.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="updatedDateTimeUtc">The database creation time-stamp.</param>
         /// <param name="yearCurrent">Optional year value for selling in the past</param>
         /// <param name="monthCurrent">Optional month value for selling in the past</param>
-        public bool SaveDbSellCustomerPortfolio(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0, int monthCurrent = 0) {
+        public bool SaveDbSellAllCustomerFundsShares(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0, int monthCurrent = 0) {
 
             // Assume we don't sell shares
             var soldShares = false;
@@ -101,8 +161,8 @@ namespace gzDAL.Repos {
                 throw new Exception("Cannot sell the customer's (id: " + customerId + ") portfolio in the future.");
             }
 
-            // Trigger selling full portfolio by asking -$1 off of it.
-            var portfolioFundsValuesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(customerId, -1, yearCurrent, monthCurrent);
+            // Calculate the value of the fund shares
+            var portfolioFundsValuesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(customerId, 0, yearCurrent, monthCurrent);
 
             // Make sure we have shares to sell
             if (portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesNum) > 0) {
@@ -342,7 +402,9 @@ namespace gzDAL.Repos {
         /// <param name="endYearMonthStr">If null assuming -> Now</param>
         public void SaveDbAllCustomersMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null) {
 
-            var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr);
+            startYearMonthStr = GetTrxMinMaxMonths(startYearMonthStr, ref endYearMonthStr);
+
+            var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr, endYearMonthStr);
 
             foreach (var customerId in activeCustomerIds) {
 
@@ -351,6 +413,16 @@ namespace gzDAL.Repos {
 
         }
 
+        /// <summary>
+        /// 
+        /// Set default transaction processing months
+        /// minimum: earliest transaction month
+        /// maximum: the present month.
+        /// 
+        /// </summary>
+        /// <param name="startYearMonthStr"></param>
+        /// <param name="endYearMonthStr"></param>
+        /// <returns>earliest StartYearMonth</returns>
         private string GetTrxMinMaxMonths(string startYearMonthStr, ref string endYearMonthStr) {
 
             if (string.IsNullOrEmpty(startYearMonthStr)) {
@@ -455,7 +527,7 @@ namespace gzDAL.Repos {
                 var soldPortfolioTimestamp = _gzTransactionRepo.GetSoldPortfolioTimestamp(customerId, yearCurrent,
                     monthCurrent);
 
-                SaveDbSellCustomerPortfolio(customerId, soldPortfolioTimestamp, yearCurrent, monthCurrent);
+                SaveDbSellAllCustomerFundsShares(customerId, soldPortfolioTimestamp, yearCurrent, monthCurrent);
             }
         }
 

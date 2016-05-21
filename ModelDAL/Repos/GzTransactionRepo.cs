@@ -48,7 +48,9 @@ namespace gzDAL.Repos {
                 .Select(g => new {
                     YearMonthStr = g.Key,
                     InvestAmount = g.Sum(t => t.Amount),
-                    VintageDate = g.Max(t => t.CreatedOnUTC)
+                    VintageDate = g.Max(t => t.CreatedOnUTC),
+                    Sold = g.Any(t => t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming),
+                    MaxInvestmentId = g.Max(t=>t.Id)
                 })
                 /** 
                  * The 2 staged select approach with AsEnumerable 
@@ -59,7 +61,9 @@ namespace gzDAL.Repos {
                 .Select(t => new VintageDto() {
                     YearMonthStr = t.YearMonthStr,
                     InvestAmount = t.InvestAmount,
-                    SellThisMonth = (DateTime.UtcNow - t.VintageDate).TotalDays - lockInDays >= 0
+                    Locked = lockInDays - (DateTime.UtcNow - t.VintageDate).TotalDays > 0,
+                    Sold = t.Sold,
+                    LastInvestmentId = t.MaxInvestmentId
                 })
                 .ToList();
 
@@ -68,19 +72,28 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Get the Customer ids whose transaction activity has been initiated already within a given month
+        /// Get the Customer ids whose transaction activity has been initiated already 
+        /// within a range of months
         /// 
         /// </summary>
-        /// <param name="thisYearMonth"></param>
+        /// <param name="startYearMonthStr"></param>
+        /// <param name="endYearMonthStr"></param>
         /// <returns></returns>
-        public IEnumerable<int> GetActiveCustomers(string thisYearMonth) {
+        public IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr) {
 
-            return _db.GzTransactions
-                .Where(BeforeEq(thisYearMonth))
+            if (string.IsNullOrEmpty(startYearMonthStr) && string.IsNullOrEmpty(endYearMonthStr)) {
+                throw new Exception("startYearMonth and endYearMonth cannot be empty or null");
+            }
+
+            var customerIds = _db.GzTransactions
+                .Where(LaterEq(startYearMonthStr))
+                .Where(BeforeEq(endYearMonthStr))
                 .OrderBy(t => t.CustomerId)
                 .Select(t => t.CustomerId)
                 .Distinct()
                 .ToList();
+
+            return customerIds;
         }
 
         /// <summary>
