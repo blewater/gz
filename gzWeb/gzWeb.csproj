@@ -494,6 +494,7 @@
     <Content Include="Partials\messages\forgotPassword.html" />
     <Content Include="Partials\messages\registerDetails.html" />
     <Content Include="Partials\messages\confirmDeposit.html" />
+    <Content Include="Partials\messages\explainerVideo.html" />
     <Content Include="Partials\messages\terms.html" />
     <Content Include="Partials\messages\login.html" />
     <Content Include="Partials\messages\registerAccount.html" />
