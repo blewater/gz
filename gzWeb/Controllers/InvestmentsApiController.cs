@@ -204,14 +204,14 @@ namespace gzWeb.Controllers
 
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
-            var investmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*user.InvBalance);
+            var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*user.LastInvestmentAmount);
 
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
                             //Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                             NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
-                            NextExpectedInvestment = investmentsBalance,
+                            NextExpectedInvestment = investmentAmount,
                             //ROI = new ReturnOnInvestmentViewModel { Title = "% Current ROI", Percent = 59 },
                             Plans = GetCustomerPlans(user)
                         };
