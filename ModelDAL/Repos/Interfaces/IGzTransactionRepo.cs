@@ -7,6 +7,8 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface IGzTransactionRepo {
 
+        decimal GetTotalDeposit(int customerId);
+
         IEnumerable<VintageDto> GetCustomerVintages(int customerId);
 
         IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
@@ -21,7 +23,11 @@ namespace gzDAL.Repos.Interfaces
 
         bool GetEnabledWithdraw(int customerId);
 
-        void SaveDbGzTransaction(int customerId, GzTransactionJournalTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc);
+        void SaveDbGmTransaction(int customerId, GmTransactionTypeEnum gzTransactionType, decimal amount,
+            DateTime createdOnUtc);
+
+        void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount,
+            DateTime createdOnUtc);
 
         void SaveDbInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc);
 
@@ -29,6 +35,6 @@ namespace gzDAL.Repos.Interfaces
 
         void SaveDbTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc);
 
-        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionJournalTypeEnum sellingJournalTypeReason, DateTime createdOnUtc);
+        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, DateTime createdOnUtc);
     }
 }

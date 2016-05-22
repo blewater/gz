@@ -35,13 +35,13 @@ namespace gzDAL.Models
             }
         }
         public virtual ICollection<InvBalance> InvBalances { get; set; }
-        public virtual ICollection<GzTransaction> GzTransactions { get; set; }
+        public virtual ICollection<GzTrx> GzTrxs { get; set; }
 
         public virtual ICollection<CustPortfolio> CustPortfolios { get; set; }
 
-        //[Index(IsUnique=true)]
-        //[Required]
-        public int? PlatformCustomerId { get; set; }
+        //http://stackoverflow.com/questions/24361518/ef-6-1-unique-nullable-index
+        [Index]
+        public int? GmCustomerId { get; set; }
 
         public string Currency { get; set; }
 
@@ -56,8 +56,8 @@ namespace gzDAL.Models
         [NotMapped]
         public decimal LastInvestmentAmount {
             get {
-                return GzTransactions
-                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
+                return GzTrxs
+                    .Where(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
                     .OrderByDescending(t => t.YearMonthCtd)
                     .Select(t => t.Amount)
                     .FirstOrDefault();
@@ -75,19 +75,9 @@ namespace gzDAL.Models
         [NotMapped]
         public decimal TotalInvestments {
             get {
-                return 
-                    GzTransactions
-                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss)
-                    .Select(t => t.Amount)
-                    .Sum();
-            }
-        }
-        [NotMapped]
-        public decimal TotalDeposits {
-            get {
-                return 
-                    GzTransactions
-                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.Deposit)
+                return
+                    GzTrxs
+                    .Where(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
                     .Select(t => t.Amount)
                     .Sum();
             }
@@ -96,9 +86,8 @@ namespace gzDAL.Models
         public decimal TotalWithdrawals {
             get {
                 return 
-                    GzTransactions
-                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.InvWithdrawal 
-                             || t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming)
+                    GzTrxs
+                    .Where(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming)
                     .Select(t => t.Amount)
                     .Sum();
             }
@@ -212,8 +201,10 @@ namespace gzDAL.Models
         public DbSet<Fund> Funds { get; set; }
         public DbSet<FundPrice> FundPrices { get; set; }
         public DbSet<GzConfiguration> GzConfigurations { get; set; }
-        public DbSet<GzTransaction> GzTransactions { get; set; }
-        public DbSet<GzTransactionType> GzTransationTypes { get; set; }
+        public DbSet<GmTrx> GmTrxs { get; set; }
+        public DbSet<GmTrxType> GmTrxTypes { get; set; }
+        public DbSet<GzTrx> GzTrxs { get; set; }
+        public DbSet<GzTrxType> GzTrxTypes { get; set; }
         public DbSet<InvBalance> InvBalances { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }

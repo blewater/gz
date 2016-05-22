@@ -168,7 +168,7 @@ namespace gzWeb.Tests.Models {
 
                 // Add deposit, withdrawals
                 gzTrx.SaveDbTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
-                gzTrx.SaveDbGzTransaction(customerId: custId, gzTransactionType: GzTransactionJournalTypeEnum.Deposit,
+                gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
                     amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
                 gzTrx.SaveDbInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
                 gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
@@ -182,7 +182,7 @@ namespace gzWeb.Tests.Models {
                 var gzTrx = new GzTransactionRepo(db);
 
                 // Add deposit, withdrawals
-                gzTrx.SaveDbGzTransaction(customerId: custId, gzTransactionType: GzTransactionJournalTypeEnum.Deposit,
+                gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
                     amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
             }
         }
