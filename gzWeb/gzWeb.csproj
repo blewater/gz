@@ -309,6 +309,10 @@
     <Compile Include="Migrations\201605182136365_GzTrxSelfReferencing.Designer.cs">
       <DependentUpon>201605182136365_GzTrxSelfReferencing.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605222154593_Transactions split to Gm Gz.cs" />
+    <Compile Include="Migrations\201605222154593_Transactions split to Gm Gz.Designer.cs">
+      <DependentUpon>201605222154593_Transactions split to Gm Gz.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -750,6 +754,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605182136365_GzTrxSelfReferencing.resx">
       <DependentUpon>201605182136365_GzTrxSelfReferencing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605222154593_Transactions split to Gm Gz.resx">
+      <DependentUpon>201605222154593_Transactions split to Gm Gz.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
