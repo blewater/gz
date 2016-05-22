@@ -106,58 +106,50 @@
         }
 
         function error(msg, options) {
-            function createErrorMsg(err) {
-                if (err && err.Message) {
-                    var errorElement = angular.element('<div></div>');
-                    var errorMessageElement = angular.element('<h5></h5>');
-                    errorMessageElement.append(err.Message);
-                    errorElement.append(errorMessageElement);
-                    if (err.MessageDetail) {
-                        var errorMessageDetailElement = angular.element('<h6></h6>');
-                        errorMessageDetailElement.append(err.MessageDetail);
-                        errorElement.append(errorMessageDetailElement);
-                    }
-                    return errorElement[0].outerHTML;
-                }
-                else
-                    return err;
-            }
+            //function createErrorMsg(err) {
+            //    if (err && err.Message) {
+            //        var errorElement = angular.element('<div></div>');
+            //        var errorMessageElement = angular.element('<h5></h5>');
+            //        errorMessageElement.append(err.Message);
+            //        errorElement.append(errorMessageElement);
+            //        if (err.MessageDetail) {
+            //            var errorMessageDetailElement = angular.element('<h6></h6>');
+            //            errorMessageDetailElement.append(err.MessageDetail);
+            //            errorElement.append(errorMessageDetailElement);
+            //        }
+            //        return errorElement[0].outerHTML;
+            //    }
+            //    else
+            //        return err;
+            //}
             var defaults = {
                 nsClass: 'error',
-                nsTitle: 'Error!',
-                nsBody: createErrorMsg(msg),
-                nsIconClass: 'fa-times',
-                nsSize: 'md',
-                nsStatic: true
+                nsTitle: msg,
+                nsIconClass: 'fa-times'
             };
-            return modal(msg, angular.extend(defaults, options));
+            return notify(msg, angular.extend(defaults, options));
         }
         function success(msg, options) {
             var defaults = {
                 nsClass: 'success',
-                nsIconClass: 'fa-check',
-                nsTitle: 'Success!',
-                nsBody: msg,
-                nsSize: 'sm'
+                nsTitle: msg,
+                nsIconClass: 'fa-check'
             };
-            return modal(msg, angular.extend(defaults, options));
+            return notify(msg, angular.extend(defaults, options));
         }
         function warning(msg, options) {
             var defaults = {
                 nsClass: 'warning',
-                nsIconClass: 'fa-exclamation-triangle',
-                nsTitle: 'Warning!',
-                nsBody: msg,
-                nsSize: 'md'
+                nsTitle: msg,
+                nsIconClass: 'fa-exclamation-triangle'
             };
-            return modal(msg, angular.extend(defaults, options));
+            return notify(msg, angular.extend(defaults, options));
         }
         function info(msg, options) {
             var defaults = {
                 nsClass: 'info',
-                nsIconClass: 'fa-bell',
                 nsTitle: msg,
-                nsSize: 'sm'
+                nsIconClass: 'fa-bell'
             };
             return notify(msg, angular.extend(defaults, options));
         }
