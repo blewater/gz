@@ -4,6 +4,7 @@
     APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', ctrlFactory]);
     function ctrlFactory($scope, message, emWamp, chat, $location, auth) {
         // #region Playground
+        // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
             message.alert('Alert ' + m++);
@@ -18,11 +19,24 @@
             message.notify('Notification ' + n++);
         };
         $scope.toastr = function () {
-            message.toastr('Toastr ' + t++, {
-                nsAutoCloseDelay: 50000
-            });
+            message.toastr('Toastr ' + t++);
         };
 
+        $scope.error = function () {
+            message.error('Error sdfg dtg d ghd gh dt gh  dth d ty hdbt yh  dtyhjtdyhbetdhrstgvetrheyhrfyjrct yhrvtvyjry j rvy jhjjjgujhb jbjbklhbgfnuuyh yfbnuymmntf bnmn tbyuihn tygbnyuhtygb6t7gbbntgnjj vyd j ry j vr tj y hjv ryvrh xch gh');
+        };
+        $scope.success = function () {
+            message.success('Success');
+        };
+        $scope.warning = function () {
+            message.warning('Warning');
+        };
+        $scope.info = function () {
+            message.info('Info');
+        };
+        // #endregion
+
+        // #region Account
         $scope.registerAccount = function () {
             message.open({
                 nsType: 'modal',
@@ -96,7 +110,9 @@
         $scope.logout = function () {
             auth.logout();
         };
+        // #endregion
 
+        // #region Various
         $scope.showChat = function () {
             chat.show();
         };
@@ -108,6 +124,15 @@
             var url = $location.protocol() + "://" + $location.host() + ":" + $location.port();
             message.toastr(url);
         };
+
+        $scope.video = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '640px',
+                nsTemplate: '/partials/messages/explainerVideo.html'
+            });
+        }
+        // #endregion
         // #endregion
     }
 })();
