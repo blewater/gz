@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'performanceCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', 'api', ctrlFactory]);
-    function ctrlFactory($scope, $controller, api) {
+    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, $controller, api, constants) {
         $controller('authCtrl', { $scope: $scope });
 
         function loadPerformanceData() {
