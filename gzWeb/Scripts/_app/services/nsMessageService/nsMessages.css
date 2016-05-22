@@ -430,6 +430,7 @@
 }
 #ns-msgs .msg.msg-modal .msg-frame .msg-close {
     position: absolute;
+    z-index: 1;
     width: 32px;
     height: 32px;
     top: -16px;
@@ -500,6 +501,8 @@
 #ns-msgs .msg .msg-title-wrap {
     text-align: center;
     background-color: #27A95C;
+    max-height: 100px;
+    overflow-y: auto;
 }
 #ns-msgs .msg .msg-title-wrap.msg-empty-title {
     height: 0;
@@ -508,9 +511,9 @@
 #ns-msgs .msg .msg-icon {
     width: 35px;
     line-height: 35px;
-    float: left;
+    /*float: left;*/
     margin-left: 5px;
-    margin-right: 20px;
+    margin-top: 5px;
     text-align: center;
     -ms-border-radius: 50%;
     border-radius: 50%;
@@ -594,20 +597,107 @@
 #ns-msgs .msg.msg-default .msg-icon { background-color: #27A95C; }
 #ns-msgs .msg.msg-default .msg-icon.msg-icon-inversed { color: #27A95C; background-color: transparent; }
 
+
 #ns-msgs .msg.msg-info .msg-icon { background-color: #3953a4; }
 #ns-msgs .msg.msg-info .msg-icon.msg-icon-inversed { color: #3953a4; background-color: transparent; }
+#ns-msgs .msg.msg-notification.msg-info .msg-title-wrap,
+#ns-msgs .msg.msg-toastr.msg-info .msg-title-wrap { background-color: #3953a4; }
+#ns-msgs .msg.msg-notification.msg-info .msg-icon.msg-icon-inversed,
+#ns-msgs .msg.msg-toastr.msg-info .msg-icon.msg-icon-inversed { background-color: #f2f2f2; }
+#ns-msgs .msg.msg-info .msg-frame .msg-down,
+#ns-msgs .msg.msg-info .msg-frame .msg-up,
+#ns-msgs .msg.msg-info .msg-frame .msg-close { color: #3953a4; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-info .msg-frame .msg-down:hover,
+#ns-msgs .msg.msg-info .msg-frame .msg-up:hover,
+#ns-msgs .msg.msg-info .msg-frame .msg-close:hover { color: #f2f2f2; background-color: #3953a4; }
+#ns-msgs .msg.msg-info .msg-frame .msg-badge { background-color: #3953a4; }
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized { background-color: #3953a4; }
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized .msg-down,
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized .msg-up,
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized .msg-close { color: #f2f2f2; background-color: #3953a4; }
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized .msg-down:hover,
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized .msg-up:hover,
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized .msg-close:hover { color: #3953a4; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-info .msg-frame.msg-minimized .msg-badge { color: #3953a4; background-color: #f2f2f2; }
+
 
 #ns-msgs .msg.msg-success .msg-icon { background-color: #27A95C; }
 #ns-msgs .msg.msg-success .msg-icon.msg-icon-inversed { color: #27A95C; background-color: transparent; }
+#ns-msgs .msg.msg-notification.msg-success .msg-title-wrap,
+#ns-msgs .msg.msg-toastr.msg-success .msg-title-wrap { background-color: #27A95C; }
+#ns-msgs .msg.msg-notification.msg-success .msg-icon.msg-icon-inversed,
+#ns-msgs .msg.msg-toastr.msg-success .msg-icon.msg-icon-inversed { background-color: #f2f2f2; }
+#ns-msgs .msg.msg-success .msg-frame .msg-down,
+#ns-msgs .msg.msg-success .msg-frame .msg-up,
+#ns-msgs .msg.msg-success .msg-frame .msg-close { color: #27A95C; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-success .msg-frame .msg-down:hover,
+#ns-msgs .msg.msg-success .msg-frame .msg-up:hover,
+#ns-msgs .msg.msg-success .msg-frame .msg-close:hover { color: #f2f2f2; background-color: #27A95C; }
+#ns-msgs .msg.msg-success .msg-frame .msg-badge { background-color: #27A95C; }
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized { background-color: #27A95C; }
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized .msg-down,
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized .msg-up,
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized .msg-close { color: #f2f2f2; background-color: #27A95C; }
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized .msg-down:hover,
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized .msg-up:hover,
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized .msg-close:hover { color: #27A95C; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-success .msg-frame.msg-minimized .msg-badge { color: #27A95C; background-color: #f2f2f2; }
+
 
 #ns-msgs .msg.msg-warning .msg-icon { background-color: #dfb820; }
 #ns-msgs .msg.msg-warning .msg-icon.msg-icon-inversed { color: #dfb820; background-color: transparent; }
+#ns-msgs .msg.msg-notification.msg-warning .msg-title-wrap,
+#ns-msgs .msg.msg-toastr.msg-warning .msg-title-wrap { background-color: #dfb820; }
+#ns-msgs .msg.msg-notification.msg-warning .msg-icon.msg-icon-inversed,
+#ns-msgs .msg.msg-toastr.msg-warning .msg-icon.msg-icon-inversed { background-color: #f2f2f2; }
+#ns-msgs .msg.msg-warning .msg-frame .msg-down,
+#ns-msgs .msg.msg-warning .msg-frame .msg-up,
+#ns-msgs .msg.msg-warning .msg-frame .msg-close { color: #dfb820; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-warning .msg-frame .msg-down:hover,
+#ns-msgs .msg.msg-warning .msg-frame .msg-up:hover,
+#ns-msgs .msg.msg-warning .msg-frame .msg-close:hover { color: #f2f2f2; background-color: #dfb820; }
+#ns-msgs .msg.msg-warning .msg-frame .msg-badge { background-color: #dfb820; }
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized { background-color: #dfb820; }
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized .msg-down,
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized .msg-up,
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized .msg-close { color: #f2f2f2; background-color: #dfb820; }
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized .msg-down:hover,
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized .msg-up:hover,
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized .msg-close:hover { color: #dfb820; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-warning .msg-frame.msg-minimized .msg-badge { color: #dfb820; background-color: #f2f2f2; }
+
 
 #ns-msgs .msg.msg-error .msg-icon { background-color: #dc272d; }
 #ns-msgs .msg.msg-error .msg-icon.msg-icon-inversed { color: #dc272d; background-color: transparent; }
+#ns-msgs .msg.msg-notification.msg-error .msg-title-wrap,
+#ns-msgs .msg.msg-toastr.msg-error .msg-title-wrap { background-color: #dc272d; }
+#ns-msgs .msg.msg-notification.msg-error .msg-icon.msg-icon-inversed,
+#ns-msgs .msg.msg-toastr.msg-error .msg-icon.msg-icon-inversed { background-color: transparent; }
+#ns-msgs .msg.msg-error .msg-frame .msg-down,
+#ns-msgs .msg.msg-error .msg-frame .msg-up,
+#ns-msgs .msg.msg-error .msg-frame .msg-close { color: #dc272d; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-error .msg-frame .msg-down:hover,
+#ns-msgs .msg.msg-error .msg-frame .msg-up:hover,
+#ns-msgs .msg.msg-error .msg-frame .msg-close:hover { color: #f2f2f2; background-color: #dc272d; }
+#ns-msgs .msg.msg-error .msg-frame .msg-badge { background-color: #dc272d; }
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized { background-color: #dc272d; }
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized .msg-down,
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized .msg-up,
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized .msg-close { color: #f2f2f2; background-color: #dc272d; }
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized .msg-down:hover,
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized .msg-up:hover,
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized .msg-close:hover { color: #dc272d; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-error .msg-frame.msg-minimized .msg-badge { color: #dc272d; background-color: #f2f2f2; }
+
 
 #ns-msgs .msg.msg-prompt .msg-icon { background-color: #4ea9df; }
-#ns-msgs .msg.msg-prompt .msg-icon.msg-icon-inversed { color: #4ea9df; background-color: transparent; }
+#ns-msgs .msg.msg-prompt .msg-icon.msg-icon-inversed { color: #4ea9df; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-prompt .msg-frame .msg-down,
+#ns-msgs .msg.msg-prompt .msg-frame .msg-up,
+#ns-msgs .msg.msg-prompt .msg-frame .msg-close { color: #4ea9df; background-color: #f2f2f2; }
+#ns-msgs .msg.msg-prompt .msg-frame .msg-down:hover,
+#ns-msgs .msg.msg-prompt .msg-frame .msg-up:hover,
+#ns-msgs .msg.msg-prompt .msg-frame .msg-close:hover { color: #f2f2f2; background-color: #4ea9df; }
 
 #ns-msgs .msg.msg-custom .msg-body { padding: 0;color: #7b7b7b;background-color: #f2f2f2; }
 /*#endregion*/

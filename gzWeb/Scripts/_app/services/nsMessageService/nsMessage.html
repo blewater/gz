@@ -21,7 +21,9 @@
                 <div class="msg-icon" ng-if="nsOptions.nsIconClass" ng-class="{'msg-icon-inversed': nsOptions.nsIconClassInversed}">
                     <i class="fa fa-lg" ng-class="nsOptions.nsIconClass"></i>
                 </div>
-                <div class="msg-title" ng-class="{ 'msg-title-shout': nsOptions.nsTitleShout }">
+                <div class="msg-title"
+                     ng-class="{ 'msg-title-shout': nsOptions.nsTitleShout }"
+                     ng-style="{ 'margin-left': nsOptions.nsIconClass ? '40px' : 0}">
                     {{nsOptions.nsTitle}}
                 </div>
             </div>
