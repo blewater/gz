@@ -10,6 +10,7 @@ using gzDAL.Repos;
 using Microsoft.AspNet.Identity;
 using Assert = NUnit.Framework.Assert;
 using System.Collections.Generic;
+using gzDAL.ModelUtil;
 
 namespace gzWeb.Tests.Models {
     [TestFixture]
@@ -131,7 +132,7 @@ namespace gzWeb.Tests.Models {
         [Test]
         public void SaveDbAfterCleanTrxTblUpdBalancesByTrx() {
 
-            string[] customerEmails = new string[] { "info@nessos.gr", "testuser@gz.com" };
+            string[] customerEmails = new string[] { "info@nessos.gr", "testuser@gz.com", "6month@allocation.com" };
 
             using (ApplicationDbContext db = new ApplicationDbContext(null)) {
 
@@ -144,7 +145,8 @@ namespace gzWeb.Tests.Models {
 
                     if (custId != 0) {
 
-                        db.Database.ExecuteSqlCommand("Delete GzTransactions Where CustomerId = " + custId);
+                        db.Database.ExecuteSqlCommand("Delete GzTrxs Where CustomerId = " + custId);
+                        db.Database.ExecuteSqlCommand("Delete GmTrxs Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
                         CreateTestCustomerPortfolioSelections(custId);
@@ -168,8 +170,10 @@ namespace gzWeb.Tests.Models {
 
                 // Add deposit, withdrawals
                 gzTrx.SaveDbTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
+
                 gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
                     amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
+
                 gzTrx.SaveDbInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
                 gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
                 gzTrx.SaveDbInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
@@ -183,7 +187,9 @@ namespace gzWeb.Tests.Models {
 
                 // Add deposit, withdrawals
                 gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
-                    amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
+                    amount: 3500, createdOnUtc: new DateTime(2015, 7, 15));
+                gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
+                    amount: 8000, createdOnUtc: new DateTime(2015, 7, 15));
             }
         }
 
@@ -192,22 +198,33 @@ namespace gzWeb.Tests.Models {
                 var gzTrx = new GzTransactionRepo(db);
 
                 // Add playing losses for first 6 months of 2015
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 160, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2015, 1, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 120, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2015, 2, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2015, 3, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 170, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2015, 4, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 300, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2015, 5, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2015, 6, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2016, 1, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 100, creditPcnt: 50,
-                    createdOnUtc: new DateTime(2015, 9, 30));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 160, createdOnUtc: new DateTime(2015, 1, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 120, createdOnUtc: new DateTime(2015, 2, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, createdOnUtc: new DateTime(2015, 3, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 170, createdOnUtc: new DateTime(2015, 4, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 300, createdOnUtc: new DateTime(2015, 5, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, createdOnUtc: new DateTime(2015, 6, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, createdOnUtc: new DateTime(2016, 1, 1));
+                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 100, createdOnUtc: new DateTime(2015, 9, 30));
+
+                var startYearMonthStr = "201510";
+                var endYeerMonthStr = DateTime.UtcNow.ToStringYearMonth();
+
+                while (startYearMonthStr.BeforeEq(endYeerMonthStr)) {
+
+                    var createdOnUtc = 
+                        new DateTime(
+                            int.Parse(startYearMonthStr.Substring(0, 4)),
+                            int.Parse(startYearMonthStr.Substring(4, 2)), 
+                            15);
+
+                    gzTrx.SaveDbPlayingLoss(
+                        customerId: custId, 
+                        totPlayinLossAmount: 200, 
+                        createdOnUtc: createdOnUtc);
+
+                    startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+                }
             }
         }
 

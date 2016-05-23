@@ -38,13 +38,29 @@ namespace gzDAL.Repos {
 
             decimal totalDeposits = 0;
 
-            var gmCustomerId = _db.Users.Where(u => u.Id == customerId).Select(u => u.GmCustomerId).SingleOrDefault();
+            var customerIds =
+                _db.Users.Where(u => u.Id == customerId)
+                    .Select(u => new {
+                        u.GmCustomerId,
+                        u.Email
+                    })
+                    .Single();
 
-            if (gmCustomerId > 0) {
+            if (customerIds.GmCustomerId.HasValue) {
 
-                totalDeposits = 
+                totalDeposits =
                     _db.GmTrxs
-                        .Where(t => t.Type.Code == GmTransactionTypeEnum.Deposit)
+                        .Where(t => t.CustomerId == customerIds.GmCustomerId &&
+                                    t.Type.Code == GmTransactionTypeEnum.Deposit)
+                        .Select(t => t.Amount)
+                        .Sum();
+            }
+            else {
+
+                totalDeposits =
+                    _db.GmTrxs
+                        .Where(t => t.CustomerEmail == customerIds.Email &&
+                                    t.Type.Code == GmTransactionTypeEnum.Deposit)
                         .Select(t => t.Amount)
                         .Sum();
             }
@@ -112,7 +128,7 @@ namespace gzDAL.Repos {
                 throw new Exception("startYearMonth and endYearMonth cannot be empty or null");
             }
 
-            var customerIds = _db.GmTrxs
+            var customerIds = _db.GzTrxs
                 .Where(LaterEq(startYearMonthStr))
                 .Where(BeforeEq(endYearMonthStr))
                 .OrderBy(t => t.CustomerId)
@@ -413,24 +429,20 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="totPlayinLossAmount">Total amount that was lost</param>
-        /// <param name="creditPcnt">Percentage number (0-100) to credit balance. For example 50 for half the amount to be credited</param>
         /// <param name="createdOnUtc">Date of the transaction in UTC</param>
+        /// 
         /// <returns></returns>
-        public void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, decimal creditPcnt, DateTime createdOnUtc) {
+        public void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, DateTime createdOnUtc) {
 
-            if (creditPcnt < 0 || creditPcnt > 100) {
+            var creditPcnt = _db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single();
 
-                throw new Exception("Invalid percentage not within range 0..100: " + creditPcnt);
+            SaveDbGzTransaction(
+                customerId, 
+                GzTransactionTypeEnum.CreditedPlayingLoss,
+                totPlayinLossAmount * (decimal) creditPcnt / 100,
+                createdOnUtc,
+                creditPcnt);
 
-            } else {
-
-                SaveDbGzTransaction(customerId, GzTransactionTypeEnum.CreditedPlayingLoss,
-                    totPlayinLossAmount * creditPcnt / 100,
-                    createdOnUtc,
-                    // Db Configuration value
-                    _db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single());
-
-            }
         }
 
         /// <summary>
@@ -446,23 +458,36 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public void SaveDbGmTransaction(int customerId, GmTransactionTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc) {
 
-            //Not thread safe but ok...within a single request context
-            _db.GmTrxs.AddOrUpdate(
+            var customerIds = _db.Users
+                .Where(u => u.Id == customerId)
+                .Select(u => new {u.GmCustomerId, u.Email})
+                .Single();
 
-                // Assume CreatedOnUtc remains constant for same transaction
-                // to support idempotent transactions
+            GmTrx newGmTrx = new GmTrx {
+                CustomerId = customerId,
+                GmCustomerId = customerIds.GmCustomerId,
+                CustomerEmail = customerIds.Email,
+                TypeId = _db.GmTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
+                YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
+                Amount = amount,
+                // Truncate Milliseconds to avoid mismatch between .net dt <--> MSSQl dt
+                CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
+            };
 
-                t => new { t.CustomerId, t.TypeId, t.CreatedOnUtc },
-                    new GmTrx {
-                        CustomerId = customerId,
-                        TypeId = _db.GmTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
-                        YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
-                        Amount = amount,
-                        // Truncate Milliseconds to avoid mismatch between .net dt <--> MSSQl dt
-                        CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
-                    }
-                );
-            _db.SaveChanges();
+            if (customerIds.GmCustomerId.HasValue) {
+                _db.GmTrxs.AddOrUpdate(
+                    t => new {t.GmCustomerId, t.CustomerEmail, t.YearMonthCtd, t.TypeId, t.CreatedOnUtc, t.Amount},
+                    newGmTrx
+                    );
+                _db.SaveChanges();
+            }
+            else {
+                _db.GmTrxs.AddOrUpdate(
+                    t => new { t.CustomerEmail, t.YearMonthCtd, t.TypeId, t.CreatedOnUtc, t.Amount },
+                    newGmTrx
+                    );
+                _db.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -508,7 +533,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="futureYearMonthStr"></param>
         /// <returns></returns>
-        private static Expression<Func<GmTrx, bool>> BeforeEq(string futureYearMonthStr) {
+        private static Expression<Func<GzTrx, bool>> BeforeEq(string futureYearMonthStr) {
             return t => string.Compare(t.YearMonthCtd, futureYearMonthStr, StringComparison.Ordinal) <= 0;
         }
 
@@ -520,7 +545,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="pastYearMonthStr"></param>
         /// <returns></returns>
-        private static Expression<Func<GmTrx, bool>> LaterEq(string pastYearMonthStr) {
+        private static Expression<Func<GzTrx, bool>> LaterEq(string pastYearMonthStr) {
             return t => string.Compare(t.YearMonthCtd, pastYearMonthStr, StringComparison.Ordinal) >= 0;
         }
     }

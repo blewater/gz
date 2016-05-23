@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using System.Linq;
+using gzDAL.ModelUtil;
 
 namespace gzDAL.Models
 {
@@ -57,10 +58,10 @@ namespace gzDAL.Models
         public decimal LastInvestmentAmount {
             get {
                 return GzTrxs
-                    .Where(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
-                    .OrderByDescending(t => t.YearMonthCtd)
+                    .Where(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss
+                                && t.YearMonthCtd == DateTime.UtcNow.ToStringYearMonth())
                     .Select(t => t.Amount)
-                    .FirstOrDefault();
+                    .Sum();
             }
         }
         [NotMapped]

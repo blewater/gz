@@ -19,14 +19,21 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required, Index("CustomerId_Mon_idx_gztransaction", IsUnique = false, Order = 1)]
-        public int CustomerId { get; set; }
+        [Index]
+        public int? CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
-        [Index("CustomerId_Mon_idx_gztransaction",IsUnique = false, Order = 2)]
-        [Required, StringLength(6)]
+        [Index]
+        [StringLength(6)]
         public string YearMonthCtd { get; set; }
+
+        [Index]
+        public int? GmCustomerId { get; set; }
+
+        [Index]
+        [StringLength(256)]
+        public string CustomerEmail { get; set; }   
 
         [ForeignKey("Type")]
         public int TypeId { get; set; }
