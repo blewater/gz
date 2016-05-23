@@ -38,23 +38,25 @@
                 $scope.passwordValidation.error = _passwordPolicyError;
             };
         };
+        $scope.newPasswordFocusedOnce = false;
         $scope.onNewPasswordFocus = function () {
             $scope.newPasswordFocused = true;
+            $scope.newPasswordFocusedOnce = true;
         }
         $scope.onNewPasswordBlur = function () {
             $scope.newPasswordFocused = false;
             $scope.validatePassword($scope.model.newPassword);
         }
 
-        $scope.passwordValidOnce = false;
-        var unregisterIsPasswordValidWatch = $scope.$watch(function () {
-            return $scope.form.newPassword.$dirty && $scope.form.newPassword.$valid && $scope.passwordValidation.isValid === true;
-        }, function (newValue, oldValue) {
-            if (newValue === true) {
-                $scope.passwordValidOnce = true;
-                unregisterIsPasswordValidWatch();
-            }
-        });
+        //$scope.passwordValidOnce = false;
+        //var unregisterIsPasswordValidWatch = $scope.$watch(function () {
+        //    return $scope.form.newPassword.$dirty && $scope.form.newPassword.$valid && $scope.passwordValidation.isValid === true;
+        //}, function (newValue, oldValue) {
+        //    if (newValue === true) {
+        //        $scope.passwordValidOnce = true;
+        //        unregisterIsPasswordValidWatch();
+        //    }
+        //});
         // #endregion
         
         $scope.submit = function () {
