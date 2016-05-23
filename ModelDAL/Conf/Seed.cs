@@ -560,10 +560,10 @@ namespace gzDAL.Conf
             // Use new API
             trxRepo.SaveDbGmTransaction(custId, GmTransactionTypeEnum.Deposit, 10000, new DateTime(2015, 3, 4, 7, 23, 42));
             trxRepo.SaveDbGmTransaction(custId, GmTransactionTypeEnum.Deposit, 90000, new DateTime(2015, 3, 18, 18, 22, 13));
-            trxRepo.SaveDbPlayingLoss(custId, 9853, 50, new DateTime(2015, 3, 31, 23, 46, 01));
+            trxRepo.SaveDbPlayingLoss(custId, 9853, new DateTime(2015, 3, 31, 23, 46, 01));
 
             trxRepo.SaveDbTransferToGamingAmount(custId, 300, new DateTime(2015, 4, 15, 11, 26, 02, 52));
-            trxRepo.SaveDbPlayingLoss(custId, 2013, 50, new DateTime(2015, 4, 29, 23, 56, 12, 42));
+            trxRepo.SaveDbPlayingLoss(custId, 2013, new DateTime(2015, 4, 29, 23, 56, 12, 42));
 
             // Old implementation before repo
             context.GzTrxs.AddOrUpdate(

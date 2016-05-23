@@ -426,7 +426,7 @@ namespace gzDAL.Repos {
         private string GetTrxMinMaxMonths(string startYearMonthStr, ref string endYearMonthStr) {
 
             if (string.IsNullOrEmpty(startYearMonthStr)) {
-                startYearMonthStr = _db.GmTrxs.Min(t => t.YearMonthCtd);
+                startYearMonthStr = _db.GzTrxs.Min(t => t.YearMonthCtd);
             }
             if (string.IsNullOrEmpty(endYearMonthStr)) {
                 endYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
