@@ -23,8 +23,8 @@
                 </div>
                 <div class="msg-title"
                      ng-class="{ 'msg-title-shout': nsOptions.nsTitleShout }"
-                     ng-style="{ 'margin-left': nsOptions.nsIconClass ? '40px' : 0}">
-                    {{nsOptions.nsTitle}}
+                     ng-style="{ 'margin-left': nsOptions.nsIconClass ? '40px' : 0}"
+                     ng-bind-html="nsOptions.nsTitle">
                 </div>
             </div>
             <div class="msg-body"></div>

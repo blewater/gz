@@ -30,9 +30,9 @@
                     $scope.nsOk();
 
                 if (response.emLogin === false)
-                    message.notify("We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<b>Retry to connect</b>​ button.");
+                    message.error("We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<i>\'Retry to connect\'</i>​​ button.");
                 if (response.gzLogin === false)
-                    message.notify("We have experienced technical difficulty in accessing your investment pages. Please try again later by pressing the ​<b>Retry to connect</b>​ button.");
+                    message.error("We have experienced technical difficulty in accessing your investment pages. Please try again later by pressing the ​<i>\'Retry to connect\'</i>​ button.");
 
                 //$scope.emErrorMsg = response.emError;
                 //$scope.gzErrorMsg = response.gzError;
