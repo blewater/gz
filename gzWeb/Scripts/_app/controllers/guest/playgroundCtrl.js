@@ -23,7 +23,7 @@
         };
 
         $scope.error = function () {
-            message.error('Error sdfg dtg d ghd gh dt gh  dth d ty hdbt yh  dtyhjtdyhbetdhrstgvetrheyhrfyjrct yhrvtvyjry j rvy jhjjjgujhb jbjbklhbgfnuuyh yfbnuymmntf bnmn tbyuihn tygbnyuhtygb6t7gbbntgnjj vyd j ry j vr tj y hjv ryvrh xch gh');
+            message.error('We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<i>\'Retry to connect\'</i>​ button.');
         };
         $scope.success = function () {
             message.success('Success');
