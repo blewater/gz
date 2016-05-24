@@ -18,7 +18,6 @@ namespace gzDAL.DTO
         public string LastName { get; set; }
         public DateTime Birthday { get; set; }
         public int PlatformCustomerId { get; set; }
-        public DateTime GamBalanceUpdOnUTC { get; set; }
         public decimal InvBalance { get; set; }
         public decimal GamBalance { get; set; }
 

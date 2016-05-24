@@ -44,6 +44,7 @@ namespace gzDAL.Models
         [Index]
         public int? GmCustomerId { get; set; }
 
+        [Required]
         public string Currency { get; set; }
 
         /// <summary>

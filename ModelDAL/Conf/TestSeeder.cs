@@ -134,7 +134,7 @@ namespace gzDAL.Conf {
                 FirstName = "test",
                 LastName = "user",
                 Birthday = new DateTime(1975, 10, 13),
-                Currency = "EUR",
+                Currency = "SEK",
                 EmailConfirmed = true,
                 PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
             };
