@@ -179,7 +179,7 @@ namespace gzDAL.Repos {
 
             DateTime earliestLoss = _db.GzTrxs.Where(
                 t => t.CustomerId == customerId && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
-                .OrderByDescending(t => t.Id)
+                .OrderBy(t => t.Id)
                 .Select(t => t.CreatedOnUtc)
                 .FirstOrDefault();
 
