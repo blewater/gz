@@ -46,6 +46,8 @@ namespace gzWeb.Tests.Models {
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 70, 2015, 5, new DateTime(2015, 5, 1));
             // Jun
             cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
+
+            cpRepo.SaveDbCustomerSelectNextMonthsPortfolio(custId, RiskToleranceEnum.High);
         }
 
         [Test]
@@ -150,6 +152,7 @@ namespace gzWeb.Tests.Models {
 
                         // Add invested Customer Portfolio
                         CreateTestCustomerPortfolioSelections(custId);
+
 
                         CreateTestPlayerLossTransactions(custId);
 
