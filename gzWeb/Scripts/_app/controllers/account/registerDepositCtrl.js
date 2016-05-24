@@ -105,9 +105,10 @@
                                         if (transactionResult.status === "success") {
                                             // TODO: show receipt page ...
                                             var msg = "You have made the deposit successfully!";
-                                            message.notify(msg);
+                                            message.success(msg, { nsType: 'toastr' });
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                             $scope.waiting = false;
+                                            $location.path(constants.routes.games.path);
                                             $scope.nsOk(true);
                                         } else if (transactionResult.status === "incomplete") {
                                             // TODO: show transaction is not completed

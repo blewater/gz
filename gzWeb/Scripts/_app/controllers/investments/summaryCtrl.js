@@ -47,10 +47,10 @@
                 }, function (withdrawResponse) {
                     if (withdrawResponse.Ok) {
                         $scope.vintages = processVintages(withdrawResponse.Result);
-                        message.notify('Your wallet balance has been updated. Please check your casino account over the next few days.');
+                        message.success('Your wallet balance has been updated. Please check your casino account over the next few days.');
                     }
                     else
-                        message.notify('Withdrawal failed!!!');
+                        message.error('Withdrawal failed!!!');
                 });
             }, function(error) {
                 for (var i = 0; i < $scope.vintages.length; i++)

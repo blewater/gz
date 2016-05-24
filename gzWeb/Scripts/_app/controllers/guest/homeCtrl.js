@@ -1,12 +1,14 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'homeCtrl';
-    APP.controller(ctrlId, ['$scope', '$location', 'message', ctrlFactory]);
-    function ctrlFactory($scope, $location, message) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, message) {
+        $controller('authCtrl', { $scope: $scope });
+
         function readResetPwdKeys() {
             var urlParams = $location.search();
             var email = urlParams.email;
-            var gzResetKey = urlParams.gzKey;
+            var gzResetKey = decodeURIComponent(urlParams.gzKey);
             var emResetKey = urlParams.emKey;
             if (emResetKey) {
                 message.open({
@@ -24,11 +26,6 @@
             }
         }
 
-        function init() {
-            readResetPwdKeys();
-        }
-        init();
-
         $scope.watchVideo = function() {
             message.open({
                 nsType: 'modal',
@@ -36,5 +33,7 @@
                 nsTemplate: '/partials/messages/explainerVideo.html'
             });
         }
+
+        $scope._init('summary', readResetPwdKeys);
     }
 })();

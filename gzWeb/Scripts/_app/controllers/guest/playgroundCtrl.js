@@ -26,7 +26,7 @@
             message.error('We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<i>\'Retry to connect\'</i>​ button.');
         };
         $scope.success = function () {
-            message.success('Success');
+            message.success('Success', { nsType: 'toastr' });
         };
         $scope.warning = function () {
             message.warning('Warning');

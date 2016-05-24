@@ -67,7 +67,7 @@
             $scope.waiting = true;
             auth.changePassword($scope.model.oldPassword, $scope.model.newPassword, $scope.model.confirmPassword).then(function (result) {
                 $scope.waiting = false;
-                message.toastr("Your password has been changed successfully!");
+                message.success("Your password has been changed successfully!", { nsType: 'toastr' });
                 $scope.nsOk(true);
             }, function (error) {
                 $scope.waiting = false;

@@ -242,7 +242,7 @@
                 });
             }, function(error) {
                 $scope.waiting = false;
-                message.notify(error);
+                message.error(error);
             });
         };
         // #endregion

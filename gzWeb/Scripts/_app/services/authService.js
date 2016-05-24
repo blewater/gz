@@ -337,7 +337,7 @@
                 changePwdUrl += email;
                 changePwdUrl += "&";
                 changePwdUrl += "gzKey=";
-                changePwdUrl += gzResetKey.data;
+                changePwdUrl += encodeURIComponent(gzResetKey.data);
                 changePwdUrl += "&";
                 changePwdUrl += "emKey=";
 
