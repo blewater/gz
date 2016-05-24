@@ -28,5 +28,13 @@
             readResetPwdKeys();
         }
         init();
+
+        $scope.watchVideo = function() {
+            message.open({
+                nsType: 'modal',
+                nsSize: '640px',
+                nsTemplate: '/partials/messages/explainerVideo.html'
+            });
+        }
     }
 })();

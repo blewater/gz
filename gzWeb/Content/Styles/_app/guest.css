@@ -13,6 +13,7 @@
 .guest .home .top {
 	background-color: #27A95C;
 	position: relative;
+    height: 350px;
 }
 
 .guest .home .middle {
@@ -42,7 +43,7 @@
 .guest .home .top .left-heading .laptop-big {
 	position: absolute;
 	height: 300px;
-	bottom: -290px;
+	bottom: -289px;
 	left: 0;
 	z-index: 100;
 }
@@ -56,14 +57,18 @@
 }
 
 .guest .home .top .right-heading  .sign-up-btn{
-	text-transform: uppercase;
-	font-weight: bold;
-	padding: 5px 20px 5px 20px;
-	margin: 10px 0 10px;	
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 0;
+    height: 40px;
+    line-height: 40px;
+    padding-top: 3px;
+    color: #333;
 }
 
 .guest .home .top .right-heading  .sign-up-btn img {
-	height: 30px;
+    height: 25px;
+    margin-top: -8px;
 }
 
 .guest .home .top .right-heading .watch-video {
@@ -73,8 +78,6 @@
 	margin-top: 12px;
 	margin-bottom: 12px;
 }
-
-.guest .home .top .right-heading .watch-video:focus { clear: all; }
 
 /*** middle section ***/
 .guest .home .middle h3 {
@@ -162,6 +165,10 @@
 		height: 200px;
 		left: calc(50% - 175px);
 		bottom: -436px;
+
+        /*bottom: -7px;
+        width: 350px;
+        left: calc(50% - 175px);*/
 	}	
 }
 

@@ -9,13 +9,14 @@
 
     <section class="top">
         <div class="container">
+            <img class="laptop-big absolute" style="bottom: -10px;" src="@Url.Content("~/Content/Images/mac.png")" />
             <div class="row">
 
-                <div class="col-sm-6 col-md-6 left-heading">
-                    <img class="laptop-big" src="@Url.Content("~/Content/Images/mac.png")" />
+                <div class="col-sm-6 left-heading">
+                    @*<img class="laptop-big" src="@Url.Content("~/Content/Images/mac.png")" />*@
                 </div>
 
-                <div class="col-sm-6 col-md-6 right-heading">
+                <div class="col-sm-6 col-md-offset-1 col-md-5 right-heading">
                     <h2>
                         Online casino.<br>
                         Keep your winnings.<br>
@@ -23,9 +24,9 @@
                     </h2>
                     <h5>Fair | Transparent | Secure | Hedged</h5>
 
-                    <button type="button" class="btn btn-default sign-up-btn"><img src="@Url.Content("~/Content/Images/falling-cube.png")" /> sign up and play</button>
+                    <button type="button" class="btn-gz sign-up-btn"><img src="@Url.Content("~/Content/Images/falling-cube.png")" /> sign up and play</button>
 
-                    <a class="watch-video" href="#" data-toggle="modal" data-target="#popupVideo"><span class="glyphicon glyphicon-play"></span> Watch Video</a>
+                    <a class="watch-video" ng-click="watchVideo()"><span class="glyphicon glyphicon-play"></span> Watch Video</a>
 
                     @*<div id="popupVideo" class="modal fade" role="dialog" width="640p" class="embed-responsive embed-responsive-16by9">
                         <iframe class="embed-responsive-item" src="videos\Greenzorro explainer video-HD.mp4"></iframe>
@@ -40,7 +41,7 @@
         <div class="container">
             <div class="row">
 
-                <div class="col-sm-6 col-md-4">
+                <div class="col-sm-6 col-md-5">
 
                     <h3>Say hello to the future of online gambling:</h3>
 
@@ -55,7 +56,7 @@
 
                 </div>
 
-                <div class="col-sm-6 col-md-offset-2 col-md-4">
+                <div class="col-sm-6 col-md-offset-2 col-md-5">
 
                     <h3>To achieve the highest possible return of losses to users, we:</h3>
 
@@ -71,8 +72,8 @@
 
     <section class="bottom">
         <div class="container">
+            <h3>THE PROCESS</h3>
             <div classs="row">
-                <h3>THE PROCESS</h3>
                 <div class="col-sm-5 col-md-3 process-item">
                     <h4>1. Sign up</h4>
                     <img src="@Url.Content("~/Content/Images/signup.svg")" />
