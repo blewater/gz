@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$route', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', authService]);
 
-    function authService($rootScope, $http, $q, $location, $route, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService) {
         var factory = {};
 
         // #region AuthData
@@ -65,6 +65,7 @@
                 factory.data.lastname = "";
                 factory.data.currency = "";
             }
+            localStorageService.remove(constants.storageKeys.clientId);
             storeAuthData();
         }
 
@@ -114,31 +115,31 @@
             else
                 watchBalance();
         }
-        function onUserConnect() {
-            getGamingAccountAndWatchBalance();
-            $route.reload();
-            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
-        }
-        function onUserDisconnect() {
-            unwatchBalance();
-            clearGamingData();
-            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
-            $route.reload();
-        }
+
+        //function onSessionDisconnected() {
+        //    clearGamingData();
+        //    unwatchBalance();
+        //    $rootScope.$broadcast(constants.events.SESSION_TERMINATED);
+        //}
 
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
             if (args.code === 0) {
                 emWamp.getSessionInfo().then(function (sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
                         setGamingAuthData(sessionInfo);
-                        onUserConnect();
-                    } else
-                        onUserDisconnect();
+                        getGamingAccountAndWatchBalance();
+                        $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                    }
+                    else {
+                        emLogout();
+                    }
+                    //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
                 });
             }
             else {
                 // TODO Check other codes
-                onUserDisconnect();
+                emLogout();
+                //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
             }
         });
         // #endregion
@@ -163,10 +164,21 @@
         // #endregion
 
         // #region Logout
-        factory.logout = function () {
-            emWamp.logout();
+        function gzLogout() {
             clearInvestmentData();
-            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+        }
+        function emLogout() {
+            clearGamingData();
+            unwatchBalance();
+            emWamp.logout();
+            $location.path(constants.routes.home.path);
+            $window.location.reload();
+        }
+
+        factory.logout = function () {
+            gzLogout();
+            emLogout();
+            //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
 
             // TODO
             //var templates = $filter('toArray')(constants.templates);

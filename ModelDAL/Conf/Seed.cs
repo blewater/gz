@@ -143,6 +143,7 @@ namespace gzDAL.Conf
                 EmailConfirmed = true,
                 FirstName = "Joe",
                 LastName = "Smith",
+                Currency = "SEK",
                 Birthday = new DateTime(1990, 1, 1),
                 PasswordHash = manager.PasswordHasher.HashPassword("1q2w3e")
             };
@@ -158,7 +159,7 @@ namespace gzDAL.Conf
                 FirstName = "test",
                 LastName = "user",
                 Birthday = new DateTime(1975, 10, 13),
-                Currency = "EUR",
+                Currency = "SEK",
                 PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
             };
             return newUser;
