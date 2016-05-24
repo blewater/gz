@@ -268,6 +268,7 @@ namespace gzWeb.Controllers
         }
         #endregion
 
+        #region Methods
         private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
         {
             var customerPortfolio = _custFundShareRepo.GetCurrentCustomerPortfolio(user.Id);
@@ -286,20 +287,21 @@ namespace gzWeb.Controllers
             var portfolioPrototype = PortfolioConfiguration.GetPortfolioPrototype(x.RiskTolerance);
             return new PlanViewModel
                    {
-                           Id = x.Id,
-                           Title = portfolioPrototype.Title,
-                           UserBalance = 0, // TODO: get from customer data
-                           Color = portfolioPrototype.Color,
-                           AllocationPercent = active ? 100 : 0,
-                           ROI = 0, // TODO: ???
-                           Selected = active, // TODO: get from customer data
-                           Holdings = x.PortFunds.Select(f => new HoldingViewModel
-                                                              {
-                                                                      Name = f.Fund.HoldingName,
-                                                                      Weight = f.Weight
-                                                              })
+                       Id = x.Id,
+                       Title = portfolioPrototype.Title,
+                       UserBalance = 0, // TODO: get from customer data
+                       Color = portfolioPrototype.Color,
+                       AllocationPercent = active ? 100 : 0,
+                       ROI = 0, // TODO: ???
+                       Selected = active, // TODO: get from customer data
+                       Holdings = x.PortFunds.Select(f => new HoldingViewModel
+                                                          {
+                                                              Name = f.Fund.HoldingName,
+                                                              Weight = f.Weight
+                                                          })
                    };
-        }
+        } 
+        #endregion
         
         #region Fields
 
