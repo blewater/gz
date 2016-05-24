@@ -2,6 +2,7 @@ var APP = (function () {
     'use strict';
 
     var id = 'GZ';
+
     var app = angular.module(id, [
         // Angular modules 
         'ngRoute',
@@ -37,6 +38,7 @@ var APP = (function () {
         function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth) {
             auth.init();
 
+            $rootScope.initialized = false;
             $rootScope.$on(constants.events.ON_INIT, function () {
                 $rootScope.initialized = true;
 
@@ -83,5 +85,10 @@ var APP = (function () {
             });
         }
     ]);
+
+    //angular.element(document).ready(function () {
+    //    angular.bootstrap(document, [id]);
+    //});
+
     return app;
 })(APP);

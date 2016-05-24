@@ -86,12 +86,17 @@
             //});
         };
 
-        function updateAuthorizationInfo () {
+        function loadAuthData() {
             $scope.authData = $scope._authData;
             $scope.name = $scope._authData.firstname;
             $scope.fullname = $scope._authData.firstname + " " + $scope._authData.lastname;
             if ($scope._authData.isGamer || $scope._authData.isInvestor)
                 $scope.initials = $scope._authData.firstname.slice(0, 1) + $scope._authData.lastname.slice(0, 1);
+
+            $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
+            if ($scope.hasGamingBalance)
+                $scope.gamingBalance = $scope._authData.gamingAccount.amount;
+            $scope.currency = $scope._authData.currency;
 
             if ($scope._authData.isGamer)
                 $scope.gamesMode = true;
@@ -101,23 +106,10 @@
                 $scope.gamesMode = undefined;
         }
 
-        function loadAuthData() {
-            $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
-            if ($scope.hasGamingBalance)
-                $scope.gamingBalance = $scope._authData.gamingAccount.amount;
-            $scope.currency = $scope._authData.currency;
-        }
+        $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);
 
-        $scope.$on(constants.events.AUTH_CHANGED, updateAuthorizationInfo);
+        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
-        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
-            loadAuthData();
-            $scope.$apply();
-        });
-
-        $scope._init('header', function () {
-            loadAuthData();
-            updateAuthorizationInfo();
-        });
+        $scope._init('header', loadAuthData);
     }
 })();
