@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerPaymentMethodsCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, constants) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', 'constants', '$location', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, constants, $location) {
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
         // #region steps
@@ -67,6 +67,7 @@
 
         // #region gotoGames
         $scope.gotoGames = function () {
+            $location.path(constants.routes.games.path);
             $scope.nsOk(false);
         };
         // #endregion
