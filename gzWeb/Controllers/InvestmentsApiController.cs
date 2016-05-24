@@ -90,7 +90,7 @@ namespace gzWeb.Controllers
                 //Currency = userCurrency.Symbol,
                 //Culture = "en-GB",
                 InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
-                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalDeposits),
+                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.GetTotalDeposit(user.Id)),
                 TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalWithdrawals),
 
                 //TODO: from the EveryMatrix Web API
