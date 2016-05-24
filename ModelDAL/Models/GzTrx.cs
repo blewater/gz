@@ -1,18 +1,15 @@
-﻿using System;
-using System.Data.Entity;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace gzDAL.Models {
-
     /// <summary>
-    /// Transfers between Casino <--> Greenzorro accounts, Casino <--> Customer bank account, 
-    /// Greenzorro <--> Customer Bank account ? (requires special communication with casino as the intermediary
+    /// 
+    /// Greenzorro --> Casino Customer Bank account ? (requires special communication with casino as the intermediary
+    /// 
     /// </summary>
-    public class GzTransaction {
+    [Table("GzTrxs")]
+    public class GzTrx {
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -28,18 +25,32 @@ namespace gzDAL.Models {
 
         [ForeignKey("Type")]
         public int TypeId { get; set; }
-        public virtual GzTransactionType Type { get; set; }
+        public virtual GzTrxType Type { get; set; }
 
-        //http://stackoverflow.com/questions/4811194/what-is-the-syntax-for-self-referencing-foreign-keys-in-ef-code-first
+        /// <summary>
+        /// 
+        /// Reference Everymatrix Gm Transaction as source
+        /// 
+        /// </summary>
+        [ForeignKey("GmTrx")]
+        public int? GmTrxId { get; set; }
+        public virtual GmTrx GmTrx { get; set; }
+
+        /// <summary>
+        /// 
+        /// Reference self source
+        /// http://stackoverflow.com/questions/4811194/what-is-the-syntax-for-self-referencing-foreign-keys-in-ef-code-first
+        /// 
+        /// </summary>
         public int? ParentTrxId { get; set; }
         [ForeignKey("ParentTrxId")]
-        public virtual GzTransaction ParentTrx { get; set; }
+        public virtual GzTrx ParentTrx { get; set; }
 
         // For Type:CreditedPlayingLoss -> the credit percentage for playing losses i.e. 50 for half
         public float? CreditPcntApplied { get; set; }
 
         [Required]
-        public DateTime CreatedOnUTC { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
 
         public decimal Amount { get; set; }
     }
