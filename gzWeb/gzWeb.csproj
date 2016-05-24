@@ -325,6 +325,10 @@
     <Compile Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.Designer.cs">
       <DependentUpon>201605241348387_Remove uniqueness of Risk Portfolios.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605242027281_SoldVintages.cs" />
+    <Compile Include="Migrations\201605242027281_SoldVintages.Designer.cs">
+      <DependentUpon>201605242027281_SoldVintages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -804,6 +808,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.resx">
       <DependentUpon>201605241348387_Remove uniqueness of Risk Portfolios.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605242027281_SoldVintages.resx">
+      <DependentUpon>201605242027281_SoldVintages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

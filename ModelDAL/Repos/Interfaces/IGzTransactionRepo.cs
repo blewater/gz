@@ -36,5 +36,7 @@ namespace gzDAL.Repos.Interfaces
         void SaveDbTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc);
 
         decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, DateTime createdOnUtc);
+
+        void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages);
     }
 }
