@@ -335,6 +335,7 @@
                 changePwdUrl += "?";
                 changePwdUrl += "email=";
                 changePwdUrl += email;
+                changePwdUrl += "&";
                 changePwdUrl += "gzKey=";
                 changePwdUrl += gzResetKey.data;
                 changePwdUrl += "&";
