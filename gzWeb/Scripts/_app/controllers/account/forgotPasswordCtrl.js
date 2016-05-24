@@ -39,7 +39,7 @@
             $scope.waiting = true;
             auth.forgotPassword($scope.model.email).then(function (result) {
                 $scope.waiting = false;
-                message.notify("You will receive an email at '" + $scope.model.email + "' that will guide you through the reset password process.");
+                message.success("You will receive an email at '" + $scope.model.email + "' that will guide you through the reset password process.");
                 $scope.nsOk(true);
             }, function(error) {
                 $scope.waiting = false;
