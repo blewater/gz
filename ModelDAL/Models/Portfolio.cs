@@ -30,11 +30,13 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Index(IsUnique=true), Required]
+        [Index(IsUnique = false), Required]
         public RiskToleranceEnum RiskTolerance { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
 
         public virtual ICollection<PortFund> PortFunds { get; set; }
 
-        public bool IsActive { get; set; }
     }
 }

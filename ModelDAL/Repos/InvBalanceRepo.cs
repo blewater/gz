@@ -52,6 +52,7 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
+        /// <param name="yearMonthStr"></param>
         /// <returns></returns>
         private decimal GetVintageSellingValue(int customerId, string yearMonthStr, int lastInvestmentId) {
 
@@ -88,6 +89,49 @@ namespace gzDAL.Repos {
             }
 
             return monthlySharesValue;
+        }
+
+        private IEnumerable<VintageDto> GetVintagesSellingValue(int customerId, IEnumerable<VintageDto> vintages) {
+
+            //List<PortfolioReturnsDTO> fundsToSell = new List<PortfolioReturnsDTO>();
+
+            //foreach (var vintageDto in vintages) {
+
+            //    int yearCurrent = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
+            //        monthCurrent = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
+
+            //    var fundSharesThisMonth = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
+            //            customerId,
+            //            yearCurrent,
+            //            monthCurrent);
+
+            //    fundsToSell.Add();
+            //    fundSharesThisMonth.Select(f=>f.Value.)
+
+
+            //}
+            //var soldValue =
+            //    _db.GzTrxs
+            //        .Where(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming
+            //                    //&& t.ParentTrxId == lastInvestmentId
+            //                    && t.YearMonthCtd == yearMonthStr
+            //                    && t.CustomerId == customerId
+            //                    )
+            //        .Sum(t => (decimal?)t.Amount);
+
+            //// If not sold calculate it now
+            //if (!soldValue.HasValue) {
+
+            //    var monthsNewSharesValue = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
+
+            //    monthlySharesValue =
+            //        DbExpressions.RoundCustomerBalanceAmount(monthsNewSharesValue -
+            //                                                 _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesValue));
+            //} else {
+            //    monthlySharesValue = soldValue.Value;
+            //}
+
+            return vintages;
         }
 
         /// <summary>
@@ -129,6 +173,11 @@ namespace gzDAL.Repos {
         /// <param name="vintages"></param>
         /// <returns></returns>
         public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+
+            foreach (var vintageDto in vintages) {
+                
+
+            }
 
             return vintages;
         }

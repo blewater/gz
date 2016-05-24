@@ -32,17 +32,23 @@ namespace gzDAL.Repos
 
                 throw new Exception("Invalid Customer Id: " + customerId);
             }
-            DateTime monthsPortfolio = new DateTime(portfYear, portfMonth, DateTime.UtcNow.Day);
-
-            var monthDifffromNow = DbExpressions.MonthDiff(DateTime.UtcNow, monthsPortfolio);
-
-            if (monthDifffromNow != 0) {
-
-                throw new Exception("You can set the customer portfolio for the present month only. Passed in a past month: " + monthsPortfolio);
-
-            }
 
             this.SaveDbCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
+        }
+
+        /// <summary>
+        /// 
+        /// UI Simplified Wrapper for setting the portfolio for the following month from UtcNow.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="riskType"></param>
+        public void SaveDbCustomerSelectNextMonthsPortfolio(int customerId, RiskToleranceEnum riskType) {
+
+            var nextMonth = DateTime.UtcNow.AddMonths(1);
+
+            SaveDbCustMonthsPortfolioMix(customerId, riskType, nextMonth.Year, nextMonth.Month, DateTime.UtcNow);
+
         }
 
         /// <summary>
@@ -78,7 +84,9 @@ namespace gzDAL.Repos
                     cp => new { cp.CustomerId, cp.YearMonth },
                         new CustPortfolio {
                             CustomerId = customerId,
-                            PortfolioId = db.Portfolios.Where(p => p.RiskTolerance == riskType).Select(p => p.Id).FirstOrDefault(),
+                            PortfolioId = db.Portfolios
+                                .Where(p => p.RiskTolerance == riskType && p.IsActive)
+                                .Select(p => p.Id).Single(),
                             YearMonth = DbExpressions.GetStrYearMonth(portfYear, portfMonth),
                             UpdatedOnUTC = UpdatedOnUTC,
                             Weight = weight
