@@ -1,14 +1,19 @@
 ﻿@charset "utf-8";
 
-.navbar.navbar-default{
-	height:70px;
+.navbar.navbar-default {
+    height:70px;
 	width:100%;
 	font-weight:300;
 	padding:0;
 	background:#27A95C;
     color:#fff;
     margin-bottom: 0;
+    border: none;
+    -webkit-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
 }
+
 /*.navbar.navbar-default.navbar-initial{
 	height:90px;
 	background:#27A95C;

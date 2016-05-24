@@ -411,7 +411,6 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Content\Images\costs.svg" />
-    <Content Include="Content\Images\cube.png" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
     <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\exit.svg" />
@@ -516,6 +515,9 @@
     <Content Include="connectionStrings.config" />
     <Content Include="Content\Images\diagram_white.svg" />
     <Content Include="Content\Images\games_white.svg" />
+    <Content Include="Content\Images\cube.svg" />
+    <Content Include="Content\Images\cube_white.svg" />
+    <Content Include="Content\Images\logo_no_bg.svg" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
