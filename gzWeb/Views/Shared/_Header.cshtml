@@ -18,12 +18,12 @@
                 <div class="nav-links-btns">
                     <div class="links">
                         <nav class="cl-effect">
-                            <ul gz-authorize="guest" gz-match="exact" class="links-guest">
+                            <ul gz-authorize="guest" gz-match="exact">
                                 <li ng-repeat="route in routes.guest">
                                     <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                                 </li>
                             </ul>
-                            <ul gz-authorize="gamer" class="links-games" ng-show="gamesMode" style="margin-top: 0;">
+                            <ul gz-authorize="gamer" ng-show="gamesMode" style="margin-top: 0;">
                                 <li ng-if="hasGamingBalance">{{currency}} {{gamingBalance}}</li>
                                 <li>
                                     <button type="button" class="btn-gz btn-gz-alt" ng-click="withdraw()">
@@ -34,7 +34,7 @@
                                     </button>
                                 </li>
                             </ul>
-                            <ul gz-authorize="investor" class="links-investments" ng-hide="gamesMode">
+                            <ul gz-authorize="investor" ng-hide="gamesMode">
                                 <li ng-repeat="route in routes.investment">
                                     <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                                 </li>
@@ -42,24 +42,30 @@
                         </nav>
                     </div>
                     <div class="nav-btns hidden">
-                        <a ng-if="!isAuthenticated" class="nav-btn-login" ng-click="login()">
+                        <a ng-if="!isAuthenticated" ng-click="login()">
                             <img src="@Url.Content("~/Content/Images/login.png")" />
                             <p>LOGIN</p>
                         </a>
-                        <a ng-if="isAuthenticated" class="nav-btn-games" ng-show="gamesMode" ng-click="toInvestments()">
+                        <a ng-if="isAuthenticated" ng-show="gamesMode" ng-click="toInvestments()">
                             <img src="@Url.Content("~/Content/Images/diagram.svg")" />
                             <p>TO INVESTMENTS</p>
                         </a>
-                        <a ng-if="isAuthenticated" class="nav-btn-investments" ng-hide="gamesMode" ng-click="backToGames()">
+                        <a ng-if="isAuthenticated" ng-hide="gamesMode" ng-click="backToGames()">
                             <img src="@Url.Content("~/Content/Images/games.svg")" />
                             <p>BACK TO GAMES</p>
                         </a>
                     </div>
                     <div class="pull-right">
-                        <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz btn-gz-alt nav-btn-login" ng-click="login()">
+                        @*<button type="button" gz-authorize="gamer" gz-not-authorize="investor" gz-match="exact" class="btn-gz" ng-click="connectToInvestment()">
+                            RETRY TO CONNECT
+                        </button>
+                        <button type="button" gz-authorize="investor" gz-not-autorize="gamer" gz-match="exact" class="btn-gz" ng-click="connectToGames()">
+                            RETRY TO CONNECT
+                        </button>*@
+                        <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz btn-gz-alt" ng-click="login()">
                             LOGIN
                         </button>
-                        <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz nav-btn-login" ng-click="signup()">
+                        <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz" ng-click="signup()">
                             SIGNUP
                         </button>
                         <span gz-authorize="gamer,investor" class="user-info">

@@ -17,10 +17,7 @@
             $scope.currency = $scope._authData.currency;
         }
 
-        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, function () {
-            loadAuthData();
-            $scope.$apply();
-        });
+        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
         $scope._init('performance', function () {
             loadPerformanceData();
