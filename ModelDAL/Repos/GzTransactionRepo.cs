@@ -269,6 +269,61 @@ namespace gzDAL.Repos {
             return soldPortfolioTimestamp;
         }
 
+        private void SaveDbSellVintage(int customerId, VintageDto vintage, DateTime soldOnUtc) {
+
+            SaveDbTransferToGamingAmount(customerId, vintage.SellingValue, soldOnUtc);
+
+            SaveDbSoldVintage(customerId, vintage, soldOnUtc);
+        }
+
+        /// <summary>
+        /// 
+        /// Upsert a sold vintage.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        /// <param name="soldOnUtc"></param>
+        private void SaveDbSoldVintage(int customerId, VintageDto vintage, DateTime soldOnUtc) {
+
+            _db.SoldVintages.AddOrUpdate(
+                v => new {v.CustomerId, v.VintageYearMonth},
+                new SoldVintage() {
+                    CustomerId = customerId,
+                    VintageYearMonth = vintage.YearMonthStr,
+                    Amount = vintage.SellingValue,
+                    // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
+                    SoldOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
+                }
+                );
+            //Not calling save changes. It will be call by the transaction block
+        }
+
+        /// <summary>
+        /// 
+        /// Sell all vintages marked for selling them.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintages"></param>
+        public void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+
+            ConnRetryConf.TransactWithRetryStrategy(_db,
+
+            () => {
+
+                var soldOnUtc = DateTime.UtcNow;
+
+                foreach (var vintage in vintages) {
+
+                    if (vintage.Selected) {
+                        SaveDbSellVintage(customerId, vintage, soldOnUtc);
+                    }
+                }
+
+            });
+        }
+
         /// <summary>
         /// 
         /// Create any type of transaction from those allowed.
