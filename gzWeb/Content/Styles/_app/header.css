@@ -232,7 +232,7 @@
 
 
 
-.navbar-collapse.guest-mode .user-info,
+/*.navbar-collapse.guest-mode .user-info,
 .navbar-collapse.guest-mode .nav-btn-games,
 .navbar-collapse.guest-mode .nav-btn-investments,
 .navbar-collapse.guest-mode .switch,
@@ -253,7 +253,7 @@
 .navbar-collapse.investments-mode .links-guest,
 .navbar-collapse.investments-mode .links-games {
     display: none;
-}
+}*/
 
 
 

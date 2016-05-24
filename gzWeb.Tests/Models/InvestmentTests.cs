@@ -271,7 +271,7 @@ namespace gzWeb.Tests.Models {
                 FirstName = "Info",
                 LastName = "Nessos",
                 Birthday = new DateTime(1975, 10, 13),
-                Currency = "EUR",
+                Currency = "SEK",
                 PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@"),
                 EmailConfirmed = true
             };
@@ -290,7 +290,7 @@ namespace gzWeb.Tests.Models {
                 FirstName = "Six",
                 LastName = "Month",
                 Birthday = new DateTime(1990, 1, 1),
-                Currency = "EUR",
+                Currency = "SEK",
                 PasswordHash = manager.PasswordHasher.HashPassword("1q2w3e")
             };
             return newUser;
