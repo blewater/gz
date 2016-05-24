@@ -103,6 +103,8 @@
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
+    <Compile Include="Models\GzTrx.cs" />
+    <Compile Include="Models\GzTrxType.cs" />
     <Compile Include="Models\TestDbContext.cs" />
     <Compile Include="Repos\CurrencyRateRepo.cs" />
     <Compile Include="Models\CustFundShare.cs" />
@@ -115,9 +117,9 @@
     <Compile Include="Models\Fund.cs" />
     <Compile Include="Models\FundPrice.cs" />
     <Compile Include="Repos\FundRepo.cs" />
-    <Compile Include="Models\GzTransaction.cs" />
+    <Compile Include="Models\GmTrx.cs" />
     <Compile Include="Repos\GzTransactionRepo.cs" />
-    <Compile Include="Models\GzTransactionType.cs" />
+    <Compile Include="Models\GmTrxType.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InvBalance.cs" />
     <Compile Include="Repos\Interfaces\IInvBalanceRepo.cs" />
