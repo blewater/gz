@@ -309,6 +309,18 @@
     <Compile Include="Migrations\201605182136365_GzTrxSelfReferencing.Designer.cs">
       <DependentUpon>201605182136365_GzTrxSelfReferencing.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605222154593_Transactions split to Gm Gz.cs" />
+    <Compile Include="Migrations\201605222154593_Transactions split to Gm Gz.Designer.cs">
+      <DependentUpon>201605222154593_Transactions split to Gm Gz.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605231928177_Refactor GmTrx.cs" />
+    <Compile Include="Migrations\201605231928177_Refactor GmTrx.Designer.cs">
+      <DependentUpon>201605231928177_Refactor GmTrx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605240943157_Required Currency.cs" />
+    <Compile Include="Migrations\201605240943157_Required Currency.Designer.cs">
+      <DependentUpon>201605240943157_Required Currency.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -398,11 +410,35 @@
     <Content Include="Areas\Mvc\Views\Guest\Home.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Content\Images\costs.svg" />
+    <Content Include="Content\Images\cube.png" />
+    <Content Include="Content\Images\custom-caret-48px.svg" />
+    <Content Include="Content\Images\exit.png" />
+    <Content Include="Content\Images\exit.svg" />
+    <Content Include="Content\Images\falling-cube.png" />
+    <Content Include="Content\Images\Gfalling-cube.png" />
+    <Content Include="Content\Images\invest.png" />
+    <Content Include="Content\Images\investments.svg" />
+    <Content Include="Content\Images\invest_main.svg" />
+    <Content Include="Content\Images\king.png" />
     <Content Include="Content\Images\login.png" />
+    <Content Include="Content\Images\losses_returned.svg" />
+    <Content Include="Content\Images\mac.png" />
     <Content Include="Content\Images\nikos.jpg" />
     <Content Include="Content\Images\nikos.png" />
+    <Content Include="Content\Images\payoutrates.svg" />
+    <Content Include="Content\Images\play.png" />
+    <Content Include="Content\Images\play.svg" />
+    <Content Include="Content\Images\receive.svg" />
+    <Content Include="Content\Images\revenues.svg" />
+    <Content Include="Content\Images\salaries.svg" />
     <Content Include="Content\Images\select_arrow.png" />
     <Content Include="Content\Images\select_arrow_down.png" />
+    <Content Include="Content\Images\signup.png" />
+    <Content Include="Content\Images\signup.svg" />
+    <Content Include="Content\Images\spades.svg" />
+    <Content Include="Content\Images\sum.png" />
+    <Content Include="Content\Images\sum.svg" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.css" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.min.css" />
     <Content Include="Content\Styles\bootstrap\bootstrap.css" />
@@ -750,6 +786,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605182136365_GzTrxSelfReferencing.resx">
       <DependentUpon>201605182136365_GzTrxSelfReferencing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605222154593_Transactions split to Gm Gz.resx">
+      <DependentUpon>201605222154593_Transactions split to Gm Gz.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605231928177_Refactor GmTrx.resx">
+      <DependentUpon>201605231928177_Refactor GmTrx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605240943157_Required Currency.resx">
+      <DependentUpon>201605240943157_Required Currency.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

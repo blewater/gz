@@ -134,7 +134,7 @@ namespace gzDAL.Conf {
                 FirstName = "test",
                 LastName = "user",
                 Birthday = new DateTime(1975, 10, 13),
-                Currency = "EUR",
+                Currency = "SEK",
                 EmailConfirmed = true,
                 PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
             };
@@ -581,154 +581,125 @@ namespace gzDAL.Conf {
             var trxRepo = new GzTransactionRepo(context);
 
             // Use new API
-            trxRepo.SaveDbGzTransaction(custId, GzTransactionJournalTypeEnum.Deposit, 10000, new DateTime(2015, 3, 4, 7, 23, 42));
-            trxRepo.SaveDbGzTransaction(custId, GzTransactionJournalTypeEnum.Deposit, 90000, new DateTime(2015, 3, 18, 18, 22, 13));
-            trxRepo.SaveDbPlayingLoss(custId, 9853, 50, new DateTime(2015, 3, 31, 23, 46, 01));
+            trxRepo.SaveDbGmTransaction(custId, GmTransactionTypeEnum.Deposit, 10000, new DateTime(2015, 3, 4, 7, 23, 42));
+            trxRepo.SaveDbGmTransaction(custId, GmTransactionTypeEnum.Deposit, 90000, new DateTime(2015, 3, 18, 18, 22, 13));
+            trxRepo.SaveDbPlayingLoss(custId, 9853, new DateTime(2015, 3, 31, 23, 46, 01));
 
             trxRepo.SaveDbTransferToGamingAmount(custId, 300, new DateTime(2015, 4, 15, 11, 26, 02, 52));
-            trxRepo.SaveDbPlayingLoss(custId, 2013, 50, new DateTime(2015, 4, 29, 23, 56, 12, 42));
+            trxRepo.SaveDbPlayingLoss(custId, 2013, new DateTime(2015, 4, 29, 23, 56, 12, 42));
 
             // Old implementation before repo
-            context.GzTransactions.AddOrUpdate(
-                t => new { t.CustomerId, t.CreatedOnUTC },
+            context.GzTrxs.AddOrUpdate(
+                t => new { t.CustomerId, t.CreatedOnUtc },
                 // May
-                new GzTransaction {
+                new GzTrx {
                     CustomerId = custId,
                     YearMonthCtd = "201505",
-                    CreatedOnUTC = new DateTime(2015, 5, 31, 23, 46, 59),
-                    Amount = new decimal(1568.43),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201505",
-                    CreatedOnUTC = new DateTime(2015, 5, 31, 23, 47, 12),
+                    CreatedOnUtc = new DateTime(2015, 5, 31, 23, 47, 12),
                     Amount = new decimal(784.22),
                     CreditPcntApplied = 50,
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // June
-                new GzTransaction {
+                new GzTrx {
                     CustomerId = custId,
                     YearMonthCtd = "201506",
-                    CreatedOnUTC = new DateTime(2015, 6, 30, 23, 47, 22),
-                    Amount = new decimal(2384.22),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201506",
-                    CreatedOnUTC = new DateTime(2015, 6, 30, 23, 47, 32),
+                    CreatedOnUtc = new DateTime(2015, 6, 30, 23, 47, 32),
                     Amount = new decimal(1192.11),
                     CreditPcntApplied = 50,
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // August Skip July he won
-                new GzTransaction {
+                new GzTrx {
                     CustomerId = custId,
                     YearMonthCtd = "201508",
-                    CreatedOnUTC = new DateTime(2015, 8, 31, 23, 47, 23),
-                    Amount = new decimal(584.23),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201508",
-                    CreatedOnUTC = new DateTime(2015, 8, 31, 23, 47, 46),
+                    CreatedOnUtc = new DateTime(2015, 8, 31, 23, 47, 46),
                     Amount = new decimal(292.12),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // Sept
-                new GzTransaction {
+                new GzTrx {
                     CustomerId = custId,
                     YearMonthCtd = "201509",
-                    CreatedOnUTC = new DateTime(2015, 9, 30, 23, 47, 23),
-                    Amount = new decimal(2943),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201509",
-                    CreatedOnUTC = new DateTime(2015, 9, 30, 23, 47, 46),
+                    CreatedOnUtc = new DateTime(2015, 9, 30, 23, 47, 46),
                     Amount = new decimal(1471.5),
                     CreditPcntApplied = 50,
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // Oct
-                new GzTransaction {
+                new GzTrx {
                     CustomerId = custId,
                     YearMonthCtd = "201510",
-                    CreatedOnUTC = new DateTime(2015, 10, 31, 23, 47, 01),
-                    Amount = new decimal(1832.21),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201510",
-                    CreatedOnUTC = new DateTime(2015, 10, 31, 23, 47, 46),
+                    CreatedOnUtc = new DateTime(2015, 10, 31, 23, 47, 46),
                     Amount = new decimal(916.11),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
+                    CreditPcntApplied = 50,
+                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // Dec Skip Nov either won or did not play
-                new GzTransaction {
+                new GzTrx {
                     CustomerId = custId,
                     YearMonthCtd = "201512",
-                    CreatedOnUTC = new DateTime(2015, 12, 31, 23, 46, 58),
-                    Amount = new decimal(3354.03),
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.PlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                new GzTransaction {
-                    CustomerId = custId,
-                    YearMonthCtd = "201512",
-                    CreatedOnUTC = new DateTime(2015, 12, 31, 23, 47, 12),
+                    CreatedOnUtc = new DateTime(2015, 12, 31, 23, 47, 12),
                     Amount = new decimal(1677.02),
                     CreditPcntApplied = 50,
-                    TypeId = context.GzTransationTypes.Where(t => t.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
+                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 }
                 );
         }
 
         private static void CreateUpdTranxType(TestDbContext context) {
-            context.GzTransationTypes.AddOrUpdate(
+            context.GmTrxTypes.AddOrUpdate(
                 t => t.Code,
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.Deposit,
+                new GmTrxType {
+                    Code = GmTransactionTypeEnum.Deposit,
                     Description = "Customer deposit to their casino account. Informational purpose only."
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.InvWithdrawal,
-                    Description = "Reserved for future use. Customer withdrawal from their Greenzorro account to their banking account. Generate fees transactions: FundFee, Commission (4%)"
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.TransferToGaming,
-                    Description = "Liquidate a single month's customer's investment(vintage) and transfer cash to their casino account. Greenzorro will follow up operationally with a Greenzorro debit of banking cash to credit the casino's customer's banking account."
-                }, 
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.CasinoWithdrawal,
+                }
+                ,
+                new GmTrxType {
+                    Code = GmTransactionTypeEnum.CasinoWithdrawal,
                     Description = "Player cash withdrawal from their casino account. Informational purpose only"
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation,
+                }
+                ,
+                new GmTrxType {
+                    Code = GmTransactionTypeEnum.PlayingLoss,
+                    Description =
+                        "Customer Casino loss. We credit a percentage i.e. 50% from this amount; see CreditedPlayingLoss."
+                }
+                );
+            context.GzTrxTypes.AddOrUpdate(
+                t => t.Code,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.InvWithdrawal,
+                    Description = "Reserved for future use. Customer withdrawal from their Greenzorro account to their banking account. Generate fees transactions: FundFee, Commission (4%)."
+                }
+                ,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.TransferToGaming,
+                    Description = "Liquidate a single month's customer's investment(vintage) and transfer cash to their casino account. Greenzorro will follow up operationally with a Greenzorro debit of banking cash to credit the casino's customer's banking account."
+                }
+                ,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.FullCustomerFundsLiquidation,
                     Description = "Liquidate all customer\'s funds to cash. Typical Transaction when closing a customer\'s account."
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.PlayingLoss,
-                    Description = "Customer Casino loss. We credit a percentage i.e. 50% from this amount; see CreditedPlayingLoss."
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.CreditedPlayingLoss,
+                }
+                ,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.CreditedPlayingLoss,
                     Description = "Player Loss credited to a customer\'s Greenzorro account after a 50% deduction. See PlayingLoss for the whole amount."
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.FundFee,
+                }
+                ,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.FundFee,
                     Description = "Fund fees: 2.5%. Deducted from the customer investment when withdrawing cash."
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.GzFees,
+                }
+                ,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.GzFees,
                     Description = "Greenzorro fees: 1.5%. Deducted from the customer investment when withdrawing cash. Profit for GreenZorro."
-                },
-                new GzTransactionType {
-                    Code = GzTransactionJournalTypeEnum.GzActualTrxProfitOrLoss,
+                }
+                ,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.GzActualTrxProfitOrLoss,
                     Description = "The realized Greenzorro profit or loss by the actual purchase of customer shares after the month\'s end. It is the total difference between \"Bought Funds Prices\" * \"Monthly Customer Shares\" - \"Customer Shares\" * \"Funds Prices\" credited to the customer\'s Account."
                 }
                 );

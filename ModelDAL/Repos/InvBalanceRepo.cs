@@ -61,9 +61,9 @@ namespace gzDAL.Repos {
                 monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
 
             var soldValue =
-                _db.GzTransactions
-                    .Where(t => t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming
-                                && t.ParentTrxId == lastInvestmentId
+                _db.GzTrxs
+                    .Where(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming
+                                //&& t.ParentTrxId == lastInvestmentId
                                 && t.YearMonthCtd == yearMonthStr
                                 && t.CustomerId == customerId
                                 )
@@ -211,7 +211,7 @@ namespace gzDAL.Repos {
                         _gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
                             customerId,
                             newMonthlyBalance,
-                            GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation,
+                            GzTransactionTypeEnum.FullCustomerFundsLiquidation,
                             updatedDateTimeUtc);
 
                     _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(boughtShares: false, customerId: customerId,
@@ -426,7 +426,7 @@ namespace gzDAL.Repos {
         private string GetTrxMinMaxMonths(string startYearMonthStr, ref string endYearMonthStr) {
 
             if (string.IsNullOrEmpty(startYearMonthStr)) {
-                startYearMonthStr = _db.GzTransactions.Min(t => t.YearMonthCtd);
+                startYearMonthStr = _db.GzTrxs.Min(t => t.YearMonthCtd);
             }
             if (string.IsNullOrEmpty(endYearMonthStr)) {
                 endYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
@@ -444,7 +444,7 @@ namespace gzDAL.Repos {
         public void SaveDbCustomerMonthlyBalance(int customerId, string thisYearMonth) {
 
             var customerMonthlyTrx =
-                _db.GzTransactions
+                _db.GzTrxs
                     .Where(t => t.CustomerId == customerId && t.YearMonthCtd == thisYearMonth)
                     .GroupBy(t => t.YearMonthCtd)
                     .SingleOrDefault();
@@ -463,7 +463,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="customerMonthlyTrxs"></param>
-        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs) {
+        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTrx> customerMonthlyTrxs) {
 
             int yearCurrent = 0, monthCurrent = 0;
 
@@ -490,7 +490,7 @@ namespace gzDAL.Repos {
         /// <param name="customerMonthlyTrxs"></param>
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
-        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTransaction> customerMonthlyTrxs, int yearCurrent, int monthCurrent) {
+        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTrx> customerMonthlyTrxs, int yearCurrent, int monthCurrent) {
 
             if (yearCurrent == 0 || monthCurrent == 0) {
                 throw new Exception("Cannot have either year or month equal to 0 inside SaveDbCustomerMonthlyBalances()");
@@ -539,29 +539,27 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="monthlyTrxGrouping"></param>
         /// <returns></returns>
-        private decimal GetMonthlyCashToInvest(IGrouping<string, GzTransaction> monthlyTrxGrouping) {
+        private decimal GetMonthlyCashToInvest(IGrouping<string, GzTrx> monthlyTrxGrouping) {
 
             if (monthlyTrxGrouping == null) {
                 return 0;
             }
 
-            var monthlyPlayingLosses = monthlyTrxGrouping.Sum(t => t.Type.Code == GzTransactionJournalTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
-
-            var monthlyWithdrawnAmounts = monthlyTrxGrouping.Sum(t => t.Type.Code == GzTransactionJournalTypeEnum.InvWithdrawal ? t.Amount : 0);
+            var monthlyPlayingLosses = monthlyTrxGrouping.Sum(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
 
             var monthlyTransfersToGaming =
-                monthlyTrxGrouping.Sum(t => t.Type.Code == GzTransactionJournalTypeEnum.TransferToGaming ? t.Amount : 0);
+                monthlyTrxGrouping.Sum(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming ? t.Amount : 0);
 
             var monthlyFees =
                 monthlyTrxGrouping.Sum(
                     t =>
-                        t.Type.Code == GzTransactionJournalTypeEnum.GzFees || t.Type.Code == GzTransactionJournalTypeEnum.FundFee
+                        t.Type.Code == GzTransactionTypeEnum.GzFees || t.Type.Code == GzTransactionTypeEnum.FundFee
                             ? t.Amount
                             : 0);
 
             var monthlyLiquidationAmount =
                 monthlyTrxGrouping.Sum(
-                    t => t.Type.Code == GzTransactionJournalTypeEnum.FullCustomerFundsLiquidation ? t.Amount : 0);
+                    t => t.Type.Code == GzTransactionTypeEnum.FullCustomerFundsLiquidation ? t.Amount : 0);
 
             // Reduce fees by the fees amount corresponding to the portfolio liquidation
             if (monthlyLiquidationAmount > 0) {
@@ -569,7 +567,7 @@ namespace gzDAL.Repos {
             }
 
             // --------------- Net amount to invest -------------------------
-            var monthlyCashToInvest = monthlyPlayingLosses - monthlyWithdrawnAmounts - monthlyTransfersToGaming -
+            var monthlyCashToInvest = monthlyPlayingLosses - monthlyTransfersToGaming -
                                       monthlyFees;
 
             // ---------------------------------------------------------------------------------
@@ -592,19 +590,19 @@ namespace gzDAL.Repos {
         /// <param name="monthsToProc">Array of YYYYMM values i.e. [201601, 201502]. If null then select all months with this customers transactional activity.</param>
         public void SaveDbCustomerMonthlyBalancesByTrx(int customerId, string[] monthsToProc = null) {
 
-            IQueryable<IGrouping<string, GzTransaction>> monthlyTrx;
+            IQueryable<IGrouping<string, GzTrx>> monthlyTrx;
 
             // Step 1: Retrieve all Transactions by player activity
             if (monthsToProc == null || monthsToProc.Length == 0) {
 
-                monthlyTrx = _db.GzTransactions.Where(t => t.CustomerId == customerId)
+                monthlyTrx = _db.GzTrxs.Where(t => t.CustomerId == customerId)
                     .OrderBy(t => t.YearMonthCtd)
                     .GroupBy(t => t.YearMonthCtd);
             }
             // Add filter condition: given months
             else {
 
-                monthlyTrx = _db.GzTransactions.Where(t => t.CustomerId == customerId
+                monthlyTrx = _db.GzTrxs.Where(t => t.CustomerId == customerId
                     && monthsToProc.Contains(t.YearMonthCtd))
                     .OrderBy(t => t.YearMonthCtd)
                     .GroupBy(t => t.YearMonthCtd);
@@ -621,7 +619,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="customerMonthlyTrxs"></param>
-        private void SaveDbCustomerMonthlyBalancesByTrx(int customerId, IEnumerable<IGrouping<string, GzTransaction>> customerMonthlyTrxs) {
+        private void SaveDbCustomerMonthlyBalancesByTrx(int customerId, IEnumerable<IGrouping<string, GzTrx>> customerMonthlyTrxs) {
 
             // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
             foreach (var customerMonthlyTrx in customerMonthlyTrxs) {
