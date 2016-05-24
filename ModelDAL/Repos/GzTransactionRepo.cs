@@ -52,17 +52,16 @@ namespace gzDAL.Repos {
                     _db.GmTrxs
                         .Where(t => t.CustomerId == customerIds.GmCustomerId &&
                                     t.Type.Code == GmTransactionTypeEnum.Deposit)
-                        .Select(t => t.Amount)
-                        .Sum();
-            }
-            else {
+                        .Select(t => t)
+                        .Sum(t => (decimal?)t.Amount) ?? 0;
+            } else {
 
                 totalDeposits =
                     _db.GmTrxs
                         .Where(t => t.CustomerEmail == customerIds.Email &&
                                     t.Type.Code == GmTransactionTypeEnum.Deposit)
-                        .Select(t => t.Amount)
-                        .Sum();
+                        .Select(t => t)
+                        .Sum(t => (decimal?) t.Amount) ?? 0;
             }
 
             return totalDeposits;

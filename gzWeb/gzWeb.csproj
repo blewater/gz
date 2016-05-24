@@ -321,6 +321,10 @@
     <Compile Include="Migrations\201605240943157_Required Currency.Designer.cs">
       <DependentUpon>201605240943157_Required Currency.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.cs" />
+    <Compile Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.Designer.cs">
+      <DependentUpon>201605241348387_Remove uniqueness of Risk Portfolios.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -795,6 +799,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605240943157_Required Currency.resx">
       <DependentUpon>201605240943157_Required Currency.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.resx">
+      <DependentUpon>201605241348387_Remove uniqueness of Risk Portfolios.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
