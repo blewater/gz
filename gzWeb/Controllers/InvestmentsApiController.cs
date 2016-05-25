@@ -276,7 +276,7 @@ namespace gzWeb.Controllers
         #region Methods
         private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
         {
-            var customerPortfolio = _custFundShareRepo.GetCurrentCustomerPortfolio(user.Id);
+            var customerPortfolio = _custPortfolioRepo.GetCurrentCustomerPortfolio(user.Id);
             var portfolios = _dbContext.Portfolios.Where(x => x.IsActive);
 
             foreach (var portfolio in portfolios)

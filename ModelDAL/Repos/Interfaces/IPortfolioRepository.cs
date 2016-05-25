@@ -9,9 +9,5 @@ namespace gzDAL.Repos.Interfaces
         IEnumerable<PortfolioReturnsDTO> GetPortfolioReturns();
 
         IList<string> GetPortfolioRetLines();
-
-        Portfolio GetCurrentCustomerPortfolio(int customerId);
-
-        Portfolio GetNextMonthsCustomerPortfolio(int customerId);
     }
 }

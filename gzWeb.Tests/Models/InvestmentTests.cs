@@ -71,7 +71,10 @@ namespace gzWeb.Tests.Models {
 
                     foreach (var customerVintage in customerVintages) {
 
-                        var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), trxRepo)
+                        var soldShares = new InvBalanceRepo(
+                            db, 
+                            new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
+                            trxRepo)
                             .GetCustomerVintagesSellingValue(custId);
                     }
                 }
@@ -91,7 +94,9 @@ namespace gzWeb.Tests.Models {
                 var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
                     23, 00, 00);
 
-                var soldShares = new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                var soldShares = new InvBalanceRepo(
+                    db, 
+                    new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
                     .SaveDbSellAllCustomerFundsShares(custId, lastMonthDay);
 
                 Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
@@ -125,7 +130,10 @@ namespace gzWeb.Tests.Models {
                     CreateTestPlayerLossTransactions(custId);
                     CreateTestPlayerDepositWidthdrawnTransactions(custId);
 
-                    new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                    new InvBalanceRepo(
+                        db, 
+                        new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
+                        new GzTransactionRepo(db))
                         .SaveDbCustomerMonthlyBalancesByTrx(custId);
                 }
             }
@@ -159,7 +167,10 @@ namespace gzWeb.Tests.Models {
                         // Create Deposit only Transactions
                         CreateTestPlayerDepositTransactions(custId);
 
-                        new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                        new InvBalanceRepo(
+                            db, 
+                            new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
+                            new GzTransactionRepo(db))
                             .SaveDbCustomerAllMonthlyBalances(custId);
                     }
 
@@ -234,7 +245,7 @@ namespace gzWeb.Tests.Models {
         [Test]
         public void SaveDbUpdAllCustomerBalances() {
             using (var db = new ApplicationDbContext(null)) {
-                new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
                     .SaveDbAllCustomersMonthlyBalances();
             }
         }
@@ -242,7 +253,9 @@ namespace gzWeb.Tests.Models {
         [Test]
         public void SaveDbUpdOneCustomerOneMonthBalance() {
             using (var db = new ApplicationDbContext(null)) {
-                new InvBalanceRepo(db, new CustFundShareRepo(db), new GzTransactionRepo(db))
+                new InvBalanceRepo(
+                    db, 
+                    new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
                     .SaveDbCustomerMonthlyBalance(
                     /** 6month User **/
                         db.Users.Where(u => u.Email == "6month@allocation.com")

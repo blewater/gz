@@ -119,11 +119,11 @@ namespace gzWeb.Tests.Controllers
         {
 
             ApplicationDbContext db = new ApplicationDbContext();
-            ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(db);
+            ICustPortfolioRepo custPortfolioRepo = new CustPortfolioRepo(db);
+            ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(db, custPortfolioRepo);
             IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
             IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);
             ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(db);
-            ICustPortfolioRepo custPortfolioRepo = new CustPortfolioRepo(db);
 
             var config = new MapperConfiguration(cfg => {
                 cfg.CreateMap<VintageDto, VintageViewModel>();
