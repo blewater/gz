@@ -8,8 +8,8 @@
                 controller: routes[i].ctrl,
                 templateUrl: routes[i].tpl,
                 title: routes[i].title,
-                reloadOnSearch: routes[i].reloadOnSearch || true,
-                roles: routes[i].roles || [constants.roles.guest]
+                reloadOnSearch: routes[i].reloadOnSearch,
+                roles: routes[i].roles
             });
         $routeProvider.otherwise({ redirectTo: '/' });
 
