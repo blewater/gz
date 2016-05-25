@@ -14,7 +14,7 @@
             guest: apiBaseUrl('guest'),
             games: apiBaseUrl('games'),
             investments: apiBaseUrl('investments'),
-            auth: apiBaseUrl('auth')
+            account: apiBaseUrl('account')
         };
         factory.urls = urls;
         // #endregion
@@ -49,7 +49,7 @@
         };
         // #endregion
 
-        // #region Auth
+        // #region Account
         factory.login = function (usernameOrEmail, password) {
             var data = "grant_type=password" +
                        "&username=" + usernameOrEmail +
@@ -81,6 +81,13 @@
         factory.changePassword = function (parameters) {
             return $http.post('/api/Account/ChangePassword', parameters);
         }
+
+        factory.getDeploymentInfo = function () {
+            return $http.get(urls.account + 'getDeploymentInfo');
+        }
+        factory.reload = function () {
+            return $http.post(urls.account + 'reload');
+        }
         // #endregion
 
         // #region Investments
@@ -97,8 +104,8 @@
         factory.getPortfolioData = function () {
             return $http.get(urls.investments + 'getPortfolioData');
         };
-        factory.setPlanSelection = function () {
-            return $http.post(urls.investments + 'setPlanSelection');
+        factory.setPlanSelection = function (plan) {
+            return $http.post(urls.investments + 'setPlanSelection', plan);
         }
 
         factory.getPerformanceData = function () {

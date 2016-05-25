@@ -107,6 +107,7 @@
                 emBanking.getGamingAccounts(true, false).then(function (result) {
                     factory.data.gamingAccount = result.accounts[0];
                     storeAuthData();
+                    $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                     watchBalance();
                 }, function (error) {
                     console.log(error.desc);
@@ -136,9 +137,12 @@
                     //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
                 });
             }
+            //else if (args.code === 2) {
+            //}
             else {
                 // TODO Check other codes
                 emLogout();
+                //$location.path(constants.routes.home.path);
                 //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
             }
         });
@@ -171,8 +175,9 @@
             clearGamingData();
             unwatchBalance();
             emWamp.logout();
-            $location.path(constants.routes.home.path);
-            $window.location.reload();
+            //$location.path(constants.routes.home.path);
+            //$window.location.reload();
+            $window.location.href = constants.routes.home.path;
         }
 
         factory.logout = function () {
@@ -355,7 +360,6 @@
                 });
             }, function (error) {
                 vcRecaptchaService.reload();
-                // TODO Show error notification (+ set max-height)
                 q.reject(error);
             });
             return q.promise;
@@ -414,6 +418,14 @@
         // #region Init
         factory.init = function () {
             factory.readAuthData();
+
+            api.call(function () {
+                return api.getDeploymentInfo();
+            }, function (response) {
+                localStorageService.set(constants.storageKeys.version, response.Result.Version);
+                localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
+            });
+
             emWamp.init();
             var unregisterConnectionInitiated = $rootScope.$on(constants.events.CONNECTION_INITIATED, function () {
                 $rootScope.$broadcast(constants.events.ON_INIT);

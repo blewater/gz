@@ -34,13 +34,18 @@ var APP = (function () {
     ]);
 
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth) {
+        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', '$filter', 'api',
+        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, $filter, api) {
+            $rootScope.loading = true;
+            $rootScope.initialized = false;
+            localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
+
             auth.init();
 
-            $rootScope.initialized = false;
             $rootScope.$on(constants.events.ON_INIT, function () {
-                $rootScope.initialized = true;
+                var currentRoute = $filter('where')(constants.routes.all, { 'path': $location.path() })[0];
+                if (!auth.authorize(currentRoute.roles))
+                    $location.path(constants.routes.home.path);
 
                 $rootScope.$on('$routeChangeStart', function (event, next, current) {
                     $rootScope.loading = true;
@@ -74,8 +79,8 @@ var APP = (function () {
                     $rootScope.$apply();
                 });
 
-                localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
                 $rootScope.loading = false;
+                $rootScope.initialized = true;
 
                 $timeout(function () {
                     var $preloader = angular.element(document.querySelector('#preloader'));
