@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -559,5 +560,28 @@ namespace gzWeb.Controllers
         }
 
         #endregion
+
+        [AllowAnonymous]
+        public IHttpActionResult GetDeploymentInfo()
+        {
+            var debug =
+#if DEBUG
+                true;
+#else
+                false;
+#endif
+            return OkMsg(new
+            {
+                Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
+                Debug = debug
+            });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IHttpActionResult Reload()
+        {
+            return Ok();
+        }
     }
 }
