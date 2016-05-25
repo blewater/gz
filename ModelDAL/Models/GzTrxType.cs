@@ -73,7 +73,7 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// Converted back to cash from <see cref="CreditedPlayingLoss"/> as in sold vintages.
+        /// Investment vintage converted back to cash <see cref="CreditedPlayingLoss"/>. A sold vintage.
         /// 
         /// </summary>
         LiquidatedInvestment = 8

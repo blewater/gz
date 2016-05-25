@@ -180,23 +180,26 @@ namespace gzWeb.Controllers
 
 
         [HttpPost]
-        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
-        {
-            // TODO Actual withdraw and return remaining vintages
-            return OkMsg(() =>
-            {
-                var vintagesDtos = vintages.Select(v => 
-                    _mapper.Map<VintageViewModel, VintageDto>(v))
-                    .ToList();
+        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages) {
+            var vintagesDtos = vintages.Select(v =>
+                _mapper.Map<VintageViewModel, VintageDto>(v))
+                .ToList();
 
-                var updatedVintages = _invBalanceRepo.SaveDbSellVintages(
-                        User.Identity.GetUserId<int>(), vintagesDtos)
-                    .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
-                    .ToList();
+            var userId = User.Identity.GetUserId<int>();
 
-                return updatedVintages;
-            });
+            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
+
+            return OkMsg(updatedVintages);
         }
+
+        public List<VintageViewModel> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+
+            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(customerId, vintages)
+                .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
+                .ToList();
+            return updatedVintages;
+        }
+
         #endregion
 
         #region Portfolio
@@ -245,10 +248,10 @@ namespace gzWeb.Controllers
                 return OkMsg(new object(), "User not found!");
 
             var model = new PerformanceDataViewModel
-                        {
-                                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
-                                Plans = GetCustomerPlans(user)
-                        };
+            {
+                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
+                Plans = GetCustomerPlans(user)
+            };
             return OkMsg(model);
         }
         #endregion
@@ -279,7 +282,7 @@ namespace gzWeb.Controllers
         #region Methods
         private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
         {
-            var customerPortfolio = _custFundShareRepo.GetCurrentCustomerPortfolio(user.Id);
+            var customerPortfolio = _custPortfolioRepo.GetNextMonthsCustomerPortfolio(user.Id);
             var portfolios = _dbContext.Portfolios.Where(x => x.IsActive);
 
             foreach (var portfolio in portfolios)

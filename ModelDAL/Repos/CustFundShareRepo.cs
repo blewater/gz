@@ -24,8 +24,6 @@ namespace gzDAL.Repos {
         ///
         ///  Save purchased or sold funds shares to the customer's account.
         ///
-        ///  Call DBcontext.SaveChanges() on incoming db object for transaction support
-        ///
         ///  </summary>
         ///  <param name="db"></param>
         ///  <param name="customerId"></param>
@@ -99,7 +97,6 @@ namespace gzDAL.Repos {
                     // Row object value
                     custFundShare
                 );
-                db.SaveChanges();
 
             } catch (Exception e) {
                 // TODO: log customer id, fundId

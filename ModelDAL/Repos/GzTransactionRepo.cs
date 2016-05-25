@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
@@ -310,8 +311,15 @@ namespace gzDAL.Repos {
                                       && t.YearMonthCtd == vintage.YearMonthStr
                                       && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss);
 
+            var liquidatedId = _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.LiquidatedInvestment)
+                    .Select(tt => tt.Id)
+                    .First();
+
             foreach (var gzTrx in trxs) {
-                gzTrx.Type.Code = GzTransactionTypeEnum.LiquidatedInvestment;
+                gzTrx.TypeId = liquidatedId;
+                //_db.GzTrxs.Attach(gzTrx);
+                //var gzTrxEntry = _db.Entry(gzTrx);
+                //gzTrxEntry.Property(t=>t.TypeId).IsModified = true;
             }
         }
 
@@ -355,14 +363,20 @@ namespace gzDAL.Repos {
                     CustomerId = customerId,
                     VintageYearMonth = vintage.YearMonthStr,
                     MarketAmount = vintage.MarketPrice,
+                    Fees = vintage.Fees,
                     // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
                     SoldOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
                 }
                 );
-            //Not calling save changes. It will be call by the transaction block
         }
 
         /// <summary>
+        /// 
+        /// PreCondition Requirements:
+        ///     *** This method assumes it's called within transaction.
+        ///     *** Saves only the transactions part of the selling operation excluding balance updating.
+        ///     *** This method does not necessarily call SaveChanges.
+        ///     *** This method assumes that vintage marketsPrices are up to date.
         /// 
         /// Sell all vintages marked for selling them.
         /// 
@@ -371,7 +385,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
-        public void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+        public void SaveDbSellVintagesWoutTransaction(int customerId, IEnumerable<VintageDto> vintages) {
 
             var soldOnUtc = DateTime.UtcNow;
 
@@ -635,7 +649,6 @@ namespace gzDAL.Repos {
                         CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
                     }
                 );
-            _db.SaveChanges();
         }
 
         /// <summary>
