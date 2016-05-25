@@ -108,8 +108,8 @@
                                             message.success(msg, { nsType: 'toastr' });
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                             $scope.waiting = false;
-                                            $location.path(constants.routes.games.path);
                                             $scope.nsOk(true);
+                                            $location.path(constants.routes.games.path);
                                         } else if (transactionResult.status === "incomplete") {
                                             // TODO: show transaction is not completed
                                         } else if (transactionResult.status === "pending") {
