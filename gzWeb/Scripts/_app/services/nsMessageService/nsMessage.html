@@ -12,6 +12,7 @@
          ng-mouseleave="onMouseLeave()">
         <div class="msg-frame" ng-class="{'msg-minimized':isMinimized()}" ng-dblclick="toggleMinMax()">
             <span ng-if="showBadge()" class="msg-badge pull-left">{{nsIndex + 1}}</span>
+            <span ng-if="isNotification" class="msg-time pull-left">{{now | date : 'short'}}</span>
             <i ng-if="showClose()" class="msg-close fa fa-close pull-right" ng-click="onCloseClick()"></i>
             <i ng-show="showExpandCollapse() && !isMinimized()" class="msg-down fa fa-angle-down pull-right" ng-click="toggleMinMax()"></i>
             <i ng-show="showExpandCollapse() && isMinimized()" class="msg-up fa fa-angle-up pull-right" ng-click="toggleMinMax()"></i>
