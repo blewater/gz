@@ -14,7 +14,7 @@
             guest: apiBaseUrl('guest'),
             games: apiBaseUrl('games'),
             investments: apiBaseUrl('investments'),
-            auth: apiBaseUrl('auth')
+            account: apiBaseUrl('account')
         };
         factory.urls = urls;
         // #endregion
@@ -49,7 +49,7 @@
         };
         // #endregion
 
-        // #region Auth
+        // #region Account
         factory.login = function (usernameOrEmail, password) {
             var data = "grant_type=password" +
                        "&username=" + usernameOrEmail +
@@ -97,8 +97,8 @@
         factory.getPortfolioData = function () {
             return $http.get(urls.investments + 'getPortfolioData');
         };
-        factory.setPlanSelection = function () {
-            return $http.post(urls.investments + 'setPlanSelection');
+        factory.setPlanSelection = function (plan) {
+            return $http.post(urls.investments + 'setPlanSelection', plan);
         }
 
         factory.getPerformanceData = function () {

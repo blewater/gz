@@ -104,6 +104,7 @@ namespace gzWeb
             container.Register<IUserStore<ApplicationUser, int>, CustomUserStore>(Lifestyle.Scoped);
             container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
             container.Register<ICurrencyRateRepo, CurrencyRateRepo>(Lifestyle.Scoped);
+            container.Register<ICustPortfolioRepo, CustPortfolioRepo>(Lifestyle.Scoped);
             container.Register<IInvBalanceRepo, InvBalanceRepo>(Lifestyle.Scoped);
             container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);
             container.RegisterWebApiControllers(config);
