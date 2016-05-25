@@ -26,7 +26,8 @@
                             <div class="title text-left">{{plan.Title}}</div>
                         </div>
                         <div class="col-xs-4">
-                            <div class="balance text-center">{{plan.UserBalance | isoCurrency : currency : 0}}</div>
+                            <div ng-if="!plan.Selected" class="balance text-center">{{0 | isoCurrency : currency : 0}}</div>
+                            <div ng-if="plan.Selected" class="balance text-center">{{model.NextExpectedInvestment | isoCurrency : currency : 0}}</div>
                         </div>
                         <div class="col-xs-4">
                             <div class="selection text-right">
