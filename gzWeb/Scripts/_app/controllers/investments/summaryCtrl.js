@@ -45,12 +45,17 @@
                 api.call(function () {
                     return api.withdrawVintages(updatedVintages);
                 }, function (withdrawResponse) {
-                    if (withdrawResponse.Ok) {
-                        $scope.vintages = processVintages(withdrawResponse.Result);
-                        message.success('Your wallet balance has been updated. Please check your casino account over the next few days.');
+                    $scope.vintages = processVintages(withdrawResponse.Result);
+                    message.success("Your wallet balance has been updated. Please check your casino account over the next few days.");
+                }, {
+                    rejectFn: function() {
+                        var selectedCount = $filter('where')(updatedVintages, { 'Selected': true }).length;
+                        var failureMsg =
+                            "Our attempt to sell your investment vintage" +
+                            (selectedCount === 1 ? "" : "s") +
+                            " has not been successful. We apologize for the inconvenience. Please try again later.";
+                        message.error(failureMsg);
                     }
-                    else
-                        message.error('Withdrawal failed!!!');
                 });
             }, function(error) {
                 for (var i = 0; i < $scope.vintages.length; i++)
