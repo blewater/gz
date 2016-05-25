@@ -221,9 +221,9 @@ namespace gzDAL.Repos {
 
                 _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
 
-
-                // Recalculate all balances starting from the earliest
-                var startMonthBalanceToRecalc = vintages
+                // Recalculate all balances starting from the earliest month
+                var startMonthBalanceToRecalc = 
+                    vintages
                     .Where(v=>v.Selected)
                     .Select(v => v.YearMonthStr)
                     .Min();

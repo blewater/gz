@@ -11,8 +11,13 @@ namespace gzDAL.Repos {
     public class CustFundShareRepo : ICustFundShareRepo {
 
         private readonly ApplicationDbContext db;
-        public CustFundShareRepo(ApplicationDbContext db) {
+        private readonly IPortfolioRepository _portfolioRepository;
+
+        public CustFundShareRepo(ApplicationDbContext db, IPortfolioRepository portfolioRepository) {
+
             this.db = db;
+            this._portfolioRepository = portfolioRepository;
+
         }
 
         ///  <summary>
@@ -549,54 +554,5 @@ namespace gzDAL.Repos {
             return lastCompletedFundSharesMonth;
         }
 
-        /// <summary>
-        /// 
-        /// Get the present in Utc customer selected portfolio.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public Portfolio GetCurrentCustomerPortfolio(int customerId) {
-
-            return GetCustomerPortfolioForMonth(customerId, DateTime.UtcNow.ToStringYearMonth());
-        }
-
-        /// <summary>
-        /// 
-        /// Get the customer selected portfolio for any given month in their history.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearMonthStr"></param>
-        /// <returns></returns>
-        private Portfolio GetCustomerPortfolioForMonth(int customerId, string yearMonthStr) {
-
-            var portfolioMonth = GetCustPortfYearMonth(customerId, yearMonthStr);
-
-            return
-                db.CustPortfolios
-                    .Where(p => p.YearMonth == portfolioMonth && p.CustomerId == customerId)
-                    .Select(cp => cp.Portfolio)
-                    .Single();
-        }
-
-        /// <summary>
-        /// 
-        /// Get the latest YearMonth of a saved customer portfolio selection
-        /// By business rules there will be a globally default portfolio for all customers
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearMonthStr">The year month YYYYMM i.e. April 2016 = 201604 for which you want to get the portfolio </param>
-        /// 
-        /// <returns></returns>
-        private string GetCustPortfYearMonth(int customerId, string yearMonthStr) {
-
-            return db.CustPortfolios
-                .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, yearMonthStr, StringComparison.Ordinal) <= 0)
-                .OrderByDescending(p => p.YearMonth)
-                .Select(p => p.YearMonth)
-                .First();
-        }
     }
 }
