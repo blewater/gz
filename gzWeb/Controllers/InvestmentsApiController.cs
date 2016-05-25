@@ -182,17 +182,20 @@ namespace gzWeb.Controllers
         [HttpPost]
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
         {
-            var vintagesDtos = vintages.Select(v => 
-                _mapper.Map<VintageViewModel, VintageDto>(v))
-                .ToList();
-
-            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(
-                    User.Identity.GetUserId<int>(), vintagesDtos)
-                .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
-                .ToList();
-
             // TODO Actual withdraw and return remaining vintages
-            return OkMsg(() => updatedVintages);
+            return OkMsg(() =>
+            {
+                var vintagesDtos = vintages.Select(v => 
+                    _mapper.Map<VintageViewModel, VintageDto>(v))
+                    .ToList();
+
+                var updatedVintages = _invBalanceRepo.SaveDbSellVintages(
+                        User.Identity.GetUserId<int>(), vintagesDtos)
+                    .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
+                    .ToList();
+
+                return updatedVintages;
+            });
         }
         #endregion
 
