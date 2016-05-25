@@ -101,6 +101,7 @@ namespace gzWeb.Tests.Controllers
             IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
             IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);
             ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(db);
+            ICustPortfolioRepo custPortfolioRepo = new CustPortfolioRepo(db);
 
             var config = new MapperConfiguration(cfg => {
                 cfg.CreateMap<VintageDto, VintageViewModel>();
@@ -114,6 +115,7 @@ namespace gzWeb.Tests.Controllers
                     gzTransactionRepo,
                     custFundShareRepo,
                     currencyRateRepo,
+                    custPortfolioRepo,
                     mapper,
                     new ApplicationUserManager(new CustomUserStore(db), new DataProtectionProviderFactory(() => null)));
             return db;

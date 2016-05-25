@@ -17,7 +17,7 @@
             if ($scope.initialized)
                 callback();
             else {
-                var unregister = $scope.$on(constants.events.ON_INIT, function() {
+                var unregister = $scope.$on(constants.events.ON_INIT, function () {
                     callback();
                     unregister();
                 });

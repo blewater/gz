@@ -525,7 +525,7 @@
 }
 .investments .portfolio .portfolio-plans .plan .balance {
     font-size: 25px;
-    color: #000;
+    color: #7b7b7b;
 }
 .investments .portfolio .portfolio-plans .plan .selection button {
     width: 100%;
@@ -605,7 +605,7 @@
     -ms-opacity: 0.8;
     opacity: 0.8;
 
-    stroke: #555;
+    stroke: #999;
 }
 
 .investments .portfolio #portfolio-chart text {

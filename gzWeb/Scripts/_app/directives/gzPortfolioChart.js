@@ -16,9 +16,9 @@
             },
             link: function (scope, element, attrs) {
                 //var plans = [
-                //    { text: scope.gzAggressive.Title, percent: scope.gzAggressive.AllocationPercent, color: '#227B46' },
-                //    { text: scope.gzModerate.Title, percent: scope.gzModerate.AllocationPercent, color: '#64BF89' },
-                //    { text: scope.gzConservative.Title, percent: scope.gzConservative.AllocationPercent, color: '#B4DCC4' }
+                //    { text: scope.gzAggressive.Title, percent: scope.gzAggressive.AllocatedPercent, color: '#227B46' },
+                //    { text: scope.gzModerate.Title, percent: scope.gzModerate.AllocatedPercent, color: '#64BF89' },
+                //    { text: scope.gzConservative.Title, percent: scope.gzConservative.AllocatedPercent, color: '#B4DCC4' }
                 //];
                 var plans = scope.gzPlans;
                 //var roi = scope.gzRoi;
@@ -52,7 +52,7 @@
                             .padAngle(0.02);
 
                 var pie = d3.layout.pie()
-                    .value(function (d) { return d.AllocationPercent; })
+                    .value(function (d) { return d.AllocatedPercent; })
                     .sort(function (d, i) { return i; });
 
                 function showTooltip(text) {
@@ -130,7 +130,7 @@
                         });
                         return duration * totalPercent / 100;
                     })
-                    .duration(function (d, i) { return duration * d.data.AllocationPercent / 100; })
+                    .duration(function (d, i) { return duration * d.data.AllocatedPercent / 100; })
                     .ease('linear')
                     .attrTween('d', function(d) {
                         var interpolateAngle = d3.interpolate(d.startAngle, d.endAngle);
@@ -155,7 +155,7 @@
                         var c = arc.centroid(d);
                         return "translate(" + c[0]*0.8 + "," + c[1]*0.8 + ")";
                     })
-                    .text(function (d) { return d.data.AllocationPercent; });
+                    .text(function (d) { return d.data.AllocatedPercent; });
 
                 //group.append("text")
                 //    .style("text-anchor", "middle")
