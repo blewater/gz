@@ -39,6 +39,29 @@ namespace gzWeb.Tests.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// Precondition is u9@nessos.gr has to exist as user.
+        /// 
+        /// </summary>
+        [Test]
+        public void GetSummaryDataWithNewCustomer() {
+            InvestmentsApiController investmentsApiController;
+            var db = CreateInvestmentsApiController(out investmentsApiController);
+
+            var manager = new ApplicationUserManager(new CustomUserStore(db),
+                                                     new DataProtectionProviderFactory(() => null));
+            var user = manager.FindByEmail("u9@nessos.gr");
+
+            // Act
+            var result = ((IInvestmentsApi)investmentsApiController).GetSummaryData(user);
+            Assert.IsNotNull(result);
+
+            // Is this formula correct?
+            // var gainLossDiff = result.TotalInvestmentsReturns - (result.InvestmentsBalance - result.TotalInvestments);
+            // Assert.IsTrue(gainLossDiff == 0);
+        }
+
         [Test]
         public void GetSummaryDataWithUser()
         {
@@ -47,8 +70,7 @@ namespace gzWeb.Tests.Controllers
 
             var manager = new ApplicationUserManager(new CustomUserStore(db),
                                                      new DataProtectionProviderFactory(() => null));
-            //var user = manager.FindByEmail("6month@allocation.com");
-            var user = manager.FindByEmail("u9@nessos.gr");
+            var user = manager.FindByEmail("6month@allocation.com");
 
             // Act
             var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user);
