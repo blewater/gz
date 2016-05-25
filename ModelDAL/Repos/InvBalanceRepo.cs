@@ -151,6 +151,12 @@ namespace gzDAL.Repos {
 
                 if (vintageDto.Selected) {
 
+                    if (vintageDto.Locked) {
+                        int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
+                            vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
+                        throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " + vinMonth + " is locked and not available for selling it. !");
+                    }
+
                     var alreadySold =
                         _db.SoldVintages
                             .Any(v => v.CustomerId == customerId
@@ -159,7 +165,7 @@ namespace gzDAL.Repos {
                     if (alreadySold) {
                         int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
                             vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
-                        throw new Exception("This vintage for the year of " + vinYear + " and month: " + vinMonth + " cannot be resold !");
+                        throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " + vinMonth + " cannot be resold !");
                     }
 
                     // Recalculate: a long time may have passed since we last calculated it
@@ -204,8 +210,10 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Sell any vintages marked for selling. They are sold at the fund prices current
-        /// as of this method call.
+        /// Sell any vintages marked for selling. 
+        /// 
+        /// This method will update the vintages selling values before selling them.
+        /// The vintages are sold at the current fund prices as of this method call.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
@@ -215,11 +223,11 @@ namespace gzDAL.Repos {
 
             SetVintagesMarketPrices(customerId, vintages);
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            //ConnRetryConf.TransactWithRetryStrategy(_db,
 
-            () => {
+            //() => {
 
-                _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
+                _gzTransactionRepo.SaveDbSellVintagesWoutTransaction(customerId, vintages);
 
                 // Recalculate all balances starting from the earliest month
                 var startMonthBalanceToRecalc = 
@@ -233,7 +241,7 @@ namespace gzDAL.Repos {
                     startMonthBalanceToRecalc, 
                     previousMonthFromNow);
 
-            });
+            //});
 
             return vintages;
         }
@@ -307,9 +315,9 @@ namespace gzDAL.Repos {
             decimal invGainLoss,
             DateTime updatedDateTimeUtc) {
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            //ConnRetryConf.TransactWithRetryStrategy(_db,
 
-                () => {
+            //    () => {
 
                     // Save fees transactions first and continue with reduced cash amount
                     var remainingCashAmount =
@@ -336,7 +344,9 @@ namespace gzDAL.Repos {
                             UpdatedOnUTC = updatedDateTimeUtc
                         });
 
-                });
+            _db.SaveChangesAsync();
+
+            //});
         }
 
         #endregion Selling
@@ -448,9 +458,9 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            //ConnRetryConf.TransactWithRetryStrategy(_db,
 
-                () => {
+            //    () => {
 
                     _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
                             boughtShares: true,
@@ -469,7 +479,9 @@ namespace gzDAL.Repos {
                                 CashInvestment = cashToInvest,
                                 UpdatedOnUTC = DateTime.UtcNow
                             });
-                });
+
+            _db.SaveChangesAsync();
+            //});
         }
 
         /// <summary>
@@ -607,8 +619,7 @@ namespace gzDAL.Repos {
             if (monthlyCashToInvest >= 0) {
                 SaveDbCustomerMonthlyBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
             }
-
-            if (monthlyCashToInvest == 0) {
+            else {
                 SaveDbResellCustomerPortfolioIfSoldBefore(customerId, yearCurrent, monthCurrent);
             }
         }
