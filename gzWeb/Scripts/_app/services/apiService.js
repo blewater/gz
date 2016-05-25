@@ -81,6 +81,13 @@
         factory.changePassword = function (parameters) {
             return $http.post('/api/Account/ChangePassword', parameters);
         }
+
+        factory.getDeploymentInfo = function () {
+            return $http.get(urls.account + 'getDeploymentInfo');
+        }
+        factory.reload = function () {
+            return $http.post(urls.account + 'reload');
+        }
         // #endregion
 
         // #region Investments
