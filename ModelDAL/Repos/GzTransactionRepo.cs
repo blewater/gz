@@ -269,11 +269,74 @@ namespace gzDAL.Repos {
             return soldPortfolioTimestamp;
         }
 
+        /// <summary>
+        /// 
+        /// Perform all database operations for selling a vintage.
+        /// 
+        /// These operations may or may not call SaveChanges.
+        /// 
+        /// Assuming will be called within a transaction.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        /// <param name="soldOnUtc"></param>
         private void SaveDbSellVintage(int customerId, VintageDto vintage, DateTime soldOnUtc) {
 
-            SaveDbTransferToGamingAmount(customerId, vintage.SellingValue, soldOnUtc);
+            SaveDbLiquidatedPortfolioWithFees(
+                customerId, 
+                vintage.MarketPrice, 
+                GzTransactionTypeEnum.TransferToGaming, 
+                soldOnUtc);
 
             SaveDbSoldVintage(customerId, vintage, soldOnUtc);
+
+            UpdDbVintageInvestmentTrxToCash(customerId, vintage);
+
+            UpdDbSellCustomerFundShares(customerId, vintage);
+        }
+
+        /// <summary>
+        /// 
+        /// Update CreditedPlayingLoss transactions to cash converted of a vintage month.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        private void UpdDbVintageInvestmentTrxToCash(int customerId, VintageDto vintage) {
+
+            var trxs =
+                _db.GzTrxs.Where(t => t.CustomerId == customerId
+                                      && t.YearMonthCtd == vintage.YearMonthStr
+                                      && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss);
+
+            foreach (var gzTrx in trxs) {
+                gzTrx.Type.Code = GzTransactionTypeEnum.LiquidatedInvestment;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Update CustFundShare database entity to 0 any shares for that month
+        /// by zeroing the month's shares balance and "archiving" their value.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        private void UpdDbSellCustomerFundShares(int customerId, VintageDto vintage) {
+
+            var custFundShares =
+                _db.CustFundShares
+                    .Where(s => s.CustomerId == customerId
+                        && s.YearMonth == vintage.YearMonthStr
+                        && s.NewSharesNum > 0);
+
+            foreach (var fundShare in custFundShares) {
+                fundShare.SoldNewSharesNum = fundShare.NewSharesNum;
+                fundShare.NewSharesNum = 0;
+                fundShare.BoughtNewSharesValue = fundShare.NewSharesValue;
+                fundShare.NewSharesValue = 0;
+            }
         }
 
         /// <summary>
@@ -291,7 +354,7 @@ namespace gzDAL.Repos {
                 new SoldVintage() {
                     CustomerId = customerId,
                     VintageYearMonth = vintage.YearMonthStr,
-                    Amount = vintage.SellingValue,
+                    MarketAmount = vintage.MarketPrice,
                     // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
                     SoldOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
                 }
@@ -303,25 +366,21 @@ namespace gzDAL.Repos {
         /// 
         /// Sell all vintages marked for selling them.
         /// 
+        /// Assuming it's called within a transaction.
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
         public void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            var soldOnUtc = DateTime.UtcNow;
 
-            () => {
+            foreach (var vintage in vintages) {
 
-                var soldOnUtc = DateTime.UtcNow;
-
-                foreach (var vintage in vintages) {
-
-                    if (vintage.Selected) {
-                        SaveDbSellVintage(customerId, vintage, soldOnUtc);
-                    }
+                if (vintage.Selected) {
+                    SaveDbSellVintage(customerId, vintage, soldOnUtc);
                 }
-
-            });
+            }
         }
 
         /// <summary>

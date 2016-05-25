@@ -23,7 +23,10 @@ namespace gzDAL.Models {
         public string VintageYearMonth { get; set; }
 
         [Required]
-        public decimal Amount { get; set; }
+        public decimal MarketAmount { get; set; }
+
+        [Required]
+        public decimal Fees { get; set; }
 
         [Required]
         public DateTime SoldOnUtc { get; set; }

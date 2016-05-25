@@ -48,24 +48,60 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Calculate the vintage in latest fund market value 
-        /// unless it has been sold which case returns that value
+        /// Calculate the vintage in latest fund market value and deduct fees. The amount the customer
+        /// would receive.
+        /// unless it has been sold already in which case return that value
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="yearMonthStr"></param>
-        /// <returns></returns>
+        /// <returns>Sold Value with fees deducted. The amount the customer would receive.</returns>
         private decimal GetVintageSellingValue(int customerId, string yearMonthStr) {
+
+            decimal fees;
+            decimal vintageSellingPrice = GetVintageSellingPrice(customerId, yearMonthStr, out fees);
+
+            return vintageSellingPrice - fees;
+        }
+
+        /// <summary>
+        /// 
+        /// Calculate the vintage in latest fund market value
+        /// Unless it has been sold already which case return that value
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="yearMonthStr"></param>
+        /// <param name="fees"></param>
+        /// <returns>The market priced vintage.</returns>
+        private decimal GetVintageSellingPrice(
+            int customerId, 
+            string yearMonthStr,
+            out decimal fees) 
+        {
+
+            // Init return value
+            decimal monthlySharesValue = 0;
 
             var vintageSoldValue =
                 _db.SoldVintages
-                    .Where(v => v.CustomerId == customerId 
-                        && v.VintageYearMonth == yearMonthStr)
-                    .Sum(v => (decimal?)v.Amount);
+                    .Where(v => v.CustomerId == customerId
+                                && v.VintageYearMonth == yearMonthStr)
+                    .Select(v => new {Amount = v.MarketAmount, v.Fees})
+                    .FirstOrDefault();
 
-            // If not sold calculate it now
-            decimal monthlySharesValue = 
-                vintageSoldValue ?? GetVintageValueNow(customerId, yearMonthStr);
+            if (vintageSoldValue != null) {
+
+                fees = vintageSoldValue.Fees;
+                monthlySharesValue = vintageSoldValue.Amount;
+
+            }
+            else {
+
+                // If not sold already calculate it now
+                monthlySharesValue = GetVintageValuePricedNow(customerId, yearMonthStr, out fees);
+
+            }
 
             return monthlySharesValue;
         }
@@ -77,9 +113,12 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="yearMonthStr"></param>
-        /// 
+        /// <param name="fees"></param>
         /// <returns></returns>
-        private decimal GetVintageValueNow(int customerId, string yearMonthStr) {
+        private decimal GetVintageValuePricedNow(
+            int customerId, 
+            string yearMonthStr, 
+            out decimal fees) {
 
             int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
                 monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
@@ -89,13 +128,11 @@ namespace gzDAL.Repos {
                 yearCurrent,
                 monthCurrent);
 
-            var monthsNewSharesValue = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
+            var monthsNewSharesPrice = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
 
-            decimal monthlySharesValue =
-                DbExpressions.RoundCustomerBalanceAmount(
-                    monthsNewSharesValue - _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesValue));
+            fees = _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesPrice);
 
-            return monthlySharesValue;
+            return monthsNewSharesPrice;
         }
 
         /// <summary>
@@ -108,7 +145,7 @@ namespace gzDAL.Repos {
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
         /// <returns></returns>
-        private void SetVintagesSellingValue(int customerId, IEnumerable<VintageDto> vintages) {
+        private void SetVintagesMarketPrices(int customerId, IEnumerable<VintageDto> vintages) {
 
             foreach (var vintageDto in vintages) {
 
@@ -126,7 +163,13 @@ namespace gzDAL.Repos {
                     }
 
                     // Recalculate: a long time may have passed since we last calculated it
-                    vintageDto.SellingValue = GetVintageValueNow(customerId, vintageDto.YearMonthStr);
+                    decimal fees;
+                    vintageDto.MarketPrice = GetVintageValuePricedNow(
+                            customerId, 
+                            vintageDto.YearMonthStr, 
+                            out fees);
+
+                    vintageDto.Fees = fees;
                 }
             }
         }
@@ -170,9 +213,27 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
 
-            SetVintagesSellingValue(customerId, vintages);
+            SetVintagesMarketPrices(customerId, vintages);
 
-            _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
+            ConnRetryConf.TransactWithRetryStrategy(_db,
+
+            () => {
+
+                _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
+
+
+                // Recalculate all balances starting from the earliest
+                var startMonthBalanceToRecalc = vintages
+                    .Where(v=>v.Selected)
+                    .Select(v => v.YearMonthStr)
+                    .Min();
+                var previousMonthFromNow = DateTime.UtcNow.AddMonths(-1).ToStringYearMonth();
+                this.SaveDbCustomerAllMonthlyBalances(
+                    customerId, 
+                    startMonthBalanceToRecalc, 
+                    previousMonthFromNow);
+
+            });
 
             return vintages;
         }
