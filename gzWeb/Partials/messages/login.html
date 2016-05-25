@@ -35,6 +35,12 @@
                 </div>
             </div>
 
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="model.showCaptcha">
+                <div class="form-group">
+                    <div vc-recaptcha key="reCaptchaPublicKey" class="recaptcha-wrap"></div>
+                </div>
+            </div>
+
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <div class="help-block" ng-class="{'show': form.$submitted && errorMsg}">{{errorMsg}}</div>

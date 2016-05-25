@@ -100,8 +100,13 @@
 
     // #region All
     var all = [];
-    for (var key in routes)
+    for (var key in routes) {
+        if (routes[key].roles === undefined)
+            routes[key].roles = [roles.guest];
+        if (routes[key].reloadOnSearch === undefined)
+            routes[key].reloadOnSearch = true;
         all.push(routes[key]);
+    }
     routes.all = all;
     // #endregion
     // #endregion
