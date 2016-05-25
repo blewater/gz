@@ -1,5 +1,5 @@
 /* commonjs package manager support */
-if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
+if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports) {
     var autobahn = require('autobahn');
     module.exports = 'vxWamp';
 }
@@ -57,6 +57,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
          *    - `realm`: `{string=}` - The WAMP realm to join, e.g. realm1
          *
          *    Optional options:
+         *
+         *      - `prefix`: `{string=}` - prefix events so we can distinguish between instances (default: '$wamp')
          *
          *      Options that control what kind of Deferreds to use:
          *
@@ -179,6 +181,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             var connection;
             var sessionDeferred = $q.defer();
             var sessionPromise = sessionDeferred.promise;
+            var prefix = options.prefix || "$wamp";
 
             /**
              * @param session
@@ -193,7 +196,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                 var onChallengeDeferred = $q.defer();
 
-                $rootScope.$broadcast("$wamp.onchallenge", {
+                $rootScope.$broadcast(prefix + ".onchallenge", {
                     promise: onChallengeDeferred,
                     session: session,
                     method: method,
@@ -203,6 +206,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 return onChallengeDeferred.promise;
             };
 
+            var defaultOptions = {onchallenge: digestWrapper(onchallenge), use_deferred: $q.defer};
+
+            options = angular.extend(defaultOptions, options);
+
             /**
              * Interceptors stored in reverse order. Inner interceptors before outer interceptors.
              */
@@ -210,7 +217,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
             angular.forEach(interceptors, function (interceptor) {
                 reversedInterceptors.unshift(
-                    angular.isString(interceptor) ? $injector.get(interceptor) :  $injector.invoke(interceptor));
+                    angular.isString(interceptor) ? $injector.get(interceptor) : $injector.invoke(interceptor));
             });
 
             /**
@@ -228,17 +235,15 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                 return function () {
                     var cb = func.apply(this, arguments);
-                    $rootScope.$apply();
+                    $rootScope.$applyAsync();
                     return cb;
                 };
             }
 
-            options = angular.extend({onchallenge: digestWrapper(onchallenge), use_deferred: $q.defer}, options);
-
             connection = new autobahn.Connection(options);
             connection.onopen = digestWrapper(function (session, details) {
                 $log.debug("Congrats!  You're connected to the WAMP server!");
-                $rootScope.$broadcast("$wamp.open", {session: session, details: details});
+                $rootScope.$broadcast(prefix + ".open", {session: session, details: details});
                 sessionDeferred.resolve();
             });
 
@@ -254,9 +259,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     }
                 }
 
-                $rootScope.$broadcast("$wamp.close", {reason: reason, details: details});
+                $rootScope.$broadcast(prefix + ".close", {reason: reason, details: details});
             });
-
 
             /**
              * Subscription object which self manages reconnections
@@ -295,7 +299,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     onOpen();
                 }
 
-                unregister = $rootScope.$on("$wamp.open", onOpen);
+                unregister = $rootScope.$on(prefix + ".open", onOpen);
 
                 subscription.promise = deferred.promise;
                 subscription.unsubscribe = function () {
@@ -333,7 +337,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                  * @returns {{error: *, type: *, args: *}}
                  */
                 var error = function (error) {
-                    $log.error("$wamp error", {type: type, arguments: args, error: error});
+                    $log.error(prefix + " error", {type: type, arguments: args, error: error});
                     return $q.reject({error: error, type: type, args: args});
                 };
 
