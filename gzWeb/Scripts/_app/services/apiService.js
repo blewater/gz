@@ -34,13 +34,13 @@
                 if (response.Ok)
                     resolveFn(response);
                 else {
-                    console.log(response.Message);
-                    //messageService.error(response.Message);
+                    //console.log(response.Message);
+                    //message.error(response.Message);
                     ctx.rejectFn(response);
                 }
             }).error(function (error) {
-                console.log(error);
-                //messageService.error(error);
+                //console.log(error);
+                //message.error(error);
                 ctx.errorFn(error);
             }).finally(function () {
                 ctx.loadingFn(false);
