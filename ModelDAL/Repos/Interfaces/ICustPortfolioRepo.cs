@@ -8,5 +8,11 @@ namespace gzDAL.Repos.Interfaces
         void SaveDbCustomerSelectNextMonthsPortfolio(int customerId, RiskToleranceEnum riskType);
         void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC);
         void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC);
+
+        Portfolio GetCurrentCustomerPortfolio(int customerId);
+
+        Portfolio GetNextMonthsCustomerPortfolio(int customerId);
+
+        Portfolio GetCustomerPortfolioForMonth(int customerId, string yearMonthStr);
     }
 }

@@ -11,12 +11,12 @@ namespace gzDAL.Repos {
     public class CustFundShareRepo : ICustFundShareRepo {
 
         private readonly ApplicationDbContext db;
-        private readonly IPortfolioRepository _portfolioRepository;
+        private readonly ICustPortfolioRepo _custPortfolioRepo;
 
-        public CustFundShareRepo(ApplicationDbContext db, IPortfolioRepository portfolioRepository) {
+        public CustFundShareRepo(ApplicationDbContext db, ICustPortfolioRepo custPortfolioRepo) {
 
             this.db = db;
-            this._portfolioRepository = portfolioRepository;
+            this._custPortfolioRepo = custPortfolioRepo;
 
         }
 
@@ -146,7 +146,7 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         private Dictionary<int, PortfolioFundDTO> GetOwnedFundSharesPortfolioWeights(int customerId, decimal cashToInvest, int year, int month) {
 
-            var portfolio = GetCustomerPortfolioForMonth(customerId, DbExpressions.GetStrYearMonth(year, month));
+            var portfolio = _custPortfolioRepo.GetCustomerPortfolioForMonth(customerId, DbExpressions.GetStrYearMonth(year, month));
 
             System.Diagnostics.Trace.Assert(portfolio != null, string.Format("No portfolio has been set for customer Id: {0}", customerId));
 

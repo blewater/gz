@@ -173,7 +173,7 @@ namespace gzDAL.Conf
         private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
 
             new InvBalanceRepo(context, 
-                new CustFundShareRepo(context, new PortfolioRepository()), new GzTransactionRepo(context))
+                new CustFundShareRepo(context, new CustPortfolioRepo(context)), new GzTransactionRepo(context))
                 .SaveDbCustomerMonthlyBalancesByTrx(custId);
         }
 
