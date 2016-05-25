@@ -66,7 +66,7 @@ namespace gzDAL.Repos {
                                         : 0,
 
                     SharesFundPriceId = fundShares.Value.SharesFundPriceId,
-                    UpdatedOnUTC = updatedOnUtc
+                    UpdatedOnUtc = updatedOnUtc
                 };
 
                 SaveDbCustFundShare(custFundShare, customerId, year, month, updatedOnUtc, fundShares);

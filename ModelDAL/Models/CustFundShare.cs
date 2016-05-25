@@ -27,17 +27,13 @@ namespace gzDAL.Models {
 
         // Fund Nav Property
         [ForeignKey("FundId")]
-        virtual public Fund Fund { get; set; }
-
-        // Customer nav property
-        [ForeignKey("CustomerId")]
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public virtual Fund Fund { get; set; }
 
         /// <summary>
         /// Last Updated
         /// </summary>
         [Required]
-        public DateTime UpdatedOnUTC { get; set; }
+        public DateTime UpdatedOnUtc { get; set; }
 
         #region Total Monthly Shares
         /// <summary>
@@ -71,5 +67,18 @@ namespace gzDAL.Models {
         public decimal? NewSharesValue { get; set; }
 
         #endregion
+        #region Sold Shares
+
+        /// <summary>
+        /// Number of new shares bought for month
+        /// </summary>
+        public decimal? SoldNewSharesNum { get; set; }
+        /// <summary>
+        /// Value of monthly shares as they were priced when bought
+        /// </summary>
+        public decimal? BoughtNewSharesValue { get; set; }
+
+        #endregion
+
     }
 }
