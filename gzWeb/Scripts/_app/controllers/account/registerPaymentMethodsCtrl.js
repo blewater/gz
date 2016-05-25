@@ -67,8 +67,8 @@
 
         // #region gotoGames
         $scope.gotoGames = function () {
-            $location.path(constants.routes.games.path);
             $scope.nsOk(false);
+            $location.path(constants.routes.games.path);
         };
         // #endregion
 
