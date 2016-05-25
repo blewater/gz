@@ -179,29 +179,14 @@
 /* #endregion */
 
 /* #region Transparency */
-.guest .transparency {
-}
-
-/*.transparency { background-color: #ececec; }*/
-
-/*.transparency .container {
-	color: rgba(0, 0, 0, 0.6);
-}*/
-
-.guest .transparency h4 {
-	text-align: center;
-	line-height: 1.5em;
-}
-
+.guest .transparency { margin-top: 60px; }
 
 /*** Header Section Styling ***/
-.guest .transparency .header {
-	margin-bottom: 30px;
-}
+.guest .transparency .header { margin-bottom: 60px; }
 
-.guest .transparency .header h4 {
-	font-size: 27px;
-	margin-bottom: 20px;
+.guest .transparency .header .full-transparency {
+	font-size: 28px;
+    text-align: center;
 }
 
 .guest .transparency .header img {
@@ -210,13 +195,9 @@
 }
 
 /*** Main Section Styling ***/
-.guest .transparency .main {
-	margin-bottom: 30px;
-}
+.guest .transparency .main { margin-bottom: 30px; }
 
-.guest .transparency .main .item {
-	margin-bottom: 40px;
-}
+.guest .transparency .main .item { margin-bottom: 40px; }
 
 .guest .transparency .main figcaption {
 	text-align: center;
@@ -225,30 +206,26 @@
 }
 
 /*** Footer Section Styling ***/
-.guest .transparency .footer-section .well {
-	border: none!important;
+.guest .transparency .footer-section .we-report {
 	font-size: 22px;
+    text-align: center;
 	width: 80%;
-	padding: 30px 0 30px 0!important;
+    background-color: white;
+	padding: 30px 0 30px 0;
 }
 
-@media (max-width: 1119px) {
-	.guest .transparency .container { width: 70%; }
+/**************** XS ********************/
+@media (max-width: 767px)  {
+    .guest .transparency .header .full-transparency { font-size: 24px; }
+    .guest .transparency .main figcaption { font-size: 18px; }
+    .guest .transparency .footer-section .we-report { font-size: 20px; }	
 }
 
-@media (max-width: 767px) {
-	.guest .transparency .main figcaption,
-    .guest .transparency .container h4,
-    .guest .transparency .container .footer-section .last { font-size: 1em; }
-    .guest .transparency .header h4 { font-size: 20px; }
-    .guest .transparency .footer-section .well { font-size: 18px; }	
-}
-
-@media (max-width: 410px) { 
-	.guest .transparency .container h4,
-    .transparency .container .footer-section .last  { font-size: .8em; }
-	.guest .transparency .main figcaption { font-size: .6em; }
-	.guest .transparency .main img { width: 70px; }
+@media (max-width: 510px) { 
+	.guest .transparency .header .full-transparency { font-size: 20px; }
+    .guest .transparency .main img { width: 70px; 0}
+	.guest .transparency .main figcaption { font-size: 14px; }
+    .guest .transparency .footer-section .we-report { font-size: 16px; }
  }
 /* #endregion */
 
