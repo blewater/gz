@@ -108,8 +108,8 @@
 
     APP.constant("constants", {
         title: 'Greenzorro',
-        version: 0.7,
-        debugMode: true,
+        //version: 0.7,
+        //debugMode: true,
         html5Mode: true,
 
         webSocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
@@ -127,6 +127,8 @@
             sm_rel_green: { radius: 5, width: 2, length: 4, color: '#27A95C', position: 'relative', top: '0' },
         },
         storageKeys: {
+            version: 'version',
+            debug: 'debug',
             randomSuffix: 'randomSuffix',
             authData: 'authData',
             clientId: '$client_id$'

@@ -12,15 +12,16 @@
         };
         $scope.selectPlan = function (plan) {
             api.call(function () {
-                return api.setPlanSelection();
+                return api.setPlanSelection(plan);
             }, function (response) {
                 var index = $scope.model.Plans.indexOf(plan);
                 for (var i = 0; i < $scope.model.Plans.length; i++)
                     $scope.model.Plans[i].Selected = index === i;
 
-                message.toastr('Your selection was registered successfully!');
+                message.success('Your selection was registered successfully!', { nsType: 'toastr' });
             }, {
-                loadingFn: function (flag) { plan.selecting = flag; }
+                loadingFn: function (flag) { plan.selecting = flag; },
+                errorFn: function(error) { message.success(error); }
             });
         }
 

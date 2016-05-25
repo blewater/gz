@@ -34,6 +34,7 @@ namespace gzWeb.Controllers
             IGzTransactionRepo gzTransactionRepo,
             ICustFundShareRepo custFundShareRepo,
             ICurrencyRateRepo currencyRateRepo,
+            ICustPortfolioRepo custPortfolioRepo,
             IMapper mapper,
             ApplicationUserManager userManager):base(userManager)
         {
@@ -42,6 +43,7 @@ namespace gzWeb.Controllers
             _gzTransactionRepo = gzTransactionRepo;
             _custFundShareRepo = custFundShareRepo;
             _currencyRateRepo = currencyRateRepo;
+            _custPortfolioRepo = custPortfolioRepo;
             _mapper = mapper;
         }
         #endregion
@@ -219,11 +221,14 @@ namespace gzWeb.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult SetPlanSelection()
+        public IHttpActionResult SetPlanSelection(PlanViewModel plan)
         {
             return OkMsg(() =>
             {
-
+                var user = UserManager.FindById(User.Identity.GetUserId<int>());
+                if (user == null)
+                    return OkMsg(new object(), "User not found!");
+                return OkMsg(() => _custPortfolioRepo.SaveDbCustomerSelectNextMonthsPortfolio(user.Id, plan.Risk));
             });
         }
         #endregion
@@ -272,9 +277,7 @@ namespace gzWeb.Controllers
         private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
         {
             var customerPortfolio = _custFundShareRepo.GetCurrentCustomerPortfolio(user.Id);
-
-            var portfolios = _dbContext.Portfolios
-                             .Where(x => x.IsActive);
+            var portfolios = _dbContext.Portfolios.Where(x => x.IsActive);
 
             foreach (var portfolio in portfolios)
             {
@@ -289,10 +292,11 @@ namespace gzWeb.Controllers
                    {
                        Id = x.Id,
                        Title = portfolioPrototype.Title,
-                       UserBalance = 0, // TODO: get from customer data
                        Color = portfolioPrototype.Color,
-                       AllocationPercent = active ? 100 : 0,
+                       AllocatedPercent = active ? 100 : 0, // TODO
+                       AllocatedAmount = 0, // TODO
                        ROI = 0, // TODO: ???
+                       Risk = x.RiskTolerance,
                        Selected = active, // TODO: get from customer data
                        Holdings = x.PortFunds.Select(f => new HoldingViewModel
                                                           {
@@ -304,14 +308,13 @@ namespace gzWeb.Controllers
         #endregion
         
         #region Fields
-
         private readonly IMapper _mapper;
         private readonly IInvBalanceRepo _invBalanceRepo;
         private readonly IGzTransactionRepo _gzTransactionRepo;
         private readonly ICurrencyRateRepo _currencyRateRepo;
         private readonly ICustFundShareRepo _custFundShareRepo;
+        private readonly ICustPortfolioRepo _custPortfolioRepo;
         private readonly ApplicationDbContext _dbContext;
-
         #endregion
 
         #region Dummy Data
@@ -355,31 +358,35 @@ namespace gzWeb.Controllers
         {
             Title = "Aggressive",
             Selected = false,
-            AllocationPercent = 34,
-            UserBalance = 1500,
             ROI = 0.1,
             Color = "#227B46",
-            Holdings = _dummyHoldings
+            Holdings = _dummyHoldings,
+            AllocatedPercent = 34,
+            AllocatedAmount = 400,
+            Risk = RiskToleranceEnum.High
         };
         private static PlanViewModel _dummyModerate = new PlanViewModel()
         {
             Title = "Moderate",
             Selected = true,
-            AllocationPercent = 23,
-            UserBalance = 1500,
             ROI = 0.07,
             Color = "#64BF89",
-            Holdings = _dummyHoldings
+            Holdings = _dummyHoldings,
+            AllocatedPercent = 23,
+            AllocatedAmount = 1110,
+            Risk = RiskToleranceEnum.Medium
         };
         private static PlanViewModel _dummyConservative = new PlanViewModel()
         {
             Title = "Conservative",
             Selected = false,
-            AllocationPercent = 43,
-            UserBalance = 1500,
+            //UserBalance = 1500,
             ROI = 0.04,
             Color = "#B4DCC4",
-            Holdings = _dummyHoldings
+            Holdings = _dummyHoldings,
+            AllocatedPercent = 43,
+            AllocatedAmount = 700,
+            Risk = RiskToleranceEnum.Low
         };
         private static IList<PlanViewModel> _dummyPlans = new[] { _dummyConservative, _dummyModerate, _dummyAggressive };
         #endregion

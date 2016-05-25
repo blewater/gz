@@ -115,13 +115,18 @@
 
         // #region ui
         function getTemplate(templateUrl) {
+            var version = localStorageService.get(constants.storageKeys.version);// || constants.version;
+            //var debug = localStorageService.get(constants.storageKeys.debug) || constants.debugMode;
             var randomSuffix = localStorageService.get(constants.storageKeys.randomSuffix);
             if (!randomSuffix) {
                 randomSuffix = Math.random();
                 localStorageService.set(constants.storageKeys.randomSuffix, randomSuffix);
             }
 
-            var suffix = constants.debugMode ? randomSuffix : 'v.' + constants.version + '_' + randomSuffix;
+            //var suffix = debug
+            //    ? randomSuffix
+            //    : 'v.' + version + '_' + randomSuffix;
+            var suffix = 'v.' + version + '_' + randomSuffix;
             return templateUrl + '?' + suffix;
         }
         function compileTemplate(templateUrl, scope, callback) {

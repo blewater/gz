@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using gzDAL.Models;
 
 namespace gzWeb.Models
 {
@@ -19,9 +20,11 @@ namespace gzWeb.Models
         public string Title { get; set; }
         public double ROI { get; set; }
         public string Color { get; set; }
-        public decimal UserBalance { get; set; }
-        public double AllocationPercent { get; set; }
+        public double AllocatedPercent { get; set; }
+        public decimal AllocatedAmount { get; set; }
+        //public decimal NextInvestmentAmount { get; set; }
         public bool Selected { get; set; }
+        public RiskToleranceEnum Risk { get; set; }
         public IEnumerable<HoldingViewModel> Holdings { get; set; }
     }
 
