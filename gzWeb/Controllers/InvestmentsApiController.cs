@@ -182,17 +182,20 @@ namespace gzWeb.Controllers
         [HttpPost]
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
         {
-            var userId = User.Identity.GetUserId<int>();
-            var vintagesDtos = vintages.Select(v => 
-                _mapper.Map<VintageViewModel, VintageDto>(v))
-                .ToList();
+            // TODO Actual withdraw and return remaining vintages
+            return OkMsg(() =>
+            {
+                var vintagesDtos = vintages.Select(v => 
+                    _mapper.Map<VintageViewModel, VintageDto>(v))
+                    .ToList();
 
-            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(
-                    userId, vintagesDtos)
-                .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
-                .ToList();
+                var updatedVintages = _invBalanceRepo.SaveDbSellVintages(
+                        User.Identity.GetUserId<int>(), vintagesDtos)
+                    .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
+                    .ToList();
 
-            return OkMsg(() => updatedVintages);
+                return updatedVintages;
+            });
         }
         #endregion
 
@@ -276,7 +279,7 @@ namespace gzWeb.Controllers
         #region Methods
         private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
         {
-            var customerPortfolio = _custPortfolioRepo.GetCurrentCustomerPortfolio(user.Id);
+            var customerPortfolio = _custFundShareRepo.GetCurrentCustomerPortfolio(user.Id);
             var portfolios = _dbContext.Portfolios.Where(x => x.IsActive);
 
             foreach (var portfolio in portfolios)
