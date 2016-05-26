@@ -12,6 +12,6 @@ namespace gzWeb.Contracts
 
         IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user);
 
-        List<VintageViewModel> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages);
+        IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages);
     }
 }

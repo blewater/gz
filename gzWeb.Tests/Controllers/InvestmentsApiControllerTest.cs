@@ -78,32 +78,30 @@ namespace gzWeb.Tests.Controllers
 
             var user = manager.FindByEmail("6month@allocation.com");
 
-            var vintagesVms = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
-            var vintages = 
-                vintagesVms.Select(v =>mapper.Map<VintageViewModel, VintageDto>(v)).ToList();
+            var VintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
 
             // Mark for selling most recent that's allowed
-            var sellVintage = vintages.Where(v => !v.Locked && !v.Sold)
+            var sellVintage = VintagesVMs.Where(v => !v.Locked && !v.Sold)
                 .OrderBy(v => v.YearMonthStr)
                 .First();
 
             sellVintage.Selected = true;
 
-            vintagesVms = investmentsApiController.SaveDbSellVintages(user.Id, vintages);
-
-            vintages = vintagesVms.Select(v => mapper.Map<VintageViewModel, VintageDto>(v)).ToList();
+            var vintagesDto = VintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
+                .AsEnumerable();
+            vintagesDto = investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
 
             // Mark for selling earliest and latest available
-            var earliestVin = vintages.Where(v => !v.Locked && !v.Sold)
+            var earliestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
                 .OrderBy(v => v.YearMonthStr)
                 .First();
             earliestVin.Selected = true;
-            var latestVin = vintages.Where(v => !v.Locked && !v.Sold)
+            var latestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
                 .OrderByDescending(v => v.YearMonthStr)
                 .First();
             latestVin.Selected = true;
 
-            investmentsApiController.SaveDbSellVintages(user.Id, vintages);
+            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
         }
 
         [Test]
