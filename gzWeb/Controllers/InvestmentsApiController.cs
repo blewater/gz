@@ -185,18 +185,32 @@ namespace gzWeb.Controllers
                 _mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
 
-            var userId = User.Identity.GetUserId<int>();
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var userId = user.Id;
 
+            // Get user currency rate
+            CurrencyInfo userCurrency;
+            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+
+            // Sell Vintages
             var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
 
-            return OkMsg(updatedVintages);
+            var inUserRateVintages =
+            updatedVintages.Select(v => new VintageViewModel() {
+                 YearMonthStr = v.YearMonthStr,
+                 InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
+                 SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
+                 Locked = v.Locked,
+                 Sold = v.Sold
+             }).ToList();
+
+            return OkMsg(inUserRateVintages);
         }
 
-        public List<VintageViewModel> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+        public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
 
-            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(customerId, vintages)
-                .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
-                .ToList();
+            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
+
             return updatedVintages;
         }
 
