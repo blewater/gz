@@ -442,13 +442,14 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         private Dictionary<int, PortfolioFundDTO> GetOwnedCustomerFunds(int customerId, int yearCurrent, int monthCurrent) {
 
-            string lastFundsHoldingMonth = GetFundSharesFromLastPurchase(customerId, db, DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent));
+            string currentYearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
+            string lastFundsHoldingMonth = GetFundSharesFromLastPurchase(customerId, db, currentYearMonthStr);
 
             var ownedFunds = (
                 from c in db.CustFundShares
                 where c.CustomerId == customerId
                     && c.SharesNum > 0
-                    && c.YearMonth == lastFundsHoldingMonth
+                    && c.YearMonth == lastFundsHoldingMonth 
                 select new PortfolioFundDTO {
                     FundId = c.FundId,
                     PortfolioId = 0,
@@ -500,7 +501,7 @@ namespace gzDAL.Repos {
         /// Used when buying new shares in currentYearMonStr
         /// 
         /// </summary>
-        /// <param name="customerId"></param>
+        /// <param name="customerId"></param>*
         /// <param name="db"></param>
         /// <param name="currentYearMonStr"></param>
         /// <returns></returns>
