@@ -51,6 +51,7 @@
          *      nsIconClassInversed: boolean (inverse icon colors - false)
          *      nsCallback: function (function to execute upon close - angular.noop)
          *      nsShowClose: boolean (should show close icon - true)
+         *      nsTime: boolean (should show time - true when nsType IS 'notification' else false)
          *      nsAutoClose: boolean (should auto close - true when nsType IS 'toastr' else false)
          *      nsAutoCloseDelay: number (milliseconds to wait before close - 5000)
          *      nsCloseOnTitleClick: boolean (true when nsType IS NOT 'modal' else false)

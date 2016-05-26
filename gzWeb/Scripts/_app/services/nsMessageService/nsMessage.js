@@ -17,6 +17,7 @@
             },
             link: function (scope, element, attrs) {
                 // #region Variables
+                scope.now = new Date();
                 var transitionDuration = 500;
                 var intervalPromise, closePromise, hideTime;
                 var unregisterCountWatch, unregisterMsgTitleHeightWatch, unregisterMsgBodyHeightWatch;
@@ -147,6 +148,8 @@
                         scope.nsOptions.nsStatic = scope.isNotification;
                     if (!angular.isDefined(scope.nsOptions.nsSize))
                         scope.nsOptions.nsSize = 'sm';
+                    if (!angular.isDefined(scope.nsOptions.nsTime))
+                        scope.nsOptions.nsTime = scope.isNotification;
 
                     if (scope.isModal) {
                         if (!angular.isDefined(scope.nsOptions.nsIn))
@@ -280,6 +283,9 @@
                 };
                 scope.showBadge = function () {
                     return scope.isNotification && scope.nsIndex > 0;
+                };
+                scope.showTime = function () {
+                    return scope.isNotification && scope.nsTime === true;
                 };
                 scope.showClose = function () {
                     return scope.nsOptions.nsShowClose;
