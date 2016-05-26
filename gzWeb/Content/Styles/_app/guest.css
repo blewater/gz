@@ -13,6 +13,7 @@
 .guest .home .top {
 	background-color: #27A95C;
 	position: relative;
+    padding-top: 80px;
 }
 
 .guest .home .middle { background-color: #ececec; }
@@ -40,8 +41,6 @@
     background: #07693C;
     color: white;
 }
-
-.guest .home .top .right-heading h2 { margin-bottom: -15px; }
 
 .guest .home .top .right-heading h2:last-of-type { 
     margin-bottom: 20px; 
@@ -110,23 +109,28 @@
 	width: 130px;
 }
 
+/**************** MD - LG ********************/
+@media (min-width: 992px) {
+    .guest .home .top .right-heading h2 { margin-bottom: -15px; }
+}
+
 /**************** XS - MD ********************/
 @media (max-width: 1199px) {
-    .guest .home .top .laptop-big { left: 0; }
+    .guest .home .top .laptop-big { height: 280px; bottom: -9px; }
     .guest .home .middle .say-hello { margin-bottom: 0; }
 }
 
 /**************** XS - SM ********************/
 @media (max-width: 991px) {
-    .guest .home .top { padding-bottom: 300px; }
+    .guest .home .top { padding-bottom: 350px;padding-top: 50px; }
 	.guest .home .top .right-heading h2 { font-size: 28px }
     .guest .home .top .right-heading {
 		left: 0;
 		text-align: center;
 		letter-spacing: 5px;
 	}
-    .guest .home .top .right-heading .watch-video { width: 180px; margin: 0 auto; }
-	.guest .home .top .laptop-big { left: calc(50% - 261.5px); }
+    .guest .home .top .right-heading .watch-video { width: 180px; margin: 20px auto 0; }
+	.guest .home .top .laptop-big { left: calc(50% - 244.3px); }
 
     .guest .home .bottom .process-item { padding: 0; height: 250px }
 	.guest .home .bottom .process-item h4 { font-size: 18px; }
@@ -142,7 +146,7 @@
     .guest .home .top .right-heading .watch-video { font-size: 12px; width: 170px; margin: 0 auto; }
 	.guest .home .top .laptop-big { 
         height: 250px;
-        bottom: -9px;
+        bottom: -8px;
         left: calc(50% - 211.7px); 
 	}
     
@@ -210,7 +214,7 @@
 
 @media (max-width: 510px) { 
 	.guest .transparency .header .full-transparency { font-size: 20px; }
-    .guest .transparency .main img { width: 70px; 0}
+    .guest .transparency .main img { width: 70px; }
 	.guest .transparency .main figcaption { font-size: 14px; }
     .guest .transparency .footer-section .we-report { font-size: 16px; }
  }
@@ -290,7 +294,7 @@
     .guest .about .about-top .three-principles p { padding-bottom: 30px; }
 
 	.guest .about .about-top .background-image {
-		position: fixed;
+	    position: fixed;
         display: block;
 		z-index: 1;
 		top: 30px;
@@ -299,7 +303,8 @@
 		background-image: url(../../Images/king.png);
 		background-position: center;
 		background-repeat: no-repeat;
-		background-size: 200px auto;
+	    -ms-background-size: 200px auto;
+	    background-size: 200px auto;
 		width: 100%;
 		height: 350px;
 				
@@ -309,8 +314,8 @@
 		-ms-filter: opacity(15%);
 		filter: opacity(15%);
 	}
-	
-	.guest .about .about-top .idea-container { 
+
+    .guest .about .about-top .idea-container { 
 		position: relative;
 	    left: 0;
 	    right: 0;
