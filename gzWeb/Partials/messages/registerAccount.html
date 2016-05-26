@@ -59,7 +59,7 @@
                 <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                     <div class="form-group">
                         <input type="password" placeholder="confirm password" id="confirmPassword" name="confirmPassword" class="form-control" ng-model="model.confirmPassword" required
-                               ng-class="{ 'empty': !model.confirmPassword, 'danger' : model.confirmPassword !== model.password }"
+                               ng-class="{ 'empty': !model.confirmPassword, 'danger' : model.confirmPassword !== model.password && !form.confirmPassword.$pristine }"
                                ng-focus="confirmPasswordFocused = true;" ng-blur="confirmPasswordFocused = false;">
                         <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':confirmPasswordFocused || (form.password.$valid && model.confirmPassword === model.password)}">
                             <i class="fa fa-lg fa-key"></i>
@@ -74,7 +74,7 @@
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group text-center">
                     <div class="btns">
-                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !emailValidation.isAvailable || !usernameValidation.isAvailable || !passwordValidation.isValid">Next</button>
+                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !emailValidation.isAvailable || !usernameValidation.isAvailable || !passwordValidation.isValid || model.confirmPassword !== model.password">Next</button>
                     </div>
                 </div>
             </div>

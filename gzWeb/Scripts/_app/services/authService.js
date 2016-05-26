@@ -207,12 +207,19 @@
             return q.promise;
         }
 
-        function emLogin(usernameOrEmail, password) {
+        function emLogin(usernameOrEmail, password, captcha) {
             var q = $q.defer();
-            emWamp.login({
+            var params = {
                 usernameOrEmail: usernameOrEmail,
                 password: password
-            }).then(function (emLoginResult) {
+            };
+            if (captcha) {
+                params.captchaPublicKey = constants.reCaptchaPublicKey;
+                params.captchaChallenge = "";
+                params.captchaResponse = vcRecaptchaService.getResponse();
+            }
+
+            emWamp.login(params).then(function (emLoginResult) {
                 q.resolve(emLoginResult);
             }, function (error) {
                 q.reject(error ? error.desc : false);
@@ -220,21 +227,24 @@
             return q.promise;
         }
 
-        factory.login = function (usernameOrEmail, password) {
+        factory.login = function (usernameOrEmail, password, captcha) {
             var q = $q.defer();
-            emLogin(usernameOrEmail, password).then(function (emLoginResult) {
+            emLogin(usernameOrEmail, password, captcha).then(function (emLoginResult) {
                 //for (var i = 0; i < emLoginResult.roles.length; i++)
                 //    console.log("==========> EveryMatrix Role " + i + ": " + emLoginResult.roles[i]);
                 //factory.data.push(emLoginResult.roles[i]);
                 //storeAuthData();
-
-                gzLogin(usernameOrEmail, password).then(function () {
-                    $location.path(constants.routes.games.path);
-                    q.resolve({ emLogin: true, gzLogin: true });
-                }, function(gzLoginError) {
-                    $location.path(constants.routes.games.path);
-                    q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
-                });
+                if (emLoginResult.hasToEnterCaptcha)
+                    q.resolve({ enterCaptcha: true });
+                else {
+                    gzLogin(usernameOrEmail, password).then(function () {
+                        $location.path(constants.routes.games.path);
+                        q.resolve({ emLogin: true, gzLogin: true });
+                    }, function (gzLoginError) {
+                        $location.path(constants.routes.games.path);
+                        q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
+                    });
+                }
             }, function (emLoginError) {
                 gzLogin(usernameOrEmail, password).then(function () {
                     $location.path(constants.routes.summary.path);

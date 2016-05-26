@@ -79,7 +79,7 @@
             $scope.waiting = true;
             auth.resetPassword($scope.model).then(function (response) {
                 $scope.waiting = false;
-                message.toastr("Your password has been reset successfully!");
+                message.success("Your password has been reset successfully!", { nsType: 'toastr' });
                 $location.search('');
                 $scope.nsOk(true);
             }, function(error) {

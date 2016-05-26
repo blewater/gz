@@ -5,12 +5,14 @@
     function ctrlFactory($rootScope, $scope, emWamp, auth, localStorageService, constants, message) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
+        $scope.reCaptchaPublicKey = constants.reCaptchaPublicKey;
         $scope.waiting = false;
         $scope.responseMsg = null;
 
         $scope.model = {
             usernameOrEmail: null,
-            password: null
+            password: null,
+            showCaptcha: false
         };
 
         $scope.submit = function () {
@@ -18,24 +20,31 @@
                 login();
         };
 
-        function login(){
+        function login() {
             $scope.waiting = true;
             $scope.errorMsg = "";
 
-            auth.login($scope.model.usernameOrEmail, $scope.model.password).then(function (response) {
-                $scope.waiting = false;
-                if (response.emLogin === false && response.gzLogin === false)
-                    $scope.errorMsg = "The login failed. Please check your username/email and password.";
-                else
-                    $scope.nsOk();
+            auth.login($scope.model.usernameOrEmail, $scope.model.password, $scope.model.showCaptcha).then(function (response) {
+                if (response.enterCaptcha) {
+                    $scope.waiting = false;
+                    $scope.model.showCaptcha = true;
+                }
+                else {
+                    $scope.waiting = false;
+                    if (response.emLogin === false && response.gzLogin === false)
+                        $scope.errorMsg = "The login failed. Please check your username/email and password.";
+                    else {
+                        if (response.emLogin === false)
+                            message.error("We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<i>\'Retry to connect\'</i>​​ button.");
+                        if (response.gzLogin === false)
+                            message.error("We have experienced technical difficulty in accessing your investment pages. Please try again later by pressing the ​<i>\'Retry to connect\'</i>​ button.");
 
-                if (response.emLogin === false)
-                    message.error("We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<i>\'Retry to connect\'</i>​​ button.");
-                if (response.gzLogin === false)
-                    message.error("We have experienced technical difficulty in accessing your investment pages. Please try again later by pressing the ​<i>\'Retry to connect\'</i>​ button.");
+                        $scope.nsOk();
+                    }
 
-                //$scope.emErrorMsg = response.emError;
-                //$scope.gzErrorMsg = response.gzError;
+                    //$scope.emErrorMsg = response.emError;
+                    //$scope.gzErrorMsg = response.gzError;
+                }
             });
         }
 
