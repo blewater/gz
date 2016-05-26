@@ -37,7 +37,7 @@
 .guest .home .top .right-heading { color: white; }
 
 .guest .home .top .right-heading .benefit-mark { 
-    background-color: #003300;
+    background: #07693C;
     color: white;
 }
 
@@ -55,7 +55,10 @@
     height: 40px;
     line-height: 40px;
     padding: 0 20px;
-    color: #333;
+    color: #555;
+}
+.guest .home .top .right-heading .sign-up-btn:hover {
+    color: #fff;
 }
 
 .guest .home .top .right-heading .sign-up-btn img {
@@ -91,6 +94,7 @@
 .guest .home .bottom .process-item {
 	padding: 7px;
 	text-align: center;
+    height: 300px
 }
 
 .guest .home .bottom .process-item  p { text-align: left; }
@@ -121,10 +125,10 @@
 		text-align: center;
 		letter-spacing: 5px;
 	}
-    .guest .home .top .right-heading .watch-video { width: auto; }
+    .guest .home .top .right-heading .watch-video { width: 180px; margin: 0 auto; }
 	.guest .home .top .laptop-big { left: calc(50% - 261.5px); }
 
-    .guest .home .bottom .process-item { padding: 0; }
+    .guest .home .bottom .process-item { padding: 0; height: 250px }
 	.guest .home .bottom .process-item h4 { font-size: 18px; }
 	.guest .home .bottom .process-item img { width: 100px; }	
 	.guest .home .bottom .process-item p { font-size: 12px; }		
@@ -135,7 +139,7 @@
     .guest .home .top .right-heading h2 { font-size: 24px }
     .guest .home .top .right-heading h5 { font-size: 12px }
     .guest .home .top .right-heading .sign-up-btn { font-size: 12px; }
-    .guest .home .top .right-heading .watch-video { font-size: 12px; }
+    .guest .home .top .right-heading .watch-video { font-size: 12px; width: 170px; margin: 0 auto; }
 	.guest .home .top .laptop-big { 
         height: 250px;
         bottom: -9px;
