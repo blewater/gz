@@ -76,7 +76,7 @@ namespace gzDAL.Models {
         /// <summary>
         /// Value of monthly shares as they were priced when bought
         /// </summary>
-        public decimal? BoughtNewSharesValue { get; set; }
+        public decimal? CashedNewSharesValue { get; set; }
 
         #endregion
 

@@ -319,13 +319,14 @@ namespace gzDAL.Repos {
                 gzTrx.TypeId = liquidatedId;
                 //_db.GzTrxs.Attach(gzTrx);
                 //var gzTrxEntry = _db.Entry(gzTrx);
-                //gzTrxEntry.Property(t=>t.TypeId).IsModified = true;
+                //gzTrxEntry.Property(t => t.TypeId).IsModified = true;
             }
         }
 
         /// <summary>
         /// 
-        /// Update CustFundShare database entity to 0 any shares for that month
+        /// Update the Customers shares for that month to reduced by the vintage amounts
+        /// CustFundShare database entity to 0 any New shares bought for that month
         /// by zeroing the month's shares balance and "archiving" their value.
         /// 
         /// </summary>
@@ -340,10 +341,14 @@ namespace gzDAL.Repos {
                         && s.NewSharesNum > 0);
 
             foreach (var fundShare in custFundShares) {
+                fundShare.SharesNum -= fundShare.NewSharesNum ?? 0;
+                fundShare.SharesValue -= fundShare.NewSharesValue ?? 0;
                 fundShare.SoldNewSharesNum = fundShare.NewSharesNum;
                 fundShare.NewSharesNum = 0;
-                fundShare.BoughtNewSharesValue = fundShare.NewSharesValue;
+                fundShare.CashedNewSharesValue = fundShare.NewSharesValue;
                 fundShare.NewSharesValue = 0;
+                //var fundShareEntry = _db.Entry(fundShare);
+                //fundShareEntry.State = EntityState.Modified;
             }
         }
 
@@ -385,7 +390,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
-        public void SaveDbSellVintagesWoutTransaction(int customerId, IEnumerable<VintageDto> vintages) {
+        public void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
 
             var soldOnUtc = DateTime.UtcNow;
 
@@ -395,6 +400,7 @@ namespace gzDAL.Repos {
                     SaveDbSellVintage(customerId, vintage, soldOnUtc);
                 }
             }
+            _db.SaveChanges();
         }
 
         /// <summary>
