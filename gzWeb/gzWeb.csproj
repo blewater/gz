@@ -283,7 +283,6 @@
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
-    <Compile Include="Configuration\PortfolioConfiguration.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
     <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.cs" />
     <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.Designer.cs">
@@ -332,6 +331,10 @@
     <Compile Include="Migrations\201605261517381_Rename Shares Value.cs" />
     <Compile Include="Migrations\201605261517381_Rename Shares Value.Designer.cs">
       <DependentUpon>201605261517381_Rename Shares Value.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605271233178_Portfolio enhacements.cs" />
+    <Compile Include="Migrations\201605271233178_Portfolio enhacements.Designer.cs">
+      <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -818,6 +821,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605261517381_Rename Shares Value.resx">
       <DependentUpon>201605261517381_Rename Shares Value.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605271233178_Portfolio enhacements.resx">
+      <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

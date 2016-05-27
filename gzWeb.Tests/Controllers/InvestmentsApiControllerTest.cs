@@ -66,28 +66,35 @@ namespace gzWeb.Tests.Controllers
         [Test]
         public void GetSummaryDataWithNewCustomer() {
 
-            var user = manager.FindByEmail("u9@nessos.gr");
+            var user = manager.FindByEmail("info@nessos.gr");
 
             // Act
-            var result = ((IInvestmentsApi)investmentsApiController).GetSummaryData(user);
+            var result = investmentsApiController.GetCustomerPlans(user.Id);
             Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void GetCustomerPlans() {
+            var user = manager.FindByEmail("info@nessos.gr");
+
+            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
         }
 
         [Test]
         public void SaveDbVintages() {
 
-            var user = manager.FindByEmail("6month@allocation.com");
+            var user = manager.FindByEmail("info@nessos.gr");
 
-            var VintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
+            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
 
             // Mark for selling most recent that's allowed
-            var sellVintage = VintagesVMs.Where(v => !v.Locked && !v.Sold)
+            var sellVintage = vintagesVMs.Where(v => !v.Locked && !v.Sold)
                 .OrderBy(v => v.YearMonthStr)
                 .First();
 
             sellVintage.Selected = true;
 
-            var vintagesDto = VintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
+            var vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
                 .AsEnumerable();
             vintagesDto = investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
 
