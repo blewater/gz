@@ -48,6 +48,8 @@ namespace gzDAL.Repos
             return portfolioRates;
         }
 
+//        public 
+
         public IList<string> GetPortfolioRetLines() {
 
             List<string> portfolioRetLine = new List<string>();
