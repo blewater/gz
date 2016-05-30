@@ -10,8 +10,6 @@ namespace gzDAL.Repos.Interfaces
 
         Dictionary<int, PortfolioFundDTO> GetMonthlyFundSharesAfterBuyingSelling(int customerId, decimal netInvAmount, int year, int month);
 
-        Portfolio GetCurrentCustomerPortfolio(int customerId);
-
         void SaveDbMonthlyCustomerFundShares(bool boughtShares, int customerId, Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUtc);
     }
 }

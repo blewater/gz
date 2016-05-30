@@ -20,20 +20,15 @@ namespace gzDAL.Models {
 
         [Index("CustomerId_Mon_idx_gzSoldVintage",IsUnique = false, Order = 2)]
         [Required, StringLength(6)]
-        public string YearMonthCtd { get; set; }
-
-        /// <summary>
-        /// 
-        /// Reference Everymatrix Gm Transaction as source
-        /// 
-        /// </summary>
-        [ForeignKey("GzTrx")]
-        public int? GzTrxId { get; set; }
-        public virtual GzTrx GzTrx { get; set; }
+        public string VintageYearMonth { get; set; }
 
         [Required]
-        public DateTime CreatedOnUtc { get; set; }
+        public decimal MarketAmount { get; set; }
 
-        public decimal Amount { get; set; }
+        [Required]
+        public decimal Fees { get; set; }
+
+        [Required]
+        public DateTime SoldOnUtc { get; set; }
     }
 }

@@ -172,7 +172,8 @@ namespace gzDAL.Conf
         /// <param name="custId"></param>
         private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
 
-            new InvBalanceRepo(context, new CustFundShareRepo(context), new GzTransactionRepo(context))
+            new InvBalanceRepo(context, 
+                new CustFundShareRepo(context, new CustPortfolioRepo(context)), new GzTransactionRepo(context))
                 .SaveDbCustomerMonthlyBalancesByTrx(custId);
         }
 
@@ -366,19 +367,34 @@ namespace gzDAL.Conf
             context.Portfolios.AddOrUpdate(
                 p => p.RiskTolerance,
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Low, IsActive = true,
+                    RiskTolerance = RiskToleranceEnum.Low,
+                    IsActive = true,
+                    Color = "#B4DCC4",
+                    Title = "Conservative"
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Low_Medium, IsActive = false,
+                    RiskTolerance = RiskToleranceEnum.Low_Medium,
+                    IsActive = false,
+                    Color = "#FF0000",
+                    Title = "Low Medium"
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Medium, IsActive = true,
+                    RiskTolerance = RiskToleranceEnum.Medium,
+                    IsActive = true,
+                    Color = "#64BF89",
+                    Title = "Medium"
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.Medium_High, IsActive = false,
+                    RiskTolerance = RiskToleranceEnum.Medium_High,
+                    IsActive = false,
+                    Color = "#00FF00",
+                    Title = "Medium High"
                 },
                 new Portfolio {
-                    RiskTolerance = RiskToleranceEnum.High, IsActive = true
+                    RiskTolerance = RiskToleranceEnum.High,
+                    IsActive = true,
+                    Color = "#227B46",
+                    Title = "Aggressive"
                 });
 
         }
@@ -679,6 +695,11 @@ namespace gzDAL.Conf
                 new GzTrxType {
                     Code = GzTransactionTypeEnum.GzActualTrxProfitOrLoss,
                     Description = "The realized Greenzorro profit or loss by the actual purchase of customer shares after the month\'s end. It is the total difference between \"Bought Funds Prices\" * \"Monthly Customer Shares\" - \"Customer Shares\" * \"Funds Prices\" credited to the customer\'s Account."
+                }
+                ,
+                new GzTrxType {
+                    Code = GzTransactionTypeEnum.LiquidatedInvestment,
+                    Description = "Investment vintage converted back to cash from CreditedPlayingLoss. A sold vintages."
                 }
                 );
         }

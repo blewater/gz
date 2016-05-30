@@ -48,90 +48,136 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Calculate the vintage in latest fund market value unless it has been sold which case returns that value
+        /// Calculate the vintage in latest fund market value and deduct fees. The amount the customer
+        /// would receive.
+        /// unless it has been sold already in which case return that value
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="yearMonthStr"></param>
-        /// <returns></returns>
-        private decimal GetVintageSellingValue(int customerId, string yearMonthStr, int lastInvestmentId) {
+        /// <returns>Sold Value with fees deducted. The amount the customer would receive.</returns>
+        private decimal GetVintageSellingValue(int customerId, string yearMonthStr) {
 
+            decimal fees;
+            decimal vintageSellingPrice = GetVintageSellingPrice(customerId, yearMonthStr, out fees);
+
+            return vintageSellingPrice - fees;
+        }
+
+        /// <summary>
+        /// 
+        /// Calculate the vintage in latest fund market value
+        /// Unless it has been sold already which case return that value
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="yearMonthStr"></param>
+        /// <param name="fees"></param>
+        /// <returns>The market priced vintage.</returns>
+        private decimal GetVintageSellingPrice(
+            int customerId, 
+            string yearMonthStr,
+            out decimal fees) 
+        {
+
+            // Init return value
             decimal monthlySharesValue = 0;
 
-            int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
-                monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
+            var vintageSoldValue =
+                _db.SoldVintages
+                    .Where(v => v.CustomerId == customerId
+                                && v.VintageYearMonth == yearMonthStr)
+                    .Select(v => new {Amount = v.MarketAmount, v.Fees})
+                    .FirstOrDefault();
 
-            var soldValue =
-                _db.GzTrxs
-                    .Where(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming
-                                //&& t.ParentTrxId == lastInvestmentId
-                                && t.YearMonthCtd == yearMonthStr
-                                && t.CustomerId == customerId
-                                )
-                    .Sum(t => (decimal?)t.Amount);
+            if (vintageSoldValue != null) {
 
-            // If not sold calculate it now
-            if (!soldValue.HasValue) {
+                fees = vintageSoldValue.Fees;
+                monthlySharesValue = vintageSoldValue.Amount;
 
-                var fundSharesThisMonth = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
-                        customerId,
-                        yearCurrent,
-                        monthCurrent);
-
-                var monthsNewSharesValue = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
-
-                monthlySharesValue =
-                    DbExpressions.RoundCustomerBalanceAmount(monthsNewSharesValue -
-                                                             _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesValue));
             }
             else {
-                monthlySharesValue = soldValue.Value;
+
+                // If not sold already calculate it now
+                monthlySharesValue = GetVintageValuePricedNow(customerId, yearMonthStr, out fees);
+
             }
 
             return monthlySharesValue;
         }
 
-        private IEnumerable<VintageDto> GetVintagesSellingValue(int customerId, IEnumerable<VintageDto> vintages) {
+        /// <summary>
+        /// 
+        /// Calculate the vintage in latest fund market value
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="yearMonthStr"></param>
+        /// <param name="fees"></param>
+        /// <returns></returns>
+        private decimal GetVintageValuePricedNow(
+            int customerId, 
+            string yearMonthStr, 
+            out decimal fees) {
 
-            //List<PortfolioReturnsDTO> fundsToSell = new List<PortfolioReturnsDTO>();
+            int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
+                monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
 
-            //foreach (var vintageDto in vintages) {
+            var fundSharesThisMonth = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
+                customerId,
+                yearCurrent,
+                monthCurrent);
 
-            //    int yearCurrent = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
-            //        monthCurrent = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
+            var monthsNewSharesPrice = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
 
-            //    var fundSharesThisMonth = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
-            //            customerId,
-            //            yearCurrent,
-            //            monthCurrent);
+            fees = _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesPrice);
 
-            //    fundsToSell.Add();
-            //    fundSharesThisMonth.Select(f=>f.Value.)
+            return monthsNewSharesPrice;
+        }
 
+        /// <summary>
+        /// 
+        /// Recalculate the vintages selling value with present market values.
+        /// 
+        /// Throws an exception if vintage is already sold.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintages"></param>
+        /// <returns></returns>
+        private void SetVintagesMarketPrices(int customerId, IEnumerable<VintageDto> vintages) {
 
-            //}
-            //var soldValue =
-            //    _db.GzTrxs
-            //        .Where(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming
-            //                    //&& t.ParentTrxId == lastInvestmentId
-            //                    && t.YearMonthCtd == yearMonthStr
-            //                    && t.CustomerId == customerId
-            //                    )
-            //        .Sum(t => (decimal?)t.Amount);
+            foreach (var vintageDto in vintages) {
 
-            //// If not sold calculate it now
-            //if (!soldValue.HasValue) {
+                if (vintageDto.Selected) {
 
-            //    var monthsNewSharesValue = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
+                    if (vintageDto.Locked) {
+                        int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
+                            vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
+                        throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " + vinMonth + " is locked and not available for selling it. !");
+                    }
 
-            //    monthlySharesValue =
-            //        DbExpressions.RoundCustomerBalanceAmount(monthsNewSharesValue -
-            //                                                 _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesValue));
-            //} else {
-            //    monthlySharesValue = soldValue.Value;
-            //}
+                    var alreadySold =
+                        _db.SoldVintages
+                            .Any(v => v.CustomerId == customerId
+                                 && v.VintageYearMonth == vintageDto.YearMonthStr);
 
-            return vintages;
+                    if (alreadySold) {
+                        int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
+                            vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
+                        throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " + vinMonth + " cannot be resold !");
+                    }
+
+                    // Recalculate: a long time may have passed since we last calculated it
+                    decimal fees;
+                    vintageDto.MarketPrice = GetVintageValuePricedNow(
+                            customerId, 
+                            vintageDto.YearMonthStr, 
+                            out fees);
+
+                    vintageDto.Fees = fees;
+                }
+            }
         }
 
         /// <summary>
@@ -152,8 +198,7 @@ namespace gzDAL.Repos {
                 .Select(v => new VintageDto() {
                      SellingValue = GetVintageSellingValue(
                          customerId, 
-                         v.YearMonthStr, 
-                         v.LastInvestmentId),
+                         v.YearMonthStr),
                      InvestAmount = v.InvestAmount,
                      YearMonthStr = v.YearMonthStr,
                      Locked = v.Locked,
@@ -165,8 +210,10 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Sell any vintages marked for selling. They are sold at the fund prices current
-        /// as of this method call.
+        /// Sell any vintages marked for selling. 
+        /// 
+        /// This method will update the vintages selling values before selling them.
+        /// The vintages are sold at the current fund prices as of this method call.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
@@ -174,10 +221,31 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
 
-            foreach (var vintageDto in vintages) {
-                
+            SetVintagesMarketPrices(customerId, vintages);
 
-            }
+            ConnRetryConf.TransactWithRetryStrategy(_db,
+
+            () => {
+
+                _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
+
+                // Recalculate all balances starting from the earliest month
+                var startMonthBalanceToRecalc = 
+                    vintages
+                    .Where(v=>v.Selected)
+                    .Select(v => v.YearMonthStr)
+                    .Min();
+                // last completed month that's cleared.
+                var lastClearedMonth = DateTime.UtcNow.AddMonths(-1).ToStringYearMonth();
+                SaveDbCustomerAllMonthlyBalances(
+                    customerId, 
+                    startMonthBalanceToRecalc, 
+                    lastClearedMonth);
+
+            });
+
+            // Reload them & return them
+            vintages = GetCustomerVintagesSellingValue(customerId);
 
             return vintages;
         }
@@ -251,12 +319,12 @@ namespace gzDAL.Repos {
             decimal invGainLoss,
             DateTime updatedDateTimeUtc) {
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            //ConnRetryConf.TransactWithRetryStrategy(_db,
 
-                () => {
+            //() => {
 
-                    // Save fees transactions first and continue with reduced cash amount
-                    var remainingCashAmount =
+                // Save fees transactions first and continue with reduced cash amount
+                var remainingCashAmount =
                         _gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
                             customerId,
                             newMonthlyBalance,
@@ -279,8 +347,7 @@ namespace gzDAL.Repos {
                             CashInvestment = -remainingCashAmount,
                             UpdatedOnUTC = updatedDateTimeUtc
                         });
-
-                });
+            //});
         }
 
         #endregion Selling
@@ -392,28 +459,30 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            //ConnRetryConf.TransactWithRetryStrategy(_db,
 
-                () => {
+            //    () => {
 
-                    _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
-                            boughtShares: true,
-                            customerId: customerId,
-                            fundsShares: portfolioFunds,
-                            year: yearCurrent,
-                            month: monthCurrent,
-                            updatedOnUtc: DateTime.UtcNow);
+            _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
+                    boughtShares: true,
+                    customerId: customerId,
+                    fundsShares: portfolioFunds,
+                    year: yearCurrent,
+                    month: monthCurrent,
+                    updatedOnUtc: DateTime.UtcNow);
 
-                    _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
-                            new InvBalance {
-                                YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
-                                CustomerId = customerId,
-                                Balance = monthlyBalance,
-                                InvGainLoss = invGainLoss,
-                                CashInvestment = cashToInvest,
-                                UpdatedOnUTC = DateTime.UtcNow
-                            });
-                });
+            _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
+                    new InvBalance {
+                        YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
+                        CustomerId = customerId,
+                        Balance = monthlyBalance,
+                        InvGainLoss = invGainLoss,
+                        CashInvestment = cashToInvest,
+                        UpdatedOnUTC = DateTime.UtcNow
+                    });
+
+            _db.SaveChanges();
+            //});
         }
 
         /// <summary>
@@ -551,8 +620,7 @@ namespace gzDAL.Repos {
             if (monthlyCashToInvest >= 0) {
                 SaveDbCustomerMonthlyBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
             }
-
-            if (monthlyCashToInvest == 0) {
+            else {
                 SaveDbResellCustomerPortfolioIfSoldBefore(customerId, yearCurrent, monthCurrent);
             }
         }
@@ -594,35 +662,24 @@ namespace gzDAL.Repos {
                 return 0;
             }
 
-            var monthlyPlayingLosses = monthlyTrxGrouping.Sum(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss ? t.Amount : 0);
+            // These Ids throw exceptions when looked up as navigation properties in a transaction.
+            var creditedPlayingLossTypeId =
+                _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
+                    .Select(tt => tt.Id)
+                    .Single();
 
-            var monthlyTransfersToGaming =
-                monthlyTrxGrouping.Sum(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming ? t.Amount : 0);
+            var monthlyPlayingLosses = 
+                monthlyTrxGrouping.Sum(t => t.TypeId == creditedPlayingLossTypeId ? t.Amount : 0);
 
-            var monthlyFees =
-                monthlyTrxGrouping.Sum(
-                    t =>
-                        t.Type.Code == GzTransactionTypeEnum.GzFees || t.Type.Code == GzTransactionTypeEnum.FundFee
-                            ? t.Amount
-                            : 0);
 
-            var monthlyLiquidationAmount =
-                monthlyTrxGrouping.Sum(
-                    t => t.Type.Code == GzTransactionTypeEnum.FullCustomerFundsLiquidation ? t.Amount : 0);
-
+            // TODO: Reexamine account liquidation
             // Reduce fees by the fees amount corresponding to the portfolio liquidation
-            if (monthlyLiquidationAmount > 0) {
-                monthlyFees -= this._gzTransactionRepo.GetWithdrawnFees(monthlyLiquidationAmount);
-            }
+            //if (fullAccountLiquidation > 0) {
+            //    monthlyFees -= this._gzTransactionRepo.GetWithdrawnFees(fullAccountLiquidation);
+            //}
 
             // --------------- Net amount to invest -------------------------
-            var monthlyCashToInvest = monthlyPlayingLosses - monthlyTransfersToGaming -
-                                      monthlyFees;
-
-            // ---------------------------------------------------------------------------------
-
-            // Negative amount has no meaning in the context of investing or buying stock this month
-            if (monthlyCashToInvest < 0) monthlyCashToInvest = 0;
+            var monthlyCashToInvest = monthlyPlayingLosses;
 
             return monthlyCashToInvest;
         }

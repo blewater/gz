@@ -44,7 +44,7 @@ namespace CustPortfoliosCalc {
                     db, 
                     new InvBalanceRepo(
                         db, 
-                        new CustFundShareRepo(db), 
+                        new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
                         new GzTransactionRepo(db))),
                 logger);
 
