@@ -99,8 +99,12 @@ namespace gzDAL.Repos {
             else {
 
                 // If not sold already calculate it now
-                monthlySharesValue = GetVintageValuePricedNow(customerId, yearMonthStr, out fees);
-
+                IEnumerable<CustFundShare> monthsCustomerShares;
+                monthlySharesValue = GetVintageValuePricedNow(
+                    customerId, 
+                    yearMonthStr, 
+                    out monthsCustomerShares, 
+                    out fees);
             }
 
             return monthlySharesValue;
@@ -113,22 +117,24 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="yearMonthStr"></param>
+        /// <param name="monthsCustomerFunds"></param>
         /// <param name="fees"></param>
         /// <returns></returns>
         private decimal GetVintageValuePricedNow(
             int customerId, 
-            string yearMonthStr, 
+            string yearMonthStr,
+            out IEnumerable<CustFundShare> monthsCustomerFunds,
             out decimal fees) {
 
             int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
                 monthCurrent = int.Parse(yearMonthStr.Substring(4, 2));
 
-            var fundSharesThisMonth = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
+            monthsCustomerFunds = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
                 customerId,
                 yearCurrent,
                 monthCurrent);
 
-            var monthsNewSharesPrice = fundSharesThisMonth.Sum(f => f.Value.SharesValue);
+            var monthsNewSharesPrice = monthsCustomerFunds.Sum(f => f.SharesValue);
 
             fees = _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesPrice);
 
@@ -137,9 +143,11 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Recalculate the vintages selling value with present market values.
+        /// Recalculate the vintages selling value with present market values used for selling them.
         /// 
-        /// Throws an exception if vintage is already sold.
+        /// Checks for selling preconditions before attempting to return the present selling value.
+        /// 
+        /// Throws an exception if vintage is already sold or not available for selling.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
@@ -151,32 +159,48 @@ namespace gzDAL.Repos {
 
                 if (vintageDto.Selected) {
 
-                    if (vintageDto.Locked) {
-                        int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
-                            vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
-                        throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " + vinMonth + " is locked and not available for selling it. !");
-                    }
+                    ChkVintageSellingPreConditions(customerId, vintageDto);
 
-                    var alreadySold =
-                        _db.SoldVintages
-                            .Any(v => v.CustomerId == customerId
-                                 && v.VintageYearMonth == vintageDto.YearMonthStr);
-
-                    if (alreadySold) {
-                        int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
-                            vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
-                        throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " + vinMonth + " cannot be resold !");
-                    }
-
-                    // Recalculate: a long time may have passed since we last calculated it
                     decimal fees;
+                    IEnumerable<CustFundShare> monthsCustomerShares;
                     vintageDto.MarketPrice = GetVintageValuePricedNow(
                             customerId, 
-                            vintageDto.YearMonthStr, 
+                            vintageDto.YearMonthStr,
+                            out monthsCustomerShares,
                             out fees);
 
+                    vintageDto.CustomerVintageShares = monthsCustomerShares;
                     vintageDto.Fees = fees;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Check before attempting to sell a vintage that it meets the preconditions.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintageDto"></param>
+        private void ChkVintageSellingPreConditions(int customerId, VintageDto vintageDto) {
+
+            if (vintageDto.Locked) {
+                int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
+                    vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
+                throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " +
+                                    vinMonth + " is locked and not available for selling it. !");
+            }
+
+            var alreadySold =
+                _db.SoldVintages
+                    .Any(v => v.CustomerId == customerId
+                              && v.VintageYearMonth == vintageDto.YearMonthStr);
+
+            if (alreadySold) {
+                int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
+                    vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
+                throw new Exception("For customer: " + customerId + ", the vintage for the year of " + vinYear + " and month: " +
+                                    vinMonth + " cannot be resold !");
             }
         }
 
@@ -229,14 +253,11 @@ namespace gzDAL.Repos {
 
                 _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
 
-                // Recalculate all balances starting from the earliest month
-                var startMonthBalanceToRecalc = 
-                    vintages
-                    .Where(v=>v.Selected)
-                    .Select(v => v.YearMonthStr)
-                    .Min();
+                // TODO: Check if recalculating the balance is ok.
+                // Recalculate last month's balance
+                var startMonthBalanceToRecalc = DateTime.UtcNow.ToStringYearMonth();
                 // last completed month that's cleared.
-                var lastClearedMonth = DateTime.UtcNow.AddMonths(-1).ToStringYearMonth();
+                var lastClearedMonth = startMonthBalanceToRecalc;
                 SaveDbCustomerAllMonthlyBalances(
                     customerId, 
                     startMonthBalanceToRecalc, 

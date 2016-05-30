@@ -70,13 +70,6 @@ namespace gzDAL.Models {
         /// 
         /// </summary>
         GzActualTrxProfitOrLoss = 7,
-
-        /// <summary>
-        /// 
-        /// Investment vintage converted back to cash <see cref="CreditedPlayingLoss"/>. A sold vintage.
-        /// 
-        /// </summary>
-        LiquidatedInvestment = 8
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using gzDAL.Models;
 using System;
+using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.SqlServer;
@@ -47,7 +48,9 @@ namespace gzDAL.Conf {
                 var executionStrategy = new SqlAzureExecutionStrategy(2, TimeSpan.FromSeconds(10));
                 executionStrategy
                     .Execute(() => {
-                        using (var dbContextTransaction = db.Database.BeginTransaction()) {
+                        using (var dbContextTransaction = 
+                            db.Database.BeginTransaction(IsolationLevel.Serializable)) 
+                        {
 
                             dbOperationsAction();
 

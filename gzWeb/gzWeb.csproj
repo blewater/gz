@@ -336,6 +336,10 @@
     <Compile Include="Migrations\201605271233178_Portfolio enhacements.Designer.cs">
       <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605281552005_SoldVintages Shares.cs" />
+    <Compile Include="Migrations\201605281552005_SoldVintages Shares.Designer.cs">
+      <DependentUpon>201605281552005_SoldVintages Shares.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -824,6 +828,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605271233178_Portfolio enhacements.resx">
       <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605281552005_SoldVintages Shares.resx">
+      <DependentUpon>201605281552005_SoldVintages Shares.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

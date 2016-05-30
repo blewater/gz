@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace gzDAL.Models {
     /// <summary>
-    /// Tracking new and existing balance of monthly shares per customer and fund
+    /// 
+    /// Greenzorro --> Casino Customer Bank account ? (requires special communication with casino as the intermediary
+    /// 
     /// </summary>
-    public class CustFundShare {
+    public class SoldVintageShare {
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 1)]
-        public int CustomerId { get; set; }
-
-        [Required, StringLength(6)]
-        [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 2)]
-        public string YearMonth { get; set; }
+        public int SoldVintageId { get; set; }
+        [ForeignKey("SoldVintageId")]
+        public virtual SoldVintage SoldVintage { get; set; }
 
         [Required]
         [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 3)]
@@ -30,17 +27,14 @@ namespace gzDAL.Models {
         public virtual Fund Fund { get; set; }
 
         /// <summary>
-        /// Last Updated
-        /// </summary>
-        [Required]
-        public DateTime UpdatedOnUtc { get; set; }
-
-        #region Total Monthly Shares
-        /// <summary>
         /// Total number of shares for month
         /// </summary>
         [Required]
         public decimal SharesNum { get; set; }
+
+        /// TODO Ask Aki if sold vintages are liquidated any month day or
+        /// at the end of the month
+        /// if any month then we have to save their value here
         /// <summary>
         /// $ Value of NumShares: Total number of shares for month.
         /// </summary>
@@ -54,18 +48,10 @@ namespace gzDAL.Models {
         public int? SharesFundPriceId { get; set; }
         public virtual FundPrice SharesFundPrice { get; set; }
 
-        #endregion
-        #region NewShares
-
         /// <summary>
-        /// Number of new shares bought for month
+        /// Last Updated
         /// </summary>
-        public decimal? NewSharesNum { get; set; }
-        /// <summary>
-        /// Value of new shares bought for month
-        /// </summary>
-        public decimal? NewSharesValue { get; set; }
-
-        #endregion
+        [Required]
+        public DateTime UpdatedOnUtc { get; set; }
     }
 }

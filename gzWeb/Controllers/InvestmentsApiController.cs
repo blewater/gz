@@ -237,20 +237,15 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
-            var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+            CurrencyInfo userCurrency;
+            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*user.LastInvestmentAmount);
 
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
-                            //Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                             NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                             NextExpectedInvestment = investmentAmount,
-                            //ROI = new ReturnOnInvestmentViewModel() {
-                            //  Title = "% Current ROI",
-                            //  Percent = 
-                            //},
                             Plans = GetCustomerPlans(user.Id, investmentAmount)
                         };
             return OkMsg(model);
