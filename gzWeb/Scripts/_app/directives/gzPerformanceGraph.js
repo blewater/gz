@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzPerformanceGraph', ['$rootScope', '$filter', '$location', '$interval', 'helpers', directiveFactory]);
+    APP.directive('gzPerformanceGraph', ['$rootScope', '$filter', '$location', '$interval', '$timeout', 'helpers', 'iso4217', directiveFactory]);
 
-    function directiveFactory($rootScope, $filter, $location, $interval, helpers) {
+    function directiveFactory($rootScope, $filter, $location, $interval, $timeout, helpers, iso4217) {
         return {
             restrict: 'EA',
             scope: {
@@ -17,52 +17,108 @@
                 // #region Variables
                 $scope.plans = $scope.gzPlans;
                 $scope.plan = $filter('filter')($scope.plans, { Selected: true })[0];
-                $scope.year = 0;
+                $scope.year = 10;
                 $scope.annualContribution = 100;
                 $scope.projectedValue = 0;
                 $scope.profit = 0;
+                $scope.principalAmount = 100;
+                var duration = 300;
                 var divergence = 0.2;
-                $scope.principalAmount = 0;
+                var data;
                 var totalYears = 30;
-                var data = [];
-                for (var t = 0; t < totalYears; t++) {
-                    data.push({
-                        x: t,
-                        y111: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 3, t, $scope.annualContribution),
-                        y11: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
-                        y1: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence, t, $scope.annualContribution),
-                        y: project($scope.principalAmount, $scope.plan.ROI, t, $scope.annualContribution),
-                        y0: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence, t, $scope.annualContribution),
-                        y00: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
-                        y000: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 3, t, $scope.annualContribution)
-                    });
-                }
-
-                var aspect = 2;
-                //var margin = { top: 120, right: 20, bottom: 80, left: 100 };
+                var aspect = 1.5;
                 var canvas = d3.select('#canvas');
                 var canvasWidth, canvasHeight, width, height, margin, xAxisPosition, yAxisPosition;
                 var now = new Date();
                 var thisYear = now.getFullYear();
                 var x, y, xAxis, yAxis;
+                var xAxisLabels, xAxisTitle, yAxisLabels, yAxisTitle;
                 var avg, area, area2, area3;
-                var bisectDate = d3.bisector(function (d) { return d.x; }).left;
-
+                var avgElement, areaElement, area2Element, area3Element;
+                var svg, graphRect, graphRectWidth, graphRectHeight, handler, xProjection, yProjection;
+                var handlerPosition = { x: 0, y: 0 };
+                var handlerAnimationStates = {
+                    dragging: "dragging",
+                    rescaling: "rescaling",
+                    resizing: "resizing"
+                }
                 // #endregion
 
                 // #region Methods
+                function computeData() {
+                    data = [];
+                    for (var t = 0; t < totalYears; t++) {
+                        data.push({
+                            x: t,
+                            y111: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 3, t, $scope.annualContribution),
+                            y11: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
+                            y1: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence, t, $scope.annualContribution),
+                            y: project($scope.principalAmount, $scope.plan.ROI, t, $scope.annualContribution),
+                            y0: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence, t, $scope.annualContribution),
+                            y00: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
+                            y000: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 3, t, $scope.annualContribution)
+                        });
+                    }
+                    x.domain(d3.extent(data, function (d) { return d.x; }));
+                    y.domain(d3.extent(data, function (d) { return d.y.amount; }));
+                }
+                $scope.getYear = function() {
+                    return Math.ceil($scope.year);
+                }
                 $scope.selectPlan = function (plan) {
                     var index = $scope.plans.indexOf(plan);
                     for (var i = 0; i < $scope.plans.length; i++)
                         $scope.plans[i].Selected = index === i;
                     $scope.plan = $scope.plans[index];
-                    $scope.calculateProjection();
+                    calculateProjection(handlerAnimationStates.rescaling);
                 }
 
-                $scope.calculateProjection = function () {
-                    var projection = project($scope.principalAmount, $scope.plan.ROI, $scope.year, $scope.annualContribution);
-                    $scope.projectedValue = projection.amount;
-                    $scope.profit = projection.profit;
+                function getHandlerTransitionDuration(handlerAnimationState) {
+                    switch (handlerAnimationState) {
+                        case handlerAnimationStates.dragging:
+                            return duration / 4;
+                        case handlerAnimationStates.rescaling:
+                            return duration;
+                        case handlerAnimationStates.resizing:
+                            return 0;
+                        default:
+                            return duration; 
+                    }
+                }
+
+                function calculateProjection(handlerAnimationState) {
+                    $timeout(function () {
+                        computeData();
+
+                        var projection = project($scope.principalAmount, $scope.plan.ROI, $scope.year, $scope.annualContribution);
+                        $scope.projectedValue = projection.amount;
+                        $scope.profit = projection.profit;
+
+                        var x_ = x($scope.year);
+                        var y_ = y(projection.amount);
+                        
+                        handlerPosition.x = x_;
+                        handlerPosition.y = y_;
+
+                        var handlerTransitionDuration = getHandlerTransitionDuration(handlerAnimationState);
+                        handler.transition().duration(handlerTransitionDuration).attr("transform", function () {
+                            return "translate(" + x_ + "," + y_ + ")";
+                        });
+
+                        //var xProjectionData = "M " + x_ + " " + y_ + " L " + 0 + " " + y_;
+                        //var yProjectionData = "M " + x_ + " " + y_ + " L " + x_ + " " + height;
+                        var xProjectionData = "M " + width + " " + y_ + " L " + 0 + " " + y_;
+                        var yProjectionData = "M " + x_ + " " + -margin.top + " L " + x_ + " " + height;
+                        xProjection.transition().duration(duration / 4).attr("d", xProjectionData);
+                        yProjection.transition().duration(duration / 4).attr("d", yProjectionData);
+
+                        area3Element.transition().duration(duration).attr("d", area3(data));
+                        area2Element.transition().duration(duration).attr("d", area2(data));
+                        areaElement.transition().duration(duration).attr("d", area(data));
+                        avgElement.transition().duration(duration).attr("d", avg(data));
+                        //xAxisLabels.call(xAxis);
+                        yAxisLabels.transition().duration(duration).call(yAxis);
+                    }, 0);
                 }
 
                 function project(principal, rate, year, annual) {
@@ -78,10 +134,8 @@
                     };
                 }
 
-                function defineGradient(name, opacityStop0, opacityStop50, opacityStop100) {
-                    var svg = d3.select('#canvas').select("svg");
-
-                    var gradient = svg.append("defs")
+                function defineGradient(svgElement, name, opacityStop0, opacityStop10, opacityStop100) {
+                    var gradient = svgElement.append("defs")
                       .append("linearGradient")
                         .attr("id", name)
                         .attr("x1", "0%")
@@ -96,9 +150,9 @@
                         .attr("stop-opacity", opacityStop0);
 
                     gradient.append("stop")
-                        .attr("offset", "50%")
+                        .attr("offset", "10%")
                         .attr("stop-color", "#27A95C")
-                        .attr("stop-opacity", opacityStop50);
+                        .attr("stop-opacity", opacityStop10);
 
                     gradient.append("stop")
                         .attr("offset", "100%")
@@ -123,6 +177,8 @@
 
                     width = canvasWidth - margin.left - margin.right;
                     height = canvasHeight - margin.top - margin.bottom;
+                    graphRectWidth = width;
+                    graphRectHeight = canvasHeight - margin.bottom;
                     xAxisPosition = { x: 0, y: margin.bottom - 20 };
                     yAxisPosition = { x: -height / 2, y: -(margin.left - 20) };
                     //xAxisPosition = { x: 0, y: 60 };
@@ -140,7 +196,7 @@
                         .orient("bottom")
                         //.tickValues(d3.range(totalYears))
                         .tickFormat(function (d) {
-                            var year = thisYear + Math.ceil(d / 6);
+                            var year = thisYear + d;
                             return year;
                             //if (d === 0)
                             //    return "Now";
@@ -167,7 +223,7 @@
                         .orient("left")
                         //.ticks(4)
                         .tickFormat(function (d) {
-                            return $scope.gzCurrency + d3.format(",f")(d);
+                            return iso4217.getCurrencyByCode($scope.gzCurrency).symbol + d3.format(",f")(d);
                         });
 
                     avg = d3.svg.line()
@@ -194,10 +250,10 @@
                         .y1(function (d) { return y(d.y111.amount); });
                 }
 
-                function drawGraph () {
+                function drawGraph() {
                     canvas.select("svg").remove();
 
-                    var svg = d3.select('#canvas').append("svg")
+                    svg = d3.select('#canvas').append("svg")
                         .attr("width", canvasWidth)
                         .attr("height", canvasHeight)
                       .append("g")
@@ -205,24 +261,22 @@
                             return "translate(" + margin.left + "," + margin.top + ")";
                         });
 
-                    defineGradient("gradient1", 0.4, 0.2, 0);
-                    defineGradient("gradient2", 0.3, 0.15, 0);
-                    defineGradient("gradient3", 0.2, 0.1, 0);
+                    defineGradient(svg, "gradient1", 0.4, 0.2, 0);
+                    defineGradient(svg, "gradient2", 0.3, 0.15, 0);
+                    defineGradient(svg, "gradient3", 0.2, 0.1, 0);
 
-                    x.domain(d3.extent(data, function (d) { return d.x; }));
+                    x.domain(d3.extent(data, function (d) { return d.x + 1; }));
                     y.domain(d3.extent(data, function (d) { return d.y.amount; }));
 
-                    var xAxisLabels = svg.append("g")
+                    xAxisLabels = svg.append("g")
                         .attr("class", "x axis")
                         .attr("transform", "translate(0," + height + ")")
                         .call(xAxis);
-
                     xAxisLabels.selectAll("text")
                         .attr("transform", function (d) {
                             return "translate(" + -this.getBBox().width + "," + this.getBBox().height + ")rotate(-45)";
                         });
-
-                    var xAxisTitle = xAxisLabels.append("text")
+                    xAxisTitle = xAxisLabels.append("text")
                         .attr("class", "axis-title")
                         .attr("transform", "translate(" + xAxisPosition.x + "," + xAxisPosition.y + ")")
                         .style("text-anchor", "middle")
@@ -231,10 +285,10 @@
                         return width / 2 - this.getBBox().width;
                     });
 
-                    svg.append("g")
+                    yAxisLabels = svg.append("g")
                         .attr("class", "y axis")
-                        .call(yAxis)
-                    .append("text")
+                        .call(yAxis);
+                    yAxisTitle = yAxisLabels.append("text")
                         .attr("class", "axis-title")
                         .attr("transform", "rotate(-90)translate(" + yAxisPosition.x + "," + yAxisPosition.y + ")")
                         .attr("y", 6)
@@ -242,75 +296,160 @@
                         .style("text-anchor", "middle")
                         .text("Projected Value");
 
-                    svg.append("path")
+
+                    area3Element = svg.append("path")
                         .style("fill", "url(" + $location.absUrl() + "#gradient3")
                         .attr("d", function (d) { return area3(data); });
-                    svg.append("path")
+                    area2Element = svg.append("path")
                         .style("fill", "url(" + $location.absUrl() + "#gradient2")
                         .attr("d", function (d) { return area2(data); });
-                    svg.append("path")
+                    areaElement = svg.append("path")
                         .style("fill", "url(" + $location.absUrl() + "#gradient1")
                         .attr("d", function (d) { return area(data); });
 
-                    svg.append("path")
+                    avgElement = svg.append("path")
                         .datum(data)
                         .attr("class", "line")
                         .attr("d", avg(data));
 
-                    var handler = svg.append("g");
+
+                    graphRect = svg.append('rect')
+                        .style("fill", "transparent")
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", graphRectWidth)
+                        .attr("height", graphRectHeight)
+                        .attr("transform", function () {
+                            return "translate(" + 0 + "," + -margin.top + ")";
+                        });
+
+                    xProjection = svg.append("path")
+                        .attr("id", 'x-projection')
+                        .attr("class", 'projection');
+                    yProjection = svg.append("path")
+                        .attr("id", 'y-projection')
+                        .attr("class", 'projection');
+
+                    handler = svg.append("g")
+                        .attr("class", "handler")
+                        .attr("transform", function () {
+                            return "translate(" + handlerPosition.x + "," + handlerPosition.y + ")";
+                        });
+
                     handler.append("circle")
-                        .attr("cy", 60)
-                        .attr("cx", 100)
                         .attr("r", 10)
                         .style("fill", "#27A95C");
                     handler.append("circle")
-                        .attr("cy", 60)
-                        .attr("cx", 100)
                         .attr("r", 4)
                         .style("fill", "#fff");
 
                     handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
-                        .attr("transform", "translate(100, 40)")                        
-                        .style('stroke', '#ddd')
-                        .style('stroke-width', '1')
-                        .style("fill", "rgba(255, 255, 255, 0.8)");
-
+                        .attr("transform", "translate(0, -20)")
+                        .attr("class", "triangle");
+                    handler.append("path")
+                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                        .attr("transform", "translate(20, 0)rotate(90)")
+                        .attr("class", "triangle");
+                    handler.append("path")
+                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                        .attr("transform", "translate(-20, 0)rotate(-90)")
+                        .attr("class", "triangle");
                     handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-down").size(function () { return 25; }))
-                        .attr("transform", "translate(100, 80)")
-                        .style('stroke', '#ddd')
-                        .style('stroke-width', '1')
-                        .style("fill", "rgba(255, 255, 255, 0.8)");
+                        .attr("transform", "translate(0, 20)")
+                        .attr("class", "triangle");
 
-                    handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
-                        .attr("transform", "translate(120, 60)rotate(90)")
-                        .style('stroke', '#ddd')
-                        .style('stroke-width', '1')
-                        .style("fill", "rgba(255, 255, 255, 0.8)");
+                    handler.on("mousedown", function () {
+                        var startTime = new Date().getTime();
+                        var initialMousePosition = d3.mouse(graphRect.node());
+                        var initialAnnualContribution = $scope.annualContribution;
+                        var triangles = d3.selectAll(".triangle").classed("active", true);
+                        var projections = d3.selectAll(".projection").classed("active", true);
+                        var r = graphRect.on("mousemove", mousemove).on("mouseup", mouseup);//.on("mouseout", mouseRectOut);
+                        triangles.on("mouseup", mouseup);//.on("mouseout", mouseTrianglesOut);
+                        projections.on("mouseup", mouseup);//.on("mouseout", mouseProjectionsOut);
+                        //var rectOut = false;
+                        //var trianglesOut = false;
+                        //var projectionsOut = false;
+                        d3.event.preventDefault();
 
-                    handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
-                        .attr("transform", "translate(80, 60)rotate(-90)")
-                        .style('stroke', '#ddd')
-                        .style('stroke-width', '1')
-                        .style("fill", "rgba(255, 255, 255, 0.8)");
+                        //var recalcTimer;
 
+                        function calcNewAnnualContribution(initialY, mouseY) {
+                            var newAnnualContribution;
+
+                            if (initialY < mouseY) {
+                                //if (angular.isDefined(recalcTimer))
+                                //     $timeout.cancel(recalcTimer);
+                                var belowDiff = mouseY - initialY;
+                                var belowWhole = graphRectHeight - initialY;
+                                var belowPercent = belowDiff / belowWhole;
+                                newAnnualContribution = (1 - belowPercent) * initialAnnualContribution;
+                                if (newAnnualContribution < 0)
+                                    newAnnualContribution = 0;
+                            }
+                            else {
+                                //recalcTimer = $timeout(function () {
+                                //    $scope.annualContribution = calcNewAnnualContribution(initialY, mouseY);
+                                //    calculateProjection(handlerAnimationStates.dragging);
+                                //}, 2000);
+                                var currentTime = new Date().getTime();
+                                var timeDiff = currentTime - startTime;
+                                var factor = timeDiff <= 3000 ? 3 : Math.ceil(timeDiff / 1000);
+                                console.log(factor);
+                                var aboveDiff = initialY - mouseY;
+                                var aboveWhole = initialY;
+                                var aboveMax = initialAnnualContribution * factor;
+                                var abovePercent = aboveDiff / aboveWhole;
+                                newAnnualContribution = initialAnnualContribution + abovePercent * aboveMax;
+                            }
+
+                            return newAnnualContribution;
+                        }
+
+                        function mousemove() {
+                            var mousePosition = d3.mouse(graphRect.node());
+                            $scope.year = x.invert(mousePosition[0]);
+                            $scope.annualContribution = calcNewAnnualContribution(initialMousePosition[1], mousePosition[1]);
+                            calculateProjection(handlerAnimationStates.dragging);
+                        }
+
+                        function mouseup() {
+                            triangles.classed("active", false);
+                            projections.classed("active", false);
+                            r.on("mousemove", null).on("mouseup", null);//.on("mouseout", null);
+                            triangles.on("mouseup", null);//.on("mouseout", null);
+                            projections.on("mouseup", null);//.on("mouseout", null);
+
+                            //if (angular.isDefined(recalcTimer))
+                            //    $timeout.cancel(recalcTimer);
+                        }
+
+                        //function mouseRectOut() {
+                        //    rectOut = true;
+                        //    mouseout();
+                        //}
+                        //function mouseTrianglesOut() {
+                        //    trianglesOut = true;
+                        //    mouseout();
+                        //}
+                        //function mouseProjectionsOut() {
+                        //    projectionsOut = true;
+                        //    mouseout();
+                        //}
+                        //function mouseout() {
+                        //    if (rectOut && trianglesOut && projectionsOut)
+                        //        mouseup();
+                        //}
+                    });
                 }
 
-                function setClock() {
-                    var tickInterval = 1000;
-                    var tick = function() { $scope.clock = Date.now(); }
-                    $interval(tick, tickInterval);
-                    tick();
-                }
-
-                function init () {
-                    setClock();
-                    $scope.calculateProjection();
+                function init() {
                     initGraph();
+                    computeData();
                     drawGraph();
+                    calculateProjection(handlerAnimationStates.resizing);
                 }
 
                 init();
@@ -318,14 +457,20 @@
 
                 // #region Events
                 d3.select(window).on("resize", function () {
-                    initGraph();
-                    drawGraph();
+                    init();
                 });
-                $scope.isFullscreen = false;
-                $scope.toggleFullScreen = function () {
-                    $scope.isFullscreen = !$scope.isFullscreen;
-                }
                 // #endregion
+
+                //function setClock() {
+                //    var tickInterval = 1000;
+                //    var tick = function () { $scope.clock = Date.now(); }
+                //    $interval(tick, tickInterval);
+                //    tick();
+                //}
+                //$scope.isFullscreen = false;
+                //$scope.toggleFullScreen = function () {
+                //    $scope.isFullscreen = !$scope.isFullscreen;
+                //}
             }]
         };
     }
