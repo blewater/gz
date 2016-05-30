@@ -651,24 +651,26 @@
 
 
 /* #region Performance */
+.investments .performance {
+    position: relative;
+}
 .investments .performance .title {
     font-size: 22px;
     color: #646464;
 }
 .investments .performance .values {
-    margin: 30px auto;
+    position: absolute;
+    /*margin: 30px auto;*/
     width: 100%;
     font-weight: 400;
 }
-/*.investments .performance .values {
-    height: 100%;
-    display: flex;
-}*/
 .investments .performance .values .value {
-    height: 130px;
+    /*height: 130px;
+    -ms-border-radius: 5px;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #fff;*/
 }
+
 .investments .performance .values .value-top {
     font-size: 15px;
     color: #000;
@@ -692,6 +694,10 @@
     color: #646464;
 }
 
+.investments .performance .plans {
+    position: absolute;
+    margin-top: 130px;
+}
 .investments .performance .plans .plan {
     padding: 0;
 }
@@ -731,7 +737,7 @@
     width: 100%;
     /*height: 480px;*/
     font: 10px sans-serif;
-    margin: 50px auto;
+    /*margin: 50px auto;*/
 }
 .investments .performance #canvas .axis line { display: none; }
 .investments .performance #canvas .axis path { display: none; }
@@ -744,6 +750,30 @@
     stroke-opacity: 0.5;
 }
 
+
+.investments .performance #canvas .handler {
+    cursor: move;
+}
+.investments .performance #canvas .handler .triangle {
+    stroke: #ddd;
+    stroke-width: 1px;
+    fill: #ffffff;
+    fill: rgba(255, 255, 255, 0.8);
+    display: none;
+}
+
+.investments .performance #canvas .handler:hover .triangle,
+.investments .performance #canvas .handler .triangle.active {
+    display: block;
+}
+
+.investments .performance #canvas .projection {
+    stroke: transparent;
+}
+.investments .performance #canvas .projection.active {
+    stroke: #27a95c;
+    stroke: rgba(39, 169, 92, 0.4);
+}
 
 
 
@@ -764,6 +794,32 @@
         border-top: 2px solid #f2f2f2;
         border-bottom: 2px solid #f2f2f2;
     }
+    .investments .performance .values .value-top {
+        font-size: 11px;
+    }
+    .investments .performance .values .value-middle {
+        font-size: 25px;
+    }
+    .investments .performance .values .value-middle.value-bold {
+        font-size: 35px;
+    }
+    .investments .performance .values .value-bottom {
+        font-size: 11px;
+    }
+
+    .investments .performance .plans {
+        margin-top: 110px;
+    }
+    .investments .performance .plans button {
+        height: 26px;
+        line-height: 26px;
+        margin: 0;
+        font-size: 12px;
+    }
+    .investments .performance #canvas {
+        margin-top: 70px;
+    }
+
     .investments .performance #canvas .axis-title { font-size: 1em; }
     .investments .performance #canvas .axis text { font-size: 8px; }
 }
