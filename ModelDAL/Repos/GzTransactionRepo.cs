@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
@@ -271,6 +272,139 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// Perform all database operations for selling a vintage.
+        /// 
+        /// These operations may or may not call SaveChanges.
+        /// 
+        /// Assuming will be called within a transaction.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        /// <param name="soldOnUtc"></param>
+        private void SaveDbSellVintage(int customerId, VintageDto vintage, DateTime soldOnUtc) {
+
+            SaveDbLiquidatedPortfolioWithFees(
+                customerId, 
+                vintage.MarketPrice, 
+                GzTransactionTypeEnum.TransferToGaming, 
+                soldOnUtc);
+
+            SaveDbSoldVintage(customerId, vintage, soldOnUtc);
+
+            UpdDbVintageInvestmentTrxToCash(customerId, vintage);
+
+            UpdDbSellCustomerFundShares(customerId, vintage);
+        }
+
+        /// <summary>
+        /// 
+        /// Update CreditedPlayingLoss transactions to cash converted of a vintage month.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        private void UpdDbVintageInvestmentTrxToCash(int customerId, VintageDto vintage) {
+
+            var trxs =
+                _db.GzTrxs.Where(t => t.CustomerId == customerId
+                                      && t.YearMonthCtd == vintage.YearMonthStr
+                                      && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss);
+
+            var liquidatedId = _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.LiquidatedInvestment)
+                    .Select(tt => tt.Id)
+                    .First();
+
+            foreach (var gzTrx in trxs) {
+                gzTrx.TypeId = liquidatedId;
+                //_db.GzTrxs.Attach(gzTrx);
+                //var gzTrxEntry = _db.Entry(gzTrx);
+                //gzTrxEntry.Property(t => t.TypeId).IsModified = true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Update the Customers shares for that month to reduced by the vintage amounts
+        /// CustFundShare database entity to 0 any New shares bought for that month
+        /// by zeroing the month's shares balance and "archiving" their value.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        private void UpdDbSellCustomerFundShares(int customerId, VintageDto vintage) {
+
+            var custFundShares =
+                _db.CustFundShares
+                    .Where(s => s.CustomerId == customerId
+                        && s.YearMonth == vintage.YearMonthStr
+                        && s.NewSharesNum > 0);
+
+            foreach (var fundShare in custFundShares) {
+                fundShare.SharesNum -= fundShare.NewSharesNum ?? 0;
+                fundShare.SharesValue -= fundShare.NewSharesValue ?? 0;
+                fundShare.SoldNewSharesNum = fundShare.NewSharesNum;
+                fundShare.NewSharesNum = 0;
+                fundShare.CashedNewSharesValue = fundShare.NewSharesValue;
+                fundShare.NewSharesValue = 0;
+                //var fundShareEntry = _db.Entry(fundShare);
+                //fundShareEntry.State = EntityState.Modified;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Upsert a sold vintage.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        /// <param name="soldOnUtc"></param>
+        private void SaveDbSoldVintage(int customerId, VintageDto vintage, DateTime soldOnUtc) {
+
+            _db.SoldVintages.AddOrUpdate(
+                v => new {v.CustomerId, v.VintageYearMonth},
+                new SoldVintage() {
+                    CustomerId = customerId,
+                    VintageYearMonth = vintage.YearMonthStr,
+                    MarketAmount = vintage.MarketPrice,
+                    Fees = vintage.Fees,
+                    // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
+                    SoldOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
+                }
+                );
+        }
+
+        /// <summary>
+        /// 
+        /// PreCondition Requirements:
+        ///     *** This method assumes it's called within transaction.
+        ///     *** Saves only the transactions part of the selling operation excluding balance updating.
+        ///     *** This method does not necessarily call SaveChanges.
+        ///     *** This method assumes that vintage marketsPrices are up to date.
+        /// 
+        /// Sell all vintages marked for selling them.
+        /// 
+        /// Assuming it's called within a transaction.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintages"></param>
+        public void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+
+            var soldOnUtc = DateTime.UtcNow;
+
+            foreach (var vintage in vintages) {
+
+                if (vintage.Selected) {
+                    SaveDbSellVintage(customerId, vintage, soldOnUtc);
+                }
+            }
+            _db.SaveChanges();
+        }
+
+        /// <summary>
+        /// 
         /// Create any type of transaction from those allowed.
         /// Used along with peer API methods for specialized transactions
         /// 
@@ -521,7 +655,6 @@ namespace gzDAL.Repos {
                         CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
                     }
                 );
-            _db.SaveChanges();
         }
 
         /// <summary>

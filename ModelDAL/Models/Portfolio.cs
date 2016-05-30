@@ -36,6 +36,9 @@ namespace gzDAL.Models {
         [Required]
         public bool IsActive { get; set; }
 
+        public string Title { get; set; }
+        public string Color { get; set; }
+
         public virtual ICollection<PortFund> PortFunds { get; set; }
 
     }

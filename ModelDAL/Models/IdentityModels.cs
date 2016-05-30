@@ -210,6 +210,7 @@ namespace gzDAL.Models
         public DbSet<InvBalance> InvBalances { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }
+        public DbSet<SoldVintage> SoldVintages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

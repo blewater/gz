@@ -69,7 +69,14 @@ namespace gzDAL.Models {
         /// "Customer Shares" * "Funds Prices" credited to the customer's Account
         /// 
         /// </summary>
-        GzActualTrxProfitOrLoss = 7
+        GzActualTrxProfitOrLoss = 7,
+
+        /// <summary>
+        /// 
+        /// Investment vintage converted back to cash <see cref="CreditedPlayingLoss"/>. A sold vintage.
+        /// 
+        /// </summary>
+        LiquidatedInvestment = 8
     }
 
     /// <summary>

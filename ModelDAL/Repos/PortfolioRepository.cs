@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using gzDAL.DTO;
 using gzDAL.Models;
+using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 
 namespace gzDAL.Repos
@@ -46,6 +47,8 @@ namespace gzDAL.Repos
 
             return portfolioRates;
         }
+
+//        public 
 
         public IList<string> GetPortfolioRetLines() {
 

@@ -13,7 +13,6 @@ using gzDAL.Models;
 using gzDAL.ModelUtil;
 using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
-using gzWeb.Configuration;
 using gzWeb.Contracts;
 using gzWeb.Models;
 using gzWeb.Utilities;
@@ -178,25 +177,56 @@ namespace gzWeb.Controllers
             return vintages;
         }
 
-
+        /// <summary>
+        /// 
+        /// Post and sell the selected vintages.
+        /// 
+        /// </summary>
+        /// <param name="vintages"></param>
+        /// <returns></returns>
         [HttpPost]
-        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
-        {
-            // TODO Actual withdraw and return remaining vintages
-            return OkMsg(() =>
-            {
-                var vintagesDtos = vintages.Select(v => 
-                    _mapper.Map<VintageViewModel, VintageDto>(v))
-                    .ToList();
+        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages) {
+            var vintagesDtos = vintages.Select(v =>
+                _mapper.Map<VintageViewModel, VintageDto>(v))
+                .ToList();
 
-                var updatedVintages = _invBalanceRepo.SaveDbSellVintages(
-                        User.Identity.GetUserId<int>(), vintagesDtos)
-                    .Select(v => _mapper.Map<VintageDto, VintageViewModel>(v))
-                    .ToList();
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var userId = user.Id;
 
-                return updatedVintages;
-            });
+            // Get user currency rate
+            CurrencyInfo userCurrency;
+            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+
+            // Sell Vintages
+            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
+
+            var inUserRateVintages =
+            updatedVintages.Select(v => new VintageViewModel() {
+                 YearMonthStr = v.YearMonthStr,
+                 InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
+                 SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
+                 Locked = v.Locked,
+                 Sold = v.Sold
+             }).ToList();
+
+            return OkMsg(inUserRateVintages);
         }
+
+        /// <summary>
+        /// 
+        /// Public interface unit test friendly method.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintages"></param>
+        /// <returns></returns>
+        public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+
+            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
+
+            return updatedVintages;
+        }
+
         #endregion
 
         #region Portfolio
@@ -215,10 +245,13 @@ namespace gzWeb.Controllers
             var model = new PortfolioDataViewModel
                         {
                             //Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
-                            NextInvestmentOn = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month)),
+                            NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                             NextExpectedInvestment = investmentAmount,
-                            //ROI = new ReturnOnInvestmentViewModel { Title = "% Current ROI", Percent = 59 },
-                            Plans = GetCustomerPlans(user)
+                            //ROI = new ReturnOnInvestmentViewModel() {
+                            //  Title = "% Current ROI",
+                            //  Percent = 
+                            //},
+                            Plans = GetCustomerPlans(user.Id, investmentAmount)
                         };
             return OkMsg(model);
         }
@@ -245,10 +278,10 @@ namespace gzWeb.Controllers
                 return OkMsg(new object(), "User not found!");
 
             var model = new PerformanceDataViewModel
-                        {
-                                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
-                                Plans = GetCustomerPlans(user)
-                        };
+            {
+                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
+                Plans = GetCustomerPlans(user.Id)
+            };
             return OkMsg(model);
         }
         #endregion
@@ -277,37 +310,31 @@ namespace gzWeb.Controllers
         #endregion
 
         #region Methods
-        private IEnumerable<PlanViewModel> GetCustomerPlans(ApplicationUser user)
+        public IEnumerable<PlanViewModel> GetCustomerPlans(int customerId, decimal nextInvestAmount = 0)
         {
-            var customerPortfolio = _custFundShareRepo.GetCurrentCustomerPortfolio(user.Id);
-            var portfolios = _dbContext.Portfolios.Where(x => x.IsActive);
+            var customerPortfolio = _custPortfolioRepo.GetNextMonthsCustomerPortfolio(customerId);
+            var customerPortfolioId = customerPortfolio != null
+                                        ? customerPortfolio.Id
+                                        : 0;
+            var portfolios = _dbContext.Portfolios.Where(x => x.IsActive)
 
-            foreach (var portfolio in portfolios)
-            {
-                yield return CreateFromPrototype(portfolio, customerPortfolio != null && portfolio.Id == customerPortfolio.Id);
-            }
+                .Select(p => new PlanViewModel() {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Color = p.Color,
+                    AllocatedPercent = p.Id == customerPortfolioId ? 100 : 0,
+                    AllocatedAmount = p.Id == customerPortfolioId ? nextInvestAmount : 0,
+                    ROI = p.PortFunds.Select(f => f.Weight * f.Fund.YearToDate / 100).Sum(),
+                    Risk = p.RiskTolerance,
+                    Selected = p.Id == customerPortfolioId,
+                    Holdings = p.PortFunds.Select(f => new HoldingViewModel() {
+                        Name = f.Fund.HoldingName,
+                        Weight = f.Weight
+                    })
+                });
+
+            return portfolios;
         }
-
-        private PlanViewModel CreateFromPrototype(Portfolio x, bool active)
-        {
-            var portfolioPrototype = PortfolioConfiguration.GetPortfolioPrototype(x.RiskTolerance);
-            return new PlanViewModel
-                   {
-                       Id = x.Id,
-                       Title = portfolioPrototype.Title,
-                       Color = portfolioPrototype.Color,
-                       AllocatedPercent = active ? 100 : 0, // TODO
-                       AllocatedAmount = 0, // TODO
-                       ROI = 0, // TODO: ???
-                       Risk = x.RiskTolerance,
-                       Selected = active, // TODO: get from customer data
-                       Holdings = x.PortFunds.Select(f => new HoldingViewModel
-                                                          {
-                                                              Name = f.Fund.HoldingName,
-                                                              Weight = f.Weight
-                                                          })
-                   };
-        } 
         #endregion
         
         #region Fields
