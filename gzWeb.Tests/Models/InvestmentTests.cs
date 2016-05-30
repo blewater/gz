@@ -188,9 +188,7 @@ namespace gzWeb.Tests.Models {
                 gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
                     amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
 
-                gzTrx.SaveDbInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
                 gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
-                gzTrx.SaveDbInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
                 gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
             }
         }

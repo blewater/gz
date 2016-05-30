@@ -92,8 +92,7 @@ namespace gzDAL.Repos {
                     YearMonthStr = g.Key,
                     InvestAmount = g.Sum(t => t.Amount),
                     VintageDate = g.Max(t => t.CreatedOnUtc),
-                    Sold = g.Any(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming),
-                    MaxInvestmentId = g.Max(t=>t.Id)
+                    Sold = g.Any(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming)
                 })
                 /** 
                  * The 2 staged select approach with AsEnumerable 
@@ -105,8 +104,7 @@ namespace gzDAL.Repos {
                     YearMonthStr = t.YearMonthStr,
                     InvestAmount = t.InvestAmount,
                     Locked = lockInDays - (DateTime.UtcNow - t.VintageDate).TotalDays > 0,
-                    Sold = t.Sold,
-                    LastInvestmentId = t.MaxInvestmentId
+                    Sold = t.Sold
                 })
                 .ToList();
 
@@ -214,7 +212,7 @@ namespace gzDAL.Repos {
         /// Return whether a customer has a liquidation transaction in a month
         /// 
         /// </summary>
-        /// 
+        /// <param name="customerId"></param>
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
         /// 
@@ -284,72 +282,9 @@ namespace gzDAL.Repos {
         /// <param name="soldOnUtc"></param>
         private void SaveDbSellVintage(int customerId, VintageDto vintage, DateTime soldOnUtc) {
 
-            SaveDbLiquidatedPortfolioWithFees(
-                customerId, 
-                vintage.MarketPrice, 
-                GzTransactionTypeEnum.TransferToGaming, 
-                soldOnUtc);
+            SaveDbTransferToGamingAmount(customerId, vintage.MarketPrice, soldOnUtc);
 
             SaveDbSoldVintage(customerId, vintage, soldOnUtc);
-
-            UpdDbVintageInvestmentTrxToCash(customerId, vintage);
-
-            UpdDbSellCustomerFundShares(customerId, vintage);
-        }
-
-        /// <summary>
-        /// 
-        /// Update CreditedPlayingLoss transactions to cash converted of a vintage month.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="vintage"></param>
-        private void UpdDbVintageInvestmentTrxToCash(int customerId, VintageDto vintage) {
-
-            var trxs =
-                _db.GzTrxs.Where(t => t.CustomerId == customerId
-                                      && t.YearMonthCtd == vintage.YearMonthStr
-                                      && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss);
-
-            var liquidatedId = _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.LiquidatedInvestment)
-                    .Select(tt => tt.Id)
-                    .First();
-
-            foreach (var gzTrx in trxs) {
-                gzTrx.TypeId = liquidatedId;
-                //_db.GzTrxs.Attach(gzTrx);
-                //var gzTrxEntry = _db.Entry(gzTrx);
-                //gzTrxEntry.Property(t => t.TypeId).IsModified = true;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// Update the Customers shares for that month to reduced by the vintage amounts
-        /// CustFundShare database entity to 0 any New shares bought for that month
-        /// by zeroing the month's shares balance and "archiving" their value.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="vintage"></param>
-        private void UpdDbSellCustomerFundShares(int customerId, VintageDto vintage) {
-
-            var custFundShares =
-                _db.CustFundShares
-                    .Where(s => s.CustomerId == customerId
-                        && s.YearMonth == vintage.YearMonthStr
-                        && s.NewSharesNum > 0);
-
-            foreach (var fundShare in custFundShares) {
-                fundShare.SharesNum -= fundShare.NewSharesNum ?? 0;
-                fundShare.SharesValue -= fundShare.NewSharesValue ?? 0;
-                fundShare.SoldNewSharesNum = fundShare.NewSharesNum;
-                fundShare.NewSharesNum = 0;
-                fundShare.CashedNewSharesValue = fundShare.NewSharesValue;
-                fundShare.NewSharesValue = 0;
-                //var fundShareEntry = _db.Entry(fundShare);
-                //fundShareEntry.State = EntityState.Modified;
-            }
         }
 
         /// <summary>
@@ -360,7 +295,17 @@ namespace gzDAL.Repos {
         /// <param name="customerId"></param>
         /// <param name="vintage"></param>
         /// <param name="soldOnUtc"></param>
-        private void SaveDbSoldVintage(int customerId, VintageDto vintage, DateTime soldOnUtc) {
+        private void SaveDbSoldVintage(
+            int customerId, 
+            VintageDto vintage, 
+            DateTime soldOnUtc) 
+        {
+            var soldVintageShares = vintage.CustomerVintageShares.Select(cs => new SoldVintageShare() {
+                FundId = cs.FundId,
+                SharesNum = cs.SharesNum,
+                SharesValue = cs.SharesValue,
+                SharesFundPriceId = cs.SharesFundPriceId
+            }).ToList();
 
             _db.SoldVintages.AddOrUpdate(
                 v => new {v.CustomerId, v.VintageYearMonth},
@@ -369,10 +314,11 @@ namespace gzDAL.Repos {
                     VintageYearMonth = vintage.YearMonthStr,
                     MarketAmount = vintage.MarketPrice,
                     Fees = vintage.Fees,
+                    SoldVintageShares = soldVintageShares,
                     // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
-                    SoldOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
+                    UpdatedOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
                 }
-                );
+            );
         }
 
         /// <summary>
@@ -433,6 +379,7 @@ namespace gzDAL.Repos {
 
             SaveDbGzTransaction(customerId, gzTransactionType, amount, createdOnUtc, null);
 
+            _db.SaveChanges();
         }
 
         /// <summary>
@@ -441,53 +388,29 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="withdrawnAmount"></param>
+        /// <param name="investmentAmount"></param>
         /// <param name="createdOnUtc"></param>
         /// <returns></returns>
-        public void SaveDbTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc) {
+        public void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, DateTime createdOnUtc) {
 
-            if (withdrawnAmount <= 0) {
+            if (investmentAmount <= 0) {
 
-                throw new Exception("Invalid amount to transfer to gaming account. Amount must be greater than 0: " + withdrawnAmount);
+                throw new Exception("Invalid amount to transfer to gaming account. Amount must be greater than 0: " + investmentAmount);
 
             }
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            decimal gzFeesAmount, fundsFeesAmount;
+            decimal netAmountToCustomer = investmentAmount - GetWithdrawnFees(investmentAmount, out gzFeesAmount, out fundsFeesAmount);
 
-                () => {
+            // Save Fees Transactions
+            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.GzFees, gzFeesAmount, createdOnUtc, null);
 
-                    SaveDbLiquidatedPortfolioWithFees(customerId, withdrawnAmount, GzTransactionTypeEnum.TransferToGaming, createdOnUtc);
+            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.FundFee, fundsFeesAmount, createdOnUtc, null);
 
-                });
-        }
+            // Save the reason for those fees
+            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.TransferToGaming, netAmountToCustomer, createdOnUtc, null);
 
-        /// <summary>
-        /// 
-        /// Save an investment withdrawal transaction and save the calculated commission and fund fees transactions
-        /// Note identical method to <see cref="SaveDbTransferToGamingAmount"/> though in practice it may not be
-        /// able to instruct the casino platform to use it.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="withdrawnAmount"></param>
-        /// <param name="createdOnUtc"></param>
-        /// <returns></returns>
-        public void SaveDbInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc) {
-
-            if (withdrawnAmount <= 0) {
-
-                throw new Exception("Invalid withdrawal. Amount must be greater than 0: " + withdrawnAmount);
-
-            }
-
-
-            ConnRetryConf.TransactWithRetryStrategy(_db,
-
-                () => {
-
-                    SaveDbLiquidatedPortfolioWithFees(customerId, withdrawnAmount, GzTransactionTypeEnum.InvWithdrawal, createdOnUtc);
-
-                });
+            _db.SaveChanges();
         }
 
         /// <summary>
@@ -551,13 +474,14 @@ namespace gzDAL.Repos {
             // Save the reason for those fees
             SaveDbGzTransaction(customerId, sellingJournalTypeReason, liquidationAmount, createdOnUtc, null);
 
+            _db.SaveChanges();
+
             return reducedAmountToReturn;
         }
 
         /// <summary>
         /// 
-        /// Create or update a playing loss. Resulting in atomic 2 rows being created. 
-        /// A type of PlayingLoss, CreditedPlayingLoss.
+        /// Create or update a playing loss in GzTrx with the credited amount.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
@@ -576,6 +500,7 @@ namespace gzDAL.Repos {
                 createdOnUtc,
                 creditPcnt);
 
+            _db.SaveChanges();
         }
 
         /// <summary>

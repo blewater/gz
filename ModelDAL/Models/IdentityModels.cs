@@ -211,6 +211,7 @@ namespace gzDAL.Models
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }
         public DbSet<SoldVintage> SoldVintages { get; set; }
+        public DbSet<SoldVintageShare> SoldVintageShares { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

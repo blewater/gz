@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,7 +29,9 @@ namespace gzDAL.Models {
         [Required]
         public decimal Fees { get; set; }
 
+        public virtual ICollection<SoldVintageShare> SoldVintageShares { get; set; }
+
         [Required]
-        public DateTime SoldOnUtc { get; set; }
+        public DateTime UpdatedOnUtc { get; set; }
     }
 }
