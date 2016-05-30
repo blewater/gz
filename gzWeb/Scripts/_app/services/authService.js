@@ -129,6 +129,14 @@
                     if (sessionInfo.isAuthenticated) {
                         setGamingAuthData(sessionInfo);
                         getGamingAccountAndWatchBalance();
+
+                        if (factory.data.isGamer)
+                            $location.path(constants.routes.games.path);
+                        else if (factory.data.isInvestor)
+                            $location.path(constants.routes.summary.path);
+                        else
+                            $location.path(constants.routes.home.path);
+
                         $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                     }
                     else {
@@ -238,16 +246,16 @@
                     q.resolve({ enterCaptcha: true });
                 else {
                     gzLogin(usernameOrEmail, password).then(function () {
-                        $location.path(constants.routes.games.path);
+                        //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
-                        $location.path(constants.routes.games.path);
+                        //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
                     });
                 }
             }, function (emLoginError) {
                 gzLogin(usernameOrEmail, password).then(function () {
-                    $location.path(constants.routes.summary.path);
+                    //$location.path(constants.routes.summary.path);
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
                 }, function (gzLoginError) {
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
