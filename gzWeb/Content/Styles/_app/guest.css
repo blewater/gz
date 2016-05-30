@@ -157,7 +157,7 @@
 
     .guest .home .bottom h3 { 
         text-align: center;
-        text-decoration: underline;
+        font-weight: 600;
         margin-bottom: 30px;
     }
     .guest .home .bottom .process-item h4,
@@ -278,8 +278,9 @@
 
 /*** top section ***/
 .guest .about .about-top { 
-    padding-top: 20px;
-    padding-bottom: 50px; }
+    padding-top: 50px;
+    padding-bottom: 50px; 
+}
 
 .guest .about .about-top .zorro {
 	height: 220px;
@@ -308,7 +309,7 @@
 	background-color: white;
 	position: relative;
     padding-bottom: 50px;
-    padding-top: 40px;	
+    padding-top: 20px;	
 }
 
 .guest .about .about-middle .middle-container { padding-top: 40px; }
@@ -331,6 +332,7 @@
 
 /**************** XS - SM ********************/
 @media (max-width: 991px) {
+    .guest .about .about-top { padding-bottom: 30px; }
     .guest .about .about-top .zorro  { display: none; }
     .guest .about .about-top .to-achieve,
     .guest .about .about-top .three-principles { text-align: center; }
@@ -367,6 +369,7 @@
 	}
 
     .guest .about .about-middle { 
+        padding-top: 0;
         padding-bottom: 200px;
         z-index: 2;
     }
@@ -379,9 +382,28 @@
 	
 }
 
-@media (max-width: 484px) { .guest .about .about-top .background-image { top: 50px } }
+@media (max-width: 767px) {
+    .guest .about .about-top .idea-container h5 { text-align: center; }
+    .guest .about .about-top .idea-container p { text-align: justify; }
+
+    .guest .about .about-middle h5,
+    .guest .about .about-bottom h5 { text-align: center; }
+
+}
+
+@media (max-width: 484px) { 
+    .guest .about .about-top .background-image { top: 50px }
+    .guest .about .about-top { padding-bottom: 30px; }
+}
+
 @media (max-width: 374px) { 
-	.guest .about .about-top .background-image { top: 70px; } 
+	.guest .about .about-top .background-image { top: 70px; }
+    .guest .about .about-middle p { margin-bottom: -20px }
+    .guest .about .about-middle .laptop { width: 320px; height: 160px; left: calc(50% - 160px); bottom: -206px; }
+}
+
+@media (max-width: 340px) {
+    .guest .about .about-middle .laptop { width: 300px; height: 150px; left: calc(50% - 150px); bottom: -206px; }
 }
 /* #endregion */
 
