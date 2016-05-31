@@ -130,12 +130,14 @@
                         setGamingAuthData(sessionInfo);
                         getGamingAccountAndWatchBalance();
 
-                        if (factory.data.isGamer)
-                            $location.path(constants.routes.games.path);
-                        else if (factory.data.isInvestor)
-                            $location.path(constants.routes.summary.path);
-                        else
-                            $location.path(constants.routes.home.path);
+                        if ($location.path() === constants.routes.home.path) {
+                            if (factory.data.isGamer)
+                                $location.path(constants.routes.games.path);
+                            else if (factory.data.isInvestor)
+                                $location.path(constants.routes.summary.path);
+                            else
+                                $location.path(constants.routes.home.path);
+                        }
 
                         $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                     }
