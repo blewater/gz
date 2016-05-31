@@ -133,6 +133,9 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
                 , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
                 , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
+                //ACCOUNT MANAGEMENT
+                , "~/Scripts/_app/controllers/account/pendingWithdrawalsCtrl.js"
+
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"
                 , "~/Scripts/_app/directives/gzPerformanceGraph.js"

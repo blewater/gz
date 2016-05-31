@@ -143,7 +143,16 @@
                 nsStatic: true,
             });
         };
-        $scope.transactionHistory();
+        
+        $scope.pendingWithdrawals = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/pendingWithdrawals.html',
+                nsCtrl: 'pendingWithdrawalsCtrl',
+                nsStatic: true,
+            });
+        };
         // #endregion
     }
 })();

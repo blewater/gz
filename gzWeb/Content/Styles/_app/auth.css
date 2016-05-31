@@ -493,3 +493,59 @@
 .pac-container {
     z-index: 99999999;
 }
+
+
+/*region Management Modal*/
+.auth.mngModal{ height: 550px;}
+
+.auth.mngModal .mng-content {
+    height: 100%;
+    position: fixed;
+    padding: 30px 40px;
+    float: right;
+    width: 75%;
+    right: 0;
+}
+/*endregion*/
+
+/*region Management Menu*/
+.auth.mngModal .mng-menu { float: left; width: 25%; color: #fff; height: 100%; position: fixed; }
+
+.auth.mngModal nav .nav-menu { 
+    list-style-type: none; 
+    padding: 30px;
+}
+
+.auth.mngModal nav .nav-menu li{ margin-bottom: 5px; }
+
+.auth.mngModal nav .nav-menu li .btn-gz-mng-menu { margin-bottom: 10px; padding: 10px 0; }
+
+.auth.mngModal nav .nav-menu .btn-gz-mng-menu {
+    width: 150px;
+    padding: 5px 0;
+    border: none;
+    font-size: 18px;
+    text-align: left;
+}
+
+.auth.mngModal nav .nav-menu .btn-gz-mng-menu .btn-symbol { height: 18px; float: left; margin: 3px 10px 0 20px; }
+.auth.mngModal nav .nav-menu .btn-gz-mng-menu .btn-symbol.plus-symbol { content: url(../../Images/plus_icon.svg); }
+.auth.mngModal nav .nav-menu .btn-gz-mng-menu .btn-symbol.minus-symbol { content: url(../../Images/minus_icon.svg); }
+
+.auth.mngModal nav .nav-menu li .link-gz-active { color: #42b471; font-weight: bold; }
+
+.auth.mngModal nav .nav-menu li:nth-of-type(3) { margin-top: 10px; }
+
+.auth.mngModal nav .nav-menu li a {
+    font-size: 16px;
+    color: #7b7b7b;
+}
+/*end region*/
+
+/*region pendingWithdrawals*/
+.auth.mngModal.pendingWithdrawals .mng-content .text-holder {
+    background-color: #42b471;
+    padding: 40px 30px;
+    font-size: 16px;
+}
+/*endregion*/
