@@ -3,7 +3,6 @@
     var ctrlId = 'playgroundCtrl';
     APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', ctrlFactory]);
     function ctrlFactory($scope, message, emWamp, chat, $location, auth) {
-        // #region Playground
         // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -133,6 +132,18 @@
             });
         }
         // #endregion
+
+        // #region Account Management
+        $scope.transactionHistory = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/registerAccount.html',
+                nsCtrl: 'registerAccountCtrl',
+                nsStatic: true,
+            });
+        };
+        $scope.transactionHistory();
         // #endregion
     }
 })();
