@@ -8,6 +8,7 @@
             restrict: 'EA',
             scope: {
                 gzPlans: '=',
+                gzPrincipalAmount: '=',
                 gzCurrency: '@',
             },
             templateUrl: function() {
@@ -17,13 +18,13 @@
                 // #region Variables
                 $scope.plans = $scope.gzPlans;
                 for (var j = 0; j < $scope.plans.length; j++)
-                    $scope.plans[j].ROI = Math.round($scope.plans[j].ROI * 100) / 10000;
+                    $scope.plans[j].returnRate = Math.round($scope.plans[j].ROI * 100) / 10000;
                 $scope.plan = $filter('filter')($scope.plans, { Selected: true })[0];
                 $scope.year = 1;
                 $scope.annualContribution = 100;
                 $scope.projectedValue = 0;
                 $scope.profit = 0;
-                $scope.principalAmount = 100;
+                $scope.principalAmount = $scope.gzPrincipalAmount > 0 ? $scope.gzPrincipalAmount : $scope.annualContribution;
                 var duration = 300;
                 var divergence = 0.2;
                 var data;
@@ -52,13 +53,13 @@
                     for (var t = 0; t <= totalYears; t++) {
                         data.push({
                             x: t,
-                            y111: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 3, t, $scope.annualContribution),
-                            y11: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
-                            y1: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence, t, $scope.annualContribution),
-                            y: project($scope.principalAmount, $scope.plan.ROI, t, $scope.annualContribution),
-                            y0: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence, t, $scope.annualContribution),
-                            y00: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 2, t, $scope.annualContribution),
-                            y000: project($scope.principalAmount, $scope.plan.ROI - $scope.plan.ROI * divergence * 3, t, $scope.annualContribution)
+                            y111: project($scope.principalAmount, $scope.plan.returnRate + $scope.plan.returnRate * divergence * 3, t, $scope.annualContribution),
+                            y11: project($scope.principalAmount, $scope.plan.returnRate + $scope.plan.returnRate * divergence * 2, t, $scope.annualContribution),
+                            y1: project($scope.principalAmount, $scope.plan.returnRate + $scope.plan.returnRate * divergence, t, $scope.annualContribution),
+                            y: project($scope.principalAmount, $scope.plan.returnRate, t, $scope.annualContribution),
+                            y0: project($scope.principalAmount, $scope.plan.returnRate - $scope.plan.returnRate * divergence, t, $scope.annualContribution),
+                            y00: project($scope.principalAmount, $scope.plan.returnRate - $scope.plan.returnRate * divergence * 2, t, $scope.annualContribution),
+                            y000: project($scope.principalAmount, $scope.plan.returnRate - $scope.plan.returnRate * divergence * 3, t, $scope.annualContribution)
                         });
                     }
                     x.domain(d3.extent(data, function (d) { return d.x; }));
@@ -99,7 +100,7 @@
                     $timeout(function () {
                         computeData();
 
-                        var projection = project($scope.principalAmount, $scope.plan.ROI, $scope.year, $scope.annualContribution);
+                        var projection = project($scope.principalAmount, $scope.plan.returnRate, $scope.year, $scope.annualContribution);
                         $scope.projectedValue = projection.amount;
                         $scope.profit = projection.profit;
 
@@ -145,7 +146,7 @@
                     };
                 }
 
-                function defineGradient(svgElement, name, opacityStop0, opacityStop10, opacityStop100) {
+                function defineGradient(svgElement, name, opacityStart, opacityMiddle, opacityEnd) {
                     var gradient = svgElement.append("defs")
                       .append("linearGradient")
                         .attr("id", name)
@@ -158,17 +159,17 @@
                     gradient.append("stop")
                         .attr("offset", "0%")
                         .attr("stop-color", "#27A95C")
-                        .attr("stop-opacity", opacityStop0);
+                        .attr("stop-opacity", opacityStart);
 
                     gradient.append("stop")
-                        .attr("offset", "10%")
+                        .attr("offset", "30%")
                         .attr("stop-color", "#27A95C")
-                        .attr("stop-opacity", opacityStop10);
+                        .attr("stop-opacity", opacityMiddle);
 
                     gradient.append("stop")
                         .attr("offset", "100%")
                         .attr("stop-color", "#27A95C")
-                        .attr("stop-opacity", opacityStop100);
+                        .attr("stop-opacity", opacityEnd);
                 }
 
                 function initGraph() {
@@ -276,7 +277,7 @@
                     defineGradient(svg, "gradient2", 0.3, 0.15, 0);
                     defineGradient(svg, "gradient3", 0.2, 0.1, 0);
 
-                    x.domain(d3.extent(data, function (d) { return d.x + 1; }));
+                    x.domain(d3.extent(data, function (d) { return d.x; }));
                     y.domain(d3.extent(data, function (d) { return d.y.amount; }));
 
                     xAxisLabels = svg.append("g")
@@ -310,13 +311,13 @@
 
                     area3Element = svg.append("path")
                         .style("fill", "url(" + $location.absUrl() + "#gradient3")
-                        .attr("d", function (d) { return area3(data); });
+                        .attr("d", area3(data));
                     area2Element = svg.append("path")
                         .style("fill", "url(" + $location.absUrl() + "#gradient2")
-                        .attr("d", function (d) { return area2(data); });
+                        .attr("d", area2(data));
                     areaElement = svg.append("path")
                         .style("fill", "url(" + $location.absUrl() + "#gradient1")
-                        .attr("d", function (d) { return area(data); });
+                        .attr("d", area(data));
 
                     avgElement = svg.append("path")
                         .datum(data)
@@ -357,19 +358,19 @@
                     handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
                         .attr("transform", "translate(0, -20)")
-                        .attr("class", "triangle");
+                        .attr("class", "triangle triangle-top");
                     handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
                         .attr("transform", "translate(20, 0)rotate(90)")
-                        .attr("class", "triangle");
+                        .attr("class", "triangle triangle-right");
                     handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
                         .attr("transform", "translate(-20, 0)rotate(-90)")
-                        .attr("class", "triangle");
+                        .attr("class", "triangle triangle-left");
                     handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-down").size(function () { return 25; }))
                         .attr("transform", "translate(0, 20)")
-                        .attr("class", "triangle");
+                        .attr("class", "triangle triangle-bottom");
 
                     handler.on("mousedown", function () {
                         var startTime = new Date().getTime();

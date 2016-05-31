@@ -749,6 +749,10 @@
     cursor: not-allowed;
 }
 
+.investments .performance .plans .plan .plan-roi {
+    font-size: 10px;
+}
+
 .investments .performance .prompt {
     position: absolute;
     text-transform: uppercase;
@@ -776,18 +780,89 @@
 .investments .performance #canvas .handler {
     cursor: move;
 }
+
+/* #region triangles with animations */
 .investments .performance #canvas .handler .triangle {
-    stroke: #ddd;
+    stroke: #27a95c;
     stroke-width: 1px;
     fill: #ffffff;
     fill: rgba(255, 255, 255, 0.8);
     display: none;
+
+    /*-webkit-animation-duration: 2s;
+    -moz-animation-duration: 2s;
+    -ms-animation-duration: 2s;
+    -o-animation-duration: 2s;
+    animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -ms-animation-iteration-count: infinite;
+    -o-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-direction: alternate;
+    -moz-animation-direction: alternate;
+    -ms-animation-direction: alternate;
+    -o-animation-direction: alternate;
+    animation-direction: alternate;
+    -webkit-animation-timing-function: ease-in-out;
+    -moz-animation-timing-function: ease-in-out;
+    -ms-animation-timing-function: ease-in-out;
+    -o-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;*/
 }
 
 .investments .performance #canvas .handler:hover .triangle,
 .investments .performance #canvas .handler .triangle.active {
     display: block;
 }
+
+
+/*.investments .performance #canvas .handler .triangle.triangle-top {
+    -webkit-animation-name: triangle-top;
+    -moz-animation-name: triangle-top;
+    -ms-animation-name: triangle-top;
+    -o-animation-name: triangle-top;
+    animation-name: triangle-top;
+}
+.investments .performance #canvas .handler .triangle.triangle-bottom {
+    -webkit-animation-name: triangle-bottom;
+    -moz-animation-name: triangle-bottom;
+    -ms-animation-name: triangle-bottom;
+    -o-animation-name: triangle-bottom;
+    animation-name: triangle-bottom;
+}
+.investments .performance #canvas .handler .triangle.triangle-left {
+    -webkit-animation-name: triangle-left;
+    -moz-animation-name: triangle-left;
+    -ms-animation-name: triangle-left;
+    -o-animation-name: triangle-left;
+    animation-name: triangle-left;
+}
+.investments .performance #canvas .handler .triangle.triangle-right {
+    -webkit-animation-name: triangle-right;
+    -moz-animation-name: triangle-right;
+    -ms-animation-name: triangle-right;
+    -o-animation-name: triangle-right;
+    animation-name: triangle-right;
+}
+
+
+@-webkit-keyframes triangle-top {
+    0%   {margin-top:0;}
+    100% {margin-top:-10px;}
+}
+
+@-moz-keyframes triangle-top {
+    0%   {margin-top:0;}
+    100% {margin-top:-10px;}
+}
+
+@keyframes triangle-top {
+    0%   {margin-top:0;}
+    100% {margin-top:-10px;}
+
+}*/
+/* #endregion */
 
 .investments .performance #canvas .projection {
     stroke: transparent;

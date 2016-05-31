@@ -8,15 +8,15 @@
             restrict: 'A',
             scope: {
                 gzPlan: '=',
+                gzInvestmentAmount: '=',
                 gzCurrency: '@',
             },
             link: function (scope, element, attrs) {
                 scope.$watch('gzPlan', function (newValue, oldValue) {
-                    drawDonut();
+                    drawDonut(newValue);
                 });
 
-                function drawDonut () {
-                    var plan = scope.gzPlan;
+                function drawDonut (plan) {
                     var root = d3.select(element[0]);
                     root.select("svg").remove();
                     var rootWidth = root.node().getBoundingClientRect().width;
@@ -37,7 +37,7 @@
 
                     var group = canvas.append("g").attr("transform", "translate(" + minDimension + "," + minDimension + ")");
 
-                    var tooltip = d3.tip().attr('class', 'holding-info');//.direction('n');
+                    var tooltip = d3.tip().attr('class', 'holding-info');
 
                     canvas.call(tooltip);
 
@@ -53,7 +53,7 @@
                     function showTooltip(holding) {
                         var name = '<div class="row"><div class="col-xs-6">Holding Name: </div><div class="col-xs-6 text-right">' + holding.Name + '</div></div>';
                         var weight = '<div class="row"><div class="col-xs-6">Portfolio Weight: </div><div class="col-xs-6 text-right">% ' + $filter('number')(holding.Weight, 2) + '</div></div>';
-                        var value = '<div class="row"><div class="col-xs-6">Current Value: </div><div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount * holding.Weight / 100, 2) + '</div></div>';
+                        var value = '<div class="row"><div class="col-xs-6">Current Value: </div><div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')((scope.gzInvestmentAmount * holding.Weight / 100), 2) + '</div></div>';
                         var html = name + weight + value;
                         tooltip.html(html)
                             .style("background-color", d3.rgb("#27A95C").darker(holding.Weight / 10))
@@ -183,7 +183,7 @@
                     //function showHoldingInfo(holding, color) {
                     //    showHoldingElement(holdingName, holding.Name, color);
                     //    showHoldingElement(holdingWeight, "% " + holding.Weight + ".00", color);
-                    //    showHoldingElement(holdingValue, "€ " +plan.AllocatedAmount * holding.Weight / 100, color);
+                    //    showHoldingElement(holdingValue, "€ " + scope.gzInvestmentAmount * holding.Weight / 100, color);
                     //}
                     //function hideHoldingInfo() {
                     //    hideHoldingElement(holdingName);
