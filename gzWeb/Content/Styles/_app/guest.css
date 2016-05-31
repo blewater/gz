@@ -13,7 +13,7 @@
 .guest .home .top {
 	background-color: #27A95C;
 	position: relative;
-    padding-top: 80px;
+    padding-top: 70px;
 }
 
 .guest .home .middle { background-color: #ececec; }
@@ -63,7 +63,7 @@
 
 .guest .home .top .right-heading .sign-up-btn img {
     height: 25px;
-    margin-top: -8px;
+    margin-top: -4px;
 }
 
 .guest .home .top .right-heading .watch-video {
@@ -71,7 +71,7 @@
     width: 120px;
 	text-transform: uppercase;
 	color: white;
-	margin-top: 12px;
+	margin-top: 10px;
 	margin-bottom: 12px;
 }
 
@@ -123,15 +123,16 @@
 
 /**************** XS - SM ********************/
 @media (max-width: 991px) {
-    .guest .home .top { padding-bottom: 350px;padding-top: 50px; }
+    .guest .home .top { padding-bottom: 300px; padding-top: 50px; }
 	.guest .home .top .right-heading h2 { font-size: 28px }
     .guest .home .top .right-heading {
 		left: 0;
 		text-align: center;
 		letter-spacing: 5px;
 	}
+    .guest .home .top .right-heading h5 { margin: 20px 0; }
     .guest .home .top .right-heading .watch-video { width: 180px; margin: 20px auto 0; }
-	.guest .home .top .laptop-big { left: calc(50% - 244.3px); }
+	.guest .home .top .laptop-big { left: calc(50% - 244.31px); }
 
     .guest .home .bottom .process-item { padding: 0; height: 250px }
 	.guest .home .bottom .process-item h4 { font-size: 18px; }
@@ -144,11 +145,11 @@
     .guest .home .top .right-heading h2 { font-size: 24px }
     .guest .home .top .right-heading h5 { font-size: 12px }
     .guest .home .top .right-heading .sign-up-btn { font-size: 12px; }
-    .guest .home .top .right-heading .watch-video { font-size: 12px; width: 170px; margin: 0 auto; }
+    .guest .home .top .right-heading .watch-video { font-size: 11px; width: 170px; margin: 0 auto; margin-top: 10px; }
 	.guest .home .top .laptop-big { 
         height: 250px;
         bottom: -8px;
-        left: calc(50% - 211.7px); 
+        left: calc(50% - 218.165px); 
 	}
     
     .guest .home .middle h3 { font-size: 18px; }
@@ -156,12 +157,53 @@
 
     .guest .home .bottom h3 { 
         text-align: center;
-        text-decoration: underline;
+        font-weight: 600;
         margin-bottom: 30px;
     }
-    .guest .home .bottom .process-item { margin-bottom: 20px; }
     .guest .home .bottom .process-item h4,
     .guest .home .bottom .process-item p { text-align: center; }	
+}
+
+@media (max-width: 490px) {
+    .guest .home .top { padding-bottom: 240px; }
+    .guest .home .top .right-heading h2 { font-size: 20px; letter-spacing: 5px; }
+    .guest .home .top .right-heading h5 { font-size: 10px; letter-spacing: 5px; }
+    .guest .home .top .right-heading .sign-up-btn { font-size: 10px; margin-top: 5px; height: 35px; line-height: 35px; }
+    .guest .home .top .right-heading .sign-up-btn img { height: 20px; }
+    .guest .home .top .right-heading .watch-video { font-size: 11px; letter-spacing: 5px; }
+    .guest .home .top .laptop-big { height: 230px; left: calc(50% - 200.71px); }
+}
+
+@media (max-width: 446px) {
+    .guest .home .top { padding-bottom: 220px; }
+    .guest .home .top .right-heading h2 { font-size: 18px; letter-spacing: 4px; }
+    .guest .home .top .right-heading h5 { font-size: 9px; letter-spacing: 4px; }
+    .guest .home .top .right-heading .sign-up-btn { font-size: 9px; margin-top: 4px; }
+    .guest .home .top .right-heading .watch-video { font-size: 10px; letter-spacing: 4px; }
+    .guest .home .top .laptop-big { height: 210px; left: calc(50% - 183.26px); bottom: -7px; }
+
+    .guest .home .middle h3 { font-size: 16px; }
+    .guest .home .middle p { font-size: 12px; }
+
+    .guest .home .bottom h3 { font-size: 18px; }
+}
+
+@media (max-width: 398px) {
+    .guest .home .top { padding-top: 30px; padding-bottom: 200px; }
+    .guest .home .top .right-heading h2 { letter-spacing: 2px; }
+    .guest .home .top .right-heading h5 { letter-spacing: 2px; }
+    .guest .home .top .right-heading .sign-up-btn { font-size: 8px; padding: 0 10px; }
+    .guest .home .top .right-heading .watch-video { font-size: 9px; letter-spacing: 2px; }
+    .guest .home .top .laptop-big { height: 190px; left: calc(50% - 165.805px); }
+}
+
+@media (max-width: 348px) {
+    .guest .home .top { padding-bottom: 180px; }
+    .guest .home .top .right-heading h2 { letter-spacing: 1px; }
+    .guest .home .top .right-heading h5 { letter-spacing: 1px; }
+    .guest .home .top .right-heading .sign-up-btn { font-size: 8px; }
+    .guest .home .top .right-heading .watch-video { letter-spacing: 1px; }
+    .guest .home .top .laptop-big { height: 170px; left: calc(50% - 148.35px); bottom: -6px; }
 }
 
 .guest .explainer-video {
@@ -236,8 +278,9 @@
 
 /*** top section ***/
 .guest .about .about-top { 
-    padding-top: 20px;
-    padding-bottom: 50px; }
+    padding-top: 50px;
+    padding-bottom: 50px; 
+}
 
 .guest .about .about-top .zorro {
 	height: 220px;
@@ -266,7 +309,7 @@
 	background-color: white;
 	position: relative;
     padding-bottom: 50px;
-    padding-top: 40px;	
+    padding-top: 20px;	
 }
 
 .guest .about .about-middle .middle-container { padding-top: 40px; }
@@ -289,6 +332,7 @@
 
 /**************** XS - SM ********************/
 @media (max-width: 991px) {
+    .guest .about .about-top { padding-bottom: 30px; }
     .guest .about .about-top .zorro  { display: none; }
     .guest .about .about-top .to-achieve,
     .guest .about .about-top .three-principles { text-align: center; }
@@ -325,6 +369,7 @@
 	}
 
     .guest .about .about-middle { 
+        padding-top: 0;
         padding-bottom: 200px;
         z-index: 2;
     }
@@ -337,9 +382,28 @@
 	
 }
 
-@media (max-width: 484px) { .guest .about .about-top .background-image { top: 50px } }
+@media (max-width: 767px) {
+    .guest .about .about-top .idea-container h5 { text-align: center; }
+    .guest .about .about-top .idea-container p { text-align: justify; }
+
+    .guest .about .about-middle h5,
+    .guest .about .about-bottom h5 { text-align: center; }
+
+}
+
+@media (max-width: 484px) { 
+    .guest .about .about-top .background-image { top: 50px }
+    .guest .about .about-top { padding-bottom: 30px; }
+}
+
 @media (max-width: 374px) { 
-	.guest .about .about-top .background-image { top: 70px; } 
+	.guest .about .about-top .background-image { top: 70px; }
+    .guest .about .about-middle p { margin-bottom: -20px }
+    .guest .about .about-middle .laptop { width: 320px; height: 160px; left: calc(50% - 160px); bottom: -206px; }
+}
+
+@media (max-width: 340px) {
+    .guest .about .about-middle .laptop { width: 300px; height: 150px; left: calc(50% - 150px); bottom: -206px; }
 }
 /* #endregion */
 
