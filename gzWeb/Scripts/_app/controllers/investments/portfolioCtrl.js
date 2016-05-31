@@ -10,6 +10,7 @@
         $scope.thereIsExpanded = function () {
             return $scope.model && $filter('some')($scope.model.Plans, function (p) { return p.expanded; });
         };
+
         $scope.selectPlan = function (plan) {
             api.call(function () {
                 return api.setPlanSelection(plan);
@@ -17,6 +18,8 @@
                 var index = $scope.model.Plans.indexOf(plan);
                 for (var i = 0; i < $scope.model.Plans.length; i++)
                     $scope.model.Plans[i].Selected = index === i;
+                $scope.model.SelectedIndex = index;
+                $scope.model.SelectedPlan = $scope.model.Plans[index];
 
                 message.success('Your selection was registered successfully!', { nsType: 'toastr' });
             }, {
@@ -30,6 +33,8 @@
                 return api.getPortfolioData();
             }, function (response) {
                 $scope.model = response.Result;
+                $scope.model.SelectedPlan = $filter('filter')($scope.model.Plans, { Selected: true })[0];
+                $scope.model.SelectedIndex = $scope.model.Plans.indexOf($scope.model.SelectedPlan);
             });
         }
 

@@ -584,8 +584,8 @@
 }
 
 .investments .portfolio #portfolio-chart .arc path {
-    -ms-opacity: 1;
-    opacity: 1;
+    /*-ms-opacity: 1;
+    opacity: 1;*/
 
     stroke: transparent;
     stroke-width: 1px;
@@ -602,8 +602,8 @@
 }
 
 .investments .portfolio #portfolio-chart .arc path:hover {
-    -ms-opacity: 0.8;
-    opacity: 0.8;
+    /*-ms-opacity: 0.8;
+    opacity: 0.8;*/
 
     stroke: #999;
 }
@@ -613,7 +613,29 @@
     text-shadow: 1px 1px 1px #555;
 }
 
-.tooltip {
+.holding-info {
+    position: absolute;
+    margin: 10px;
+    padding: 5px;
+    font: 12px sans-serif;
+    background: #27A95C;
+    color: #fff;
+    /*border: 0;*/
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+    pointer-events: none;
+    width: 220px;
+
+    -webkit-box-shadow: 0 0 3px 0 #fff;
+    -ms-box-shadow: 0 0 3px 0 #fff;
+    box-shadow: 0 0 3px 0 #fff;
+    /*-webkit-transition: opacity 400ms linear;
+    -moz-transition: opacity 400ms linear;
+    -ms-transition: opacity 400ms linear;
+    -o-transition: opacity 400ms linear;
+    transition: opacity 400ms linear;*/
+}
+/*.holding-info .key {
     position: absolute;			
     text-align: center;
     margin: 10px;
@@ -625,13 +647,7 @@
     -ms-border-radius: 5px;
     border-radius: 5px;			
     pointer-events: none;
-    
-    /*-webkit-transition: opacity 400ms linear;
-    -moz-transition: opacity 400ms linear;
-    -ms-transition: opacity 400ms linear;
-    -o-transition: opacity 400ms linear;
-    transition: opacity 400ms linear;*/
-}
+}*/
 
 @media (max-width: 1199px) {
     .investments .portfolio .portfolio-plans .row {
