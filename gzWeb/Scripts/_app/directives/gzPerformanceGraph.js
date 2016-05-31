@@ -16,8 +16,10 @@
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 // #region Variables
                 $scope.plans = $scope.gzPlans;
+                for (var j = 0; j < $scope.plans.length; j++)
+                    $scope.plans[j].ROI = Math.round($scope.plans[j].ROI * 100) / 10000;
                 $scope.plan = $filter('filter')($scope.plans, { Selected: true })[0];
-                $scope.year = 10;
+                $scope.year = 1;
                 $scope.annualContribution = 100;
                 $scope.projectedValue = 0;
                 $scope.profit = 0;
@@ -25,8 +27,8 @@
                 var duration = 300;
                 var divergence = 0.2;
                 var data;
-                var totalYears = 30;
-                var aspect = 1.5;
+                var totalYears = 10;
+                var aspect = 2;
                 var canvas = d3.select('#canvas');
                 var canvasWidth, canvasHeight, width, height, margin, xAxisPosition, yAxisPosition;
                 var now = new Date();
@@ -47,7 +49,7 @@
                 // #region Methods
                 function computeData() {
                     data = [];
-                    for (var t = 0; t < totalYears; t++) {
+                    for (var t = 0; t <= totalYears; t++) {
                         data.push({
                             x: t,
                             y111: project($scope.principalAmount, $scope.plan.ROI + $scope.plan.ROI * divergence * 3, t, $scope.annualContribution),
@@ -65,6 +67,13 @@
                 $scope.getYear = function() {
                     return Math.ceil($scope.year);
                 }
+                $scope.getProjectedValue = function() {
+                    return Math.round($scope.projectedValue);
+                }
+                $scope.getProfit = function() {
+                    return Math.round($scope.profit);
+                }
+
                 $scope.selectPlan = function (plan) {
                     var index = $scope.plans.indexOf(plan);
                     for (var i = 0; i < $scope.plans.length; i++)
@@ -122,11 +131,13 @@
                 }
 
                 function project(principal, rate, year, annual) {
+                    //if (rate < 0)
+                    //    rate = 0;
                     var pow = Math.pow(1 + rate, year);
                     var compoundInterestForPrincipal = principal * pow;
                     var futureValues = annual * ((pow - 1) / rate);
                     var totalContributions = principal + annual * year;
-                    var projectedAmount = Math.round(compoundInterestForPrincipal + futureValues);
+                    var projectedAmount = compoundInterestForPrincipal + futureValues;
                     var projectedProfit = projectedAmount - totalContributions;
                     return {
                         amount: projectedAmount,
@@ -378,7 +389,7 @@
 
                         function calcNewAnnualContribution(initialY, mouseY) {
                             var newAnnualContribution;
-
+                            initialY = graphRectHeight / 2;
                             if (initialY < mouseY) {
                                 //if (angular.isDefined(recalcTimer))
                                 //     $timeout.cancel(recalcTimer);
@@ -397,7 +408,7 @@
                                 var currentTime = new Date().getTime();
                                 var timeDiff = currentTime - startTime;
                                 var factor = timeDiff <= 3000 ? 3 : Math.ceil(timeDiff / 1000);
-                                console.log(factor);
+                                //console.log(factor);
                                 var aboveDiff = initialY - mouseY;
                                 var aboveWhole = initialY;
                                 var aboveMax = initialAnnualContribution * factor;

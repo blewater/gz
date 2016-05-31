@@ -6,8 +6,8 @@
     </div>
     <div class="col-xs-4 value text-center">
         <div class="value-top">Projected Value</div>
-        <div class="value-middle value-bold">{{projectedValue | isoCurrency : gzCurrency : 0}}</div>
-        <div class="value-bottom">({{profit > 0 ? '+' : ''}}{{profit | isoCurrency : gzCurrency : 0}})</div>
+        <div class="value-middle value-bold">{{getProjectedValue() | isoCurrency : gzCurrency : 0}}</div>
+        <div class="value-bottom">({{getProfit() > 0 ? '+' : ''}}{{getProfit() | isoCurrency : gzCurrency : 0}})</div>
         <!--<div class="value-middle">{{model.currency}}<span format="'comma'" count-to="{{model.projectedValue}}" value="{{modelFrom.projectedValue}}" duration="{{model.countDuration}}"></span></div>
         <div class="value-bottom">({{model.profit >= 0 ? '+' : '-'}}{{model.currency}}<span count-to="{{model.profit}}" value="{{modelFrom.profit}}" duration="{{model.countDuration}}"></span>)</div>-->
     </div>
@@ -22,6 +22,11 @@
         <button type="button" ng-disabled="plan.Selected" ng-click="selectPlan(plan)">
             <span>{{plan.Title}}</span>
         </button>
+    </div>
+</div>
+<div class="prompt clearfix col-xs-12 col-sm-offset-3 col-sm-6">
+    <div class="col-xs-12 plan text-center">
+        Drag and slide the pointer
     </div>
 </div>
 <div id="canvas" class="clearfix"></div>
