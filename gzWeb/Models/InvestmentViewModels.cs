@@ -73,7 +73,7 @@ namespace gzWeb.Models
 
     public class PerformanceDataViewModel
     {
-        public string Currency { get; set; }
+        //public string Currency { get; set; }
         public IEnumerable<PlanViewModel> Plans { get; set; }
     }
 }

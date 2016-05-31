@@ -279,7 +279,7 @@ namespace gzWeb.Controllers
 
             var model = new PerformanceDataViewModel
             {
-                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
+                //Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                 Plans = GetCustomerPlans(user.Id)
             };
             return OkMsg(model);
@@ -316,8 +316,8 @@ namespace gzWeb.Controllers
             var customerPortfolioId = customerPortfolio != null
                                         ? customerPortfolio.Id
                                         : 0;
-            var portfolios = _dbContext.Portfolios.Where(x => x.IsActive)
-
+            var portfolios = _dbContext.Portfolios
+                .Where(x => x.IsActive)
                 .Select(p => new PlanViewModel() {
                     Id = p.Id,
                     Title = p.Title,
@@ -331,7 +331,8 @@ namespace gzWeb.Controllers
                         Name = f.Fund.HoldingName,
                         Weight = f.Weight
                     })
-                });
+                })
+                .ToList();
 
             return portfolios;
         }
@@ -388,7 +389,7 @@ namespace gzWeb.Controllers
         {
             Title = "Aggressive",
             Selected = false,
-            ROI = 0.1,
+            ROI = 5,
             Color = "#227B46",
             Holdings = _dummyHoldings,
             AllocatedPercent = 34,
@@ -399,7 +400,7 @@ namespace gzWeb.Controllers
         {
             Title = "Moderate",
             Selected = true,
-            ROI = 0.07,
+            ROI = 3.5,
             Color = "#64BF89",
             Holdings = _dummyHoldings,
             AllocatedPercent = 23,
@@ -411,7 +412,7 @@ namespace gzWeb.Controllers
             Title = "Conservative",
             Selected = false,
             //UserBalance = 1500,
-            ROI = 0.04,
+            ROI = 2,
             Color = "#B4DCC4",
             Holdings = _dummyHoldings,
             AllocatedPercent = 43,
