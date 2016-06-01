@@ -35,7 +35,6 @@
                                     <span ng-show="plan.Selected">
                                         <span>Selected</span>
                                         <i class="fa fa fa-check-circle"></i>
-                                        @*<i class="fa fa-lg fa-check-circle" title="Current"></i>*@
                                     </span>
                                     <span ng-show="!plan.Selected">
                                         <span ng-show="plan.selecting && !plan.selectHovered" class="spinner" us-spinner="spinnerGreen"></span>
@@ -99,21 +98,16 @@
                      class="visible-lg" ng-class="{'hide': thereIsExpanded()}">
                     <path sketch:type="MSShapeGroup" fill="none" stroke="#CCCCCC" d="M0.391,91.32h59.115" />
                     <polyline fill="none" stroke="#CCCCCC" points="59.006,0 24.892,0 24.892,182.641 59.006,182.641 " />
+                    <polyline ng-show="model.SelectedIndex === 0" fill="none" stroke="#27A95C" stroke-width="3" points="59.006,0 24.892,0 24.892,91.32 0.391,91.32 " />
+                    <polyline ng-show="model.SelectedIndex === 1" fill="none" stroke="#27A95C" stroke-width="3" points="59.006,91.32 0.391,91.32 " />
+                    <polyline ng-show="model.SelectedIndex === 2" fill="none" stroke="#27A95C" stroke-width="3" points="59.006,182.641 24.892,182.641 24.892,91.32 0.391,91.32 " />
 				</svg>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-lg-3">
             <div class="portfolio-section current-portfolio">
                 <div class="side-box">
-                    <div id="portfolio-chart" ng-if="model"
-                         gz-portfolio-chart
-                         gz-plans="model.Plans"
-                         @*gz-roi="model.ROI"
-                         gz-conservative="model.Plans[2]"
-                         gz-moderate="model.Plans[1]"
-                         gz-aggressive="model.Plans[0]"
-                         gz-average="model.AvgPercent"*@>
-                    </div>
+                    <div id="portfolio-chart" ng-if="model" gz-portfolio-chart gz-plan="model.SelectedPlan" gz-investment-amount="model.NextExpectedInvestment" gz-currency="{{currency}}"></div>
                 </div>
             </div>
         </div>
