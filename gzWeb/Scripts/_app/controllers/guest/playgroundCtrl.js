@@ -173,6 +173,16 @@
                 nsStatic: true,
             });
         };
+
+        $scope.bonuses = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/bonuses.html',
+                nsCtrl: 'bonusesCtrl',
+                nsStatic: true,
+            });
+        };
         // #endregion
     }
 })();
