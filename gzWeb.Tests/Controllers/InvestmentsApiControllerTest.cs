@@ -114,7 +114,7 @@ namespace gzWeb.Tests.Controllers
         [Test]
         public void GetSummaryDataWithUser()
         {
-            var user = manager.FindByEmail("6month@allocation.com");
+            var user = manager.FindByEmail("info@nessos.gr");
 
             // Act
             var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user);
