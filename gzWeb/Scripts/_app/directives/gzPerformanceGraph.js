@@ -355,22 +355,50 @@
                         .attr("r", 4)
                         .style("fill", "#fff");
 
-                    handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                    var triangleTop = handler.append("path")
+                        .attr("d", d3.svg.symbol().type("triangle-up").size(function() { return 25; }))
                         .attr("transform", "translate(0, -20)")
                         .attr("class", "triangle triangle-top");
-                    handler.append("path")
+                    var triangleRight = handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
                         .attr("transform", "translate(20, 0)rotate(90)")
                         .attr("class", "triangle triangle-right");
-                    handler.append("path")
+                    var triangleLeft = handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
                         .attr("transform", "translate(-20, 0)rotate(-90)")
                         .attr("class", "triangle triangle-left");
-                    handler.append("path")
+                    var triangleBottom = handler.append("path")
                         .attr("d", d3.svg.symbol().type("triangle-down").size(function () { return 25; }))
                         .attr("transform", "translate(0, 20)")
                         .attr("class", "triangle triangle-bottom");
+
+                    handler.on("mouseover", function () {
+                        var loopDuration = 800;
+                        function move(el, transformTo, transformFrom) {
+                            (function repeat() {
+                                el.transition()
+                                    .duration(loopDuration)
+                                    .attr("transform", transformTo)
+                                    .each("end", function () {
+                                        el.transition()
+                                            .duration(loopDuration)
+                                            .attr("transform", transformFrom)
+                                            .each("end", repeat);
+                                    });
+                            })();
+                        }
+                        move(triangleTop, "translate(0, -25)", "translate(0, -20)");
+                        move(triangleRight, "translate(25, 0)rotate(90)", "translate(20, 0)rotate(90)");
+                        move(triangleLeft, "translate(-25, 0)rotate(-90)", "translate(-20, 0)rotate(-90)");
+                        move(triangleBottom, "translate(0, 25)", "translate(0, 20)");
+                        d3.select(this).on("mouseover", null);
+                    });
+                    handler.on("mouseleave", function () {
+                        triangleTop.attr("transform", "translate(0, -20)");
+                        triangleRight.attr("transform", "translate(20, 0)rotate(90)");
+                        triangleLeft.attr("transform", "translate(-20, 0)rotate(-90)");
+                        triangleBottom.attr("transform", "translate(0, 20)");
+                    });
 
                     handler.on("mousedown", function () {
                         var startTime = new Date().getTime();
