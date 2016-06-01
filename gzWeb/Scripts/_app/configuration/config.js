@@ -9,6 +9,7 @@
                 templateUrl: routes[i].tpl,
                 title: routes[i].title,
                 reloadOnSearch: routes[i].reloadOnSearch,
+                category: routes[i].category,
                 roles: routes[i].roles
             });
         $routeProvider.otherwise({ redirectTo: '/' });

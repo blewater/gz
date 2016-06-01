@@ -475,14 +475,27 @@
     float: right;
 }
 .navbar .switch .on {
-    background-color: #27A95C;
-}
-.navbar .switch .off {
     background-color: #f2f2f2;
+}
+/*.navbar .switch .on:hover {
+    background-color: #27A95C;
+}*/
+.navbar .switch .off {
+    background-color: #27A95C;
     cursor: not-allowed;
 }
 .navbar .switch .on img,
 .navbar .switch .off img {
     width: 26px;
     height: 24px;
+}
+
+.navbar .switch .divider {
+    margin-top: 18px;
+    padding: 18px 0;
+    border-right-color: #27A95C;
+    border-right-width: 1px;
+    border-right-style: solid;
+    background-color: #f2f2f2;
+    float: right;
 }
