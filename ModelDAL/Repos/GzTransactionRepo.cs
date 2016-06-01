@@ -300,13 +300,6 @@ namespace gzDAL.Repos {
             VintageDto vintage, 
             DateTime soldOnUtc) 
         {
-            var soldVintageShares = vintage.CustomerVintageShares.Select(cs => new SoldVintageShare() {
-                FundId = cs.FundId,
-                SharesNum = cs.SharesNum,
-                SharesValue = cs.SharesValue,
-                SharesFundPriceId = cs.SharesFundPriceId
-            }).ToList();
-
             _db.SoldVintages.AddOrUpdate(
                 v => new {v.CustomerId, v.VintageYearMonth},
                 new SoldVintage() {
@@ -314,7 +307,7 @@ namespace gzDAL.Repos {
                     VintageYearMonth = vintage.YearMonthStr,
                     MarketAmount = vintage.MarketPrice,
                     Fees = vintage.Fees,
-                    SoldVintageShares = soldVintageShares,
+                    VintageShares = vintage.CustomerVintageShares.ToList(),
                     // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
                     UpdatedOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
                 }

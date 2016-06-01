@@ -106,7 +106,6 @@
     <Compile Include="Models\GzTrx.cs" />
     <Compile Include="Models\GzTrxType.cs" />
     <Compile Include="Models\SoldVintage.cs" />
-    <Compile Include="Models\SoldVintageShare.cs" />
     <Compile Include="Models\TestDbContext.cs" />
     <Compile Include="Repos\CurrencyRateRepo.cs" />
     <Compile Include="Models\CustFundShare.cs" />

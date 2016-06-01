@@ -336,9 +336,9 @@
     <Compile Include="Migrations\201605271233178_Portfolio enhacements.Designer.cs">
       <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201605281552005_SoldVintages Shares.cs" />
-    <Compile Include="Migrations\201605281552005_SoldVintages Shares.Designer.cs">
-      <DependentUpon>201605281552005_SoldVintages Shares.cs</DependentUpon>
+    <Compile Include="Migrations\201605311142130_SoldVintage CustFundShares.cs" />
+    <Compile Include="Migrations\201605311142130_SoldVintage CustFundShares.Designer.cs">
+      <DependentUpon>201605311142130_SoldVintage CustFundShares.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -829,8 +829,8 @@
     <EmbeddedResource Include="Migrations\201605271233178_Portfolio enhacements.resx">
       <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201605281552005_SoldVintages Shares.resx">
-      <DependentUpon>201605281552005_SoldVintages Shares.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201605311142130_SoldVintage CustFundShares.resx">
+      <DependentUpon>201605311142130_SoldVintage CustFundShares.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

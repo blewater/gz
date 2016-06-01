@@ -134,7 +134,8 @@ namespace gzDAL.Repos {
                 yearCurrent,
                 monthCurrent);
 
-            var monthsNewSharesPrice = monthsCustomerFunds.Sum(f => f.SharesValue);
+            // *NewShares* values meaning purchased on this month
+            var monthsNewSharesPrice = monthsCustomerFunds.Sum(f => f.NewSharesValue??0);
 
             fees = _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesPrice);
 
@@ -423,8 +424,8 @@ namespace gzDAL.Repos {
             int yearCurrent,
             int monthCurrent,
             out decimal customerMonthsBalance,
-            out decimal invGainLoss) 
-        {
+            out decimal invGainLoss) {
+
             var monthlySharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
             var newSharesVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue);
             var prevMonthsSharesPricedNow = monthlySharesValue - newSharesVal;
