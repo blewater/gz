@@ -134,6 +134,16 @@
         // #endregion
 
         // #region Account Management
+        $scope.deposit = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/deposit.html',
+                nsCtrl: 'depositCtrl',
+                nsStatic: true,
+            });
+        };
+
         $scope.withdraw = function () {
             message.open({
                 nsType: 'modal',
