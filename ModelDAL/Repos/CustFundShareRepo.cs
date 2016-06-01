@@ -271,24 +271,21 @@ namespace gzDAL.Repos {
         /// To be used for selling shares not for calculating balances.
         /// 
         /// </summary>
-        /// <param name="soldCustFundShares"></param>
+        /// <param name="monthsCustFundShares"></param>
         private void SetFundsSharesLatestValue(
-                IEnumerable<CustFundShare> soldCustFundShares) {
+                IEnumerable<CustFundShare> monthsCustFundShares) {
 
             // Process the portfolio funds and any additional customer owned funds
-            foreach (var custFundShare in soldCustFundShares) {
+            foreach (var custFundShare in monthsCustFundShares) {
 
                 var fundId = custFundShare.FundId;
 
-                // Get previous from the queried CustomerFund
-                decimal thisMonShares = custFundShare.SharesNum;
-
                 // Calculate the current fund shares value
                 FundPrice fundPrice = GetLatestFundPrice(fundId);
-                decimal existingFundSharesVal = thisMonShares * (decimal)fundPrice.ClosingPrice;
 
                 // Calculate this month current fund value including the new cash investment
-                custFundShare.SharesValue = existingFundSharesVal;
+                custFundShare.SharesValue = custFundShare.SharesNum * (decimal)fundPrice.ClosingPrice;
+                custFundShare.NewSharesValue = custFundShare.NewSharesNum * (decimal)fundPrice.ClosingPrice;
             }
         }
 
@@ -444,25 +441,49 @@ namespace gzDAL.Repos {
             string lastFundsHoldingMonth =
                 GetFundSharesFromLastPurchase(customerId, db, currentYearMonthStr) ?? "";
 
+            var soldVintageYearMonths = db.SoldVintages.Where(sv => sv.CustomerId == 10 && sv.YearMonth == "201605")
+                .Select(sv => sv.VintageYearMonth).ToList();
+
             var ownedFunds = (
                 from c in db.CustFundShares
                 where c.CustomerId == customerId
                     && c.SharesNum > 0
-                    && c.YearMonth == lastFundsHoldingMonth 
-                select new PortfolioFundDTO {
-                    FundId = c.FundId,
-                    PortfolioId = 0,
-                    Weight = 0,
-                    SharesNum = c.SharesNum
-                })
+                    && c.YearMonth == lastFundsHoldingMonth
+                select c)
+                .ToDictionary(f=>f.FundId);
+
+            // TODO: combine shares from multiple months: Group by & sum sharesnum
+            // Group by fundId
+            var vintageFunds = (from c in db.CustFundShares
+                where c.CustomerId == customerId
+                      && c.SharesNum > 0
+                      && soldVintageYearMonths.Contains(c.YearMonth)
+                select c)
                 .ToDictionary(f => f.FundId);
 
-            return ownedFunds;
+            // Combine owned with vintage shares
+            foreach (var ownedFund in ownedFunds) {
+                var fundId = ownedFund.Key;
+                if (vintageFunds.ContainsKey(fundId)) {
+                    // Reduce this months total shares by the new shares of the vintage month
+                    ownedFund.Value.SharesNum -= vintageFunds[fundId].NewSharesValue??0;
+                }
+            }
+            // Map to portofolioFundDto
+            var portfolioFundDtos = ownedFunds.Values.Select(f => new PortfolioFundDTO() {
+                FundId = f.FundId,
+                PortfolioId = 0,
+                Weight = 0,
+                SharesNum = f.SharesNum
+            })
+            .ToDictionary(f => f.FundId);
+
+            return portfolioFundDtos;
         }
 
         /// <summary>
         /// 
-        /// Get the *Purchased* (NewShares) for a month.
+        /// Get the *Purchased* (NewShares) of a month.
         /// 
         /// Used when selling a month's vintage.
         /// 
@@ -476,12 +497,16 @@ namespace gzDAL.Repos {
             int yearCurrent, 
             int monthCurrent) {
 
-            string lastFundsHoldingMonth = GetMonthsFundShares(customerId, db,
-                                                DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent));
+            string yearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
+
+            // TODO: is the line below needed? To ever search for a previous month's shares
+            //string lastFundsHoldingMonth = GetMonthsFundShares(customerId, db,
+            // DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent));
+
             var ownedFunds =
                 (from c in db.CustFundShares
                     where c.CustomerId == customerId
-                          && c.YearMonth == lastFundsHoldingMonth
+                          && c.YearMonth == yearMonthStr
                     select c).AsEnumerable();
 
             return ownedFunds;
@@ -502,12 +527,11 @@ namespace gzDAL.Repos {
         private string GetFundSharesFromLastPurchase(int customerId, ApplicationDbContext db, string currentYearMonStr) {
 
             return db.CustFundShares
-                .Where(c => c.CustomerId == customerId 
-                                /* Before */
-                    && string.Compare(c.YearMonth, currentYearMonStr, StringComparison.Ordinal) < 0)
-                .OrderByDescending(c => c.YearMonth)
-                .Select(c => c.YearMonth)
-                .FirstOrDefault();
+                .Where(c => c.CustomerId == customerId
+                    /* Before */
+                    && string.Compare(c.YearMonth, currentYearMonStr, StringComparison.Ordinal) 
+                        < 0)
+                .Max(c => c.YearMonth);
         }
 
         /// <summary>
@@ -531,11 +555,9 @@ namespace gzDAL.Repos {
                 // Typical case
                 lastCompletedFundSharesMonth = db.CustFundShares
                     .Where(c => c.CustomerId == customerId
-                                /* Equals */
+                        /* Equals */
                                 && c.YearMonth == currentYearMonStr)
-                    .OrderByDescending(c => c.YearMonth)
-                    .Select(c => c.YearMonth)
-                    .FirstOrDefault();
+                    .Max(c => c.YearMonth);
             }
             else {
 

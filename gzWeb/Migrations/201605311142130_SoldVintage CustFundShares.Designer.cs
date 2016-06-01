@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class SoldVintagesShares : IMigrationMetadata
+    public sealed partial class SoldVintageCustFundShares : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(SoldVintagesShares));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(SoldVintageCustFundShares));
         
         string IMigrationMetadata.Id
         {
-            get { return "201605281552005_SoldVintages Shares"; }
+            get { return "201605311142130_SoldVintage CustFundShares"; }
         }
         
         string IMigrationMetadata.Source
