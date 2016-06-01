@@ -134,12 +134,12 @@
         // #endregion
 
         // #region Account Management
-        $scope.transactionHistory = function () {
+        $scope.withdraw = function () {
             message.open({
                 nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '/partials/messages/registerAccount.html',
-                nsCtrl: 'registerAccountCtrl',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/withdraw.html',
+                nsCtrl: 'withdrawCtrl',
                 nsStatic: true,
             });
         };
@@ -150,6 +150,16 @@
                 nsSize: '1000px',
                 nsTemplate: '/partials/messages/pendingWithdrawals.html',
                 nsCtrl: 'pendingWithdrawalsCtrl',
+                nsStatic: true,
+            });
+        };
+
+        $scope.transactionHistory = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/registerAccount.html',
+                nsCtrl: 'registerAccountCtrl',
                 nsStatic: true,
             });
         };
