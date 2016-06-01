@@ -438,7 +438,9 @@
     <Content Include="Content\Images\login.png" />
     <Content Include="Content\Images\losses_returned.svg" />
     <Content Include="Content\Images\mac.png" />
+    <Content Include="Content\Images\mastercard-logo-200x106.gif" />
     <Content Include="Content\Images\minus_icon.svg" />
+    <Content Include="Content\Images\neteller-logo-219x80.gif" />
     <Content Include="Content\Images\nikos.jpg" />
     <Content Include="Content\Images\nikos.png" />
     <Content Include="Content\Images\payoutrates.svg" />
@@ -452,6 +454,7 @@
     <Content Include="Content\Images\select_arrow_down.png" />
     <Content Include="Content\Images\signup.png" />
     <Content Include="Content\Images\signup.svg" />
+    <Content Include="Content\Images\skrill-logo-200x87.gif" />
     <Content Include="Content\Images\spades.svg" />
     <Content Include="Content\Images\sum.png" />
     <Content Include="Content\Images\sum.svg" />
@@ -543,6 +546,7 @@
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
     <Content Include="Partials\messages\changePassword.html" />
+    <Content Include="Partials\messages\deposit.html" />
     <Content Include="Partials\messages\withdraw.html" />
     <Content Include="Partials\messages\pendingWithdrawals.html" />
     <Content Include="Partials\messages\registerDeposit.html" />
@@ -611,6 +615,7 @@
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\account\changePasswordCtrl.js" />
+    <Content Include="Scripts\_app\controllers\account\depositCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\withdrawCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\pendingWithdrawalsCtrl.js" />
     <Content Include="Scripts\_app\controllers\authCtrl.js" />
