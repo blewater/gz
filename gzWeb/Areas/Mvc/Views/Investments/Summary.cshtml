@@ -10,7 +10,7 @@
     <div class="withdraw-msg" ng-if="!model.OkToWithdraw">
         <i class="fa fa-exclamation-triangle text-warning"></i>
         <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
-    </div>        
+    </div>
 </script>
 
 <script type="text/ng-template" id="backToGamesTpl.html">
@@ -97,17 +97,17 @@
                         </div>
                         <div class="side-box-table-body">
                             <div class="row">
-                                <div class="col-xs-9 text-left">Cash In</div>
-                                <div class="col-xs-3 text-right">{{model.TotalDeposits | isoCurrency : currency : 0}}</div>
+                                <div class="col-xs-8 text-left"><div class="row">Cash In</div></div>
+                                <div class="col-xs-4 text-right"><div class="row">{{model.TotalDeposits | isoCurrency : currency : 0}}</div></div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-9 text-left">Cash Out</div>
-                                <div class="col-xs-3 text-right">{{model.TotalWithdrawals | isoCurrency : currency : 0}}</div>
+                                <div class="col-xs-8 text-left"><div class="row">Cash Out</div></div>
+                                <div class="col-xs-4 text-right"><div class="row">{{model.TotalWithdrawals | isoCurrency : currency : 0}}</div></div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-9 text-left">Gaming Balance</div>
-                                <div ng-if="hasGamingBalance" class="col-xs-3 text-right">{{gamingBalance | isoCurrency : currency : 0}}</div>
-                                <div ng-if="!hasGamingBalance" class="col-xs-3 text-right"><i>offline</i></div>
+                                <div class="col-xs-8 text-left"><div class="row">Gaming Balance</div></div>
+                                <div ng-if="hasGamingBalance" class="col-xs-4 text-right"><div class="row">{{gamingBalance | isoCurrency : currency : 0}}</div></div>
+                                <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><div class="row"><i>offline</i></div></div>
                             </div>
                         </div>
                     </div>
