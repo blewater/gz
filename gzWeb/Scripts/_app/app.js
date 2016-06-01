@@ -42,49 +42,65 @@ var APP = (function () {
 
             auth.init();
 
-            var currentRoute = $filter('where')(constants.routes.all, { 'path': $location.path() })[0];
-            if (!auth.authorize(currentRoute.roles))
-                $location.path(constants.routes.home.path);
-
-            $rootScope.$on('$routeChangeStart', function (event, next, current) {
-                $rootScope.loading = true;
-                if (next && !auth.authorize(next.roles))
-                    $location.path(constants.routes.home.path);
-            });
-
-            $rootScope.$on('$routeChangeSuccess', function () {
-                $rootScope.loading = false;
-                $rootScope.documentTitle = constants.title;
-                if ($route.current.$$route && $route.current.$$route.title) {
-                    $rootScope.title = $route.current.$$route.title;
-                    $rootScope.documentTitle += " - " + $rootScope.title;
-                }
-            });
-
-            $rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
-            $rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
-            $rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
-            $rootScope.lg = screenSize.on('lg', function (match) { $rootScope.lg = match; });
-            $rootScope.size = screenSize.get();
-            screenSize.on('xs,sm,md,lg', function () {
-                $rootScope.size = screenSize.get();
-            });
-
-            $rootScope.scrolled = false;
-            $rootScope.scrollOffset = 0;
-            angular.element($window).bind("scroll", function () {
-                $rootScope.scrolled = this.pageYOffset > 0;
-                $rootScope.scrollOffset = this.pageYOffset;
-                $rootScope.$apply();
-            });
-
-            $timeout(function () {
-                var $preloader = angular.element(document.querySelector('#preloader'));
-                $preloader.addClass('die');
-                $timeout(function () { $preloader.remove(); }, 2000);
-            }, 1000);
-
             $rootScope.$on(constants.events.ON_INIT, function () {
+                function setRouteData(route) {
+                    var category = route.category;
+                    if (angular.isDefined(category))
+                        $rootScope.routeData = {
+                            category: category,
+                            wandering: category === constants.categories.wandering,
+                            gaming: category === constants.categories.gaming,
+                            investing: category === constants.categories.investing
+                        }
+                }
+
+                var currentRoute = $filter('where')(constants.routes.all, { 'path': $location.path() })[0];
+                if (!auth.authorize(currentRoute.roles))
+                    $location.path(constants.routes.home.path);
+                else
+                    setRouteData(currentRoute);
+
+                $rootScope.$on('$routeChangeStart', function (event, next, current) {
+                    $rootScope.loading = true;
+                    if (next && !auth.authorize(next.roles))
+                        $location.path(constants.routes.home.path);
+                });
+
+                $rootScope.$on('$routeChangeSuccess', function () {
+                    $rootScope.loading = false;
+                    $rootScope.documentTitle = constants.title;
+                    if ($route.current.$$route) {
+                        if ($route.current.$$route.title) {
+                            $rootScope.title = $route.current.$$route.title;
+                            $rootScope.documentTitle += " - " + $rootScope.title;
+                        }
+                        setRouteData($route.current.$$route);
+                    }
+                });
+
+                $rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
+                $rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
+                $rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
+                $rootScope.lg = screenSize.on('lg', function (match) { $rootScope.lg = match; });
+                $rootScope.size = screenSize.get();
+                screenSize.on('xs,sm,md,lg', function () {
+                    $rootScope.size = screenSize.get();
+                });
+
+                $rootScope.scrolled = false;
+                $rootScope.scrollOffset = 0;
+                angular.element($window).bind("scroll", function () {
+                    $rootScope.scrolled = this.pageYOffset > 0;
+                    $rootScope.scrollOffset = this.pageYOffset;
+                    $rootScope.$apply();
+                });
+
+                $timeout(function () {
+                    var $preloader = angular.element(document.querySelector('#preloader'));
+                    $preloader.addClass('die');
+                    $timeout(function () { $preloader.remove(); }, 2000);
+                }, 1000);
+
                 $rootScope.loading = false;
                 $rootScope.initialized = true;
             });
