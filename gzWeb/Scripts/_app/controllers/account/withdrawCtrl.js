@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'pendingWithdrawalsCtrl';
+    var ctrlId = 'withdrawCtrl';
     APP.controller(ctrlId, ['$scope', ctrlFactory]);
     function ctrlFactory($scope) {
     }

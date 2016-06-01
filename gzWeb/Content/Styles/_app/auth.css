@@ -506,9 +506,23 @@
     width: 75%;
     right: 0;
 }
+
+.auth.mgmt-modal .mgmt-content.left-content { 
+    border-right: 1px dashed white;
+    left: 25%;
+    width: 45%;
+    float: left;
+}
+
+.auth.mgmt-modal .mgmt-content.right-content {  
+    width: 30%;
+    float: right;
+}
 /*endregion*/
 
 /*region Management Menu*/
+.bg-grey-dark { background-color: #c5c5c5; }
+
 .auth.mgmt-modal .mgmt-menu { float: left; width: 25%; color: #fff; height: 100%; position: fixed; }
 
 .auth.mgmt-modal nav .nav-menu { 
@@ -518,15 +532,17 @@
 
 .auth.mgmt-modal nav .nav-menu li{ margin-bottom: 5px; }
 
-.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu { margin-bottom: 10px; padding: 10px 0; }
-
-.auth.mgmt-modal nav .nav-menu .btn-mgmt-menu {
-    width: 150px;
-    padding: 5px 0;
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu { 
+    margin-bottom: 10px; 
+    padding: 10px 0; 
+    width: 150px; 
     border: none;
     font-size: 18px;
     text-align: left;
 }
+
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active { width: 190px; margin-left: -40px; }
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active .btn-symbol { margin-left: 60px; }
 
 .auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol { height: 18px; float: left; margin: 3px 10px 0 20px; }
 .auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol.plus-symbol { content: url(../../Images/plus_icon.svg); }
@@ -540,7 +556,7 @@
     font-size: 16px;
     color: #7b7b7b;
 }
-/*end region*/
+/*endregion*/
 
 /*region pendingWithdrawals*/
 .auth.mgmt-modal.pending-withdrawals .mgmt-content .text-holder {
@@ -548,4 +564,13 @@
     padding: 40px 30px;
     font-size: 16px;
 }
+/*endregion*/
+
+/*region withdraw*/
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { height: 70px; width: 350px; padding: 10px; margin-top: 25px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer-inner { height: 50px; width: 80px; float: left; padding: 5px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer p {  font-size: 17px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer .text-holder { float: right; margin-right: 70px; display: block; margin-top: 2px; }
+
+.auth.mgmt-modal.withdraw .mgmt-content h4 { padding-bottom: 10px; }
 /*endregion*/
