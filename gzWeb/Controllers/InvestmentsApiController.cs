@@ -272,9 +272,13 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
+            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
+            var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+
             var model = new PerformanceDataViewModel
             {
-                Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
+                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
+                NextExpectedInvestment = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.LastInvestmentAmount),
                 Plans = GetCustomerPlans(user.Id)
             };
             return OkMsg(model);
@@ -311,14 +315,14 @@ namespace gzWeb.Controllers
             var customerPortfolioId = customerPortfolio != null
                                         ? customerPortfolio.Id
                                         : 0;
-            var portfolios = _dbContext.Portfolios.Where(x => x.IsActive)
-
+            var portfolios = _dbContext.Portfolios
+                .Where(x => x.IsActive)
                 .Select(p => new PlanViewModel() {
                     Id = p.Id,
                     Title = p.Title,
                     Color = p.Color,
-                    AllocatedPercent = p.Id == customerPortfolioId ? 100 : 0,
-                    AllocatedAmount = p.Id == customerPortfolioId ? nextInvestAmount : 0,
+                    //AllocatedPercent = p.Id == customerPortfolioId ? 100 : 0,
+                    //AllocatedAmount = p.Id == customerPortfolioId ? nextInvestAmount : 0,
                     ROI = p.PortFunds.Select(f => f.Weight * f.Fund.YearToDate / 100).Sum(),
                     Risk = p.RiskTolerance,
                     Selected = p.Id == customerPortfolioId,
@@ -326,7 +330,8 @@ namespace gzWeb.Controllers
                         Name = f.Fund.HoldingName,
                         Weight = f.Weight
                     })
-                });
+                })
+                .ToList();
 
             return portfolios;
         }
@@ -383,34 +388,27 @@ namespace gzWeb.Controllers
         {
             Title = "Aggressive",
             Selected = false,
-            ROI = 0.1,
+            ROI = 5,
             Color = "#227B46",
             Holdings = _dummyHoldings,
-            AllocatedPercent = 34,
-            AllocatedAmount = 400,
             Risk = RiskToleranceEnum.High
         };
         private static PlanViewModel _dummyModerate = new PlanViewModel()
         {
             Title = "Moderate",
             Selected = true,
-            ROI = 0.07,
+            ROI = 3.5,
             Color = "#64BF89",
             Holdings = _dummyHoldings,
-            AllocatedPercent = 23,
-            AllocatedAmount = 1110,
             Risk = RiskToleranceEnum.Medium
         };
         private static PlanViewModel _dummyConservative = new PlanViewModel()
         {
             Title = "Conservative",
             Selected = false,
-            //UserBalance = 1500,
-            ROI = 0.04,
+            ROI = 2,
             Color = "#B4DCC4",
             Holdings = _dummyHoldings,
-            AllocatedPercent = 43,
-            AllocatedAmount = 700,
             Risk = RiskToleranceEnum.Low
         };
         private static IList<PlanViewModel> _dummyPlans = new[] { _dummyConservative, _dummyModerate, _dummyAggressive };
