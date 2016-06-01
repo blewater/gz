@@ -36,11 +36,11 @@ body {
     min-height: calc(100% - 50px);
     margin-bottom: -50px;
 }
-.non-footer:after {
+/*.non-footer:after {
     content: "";
     display: block;
     height: 50px;
-}
+}*/
 .footer {
     clear: both;
     height: 50px;
