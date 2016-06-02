@@ -548,6 +548,7 @@
     <Content Include="Partials\messages\changePassword.html" />
     <Content Include="Partials\messages\deposit.html" />
     <Content Include="Partials\messages\bonuses.html" />
+    <Content Include="Partials\messages\transactionHistory.html" />
     <Content Include="Partials\messages\withdraw.html" />
     <Content Include="Partials\messages\pendingWithdrawals.html" />
     <Content Include="Partials\messages\registerDeposit.html" />
@@ -618,6 +619,7 @@
     <Content Include="Scripts\_app\controllers\account\changePasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\bonusesCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\depositCtrl.js" />
+    <Content Include="Scripts\_app\controllers\account\transactionHistoryCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\withdrawCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\pendingWithdrawalsCtrl.js" />
     <Content Include="Scripts\_app\controllers\authCtrl.js" />
