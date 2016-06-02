@@ -85,11 +85,12 @@
                             </ul>
                         </span>
                         <div gz-authorize="gamer,investor" gz-match="all" class="switch">
-                            <a ng-class="{'on':gamesMode, 'off':!gamesMode}" ng-click="!gamesMode || toInvestments()">
-                                <img ng-src="{{gamesMode ? investmentsImgOn : investmentsImgOff}}" />
+                            <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">
+                                <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />
                             </a>
-                            <a ng-class="{'on':!gamesMode, 'off':gamesMode}" ng-click="gamesMode || backToGames()">
-                                <img ng-src="{{gamesMode ? gamesImgOff : gamesImgOn}}" />
+                            <div ng-hide="routeData.investing || routeData.gaming" class="divider"></div>
+                            <a ng-class="{'on':!routeData.gaming, 'off':routeData.gaming}" ng-click="routeData.gaming || backToGames()" ng-mouseover="gamingOver = true;" ng-mouseleave="gamingOver = false;">
+                                <img ng-src="{{routeData.gaming ? gamesImgOff : gamesImgOn}}" />
                             </a>
                         </div>
                     </div>
@@ -97,26 +98,26 @@
             </div>
         </div>
     </nav>
-    <div style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; width: 300px;margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;"
-         ng-style="{'height': collapsed ? '35px' : auto}" ng-init="collapsed = true;">
+    <div style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;"
+         ng-style="{'height': collapsed ? '35px' : auto, 'width': collapsed ? '30px' : '300px'}" ng-init="collapsed = true;">
         <i ng-show="!collapsed" class="fa fa-angle-up pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>
         <i ng-show="collapsed" class="fa fa-angle-down pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>
         <div ng-show="!collapsed">
-            <div ng-click="collapsed = !collapsed;" style="cursor: pointer;"><i><u>hide authentication data</u></i></div>
-            <div>firstname: {{authData.firstname}}</div>
-            <div>lastname: {{authData.lastname}}</div>
-            <div>currency: {{authData.currency}}</div>
-            <div>username: {{authData.username}}</div>
-            <div>roles: {{authData.roles}}</div>
-            <div>token: {{authData.token.substr(0, 20)}}...</div>
-            <div>isGuest: {{authData.isGuest}}</div>
-            <div>isGamer: {{authData.isGamer}}</div>
-            <div>isInvestor: {{authData.isInvestor}}</div>
-            <div>gamesMode: {{gamesMode}}</div>
-            <div>balance: {{authData.gamingAccount.amount}}</div>
-        </div>
-        <div ng-show="collapsed">
-            <div ng-click="collapsed = !collapsed;" style="cursor: pointer;"><i><u>show authentication data</u></i></div>
+            <div ng-click="collapsed = !collapsed;" style="cursor: pointer;"></div>
+            <div>firstname: {{_authData.firstname}}</div>
+            <div>lastname: {{_authData.lastname}}</div>
+            <div>currency: {{_authData.currency}}</div>
+            <div>username: {{_authData.username}}</div>
+            <div>roles: {{_authData.roles}}</div>
+            <div>token: {{_authData.token.substr(0, 20)}}...</div>
+            <div>isGuest: {{_authData.isGuest}}</div>
+            <div>isGamer: {{_authData.isGamer}}</div>
+            <div>isInvestor: {{_authData.isInvestor}}</div>
+            <div>category: {{routeData.category}}</div>
+            <div>wandering: {{routeData.wandering}}</div>
+            <div>gaming: {{routeData.gaming}}</div>
+            <div>investing: {{routeData.investing}}</div>
+            <div>balance: {{_authData.gamingAccount.amount}}</div>
         </div>
     </div>
 </header>
