@@ -9,8 +9,6 @@ namespace gzDAL.Repos.Interfaces
 
         decimal GetTotalDeposit(int customerId);
 
-        IEnumerable<VintageDto> GetCustomerVintages(int customerId);
-
         IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
 
         bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);
@@ -35,6 +33,6 @@ namespace gzDAL.Repos.Interfaces
 
         decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, DateTime createdOnUtc);
 
-        void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages);
+        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
     }
 }

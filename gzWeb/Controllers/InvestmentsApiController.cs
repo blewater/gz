@@ -73,8 +73,9 @@ namespace gzWeb.Controllers
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(user.Id);
 
-            var customerVintages = _gzTransactionRepo
-                .GetCustomerVintages(user.Id)
+            var customerVintages = //_gzTransactionRepo
+                //.GetCustomerVintages(user.Id)
+                _invBalanceRepo.GetCustomerVintages(user.Id)
 
                 // Convert to User currency
                 .Select(v => new VintageDto() {
@@ -220,7 +221,7 @@ namespace gzWeb.Controllers
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
         /// <returns></returns>
-        public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+        public ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages) {
 
             var updatedVintages = _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
 

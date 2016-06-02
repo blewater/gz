@@ -65,17 +65,13 @@ namespace gzWeb.Tests.Models {
 
                 foreach (var custId in custIdList) {
 
-                    var trxRepo = new GzTransactionRepo(db);
+                    var balRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db));
 
-                    var customerVintages = trxRepo.GetCustomerVintages(custId);
+                    var customerVintages = balRepo.GetCustomerVintages(custId);
 
                     foreach (var customerVintage in customerVintages) {
 
-                        var soldShares = new InvBalanceRepo(
-                            db, 
-                            new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
-                            trxRepo)
-                            .GetCustomerVintagesSellingValue(custId);
+                        var soldShares = balRepo.GetCustomerVintagesSellingValue(custId);
                     }
                 }
             }
@@ -158,6 +154,7 @@ namespace gzWeb.Tests.Models {
                         db.Database.ExecuteSqlCommand("Delete GzTrxs Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete GmTrxs Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete SoldVintages Where CustomerId = " + custId);
+                        db.Database.ExecuteSqlCommand("Delete CustFundShares Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
                         CreateTestCustomerPortfolioSelections(custId);
