@@ -157,6 +157,7 @@ namespace gzWeb.Tests.Models {
 
                         db.Database.ExecuteSqlCommand("Delete GzTrxs Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete GmTrxs Where CustomerId = " + custId);
+                        db.Database.ExecuteSqlCommand("Delete SoldVintages Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
                         CreateTestCustomerPortfolioSelections(custId);

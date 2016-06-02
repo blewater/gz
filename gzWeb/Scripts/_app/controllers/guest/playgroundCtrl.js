@@ -134,16 +134,55 @@
         // #endregion
 
         // #region Account Management
+        $scope.deposit = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/deposit.html',
+                nsCtrl: 'depositCtrl',
+                nsStatic: true,
+            });
+        };
+
+        $scope.withdraw = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/withdraw.html',
+                nsCtrl: 'withdrawCtrl',
+                nsStatic: true,
+            });
+        };
+        
+        $scope.pendingWithdrawals = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/pendingWithdrawals.html',
+                nsCtrl: 'pendingWithdrawalsCtrl',
+                nsStatic: true,
+            });
+        };
+
         $scope.transactionHistory = function () {
             message.open({
                 nsType: 'modal',
-                nsSize: '600px',
+                nsSize: '1000px',
                 nsTemplate: '/partials/messages/registerAccount.html',
                 nsCtrl: 'registerAccountCtrl',
                 nsStatic: true,
             });
         };
-        $scope.transactionHistory();
+
+        $scope.bonuses = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/bonuses.html',
+                nsCtrl: 'bonusesCtrl',
+                nsStatic: true,
+            });
+        };
         // #endregion
     }
 })();
