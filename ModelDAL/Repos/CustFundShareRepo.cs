@@ -441,9 +441,6 @@ namespace gzDAL.Repos {
             string lastFundsHoldingMonth =
                 GetFundSharesFromLastPurchase(customerId, db, currentYearMonthStr) ?? "";
 
-            var soldVintageYearMonths = db.SoldVintages.Where(sv => sv.CustomerId == 10 && sv.YearMonth == "201605")
-                .Select(sv => sv.VintageYearMonth).ToList();
-
             var ownedFunds = (
                 from c in db.CustFundShares
                 where c.CustomerId == customerId
@@ -452,32 +449,40 @@ namespace gzDAL.Repos {
                 select c)
                 .ToDictionary(f=>f.FundId);
 
-            // TODO: combine shares from multiple months: Group by & sum sharesnum
-            // Group by fundId
-            var vintageFunds = (from c in db.CustFundShares
-                where c.CustomerId == customerId
-                      && c.SharesNum > 0
-                      && soldVintageYearMonths.Contains(c.YearMonth)
-                select c)
-                .ToDictionary(f => f.FundId);
+            var soldVintageYearMonths = db.SoldVintages
+                .Where(sv => sv.CustomerId == customerId 
+                        && sv.YearMonth == currentYearMonthStr)
+                .Select(sv => sv.VintageYearMonth).ToList();
 
-            // Combine owned with vintage shares
-            foreach (var ownedFund in ownedFunds) {
-                var fundId = ownedFund.Key;
-                if (vintageFunds.ContainsKey(fundId)) {
-                    // Reduce this months total shares by the new shares of the vintage month
-                    ownedFund.Value.SharesNum -= vintageFunds[fundId].NewSharesValue??0;
+            if (soldVintageYearMonths.Count > 0) {
+
+                // TODO: combine shares from multiple months: Group by & sum sharesnum
+                // Group by fundId
+                var vintageFunds = (from c in db.CustFundShares
+                    where c.CustomerId == customerId
+                          && c.SharesNum > 0
+                          && soldVintageYearMonths.Contains(c.YearMonth)
+                    select c)
+                    .ToDictionary(f => f.FundId);
+
+                // Combine owned with vintage shares
+                foreach (var ownedFund in ownedFunds) {
+                    var fundId = ownedFund.Key;
+                    if (vintageFunds.ContainsKey(fundId)) {
+                        // Reduce this months total shares by the new shares of the vintage month
+                        ownedFund.Value.SharesNum -= vintageFunds[fundId].NewSharesValue ?? 0;
+                    }
                 }
             }
+
             // Map to portofolioFundDto
             var portfolioFundDtos = ownedFunds.Values.Select(f => new PortfolioFundDTO() {
-                FundId = f.FundId,
-                PortfolioId = 0,
-                Weight = 0,
-                SharesNum = f.SharesNum
-            })
-            .ToDictionary(f => f.FundId);
-
+                    FundId = f.FundId,
+                    PortfolioId = 0,
+                    Weight = 0,
+                    SharesNum = f.SharesNum
+                })
+                    .ToDictionary(f => f.FundId);
             return portfolioFundDtos;
         }
 

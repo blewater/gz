@@ -70,49 +70,6 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Get a customer's vintages.
-        /// 
-        /// Note viewModels have been moved to gzWeb so we return a DTO.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public IEnumerable<VintageDto> GetCustomerVintages(int customerId) {
-
-            var lockInDays = _db.GzConfigurations
-                .Select(c => c.LOCK_IN_NUM_DAYS)
-                .Single();
-
-            var vintagesList = _db.GzTrxs
-                .Where(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss 
-                    && t.CustomerId == customerId)
-                .GroupBy(t => t.YearMonthCtd)
-                .OrderByDescending(t => t.Key)
-                .Select(g => new {
-                    YearMonthStr = g.Key,
-                    InvestAmount = g.Sum(t => t.Amount),
-                    VintageDate = g.Max(t => t.CreatedOnUtc),
-                    Sold = g.Any(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming)
-                })
-                /** 
-                 * The 2 staged select approach with AsEnumerable 
-                 *  generates a single select statement vs 
-                 *  a one select approach 
-                 */
-                .AsEnumerable()
-                .Select(t => new VintageDto() {
-                    YearMonthStr = t.YearMonthStr,
-                    InvestAmount = t.InvestAmount,
-                    Locked = lockInDays - (DateTime.UtcNow - t.VintageDate).TotalDays > 0,
-                    Sold = t.Sold
-                })
-                .ToList();
-
-            return vintagesList;
-        }
-
-        /// <summary>
-        /// 
         /// Get the Customer ids whose transaction activity has been initiated already 
         /// within a range of months
         /// 
@@ -300,6 +257,11 @@ namespace gzDAL.Repos {
             VintageDto vintage, 
             DateTime soldOnUtc) 
         {
+            // Update timestamp on CustFundShares
+            foreach (var vintageShare in vintage.CustomerVintageShares) {
+                vintageShare.UpdatedOnUtc = soldOnUtc;
+            }
+
             _db.SoldVintages.AddOrUpdate(
                 v => new {v.CustomerId, v.VintageYearMonth},
                 new SoldVintage() {
@@ -307,6 +269,7 @@ namespace gzDAL.Repos {
                     VintageYearMonth = vintage.YearMonthStr,
                     MarketAmount = vintage.MarketPrice,
                     Fees = vintage.Fees,
+                    YearMonth = soldOnUtc.ToStringYearMonth(),
                     VintageShares = vintage.CustomerVintageShares.ToList(),
                     // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
                     UpdatedOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
@@ -329,7 +292,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
-        public void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+        public void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages) {
 
             var soldOnUtc = DateTime.UtcNow;
 
@@ -339,7 +302,6 @@ namespace gzDAL.Repos {
                     SaveDbSellVintage(customerId, vintage, soldOnUtc);
                 }
             }
-            _db.SaveChanges();
         }
 
         /// <summary>

@@ -167,6 +167,24 @@ namespace gzDAL.ModelUtil {
 
         /// <summary>
         /// 
+        /// Convert a YYYYMM string to DateTime(yyyy, mm, last day)
+        /// 
+        /// For example
+        /// Input: "201605" -> Output: new DateTime(2016, 5, 31)
+        /// 
+        /// </summary>
+        /// <param name="yearMonthStr"></param>
+        /// <returns>Input: "201605" -> Output: new DateTime(2016, 5, 31)</returns>
+        public static DateTime GetDtYearMonthStrToEndOfMonth(string yearMonthStr) {
+
+            var yearMonthStrToEndOfMonthDt = new DateTime(int.Parse(yearMonthStr.Substring(0, 4))
+                , int.Parse(yearMonthStr.Substring(4, 2)), 1).AddMonths(1).AddDays(-1);
+
+            return yearMonthStrToEndOfMonthDt;
+        }
+
+        /// <summary>
+        /// 
         /// Return the following month in string format YYYYMM i.e. 201604 for April 2016.
         /// 
         /// </summary>

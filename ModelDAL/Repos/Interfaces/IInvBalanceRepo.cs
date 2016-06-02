@@ -8,9 +8,11 @@ namespace gzDAL.Repos.Interfaces
         DateTime GetLastUpdatedDateTime(int customerId);
         Dictionary<int, PortfolioFundDTO> GetCustomerSharesBalancesForMonth(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss);
 
-        IEnumerable<VintageDto> GetCustomerVintagesSellingValue(int customerId);
+        ICollection<VintageDto> GetCustomerVintages(int customerId);
 
-        IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages);
+        ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId);
+
+        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
 
         bool SaveDbSellAllCustomerFundsShares(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0,
             int monthCurrent = 0);

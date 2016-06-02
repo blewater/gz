@@ -44,7 +44,44 @@ namespace gzDAL.Repos {
             return lastUpdated;
         }
 
-        #region Fund Shares Selling
+        #region Vintages
+
+        /// <summary>
+        /// 
+        /// Get User Vintages from InvBalance.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public ICollection<VintageDto> GetCustomerVintages(int customerId) {
+
+            var lockInDays = _db.GzConfigurations
+                .Select(c => c.LOCK_IN_NUM_DAYS)
+                .Single();
+
+            var vintagesList = (
+                from b in _db.InvBalances
+                    where b.CustomerId == customerId && b.CashInvestment > 0
+                from sv in _db.SoldVintages
+                    .Where(sv => sv.VintageYearMonth == b.YearMonth && sv.CustomerId == customerId)
+                    .DefaultIfEmpty()
+                orderby b.YearMonth descending
+                select new {
+                    YearMonth = b.YearMonth,
+                    CashInvestment = b.CashInvestment,
+                    Sold = sv.Id != null // wrong warning due to ignoring the DefaultIfEmpty above
+                })
+                .AsEnumerable()
+                .Select(b=>new VintageDto {
+                    YearMonthStr = b.YearMonth,
+                    InvestAmount = b.CashInvestment,
+                    Locked = lockInDays - (DateTime.UtcNow - DbExpressions.GetDtYearMonthStrToEndOfMonth(b.YearMonth)).TotalDays > 0,
+                    Sold = b.Sold
+                    // ToList to avoid repeating db queries
+                }).ToList();
+
+            return vintagesList;
+        }
 
         /// <summary>
         /// 
@@ -59,9 +96,9 @@ namespace gzDAL.Repos {
         private decimal GetVintageSellingValue(int customerId, string yearMonthStr) {
 
             decimal fees;
-            decimal vintageSellingPrice = GetVintageSellingPrice(customerId, yearMonthStr, out fees);
+            decimal vintageMarketPrice = GetVintageMarketPrice(customerId, yearMonthStr, out fees);
 
-            return vintageSellingPrice - fees;
+            return vintageMarketPrice - fees;
         }
 
         /// <summary>
@@ -74,7 +111,7 @@ namespace gzDAL.Repos {
         /// <param name="yearMonthStr"></param>
         /// <param name="fees"></param>
         /// <returns>The market priced vintage.</returns>
-        private decimal GetVintageSellingPrice(
+        private decimal GetVintageMarketPrice(
             int customerId, 
             string yearMonthStr,
             out decimal fees) 
@@ -216,10 +253,9 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public IEnumerable<VintageDto> GetCustomerVintagesSellingValue(int customerId) {
+        public ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId) {
 
-            var customerVintages = _gzTransactionRepo
-                .GetCustomerVintages(customerId)
+            var customerVintages = GetCustomerVintages(customerId)
                 .Select(v => new VintageDto() {
                      SellingValue = GetVintageSellingValue(
                          customerId, 
@@ -244,7 +280,7 @@ namespace gzDAL.Repos {
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
         /// <returns></returns>
-        public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+        public ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages) {
 
             SetVintagesMarketPrices(customerId, vintages);
 
@@ -254,16 +290,6 @@ namespace gzDAL.Repos {
 
                 _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
 
-                // TODO: Check if recalculating the balance is ok.
-                // Recalculate last month's balance
-                var startMonthBalanceToRecalc = DateTime.UtcNow.ToStringYearMonth();
-                // last completed month that's cleared.
-                var lastClearedMonth = startMonthBalanceToRecalc;
-                SaveDbCustomerAllMonthlyBalances(
-                    customerId, 
-                    startMonthBalanceToRecalc, 
-                    lastClearedMonth);
-
             });
 
             // Reload them & return them
@@ -271,6 +297,9 @@ namespace gzDAL.Repos {
 
             return vintages;
         }
+
+        #endregion Vintages
+        #region Fund Shares Selling
 
         /// <summary>
         /// 
@@ -481,30 +510,29 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
-            //ConnRetryConf.TransactWithRetryStrategy(_db,
+            ConnRetryConf.TransactWithRetryStrategy(_db,
 
-            //    () => {
+                () => {
 
-            _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
-                    boughtShares: true,
-                    customerId: customerId,
-                    fundsShares: portfolioFunds,
-                    year: yearCurrent,
-                    month: monthCurrent,
-                    updatedOnUtc: DateTime.UtcNow);
+                    _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
+                        boughtShares: true,
+                        customerId: customerId,
+                        fundsShares: portfolioFunds,
+                        year: yearCurrent,
+                        month: monthCurrent,
+                        updatedOnUtc: DateTime.UtcNow);
 
-            _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
-                    new InvBalance {
-                        YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
-                        CustomerId = customerId,
-                        Balance = monthlyBalance,
-                        InvGainLoss = invGainLoss,
-                        CashInvestment = cashToInvest,
-                        UpdatedOnUTC = DateTime.UtcNow
-                    });
+                    _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
+                            new InvBalance {
+                                YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
+                                CustomerId = customerId,
+                                Balance = monthlyBalance,
+                                InvGainLoss = invGainLoss,
+                                CashInvestment = cashToInvest,
+                                UpdatedOnUTC = DateTime.UtcNow
+                            });
 
-            _db.SaveChanges();
-            //});
+                });
         }
 
         /// <summary>
