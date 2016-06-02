@@ -576,6 +576,7 @@ namespace gzDAL.Repos {
                 createdOnUtc,
                 creditPcnt);
 
+            _db.SaveChanges();
         }
 
         /// <summary>

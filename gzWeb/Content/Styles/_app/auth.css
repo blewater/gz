@@ -493,3 +493,142 @@
 .pac-container {
     z-index: 99999999;
 }
+
+
+/*region Management Modal*/
+.auth.mgmt-modal { height: 550px;}
+
+.auth.mgmt-modal .mgmt-content {
+    height: 100%;
+    position: fixed;
+    padding: 40px 50px;
+    float: right;
+    width: 75%;
+    right: 0;
+}
+
+.auth.mgmt-modal .mgmt-content.left-content { 
+    border-right: 1px dashed white;
+    left: 25%;
+    width: 45%;
+    float: left;
+}
+
+.auth.mgmt-modal .mgmt-content.right-content {  
+    width: 30%;
+    float: right;
+}
+/*endregion*/
+
+/*region Management Menu*/
+.bg-grey-dark { background-color: #c5c5c5; }
+
+.auth.mgmt-modal .mgmt-menu { float: left; width: 25%; color: #fff; height: 100%; position: fixed; }
+
+.auth.mgmt-modal nav .nav-menu { 
+    list-style-type: none; 
+    padding: 40px 30px;
+}
+
+.auth.mgmt-modal nav .nav-menu li { margin-bottom: 6px; }
+
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu { 
+    margin-bottom: 10px; 
+    padding: 10px 0; 
+    width: 150px; 
+    border: none;
+    font-size: 18px;
+    text-align: left;
+}
+
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active { width: 190px; margin-left: -40px; }
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active .btn-symbol { margin-left: 60px; }
+
+.auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol { height: 18px; float: left; margin: 3px 10px 0 20px; }
+
+.auth.mgmt-modal nav .nav-menu li .link-mgmt-active { color: #42b471; font-weight: 800; }
+
+.auth.mgmt-modal nav .nav-menu li:nth-of-type(3) { margin-top: 10px; }
+
+.auth.mgmt-modal nav .nav-menu li a {
+    font-size: 16px;
+    color: #7b7b7b;
+}
+/*endregion*/
+
+/*region Pending Withdrawals*/
+.auth.mgmt-modal.pending-withdrawals .mgmt-content .text-holder {
+    background-color: #42b471;
+    padding: 40px 30px;
+    font-size: 16px;
+}
+/*endregion*/
+
+/*region Withdraw*/
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { height: 70px; width: 350px; padding: 10px; margin-top: 25px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer-inner { height: 50px; width: 80px; float: left; padding: 5px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer p {  font-size: 17px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer .text-holder { float: right; margin-right: 70px; display: block; margin-top: 2px; }
+
+.auth.mgmt-modal.withdraw .mgmt-content h4 { padding-bottom: 10px; }
+/*endregion*/
+
+/*region Deposit*/
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder { height: 40px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder .selected-credit-card { 
+    width: 50px; 
+    height: 28px; 
+    float: left; 
+    border-radius: 4px; 
+    padding: 4px 5px; 
+}
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder .selected-credit-card .selected-logo-holder { width: 40px; height: 20px; }
+
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder p { float: left; text-indent: 12px; font-size: 20px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content p { display: block; font-size: 17px; }
+
+
+.auth.mgmt-modal.withdraw .mgmt-content.right-content .payment-methods { margin-top: 15px; margin-bottom: 20px; }
+.auth.mgmt-modal.withdraw .mgmt-content.right-content .payment-methods .method { 
+    display: inline-block; 
+    width: 70px; 
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 4px;
+    position: relative;
+    padding: 10px;
+}
+.auth.mgmt-modal.withdraw .mgmt-content.right-content .payment-methods .method .logo-holder { 
+    position: absolute;
+    width: 50px; 
+    height: 20px; 
+}
+
+.auth.mgmt-modal.withdraw .mgmt-content.right-content p { font-size: 16px; margin-bottom: 0; }
+/*endregion*/
+
+/*region Bonuses*/
+.auth.mgmt-modal.bonuses .mgmt-content .text-holder {
+    background-color: #42b471;
+    padding: 10px 30px;
+    margin-bottom: 80px;
+}
+.auth.mgmt-modal.bonuses .mgmt-content .text-holder p { font-size: 17px; margin: 0; }
+
+.auth.mgmt-modal.bonuses .mgmt-content p { font-size: 17px; margin-bottom: 20px; }
+
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form { 
+    width: 250px;
+    height: 40px;
+    color: white;
+    font-size: 18px;
+    border: 2px solid;
+    padding: 0 30px;
+}
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-webkit-input-placeholder { color: white; font-size: 18px; } /*change placeholder color*/
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-moz-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-moz-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-ms-input-placeholder { color: white; font-size: 18px; }
+
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .btn-gz { margin: 10px -1px; width: 140px; padding: 0; height: 40px; box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); }
+/*endregion*/
