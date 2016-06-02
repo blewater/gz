@@ -19,13 +19,13 @@ namespace gzDAL.Models {
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
-        [Index("CustomerId_Mon_idx_gzSoldVintage",IsUnique = true, Order = 2)]
-        [Required, StringLength(6)]
-        public string YearMonth { get; set; }
-
-        [Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 3)]
+        [Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 2)]
         [Required, StringLength(6)]
         public string VintageYearMonth { get; set; }
+
+        [Index("CustomerId_Mon_idx_gzSoldVintage",IsUnique = true, Order = 3)]
+        [Required, StringLength(6)]
+        public string YearMonth { get; set; }
 
         [Required]
         public decimal MarketAmount { get; set; }
