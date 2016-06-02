@@ -10,6 +10,14 @@
     }
     // #endregion
 
+    // #region Modes
+    var categories = {
+        wandering: 'wandering',
+        gaming: 'gaming',
+        investing: 'investing',
+    }
+    // #endregion
+
     // #region Routes
     var routes = {};
 
@@ -20,35 +28,40 @@
         ctrl: 'homeCtrl',
         tpl: '/Mvc/Guest/Home',
         title: 'Home',
-        reloadOnSearch: false
+        reloadOnSearch: false,
+        category: categories.wandering
     };
     routes.transparency = {
         key: 'transparency',
         path: '/transparency',
         ctrl: 'transparencyCtrl',
         tpl: '/Mvc/Guest/Transparency',
-        title: 'Transparency'
+        title: 'Transparency',
+        category: categories.wandering
     };
     routes.about = {
         key: 'about',
         path: '/about',
         ctrl: 'aboutCtrl',
         tpl: '/Mvc/Guest/About',
-        title: 'About'
+        title: 'About',
+        category: categories.wandering
     };
     routes.faq = {
         key: 'faq',
         path: '/faq',
         ctrl: 'faqCtrl',
         tpl: '/Mvc/Guest/FAQ',
-        title: 'FAQ'
+        title: 'FAQ',
+        category: categories.wandering
     };
     routes.playground = {
         key: 'playground',
         path: '/playground',
         ctrl: 'playgroundCtrl',
         tpl: '/Mvc/Guest/Playground',
-        title: 'Playground'
+        title: 'Playground',
+        category: categories.wandering
     };
     // #endregion
 
@@ -59,7 +72,17 @@
         ctrl: 'gamesCtrl',
         tpl: '/Mvc/Games/Games',
         title: 'Games',
-        roles: [roles.gamer]
+        roles: [roles.gamer],
+        category: categories.gaming
+    };
+    routes.game = {
+        key: 'game',
+        path: '/game/:slug',
+        ctrl: 'gameCtrl',
+        tpl: '/Mvc/Games/Game',
+        title: 'Games',
+        roles: [roles.gamer],
+        category: categories.gaming
     };
     // #endregion
 
@@ -70,7 +93,8 @@
         ctrl: 'summaryCtrl',
         tpl: '/Mvc/Investments/Summary',
         title: 'Summary',
-        roles: [roles.investor]
+        roles: [roles.investor],
+        category: categories.investing
     };
     routes.portfolio = {
         key: 'portfolio',
@@ -78,7 +102,8 @@
         ctrl: 'portfolioCtrl',
         tpl: '/Mvc/Investments/Portfolio',
         title: 'Portfolio',
-        roles: [roles.investor]
+        roles: [roles.investor],
+        category: categories.investing
     };
     routes.performance = {
         key: 'performance',
@@ -86,7 +111,8 @@
         ctrl: 'performanceCtrl',
         tpl: '/Mvc/Investments/Performance',
         title: 'Performance',
-        roles: [roles.investor]
+        roles: [roles.investor],
+        category: categories.investing
     };
     routes.activity = {
         key: 'activity',
@@ -94,7 +120,8 @@
         ctrl: 'activityCtrl',
         tpl: '/Mvc/Investments/Activity',
         title: 'Activity',
-        roles: [roles.investor]
+        roles: [roles.investor],
+        category: categories.investing
     };
     // #endregion
 
@@ -103,6 +130,8 @@
     for (var key in routes) {
         if (routes[key].roles === undefined)
             routes[key].roles = [roles.guest];
+        if (routes[key].category === undefined)
+            routes[key].category = categories.wandering;
         if (routes[key].reloadOnSearch === undefined)
             routes[key].reloadOnSearch = true;
         all.push(routes[key]);
@@ -124,6 +153,7 @@
 
         area: "/Mvc",
         routes: routes,
+        categories: categories,
         roles: roles,
 
         spinners: {

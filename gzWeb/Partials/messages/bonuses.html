@@ -1,4 +1,4 @@
-﻿<div class="auth mgmt-modal pending-withdrawals">
+﻿<div class="auth mgmt-modal bonuses">
 
         <aside class="mgmt-menu bg-white">
             <nav>
@@ -13,9 +13,9 @@
                             <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon.svg" />Withdraw
                         </button>
                     </li>
-                    <li><a class="link-mgmt-active" href="">Pending Withdrawals</a></li>
+                    <li><a href="">Pending Withdrawals</a></li>
                     <li><a href="">Transaction History</a></li>
-                    <li><a href="">Bonuses</a></li>
+                    <li><a class="link-mgmt-active" href="">Bonuses</a></li>
                     <li><a href="">My Profile</a></li>
                     <li><a href="">Logout</a></li>
                 </ul>
@@ -25,10 +25,15 @@
         <section class="mgmt-content bg-gz">
             <div class="text-holder">
                 <p>
-                    You do not currently have any pending withdrawals. When you initiate a withdrawal it will automatically be left pending
-                    here until we have processed it.<br /><br />
-                    Until a withdrawal has been processed you have the opportunity to cancel it and return the money to your Greenzorro account.
+                    You have no active bonus at the moment. If you have received a bonus code for a free money bonus, please enter it below.
                 </p>
+            </div>
+            <div class="bonus-code">
+                <p>If you are eligible and have a bonus code,<br />
+                   please enter it below and click "Submit".
+                </p>
+                <input class="form-control bonus-code-form ng-pristine ng-touched bg-gz" placeholder="BONUS CODE"/>
+                <button type="submit" class="btn-gz modal-btn-gz">submit</button>
             </div>
         </section>
 

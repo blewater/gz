@@ -83,6 +83,47 @@ a { text-decoration:none; }
     text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
 }
 
+.bg {
+    position: fixed;
+    z-index: -1;
+    min-height: 100%;
+    -moz-min-width: 1024px;
+    -ms-min-width: 1024px;
+    -o-min-width: 1024px;
+    -webkit-min-width: 1024px;
+    min-width: 1024px;
+    width: 100%;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.center-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.responsive-size {
+    min-height: 100%;
+    -webkit-min-width: 1024px;
+    -moz-min-width: 1024px;
+    -ms-min-width: 1024px;
+    -o-min-width: 1024px;
+    min-width: 1024px;
+    width: 100%;
+    height: auto;
+}
+
 .loading {
     position: fixed;
     min-height: 100%;
