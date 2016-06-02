@@ -356,6 +356,7 @@
             //    return;
 
             $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
+                kwargs.initialized = $rootScope.initialized;
                 $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
                 $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
                 $log.log("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
