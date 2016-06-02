@@ -696,11 +696,6 @@ namespace gzDAL.Conf
                     Code = GzTransactionTypeEnum.GzActualTrxProfitOrLoss,
                     Description = "The realized Greenzorro profit or loss by the actual purchase of customer shares after the month\'s end. It is the total difference between \"Bought Funds Prices\" * \"Monthly Customer Shares\" - \"Customer Shares\" * \"Funds Prices\" credited to the customer\'s Account."
                 }
-                ,
-                new GzTrxType {
-                    Code = GzTransactionTypeEnum.LiquidatedInvestment,
-                    Description = "Investment vintage converted back to cash from CreditedPlayingLoss. A sold vintages."
-                }
                 );
         }
     }

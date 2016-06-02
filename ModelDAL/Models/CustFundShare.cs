@@ -67,16 +67,15 @@ namespace gzDAL.Models {
         public decimal? NewSharesValue { get; set; }
 
         #endregion
-        #region Sold Shares
+
+        #region Sold Vintage
 
         /// <summary>
-        /// Number of new shares bought for month
+        /// If the month's vintage has been sold
         /// </summary>
-        public decimal? SoldNewSharesNum { get; set; }
-        /// <summary>
-        /// Value of monthly shares as they were priced when bought
-        /// </summary>
-        public decimal? CashedNewSharesValue { get; set; }
+        public int? SoldVintageId { get; set; }
+        [ForeignKey("SoldVintageId")]
+        public virtual SoldVintage SoldVintage { get; set; }
 
         #endregion
 

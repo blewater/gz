@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,14 +14,18 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required, Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = false, Order = 1)]
+        [Required, Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
-        [Index("CustomerId_Mon_idx_gzSoldVintage",IsUnique = false, Order = 2)]
+        [Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 2)]
         [Required, StringLength(6)]
         public string VintageYearMonth { get; set; }
+
+        [Index("CustomerId_Mon_idx_gzSoldVintage",IsUnique = true, Order = 3)]
+        [Required, StringLength(6)]
+        public string YearMonth { get; set; }
 
         [Required]
         public decimal MarketAmount { get; set; }
@@ -28,7 +33,9 @@ namespace gzDAL.Models {
         [Required]
         public decimal Fees { get; set; }
 
+        public virtual ICollection<CustFundShare> VintageShares { get; set; }
+
         [Required]
-        public DateTime SoldOnUtc { get; set; }
+        public DateTime UpdatedOnUtc { get; set; }
     }
 }
