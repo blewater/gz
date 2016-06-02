@@ -73,8 +73,9 @@ namespace gzWeb.Controllers
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(user.Id);
 
-            var customerVintages = _gzTransactionRepo
-                .GetCustomerVintages(user.Id)
+            var customerVintages = //_gzTransactionRepo
+                //.GetCustomerVintages(user.Id)
+                _invBalanceRepo.GetCustomerVintages(user.Id)
 
                 // Convert to User currency
                 .Select(v => new VintageDto() {
@@ -220,7 +221,7 @@ namespace gzWeb.Controllers
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
         /// <returns></returns>
-        public IEnumerable<VintageDto> SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages) {
+        public ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages) {
 
             var updatedVintages = _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
 
@@ -237,20 +238,15 @@ namespace gzWeb.Controllers
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
-            var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+            CurrencyInfo userCurrency;
+            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*user.LastInvestmentAmount);
 
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
-                            //Currency = CurrencyHelper.GetSymbol(user.Currency).Symbol,
                             NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                             NextExpectedInvestment = investmentAmount,
-                            //ROI = new ReturnOnInvestmentViewModel() {
-                            //  Title = "% Current ROI",
-                            //  Percent = 
-                            //},
                             Plans = GetCustomerPlans(user.Id, investmentAmount)
                         };
             return OkMsg(model);

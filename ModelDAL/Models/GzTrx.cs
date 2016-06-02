@@ -23,6 +23,7 @@ namespace gzDAL.Models {
         [Required, StringLength(6)]
         public string YearMonthCtd { get; set; }
 
+        [Index("CustomerId_Mon_idx_gztransaction", IsUnique = false, Order = 3)]
         [ForeignKey("Type")]
         public int TypeId { get; set; }
         public virtual GzTrxType Type { get; set; }

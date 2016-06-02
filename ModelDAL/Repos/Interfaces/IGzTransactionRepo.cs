@@ -9,8 +9,6 @@ namespace gzDAL.Repos.Interfaces
 
         decimal GetTotalDeposit(int customerId);
 
-        IEnumerable<VintageDto> GetCustomerVintages(int customerId);
-
         IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
 
         bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);
@@ -29,14 +27,12 @@ namespace gzDAL.Repos.Interfaces
         void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount,
             DateTime createdOnUtc);
 
-        void SaveDbInvWithdrawalAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc);
-
         void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, DateTime createdOnUtc);
 
-        void SaveDbTransferToGamingAmount(int customerId, decimal withdrawnAmount, DateTime createdOnUtc);
+        void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, DateTime createdOnUtc);
 
         decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, DateTime createdOnUtc);
 
-        void SaveDbSellVintages(int customerId, IEnumerable<VintageDto> vintages);
+        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
     }
 }
