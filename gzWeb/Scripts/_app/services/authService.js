@@ -123,28 +123,25 @@
         //    $rootScope.$broadcast(constants.events.SESSION_TERMINATED);
         //}
 
-        $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, args) {
+        $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
+            var args = kwargs;
             if (args.code === 0) {
                 emWamp.getSessionInfo().then(function (sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
                         setGamingAuthData(sessionInfo);
                         getGamingAccountAndWatchBalance();
 
-                        if ($location.path() === constants.routes.home.path) {
+                        if (args.initialized === true && $rootScope.routeData.category === constants.categories.wandering) {
                             if (factory.data.isGamer)
                                 $location.path(constants.routes.games.path);
                             else if (factory.data.isInvestor)
                                 $location.path(constants.routes.summary.path);
-                            else
-                                $location.path(constants.routes.home.path);
                         }
-
                         $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                     }
                     else {
                         emLogout();
                     }
-                    //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
                 });
             }
             //else if (args.code === 2) {
@@ -448,15 +445,14 @@
 
             emWamp.init();
             var unregisterConnectionInitiated = $rootScope.$on(constants.events.CONNECTION_INITIATED, function () {
+                if (factory.data.username.length > 0) {
+                    emWamp.getSessionInfo().then(function (sessionInfo) {
+                        if (!sessionInfo.isAuthenticated)
+                            factory.logout();
+                    });
+                }
+
                 $rootScope.$broadcast(constants.events.ON_INIT);
-
-                //if ($location.path() === constants.routes.home.path) {
-                //    if (factory.data.isGamer)
-                //        $location.path(constants.routes.games.path);
-                //    else if (factory.data.isInvestor)
-                //        $location.path(constants.routes.summary.path);
-                //}
-
                 unregisterConnectionInitiated();
             });
         };

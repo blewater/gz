@@ -124,6 +124,7 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/investments/activityCtrl.js"
                 , "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
                 , "~/Scripts/_app/controllers/games/gamesCtrl.js"
+                , "~/Scripts/_app/controllers/games/gameCtrl.js"
                 , "~/Scripts/_app/controllers/account/registerCtrl.js"
                 , "~/Scripts/_app/controllers/account/loginCtrl.js"
                 , "~/Scripts/_app/controllers/account/forgotPasswordCtrl.js"
@@ -134,8 +135,11 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
                 , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
                 //ACCOUNT MANAGEMENT
+                , "~/Scripts/_app/controllers/account/depositCtrl.js"
                 , "~/Scripts/_app/controllers/account/withdrawCtrl.js"
                 , "~/Scripts/_app/controllers/account/pendingWithdrawalsCtrl.js"
+                , "~/Scripts/_app/controllers/account/transactionHistoryCtrl.js"
+                , "~/Scripts/_app/controllers/account/bonusesCtrl.js"
 
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"

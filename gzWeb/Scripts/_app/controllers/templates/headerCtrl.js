@@ -1,15 +1,15 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'constants', 'message', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, constants, message, auth) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
-        $scope.gamesImgOn = imgDir + "games_white.svg";
-        $scope.gamesImgOff = imgDir + "games.svg";
-        $scope.investmentsImgOn = imgDir + "diagram_white.svg";
-        $scope.investmentsImgOff = imgDir + "diagram.svg";
+        $scope.gamesImgOff = imgDir + "games_white.svg";
+        $scope.gamesImgOn = imgDir + "games_green.svg";
+        $scope.investmentsImgOff = imgDir + "diagram_white.svg";
+        $scope.investmentsImgOn = imgDir + "diagram_green.svg";
 
         $scope.routes = {
             guest: [
@@ -28,11 +28,9 @@
         }
 
         $scope.backToGames = function () {
-            $scope.gamesMode = true;
             $location.path(constants.routes.games.path);
         };
         $scope.toInvestments = function () {
-            $scope.gamesMode = false;
             $location.path(constants.routes.summary.path);
         };
 
@@ -87,7 +85,6 @@
         };
 
         function loadAuthData() {
-            $scope.authData = $scope._authData;
             $scope.name = $scope._authData.firstname;
             $scope.fullname = $scope._authData.firstname + " " + $scope._authData.lastname;
             if ($scope._authData.isGamer || $scope._authData.isInvestor)
@@ -97,13 +94,6 @@
             if ($scope.hasGamingBalance)
                 $scope.gamingBalance = $scope._authData.gamingAccount.amount;
             $scope.currency = $scope._authData.currency;
-
-            if ($scope._authData.isGamer)
-                $scope.gamesMode = true;
-            else if ($scope._authData.isInvestor)
-                $scope.gamesMode = false;
-            else
-                $scope.gamesMode = undefined;
         }
 
         $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);

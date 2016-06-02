@@ -8,5 +8,9 @@ namespace gzWeb.Areas.Mvc.Controllers
         {
             return View();
         }
+        public ActionResult Game()
+        {
+            return View();
+        }
     }
 }
