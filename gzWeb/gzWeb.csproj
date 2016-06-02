@@ -539,6 +539,8 @@
     <Content Include="Content\Images\cube_white.svg" />
     <Content Include="Content\Images\logo_no_bg.svg" />
     <Content Include="Areas\Mvc\Views\Games\Game.cshtml" />
+    <Content Include="Content\Images\diagram_green.svg" />
+    <Content Include="Content\Images\games_green.svg" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
