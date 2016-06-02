@@ -496,7 +496,7 @@
 
 
 /*region Management Modal*/
-.auth.mgmt-modal{ height: 550px;}
+.auth.mgmt-modal { height: 550px;}
 
 .auth.mgmt-modal .mgmt-content {
     height: 100%;
@@ -530,7 +530,7 @@
     padding: 40px 30px;
 }
 
-.auth.mgmt-modal nav .nav-menu li{ margin-bottom: 6px; }
+.auth.mgmt-modal nav .nav-menu li { margin-bottom: 6px; }
 
 .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu { 
     margin-bottom: 10px; 
@@ -545,8 +545,6 @@
 .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active .btn-symbol { margin-left: 60px; }
 
 .auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol { height: 18px; float: left; margin: 3px 10px 0 20px; }
-.auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol.plus-symbol { content: url(../../Images/plus_icon.svg); }
-.auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol.minus-symbol { content: url(../../Images/minus_icon.svg); }
 
 .auth.mgmt-modal nav .nav-menu li .link-mgmt-active { color: #42b471; font-weight: 800; }
 
@@ -576,17 +574,13 @@
 /*endregion*/
 
 /*region Deposit*/
-.mastercard-logo { content: url(../../Images/mastercard-logo-200x106.gif); }
-.skrill-logo { content: url(../../Images/skrill-logo-200x87.gif); }
-.neteller-logo { content: url(../../Images/neteller-logo-219x80.gif); }
-
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder { height: 40px; }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder .selected-credit-card { 
     width: 50px; 
     height: 28px; 
     float: left; 
     border-radius: 4px; 
-    padding: 5px; 
+    padding: 4px 5px; 
 }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder .selected-credit-card .selected-logo-holder { width: 40px; height: 20px; }
 
@@ -627,10 +621,14 @@
     width: 250px;
     height: 40px;
     color: white;
+    font-size: 18px;
     border: 2px solid;
     padding: 0 30px;
 }
-.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-webkit-input-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-webkit-input-placeholder { color: white; font-size: 18px; } /*change placeholder color*/
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-moz-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-moz-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-ms-input-placeholder { color: white; font-size: 18px; }
 
 .auth.mgmt-modal.bonuses .mgmt-content .bonus-code .btn-gz { margin: 10px -1px; width: 140px; padding: 0; height: 40px; box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); }
 /*endregion*/
