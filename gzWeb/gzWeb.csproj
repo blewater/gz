@@ -533,6 +533,7 @@
     <Content Include="Content\Images\cube.svg" />
     <Content Include="Content\Images\cube_white.svg" />
     <Content Include="Content\Images\logo_no_bg.svg" />
+    <Content Include="Areas\Mvc\Views\Games\Game.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
@@ -608,6 +609,7 @@
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\account\changePasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\authCtrl.js" />
+    <Content Include="Scripts\_app\controllers\games\gameCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\footerCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />

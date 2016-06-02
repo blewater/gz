@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzPerformanceGraph', ['$rootScope', '$filter', '$location', '$interval', '$timeout', 'helpers', 'iso4217', directiveFactory]);
+    APP.directive('gzPerformanceGraph', ['$rootScope', '$filter', '$location', '$timeout', 'helpers', 'iso4217', directiveFactory]);
 
-    function directiveFactory($rootScope, $filter, $location, $interval, $timeout, helpers, iso4217) {
+    function directiveFactory($rootScope, $filter, $location, $timeout, helpers, iso4217) {
         return {
             restrict: 'EA',
             scope: {
@@ -500,17 +500,6 @@
                     init();
                 });
                 // #endregion
-
-                //function setClock() {
-                //    var tickInterval = 1000;
-                //    var tick = function () { $scope.clock = Date.now(); }
-                //    $interval(tick, tickInterval);
-                //    tick();
-                //}
-                //$scope.isFullscreen = false;
-                //$scope.toggleFullScreen = function () {
-                //    $scope.isFullscreen = !$scope.isFullscreen;
-                //}
             }]
         };
     }
