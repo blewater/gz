@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gamesCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$sce', 'emCasino', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $sce, emCasino) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'emCasino', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, emCasino, constants) {
         $controller('authCtrl', { $scope: $scope });
 
         $scope.games = [];
@@ -24,10 +24,18 @@
         };
 
         $scope.onGameSelected = function (slug) {
-            emCasino.getLaunchUrl(slug, null, $scope.playForRealMoney).then(function (result) {
-                $scope.gameLaunchData = result;
-                $scope.gameUrl = $sce.trustAsResourceUrl(result.url);
-            }, logError);
+            $location.path(constants.routes.game.path.replace(":slug", slug));
+            //emCasino.getGames({
+            //    filterBySlug: [slug],
+            //    expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.BackgroundImage,
+            //    pageSize: 1,
+            //}).then(function (result) {
+            //    var game = result.games[0];
+            //    emCasino.getLaunchUrl(game.slug, null, $scope.playForRealMoney).then(function (result) {
+            //        $scope.gameLaunchData = result;
+            //        $scope.gameUrl = $sce.trustAsResourceUrl(result.url);
+            //    }, logError);
+            //}, logError);
         };
 
         function getGameCategories() {
@@ -56,7 +64,7 @@
         
         $scope._init('games', function () {
             getGameCategories();
-            getMostPlayedGames();
+            //getMostPlayedGames();
             $scope.onCategoryChanged("VIDEOPOKERS");
         });
 
