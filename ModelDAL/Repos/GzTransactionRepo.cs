@@ -523,7 +523,7 @@ namespace gzDAL.Repos {
                 // Assume CreatedOnUtc remains constant for same transaction
                 // to support idempotent transactions
 
-                t => new { t.CustomerId, t.TypeId, t.CreatedOnUtc },
+                t => new { t.CustomerId, t.TypeId, t.YearMonthCtd, t.Amount, t.CreatedOnUtc },
                     new GzTrx {
                         CustomerId = customerId,
                         TypeId = _db.GzTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
@@ -458,19 +459,21 @@ namespace gzDAL.Repos {
 
                 // TODO: combine shares from multiple months: Group by & sum sharesnum
                 // Group by fundId
-                var vintageFunds = (from c in db.CustFundShares
-                    where c.CustomerId == customerId
-                          && c.SharesNum > 0
-                          && soldVintageYearMonths.Contains(c.YearMonth)
-                    select c)
-                    .ToDictionary(f => f.FundId);
+                var vintageFunds = db.CustFundShares
+                    .Where(c => c.CustomerId == customerId
+                                && c.SharesNum > 0
+                                && soldVintageYearMonths.Contains(c.YearMonth))
+                    .GroupBy(c => c.FundId)
+                    .Select(g => new {FundId = g.Key, NewSharesNum = g.Sum(c => c.NewSharesNum)})
+                    .ToDictionary(g => g.FundId);
 
                 // Combine owned with vintage shares
                 foreach (var ownedFund in ownedFunds) {
                     var fundId = ownedFund.Key;
+                    Trace.Assert(vintageFunds.ContainsKey(fundId));
                     if (vintageFunds.ContainsKey(fundId)) {
                         // Reduce this months total shares by the new shares of the vintage month
-                        ownedFund.Value.SharesNum -= vintageFunds[fundId].NewSharesValue ?? 0;
+                        ownedFund.Value.SharesNum -= vintageFunds[fundId].NewSharesNum ?? 0;
                     }
                 }
             }

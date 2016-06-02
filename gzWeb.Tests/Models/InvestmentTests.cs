@@ -254,10 +254,10 @@ namespace gzWeb.Tests.Models {
                     new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
                     .SaveDbCustomerMonthlyBalance(
                     /** 6month User **/
-                        db.Users.Where(u => u.Email == "6month@allocation.com")
+                        db.Users.Where(u => u.Email == "info@nessos.gr")
                         .Select(u => u.Id)
                             /** Update month balance 201506 **/
-                        .Single(), "201506");
+                        .Single(), "201606");
             }
         }
 

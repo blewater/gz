@@ -455,15 +455,26 @@ namespace gzDAL.Repos {
             out decimal customerMonthsBalance,
             out decimal invGainLoss) {
 
+            string yearMonthCurrentStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
+
             var monthlySharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
             var newSharesVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue);
             var prevMonthsSharesPricedNow = monthlySharesValue - newSharesVal;
+
+            var soldVintagesMarketAmount = _db.SoldVintages
+                .Where(sv => sv.CustomerId == customerId && sv.YearMonth == yearMonthCurrentStr)
+                .Select(sv => sv.MarketAmount)
+                .DefaultIfEmpty(0)
+                .Sum();
 
             var prevMonthsSharesBalance = GetPrevMonthInvestmentBalance(customerId, yearCurrent, monthCurrent);
 
             // if portfolio is liquidated in whole or partly then invGainLoss has no meaning
             invGainLoss = monthlySharesValue > 0
-                ? DbExpressions.RoundCustomerBalanceAmount(prevMonthsSharesPricedNow - prevMonthsSharesBalance)
+                ? DbExpressions.RoundCustomerBalanceAmount(
+                        prevMonthsSharesPricedNow 
+                      - prevMonthsSharesBalance 
+                      + soldVintagesMarketAmount)
                 : 0;
 
             customerMonthsBalance = monthlySharesValue > 0
