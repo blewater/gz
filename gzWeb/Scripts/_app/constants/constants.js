@@ -10,7 +10,7 @@
     }
     // #endregion
 
-    // #region Modes
+    // #region Categories
     var categories = {
         wandering: 'wandering',
         gaming: 'gaming',
@@ -23,7 +23,6 @@
 
     // #region Guest
     routes.home = {
-        key: 'home',
         path: '/',
         ctrl: 'homeCtrl',
         tpl: '/Mvc/Guest/Home',
@@ -32,7 +31,6 @@
         category: categories.wandering
     };
     routes.transparency = {
-        key: 'transparency',
         path: '/transparency',
         ctrl: 'transparencyCtrl',
         tpl: '/Mvc/Guest/Transparency',
@@ -40,7 +38,6 @@
         category: categories.wandering
     };
     routes.about = {
-        key: 'about',
         path: '/about',
         ctrl: 'aboutCtrl',
         tpl: '/Mvc/Guest/About',
@@ -48,7 +45,6 @@
         category: categories.wandering
     };
     routes.faq = {
-        key: 'faq',
         path: '/faq',
         ctrl: 'faqCtrl',
         tpl: '/Mvc/Guest/FAQ',
@@ -56,7 +52,6 @@
         category: categories.wandering
     };
     routes.playground = {
-        key: 'playground',
         path: '/playground',
         ctrl: 'playgroundCtrl',
         tpl: '/Mvc/Guest/Playground',
@@ -67,7 +62,6 @@
 
     // #region Games
     routes.games = {
-        key: 'games',
         path: '/games',
         ctrl: 'gamesCtrl',
         tpl: '/Mvc/Games/Games',
@@ -76,7 +70,6 @@
         category: categories.gaming
     };
     routes.game = {
-        key: 'game',
         path: '/game/:slug',
         ctrl: 'gameCtrl',
         tpl: '/Mvc/Games/Game',
@@ -88,7 +81,6 @@
 
     // #region Investments
     routes.summary = {
-        key: 'summary',
         path: '/summary',
         ctrl: 'summaryCtrl',
         tpl: '/Mvc/Investments/Summary',
@@ -97,7 +89,6 @@
         category: categories.investing
     };
     routes.portfolio = {
-        key: 'portfolio',
         path: '/portfolio',
         ctrl: 'portfolioCtrl',
         tpl: '/Mvc/Investments/Portfolio',
@@ -106,7 +97,6 @@
         category: categories.investing
     };
     routes.performance = {
-        key: 'performance',
         path: '/performance',
         ctrl: 'performanceCtrl',
         tpl: '/Mvc/Investments/Performance',
@@ -115,7 +105,6 @@
         category: categories.investing
     };
     routes.activity = {
-        key: 'activity',
         path: '/activity',
         ctrl: 'activityCtrl',
         tpl: '/Mvc/Investments/Activity',

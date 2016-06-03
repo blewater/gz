@@ -54,14 +54,14 @@ var APP = (function () {
                         }
                 }
 
-                var currentRoute = $filter('where')(constants.routes.all, { 'path': $location.path() })[0];
+                var currentRoute = $route.current.$$route;
                 if (!auth.authorize(currentRoute.roles))
                     $location.path(constants.routes.home.path);
                 else
                     setRouteData(currentRoute);
 
                 $rootScope.$on('$routeChangeStart', function (event, next, current) {
-                    $rootScope.loading = true;
+                    $rootScope.loading = true;                    
                     if (next && !auth.authorize(next.roles))
                         $location.path(constants.routes.home.path);
                 });
