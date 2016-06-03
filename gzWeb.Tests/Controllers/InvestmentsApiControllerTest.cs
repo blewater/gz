@@ -87,15 +87,15 @@ namespace gzWeb.Tests.Controllers
 
             var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
 
-            // Mark for selling most recent that's allowed
+            // Mark for selling earliest that's allowed
             var sellVintage = vintagesVMs.Where(v => !v.Locked && !v.Sold)
                 .OrderBy(v => v.YearMonthStr)
                 .First();
 
             sellVintage.Selected = true;
 
-            var vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
-                .AsEnumerable();
+            ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
+                .ToList();
             vintagesDto = investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
 
             // Mark for selling earliest and latest available

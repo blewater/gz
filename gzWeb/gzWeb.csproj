@@ -336,6 +336,10 @@
     <Compile Include="Migrations\201605271233178_Portfolio enhacements.Designer.cs">
       <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605311142130_SoldVintage CustFundShares.cs" />
+    <Compile Include="Migrations\201605311142130_SoldVintage CustFundShares.Designer.cs">
+      <DependentUpon>201605311142130_SoldVintage CustFundShares.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -551,6 +555,7 @@
     <Content Include="Partials\messages\changePassword.html" />
     <Content Include="Partials\messages\deposit.html" />
     <Content Include="Partials\messages\bonuses.html" />
+    <Content Include="Partials\messages\transactionHistory.html" />
     <Content Include="Partials\messages\withdraw.html" />
     <Content Include="Partials\messages\pendingWithdrawals.html" />
     <Content Include="Partials\messages\registerDeposit.html" />
@@ -621,6 +626,7 @@
     <Content Include="Scripts\_app\controllers\account\changePasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\bonusesCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\depositCtrl.js" />
+    <Content Include="Scripts\_app\controllers\account\transactionHistoryCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\withdrawCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\pendingWithdrawalsCtrl.js" />
     <Content Include="Scripts\_app\controllers\authCtrl.js" />
@@ -841,6 +847,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605271233178_Portfolio enhacements.resx">
       <DependentUpon>201605271233178_Portfolio enhacements.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605311142130_SoldVintage CustFundShares.resx">
+      <DependentUpon>201605311142130_SoldVintage CustFundShares.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
