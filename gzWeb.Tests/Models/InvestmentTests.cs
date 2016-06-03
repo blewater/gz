@@ -65,17 +65,13 @@ namespace gzWeb.Tests.Models {
 
                 foreach (var custId in custIdList) {
 
-                    var trxRepo = new GzTransactionRepo(db);
+                    var balRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db));
 
-                    var customerVintages = trxRepo.GetCustomerVintages(custId);
+                    var customerVintages = balRepo.GetCustomerVintages(custId);
 
                     foreach (var customerVintage in customerVintages) {
 
-                        var soldShares = new InvBalanceRepo(
-                            db, 
-                            new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
-                            trxRepo)
-                            .GetCustomerVintagesSellingValue(custId);
+                        var soldShares = balRepo.GetCustomerVintagesSellingValue(custId);
                     }
                 }
             }
@@ -158,6 +154,7 @@ namespace gzWeb.Tests.Models {
                         db.Database.ExecuteSqlCommand("Delete GzTrxs Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete GmTrxs Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete SoldVintages Where CustomerId = " + custId);
+                        db.Database.ExecuteSqlCommand("Delete CustFundShares Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
                         CreateTestCustomerPortfolioSelections(custId);
@@ -189,9 +186,7 @@ namespace gzWeb.Tests.Models {
                 gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
                     amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
 
-                gzTrx.SaveDbInvWithdrawalAmount(custId, 30, new DateTime(2015, 5, 30));
                 gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
-                gzTrx.SaveDbInvWithdrawalAmount(custId, 40, new DateTime(2015, 6, 1));
                 gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
             }
         }
@@ -259,10 +254,10 @@ namespace gzWeb.Tests.Models {
                     new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
                     .SaveDbCustomerMonthlyBalance(
                     /** 6month User **/
-                        db.Users.Where(u => u.Email == "6month@allocation.com")
+                        db.Users.Where(u => u.Email == "info@nessos.gr")
                         .Select(u => u.Id)
                             /** Update month balance 201506 **/
-                        .Single(), "201506");
+                        .Single(), "201606");
             }
         }
 

@@ -168,8 +168,8 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '1000px',
-                nsTemplate: '/partials/messages/registerAccount.html',
-                nsCtrl: 'registerAccountCtrl',
+                nsTemplate: '/partials/messages/transactionHistory.html',
+                nsCtrl: 'transactionHistoryCtrl',
                 nsStatic: true,
             });
         };
