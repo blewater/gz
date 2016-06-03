@@ -289,6 +289,9 @@ namespace gzDAL.Repos {
             () => {
 
                 _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
+#if DEBUG
+                SaveDbCustomerMonthlyBalance(customerId, DateTime.UtcNow.ToStringYearMonth());
+#endif
 
             });
 
