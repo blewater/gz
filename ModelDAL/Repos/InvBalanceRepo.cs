@@ -67,8 +67,8 @@ namespace gzDAL.Repos {
                     .DefaultIfEmpty()
                 orderby b.YearMonth descending
                 select new {
-                    YearMonth = b.YearMonth,
-                    CashInvestment = b.CashInvestment,
+                    b.YearMonth,
+                    b.CashInvestment,
                     Sold = sv.Id != null // wrong warning due to ignoring the DefaultIfEmpty above
                 })
                 .AsEnumerable()
@@ -291,6 +291,9 @@ namespace gzDAL.Repos {
                 _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
 
             });
+#if DEBUG
+            SaveDbCustomerMonthlyBalance(customerId, DateTime.UtcNow.ToStringYearMonth());
+#endif
 
             // Reload them & return them
             vintages = GetCustomerVintagesSellingValue(customerId);
