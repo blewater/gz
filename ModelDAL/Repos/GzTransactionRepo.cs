@@ -257,9 +257,28 @@ namespace gzDAL.Repos {
             VintageDto vintage, 
             DateTime soldOnUtc) 
         {
-            // Update timestamp on CustFundShares
-            foreach (var vintageShare in vintage.CustomerVintageShares) {
-                vintageShare.UpdatedOnUtc = soldOnUtc;
+            List<CustFundShare> vintageCustFundShares = new List<CustFundShare>();
+
+            // Copy DTOs back to the entities
+            foreach (var dto in vintage.CustomerVintageShares) {
+
+                vintageCustFundShares.Add(new CustFundShare() {
+
+                    Id = dto.Id,
+                    FundId = dto.FundId,
+                    CustomerId = dto.CustomerId,
+                    YearMonth = dto.YearMonth,
+                    SharesNum = dto.SharesNum,
+                    SharesValue = dto.SharesValue,
+                    NewSharesNum = dto.NewSharesNum,
+                    NewSharesValue = dto.NewSharesValue,
+                    SharesFundPriceId = dto.SharesFundPriceId,
+                    SoldVintageId = dto.SoldVintageId,
+
+                    // Update timestamp to IN param
+                    UpdatedOnUtc = soldOnUtc
+
+                });
             }
 
             _db.SoldVintages.AddOrUpdate(
@@ -270,7 +289,7 @@ namespace gzDAL.Repos {
                     MarketAmount = vintage.MarketPrice,
                     Fees = vintage.Fees,
                     YearMonth = soldOnUtc.ToStringYearMonth(),
-                    VintageShares = vintage.CustomerVintageShares.ToList(),
+                    VintageShares = vintageCustFundShares,
                     // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
                     UpdatedOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
                 }
