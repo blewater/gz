@@ -124,12 +124,9 @@
     <Compile Include="DTO\PortfolioReturnsDTO.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
-<<<<<<< HEAD
     <Compile Include="DTO\CustFundShareDto.cs" />
     <Compile Include="Models\DbSetExtensions.cs" />
-=======
     <Compile Include="Models\EmailTemplate.cs" />
->>>>>>> 7a48b445d10b9c20198f6710431e9ebad8f0ffd8
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
