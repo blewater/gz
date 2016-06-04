@@ -280,6 +280,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
@@ -444,6 +446,8 @@
     <Content Include="Areas\Mvc\Views\Auth\RegisterProfile.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterForm.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
+    <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
@@ -671,6 +675,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
