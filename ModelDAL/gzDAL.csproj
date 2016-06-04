@@ -100,6 +100,8 @@
     <Compile Include="DTO\PortfolioReturnsDTO.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
+    <Compile Include="DTO\CustFundShareDto.cs" />
+    <Compile Include="Models\DbSetExtensions.cs" />
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
