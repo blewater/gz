@@ -54,6 +54,7 @@
     <script src="Scripts/angular-wamp/angular-wamp.js"></script>
     <script src="Scripts/angular-local-storage/angular-local-storage.js"></script>
     <script src="Scripts/angular-recaptcha/angular-recaptcha.js"></script>
+    <script src="Scripts/jsnlog/jsnlog.min.js"></script>
     <script>
         var APP = angular.module("emTestApiApp", ["vxWamp", "LocalStorageModule", "vcRecaptcha"]);
 
@@ -385,6 +386,7 @@
                         });
                 };
 
+                emWamp.init();
                 //emWamp.login({ usernameOrEmail: "xdinos4@nessos.gr", password: "lunat!c7" })
                 emWamp.login({ usernameOrEmail: "info@nessos.gr", password: "gz2016!@" })
                     .then(function(result) {

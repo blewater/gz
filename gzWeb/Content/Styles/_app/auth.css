@@ -501,41 +501,70 @@
 .auth.mgmt-modal .mgmt-content {
     height: 100%;
     position: fixed;
-    padding: 40px 50px;
-    float: right;
-    width: 75%;
+    padding-top: 40px /*50px*/;
+    /*float: right;*/
+    /*width: 75%;*/
     right: 0;
 }
 
 .auth.mgmt-modal .mgmt-content.left-content { 
     border-right: 1px dashed white;
-    left: 25%;
-    width: 45%;
-    float: left;
+    left: 0;
+    top: 0;
+    /*width: 45%;*/
+    /*float: left;*/
+    position: absolute;
 }
 
 .auth.mgmt-modal .mgmt-content.right-content {  
     width: 30%;
-    float: right;
+    /*float: right;*/
+    right: 0;
+    top: 0;
+    position: absolute;
+    
 }
 
 .auth.mgmt-modal .mgmt-content .modal-btn-gz { 
-    margin: 10px -1px; 
+    margin: 0;
     width: 140px; 
     padding: 0; 
     height: 40px; 
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); 
+}
+
+.auth.mgmt-modal .mgmt-content { overflow: auto; }
+
+@media (max-width: 991px) {
+    .auth.mgmt-modal .mgmt-content.left-content {
+        position: static;
+        padding-bottom: 150px;
+        border-right: none;
+    }
+
+    .auth.mgmt-modal .mgmt-content.right-content {
+        border-left: none;
+        border-top: 1px dashed white;
+        position: static;
+        width: 100%;
+        
+    }
+}
+
+/**************** XS - SM ********************/
+@media (max-width: 991px) {
+    .auth.mgmt-modal .mgmt-content.left-content { padding-top: 0; }
 }
 /*endregion*/
 
 /*region Management Menu*/
 .bg-grey-dark { background-color: #c5c5c5; }
 
-.auth.mgmt-modal .mgmt-menu { float: left; width: 25%; color: #fff; height: 100%; position: fixed; }
+.auth.mgmt-modal .mgmt-menu { /*float: left; width: 25%;*/ color: #fff; height: 100%; position: fixed; left: 0; min-width: 40px; display: inline-block; }
 
 .auth.mgmt-modal nav .nav-menu { 
     list-style-type: none; 
-    padding: 40px 30px;
+    padding-top: 40px /*30px*/;
 }
 
 .auth.mgmt-modal nav .nav-menu li { margin-bottom: 6px; }
@@ -552,15 +581,34 @@
 .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active { width: 190px; margin-left: -40px; }
 .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active .btn-symbol { margin-left: 60px; }
 
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active { border-right: 2px solid #27A95C; height: 100%; margin-left: -4px; margin-right: 2px; }
+
 .auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol { height: 18px; float: left; margin: 3px 10px 0 20px; }
 
 .auth.mgmt-modal nav .nav-menu li .link-mgmt-active { color: #42b471; font-weight: 800; }
+
+.auth.mgmt-modal nav .nav-menu li .fa { margin-left: 2px; }
 
 .auth.mgmt-modal nav .nav-menu li:nth-of-type(3) { margin-top: 10px; }
 
 .auth.mgmt-modal nav .nav-menu li a {
     font-size: 16px;
     color: #7b7b7b;
+}
+
+/**************** SM - LG ********************/
+@media (min-width: 768px) {
+    .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs { display: none; }
+    .auth.mgmt-modal nav .nav-menu li .xs-ico { display: none; }
+}
+
+/**************** XS ********************/
+@media (max-width: 767px) {
+    .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs { display: block; }
+    .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu { display: none; }
+    .auth.mgmt-modal nav .nav-menu li .xs-ico { display: block; font-size: 24px; }
+    .auth.mgmt-modal nav .nav-menu li .visi-text { display: none; }
+
 }
 /*endregion*/
 
@@ -573,31 +621,39 @@
 /*endregion*/
 
 /*region Withdraw*/
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { height: 70px; width: 350px; padding: 10px; margin-top: 25px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { height: 70px; width: 85%; padding: 10px; margin-top: 25px; }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer-inner { height: 50px; width: 80px; float: left; padding: 5px; }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer p {  font-size: 17px; }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer .text-holder { float: right; margin-right: 70px; display: block; margin-top: 2px; }
+.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer .text-holder { float: left; margin-left: 5%; display: block; margin-top: 2px; }
 
 .auth.mgmt-modal.withdraw .mgmt-content h4 { padding-bottom: 10px; }
+
+/**************** XS ********************/
+@media (max-width: 767px) {
+    .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { width: 100%; }
+    .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer p {  font-size: 12px; text-align: justify; }
+    .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer-inner { width: 50px }
+}
 /*endregion*/
 
 /*region Deposit*/
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder { height: 40px; }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder .selected-credit-card { 
+.auth.mgmt-modal.deposit .mgmt-content { overflow-x: hidden; }
+.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder { height: 40px; }
+.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder .selected-credit-card { 
     width: 50px; 
     height: 28px; 
     float: left; 
     border-radius: 4px; 
     padding: 4px 5px; 
 }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder .selected-credit-card .selected-logo-holder { width: 40px; height: 20px; }
+.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder .selected-credit-card .selected-logo-holder { width: 40px; height: 20px; }
 
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .credit-card-holder p { float: left; text-indent: 12px; font-size: 20px; }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content p { display: block; font-size: 17px; }
+.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder p { float: left; text-indent: 12px; font-size: 20px; }
+.auth.mgmt-modal.deposit .mgmt-content.left-content p { display: block; font-size: 17px; }
 
 
-.auth.mgmt-modal.withdraw .mgmt-content.right-content .payment-methods { margin-top: 15px; margin-bottom: 20px; }
-.auth.mgmt-modal.withdraw .mgmt-content.right-content .payment-methods .method { 
+.auth.mgmt-modal.deposit .mgmt-content.right-content .payment-methods { margin-top: 15px; margin-bottom: 20px; }
+.auth.mgmt-modal.deposit .mgmt-content.right-content .payment-methods .method { 
     display: inline-block; 
     width: 70px; 
     height: 40px;
@@ -606,13 +662,14 @@
     position: relative;
     padding: 10px;
 }
-.auth.mgmt-modal.withdraw .mgmt-content.right-content .payment-methods .method .logo-holder { 
+.auth.mgmt-modal.deposit .mgmt-content.right-content .payment-methods .method .logo-holder { 
     position: absolute;
     width: 50px; 
     height: 20px; 
 }
 
-.auth.mgmt-modal.withdraw .mgmt-content.right-content p { font-size: 16px; margin-bottom: 0; }
+.auth.mgmt-modal.deposit .mgmt-content.right-content p { font-size: 16px; margin-bottom: 0; }
+
 /*endregion*/
 
 /*region Bonuses*/
@@ -637,25 +694,27 @@
 .auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-moz-placeholder { color: white; font-size: 18px; }
 .auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-moz-placeholder { color: white; font-size: 18px; }
 .auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-ms-input-placeholder { color: white; font-size: 18px; }
+
+.auth.mgmt-modal.bonuses .mgmt-content .modal-btn-gz { margin: 12px -1px; }
 /*endregion*/
 
 /*region Transaction History*/
-.auth.mgmt-modal.transaction-history .mgmt-content h4 { font-size:; }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group { margin-top: 28px; }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .filter-forms { 
-    display: inline-block; 
-    width: 140px; 
+    /*display: inline-block;*/ 
+    /*width: 140px;*/ 
     height: 40px; 
-    margin-right: 10px; 
+    /*margin-right: 10px;*/ 
 }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .form-control.filter-forms { background-color: #f2f2f2; }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .filter-forms .filter-type-drop { text-align: left; color: #999; }
-.auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .dropdown .dropdown-menu { background-color: #f2f2f2; min-width: 140px; }
+.auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .dropdown .dropdown-menu { background-color: #f2f2f2; /*min-width: 140px;*/ }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .dropdown .dropdown-menu li a { color: #999; }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .dropdown .dropdown-menu li a:hover { color: #fff; background-color: #27A95C; background-image: none; }
 
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .filter-forms .filter-type-drop .caret { float: right; margin-top: 8px; }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .filter-forms .filter-type-drop[aria-expanded="true"] .caret { color: #27A95C }
+.auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .modal-btn-gz { width: 100%; }
 
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container { margin-top: 50px; }
 
@@ -665,4 +724,19 @@
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table td { border: 2px solid white; }
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr th, 
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr td { text-align: center; }
+
+@media (max-width: 767px){
+    .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .modal-btn-gz { margin-top: 5px;}
+}
+
+/*endregion*/
+
+/*region My Profile*/
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form { margin-top: 20px; margin-left: 15px; }
+
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .form-control { height: 40px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .checkboxes-group { margin-top: 20px; }
+
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { margin-left: 0; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 220px; margin-left: 0; }
 /*endregion*/

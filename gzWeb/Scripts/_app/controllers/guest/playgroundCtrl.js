@@ -183,6 +183,17 @@
                 nsStatic: true,
             });
         };
+
+        $scope.myProfile = function () {
+            message.open({
+                nsType: 'modal',
+                nsSize: '1000px',
+                nsTemplate: '/partials/messages/myProfile.html',
+                nsCtrl: 'myProfileCtrl',
+                nsStatic: true,
+            });
+        };
+
         // #endregion
     }
 })();
