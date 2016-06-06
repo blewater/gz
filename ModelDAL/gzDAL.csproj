@@ -124,6 +124,8 @@
     <Compile Include="DTO\PortfolioReturnsDTO.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
+    <Compile Include="DTO\CustFundShareDto.cs" />
+    <Compile Include="Models\DbSetExtensions.cs" />
     <Compile Include="Models\EmailTemplate.cs" />
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
@@ -167,9 +169,6 @@
     <Compile Include="ModelUtil\YQLFundCurrencyInq.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
