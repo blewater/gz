@@ -472,9 +472,11 @@
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
+    <Content Include="Partials\messages\myProfile.html" />
     <Content Include="Partials\messages\changePassword.html" />
     <Content Include="Partials\messages\deposit.html" />
     <Content Include="Partials\messages\bonuses.html" />
+    <Content Include="Partials\messages\responsiveTest.html" />
     <Content Include="Partials\messages\transactionHistory.html" />
     <Content Include="Partials\messages\withdraw.html" />
     <Content Include="Partials\messages\pendingWithdrawals.html" />
@@ -543,9 +545,11 @@
     <Content Include="Scripts\_app\app.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
+    <Content Include="Scripts\_app\controllers\account\myProfileCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\changePasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\bonusesCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\depositCtrl.js" />
+    <Content Include="Scripts\_app\controllers\account\responsiveTestCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\transactionHistoryCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\withdrawCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\pendingWithdrawalsCtrl.js" />

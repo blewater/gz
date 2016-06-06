@@ -501,22 +501,28 @@
 .auth.mgmt-modal .mgmt-content {
     height: 100%;
     position: fixed;
-    padding: 40px 50px;
-    float: right;
-    width: 75%;
+    padding-top: 40px /*50px*/;
+    /*float: right;*/
+    /*width: 75%;*/
     right: 0;
 }
 
 .auth.mgmt-modal .mgmt-content.left-content { 
     border-right: 1px dashed white;
-    left: 25%;
-    width: 45%;
-    float: left;
+    left: 0;
+    top: 0;
+    /*width: 45%;*/
+    /*float: left;*/
+    position: absolute;
 }
 
 .auth.mgmt-modal .mgmt-content.right-content {  
     width: 30%;
-    float: right;
+    /*float: right;*/
+    right: 0;
+    top: 0;
+    position: absolute;
+    
 }
 
 .auth.mgmt-modal .mgmt-content .modal-btn-gz { 
@@ -526,16 +532,34 @@
     height: 40px; 
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); 
 }
+
+.auth.mgmt-modal .mgmt-content { overflow: auto; }
+
+@media (max-width: 991px) {
+    .auth.mgmt-modal .mgmt-content.left-content {
+        position: static;
+        padding-bottom: 150px;
+        border-right: none;
+    }
+
+    .auth.mgmt-modal .mgmt-content.right-content {
+        border-left: none;
+        border-top: 1px dashed white;
+        position: static;
+        width: 100%;
+        
+    }
+}
 /*endregion*/
 
 /*region Management Menu*/
 .bg-grey-dark { background-color: #c5c5c5; }
 
-.auth.mgmt-modal .mgmt-menu { float: left; width: 25%; color: #fff; height: 100%; position: fixed; }
+.auth.mgmt-modal .mgmt-menu { /*float: left; width: 25%;*/ color: #fff; height: 100%; position: fixed; left: 0; }
 
 .auth.mgmt-modal nav .nav-menu { 
     list-style-type: none; 
-    padding: 40px 30px;
+    padding-top: 40px /*30px*/;
 }
 
 .auth.mgmt-modal nav .nav-menu li { margin-bottom: 6px; }
@@ -665,4 +689,14 @@
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table td { border: 2px solid white; }
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr th, 
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr td { text-align: center; }
+/*endregion*/
+
+/*region My Profile*/
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form { margin-top: 20px; margin-left: 15px; }
+
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .form-control { height: 40px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .checkboxes-group { margin-top: 20px; }
+
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { margin-left: 0; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 220px; margin-left: 0; }
 /*endregion*/
