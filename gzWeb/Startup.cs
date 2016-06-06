@@ -107,6 +107,7 @@ namespace gzWeb
             container.Register<ICustPortfolioRepo, CustPortfolioRepo>(Lifestyle.Scoped);
             container.Register<IInvBalanceRepo, InvBalanceRepo>(Lifestyle.Scoped);
             container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);
+            container.Register<IEmailService, SendGridEmailService>(Lifestyle.Scoped);
             container.RegisterWebApiControllers(config);
             
             container.Verify();
