@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class emailTemplatestable : IMigrationMetadata
+    public sealed partial class Email_Template_Table : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(emailTemplatestable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Email_Template_Table));
         
         string IMigrationMetadata.Id
         {
-            get { return "201606031351375_emailTemplates-table"; }
+            get { return "201606060853155_Email_Template_Table"; }
         }
         
         string IMigrationMetadata.Source

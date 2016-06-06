@@ -3,7 +3,7 @@ namespace gzWeb.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class emailTemplatestable : DbMigration
+    public partial class Email_Template_Table : DbMigration
     {
         public override void Up()
         {
@@ -17,6 +17,7 @@ namespace gzWeb.Migrations
                         Body = c.String(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
+            
         }
         
         public override void Down()
