@@ -1,26 +1,26 @@
 ﻿using System.Web.Mvc;
 
-namespace gzWeb.Areas.Mvc
+namespace gzWeb.Areas.Admin
 {
-    public class MvcAreaRegistration : AreaRegistration 
+    public class AdminAreaRegistration : AreaRegistration 
     {
         public override string AreaName 
         {
             get 
             {
-                return "Mvc";
+                return "Admin";
             }
         }
 
         public override void RegisterArea(AreaRegistrationContext context) 
         {
-            context.Routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            //context.Routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             context.MapRoute(
-                    "MvcRoute",
-                    "Mvc/{controller}/{action}/{id}",
+                    "AdminRoute",
+                    "Admin/{controller}/{action}/{id}",
                     new {action = "Index", id = UrlParameter.Optional},
-                    new[] { "gzWeb.Areas.Mvc.Controllers" });
+                    new[] { "gzWeb.Areas.Admin.Controllers" });
         }
     }
 }

@@ -42,6 +42,6 @@ namespace gzDAL.DTO {
         /// <summary>
         /// Shares comprising this vintage
         /// </summary>
-        public IEnumerable<CustFundShare> CustomerVintageShares { get; set; } 
+        public IEnumerable<CustFundShareDto> CustomerVintageShares { get; set; } 
     }
 }
