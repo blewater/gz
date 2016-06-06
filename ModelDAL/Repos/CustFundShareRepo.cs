@@ -110,24 +110,23 @@ namespace gzDAL.Repos {
         /// Phase 1 launch assumes only 1 portfolio possession in 100%
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="netInvAmount"></param>
+        /// <param name="cashInvestmentAmount"></param>
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="updatedOnUtc"></param>
-        public Dictionary<int, PortfolioFundDTO> GetMonthlyFundSharesAfterBuyingSelling(int customerId, decimal netInvAmount, int year, int month) {
+        public Dictionary<int, PortfolioFundDTO> GetMonthlyFundSharesAfterBuyingSelling(int customerId, decimal cashInvestmentAmount, int year, int month) {
 
             Dictionary<int, PortfolioFundDTO> portfolioFundValues = null;
 
-            if (netInvAmount >= 0) {
+            // If cashInvestmentAmount is 0 then it means we are repricing (0 cash) or liquidating all shares to cash
+            if (cashInvestmentAmount >= 0) {
 
-                portfolioFundValues = GetOwnedFundSharesPortfolioWeights(customerId, netInvAmount, year, month);
+                portfolioFundValues = GetOwnedFundSharesPortfolioWeights(customerId, cashInvestmentAmount, year, month);
 
-                // Note this case for repricing (0 cash) or liquidating shares to cash
-            } 
-            //else if (netInvAmount < 0) {
-
-            //    portfolioFundValues = GetMonthsBoughtFundsValue(customerId, year, month);
-            //}
+            }
+            else {
+                throw new Exception("GetMonthlyFundSharesAfterBuyingSelling(): cashInvestmentAmount cannot be 0");
+            }
 
             return portfolioFundValues;
         }
@@ -441,22 +440,18 @@ namespace gzDAL.Repos {
             string lastFundsHoldingMonth =
                 GetFundSharesFromLastPurchase(customerId, _db, currentYearMonthStr) ?? "";
 
-            var ownedFunds = (
+            var portfolioFundDtos = (
                 from c in _db.CustFundShares
                 where c.CustomerId == customerId
-                    && c.SharesNum > 0
-                    && c.YearMonth == lastFundsHoldingMonth
-                select c)
-                .ToDictionary(f=>f.FundId);
-
-            // Map to portofolioFundDto
-            var portfolioFundDtos = ownedFunds.Values.Select(f => new PortfolioFundDTO() {
-                FundId = f.FundId,
-                PortfolioId = 0,
-                Weight = 0,
-                SharesNum = f.SharesNum
-            })
-            .ToDictionary(f => f.FundId);
+                      && c.SharesNum > 0
+                      && c.YearMonth == lastFundsHoldingMonth
+                select new PortfolioFundDTO() {
+                    FundId = c.FundId,
+                    PortfolioId = 0,
+                    Weight = 0,
+                    SharesNum = c.SharesNum
+                })
+                .ToDictionary(c => c.FundId);
 
             SetShareValuesBySoldVintagesOffset(customerId, currentYearMonthStr, portfolioFundDtos);
 
