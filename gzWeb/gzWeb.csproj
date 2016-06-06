@@ -310,6 +310,10 @@
     <Compile Include="Migrations\201606030625071_sold vintages index.Designer.cs">
       <DependentUpon>201606030625071_sold vintages index.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606060853155_Email_Template_Table.cs" />
+    <Compile Include="Migrations\201606060853155_Email_Template_Table.Designer.cs">
+      <DependentUpon>201606060853155_Email_Template_Table.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -702,6 +706,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606030625071_sold vintages index.resx">
       <DependentUpon>201606030625071_sold vintages index.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606060853155_Email_Template_Table.resx">
+      <DependentUpon>201606060853155_Email_Template_Table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
