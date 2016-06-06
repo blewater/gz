@@ -2,23 +2,44 @@
     <div class="row">
         <aside class="mgmt-menu bg-white col-xs-1 col-sm-3">
             <div class="row">
-                <nav class="col-md-10 col-md-offset-1">
+                <nav class="col-xs-12 col-sm-offset-1">
                     <ul class="nav-menu">
                         <li>
                             <button class="btn-mgmt-menu bg-gz">
                                 <img class="btn-symbol plus-symbol" src="../../Content/Images/plus_icon.svg" />Deposit
                             </button>
+                            <a href="" class="btn-mgmt-menu-xs">
+                                <img class="btn-symbol plus-symbol" src="../../Content/Images/plus_icon_green.svg" />
+                            </a>
                         </li>
                         <li>
                             <button class="btn-mgmt-menu bg-grey-dark">
                                 <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon.svg" />Withdraw
                             </button>
+                            <a href="" class="btn-mgmt-menu-xs btn-mgmt-active">
+                                <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon_dgrey.svg" />
+                            </a>
                         </li>
-                        <li><a href="">Pending Withdrawals</a></li>
-                        <li><a class="link-mgmt-active" href="">Transaction History</a></li>
-                        <li><a href="">Bonuses</a></li>
-                        <li><a href="">My Profile</a></li>
-                        <li><a href="">Logout</a></li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-clock-o" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">Pending Withdrawals</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico link-mgmt-active" href=""><i class="fa fa-exchange" aria-hidden="true"></i></a>
+                            <a class="visi-text link-mgmt-active" href="">Transaction History</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-gift" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">Bonuses</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-user" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">My Profile</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">Logout</a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -30,13 +51,13 @@
                     <h4>Transaction History</h4>
                     <div class="row">
                         <div class="form-group filter-form-group">
-                            <div class="col-xs-6 col-sm-3">
+                            <div class="col-xs-12 col-sm-3">
                                 <input type="text" class="col-xs-12 col-md-4 form-control filter-forms" placeholder="from" />
                             </div>
-                            <div class="col-xs-6 col-sm-3">
+                            <div class="col-xs-12 col-sm-3">
                                 <input type="text" class="col-xs-12 col-md-4 form-control filter-forms" placeholder="to" />
                             </div>
-                            <div class="col-xs-6 col-sm-3">
+                            <div class="col-xs-12 col-sm-3">
                                 <div class="dropdown filter-forms">
                                     <button class="form-control filter-forms filter-type-drop dropdown-toggle" type="button" id="dropdownType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         type
@@ -51,7 +72,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="col-xs-6 col-sm-3">
+                            <div class="col-xs-12 col-sm-3">
                                 <button class="col-xs-12 col-md-4 btn-gz modal-btn-gz filter-forms" type="button">filter</button>
                             </div>
                         </div>

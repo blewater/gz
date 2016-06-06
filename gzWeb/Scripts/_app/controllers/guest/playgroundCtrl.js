@@ -194,15 +194,6 @@
             });
         };
 
-        $scope.responsiveTest = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '1000px',
-                nsTemplate: '/partials/messages/responsiveTest.html',
-                nsCtrl: 'responsiveTestCtrl',
-                nsStatic: true,
-            });
-        };
         // #endregion
     }
 })();

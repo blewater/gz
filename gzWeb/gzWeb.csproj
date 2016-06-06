@@ -361,6 +361,7 @@
     <Content Include="Content\Images\losses_returned.svg" />
     <Content Include="Content\Images\mac.png" />
     <Content Include="Content\Images\mastercard-logo-200x106.gif" />
+    <Content Include="Content\Images\minus_icon_dgrey.svg" />
     <Content Include="Content\Images\minus_icon.svg" />
     <Content Include="Content\Images\neteller-logo-219x80.gif" />
     <Content Include="Content\Images\nikos.jpg" />
@@ -368,6 +369,7 @@
     <Content Include="Content\Images\payoutrates.svg" />
     <Content Include="Content\Images\play.png" />
     <Content Include="Content\Images\play.svg" />
+    <Content Include="Content\Images\plus_icon_green.svg" />
     <Content Include="Content\Images\plus_icon.svg" />
     <Content Include="Content\Images\receive.svg" />
     <Content Include="Content\Images\revenues.svg" />
@@ -476,7 +478,6 @@
     <Content Include="Partials\messages\changePassword.html" />
     <Content Include="Partials\messages\deposit.html" />
     <Content Include="Partials\messages\bonuses.html" />
-    <Content Include="Partials\messages\responsiveTest.html" />
     <Content Include="Partials\messages\transactionHistory.html" />
     <Content Include="Partials\messages\withdraw.html" />
     <Content Include="Partials\messages\pendingWithdrawals.html" />
@@ -549,7 +550,6 @@
     <Content Include="Scripts\_app\controllers\account\changePasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\bonusesCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\depositCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\responsiveTestCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\transactionHistoryCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\withdrawCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\pendingWithdrawalsCtrl.js" />
