@@ -727,25 +727,31 @@ namespace gzDAL.Repos {
                 return 0;
             }
 
+            var monthlyCashToInvest = 0M;
+
             // These Ids throw exceptions when looked up as navigation properties in a transaction.
-            var creditedPlayingLossTypeId =
-                _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
+            var liquidatedTypeId =
+                _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.FullCustomerFundsLiquidation)
                     .Select(tt => tt.Id)
                     .Single();
 
-            var monthlyPlayingLosses = 
-                monthlyTrxGrouping.Sum(t => t.TypeId == creditedPlayingLossTypeId ? t.Amount : 0);
+            var liquidatedMonth = monthlyTrxGrouping
+                .Any(t => t.TypeId == liquidatedTypeId);
 
+            // don't buy stock if the account was liquidated this month
+            if (!liquidatedMonth) {
 
-            // TODO: Reexamine account liquidation
-            // Reduce fees by the fees amount corresponding to the portfolio liquidation
-            //if (fullAccountLiquidation > 0) {
-            //    monthlyFees -= this._gzTransactionRepo.GetWithdrawnFees(fullAccountLiquidation);
-            //}
+                var creditedPlayingLossTypeId =
+                    _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
+                        .Select(tt => tt.Id)
+                        .Single();
+
+                monthlyCashToInvest =
+                    monthlyTrxGrouping.Sum(t => t.TypeId == creditedPlayingLossTypeId ? t.Amount : 0);
+
+            }
 
             // --------------- Net amount to invest -------------------------
-            var monthlyCashToInvest = monthlyPlayingLosses;
-
             return monthlyCashToInvest;
         }
 
