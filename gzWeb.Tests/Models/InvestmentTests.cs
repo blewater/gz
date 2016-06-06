@@ -256,7 +256,7 @@ namespace gzWeb.Tests.Models {
                     /** 6month User **/
                         db.Users.Where(u => u.Email == "info@nessos.gr")
                         .Select(u => u.Id)
-                            /** Update month balance 201506 **/
+                            /** Update month balance **/
                         .Single(), "201606");
             }
         }

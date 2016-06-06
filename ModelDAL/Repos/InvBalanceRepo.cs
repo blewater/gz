@@ -136,7 +136,7 @@ namespace gzDAL.Repos {
             else {
 
                 // If not sold already calculate it now
-                IEnumerable<CustFundShare> monthsCustomerShares;
+                IEnumerable<CustFundShareDto> monthsCustomerShares;
                 monthlySharesValue = GetVintageValuePricedNow(
                     customerId, 
                     yearMonthStr, 
@@ -160,7 +160,7 @@ namespace gzDAL.Repos {
         private decimal GetVintageValuePricedNow(
             int customerId, 
             string yearMonthStr,
-            out IEnumerable<CustFundShare> monthsCustomerFunds,
+            out IEnumerable<CustFundShareDto> monthsCustomerFunds,
             out decimal fees) {
 
             int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
@@ -200,7 +200,7 @@ namespace gzDAL.Repos {
                     ChkVintageSellingPreConditions(customerId, vintageDto);
 
                     decimal fees;
-                    IEnumerable<CustFundShare> monthsCustomerShares;
+                    IEnumerable<CustFundShareDto> monthsCustomerShares;
                     vintageDto.MarketPrice = GetVintageValuePricedNow(
                             customerId, 
                             vintageDto.YearMonthStr,
@@ -295,8 +295,8 @@ namespace gzDAL.Repos {
             SaveDbCustomerMonthlyBalance(customerId, DateTime.UtcNow.ToStringYearMonth());
 #endif
 
-            // Reload them & return them
-            vintages = GetCustomerVintagesSellingValue(customerId);
+            // Uneeded Reload them & return them
+            // vintages = GetCustomerVintagesSellingValue(customerId);
 
             return vintages;
         }
@@ -373,9 +373,9 @@ namespace gzDAL.Repos {
             decimal invGainLoss,
             DateTime updatedDateTimeUtc) {
 
-            //ConnRetryConf.TransactWithRetryStrategy(_db,
+            ConnRetryConf.TransactWithRetryStrategy(_db,
 
-            //() => {
+            () => {
 
                 // Save fees transactions first and continue with reduced cash amount
                 var remainingCashAmount =
@@ -401,7 +401,7 @@ namespace gzDAL.Repos {
                             CashInvestment = -remainingCashAmount,
                             UpdatedOnUTC = updatedDateTimeUtc
                         });
-            //});
+            });
         }
 
         #endregion Selling
@@ -524,9 +524,11 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
+
             ConnRetryConf.TransactWithRetryStrategy(_db,
 
                 () => {
+                    var createdOnUtc = DateTime.UtcNow;
 
                     _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
                         boughtShares: true,
@@ -534,7 +536,7 @@ namespace gzDAL.Repos {
                         fundsShares: portfolioFunds,
                         year: yearCurrent,
                         month: monthCurrent,
-                        updatedOnUtc: DateTime.UtcNow);
+                        updatedOnUtc: createdOnUtc);
 
                     _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
                             new InvBalance {
@@ -543,9 +545,8 @@ namespace gzDAL.Repos {
                                 Balance = monthlyBalance,
                                 InvGainLoss = invGainLoss,
                                 CashInvestment = cashToInvest,
-                                UpdatedOnUTC = DateTime.UtcNow
-                            });
-
+                                UpdatedOnUTC = createdOnUtc
+                    });
                 });
         }
 
