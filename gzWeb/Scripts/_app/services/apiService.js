@@ -62,6 +62,10 @@
             });
         }
 
+        factory.setUserId = function(userId) {
+            return $http.post("/api/Account/SetUserId?userId=" + userId);
+        }
+
         factory.register = function (parameters) {
             return $http.post('/api/Account/Register', parameters);
         }
