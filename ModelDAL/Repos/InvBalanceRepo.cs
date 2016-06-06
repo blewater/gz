@@ -377,6 +377,8 @@ namespace gzDAL.Repos {
 
             () => {
 
+                _db.Database.Log = s => DbSetExtensions.Log("SaveDbLiquidateCustomerPortfolio()", s);
+
                 // Save fees transactions first and continue with reduced cash amount
                 var remainingCashAmount =
                         _gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
@@ -401,6 +403,9 @@ namespace gzDAL.Repos {
                             CashInvestment = -remainingCashAmount,
                             UpdatedOnUTC = updatedDateTimeUtc
                         });
+
+                _db.Database.Log = null;
+
             });
         }
 
