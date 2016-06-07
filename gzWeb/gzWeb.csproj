@@ -548,6 +548,8 @@
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
+    <Content Include="Partials\directives\gzFeaturedGames.html" />
+    <Content Include="Partials\directives\gzFeaturedGame.html" />
     <Content Include="Partials\directives\gzFieldOk.html" />
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
@@ -635,6 +637,8 @@
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />
     <Content Include="Scripts\_app\directives\gzAuthAccess.js" />
+    <Content Include="Scripts\_app\directives\gzFeaturedGames.js" />
+    <Content Include="Scripts\_app\directives\gzFeaturedGame.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="Scripts\_app\services\authService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
