@@ -505,6 +505,7 @@
     /*float: right;*/
     /*width: 75%;*/
     right: 0;
+    overflow-x: hidden;
 }
 
 .auth.mgmt-modal .mgmt-content.left-content { 
@@ -533,8 +534,7 @@
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); 
 }
 
-.auth.mgmt-modal .mgmt-content { overflow: auto; }
-
+/**************** XS - SM ********************/
 @media (max-width: 991px) {
     .auth.mgmt-modal .mgmt-content.left-content {
         position: static;
@@ -546,8 +546,7 @@
         border-left: none;
         border-top: 1px dashed white;
         position: static;
-        width: 100%;
-        
+        width: 100%;       
     }
 }
 
@@ -581,7 +580,7 @@
 .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active { width: 190px; margin-left: -40px; }
 .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active .btn-symbol { margin-left: 60px; }
 
-.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active { border-right: 2px solid #27A95C; height: 100%; margin-left: -4px; margin-right: 2px; }
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active { border-left: 2px solid #27A95C; padding-left: 3px; margin-left: -5px; }
 
 .auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol { height: 18px; float: left; margin: 3px 10px 0 20px; }
 
@@ -595,6 +594,9 @@
     font-size: 16px;
     color: #7b7b7b;
 }
+
+.auth.mgmt-modal .mgmt-content .filter-type-drop .caret { float: right; margin-top: 8px; }
+.auth.mgmt-modal .mgmt-content .filter-forms .filter-type-drop[aria-expanded="true"] .caret { color: #27A95C }
 
 /**************** SM - LG ********************/
 @media (min-width: 768px) {
@@ -712,11 +714,9 @@
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .dropdown .dropdown-menu li a { color: #999; }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .dropdown .dropdown-menu li a:hover { color: #fff; background-color: #27A95C; background-image: none; }
 
-.auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .filter-forms .filter-type-drop .caret { float: right; margin-top: 8px; }
-.auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .filter-forms .filter-type-drop[aria-expanded="true"] .caret { color: #27A95C }
 .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .modal-btn-gz { width: 100%; }
 
-.auth.mgmt-modal.transaction-history .mgmt-content .table-container { margin-top: 50px; }
+.auth.mgmt-modal.transaction-history .mgmt-content .table-container { margin-top: 50px; overflow-x: auto; }
 
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table,
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr,
@@ -725,6 +725,7 @@
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr th, 
 .auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr td { text-align: center; }
 
+/**************** XS ********************/
 @media (max-width: 767px){
     .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .modal-btn-gz { margin-top: 5px;}
 }
@@ -735,8 +736,27 @@
 .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form { margin-top: 20px; margin-left: 15px; }
 
 .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .form-control { height: 40px; }
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .checkboxes-group { margin-top: 20px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .checkboxes-group { margin-top: 15px; }
 
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { margin-left: 0; }
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 220px; margin-left: 0; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { margin-left: -3px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox:first-of-type { margin-bottom: -1px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 57%; margin-left: -6px; margin-bottom: 50px; }
+
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group #mobile { margin-top: 5px; }
+
+/**************** XS - SM ********************/
+@media (max-width: 991px) {
+    .auth.mgmt-modal.my-profile .mgmt-content h4 { margin-left: -10px; }
+
+    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 104%; }
+}
+
+/**************** XS ********************/
+@media (max-width: 767px) {
+    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { font-size: 12px; }
+}
+
+@media (max-width: 509px) { 
+    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { font-size: 8px; }
+}
 /*endregion*/
