@@ -45,9 +45,7 @@
                 angular.element($window).bind('resize', function () {
                     setGameDimensions();
                 });
-
-
-
+                
                 emCasino.getLaunchUrl($scope.game.slug, null, $scope.playForRealMoney).then(function (launchDataResult) {
                     $scope.gameLaunchData = launchDataResult;
                     $scope.gameUrl = $sce.trustAsResourceUrl(launchDataResult.url);
