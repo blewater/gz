@@ -1,40 +1,68 @@
 ﻿<div class="auth mgmt-modal bonuses">
-
-        <aside class="mgmt-menu bg-white">
-            <nav>
-                <ul class="nav-menu">
-                    <li>
-                        <button class="btn-mgmt-menu bg-gz">
-                            <img class="btn-symbol plus-symbol" src="../../Content/Images/plus_icon.svg" />Deposit
-                        </button>
-                    </li>
-                    <li>
-                        <button class="btn-mgmt-menu bg-grey-dark">
-                            <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon.svg" />Withdraw
-                        </button>
-                    </li>
-                    <li><a href="">Pending Withdrawals</a></li>
-                    <li><a href="">Transaction History</a></li>
-                    <li><a class="link-mgmt-active" href="">Bonuses</a></li>
-                    <li><a href="">My Profile</a></li>
-                    <li><a href="">Logout</a></li>
-                </ul>
-            </nav>
+    <div class="row">
+        <aside class="mgmt-menu bg-white col-xs-1 col-sm-3">
+            <div class="row">
+                <nav class="col-xs-12 col-sm-offset-1">
+                    <ul class="nav-menu">
+                        <li>
+                            <button class="btn-mgmt-menu bg-gz">
+                                <img class="btn-symbol plus-symbol" src="../../Content/Images/plus_icon.svg" />Deposit
+                            </button>
+                            <a href="" class="btn-mgmt-menu-xs">
+                                <img class="btn-symbol plus-symbol" src="../../Content/Images/plus_icon_green.svg" />
+                            </a>
+                        </li>
+                        <li>
+                            <button class="btn-mgmt-menu bg-grey-dark">
+                                <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon.svg" />Withdraw
+                            </button>
+                            <a href="" class="btn-mgmt-menu-xs btn-mgmt-active">
+                                <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon_dgrey.svg" />
+                            </a>
+                        </li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-clock-o" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">Pending Withdrawals</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-exchange" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">Transaction History</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico link-mgmt-active" href=""><i class="fa fa-gift" aria-hidden="true"></i></a>
+                            <a class="visi-text link-mgmt-active" href="">Bonuses</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-user" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">My Profile</a>
+                        </li>
+                        <li>
+                            <a class="xs-ico" href=""><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+                            <a class="visi-text" href="">Logout</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </aside>
 
-        <section class="mgmt-content bg-gz">
-            <div class="text-holder">
-                <p>
-                    You have no active bonus at the moment. If you have received a bonus code for a free money bonus, please enter it below.
-                </p>
-            </div>
-            <div class="bonus-code">
-                <p>If you are eligible and have a bonus code,<br />
-                   please enter it below and click "Submit".
-                </p>
-                <input class="form-control bonus-code-form ng-pristine ng-touched bg-gz" placeholder="BONUS CODE"/>
-                <button type="submit" class="btn-gz modal-btn-gz">submit</button>
+        <section class="mgmt-content bg-gz col-xs-11 col-sm-9">
+            <div class="row">
+                <div class="col-xs-10 col-xs-offset-1">
+                    <div class="text-holder">
+                        <p>
+                            You have no active bonus at the moment. If you have received a bonus code for a free money bonus, please enter it below.
+                        </p>
+                    </div>
+                    <div class="bonus-code">
+                        <p>
+                            If you are eligible and have a bonus code,<br />
+                            please enter it below and click "Submit".
+                        </p>
+                        <input class="form-control bonus-code-form ng-pristine ng-touched bg-gz" placeholder="BONUS CODE" />
+                        <button type="submit" class="btn-gz modal-btn-gz">submit</button>
+                    </div>
+                </div>
             </div>
         </section>
-
+    </div>
 </div>

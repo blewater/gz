@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -27,10 +28,12 @@ namespace gzWeb.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
+        private readonly ApplicationDbContext _dbContext;
 
-        public AccountApiController(ApplicationUserManager userManager)
+        public AccountApiController(ApplicationUserManager userManager,ApplicationDbContext dbContext)
                 : base(userManager)
         {
+            _dbContext = dbContext;
         }
 
         #region accessTokenFormat Constructor
@@ -428,6 +431,24 @@ namespace gzWeb.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("SetUserId")]
+        public async Task<IHttpActionResult> SetUserId(int userId)
+        {
+            var logedInUserId = User.Identity.GetUserId<int>();
+            var user = _dbContext.Users.SingleOrDefault(x => x.Id == logedInUserId);
+
+            if (user == null)
+                return NotFound();
+
+            if (user.GmCustomerId.HasValue)
+                return Ok();
+
+            user.GmCustomerId = userId;
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
 
         [AllowAnonymous]
         [HttpPost]

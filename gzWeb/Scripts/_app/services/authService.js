@@ -236,15 +236,20 @@
 
         factory.login = function (usernameOrEmail, password, captcha) {
             var q = $q.defer();
-            emLogin(usernameOrEmail, password, captcha).then(function (emLoginResult) {
-                //for (var i = 0; i < emLoginResult.roles.length; i++)
-                //    console.log("==========> EveryMatrix Role " + i + ": " + emLoginResult.roles[i]);
-                //factory.data.push(emLoginResult.roles[i]);
-                //storeAuthData();
-                if (emLoginResult.hasToEnterCaptcha)
-                    q.resolve({ enterCaptcha: true });
-                else {
+            emLogin(usernameOrEmail, password, captcha).then(function(emLoginResult) {
+                    //for (var i = 0; i < emLoginResult.roles.length; i++)
+                    //    console.log("==========> EveryMatrix Role " + i + ": " + emLoginResult.roles[i]);
+                    //factory.data.push(emLoginResult.roles[i]);
+                    //storeAuthData();
+                    if (emLoginResult.hasToEnterCaptcha)
+                        q.resolve({ enterCaptcha: true });
+                    else {
                     gzLogin(usernameOrEmail, password).then(function () {
+                            emWamp.getSessionInfo().then(function(sessionInfo) {
+                                api.setUserId(sessionInfo.userID);
+                            }, function(error) {
+
+                            });
                         //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
