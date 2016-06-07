@@ -67,8 +67,8 @@ namespace gzDAL.Repos {
                     .DefaultIfEmpty()
                 orderby b.YearMonth descending
                 select new {
-                    YearMonth = b.YearMonth,
-                    CashInvestment = b.CashInvestment,
+                    b.YearMonth,
+                    b.CashInvestment,
                     Sold = sv.Id != null // wrong warning due to ignoring the DefaultIfEmpty above
                 })
                 .AsEnumerable()
@@ -136,7 +136,7 @@ namespace gzDAL.Repos {
             else {
 
                 // If not sold already calculate it now
-                IEnumerable<CustFundShare> monthsCustomerShares;
+                IEnumerable<CustFundShareDto> monthsCustomerShares;
                 monthlySharesValue = GetVintageValuePricedNow(
                     customerId, 
                     yearMonthStr, 
@@ -160,7 +160,7 @@ namespace gzDAL.Repos {
         private decimal GetVintageValuePricedNow(
             int customerId, 
             string yearMonthStr,
-            out IEnumerable<CustFundShare> monthsCustomerFunds,
+            out IEnumerable<CustFundShareDto> monthsCustomerFunds,
             out decimal fees) {
 
             int yearCurrent = int.Parse(yearMonthStr.Substring(0, 4)),
@@ -200,7 +200,7 @@ namespace gzDAL.Repos {
                     ChkVintageSellingPreConditions(customerId, vintageDto);
 
                     decimal fees;
-                    IEnumerable<CustFundShare> monthsCustomerShares;
+                    IEnumerable<CustFundShareDto> monthsCustomerShares;
                     vintageDto.MarketPrice = GetVintageValuePricedNow(
                             customerId, 
                             vintageDto.YearMonthStr,
@@ -291,9 +291,12 @@ namespace gzDAL.Repos {
                 _gzTransactionRepo.SaveDbSellVintages(customerId, vintages);
 
             });
+#if DEBUG
+            SaveDbCustomerMonthlyBalance(customerId, DateTime.UtcNow.ToStringYearMonth());
+#endif
 
-            // Reload them & return them
-            vintages = GetCustomerVintagesSellingValue(customerId);
+            // Uneeded Reload them & return them
+            // vintages = GetCustomerVintagesSellingValue(customerId);
 
             return vintages;
         }
@@ -370,9 +373,11 @@ namespace gzDAL.Repos {
             decimal invGainLoss,
             DateTime updatedDateTimeUtc) {
 
-            //ConnRetryConf.TransactWithRetryStrategy(_db,
+            ConnRetryConf.TransactWithRetryStrategy(_db,
 
-            //() => {
+            () => {
+
+                _db.Database.Log = s => DbSetExtensions.Log("SaveDbLiquidateCustomerPortfolio()", s);
 
                 // Save fees transactions first and continue with reduced cash amount
                 var remainingCashAmount =
@@ -398,7 +403,10 @@ namespace gzDAL.Repos {
                             CashInvestment = -remainingCashAmount,
                             UpdatedOnUTC = updatedDateTimeUtc
                         });
-            //});
+
+                _db.Database.Log = null;
+
+            });
         }
 
         #endregion Selling
@@ -521,9 +529,11 @@ namespace gzDAL.Repos {
             var portfolioFunds = GetCustomerSharesBalancesForMonth(customerId, yearCurrent, monthCurrent, cashToInvest, out monthlyBalance,
                 out invGainLoss);
 
+
             ConnRetryConf.TransactWithRetryStrategy(_db,
 
                 () => {
+                    var createdOnUtc = DateTime.UtcNow;
 
                     _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
                         boughtShares: true,
@@ -531,7 +541,7 @@ namespace gzDAL.Repos {
                         fundsShares: portfolioFunds,
                         year: yearCurrent,
                         month: monthCurrent,
-                        updatedOnUtc: DateTime.UtcNow);
+                        updatedOnUtc: createdOnUtc);
 
                     _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
                             new InvBalance {
@@ -540,9 +550,8 @@ namespace gzDAL.Repos {
                                 Balance = monthlyBalance,
                                 InvGainLoss = invGainLoss,
                                 CashInvestment = cashToInvest,
-                                UpdatedOnUTC = DateTime.UtcNow
-                            });
-
+                                UpdatedOnUTC = createdOnUtc
+                    });
                 });
         }
 
@@ -723,25 +732,31 @@ namespace gzDAL.Repos {
                 return 0;
             }
 
+            var monthlyCashToInvest = 0M;
+
             // These Ids throw exceptions when looked up as navigation properties in a transaction.
-            var creditedPlayingLossTypeId =
-                _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
+            var liquidatedTypeId =
+                _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.FullCustomerFundsLiquidation)
                     .Select(tt => tt.Id)
                     .Single();
 
-            var monthlyPlayingLosses = 
-                monthlyTrxGrouping.Sum(t => t.TypeId == creditedPlayingLossTypeId ? t.Amount : 0);
+            var liquidatedMonth = monthlyTrxGrouping
+                .Any(t => t.TypeId == liquidatedTypeId);
 
+            // don't buy stock if the account was liquidated this month
+            if (!liquidatedMonth) {
 
-            // TODO: Reexamine account liquidation
-            // Reduce fees by the fees amount corresponding to the portfolio liquidation
-            //if (fullAccountLiquidation > 0) {
-            //    monthlyFees -= this._gzTransactionRepo.GetWithdrawnFees(fullAccountLiquidation);
-            //}
+                var creditedPlayingLossTypeId =
+                    _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
+                        .Select(tt => tt.Id)
+                        .Single();
+
+                monthlyCashToInvest =
+                    monthlyTrxGrouping.Sum(t => t.TypeId == creditedPlayingLossTypeId ? t.Amount : 0);
+
+            }
 
             // --------------- Net amount to invest -------------------------
-            var monthlyCashToInvest = monthlyPlayingLosses;
-
             return monthlyCashToInvest;
         }
 

@@ -140,6 +140,7 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/account/pendingWithdrawalsCtrl.js"
                 , "~/Scripts/_app/controllers/account/transactionHistoryCtrl.js"
                 , "~/Scripts/_app/controllers/account/bonusesCtrl.js"
+                , "~/Scripts/_app/controllers/account/myProfileCtrl.js"
 
 
                 , "~/Scripts/_app/directives/gzPortfolioChart.js"

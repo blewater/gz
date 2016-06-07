@@ -257,9 +257,28 @@ namespace gzDAL.Repos {
             VintageDto vintage, 
             DateTime soldOnUtc) 
         {
-            // Update timestamp on CustFundShares
-            foreach (var vintageShare in vintage.CustomerVintageShares) {
-                vintageShare.UpdatedOnUtc = soldOnUtc;
+            List<CustFundShare> vintageCustFundShares = new List<CustFundShare>();
+
+            // Copy DTOs back to the entities
+            foreach (var dto in vintage.CustomerVintageShares) {
+
+                vintageCustFundShares.Add(new CustFundShare() {
+
+                    Id = dto.Id,
+                    FundId = dto.FundId,
+                    CustomerId = dto.CustomerId,
+                    YearMonth = dto.YearMonth,
+                    SharesNum = dto.SharesNum,
+                    SharesValue = dto.SharesValue,
+                    NewSharesNum = dto.NewSharesNum,
+                    NewSharesValue = dto.NewSharesValue,
+                    SharesFundPriceId = dto.SharesFundPriceId,
+                    SoldVintageId = dto.SoldVintageId,
+
+                    // Update timestamp to IN param
+                    UpdatedOnUtc = soldOnUtc
+
+                });
             }
 
             _db.SoldVintages.AddOrUpdate(
@@ -270,7 +289,7 @@ namespace gzDAL.Repos {
                     MarketAmount = vintage.MarketPrice,
                     Fees = vintage.Fees,
                     YearMonth = soldOnUtc.ToStringYearMonth(),
-                    VintageShares = vintage.CustomerVintageShares.ToList(),
+                    VintageShares = vintageCustFundShares,
                     // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
                     UpdatedOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
                 }
@@ -341,9 +360,11 @@ namespace gzDAL.Repos {
         /// 
         /// Transfer to the Gaming account by selling investment shares and save the calculated commission and fund fees transactions
         /// 
+        /// Note investment amount is the full amount before any fees deduction!
+        /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="investmentAmount"></param>
+        /// <param name="investmentAmount">Full Investment amount before deducting any fees.</param>
         /// <param name="createdOnUtc"></param>
         /// <returns></returns>
         public void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, DateTime createdOnUtc) {
@@ -426,12 +447,51 @@ namespace gzDAL.Repos {
 
             SaveDbGzTransaction(customerId, GzTransactionTypeEnum.FundFee, fundsFeesAmount, createdOnUtc, null);
 
-            // Save the reason for those fees
-            SaveDbGzTransaction(customerId, sellingJournalTypeReason, liquidationAmount, createdOnUtc, null);
+            // Save the liquidation transaction
+            SaveDbGzTransaction(customerId, sellingJournalTypeReason, reducedAmountToReturn, createdOnUtc, null);
+
+            // Save the transfer to Everymatrix amount out of the shares selling
+            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.TransferToGaming, reducedAmountToReturn, 
+                createdOnUtc, null);
+
+            // Update any credited player losses back to transfer to Everymatrix amounts without any fees deductions.
+            UpdateCashInvestmentsToTrnsfToEverymatrix(customerId, createdOnUtc);
 
             _db.SaveChanges();
 
             return reducedAmountToReturn;
+        }
+
+        /// <summary>
+        /// 
+        /// Update any cash investment transactions to transactions indicating cash to be returned
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="createdOnUtc"></param>
+        private void UpdateCashInvestmentsToTrnsfToEverymatrix(int customerId, DateTime createdOnUtc) {
+
+            var currentYearMonthStr = createdOnUtc.ToStringYearMonth();
+
+            var cplayingLossId = _db.GzTrxTypes
+                .Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
+                .Select(tt => tt.Id)
+                .Single();
+
+            var investmentCashTrxs = _db.GzTrxs
+                .Where(t => t.CustomerId == customerId
+                            && t.YearMonthCtd == currentYearMonthStr
+                            && t.TypeId == cplayingLossId
+                            );
+
+            var transferToGamingId = _db.GzTrxTypes
+                .Where(tt => tt.Code == GzTransactionTypeEnum.TransferToGaming)
+                .Select(tt => tt.Id)
+                .Single();
+
+            foreach (var investmentCashTrx in investmentCashTrxs) {
+                investmentCashTrx.TypeId = transferToGamingId;
+            }
         }
 
         /// <summary>

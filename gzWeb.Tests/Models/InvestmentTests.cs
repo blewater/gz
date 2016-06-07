@@ -153,8 +153,8 @@ namespace gzWeb.Tests.Models {
 
                         db.Database.ExecuteSqlCommand("Delete GzTrxs Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete GmTrxs Where CustomerId = " + custId);
-                        db.Database.ExecuteSqlCommand("Delete SoldVintages Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete CustFundShares Where CustomerId = " + custId);
+                        db.Database.ExecuteSqlCommand("Delete SoldVintages Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
                         CreateTestCustomerPortfolioSelections(custId);
@@ -256,7 +256,7 @@ namespace gzWeb.Tests.Models {
                     /** 6month User **/
                         db.Users.Where(u => u.Email == "info@nessos.gr")
                         .Select(u => u.Id)
-                            /** Update month balance 201506 **/
+                            /** Update month balance **/
                         .Single(), "201606");
             }
         }
