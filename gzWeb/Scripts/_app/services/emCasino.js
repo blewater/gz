@@ -119,6 +119,9 @@
             return emWamp.call("/casino#biggestWinGames", { expectedGameFields: expectedGameFields });
         };
 
+        _service.getJackpots = function (parameters) {
+            return emWamp.call("/casino#getJackpots", parameters);
+        };
         // 
         // Query the recommended games by user / game
         //
