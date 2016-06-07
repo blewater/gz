@@ -148,6 +148,8 @@ namespace gzWeb
                 , "~/Scripts/_app/directives/gzSelect.js"
                 , "~/Scripts/_app/directives/gzFieldOk.js"
                 , "~/Scripts/_app/directives/gzAuthAccess.js"
+                , "~/Scripts/_app/directives/gzFeaturedGame.js"
+                , "~/Scripts/_app/directives/gzFeaturedGames.js"
 
                 , "~/Scripts/_app/services/emWamp.js"
                 , "~/Scripts/_app/services/emCasino.js"
