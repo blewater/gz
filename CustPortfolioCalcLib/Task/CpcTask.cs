@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Threading.Tasks;
+using NLog;
 
 namespace gzCpcLib.Task {
     /// <summary>
@@ -9,6 +10,8 @@ namespace gzCpcLib.Task {
     /// 
     /// </summary>
     public abstract class CpcTask : ICpcTask {
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 
