@@ -25,7 +25,7 @@
 	padding-top: 50px;
 }
 
-.guest .home .container { padding: 30px; }
+.guest .home .container { padding: 60px 0; }
 
 /*** top section ***/
 .guest .home .top .laptop-big {
@@ -213,7 +213,7 @@
 /* #endregion */
 
 /* #region Transparency */
-.guest .transparency { margin-top: 60px; }
+.guest .transparency { margin: 60px 0; }
 
 /*** Header Section Styling ***/
 .guest .transparency .header { margin-bottom: 60px; }
@@ -265,20 +265,17 @@
 
 /* #region About */
 .guest .about {
-}
-
-.guest .about {
 	background-color: #ececec;
-	padding: 30px 0 30px 0;
+	padding: 60px 0;
 }
 
-.guest .about row { padding: 10px 5px 10px 5px; }
+.guest .about .row { padding: 10px 5px; }
 .guest .about h5 { font-size: 1.2em; } /* all h5 headers in page */
 .guest .about .container p { margin-top: 25px; } /* all paragraphs in page */
 
 /*** top section ***/
 .guest .about .about-top { 
-    padding-top: 50px;
+    /*padding-top: 50px;*/
     padding-bottom: 50px; 
 }
 
