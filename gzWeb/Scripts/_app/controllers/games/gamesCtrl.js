@@ -16,6 +16,7 @@
             var parameters = {
                 expectedFields: featuredGameFields,
                 expectedFormat: 'array',
+                filterByPlatform: null,
                 pageIndex: 1,
                 pageSize: 5,
                 sortFields: [{ field: emCasino.FIELDS.Popularity, order: 'DESC' }]
@@ -171,6 +172,7 @@
         function loadCategoryGames(categoryName) {
             emCasino.getGames({
                 filterByCategory: [categoryName],
+                filterByPlatform: null,
                 expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail,
                 pageSize: 4
             }).then(function (getCategoryGamesResult) {
@@ -210,6 +212,7 @@
 
         function getGames() {
             emCasino.getGames({
+                filterByPlatform: null,
                 expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail,
                 pageSize:4
             }).then(function(result) {
