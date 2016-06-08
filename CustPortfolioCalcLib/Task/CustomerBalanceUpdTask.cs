@@ -74,7 +74,7 @@ namespace gzCpcLib.Task {
         /// <param name="customerId"></param>
         private void SaveDbProcessCustomerMonthlyUpdates(int customerId) {
 
-            // Process all given month
+            // Process all given months
             if (YearMonthsToProc.Length > 0) {
                 foreach (var yearMonth in YearMonthsToProc) {
 
