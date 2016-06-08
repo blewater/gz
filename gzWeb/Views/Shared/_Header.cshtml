@@ -18,7 +18,7 @@
                 <div class="nav-links-btns">
                     <div class="links">
                         <nav class="cl-effect">
-                            <ul gz-authorize="guest">
+                            <ul gz-authorize="guest" ng-show="routeData.wandering">
                                 <li ng-repeat="route in routes.guest">
                                     <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                                 </li>
