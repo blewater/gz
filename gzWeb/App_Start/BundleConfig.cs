@@ -116,6 +116,7 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/guest/homeCtrl.js"
                 , "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
                 , "~/Scripts/_app/controllers/guest/aboutCtrl.js"
+                , "~/Scripts/_app/controllers/guest/contactCtrl.js"
                 , "~/Scripts/_app/controllers/guest/faqCtrl.js"
                 , "~/Scripts/_app/controllers/guest/playgroundCtrl.js"
                 , "~/Scripts/_app/controllers/investments/summaryCtrl.js"
@@ -149,6 +150,8 @@ namespace gzWeb
                 , "~/Scripts/_app/directives/gzSelect.js"
                 , "~/Scripts/_app/directives/gzFieldOk.js"
                 , "~/Scripts/_app/directives/gzAuthAccess.js"
+                , "~/Scripts/_app/directives/gzFeaturedGame.js"
+                , "~/Scripts/_app/directives/gzFeaturedGames.js"
 
                 , "~/Scripts/_app/services/emWamp.js"
                 , "~/Scripts/_app/services/emCasino.js"

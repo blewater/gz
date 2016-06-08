@@ -14,6 +14,7 @@
             var slug = $routeParams.slug;
             emCasino.getGames({
                 filterBySlug: [slug],
+                filterByPlatform: null,
                 expectedFields:
                     emCasino.FIELDS.Slug +
                     emCasino.FIELDS.Name +
@@ -21,7 +22,7 @@
                     emCasino.FIELDS.License +
                     emCasino.FIELDS.Width + 
                     emCasino.FIELDS.Height,
-                pageSize: 10,
+                pageSize: 1,
             }).then(function (gamesResult) {
                 $scope.game = gamesResult.games[0];
 
@@ -45,9 +46,7 @@
                 angular.element($window).bind('resize', function () {
                     setGameDimensions();
                 });
-
-
-
+                
                 emCasino.getLaunchUrl($scope.game.slug, null, $scope.playForRealMoney).then(function (launchDataResult) {
                     $scope.gameLaunchData = launchDataResult;
                     $scope.gameUrl = $sce.trustAsResourceUrl(launchDataResult.url);

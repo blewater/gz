@@ -12,11 +12,11 @@
             <span class="back-to-games" ng-click="backToGames()" title="Go back to games list"><i class="fa fa-share fa-flip-horizontal"></i></span>
             <span class="fullscreen" ng-click="toggleFullScreen()" title="Play in fullscreen mode"><i class="fa fa-expand"></i></span>
         </div>
-        <div class="hidden game-licence text-shadow-dark" ng-style="{
+        @*<div class="hidden game-licence text-shadow-dark" ng-style="{
              'top': 'calc(50% + ' + (gameHeight / 2) + 'px)',
              'left': '0'}">
             {{game.license}}
-        </div>
+        </div>*@
     </div>
     <div class="fullscreen-hud" ng-show="isFullscreen">
         <span class="clock"><i class="fa fa-clock-o"></i>{{ clock | date:'HH:mm:ss'}}</span>

@@ -44,6 +44,13 @@
         title: 'About',
         category: categories.wandering
     };
+    routes.contact = {
+        path: '/contact',
+        ctrl: 'contactCtrl',
+        tpl: '/Mvc/Guest/Contact',
+        title: 'Contact',
+        category: categories.wandering
+    };
     routes.faq = {
         path: '/faq',
         ctrl: 'faqCtrl',
