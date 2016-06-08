@@ -47,8 +47,11 @@
 
         <section class="mgmt-content bg-gz col-xs-11 col-sm-9">
             <div class="row">
-                <div class="col col-xs-10 col-xs-offset-1">
-                    <h4>My Profile</h4>                   
+                <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+                    <h4>My Profile</h4>
+                </div>
+                <div class="col-xs-10 col-xs-offset-1">
+                    
                     <form class="form-horizontal update-prof-form">
                         <div class="row">
                             <div class="col-xs-10 col-xs-offset-1 col-md-offset-0 col-md-4">
@@ -115,30 +118,28 @@
                                 </div>
                             </div>
                             <div class="col-xs-10 col-xs-offset-1 col-md-offset-1 col-md-4">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label for="phoneNumber">Mobile</label>
-                                        <div class="col-md-2">
-                                            <div id="phonePrefix" class="btn-group dropup full-width" uib-dropdown on-toggle="setDropdownOffset(open)">
-                                                <button type="button" class="form-control" uib-dropdown-toggle ng-class="{'empty': !model.phonePrefix}">
-                                                    <div class="full-width text-left">{{model.phonePrefix}}</div>
-                                                </button>
-                                                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="phonePrefix">
-                                                    <li role="menuitem" ng-repeat="prefix in phonePrefixes" ng-class="{'active': prefix.active}">
-                                                        <a ng-click="onPhonePrefixSelected($index)">{{prefix.name}}</a>
-                                                    </li>
-                                                </ul>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <label for="phonePrefix">Mobile</label>
+                                                <div class="dropdown filter-forms">
+                                                    <button class="form-control filter-forms filter-type-drop dropdown-toggle" type="button" id="phonePrefix" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="phonePrefix">
+                                                        <li><a href="">+031</a></li>
+                                                        <li><a href="">+028</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-8">
+                                                <label for="mobile"> </label>
+                                                <input type="text" placeholder="" id="mobile" class="form-control" />
                                             </div>
                                         </div>
-                                        <div class="col-md-10">
-                                            <input type="text" placeholder="Mobile Number" id="phoneNumber" name="phoneNumber" class="form-control" autocomplete="off" ng-model="model.phoneNumber" required
-                                                   ng-class="{ 'empty': !model.phoneNumber, 'danger': form.phoneNumber.$invalid && !form.phoneNumber.$pristine }"
-                                                   ng-focus="phoneNumberFocused = true" ng-blur="phoneNumberFocused = false"
-                                                   cs-pattern-restrict="^[0-9]*$">
-                                            <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Mobile number is required</div>
-                                        </div>
-                                    </div>
-                                </div>
+                                  </div>
                             </div>
                             <div class="col-xs-10 col-xs-offset-1 col-md-offset-0 col-md-4">
                                 <div class="form-group">
@@ -149,15 +150,17 @@
                         </div>
                         <div class="row">
                             <div class="col-md-10 form-group">
-                                <div class="checkboxes-group">
-                                    <div class="form-group gz-checkbox">
-                                        <gz-check-box gz-model="model" gz-value="agreed">Yes, please send me emails about news and offers.</gz-check-box>
+                                <div class="col-xs-10 col-xs-offset-1 col-md-offset-0">
+                                    <div class="checkboxes-group">
+                                        <div class="form-group gz-checkbox">
+                                            <gz-check-box gz-model="model" gz-value="agreed">Yes, please send me emails about news and offers.</gz-check-box>
+                                        </div>
+                                        <div class="form-group gz-checkbox">
+                                            <gz-check-box gz-model="model" gz-value="agreed">Yes, please send me exclusive offers by SMS.</gz-check-box>
+                                        </div>
                                     </div>
-                                    <div class="form-group gz-checkbox">
-                                        <gz-check-box gz-model="model" gz-value="agreed">Yes, please send me exclusive offers by SMS.</gz-check-box>
-                                    </div>
+                                    <button class="btn-gz modal-btn-gz update-prof-form up-prof-btn">Update Profile</button>
                                 </div>
-                                <button class="col-md-4 btn-gz modal-btn-gz update-prof-form up-prof-btn">Update Profile</button>
                             </div>
                         </div>
                     </form>

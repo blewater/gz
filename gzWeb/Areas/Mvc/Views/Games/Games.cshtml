@@ -3,46 +3,141 @@
 }
 <div class="games-list">
     <div class="container-fluid">
-        <div class="featured hidden" ng-repeat="featured in featuredGames">
-            <img src="{{featured.img}}" />
-            <input class="btn" value="{{featured.name}}" ng-click="onGameSelected(featured.slug)" />
-        </div>
-
-
-        <h1 class="text-center">Games Page 1</h1>
-
-        <div class="row">
-            <div class="col-md-12">
-                <span ng-repeat="category in gameCategories">
-                    <input class="btn" value="{{category}}" ng-click="onCategoryChanged(category)" /><span> </span>
-                </span>
-            </div>
-        </div>
-
-        <div class="row" ng-hide="gameLaunchData==null">
-            <div class="col-md-12">
-                <ul>
-                    <li>{{gameLaunchData.status}}</li>
-                    <li>{{gameLaunchData.statusText}}</li>
-                    <li>{{gameLaunchData.url}}</li>
-                    <li>{{gameUrl}}</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-2">
-                <ul>
-                    <li ng-repeat="game in games">
-                        <div>
-                            <img src="{{game.thumbnail}}" />
-                            <input class="btn" value="{{game.name}}" ng-click="onGameSelected(game.slug)" />
+        <uib-tabset justified="true">
+            <uib-tab index="0" heading="Most Popular" ng-show="mostPopularGames.length > 0">
+                <gz-featured-games gz-games="mostPopularGames"></gz-featured-games>
+            </uib-tab>
+            <uib-tab index="1" heading="Recommended" ng-show="recommendedGames.length > 0">
+                <gz-featured-games gz-games="recommendedGames"></gz-featured-games>
+            </uib-tab>
+            <uib-tab index="2" heading="Biggest Win" ng-show="biggestWinGames.length > 0">
+                <gz-featured-games gz-games="biggestWinGames"></gz-featured-games>
+            </uib-tab>
+            <uib-tab index="3" heading="Last Played" ng-show="lastPlayedGames.length > 0">
+                <gz-featured-games gz-games="lastPlayedGames"></gz-featured-games>
+            </uib-tab>
+            <uib-tab index="4" heading="Most Played" ng-show="mostPlayedGames.length > 0">
+                <gz-featured-games gz-games="mostPlayedGames"></gz-featured-games>
+            </uib-tab>
+            <uib-tab index="5" heading="Jackpots" ng-show="jackpots.length > 0">
+                <gz-featured-games gz-games="jackpots"></gz-featured-games>
+            </uib-tab>
+        </uib-tabset>
+        @*<div class="row relative">
+                <div class="col-xs-12">
+                    <div class="featured-games">
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="row">
+                                <gz-featured-game gz-game="featuredGames[0]"></gz-featured-game>
+                            </div>
                         </div>
-                    </li>
-                </ul>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="row">
+                                        <gz-featured-game gz-game="featuredGames[1]"></gz-featured-game>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="row">
+                                        <gz-featured-game gz-game="featuredGames[2]"></gz-featured-game>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="row">
+                                        <gz-featured-game gz-game="featuredGames[3]"></gz-featured-game>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="row">
+                                        <gz-featured-game gz-game="featuredGames[4]"></gz-featured-game>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+        @*<div class="slideshow" ng-class="{
+                 'auto':featured.auto,
+                 'manual':featured.manual,
+                 'instant':featured.instant
+                 }">
+                <div class="slide-nav-btn slide-nav-prev" ng-click="onPrev()">
+                    <i class="fa fa-3x fa-angle-left"></i>
+                </div>
+                <div class="slide-item move" ng-repeat="featured in featuredGames"
+                     ng-class="{
+                        'current':featured.isCurrent,
+                        'prev':featured.isPrev,
+                        'next':featured.isNext
+                     }">
+                    <img class="slide-bg" src="{{featured.backgroundImage}}" />
+                    <img class="slide-img" src="{{featured.logo}}" />
+                    <div class="slide-text text-shadow-dark">{{featured.name}}</div>
+                    <div class="slide-action">
+                        <button type="button" class="btn-gz btn-gz-alt" ng-click="onGameSelected(featured.slug)">
+                            Play now
+                        </button>
+                    </div>
+                </div>
+                <div class="slide-progress" ng-style="{'width': slideProgress + '%'}"></div>
+                <div class="slide-nav-btn slide-nav-next" ng-click="onNext()">
+                    <i class="fa fa-3x fa-angle-right"></i>
+                </div>
+            </div>*@
+
+        @*<div>{{slideMode}}</div>
+            <div ng-repeat="featured in featuredGames"
+                    ng-class="{
+                        'current':featured.isCurrent,
+                        'prev':featured.isPrev,
+                        'next':featured.isNext
+                        }">
+                <div class="col-xs-3">{{$index}}. {{featured.name}}</div>
+                <div class="col-xs-9">Prev = {{featured.isPrev}} - Current: {{featured.isCurrent}} - Next: {{featured.isNext}}</div>
+            </div>*@
+
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="filters clearfix">
+                    <div class="filter col-xs-12 col-lg-9">
+                        <div>Search by category</div>
+                        <div class="relative clearfix">
+                            <span ng-repeat="category in gameCategories">
+                                <button type="button" class="btn-category btn-gz" ng-class="{'btn-gz-alt': category.selected}" ng-click="onCategorySelected(category)">
+                                    {{category.name}}
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="filter col-xs-12 col-lg-3">
+                        <div>Search by name</div>
+                        <div class="relative clearfix">
+                            <input type="text" placeholder="SEARCH GAME" id="search" name="search" class="form-control" ng-model="searchInput"
+                                   ng-class="{ 'empty': !searchInput }" ng-focus="searchFocused = true" ng-blur="searchFocused = false">
+                            <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':searchFocused || searchInput}">
+                                <i class="fa fa-lg fa-search"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-10" ng-hide="gameLaunchData==null">
-                <iframe width="500" height="400" ng-src="{{gameUrl}}"></iframe>
+        </div>
+
+        <div class="category" ng-repeat="category in gameCategories">
+            <div class="category-heading" ng-class="{'text-center': xs}" ng-click="toggleCategoryCollapse(category)">
+                <span>{{category.name}}</span>
+                <span ng-show="collapsed" class="pull-right"><i class="fa fa-lg fa-chevron-circle-down"></i></span>
+                <span ng-hide="collapsed" class="pull-right"><i class="fa fa-lg fa-chevron-circle-up"></i></span>
+            </div>
+
+            <div class="games">
+                <div class="game-info text-center" ng-repeat="game in category.games">
+                    <img class="game-img" src="{{game.thumbnail}}" alt="{{game.name}}" ng-click="onGameSelected(game.slug)" />
+                    <div class="hidden game-name">{{game.name}}</div>
+                </div>
             </div>
         </div>
     </div>
