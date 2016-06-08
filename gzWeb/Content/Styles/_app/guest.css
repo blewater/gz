@@ -472,3 +472,8 @@
 }
 /* #endregion */
 
+/* #region Contact */
+.guest .contact .contact-content { margin-top: 150px; background-color: #27A95C!important; }
+
+.guest .contact .contact-content h4 { margin-bottom: 50px; }
+/* #endregion */
