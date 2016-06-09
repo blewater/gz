@@ -315,7 +315,7 @@
 	position: absolute;
 	width: 350px;
 	height: 180px;
-	bottom: -160px;
+	bottom: -169px;
 	left: 100px;
 	z-index: 100;	
 }
@@ -325,7 +325,9 @@
 
 
 /**************** MD ********************/
-@media (min-width: 992px) and (max-width: 1199px) { .guest .about .about-middle .laptop { bottom: -180px; } }
+@media (min-width: 992px) and (max-width: 1199px) {
+    .guest .about .about-middle .laptop { bottom: -189px; }    
+}
 
 /**************** XS - SM ********************/
 @media (max-width: 991px) {
@@ -372,7 +374,7 @@
     }
 	.guest .about .about-middle .laptop {
 		left: calc(50% - 175px);
-		bottom: -208px;
+		bottom: -217px;
 	}
 
     .guest .about .about-bottom .motivation { padding-bottom: 30px; }
@@ -396,11 +398,11 @@
 @media (max-width: 374px) { 
 	.guest .about .about-top .background-image { top: 70px; }
     .guest .about .about-middle p { margin-bottom: -20px }
-    .guest .about .about-middle .laptop { width: 320px; height: 160px; left: calc(50% - 160px); bottom: -206px; }
+    .guest .about .about-middle .laptop { width: 320px; height: 160px; left: calc(50% - 160px); bottom: -216px; }
 }
 
 @media (max-width: 340px) {
-    .guest .about .about-middle .laptop { width: 300px; height: 150px; left: calc(50% - 150px); bottom: -206px; }
+    .guest .about .about-middle .laptop { width: 260px; height: 130px; left: calc(50% - 130px); bottom: -215px; }
 }
 /* #endregion */
 
