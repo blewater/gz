@@ -475,38 +475,77 @@
 /* #endregion */
 
 /* #region Contact */
-.guest .contact .contact-content { margin-top: 150px; background-color: #c5c5c5; padding: 20px; color: white;  }
+.guest .contact .contact-content { margin-top: 60px; /*padding: 20px;*/ color: #27A95C;  }
 
-.guest .contact .contact-content h4 { margin-bottom: 50px; }
+.guest .contact .contact-content iframe { width: 100%; height: 500px; }
 
-.guest .contact .contact-content .contact-form .form-group { margin-bottom: 0; }
+.guest .contact .contact-content .contact-bottom { background-color: #ececec; margin: 60px 0; padding: 30px 0; }
 
-.guest .contact .contact-content .contact-form .form-group .form-control { 
+.guest .contact .contact-content .contact-bottom h3 { margin-bottom: 30px; }
+
+.guest .contact .contact-content .contact-bottom .social-media { margin-top: 70px; margin-bottom: 80px; }
+
+.guest .contact .contact-content .contact-bottom .social-media .social-circle { 
+    border: 2px solid #29A95C;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    background-color: #27A95C;
+    font-size: 35px;
+    color: white;
+    display: inline-block;
+    margin: 10px;
+
+    transition: all 0.3s ease;
+}
+
+.guest .contact .contact-content .contact-bottom .social-media a:hover {
+    text-decoration: none;
+}
+
+.guest .contact .contact-content .contact-bottom .social-media .social-circle:hover {
+    background-color: #ececec;
+    color: #27A95C;
+    -webkit-transform: scale(1.05);
+	-moz-transform: scale(1.05);
+	-ms-transform: scale(1.05);
+	transform: scale(1.05);
+}
+
+.guest .contact .contact-content .contact-bottom .contact-info { margin-bottom: 60px; }
+
+.guest .contact .contact-content .contact-bottom .contact-info a { color: #29A95C; }
+.guest .contact .contact-content .contact-bottom .contact-info a:hover { text-decoration: none; font-weight: bold; }
+
+.guest .contact .contact-content .contact-bottom .contact-form .form-group { margin-bottom: 0; }
+
+.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control { 
     border: 0; 
-    border-bottom: 1px solid white; 
+    border-bottom: 1px solid #27A95C;; 
     background-color: transparent;
     padding: 0;
-    color: white;
+    color: #27A95C;;
     border-style: solid;   
     box-shadow: inset 0px 0px 0px 0px;
 }
 
-.guest .contact .contact-content .contact-form .form-group .form-control::-webkit-input-placeholder { color: white; }
-.guest .contact .contact-content .contact-form .form-group .form-control:-moz-placeholder { color: white; }
-.guest .contact .contact-content .contact-form .form-group .form-control::-moz-placeholder  { color: white; }
-.guest .contact .contact-content .contact-form .form-group .form-control:-ms-input-placeholder { color: white; }
+.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control::-webkit-input-placeholder { color: #27A95C;; }
+.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control:-moz-placeholder { color: #27A95C;; }
+.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control::-moz-placeholder  { color: #27A95C;; }
+.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control:-ms-input-placeholder { color: #27A95C;; }
 
-.guest .contact .contact-content .contact-form .message-card { 
-    border: 1px solid white; 
+.guest .contact .contact-content .contact-bottom .contact-form .message-card { 
+    border: 1px solid #27A95C;; 
     padding: 10px; 
-    border-radius: 5px;
     margin: 20px 0;
 }
 
-.guest .contact .contact-content .contact-form .form-group textarea { 
-    background-image: linear-gradient(rgba(255,255,255,.26) .1em,transparent .1em); 
+.guest .contact .contact-content .contact-bottom .contact-form .message-card .form-group textarea { 
+    background-image: linear-gradient(rgba(39, 169, 92, .5) .1em,transparent .1em); 
     background-size: 100% 20px;
     border: none!important;
     margin-top: 10px;    
 }
+
+.guest .contact .contact-content .contact-bottom .contact-form .btn-gz { margin-right: 0; }
 /* #endregion */
