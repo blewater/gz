@@ -5,8 +5,6 @@
     function serviceFactory() {
         var _duration = 400;
 
-        init();
-
         var service = {
             show: show,
             hide: hide
@@ -14,14 +12,17 @@
         return service;
 
         function show() {
-            $('.zopim:first-of-type').fadeIn(_duration);
+            if ($('.zopim').length > 0)
+                $('.zopim:first-of-type').fadeIn(_duration);
+            else
+                init();
         }
         function hide() {
             $('.zopim').fadeOut(_duration);
         }
 
         function _onLoad() {
-            
+            show();
         }
 
         function init() {
@@ -33,7 +34,7 @@
                 z.set = function (o) { z.set._.push(o); };
                 z._ = [];
                 z.set._ = [];
-                z.s.async = !0;
+                z.s.async = true;
                 z.s.setAttribute("charset", "utf-8");
                 z.s.src = "//v2.zopim.com/?3ql1n78VIwjWnWgVfrbuXG2sCMcCHPuM";
                 z.s.addEventListener('load', _onLoad);
