@@ -475,7 +475,38 @@
 /* #endregion */
 
 /* #region Contact */
-.guest .contact .contact-content { margin-top: 150px; background-color: #27A95C!important; }
+.guest .contact .contact-content { margin-top: 150px; background-color: #c5c5c5; padding: 20px; color: white;  }
 
 .guest .contact .contact-content h4 { margin-bottom: 50px; }
+
+.guest .contact .contact-content .contact-form .form-group { margin-bottom: 0; }
+
+.guest .contact .contact-content .contact-form .form-group .form-control { 
+    border: 0; 
+    border-bottom: 1px solid white; 
+    background-color: transparent;
+    padding: 0;
+    color: white;
+    border-style: solid;   
+    box-shadow: inset 0px 0px 0px 0px;
+}
+
+.guest .contact .contact-content .contact-form .form-group .form-control::-webkit-input-placeholder { color: white; }
+.guest .contact .contact-content .contact-form .form-group .form-control:-moz-placeholder { color: white; }
+.guest .contact .contact-content .contact-form .form-group .form-control::-moz-placeholder  { color: white; }
+.guest .contact .contact-content .contact-form .form-group .form-control:-ms-input-placeholder { color: white; }
+
+.guest .contact .contact-content .contact-form .message-card { 
+    border: 1px solid white; 
+    padding: 10px; 
+    border-radius: 5px;
+    margin: 20px 0;
+}
+
+.guest .contact .contact-content .contact-form .form-group textarea { 
+    background-image: linear-gradient(rgba(255,255,255,.26) .1em,transparent .1em); 
+    background-size: 100% 20px;
+    border: none!important;
+    margin-top: 10px;    
+}
 /* #endregion */
