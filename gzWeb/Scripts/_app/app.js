@@ -34,8 +34,8 @@ var APP = (function () {
     ]);
 
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', '$filter', 'api',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, $filter, api) {
+        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat',
+        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat) {
             $rootScope.loading = true;
             $rootScope.initialized = false;
             localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
@@ -103,6 +103,7 @@ var APP = (function () {
 
                 $rootScope.loading = false;
                 $rootScope.initialized = true;
+                chat.show();
             });
         }
     ]);
