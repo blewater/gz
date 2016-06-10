@@ -24,22 +24,22 @@
                                 <h3>Follow us</h3>
                                 <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
                                 <div class="col-md-12">
-                                    <a href="https://www.facebook.com/Greenzorro-520872994721625/timeline/">
+                                    <a target="_blank" href="https://www.facebook.com/Greenzorro-520872994721625/timeline/">
                                         <div class="social-circle">
                                             <i class="fa fa-facebook"></i>
                                         </div>
                                     </a>
-                                    <a href="https://twitter.com/GrZorro">
+                                    <a target="_blank" href="https://twitter.com/GrZorro">
                                         <div class="social-circle">
                                             <i class="fa fa-twitter"></i>
                                         </div>
                                     </a>
-                                    <a href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home">
+                                    <a target="_blank" href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home">
                                         <div class="social-circle">
                                             <i class="fa fa-linkedin"></i>
                                         </div>
                                     </a>
-                                    <a href="https://www.instagram.com/greenzorro_official/">
+                                    <a target="_blank" href="https://www.instagram.com/greenzorro_official/">
                                         <div class="social-circle">
                                             <i class="fa fa-instagram"></i>
                                         </div>
@@ -52,7 +52,7 @@
                                 <div class="col-md-12">
                                     <p><b><b>Greenzorro LTD.</b></b></p>
                                     <p>80-83 , Long Lane LONDON EC1A 9ET</p>
-                                    <a href="mailto:contact@greenzorro.com">contact@greenzorro.com</a>
+                                    <a target="_blank" href="mailto:contact@greenzorro.com">contact@greenzorro.com</a>
                                 </div>
                             </div>
                         </div>
@@ -60,22 +60,42 @@
                             <h3 class="text-center">Contact us</h3>
                             <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
                             <div class="col-md-12">
-                                <form class="contact-form">
+                                <form name="contactForm" class="contact-form" novalidate>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Name" required/>
+                                        <input type="text" id="name" name="name" class="form-control" ng-model="name" placeholder="Name" required/>
+                                        <span ng-show="contactForm.name.$touched || (contactForm.name.$dirty && contactForm.name.$invalid)">
+                                            <span ng-show="contactForm.name.$error.required">Name is required.</span>
+                                        </span>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="E-mail" required/>
+                                        <input type="email" id="email" name="email" class="form-control" ng-model="email" placeholder="E-mail" required/>
+                                        <span ng-show="contactForm.email.$touched && contactForm.email.$invalid">
+                                            <span ng-show="contactForm.email.$error.required">Email is required.</span>
+                                            <span ng-show="contactForm.email.$error.email">Invalid email address.</span>
+                                        </span>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Subject" required/>
+                                        <input type="text" id="subject" name="subject" class="form-control" ng-model="subject" placeholder="Subject" required/>
+                                        <span ng-show="contactForm.subject.$touched || (contactForm.subject.$dirty && contactForm.subject.$invalid)">
+                                            <span ng-show="contactForm.subject.$error.required">Subject is required.</span>
+                                        </span>
                                     </div>
                                     <div class="message-card">
                                         <div class="form-group">
-                                            <textarea type="text" rows="10" class="form-control" placeholder="Enter your message here" required/>
+                                            <textarea type="text" id="message" name="message" rows="10" class="form-control" ng-model="message" placeholder="Enter your message here" required/>
+                                            <span ng-show="contactForm.message.$touched || (contactForm.message.$dirty && contactForm.message.$invalid)">
+                                                <span ng-show="contactForm.message.$error.required">Message is required.</span>
+                                            </span>
                                         </div>
                                     </div>
-                                    <button class="btn-gz pull-right" type="submit">Send</button>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div vc-recaptcha key="reCaptchaPublicKey" class="recaptcha-wrap"></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button ng-disabled="contactForm.$invalid" class="btn-gz pull-right" type="submit">Send</button>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>

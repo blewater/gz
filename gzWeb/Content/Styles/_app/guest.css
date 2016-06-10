@@ -479,7 +479,7 @@
 
 .guest .contact .contact-content iframe { width: 100%; height: 500px; }
 
-.guest .contact .contact-content .contact-bottom { background-color: #ececec; margin: 60px 0; padding: 30px 0; }
+.guest .contact .contact-content .contact-bottom { background-color: #fff; margin: 60px 0; padding: 30px 0; }
 
 .guest .contact .contact-content .contact-bottom h3 { margin-bottom: 30px; }
 
@@ -534,6 +534,8 @@
 .guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control::-moz-placeholder  { color: #27A95C;; }
 .guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control:-ms-input-placeholder { color: #27A95C;; }
 
+.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control { /*background-color: #fff;*/ }
+
 .guest .contact .contact-content .contact-bottom .contact-form .message-card { 
     border: 1px solid #27A95C;; 
     padding: 10px; 
@@ -548,4 +550,7 @@
 }
 
 .guest .contact .contact-content .contact-bottom .contact-form .btn-gz { margin-right: 0; }
+
+.guest .contact .contact-content .contact-bottom .contact-form .form-group input.ng-invalid.ng-touched { border-bottom: 1px solid red; }
+.guest .contact .contact-content .contact-bottom .contact-form .form-group span { color: red; font-size: 12px; }
 /* #endregion */
