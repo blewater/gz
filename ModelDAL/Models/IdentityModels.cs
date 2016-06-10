@@ -212,6 +212,7 @@ namespace gzDAL.Models
         public DbSet<PortFund> PortFunds { get; set; }
         public DbSet<SoldVintage> SoldVintages { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
+        public DbSet<LogEntry> LogEntries { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
