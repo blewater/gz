@@ -26,13 +26,13 @@
             }
         }
 
-        $scope.watchVideo = function() {
-            message.open({
-                nsType: 'modal',
-                nsSize: '640px',
-                nsTemplate: '/partials/messages/explainerVideo.html'
-            });
-        }
+        //$scope.watchVideo = function() {
+        //    message.open({
+        //        nsType: 'modal',
+        //        nsSize: '640px',
+        //        nsTemplate: '/partials/messages/explainerVideo.html'
+        //    });
+        //}
 
         $scope._init('summary', readResetPwdKeys);
     }
