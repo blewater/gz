@@ -33,7 +33,7 @@ namespace gzDAL.Models
 
         [StringLength(Int32.MaxValue)]
         public string Url { get; set; }
-        
+
         public bool Https { get; set; }
 
         [StringLength(Int32.MaxValue)]
