@@ -1,28 +1,53 @@
 ﻿<footer class="bg-gz" ng-controller="footerCtrl">
-    <div class="container cl-effect">
-        <div class="pull-left">
-            <a ng-href="/faq">FAQ</a>
+    <div class="container">
+        <div class="hidden footer-menu cl-effect">
+            <div class="pull-left">
+                <a ng-href="/faq">FAQ</a>
+                <a ng-href="/transparency">TRANSPARENCY</a>
+                <a ng-href="/about">ABOUT</a>
+                <a ng-href="/contact">CONTACT</a>
+            </div>
+            <div class="pull-right">
+                <a href="https://www.facebook.com/Greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook"></i></a>
+                <a href="https://twitter.com/GrZorro" target="_blank"><i class="fa fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home" target="_blank"><i class="fa fa-linkedin"></i></a>
+                <a href="https://www.instagram.com/greenzorro_official/" target="_blank"><i class="fa fa-instagram"></i></a>
+                <a href="mailto:contact@greenzorro.com" target="_blank"><i class="fa fa-envelope"></i></a>
+                <a href="http://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker"></i></a>
+            </div>
+        </div>
+        <div class="footer-menu cl-effect text-center">
             <a ng-href="/transparency">TRANSPARENCY</a>
             <a ng-href="/about">ABOUT</a>
+            <a ng-href="/faq">FAQ</a>
             <a ng-href="/contact">CONTACT</a>
         </div>
-        <div class="pull-right">
-            <a href="https://www.facebook.com/Greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook"></i></a>
-            <a href="https://twitter.com/GrZorro" target="_blank"><i class="fa fa-twitter"></i></a>
-            <a href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home" target="_blank"><i class="fa fa-linkedin"></i></a>
-            <a href="https://www.instagram.com/greenzorro_official/" target="_blank"><i class="fa fa-instagram"></i></a>
+        @*<img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />*@
+        <div class="footer-social cl-effect text-center">
+            <a href="https://www.facebook.com/Greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook" ng-class="{'fa-lg': !xs}"></i></a>
+            <a href="https://twitter.com/GrZorro" target="_blank"><i class="fa fa-twitter" ng-class="{'fa-lg': !xs}"></i></a>
+            <a href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home" target="_blank"><i class="fa fa-linkedin" ng-class="{'fa-lg': !xs}"></i></a>
+            <a href="https://www.instagram.com/greenzorro_official/" target="_blank"><i class="fa fa-instagram" ng-class="{'fa-lg': !xs}"></i></a>
+            <a href="mailto:contact@greenzorro.com" target="_blank"><i class="fa fa-envelope" ng-class="{'fa-lg': !xs}"></i></a>
+            <a href="http://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker" ng-class="{'fa-lg': !xs}"></i></a>
         </div>
+        <div class="copyright text-center">
+            &copy; {{copyrightYears}} | Greenzorro LTD | All rights reserved
+        </div>
+        <div class="company-registration text-center">
+            <span>Company registration number: 9320285</span>
+            <span class="company-registration-separator"> | </span>
+            <br class="company-registration-separator" /> 
+            <span>Registered in England & Wales</span>
+        </div>
+
         @*<div class="text-center hidden">
                 <span class="visible-lg">LG</span>
                 <span class="visible-md">MD</span>
                 <span class="visible-sm">SM</span>
                 <span class="visible-xs">XS</span>
             </div>
-
-            <div class="text-center">
-                &copy; {{copyrightYears}} Greenzorro. All rights reserved v @typeof(MvcApplication).Assembly.GetName().Version
-            </div>*@
-
+        *@
     </div>
 </footer>
 
