@@ -11,8 +11,6 @@ namespace gzCpcLib.Task {
     /// </summary>
     public abstract class CpcTask : ICpcTask {
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         /// <summary>
         /// 
         /// Return an observable for the declared task

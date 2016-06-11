@@ -10,6 +10,8 @@ namespace gzCpcLib.Task {
     /// </summary>
     public class FundsUpdTask : CpcTask {
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public override void DoTask() {
 
             var fundRepo = new FundRepo(new ApplicationDbContext());
