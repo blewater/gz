@@ -318,9 +318,9 @@
     <Compile Include="Migrations\201606080939594_ActiveGzCustomer.Designer.cs">
       <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201606101950312_LogEntry-Table.cs" />
-    <Compile Include="Migrations\201606101950312_LogEntry-Table.Designer.cs">
-      <DependentUpon>201606101950312_LogEntry-Table.cs</DependentUpon>
+    <Compile Include="Migrations\201606111158443_fix.cs" />
+    <Compile Include="Migrations\201606111158443_fix.Designer.cs">
+      <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -731,8 +731,8 @@
     <EmbeddedResource Include="Migrations\201606080939594_ActiveGzCustomer.resx">
       <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201606101950312_LogEntry-Table.resx">
-      <DependentUpon>201606101950312_LogEntry-Table.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201606111158443_fix.resx">
+      <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
