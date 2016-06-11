@@ -518,11 +518,11 @@
 }
 
 .auth.mgmt-modal .mgmt-content.right-content {  
-    width: 30%;
+    /*width: 30%;*/
     /*float: right;*/
     right: 0;
     top: 0;
-    position: absolute;
+    /*position: absolute;*/
     
 }
 
@@ -623,12 +623,17 @@
 /*endregion*/
 
 /*region Withdraw*/
+.auth.mgmt-modal.withdraw .mgmt-content.right-content { position: absolute; }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { height: 70px; width: 85%; padding: 10px; margin-top: 25px; }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer-inner { height: 50px; width: 80px; float: left; padding: 5px; }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer p {  font-size: 17px; }
 .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer .text-holder { float: left; margin-left: 5%; display: block; margin-top: 2px; }
 
 .auth.mgmt-modal.withdraw .mgmt-content h4 { padding-bottom: 10px; }
+
+@media (max-width: 991px) {
+    .auth.mgmt-modal.withdraw .mgmt-content.right-content { position: static;}
+}
 
 /**************** XS ********************/
 @media (max-width: 767px) {
@@ -639,6 +644,7 @@
 /*endregion*/
 
 /*region Deposit*/
+/*.auth.mgmt-modal.deposit .mgmt-content.right-content { width: 30%; }*/
 .auth.mgmt-modal.deposit .mgmt-content { overflow-x: hidden; }
 .auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder { height: 40px; }
 .auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder .selected-credit-card { 
@@ -734,21 +740,22 @@
 
 /*region My Profile*/
 .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form { margin-top: 20px; margin-left: 15px; }
+.auth.mgmt-modal.my-profile .mgmt-content h4 { margin-left: -3px; margin-bottom: 25px; }
 
 .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .form-control { height: 40px; }
 .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .checkboxes-group { margin-top: 15px; }
 
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { margin-left: -3px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { margin-left: 0 }
 .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox:first-of-type { margin-bottom: -1px; }
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 57%; margin-left: -6px; margin-bottom: 50px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 50%; margin-left: -1px; margin-bottom: 50px; }
 
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group #mobile { margin-top: 5px; }
+.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group #phoneNumber { margin-top: 5px; }
 
 /**************** XS - SM ********************/
 @media (max-width: 991px) {
-    .auth.mgmt-modal.my-profile .mgmt-content h4 { margin-left: -10px; }
+    /*.auth.mgmt-modal.my-profile .mgmt-content h4 { margin-left: -10px; }*/
 
-    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 104%; }
+    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 100%; }
 }
 
 /**************** XS ********************/

@@ -7,7 +7,7 @@
     <h1 class="text-center">
         <span class="glyphicon-euro"> @Html.DisplayFor(model => model.InvBalance)</span>
     </h1>
-    <p class="text-center">Your investment balance.</p>
+    <p class="text-center">Your @*investment balance*@bonus balance allocated to investments.</p>
 </div>
 <div class="container">
     <div class="row">
@@ -66,7 +66,7 @@
                 <p><strong>@DateTime.Now.AddMonths(1).AddDays(-1).ToString("MMMM d")</strong></p>
                 <p>Investment amount:</p>
                 <p><strong><span class="glyphicon-euro">@Html.DisplayFor(model => model.LastInvestmentAmount)</span></strong></p>
-                <p>*Status as of @DateTime.Now.ToString("MMM d, h:mm tt") - 50% of net losses (cach in - cash out - investment balance)</p>
+                <p>*Status as of @DateTime.Now.ToString("MMM d, h:mm tt") - 50% of net losses (cach in - cash out - @*investment balance*@bonus balance allocated to investments)</p>
             </div>
         </div>
     </div>
