@@ -153,6 +153,28 @@
                 //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
             }
         });
+
+        //var requestPath = undefined;
+        //factory.nonAuthRedirect = function () {
+        //    var path = $location.url();
+        //    if (path && path !== constants.routes.home.path)
+        //        requestPath = path;
+        //    $location.path(constants.routes.home.path);
+        //};
+        //factory.loginRedirect = function () {
+        //    if (angular.isDefined(requestPath))
+        //        $location.path(requestPath);
+        //    else if (factory.data.isGamer)
+        //        $location.path(constants.routes.games.path);
+        //    else if (factory.data.isInvestor)
+        //        $location.path(constants.routes.summary.path);
+        //};
+        //var currentRoute = $route.current.$$route;
+        //if (!auth.authorize(currentRoute.roles))
+        //    $location.path(constants.routes.home.path);
+        //else
+        //    setRouteData(currentRoute);
+
         // #endregion
 
         // #region Authorize
@@ -237,19 +259,19 @@
         factory.login = function (usernameOrEmail, password, captcha) {
             var q = $q.defer();
             emLogin(usernameOrEmail, password, captcha).then(function(emLoginResult) {
-                    //for (var i = 0; i < emLoginResult.roles.length; i++)
-                    //    console.log("==========> EveryMatrix Role " + i + ": " + emLoginResult.roles[i]);
-                    //factory.data.push(emLoginResult.roles[i]);
-                    //storeAuthData();
-                    if (emLoginResult.hasToEnterCaptcha)
-                        q.resolve({ enterCaptcha: true });
-                    else {
+                //for (var i = 0; i < emLoginResult.roles.length; i++)
+                //    console.log("==========> EveryMatrix Role " + i + ": " + emLoginResult.roles[i]);
+                //factory.data.push(emLoginResult.roles[i]);
+                //storeAuthData();
+                if (emLoginResult.hasToEnterCaptcha)
+                    q.resolve({ enterCaptcha: true });
+                else {
                     gzLogin(usernameOrEmail, password).then(function () {
-                            emWamp.getSessionInfo().then(function(sessionInfo) {
-                                api.setUserId(sessionInfo.userID);
-                            }, function(error) {
+                        emWamp.getSessionInfo().then(function(sessionInfo) {
+                            api.setUserId(sessionInfo.userID);
+                        }, function(error) {
 
-                            });
+                        });
                         //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
@@ -333,7 +355,11 @@
                 gzLogin(parameters.username, parameters.password).then(function (gzLoginResult) {
                     emRegister(parameters).then(function (emRegisterResult) {
                         emLogin(parameters.username, parameters.password).then(function (emLoginResult) {
-                            q.resolve(true);
+                            api.finalizeRegistration().then(function () {
+                                q.resolve(true);
+                            }, function (finalizeError) {
+                                q.reject(finalizeError);
+                            });
                         }, function (emLoginError) {
                             q.reject(emLoginError);
                         });
