@@ -1,6 +1,7 @@
 ﻿using System;
 using CommandLine;
 using CommandLine.Text;
+using NLog;
 
 namespace gzCpcLib.Options
 {
@@ -11,6 +12,8 @@ namespace gzCpcLib.Options
     /// </summary>
     public class CpcOptions
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public bool ParsingSuccess { get; private set; }
 
         [Option('a', "all",
