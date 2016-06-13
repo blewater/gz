@@ -83,13 +83,24 @@ namespace gzDAL.Repos {
                 throw new Exception("startYearMonth and endYearMonth cannot be empty or null");
             }
 
-            var customerIds = _db.GzTrxs
-                .Where(LaterEq(startYearMonthStr))
-                .Where(BeforeEq(endYearMonthStr))
-                .OrderBy(t => t.CustomerId)
-                .Select(t => t.CustomerId)
-                .Distinct()
-                .ToList();
+            var customerIds =
+
+//_db.GzTrxs
+//.Where(LaterEq(startYearMonthStr))
+//.Where(BeforeEq(endYearMonthStr))
+//.OrderBy(t => t.CustomerId)
+//.Select(t => t.CustomerId)
+//.Distinct()
+//.ToList();
+
+                from t in _db.GzTrxs
+                join c in _db.Users on t.CustomerId equals c.Id
+                where !c.DisabledGzCustomer && !c.ClosedGzAccount 
+                    && string.Compare(t.YearMonthCtd, startYearMonthStr, StringComparison.Ordinal) >= 0
+                    && string.Compare(t.YearMonthCtd, endYearMonthStr, StringComparison.Ordinal) <= 0
+                group c by c.Id
+                into g
+                select g.Key;
 
             return customerIds;
         }

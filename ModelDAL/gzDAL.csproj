@@ -132,6 +132,7 @@
     <Compile Include="Models\CurrencyRate.cs" />
     <Compile Include="Models\GzTrx.cs" />
     <Compile Include="Models\GzTrxType.cs" />
+    <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\SoldVintage.cs" />
     <Compile Include="Models\TestDbContext.cs" />
     <Compile Include="Repos\CurrencyRateRepo.cs" />
