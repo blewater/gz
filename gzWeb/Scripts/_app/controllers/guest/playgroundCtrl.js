@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp, chat, $location, auth) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, chat, $location, auth, constants) {
         // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -130,6 +130,11 @@
                 nsSize: '640px',
                 nsTemplate: '/partials/messages/explainerVideo.html'
             });
+        }
+
+        $scope.currentRoute = function() {
+            if ($location.path() === constants.routes.home.path)
+                $location.path(constants.routes.games.path);
         }
         // #endregion
 
