@@ -7,7 +7,7 @@
         var maxYear = thisYear + 30;
 
         $scope.model = {
-            selectExisting: undefined,
+            selectedCreditCard: undefined,
             cardNumber: undefined,
             cardHolderName: undefined,
             cardSecurityNumber: undefined,
@@ -58,17 +58,22 @@
             $scope.loadingMonths = false;
         }
 
-        $scope.onCreditCardSelected = function (card) {
+        $scope.onCreditCardSelected = function (cardId) {
+            var card = $filter('where')($scope.existingCreditCards, { 'id': cardId })[0];
             $scope.model.existingCard = card;
-            // if (card) {
-            //     $scope.model.id = card.id;
-            //     $scope.model.cardNumber = card.name;
-            //     $scope.model.cardHolderName = card.cardHolderName;
-            //     $scope.model.cardExpiryYear = parseInt(card.cardExpiryDate.slice(0, 2));
-            //     $scope.model.cardExpiryMonth = parseInt(card.cardExpiryDate.slice(0, -4));
-            // }
-            // else {                
-            // }
+            if (card) {
+                $scope.model.cardNumber = card.name;
+                $scope.model.cardHolderName = card.cardHolderName;
+                $scope.model.cardExpiryYear = $filter('where')($scope.years, { 'value': parseInt(card.cardExpiryDate.slice(-4)) })[0];
+                $scope.model.cardExpiryMonth = $filter('where')($scope.months, { 'value': parseInt(card.cardExpiryDate.slice(0, 2)) })[0];
+                angular.element('#cardSecurityNumber').focus();
+            } else {
+                $scope.model.cardNumber = undefined;
+                $scope.model.cardHolderName = undefined;
+                $scope.model.cardExpiryYear = undefined;
+                $scope.model.cardExpiryMonth = undefined;
+                angular.element('#cardNumber').focus();
+            }
         };
 
         function loadCreditCardInfo() {
