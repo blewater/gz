@@ -243,13 +243,12 @@
                 var category = $scope.gameCategories[i];
                 category.games = [];
                 category.collapsed = false;
+                category.currentPageIndex = 0;
+                category.totalGameCount = 0;
+                category.totalPageCount = 0;
                 if (category.selected)
                     fetchGamesByCategory(category, names);
             }
-            //helpers.array.applyWithDelay($scope.gameCategories, function (category) {
-            //}, 300, function() {
-            //    $scope.searching = false;
-            //});
         };
 
         $scope.onCategorySelected = function (category) {
