@@ -431,11 +431,15 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            return OkMsg(() =>
-            {
-                //IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-                //return result;
-            });
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null)
+                return Ok("User not found!");
+
+            var result = await UserManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return GetErrorResult(result);
+
+            return Ok(result);
         }
 
         [HttpPost]
