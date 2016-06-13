@@ -146,9 +146,13 @@
             }
             //else if (args.code === 2) {
             //}
+            else if (args.code === 3) {
+                //message.info(args.desc);
+                factory.logout(args.desc);
+            }
             else {
                 // TODO Check other codes
-                emLogout();
+                factory.logout();
                 //$location.path(constants.routes.home.path);
                 //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
             }
@@ -200,18 +204,18 @@
         function gzLogout() {
             clearInvestmentData();
         }
-        function emLogout() {
+        function emLogout(reason) {
             clearGamingData();
             unwatchBalance();
             emWamp.logout();
             //$location.path(constants.routes.home.path);
             //$window.location.reload();
-            $window.location.href = constants.routes.home.path;
+            $window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
         }
 
-        factory.logout = function () {
+        factory.logout = function (reason) {
             gzLogout();
-            emLogout();
+            emLogout(reason);
             //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
 
             // TODO
@@ -259,24 +263,17 @@
         factory.login = function (usernameOrEmail, password, captcha) {
             var q = $q.defer();
             emLogin(usernameOrEmail, password, captcha).then(function(emLoginResult) {
-                //for (var i = 0; i < emLoginResult.roles.length; i++)
-                //    console.log("==========> EveryMatrix Role " + i + ": " + emLoginResult.roles[i]);
-                //factory.data.push(emLoginResult.roles[i]);
-                //storeAuthData();
                 if (emLoginResult.hasToEnterCaptcha)
                     q.resolve({ enterCaptcha: true });
                 else {
                     gzLogin(usernameOrEmail, password).then(function () {
-                        //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
-                        //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
                     });
                 }
             }, function (emLoginError) {
                 gzLogin(usernameOrEmail, password).then(function () {
-                    //$location.path(constants.routes.summary.path);
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
                 }, function (gzLoginError) {
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
