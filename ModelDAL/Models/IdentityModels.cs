@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using gzDAL.ModelUtil;
 
 namespace gzDAL.Models
@@ -46,6 +47,28 @@ namespace gzDAL.Models
 
         [Required]
         public string Currency { get; set; }
+
+        /// <summary>
+        /// Whether the account is disabled temporarily for any reason
+        /// </summary>
+        private bool _disabledGzCustomer = false;
+        [Required]
+        public bool DisabledGzCustomer {
+            get { return _disabledGzCustomer; }
+            set { _disabledGzCustomer = value; }
+        }
+
+        /// <summary>
+        /// Whether the account is closed and no longer a Gz customer.
+        /// </summary>
+        private bool _closedGzAccount;
+        [Required]
+        public bool ClosedGzAccount {
+            get { return _closedGzAccount; }
+            set { _closedGzAccount = value; }
+        }
+
+
 
         /// <summary>
         /// Must get from Casino Operator
@@ -212,6 +235,7 @@ namespace gzDAL.Models
         public DbSet<PortFund> PortFunds { get; set; }
         public DbSet<SoldVintage> SoldVintages { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
+        public DbSet<LogEntry> LogEntries { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

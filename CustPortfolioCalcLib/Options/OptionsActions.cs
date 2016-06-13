@@ -4,6 +4,8 @@ using System.Reactive.Linq;
 using System.Runtime.Remoting.Messaging;
 using gzCpcLib.Task;
 using NLog;
+using PostSharp.Patterns.Diagnostics;
+using PostSharp.Extensibility;
 
 namespace gzCpcLib.Options {
 
@@ -14,30 +16,29 @@ namespace gzCpcLib.Options {
     /// </summary>
     public class OptionsActions {
 
-        private readonly CpcOptions cpcOptions;
-        private readonly ExchRatesUpdTask exchRatesUpd;
-        private readonly FundsUpdTask fundsUpd;
-        private readonly CustomerBalanceUpdTask customerBalUpd;
-        private readonly Logger logger;
+        private readonly CpcOptions _cpcOptions;
+        private readonly ExchRatesUpdTask _exchRatesUpd;
+        private readonly FundsUpdTask _fundsUpd;
+        private readonly CustomerBalanceUpdTask _customerBalUpd;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public bool IsProcessing { get; private set; }
 
         public OptionsActions(CpcOptions inCpcOptions,
             ExchRatesUpdTask inExchRatesUpd,
             FundsUpdTask inFundsUpd,
-            CustomerBalanceUpdTask inCustomerBalUpd,
-            Logger inLogger) {
+            CustomerBalanceUpdTask inCustomerBalUpd) {
 
-            this.cpcOptions = inCpcOptions;
-            this.exchRatesUpd = inExchRatesUpd;
-            this.fundsUpd = inFundsUpd;
-            this.customerBalUpd = inCustomerBalUpd;
-            this.logger = inLogger;
+            this._cpcOptions = inCpcOptions;
+            this._exchRatesUpd = inExchRatesUpd;
+            this._fundsUpd = inFundsUpd;
+            this._customerBalUpd = inCustomerBalUpd;
         }
 
+        [Log]
         public void ProcessOptions() {
 
-            if (!cpcOptions.ParsingSuccess) {
+            if (!_cpcOptions.ParsingSuccess) {
 
                 logger.Trace("Exiting ProcessOptions cpcOptions.ParsingSucces is false");
 
@@ -48,30 +49,31 @@ namespace gzCpcLib.Options {
             // Starting to process
             IsProcessing = true;
 
-            if (cpcOptions.CurrenciesMarketUpdOnly) {
+            if (_cpcOptions.CurrenciesMarketUpdOnly) {
 
-                SubscribeToObs(exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing: true);
-
-            }
-            else if (cpcOptions.StockMarketUpdOnly) {
-
-                SubscribeToObs(fundsUpd, "Funds stock values updated.", indicateWhenCompleteProcessing: true);
+                logger.Trace("In _cpcOptions.CurrenciesMarketUpdOnly");
+                SubscribeToObs(_exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing: true);
 
             }
-            else if (cpcOptions.FinancialValuesUpd) {
+            else if (_cpcOptions.StockMarketUpdOnly) {
 
-                MergeObs(exchRatesUpd, fundsUpd, "Financial Values Updated.");
+                SubscribeToObs(_fundsUpd, "Funds stock values updated.", indicateWhenCompleteProcessing: true);
 
             }
-            else if (cpcOptions.ProcessEverything || cpcOptions.CustomersToProc.Length > 0 || cpcOptions.YearMonthsToProc.Length > 0) {
+            else if (_cpcOptions.FinancialValuesUpd) {
 
-                customerBalUpd.CustomerIds = cpcOptions.CustomersToProc;
-                customerBalUpd.YearMonthsToProc = cpcOptions.YearMonthsToProc;
+                MergeObs(_exchRatesUpd, _fundsUpd, "Financial Values Updated.");
+
+            }
+            else if (_cpcOptions.ProcessEverything || _cpcOptions.CustomersToProc.Length > 0 || _cpcOptions.YearMonthsToProc.Length > 0) {
+
+                _customerBalUpd.CustomerIds = _cpcOptions.CustomersToProc;
+                _customerBalUpd.YearMonthsToProc = _cpcOptions.YearMonthsToProc;
 
                 // Wait for both to complete before moving on: merge
-                MergeReduceObs(exchRatesUpd, fundsUpd, customerBalUpd, "Customers Balances Processed");
+                MergeReduceObs(_exchRatesUpd, _fundsUpd, _customerBalUpd, "Customers Balances Processed");
 
-            } else if (cpcOptions.ConsoleOutOnly) {
+            } else if (_cpcOptions.ConsoleOutOnly) {
                 
             }
             else {

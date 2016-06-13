@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Threading.Tasks;
+using NLog;
 
 namespace gzCpcLib.Task {
     /// <summary>

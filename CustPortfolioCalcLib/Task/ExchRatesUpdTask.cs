@@ -10,6 +10,8 @@ namespace gzCpcLib.Task {
     /// </summary>
     public class ExchRatesUpdTask : CpcTask {
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public override void DoTask() {
 
             var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext());

@@ -314,6 +314,14 @@
     <Compile Include="Migrations\201606060853155_Email_Template_Table.Designer.cs">
       <DependentUpon>201606060853155_Email_Template_Table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606080939594_ActiveGzCustomer.cs" />
+    <Compile Include="Migrations\201606080939594_ActiveGzCustomer.Designer.cs">
+      <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606111158443_fix.cs" />
+    <Compile Include="Migrations\201606111158443_fix.Designer.cs">
+      <DependentUpon>201606111158443_fix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -725,6 +733,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606060853155_Email_Template_Table.resx">
       <DependentUpon>201606060853155_Email_Template_Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606080939594_ActiveGzCustomer.resx">
+      <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606111158443_fix.resx">
+      <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
