@@ -440,39 +440,24 @@ namespace gzWeb.Controllers
 
         [HttpPost]
         [Route("FinalizeRegistration")]
-        public IHttpActionResult FinalizeRegistration()
+        public IHttpActionResult FinalizeRegistration(int userId)
         {
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+
             return OkMsg(() =>
             {
-                var user = UserManager.FindById(User.Identity.GetUserId<int>());
-                if (user == null)
-                    return OkMsg(new object(), "User not found!");
+                if (!user.GmCustomerId.HasValue)
+                {
+                    user.GmCustomerId = userId;
+                    _dbContext.SaveChanges();
+                }
 
-                var now = DateTime.Now;
-                var year = now.Year;
-                var month = now.Month;
-                _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(user.Id, RiskToleranceEnum.Medium, 100, year, month, new DateTime(year, month, 1));
+                var now = DateTime.UtcNow;
+                _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(user.Id, RiskToleranceEnum.Medium, now.Year, now.Month, now);
                 return true;
             });
-        }
-
-        [HttpPost]
-        [Route("SetUserId")]
-        public async Task<IHttpActionResult> SetUserId(int userId)
-        {
-            var logedInUserId = User.Identity.GetUserId<int>();
-            var user = _dbContext.Users.SingleOrDefault(x => x.Id == logedInUserId);
-
-            if (user == null)
-                return NotFound();
-
-            if (user.GmCustomerId.HasValue)
-                return Ok();
-
-            user.GmCustomerId = userId;
-            await _dbContext.SaveChangesAsync();
-
-            return Ok();
         }
 
         [AllowAnonymous]

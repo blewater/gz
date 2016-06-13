@@ -267,11 +267,6 @@
                     q.resolve({ enterCaptcha: true });
                 else {
                     gzLogin(usernameOrEmail, password).then(function () {
-                        emWamp.getSessionInfo().then(function(sessionInfo) {
-                            api.setUserId(sessionInfo.userID);
-                        }, function(error) {
-
-                        });
                         //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
@@ -355,10 +350,14 @@
                 gzLogin(parameters.username, parameters.password).then(function (gzLoginResult) {
                     emRegister(parameters).then(function (emRegisterResult) {
                         emLogin(parameters.username, parameters.password).then(function (emLoginResult) {
-                            api.finalizeRegistration().then(function () {
-                                q.resolve(true);
-                            }, function (finalizeError) {
-                                q.reject(finalizeError);
+                            emWamp.getSessionInfo().then(function (sessionInfo) {
+                                api.finalizeRegistration(sessionInfo.userID).then(function () {
+                                    q.resolve(true);
+                                }, function (finalizeError) {
+                                    q.reject(finalizeError);
+                                });
+                            }, function (getSessionInfoError) {
+                                q.reject(getSessionInfoError);
                             });
                         }, function (emLoginError) {
                             q.reject(emLoginError);
