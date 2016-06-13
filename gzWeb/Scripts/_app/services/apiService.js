@@ -74,6 +74,10 @@
             return $http.post('/api/Account/RevokeRegistration');
         }
 
+        factory.finalizeRegistration = function () {
+            return $http.post('/api/Account/FinalizeRegistration');
+        }
+
         factory.forgotPassword = function (email) {
             return $http.post('/api/Account/ForgotPassword', { Email: email });
         }

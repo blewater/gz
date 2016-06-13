@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
+using gzDAL.Repos.Interfaces;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -29,11 +30,13 @@ namespace gzWeb.Controllers
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _dbContext;
+        private readonly ICustPortfolioRepo _custPortfolioRepo;
 
-        public AccountApiController(ApplicationUserManager userManager,ApplicationDbContext dbContext)
+        public AccountApiController(ApplicationUserManager userManager, ApplicationDbContext dbContext, ICustPortfolioRepo custPortfolioRepo)
                 : base(userManager)
         {
             _dbContext = dbContext;
+            _custPortfolioRepo = custPortfolioRepo;
         }
 
         #region accessTokenFormat Constructor
@@ -428,7 +431,29 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            return Ok();
+            return OkMsg(() =>
+            {
+                //IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+                //return result;
+            });
+        }
+
+        [HttpPost]
+        [Route("FinalizeRegistration")]
+        public IHttpActionResult FinalizeRegistration()
+        {
+            return OkMsg(() =>
+            {
+                var user = UserManager.FindById(User.Identity.GetUserId<int>());
+                if (user == null)
+                    return OkMsg(new object(), "User not found!");
+
+                var now = DateTime.Now;
+                var year = now.Year;
+                var month = now.Month;
+                _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(user.Id, RiskToleranceEnum.Medium, 100, year, month, new DateTime(year, month, 1));
+                return true;
+            });
         }
 
         [HttpPost]
