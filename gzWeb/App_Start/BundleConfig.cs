@@ -18,12 +18,16 @@ namespace gzWeb
                 "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
             ));
 
-            bundles.Add(new StyleBundle("~/css/app_old").Include(
-                //"~/Content/Site.css"
-                "~/Content/Styles/_app/template/basic.css"
-                , "~/Content/Styles/_app/template/acorns.css"
-                , "~/Content/Styles/_app/template/donut.css"
+            bundles.Add(new StyleBundle("~/css/modules").Include(
+                "~/Content/Styles/ng-tags-input/ng-tags-input.min.css"
             ));
+
+            //bundles.Add(new StyleBundle("~/css/app_old").Include(
+            //    //"~/Content/Site.css"
+            //    "~/Content/Styles/_app/template/basic.css"
+            //    , "~/Content/Styles/_app/template/acorns.css"
+            //    , "~/Content/Styles/_app/template/donut.css"
+            //));
             bundles.Add(new StyleBundle("~/css/app").Include(
                 //"~/Content/Site.css"
                 "~/Content/Styles/_app/basic.css"
@@ -95,6 +99,7 @@ namespace gzWeb
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
+                , "~/Scripts/ng-tags-input/ng-tags-input.min.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 //, "~/Scripts/_modules/styleInjector.js"

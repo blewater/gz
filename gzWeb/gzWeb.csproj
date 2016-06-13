@@ -393,6 +393,10 @@
     <Content Include="Content\Styles\exceptionaire-style.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.bootstrap.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.bootstrap.min.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.min.css" />
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
@@ -544,6 +548,8 @@
     <Content Include="Scripts\moment\moment-with-locales.min.js" />
     <Content Include="Scripts\moment\moment.js" />
     <Content Include="Scripts\moment\moment.min.js" />
+    <Content Include="Scripts\ng-tags-input\ng-tags-input.js" />
+    <Content Include="Scripts\ng-tags-input\ng-tags-input.min.js" />
     <Content Include="Scripts\spin\spin.js" />
     <Content Include="Scripts\spin\spin.min.js" />
     <Content Include="Scripts\_app\app.js" />
