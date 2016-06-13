@@ -1,12 +1,16 @@
-﻿<div class="featured-game" ng-class="{'featured-large': gzGame.rank === 1, 'featured-small': gzGame.rank > 1}" >
+﻿<div class="featured-game" ng-class="{'featured-large': gzGame.rank === 1, 'featured-small': gzGame.rank > 1}">
     <img class="featured-bg img-responsive" src="{{gzGame.backgroundImage}}" cs-fallback-src="../../Content/Images/casino-default.jpg" />
     <img class="featured-logo added" src="{{gzGame.logo}}" />
     <div class="featured-name text-shadow-dark">{{gzGame.name}}</div>
-    <div class="featured-index text-shadow-dark">#{{gzGame.rank}}</div>
+    <div class="featured-info text-shadow-dark">{{gzGame.info}}</div>
     <div class="featured-btn" ng-click="playGame()">
-        <i class="fa fa-4x fa-play-circle hidden"></i>
+        <span class="play-btn">
+            <i class="fa fa-2x fa-circle"></i>
+            <i class="fa fa-3x fa-play-circle"></i>
+        </span>
+        <!--<i class="fa fa-3x fa-play-circle"></i>-->
         <!--<button type="button" class="btn-gz btn-gz-alt" ng-click="playGame()">
-                Play now
+                PLAY NOW
             </button>-->
     </div>
 </div>
