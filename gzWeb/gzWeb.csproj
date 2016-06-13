@@ -355,6 +355,7 @@
     <Content Include="Areas\Mvc\Views\Guest\Home.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Content\Images\casino-default.jpg" />
     <Content Include="Content\Images\costs.svg" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
     <Content Include="Content\Images\exit.png" />
