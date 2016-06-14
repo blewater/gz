@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class LogEntryTable : IMigrationMetadata
+    public sealed partial class RefactorGmTrx : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(LogEntryTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(RefactorGmTrx));
         
         string IMigrationMetadata.Id
         {
-            get { return "201606101950312_LogEntry-Table"; }
+            get { return "201605231928177_Refactor GmTrx"; }
         }
         
         string IMigrationMetadata.Source
