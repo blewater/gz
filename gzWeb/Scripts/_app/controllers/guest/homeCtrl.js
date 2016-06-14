@@ -26,6 +26,15 @@
             }
         }
 
+        function readLogoutReason() {
+            var urlParams = $location.search();
+            var logoutReason = urlParams.logoutReason;
+            if (logoutReason) {
+                message.info(logoutReason);
+                $location.search('');
+            }
+        }
+
         //$scope.watchVideo = function() {
         //    message.open({
         //        nsType: 'modal',
@@ -34,6 +43,9 @@
         //    });
         //}
 
-        $scope._init('summary', readResetPwdKeys);
+        $scope._init('summary', function() {
+            readResetPwdKeys();
+            readLogoutReason();
+        });
     }
 })();
