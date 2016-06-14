@@ -30,6 +30,7 @@
 .navbar-brand {
     padding: 7px 0;
     width: 100%;
+    position: relative;
 }
 .navbar > .container .navbar-brand,
 .navbar > .container-fluid .navbar-brand {
@@ -39,6 +40,7 @@
 .navbar-brand img {
     float: left;
 }
+
 .navbar-brand h2 {
     font-family: Helvetica;
     font-size: 18px;
@@ -47,6 +49,18 @@
 	color:#fff;
 	margin:20px 0 0 15px;
     float: left;
+}
+.navbar-brand .version {
+    position: absolute;
+    font-family: cursive;
+    font-size: 16px;
+    font-weight: bold;
+    color: #c22;
+    width: 40px;
+    right: -20px;
+    bottom: -10px;
+    -ms-text-shadow: 1px 1px 1px rgba(255, 255, 255, .75);
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, .75);
 }
 
 .user-info {
@@ -412,6 +426,12 @@
         float: none;
         margin: 0 auto;
     }
+
+    .navbar-brand .version {
+        right: calc(50% - 20px);
+        bottom: -15px;
+    }
+
     .user-info {
         display: block;
         float: none;
