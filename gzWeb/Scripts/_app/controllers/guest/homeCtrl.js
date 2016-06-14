@@ -31,6 +31,7 @@
             var logoutReason = urlParams.logoutReason;
             if (logoutReason) {
                 message.info(logoutReason);
+                $location.search('');
             }
         }
 
