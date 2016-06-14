@@ -213,7 +213,7 @@ namespace gzDAL.Models
 #if DEBUG
                 connectionString = "gzDevDb";
 #else
-                connectionString = "gzPrdDb";
+                connectionString = "gzProdDb";
 #endif
 
             return connectionString;
