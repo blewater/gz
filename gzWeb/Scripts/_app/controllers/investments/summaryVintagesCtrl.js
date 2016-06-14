@@ -32,8 +32,8 @@
         }
 
         $scope.thereIsNoSelectedVintage = function() {
-            return helpers.array.all(getFlattened(), function (v) {
-                return v.Selected === false;
+            return !helpers.array.any(getFlattened(), function (v) {
+                return v.Selected === true && v.Sold === false;
             });
         };
 
