@@ -418,6 +418,7 @@
     <Compile Include="Migrations\201606080939594_ActiveGzCustomer.Designer.cs">
       <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606101950312_LogEntry-Table.cs" />
     <Compile Include="Migrations\201606111158443_fix.cs" />
     <Compile Include="Migrations\201606111158443_fix.Designer.cs">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
@@ -571,7 +572,9 @@
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
     <Content Include="Areas\Mvc\Views\Guest\FAQ.cshtml" />
-    <Content Include="connectionStrings.config" />
+    <Content Include="connectionStrings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Content\Images\diagram_white.svg" />
     <Content Include="Content\Images\games_white.svg" />
     <Content Include="Content\Images\cube.svg" />
@@ -907,6 +910,9 @@
     <EmbeddedResource Include="Migrations\201606080939594_ActiveGzCustomer.resx">
       <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606101950312_LogEntry-Table.resx">
+      <DependentUpon>201606101950312_LogEntry-Table.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606111158443_fix.resx">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </EmbeddedResource>
@@ -925,6 +931,21 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <TypeScriptTarget>ES3</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
@@ -939,7 +960,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>63659</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:63659/</IISUrl>
+          <IISUrl>https://localhost:44300/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
