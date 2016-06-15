@@ -258,6 +258,7 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     background: url('../../Images/select_arrow_down.png') no-repeat right;
     cursor: pointer;
     background-color: #fff;
+    color: #a5a5a5;
 }
 
 
@@ -266,7 +267,7 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     cursor: not-allowed;
 }
 .gz-select select option { color: #000; }
-.gz-select select option.prompt { color: #aaa; }
+.gz-select select option.prompt { color: #a5a5a5; }
 .gz-select select.selected { color: #000; }
 .gz-select .loading-spinner {
     z-index: 1000;
@@ -339,6 +340,71 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
 
 /* #endregion */
 
+
+/* #region ribbon */
+.ribbon .ribbon-text {
+    background:#27A95C;
+    color:#fff;
+    text-decoration:none;
+    font-family:arial,sans-serif;
+    text-align:center;
+    font-weight:bold;
+    padding:5px 40px;
+    font-size:1rem;
+    line-height:2rem;
+    position:relative;
+    -webkit-transition:0.5s;
+    -moz-transition:0.5s;
+    -ms-transition:0.5s;
+    -o-transition:0.5s;
+    transition:0.5s;
+}
+/*.ribbon .ribbon-text:hover {
+    background:#47c97c;
+    color:#fff;
+}*/
+
+.ribbon::before,
+.ribbon .ribbon-text::after {
+    content:"";
+    width:100%;
+    display:block;
+    position:absolute;
+    top:1px;
+    left:0;
+    height:1px;
+}
+.ribbon .ribbon-text::after {
+    bottom:1px;
+    top:auto;
+}
+@media screen and (min-width:800px) {
+    .ribbon {
+        position:fixed;
+        display:block;
+        top:0;
+        right:0;
+        width:200px;
+        overflow:hidden;
+        height:200px;
+        z-index:9999;
+    }
+    .ribbon .ribbon-text {
+        width:200px;
+        position:absolute;
+        top:30px;
+        right:-40px;
+        -webkit-transform:rotate(45deg);
+        -moz-transform:rotate(45deg);
+        -ms-transform:rotate(45deg);
+        -o-transform:rotate(45deg);
+        transform:rotate(45deg);
+        -webkit-box-shadow:1px 1px 5px rgba(255,255,255,0.6);
+        -ms-box-shadow:1px 1px 5px rgba(255,255,255,0.6);
+        box-shadow:1px 1px 5px rgba(255,255,255,0.6);
+    }
+}
+/* #endregion */
 
 
 /* #region Conditional Styling */
