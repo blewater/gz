@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using AutoMapper;
+using Common.Logging.NLog;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.Models;
@@ -45,6 +46,8 @@ namespace gzWeb
     {
         public void Configuration(IAppBuilder app)
         {
+            NLog.GlobalDiagnosticsContext.Set("gzConnectionString", ConfigurationManager.ConnectionStrings[ApplicationDbContext.GetCompileModeConnString(null)].ConnectionString);
+
             //AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
