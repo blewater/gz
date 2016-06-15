@@ -207,7 +207,7 @@ namespace gzDAL.Models
         /// -- or
         ///     Release -> "gzProdDb"
         /// </returns>
-        private static string GetCompileModeConnString(string connectionString) {
+        public static string GetCompileModeConnString(string connectionString) {
 
             if (connectionString == null)
 #if DEBUG
