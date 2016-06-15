@@ -46,10 +46,7 @@ namespace gzWeb
     {
         public void Configuration(IAppBuilder app)
         {
-            //NLog.GlobalDiagnosticsContext.Set("connectionString", ApplicationDbContext.GetCompileModeConnString(null));
-            var databaseTarget = (NLog.Targets.DatabaseTarget)NLog.LogManager.Configuration.FindTargetByName("dbLog");
-            databaseTarget.ConnectionStringName = ApplicationDbContext.GetCompileModeConnString(null);
-            NLog.LogManager.ReconfigExistingLoggers();
+            NLog.GlobalDiagnosticsContext.Set("gzConnectionString", ConfigurationManager.ConnectionStrings[ApplicationDbContext.GetCompileModeConnString(null)].ConnectionString);
 
             //AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
