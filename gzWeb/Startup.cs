@@ -45,6 +45,8 @@ namespace gzWeb
     {
         public void Configuration(IAppBuilder app)
         {
+            NLog.GlobalDiagnosticsContext.Set("connectionString", ApplicationDbContext.GetCompileModeConnString(null));
+
             //AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
