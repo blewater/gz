@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -91,11 +91,17 @@
                 $scope.initials = $scope._authData.firstname.slice(0, 1) + $scope._authData.lastname.slice(0, 1);
 
             $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
-            if ($scope.hasGamingBalance)
+            if ($scope.hasGamingBalance) {
+                emBanking.getGamingAccounts(true, true)
+                    .then(function(result) {
+                        $scope.gamingBalance = result.accounts[0].amount;
+                        },
+                    function (error) { });
                 $scope.gamingBalance = $scope._authData.gamingAccount.amount;
+            }
             $scope.currency = $scope._authData.currency;
         }
-
+        
         $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);
 
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp, chat, $location, auth, constants) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', 'constants', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, chat, $location, auth, constants, $timeout) {
         // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -198,7 +198,7 @@
                 nsStatic: true,
             });
         };
-
+        //$timeout($scope.transactionHistory, 5000);
         // #endregion
     }
 })();
