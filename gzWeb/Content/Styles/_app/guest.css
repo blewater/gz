@@ -56,6 +56,7 @@
     line-height: 40px;
     padding: 0 20px;
     color: #555;
+    width: 250px;
 }
 .guest .home .top .right-heading .sign-up-btn:hover {
     color: #fff;
