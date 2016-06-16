@@ -15,7 +15,7 @@ namespace gzWeb
             ));
 
             bundles.Add(new StyleBundle("~/css/fa").Include(
-                "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
+                "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()
             ));
 
             bundles.Add(new StyleBundle("~/css/modules").Include(
