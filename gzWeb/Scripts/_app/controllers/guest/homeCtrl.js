@@ -43,6 +43,16 @@
         //    });
         //}
 
+        $scope.signup = function() {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/registerAccount.html',
+                nsCtrl: 'registerAccountCtrl',
+                nsStatic: true
+            });
+        };
+
         $scope._init('summary', function() {
             readResetPwdKeys();
             readLogoutReason();

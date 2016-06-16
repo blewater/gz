@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDepositCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', '$location', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers, $location) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', '$location', '$rootScope', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers, $location, $rootScope) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -91,6 +91,7 @@
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                             $scope.waiting = false;
                                             $scope.nsOk(true);
+                                            $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
                                             if ($location.path() === constants.routes.home.path)
                                                 $location.path(constants.routes.games.path);
                                         } else if (transactionResult.status === "incomplete") {
