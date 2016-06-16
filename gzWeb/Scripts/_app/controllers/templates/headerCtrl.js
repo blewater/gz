@@ -91,14 +91,16 @@
                 $scope.initials = $scope._authData.firstname.slice(0, 1) + $scope._authData.lastname.slice(0, 1);
 
             $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
-            if ($scope.hasGamingBalance) {
-                emBanking.getGamingAccounts(true, true)
-                    .then(function(result) {
-                        $scope.gamingBalance = result.accounts[0].amount;
-                        },
-                    function (error) { });
+            if ($scope.hasGamingBalance)
                 $scope.gamingBalance = $scope._authData.gamingAccount.amount;
-            }
+            //if ($scope.hasGamingBalance) {
+            //    emBanking.getGamingAccounts(true, true)
+            //        .then(function(result) {
+            //            $scope.gamingBalance = result.accounts[0].amount;
+            //            },
+            //        function (error) { });
+            //    $scope.gamingBalance = $scope._authData.gamingAccount.amount;
+            //}
             $scope.currency = $scope._authData.currency;
         }
         

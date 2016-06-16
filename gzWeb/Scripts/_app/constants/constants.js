@@ -172,6 +172,7 @@
             AUTH_CHANGED: 'authChanged',
             SESSION_STATE_CHANGE: 'sessionStageChange',
             ACCOUNT_BALANCE_CHANGED: 'accountBalanceChanged',
+            REQUEST_ACCOUNT_BALANCE: 'requestAccountBalance',
             DEPOSIT_STATUS_CHANGED: 'depositStatusChanged',
             WITHDRAW_STATUS_CHANGED: 'withdrawStatusChanged'
         },

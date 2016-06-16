@@ -90,8 +90,8 @@
                                             message.success(msg, { nsType: 'toastr' });
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                             $scope.waiting = false;
+                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                             $scope.nsOk(true);
-                                            $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
                                             if ($location.path() === constants.routes.home.path)
                                                 $location.path(constants.routes.games.path);
                                         } else if (transactionResult.status === "incomplete") {
