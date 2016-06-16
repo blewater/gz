@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gameCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope) {
         $controller('authCtrl', { $scope: $scope });
 
         $scope.game = null;
@@ -72,6 +72,7 @@
         }
 
         $scope.backToGames = function () {
+            $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
             $location.path(constants.routes.games.path);
         }
 
