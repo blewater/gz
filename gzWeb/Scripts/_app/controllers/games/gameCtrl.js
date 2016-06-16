@@ -72,10 +72,12 @@
         }
 
         $scope.backToGames = function () {
-            $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
             $location.path(constants.routes.games.path);
         }
 
+        $scope.$on('$locationChangeStart', function (event, next, current) {
+            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+        });
 
         function logError(error) {
             console.log(error);

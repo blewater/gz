@@ -86,36 +86,55 @@
         // #endregion
 
         // #region Session Management
-        function watchBalance() {
-            if (factory.data.gamingAccount) {
-                emWamp.watchBalance(factory.data.gamingAccount, function(data) {
-                    factory.data.gamingAccount.amount = data.amount;
-                    storeAuthData();
-                    $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
-                });
-            } else
-                console.log("watchBalance: No Gaming account to watch.");
-        }
-        function unwatchBalance() {
-            if (factory.data.gamingAccount) {
-                emWamp.unwatchBalance(factory.data.gamingAccount);
-            } else
-                console.log("unwatchBalance: No Gaming account to unwatch.");
-        }
-        function getGamingAccountAndWatchBalance() {
-            if (!factory.data.gamingAccount) {
-                emBanking.getGamingAccounts(true, false).then(function (result) {
-                    factory.data.gamingAccount = result.accounts[0];
-                    storeAuthData();
-                    $rootScope.$broadcast(constants.events.AUTH_CHANGED);
-                    watchBalance();
-                }, function (error) {
-                    console.log(error.desc);
-                });
-            }
-            else
-                watchBalance();
-        }
+        //function watchBalance() {
+        //    if (factory.data.gamingAccount) {
+        //        emWamp.watchBalance(factory.data.gamingAccount, function(data) {
+        //            factory.data.gamingAccount.amount = data.amount;
+        //            storeAuthData();
+        //            $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
+        //        });
+        //    } else
+        //        console.log("watchBalance: No Gaming account to watch.");
+        //}
+        //function unwatchBalance() {
+        //    if (factory.data.gamingAccount) {
+        //        emWamp.unwatchBalance(factory.data.gamingAccount);
+        //    } else
+        //        console.log("unwatchBalance: No Gaming account to unwatch.");
+        //}
+        //function getGamingAccountAndWatchBalance() {
+        //    if (!factory.data.gamingAccount) {
+        //        emBanking.getGamingAccounts(true, false).then(function (result) {
+        //            factory.data.gamingAccount = result.accounts[0];
+        //            storeAuthData();
+        //            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+        //            watchBalance();
+        //        }, function (error) {
+        //            console.log(error.desc);
+        //        });
+        //    }
+        //    else
+        //        watchBalance();
+        //}
+
+        $rootScope.$on(constants.events.REQUEST_ACCOUNT_BALANCE, function (event, args) {
+            var expectBalance = args && args.expectBalance ? args.expectBalance : true;
+            var expectBonus = args && args.expectBonus ? args.expectBonus : true;
+            var callback = args && args.callback ? args.callback : angular.noop;
+            factory.getGamingAccounts(expectBalance, expectBonus, callback);
+        });
+
+        factory.getGamingAccounts = function (expectBalance, expectBonus, callback) {
+            emBanking.getGamingAccounts(expectBalance, expectBonus).then(function (result) {
+                factory.data.gamingAccount = result.accounts[0];
+                storeAuthData();
+                $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
+                if (angular.isFunction(callback))
+                    callback();
+            }, function (error) {
+                console.log(error.desc);
+            });
+        };
 
         //function onSessionDisconnected() {
         //    clearGamingData();
@@ -129,7 +148,8 @@
                 emWamp.getSessionInfo().then(function (sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
                         setGamingAuthData(sessionInfo);
-                        getGamingAccountAndWatchBalance();
+                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                        //getGamingAccountAndWatchBalance();
 
                         if (args.initialized === true && $rootScope.routeData.category === constants.categories.wandering) {
                             if (factory.data.isGamer)
@@ -206,7 +226,7 @@
         }
         function emLogout(reason) {
             clearGamingData();
-            unwatchBalance();
+            //unwatchBalance();
             emWamp.logout();
             //$location.path(constants.routes.home.path);
             //$window.location.reload();
