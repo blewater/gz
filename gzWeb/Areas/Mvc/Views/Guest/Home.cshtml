@@ -19,7 +19,7 @@
                     <h2>@*<mark class="benefit-mark">*@Benefit from your losses.@*</mark>*@</h2>
                     <h5>Fair | Transparent | Secure @*| Hedged*@</h5>
 
-                    <button style="margin-bottom:30px;" type="button" class="btn-gz sign-up-btn" ng-mouseover="signUpHovered = true;" ng-mouseleave="signUpHovered = false;">
+                    <button type="button" class="btn-gz sign-up-btn" ng-mouseover="signUpHovered = true;" ng-mouseleave="signUpHovered = false;" ng-click="signup()">
                         <img ng-show="!signUpHovered" src="@Url.Content("~/Content/Images/games.svg")" />
                         <img ng-show="signUpHovered" src="@Url.Content("~/Content/Images/games_white.svg")" />
                         <span>sign up and play</span>
