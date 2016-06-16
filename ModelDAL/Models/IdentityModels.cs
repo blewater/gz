@@ -184,7 +184,7 @@ namespace gzDAL.Models
         /// 
         ///         In Debug mode --> Construct using the "gzDevDb" connection string.
         /// 
-        ///         If in Release mode --> Construct using "gzPrdDb" connection string.
+        ///         If in Release mode --> Construct using "gzProdDb" connection string.
         /// 
         /// </param>
         public ApplicationDbContext(string connectionString)
@@ -205,7 +205,7 @@ namespace gzDAL.Models
         /// -- or
         ///     DEBUG -> "gzDevDb"
         /// -- or
-        ///     Release -> "gzPrdDb"
+        ///     Release -> "gzProdDb"
         /// </returns>
         public static string GetCompileModeConnString(string connectionString) {
 
@@ -213,7 +213,7 @@ namespace gzDAL.Models
 #if DEBUG
                 connectionString = "gzDevDb";
 #else
-                connectionString = "gzPrdDb";
+                connectionString = "gzProdDb";
 #endif
 
             return connectionString;
