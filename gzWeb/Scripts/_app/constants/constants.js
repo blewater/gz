@@ -160,11 +160,12 @@
             xs_rel_green: { radius: 4, width: 2, length: 3, color: '#27A95C', position: 'relative', top: '0' },
         },
         storageKeys: {
-            version: 'version',
-            debug: 'debug',
-            randomSuffix: 'randomSuffix',
-            authData: 'authData',
-            clientId: '$client_id$'
+            version: 'gz_version',
+            debug: 'gz_debug',
+            randomSuffix: 'gz_randomSuffix',
+            authData: 'gz_authData',
+            clientId: 'gz_$client_id$',
+            reCaptchaPublicKey: 'gz_reCaptchaPublicKey'
         },
         events: {
             ON_INIT: 'onInit',
@@ -175,9 +176,9 @@
             REQUEST_ACCOUNT_BALANCE: 'requestAccountBalance',
             DEPOSIT_STATUS_CHANGED: 'depositStatusChanged',
             WITHDRAW_STATUS_CHANGED: 'withdrawStatusChanged'
-        },
+        }
 
-        reCaptchaPublicKey: '6Ld2ZB8TAAAAAFPviZAHanWXdifnC88VuM0DdsWO'
+        //reCaptchaPublicKey: '6Ld2ZB8TAAAAAFPviZAHanWXdifnC88VuM0DdsWO'
         //reCaptchaPublicKey: '6Ld5ZB8TAAAAAI1QlCbPCo-OnYi6EyR-lL2GrFyH'
         //reCaptchaPublicKey: '6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML'
 

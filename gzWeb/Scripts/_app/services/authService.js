@@ -267,7 +267,7 @@
                 password: password
             };
             if (captcha) {
-                params.captchaPublicKey = constants.reCaptchaPublicKey;
+                params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey), //constants.reCaptchaPublicKey;
                 params.captchaChallenge = "";
                 params.captchaResponse = vcRecaptchaService.getResponse();
             }
@@ -413,7 +413,7 @@
                 emWamp.sendResetPwdEmail({
                     email: email,
                     changePwdURL: changePwdUrl,
-                    captchaPublicKey: constants.reCaptchaPublicKey,
+                    captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey), //constants.reCaptchaPublicKey,
                     captchaChallenge: "",
                     captchaResponse: vcRecaptchaService.getResponse()
                 }).then(function (result) {
@@ -457,7 +457,7 @@
             emWamp.changePassword({
                 oldPassword: oldPassword,
                 newPassword: newPassword,
-                captchaPublicKey: constants.reCaptchaPublicKey,
+                captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey), //constants.reCaptchaPublicKey,
                 captchaChallenge: "",
                 captchaResponse: vcRecaptchaService.getResponse()
             }).then(function (emChangeResult) {
@@ -488,6 +488,7 @@
             }, function (response) {
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
+                localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
             });
 
             emWamp.init();

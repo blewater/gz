@@ -1,11 +1,11 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "forgotPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'vcRecaptchaService', 'emWamp', 'auth', 'message', '$location', ctrlFactory]);
-    function ctrlFactory($scope, constants, vcRecaptchaService, emWamp, auth, message, $location) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'vcRecaptchaService', 'emWamp', 'auth', 'message', '$location', 'localStorageService', ctrlFactory]);
+    function ctrlFactory($scope, constants, vcRecaptchaService, emWamp, auth, message, $location, localStorageService) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
-        $scope.reCaptchaPublicKey = constants.reCaptchaPublicKey;
+        $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey); //constants.reCaptchaPublicKey;
 
         $scope.emailValidOnce = false;
         var unregisterIsEmailValidWatch = $scope.$watch(function(){

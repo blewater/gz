@@ -605,10 +605,12 @@ namespace gzWeb.Controllers
 #else
                 false;
 #endif
+
             return OkMsg(new
             {
                 Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
-                Debug = debug
+                Debug = debug,
+                ReCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings["ReCaptchaSiteKey"]
             });
         }
 

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -109,5 +109,7 @@
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
         $scope._init('header', loadAuthData);
+
+        $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
     }
 })();
