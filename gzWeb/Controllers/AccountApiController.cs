@@ -606,11 +606,15 @@ namespace gzWeb.Controllers
                 false;
 #endif
 
+            var host = Request.RequestUri.Host;
+            if (host == "localhost")
+                host = "www.greenzorro.com";
+            var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings["ReCaptchaSiteKey@" + host];
             return OkMsg(new
             {
                 Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
                 Debug = debug,
-                ReCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings["ReCaptchaSiteKey"]
+                ReCaptchaSiteKey = reCaptchaSiteKey
             });
         }
 
