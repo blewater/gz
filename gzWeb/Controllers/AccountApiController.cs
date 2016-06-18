@@ -609,11 +609,14 @@ namespace gzWeb.Controllers
             var host = Request.RequestUri.Host;
             if (host == "localhost")
                 host = "www.greenzorro.com";
-            var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings["ReCaptchaSiteKey@" + host];
+            var appKey = "ReCaptchaSiteKey@" + host;
+            var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings[appKey];
             return OkMsg(new
             {
                 Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
                 Debug = debug,
+                Host = host,
+                AppKey = appKey,
                 ReCaptchaSiteKey = reCaptchaSiteKey
             });
         }
