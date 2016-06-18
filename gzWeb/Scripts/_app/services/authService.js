@@ -490,6 +490,8 @@
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
                 localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
+                message.info("Host="+response.Result.Host);
+                message.info("AppKey="+response.Result.AppKey);
             });
 
             emWamp.init();
