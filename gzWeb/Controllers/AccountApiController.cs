@@ -615,8 +615,6 @@ namespace gzWeb.Controllers
             {
                 Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
                 Debug = debug,
-                Host = host,
-                AppKey = appKey,
                 ReCaptchaSiteKey = reCaptchaSiteKey
             });
         }
