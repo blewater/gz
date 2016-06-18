@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'message', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, message) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService) {
         var factory = {};
 
         // #region AuthData
@@ -490,8 +490,6 @@
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
                 localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
-                message.info("Host="+response.Result.Host);
-                message.info("AppKey="+response.Result.AppKey);
             });
 
             emWamp.init();
