@@ -5,7 +5,7 @@
     function ctrlFactory($scope, constants, emWamp, auth, message, vcRecaptchaService, localStorageService) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
-        $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey); //constants.reCaptchaPublicKey;
+        $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
 
         $scope.model = {
             oldPassword: undefined,
