@@ -86,6 +86,7 @@
         // #endregion
 
         // #region Session Management
+
         //function watchBalance() {
         //    if (factory.data.gamingAccount) {
         //        emWamp.watchBalance(factory.data.gamingAccount, function(data) {
@@ -267,7 +268,7 @@
                 password: password
             };
             if (captcha) {
-                params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey), //constants.reCaptchaPublicKey;
+                params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey)
                 params.captchaChallenge = "";
                 params.captchaResponse = vcRecaptchaService.getResponse();
             }
@@ -413,7 +414,7 @@
                 emWamp.sendResetPwdEmail({
                     email: email,
                     changePwdURL: changePwdUrl,
-                    captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey), //constants.reCaptchaPublicKey,
+                    captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
                     captchaChallenge: "",
                     captchaResponse: vcRecaptchaService.getResponse()
                 }).then(function (result) {
@@ -457,7 +458,7 @@
             emWamp.changePassword({
                 oldPassword: oldPassword,
                 newPassword: newPassword,
-                captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey), //constants.reCaptchaPublicKey,
+                captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
                 captchaChallenge: "",
                 captchaResponse: vcRecaptchaService.getResponse()
             }).then(function (emChangeResult) {
