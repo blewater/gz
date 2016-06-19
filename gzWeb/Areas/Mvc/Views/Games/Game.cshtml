@@ -4,11 +4,16 @@
 
 <div class="game-play">
     <img class="game-bg center-screen responsive-size" src="{{game.backgroundImage}}" alt="Background" />
-    <div ng-hide="gameLaunchData==null" class="game-frame">
-        <iframe ng-src="{{gameUrl}}" width="{{gameWidth}}" height="{{gameHeight}}" fullscreen="isFullscreen" only-watched-property></iframe>
-        <div class="game-actions" ng-style="{
-             'top': 'calc(50% + ' + (gameHeight / 2) + 'px)',
-             'right': 'calc(50% - ' + (gameWidth / 2)+ 'px)'}">
+    <div ng-hide="gameLaunchData==null" class="game-frame" fullscreen="isFullscreen" only-watched-property>
+        <iframe ng-src="{{gameUrl}}" width="{{getGameWidth()}}" height="{{getGameHeight()}}"
+                ng-style="{
+                   'top': getGameTop(),
+                   'right': getGameRight()
+                }"></iframe>
+        <div class="game-actions" ng-hide="isFullscreen" ng-style="{
+                'top': getActionsTop(),
+                'right': getActionsRight()
+             }">
             <span class="back-to-games" ng-click="backToGames()" title="Go back to games list"><i class="fa fa-share fa-flip-horizontal"></i></span>
             <span class="fullscreen" ng-click="toggleFullScreen()" title="Play in fullscreen mode"><i class="fa fa-expand"></i></span>
         </div>
@@ -17,9 +22,9 @@
              'left': '0'}">
             {{game.license}}
         </div>*@
-    </div>
-    <div class="fullscreen-hud" ng-show="isFullscreen">
-        <span class="clock"><i class="fa fa-clock-o"></i>{{ clock | date:'HH:mm:ss'}}</span>
-        <span class="exit" ng-click="toggleFullScreen()"><i class="fa fa-times"></i>Exit</span>
+        <div class="fullscreen-hud" ng-show="isFullscreen">
+            <span class="clock"><i class="fa fa-clock-o"></i>{{ clock | date:'HH:mm:ss'}}</span>
+            <span class="exit" ng-click="toggleFullScreen()"><i class="fa fa-times"></i>Exit</span>
+        </div>
     </div>
 </div>
