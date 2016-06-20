@@ -664,12 +664,12 @@ namespace gzDAL.Conf
                 t => t.Code,
                 new GzTrxType {
                     Code = GzTransactionTypeEnum.InvWithdrawal,
-                    Description = "Reserved for future use. Customer withdrawal from their Greenzorro account to their banking account. Generate fees transactions: FundFee, Commission (4%)."
+                    Description = "Reserved for future use. Customer withdrawal from their greenzorro account to their banking account. Generate fees transactions: FundFee, Commission (4%)."
                 }
                 ,
                 new GzTrxType {
                     Code = GzTransactionTypeEnum.TransferToGaming,
-                    Description = "Liquidate a single month's customer's investment(vintage) and transfer cash to their casino account. Greenzorro will follow up operationally with a Greenzorro debit of banking cash to credit the casino's customer's banking account."
+                    Description = "Liquidate a single month's customer's investment(vintage) and transfer cash to their casino account. greenzorro will follow up operationally with a greenzorro debit of banking cash to credit the casino's customer's banking account."
                 }
                 ,
                 new GzTrxType {
@@ -679,7 +679,7 @@ namespace gzDAL.Conf
                 ,
                 new GzTrxType {
                     Code = GzTransactionTypeEnum.CreditedPlayingLoss,
-                    Description = "Player Loss credited to a customer\'s Greenzorro account after a 50% deduction. See PlayingLoss for the whole amount."
+                    Description = "Player Loss credited to a customer\'s greenzorro account after a 50% deduction. See PlayingLoss for the whole amount."
                 }
                 ,
                 new GzTrxType {
@@ -689,12 +689,12 @@ namespace gzDAL.Conf
                 ,
                 new GzTrxType {
                     Code = GzTransactionTypeEnum.GzFees,
-                    Description = "Greenzorro fees: 1.5%. Deducted from the customer investment when withdrawing cash. Profit for GreenZorro."
+                    Description = "greenzorro fees: 1.5%. Deducted from the customer investment when withdrawing cash. Profit for GreenZorro."
                 }
                 ,
                 new GzTrxType {
                     Code = GzTransactionTypeEnum.GzActualTrxProfitOrLoss,
-                    Description = "The realized Greenzorro profit or loss by the actual purchase of customer shares after the month\'s end. It is the total difference between \"Bought Funds Prices\" * \"Monthly Customer Shares\" - \"Customer Shares\" * \"Funds Prices\" credited to the customer\'s Account."
+                    Description = "The realized greenzorro profit or loss by the actual purchase of customer shares after the month\'s end. It is the total difference between \"Bought Funds Prices\" * \"Monthly Customer Shares\" - \"Customer Shares\" * \"Funds Prices\" credited to the customer\'s Account."
                 }
                 );
         }

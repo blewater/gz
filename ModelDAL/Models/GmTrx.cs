@@ -10,7 +10,7 @@ namespace gzDAL.Models {
 
     /// <summary>
     /// 
-    /// Transfers between Casino <--> Greenzorro accounts, Casino <--> Customer bank account
+    /// Transfers between Casino <--> greenzorro accounts, Casino <--> Customer bank account
     /// 
     /// </summary>
     [Table("GmTrxs")]

@@ -137,7 +137,7 @@
     // #endregion
 
     APP.constant("constants", {
-        title: 'Greenzorro',
+        title: 'greenzorro',
         //version: 0.7,
         //debugMode: true,
         html5Mode: true,
