@@ -27,7 +27,7 @@ namespace gzDAL.Models {
         public virtual ApplicationUser Customer { get; set; }
 
         /// <summary>
-        /// Investment Balance in $ owned in Greenzorro managed funds.
+        /// Investment Balance in $ owned in greenzorro managed funds.
         /// </summary>
         [Required]
         public decimal Balance { get; set; }

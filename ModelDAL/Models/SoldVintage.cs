@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace gzDAL.Models {
     /// <summary>
     /// 
-    /// Greenzorro --> Casino Customer Bank account ? (requires special communication with casino as the intermediary
+    /// greenzorro --> Casino Customer Bank account ? (requires special communication with casino as the intermediary
     /// 
     /// </summary>
     public class SoldVintage {

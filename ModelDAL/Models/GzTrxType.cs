@@ -11,7 +11,7 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// "Reserved for future use. Customer withdrawal from their Greenzorro account 
+        /// "Reserved for future use. Customer withdrawal from their greenzorro account 
         /// to their banking account." 
         /// Generate fees transactions: FundFee, Commission (4%)
         /// 
@@ -52,7 +52,7 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// Greenzorro fees: 1.5%
+        /// greenzorro fees: 1.5%
         /// Deducted from the customer investment when withdrawing cash.
         /// 
         /// </summary>
@@ -60,7 +60,7 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// The realized Greenzorro profit or loss by the actual purchase of customer shares 
+        /// The realized greenzorro profit or loss by the actual purchase of customer shares 
         /// after the month's end.
         /// It is the total difference between 
         /// 
@@ -74,7 +74,7 @@ namespace gzDAL.Models {
 
     /// <summary>
     /// 
-    /// Captures a business Greenzorro transaction log entry
+    /// Captures a business greenzorro transaction log entry
     /// 
     /// </summary>
     public class GzTrxType {
