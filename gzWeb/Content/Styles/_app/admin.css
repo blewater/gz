@@ -1,2 +1,19 @@
 ﻿body {
+    margin:0;
+	padding:0;
+	font-family:Helvetica;
+	background:#F2F2F2;
 }
+
+.logs-admin h3 { margin: 50px 0; }
+
+.logs-admin .table thead tr { background-color: #27A95C; }
+
+.logs-admin .btn-gz { width: 150px; }
+
+.logs-admin .table tbody .Fatal { background-color: #ff0000; }
+.logs-admin .table tbody .Error { background-color: #ff3300; }
+.logs-admin .table tbody .Warn { background-color: #ff8000; }
+.logs-admin .table tbody .Debug,
+.logs-admin .table tbody .Info,
+.logs-admin .table tbody .Trace { background-color: #c0c0c0 }
