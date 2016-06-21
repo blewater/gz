@@ -39,6 +39,7 @@ namespace gzWeb
                 , "~/Content/Styles/_app/auth.css"
                 , "~/Content/Styles/_app/investments.css"
                 , "~/Content/Styles/_app/games.css"
+                , "~/Content/Styles/_app/admin.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
                 //, "~/Content/Styles/_app/exceptionaire/exceptionaire-meterialize.css"
                 //, "~/Content/Styles/_app/exceptionaire/exceptionaire-style.css"
