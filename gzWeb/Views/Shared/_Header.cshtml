@@ -1,10 +1,11 @@
-﻿<header ng-controller="headerCtrl" class="relative">
+﻿<header ng-controller="headerCtrl" class="relative" ng-hide="playing">
     <nav class="navbar navbar-default navbar-static-top" ng-class="{'navbar-initial': !scrolled}">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a id="logo" class="navbar-brand" href="/">
                     <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
-                    <h2 class="visible-lg">GREENZORRO</h2>
+                    <span class="version">alpha</span>
+                    <h2 class="visible-lg">greenzorro</h2>
                 </a>
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse-section">
                     <span class="sr-only">Toggle navigation</span>
@@ -84,7 +85,8 @@
             </div>
         </div>
     </nav>
-    <div style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;"
+    <div ng-if="inDebugMode"
+         style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;"
          ng-style="{'height': collapsed ? '35px' : auto, 'width': collapsed ? '30px' : '300px'}" ng-init="collapsed = true;">
         <i ng-show="!collapsed" class="fa fa-angle-up pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>
         <i ng-show="collapsed" class="fa fa-angle-down pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>

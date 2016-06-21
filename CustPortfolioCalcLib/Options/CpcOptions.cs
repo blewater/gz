@@ -67,7 +67,7 @@ namespace gzCpcLib.Options
         string GetUsage() {
             var help = new HelpText {
                 Heading = new HeadingInfo("<<Customers Portfolio Clearance>>", "<<0.9>>"),
-                Copyright = new CopyrightInfo("GreenZorro", 2016),
+                Copyright = new CopyrightInfo("greenzorro", 2016),
                 MaximumDisplayWidth = 80,
                 AdditionalNewLineAfterOption = true,
                 AddDashesToOption = true

@@ -42,7 +42,7 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// N/A or not initially useful to the Greenzorro business logic
+        /// N/A or not initially useful to the greenzorro business logic
         /// 
         /// </summary>
         Other = 4
@@ -50,7 +50,7 @@ namespace gzDAL.Models {
 
     /// <summary>
     /// 
-    /// Captures a business Greenzorro transaction log entry
+    /// Captures a business greenzorro transaction log entry
     /// 
     /// </summary>
     public class GmTrxType {

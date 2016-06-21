@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
+using gzDAL.Repos.Interfaces;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -29,11 +30,13 @@ namespace gzWeb.Controllers
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _dbContext;
+        private readonly ICustPortfolioRepo _custPortfolioRepo;
 
-        public AccountApiController(ApplicationUserManager userManager,ApplicationDbContext dbContext)
+        public AccountApiController(ApplicationUserManager userManager, ApplicationDbContext dbContext, ICustPortfolioRepo custPortfolioRepo)
                 : base(userManager)
         {
             _dbContext = dbContext;
+            _custPortfolioRepo = custPortfolioRepo;
         }
 
         #region accessTokenFormat Constructor
@@ -428,26 +431,37 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            return Ok();
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            if (user == null)
+                return Ok("User not found!");
+
+            var result = await UserManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return GetErrorResult(result);
+
+            return Ok(result);
         }
 
         [HttpPost]
-        [Route("SetUserId")]
-        public async Task<IHttpActionResult> SetUserId(int userId)
+        [Route("FinalizeRegistration")]
+        public IHttpActionResult FinalizeRegistration(int userId)
         {
-            var logedInUserId = User.Identity.GetUserId<int>();
-            var user = _dbContext.Users.SingleOrDefault(x => x.Id == logedInUserId);
-
+            var user = UserManager.FindById(User.Identity.GetUserId<int>());
             if (user == null)
-                return NotFound();
+                return OkMsg(new object(), "User not found!");
 
-            if (user.GmCustomerId.HasValue)
-                return Ok();
+            return OkMsg(() =>
+            {
+                if (!user.GmCustomerId.HasValue)
+                {
+                    user.GmCustomerId = userId;
+                    _dbContext.SaveChanges();
+                }
 
-            user.GmCustomerId = userId;
-            await _dbContext.SaveChangesAsync();
-
-            return Ok();
+                var now = DateTime.UtcNow;
+                _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(user.Id, RiskToleranceEnum.Medium, now.Year, now.Month, now);
+                return true;
+            });
         }
 
         [AllowAnonymous]
@@ -591,10 +605,17 @@ namespace gzWeb.Controllers
 #else
                 false;
 #endif
+
+            var host = Request.RequestUri.Host;
+            if (host == "localhost")
+                host = "www.greenzorro.com";
+            var appKey = "ReCaptchaSiteKey@" + host;
+            var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings[appKey];
             return OkMsg(new
             {
                 Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
-                Debug = debug
+                Debug = debug,
+                ReCaptchaSiteKey = reCaptchaSiteKey
             });
         }
 

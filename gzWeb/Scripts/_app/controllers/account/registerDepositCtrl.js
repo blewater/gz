@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDepositCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', '$location', '$rootScope', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers, $location, $rootScope) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -23,7 +23,6 @@
         // #region init
         function init() {
             getPaymentMethodCfg();
-            //getGamingAccounts();
         };
 
         function getPaymentMethodCfg() {
@@ -34,15 +33,9 @@
                     attachDepositFields($scope.paymentMethodCfg.paymentMethodCode);
                     $scope.initializing = false;
                 }, function (error) {
-                    console.log(error.desc);
+                    message.error(error.desc);
                     $scope.initializing = false;
                 });
-
-                //emWamp.getSessionInfo().then(function (sessionInfo) {
-                //    if (sessionInfo.isAuthenticated) {
-                //    } else {
-                //    }
-                //});
             }
             else {
                 attachDepositFields($scope.paymentMethodCfg.paymentMethodCode);
@@ -62,17 +55,6 @@
                 $compile($depositFields.contents())($scope);                    
             });
         }
-
-        function getGamingAccounts() {
-            if (!$scope.gamingAccounts) {
-                emBanking.getGamingAccounts(false, false).then(function (result) {
-                    $scope.gamingAccounts = result.accounts;
-                }, function (error) {
-                    console.log(error.desc);
-                });
-            }
-        }
-
         // #endregion
 
         // #region deposit
@@ -108,17 +90,22 @@
                                             message.success(msg, { nsType: 'toastr' });
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                             $scope.waiting = false;
+                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                             $scope.nsOk(true);
-                                            $location.path(constants.routes.games.path);
+                                            if ($location.path() === constants.routes.home.path)
+                                                $location.path(constants.routes.games.path);
                                         } else if (transactionResult.status === "incomplete") {
+                                            console.log("show transaction is not completed");
                                             // TODO: show transaction is not completed
                                         } else if (transactionResult.status === "pending") {
+                                            console.log("show transaction is pending");
                                             // TODO: show transaction is pending
                                         } else if (transactionResult.status === "error") {
+                                            console.log("show error");
                                             // TODO: show error
                                         }
                                     }, function (error) {
-                                        console.log(error.desc);
+                                        message.error(error.desc);
                                     });
                                 } else if (confirmResult.status === "redirection") {
                                     // TODO: redirection ...
@@ -129,23 +116,27 @@
                                 }
                             }, function (error) {
                                 $scope.waiting = false;
-                                console.log(error.desc);
+                                message.error(error.desc);
                             });
+                        }, function() {
+                            $scope.waiting = false;
+                            $scope.paymentMethodCfg = undefined;
+                            init();
                         });
                     } else if (prepareResult.status === "redirection") {
                         // TODO: redirection ...
                     } else {
                         // TODO: log error ???
                         $scope.waiting = false;
-                        console.log("Unexpected payment method prepare status");
+                        message.error("Unexpected payment method prepare status");
                     }
                 }, function(error) {
                     $scope.waiting = false;
-                    console.log(error.desc);
+                    message.error(error.desc);
                 });
             }, function(error) {
                 $scope.waiting = false;
-                console.log(error.desc);
+                message.error(error.desc);
             });
         };
         // #endregion

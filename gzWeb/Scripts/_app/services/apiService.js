@@ -61,17 +61,17 @@
                 headers: { "Content-Type": "application/x-www-form-urlencoded" }
             });
         }
-
-        factory.setUserId = function(userId) {
-            return $http.post("/api/Account/SetUserId?userId=" + userId);
-        }
-
+        
         factory.register = function (parameters) {
             return $http.post('/api/Account/Register', parameters);
         }
 
         factory.revokeRegistration = function () {
             return $http.post('/api/Account/RevokeRegistration');
+        }
+
+        factory.finalizeRegistration = function (userId) {
+            return $http.post('/api/Account/FinalizeRegistration?userId=' + userId);
         }
 
         factory.forgotPassword = function (email) {

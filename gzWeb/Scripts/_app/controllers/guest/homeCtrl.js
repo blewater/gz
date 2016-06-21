@@ -26,6 +26,15 @@
             }
         }
 
+        function readLogoutReason() {
+            var urlParams = $location.search();
+            var logoutReason = urlParams.logoutReason;
+            if (logoutReason) {
+                message.info(logoutReason);
+                $location.search('');
+            }
+        }
+
         //$scope.watchVideo = function() {
         //    message.open({
         //        nsType: 'modal',
@@ -34,6 +43,19 @@
         //    });
         //}
 
-        $scope._init('summary', readResetPwdKeys);
+        $scope.signup = function() {
+            message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '/partials/messages/registerAccount.html',
+                nsCtrl: 'registerAccountCtrl',
+                nsStatic: true
+            });
+        };
+
+        $scope._init('summary', function() {
+            readResetPwdKeys();
+            readLogoutReason();
+        });
     }
 })();

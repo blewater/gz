@@ -15,7 +15,7 @@ namespace gzDAL.Repos {
 
     /// <summary>
     /// 
-    /// For any Greenzorro Transaction creation/update
+    /// For any greenzorro Transaction creation/update
     /// Currency conversions are encapsulated here alone.
     /// 
     /// </summary>
@@ -198,11 +198,11 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Overloaded (Function): Calculate the Greenzorro & Fund fees on any amount that Greenzorro offered an investment service.
+        /// Overloaded (Function): Calculate the greenzorro & Fund fees on any amount that greenzorro offered an investment service.
         /// 
         /// </summary>
         /// <param name="liquidationAmount"></param>
-        /// <returns>Total Greenzorro + Fund fees on a investment amount.</returns>
+        /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
         public decimal GetWithdrawnFees(decimal liquidationAmount) {
 
             decimal gzFeesAmount, fundsFeesAmount;
@@ -402,14 +402,14 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Overloaded: Calculate the Greenzorro & Fund fees on any amount that Greenzorro offered an investment service.
+        /// Overloaded: Calculate the greenzorro & Fund fees on any amount that greenzorro offered an investment service.
         /// Returns the individual fees as out parameters.
         /// 
         /// </summary>
         /// <param name="liquidationAmount"></param>
-        /// <param name="gzFeesAmount">Out parameter to return the Greenzorro fee.</param>
+        /// <param name="gzFeesAmount">Out parameter to return the greenzorro fee.</param>
         /// <param name="fundsFeesAmount">Out parameter to return the Fund fee.</param>
-        /// <returns>Total Greenzorro + Fund fees on a investment amount.</returns>
+        /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
         private decimal GetWithdrawnFees(decimal liquidationAmount, out decimal gzFeesAmount, out decimal fundsFeesAmount) {
 
             gzFeesAmount = liquidationAmount *
@@ -425,7 +425,7 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Save to DB the calculated Fund Greenzorro fees.
+        /// Save to DB the calculated Fund greenzorro fees.
         /// 
         /// Note this is not enclosed within a user transaction. It's the responsibility of the caller.
         /// 

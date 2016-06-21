@@ -30,6 +30,7 @@ var APP = (function () {
         , 'ngAutocomplete'
         , 'vcRecaptcha'
         , 'isoCurrency'
+        , 'ngTagsInput'
         //, 'logToServer'
     ]);
 

@@ -51,11 +51,12 @@
 .guest .home .top .right-heading .sign-up-btn {
     text-transform: uppercase;
     font-weight: bold;
-    margin: 10px 0;
+    margin: 10px 0 30px;
     height: 40px;
     line-height: 40px;
     padding: 0 20px;
     color: #555;
+    width: 250px;
 }
 .guest .home .top .right-heading .sign-up-btn:hover {
     color: #fff;
@@ -475,82 +476,106 @@
 /* #endregion */
 
 /* #region Contact */
-.guest .contact .contact-content { margin-top: 60px; /*padding: 20px;*/ color: #27A95C;  }
+.guest .contact .top-section { background-color: #ddd; padding-top: 100px;  }
+.guest .contact .middle-section { background-color: #fff; border-bottom: 5px solid #ddd; padding-top: 65px; z-index: 2; position: relative; width: 100%; }
+.guest .contact .bottom-section { background-color: #fff; }
 
-.guest .contact .contact-content iframe { width: 100%; height: 500px; }
+.guest .contact .contact-content { margin-bottom: 80px; color: #27A95C;  }
 
-.guest .contact .contact-content .contact-bottom { background-color: #fff; margin: 60px 0; padding: 30px 0; }
 
-.guest .contact .contact-content .contact-bottom h3 { margin-bottom: 30px; }
+.guest .contact .logo-holder { position: absolute; z-index: 3; }
+.guest .contact .logo-holder .circle-bg { width: 100px; height: 100px; background-color: #fff; border-radius: 50%; box-shadow: 2px 1px 2px #707070; z-index: 5; display: block; margin: 0 auto; }
+.guest .contact .logo-holder img { width: 100px; height: 100px; margin-top: -50px; }
 
-.guest .contact .contact-content .contact-bottom .social-media { margin-top: 70px; margin-bottom: 80px; }
 
-.guest .contact .contact-content .contact-bottom .social-media .social-circle { 
-    border: 2px solid #29A95C;
-    border-radius: 50%;
-    width: 52px;
-    height: 52px;
-    background-color: #27A95C;
-    font-size: 35px;
-    color: white;
-    display: inline-block;
-    margin: 10px;
+.guest .contact .top-section .contact-content #gz-map iframe { width: 100%; }
 
-    transition: all 0.3s ease;
-}
 
-.guest .contact .contact-content .contact-bottom .social-media a:hover {
-    text-decoration: none;
-}
+.guest .contact .middle-section .contact-content h4 { font-size: 20px; padding-top: 20px; margin-bottom: 23px; }
 
-.guest .contact .contact-content .contact-bottom .social-media .social-circle:hover {
-    background-color: #ececec;
+.guest .contact .middle-section .contact-content .social-media { display: inline-block; }
+.guest .contact .middle-section .contact-content .social-media a {
+    background-color: transparent;
+    font-size: 28px;
     color: #27A95C;
-    -webkit-transform: scale(1.05);
-	-moz-transform: scale(1.05);
-	-ms-transform: scale(1.05);
-	transform: scale(1.05);
+    display: inline-block;
+    margin: 0 15px;
+    letter-spacing: 10px;
+    transition: all 0.5s ease;
+    bottom: 0;
+    position: relative;
 }
+.guest .contact .middle-section .contact-content .social-media a:hover { bottom: 5px; }
 
-.guest .contact .contact-content .contact-bottom .contact-info { margin-bottom: 60px; }
+.guest .contact .middle-section .contact-content .contact-info p { font-size: 20px; padding-top: 10px; line-height: 1 }
 
-.guest .contact .contact-content .contact-bottom .contact-info a { color: #29A95C; }
-.guest .contact .contact-content .contact-bottom .contact-info a:hover { text-decoration: none; font-weight: bold; }
+.guest .contact .middle-section .contact-content .contact-info a { color: #29A95C; position: relative; bottom: 0; transition: all 0.5s ease; }
+.guest .contact .middle-section .contact-content .contact-info a:hover { text-decoration: none; }
 
-.guest .contact .contact-content .contact-bottom .contact-form .form-group { margin-bottom: 0; }
 
-.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control { 
+.guest .contact .bottom-section .contact-content .contact-bottom { background-color: #fff; padding-bottom: 60px; }
+
+.guest .contact .bottom-section .contact-content .contact-bottom  h3 { margin-top: 100px; margin-bottom: 50px; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group .form-control::-webkit-input-placeholder { color: #27A95C; font-size: 16px; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group .form-control:-moz-placeholder { color: #27A95C; font-size: 16px; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group .form-control::-moz-placeholder  { color: #27A95C; font-size: 16px; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group .form-control:-ms-input-placeholder { color: #27A95C; font-size: 16px; }
+
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group { font-size: 16px; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group .form-control { 
+    font-size: 16px;
     border: 0; 
     border-bottom: 1px solid #27A95C;; 
     background-color: transparent;
     padding: 0;
-    color: #27A95C;;
+    color: #27A95C;
     border-style: solid;   
     box-shadow: inset 0px 0px 0px 0px;
+    margin-top: 10px;
 }
 
-.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control::-webkit-input-placeholder { color: #27A95C;; }
-.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control:-moz-placeholder { color: #27A95C;; }
-.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control::-moz-placeholder  { color: #27A95C;; }
-.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control:-ms-input-placeholder { color: #27A95C;; }
-
-.guest .contact .contact-content .contact-bottom .contact-form .form-group .form-control { /*background-color: #fff;*/ }
-
-.guest .contact .contact-content .contact-bottom .contact-form .message-card { 
-    border: 1px solid #27A95C;; 
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .message-card { 
+    border: 1px solid #27A95C;
     padding: 10px; 
     margin: 20px 0;
 }
 
-.guest .contact .contact-content .contact-bottom .contact-form .message-card .form-group textarea { 
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .message-card .form-group textarea { 
     background-image: linear-gradient(rgba(39, 169, 92, .5) .1em,transparent .1em); 
     background-size: 100% 20px;
     border: none!important;
-    margin-top: 10px;    
+    margin-top: 10px;
+    max-width: 688px;
+    min-width: 688px;
+    line-height: 20px;
 }
 
-.guest .contact .contact-content .contact-bottom .contact-form .btn-gz { margin-right: 0; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .recaptcha-wrap { margin-left: -15px; margin-top: 10px; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .btn-gz { margin-top: 30px; margin-left: -17px; width: 105%; }
 
-.guest .contact .contact-content .contact-bottom .contact-form .form-group input.ng-invalid.ng-touched { border-bottom: 1px solid red; }
-.guest .contact .contact-content .contact-bottom .contact-form .form-group span { color: red; font-size: 12px; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group input.ng-invalid.ng-touched { border-bottom: 1px solid red; }
+.guest .contact .bottom-section .contact-content .contact-bottom .contact-form .form-group span { color: red; font-size: 12px; }
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .guest .contact .bottom-section .contact-content .contact-bottom .contact-form .message-card .form-group textarea { max-width: 550px; min-width: 550px; }
+}
+
+@media (max-width: 991px) {
+    .guest .contact .bottom-section .contact-content .contact-bottom .contact-form .message-card .form-group textarea { max-width: 638px; }
+}
+
+@media (max-width: 767px) {
+    .guest .contact .middle-section .contact-content .social-media h4,
+    .guest .contact .middle-section .contact-content .social-media a,
+    .guest .contact .middle-section .contact-content .contact-info h4,
+    .guest .contact .middle-section .contact-content .contact-info a,
+    .guest .contact .middle-section .contact-content .contact-info p { font-size: 18px; }
+
+    .guest .contact .bottom-section .contact-content .contact-bottom .contact-form .message-card .form-group textarea { max-width: 100%; min-width: 100%; }
+    .guest .contact .bottom-section .contact-content .contact-bottom .contact-form .btn-gz {        
+        width: 100%;
+        margin: 0 auto;
+        margin-top: 30px;
+    }
+}
 /* #endregion */

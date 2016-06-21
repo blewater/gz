@@ -122,8 +122,16 @@
       <HintPath>..\packages\NLog.4.2.3\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog.Extended, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Extended.4.0.0.1\lib\net45-full\NLog.Extended.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog.Owin.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.Owin.Logging.1.0\lib\net45\NLog.Owin.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog.Web, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.2.1\lib\net35\NLog.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -144,6 +152,10 @@
     </Reference>
     <Reference Include="SimpleInjector.Integration.Web, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.Integration.Web.3.1.2\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web.Mvc, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.3.1.2\lib\net40\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SimpleInjector.Integration.WebApi, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
@@ -282,10 +294,103 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
+    <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.cs" />
+    <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.Designer.cs">
+      <DependentUpon>201601301303283_Init CustPortfolio Key.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602011056104_CustFundShares.cs" />
+    <Compile Include="Migrations\201602011056104_CustFundShares.Designer.cs">
+      <DependentUpon>201602011056104_CustFundShares.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602021921345_Decimal numShares.cs" />
+    <Compile Include="Migrations\201602021921345_Decimal numShares.Designer.cs">
+      <DependentUpon>201602021921345_Decimal numShares.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602041028159_Add invGainLoss in InvBalance.cs" />
+    <Compile Include="Migrations\201602041028159_Add invGainLoss in InvBalance.Designer.cs">
+      <DependentUpon>201602041028159_Add invGainLoss in InvBalance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602042130150_PurchasedStockValue.cs" />
+    <Compile Include="Migrations\201602042130150_PurchasedStockValue.Designer.cs">
+      <DependentUpon>201602042130150_PurchasedStockValue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602091155456_CurrencyListX.cs" />
+    <Compile Include="Migrations\201602091155456_CurrencyListX.Designer.cs">
+      <DependentUpon>201602091155456_CurrencyListX.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602111100324_CustFundShares_Simplified.cs" />
+    <Compile Include="Migrations\201602111100324_CustFundShares_Simplified.Designer.cs">
+      <DependentUpon>201602111100324_CustFundShares_Simplified.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602140845493_Trx.cs" />
+    <Compile Include="Migrations\201602140845493_Trx.Designer.cs">
+      <DependentUpon>201602140845493_Trx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602162235481_Decimal Precision.cs" />
+    <Compile Include="Migrations\201602162235481_Decimal Precision.Designer.cs">
+      <DependentUpon>201602162235481_Decimal Precision.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602171111398_Decimal Precision 29.16.cs" />
+    <Compile Include="Migrations\201602171111398_Decimal Precision 29.16.Designer.cs">
+      <DependentUpon>201602171111398_Decimal Precision 29.16.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602172221201_New Shares Fund Price Del.cs" />
+    <Compile Include="Migrations\201602172221201_New Shares Fund Price Del.Designer.cs">
+      <DependentUpon>201602172221201_New Shares Fund Price Del.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602291353494_CustFundSoldShare.cs" />
+    <Compile Include="Migrations\201602291353494_CustFundSoldShare.Designer.cs">
+      <DependentUpon>201602291353494_CustFundSoldShare.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603101532458_Conf_Table.cs" />
+    <Compile Include="Migrations\201603101532458_Conf_Table.Designer.cs">
+      <DependentUpon>201603101532458_Conf_Table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604061021304_Remove CustSoldFurndShares-Add CashBalance.cs" />
+    <Compile Include="Migrations\201604061021304_Remove CustSoldFurndShares-Add CashBalance.Designer.cs">
+      <DependentUpon>201604061021304_Remove CustSoldFurndShares-Add CashBalance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.cs" />
+    <Compile Include="Migrations\201604081406555_Add Currency to ApplicationUser.Designer.cs">
+      <DependentUpon>201604081406555_Add Currency to ApplicationUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs" />
+    <Compile Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.Designer.cs">
+      <DependentUpon>201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.cs" />
+    <Compile Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.Designer.cs">
+      <DependentUpon>201604211050117_Remove GamBalance in ApplicationUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605161506044_Add fund YTD.cs" />
+    <Compile Include="Migrations\201605161506044_Add fund YTD.Designer.cs">
+      <DependentUpon>201605161506044_Add fund YTD.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605181742395_Increase Description Len TransactionType.cs" />
+    <Compile Include="Migrations\201605181742395_Increase Description Len TransactionType.Designer.cs">
+      <DependentUpon>201605181742395_Increase Description Len TransactionType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605182136365_GzTrxSelfReferencing.cs" />
+    <Compile Include="Migrations\201605182136365_GzTrxSelfReferencing.Designer.cs">
+      <DependentUpon>201605182136365_GzTrxSelfReferencing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605222154593_Transactions split to Gm Gz.cs" />
+    <Compile Include="Migrations\201605222154593_Transactions split to Gm Gz.Designer.cs">
+      <DependentUpon>201605222154593_Transactions split to Gm Gz.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605231928177_Refactor GmTrx.cs" />
+    <Compile Include="Migrations\201605231928177_Refactor GmTrx.Designer.cs">
+      <DependentUpon>201605231928177_Refactor GmTrx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201605240943157_Required Currency.cs" />
+    <Compile Include="Migrations\201605240943157_Required Currency.Designer.cs">
+      <DependentUpon>201605240943157_Required Currency.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.cs" />
     <Compile Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.Designer.cs">
       <DependentUpon>201605241348387_Remove uniqueness of Risk Portfolios.cs</DependentUpon>
@@ -318,6 +423,7 @@
     <Compile Include="Migrations\201606080939594_ActiveGzCustomer.Designer.cs">
       <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606101950312_LogEntry-Table.cs" />
     <Compile Include="Migrations\201606111158443_fix.cs" />
     <Compile Include="Migrations\201606111158443_fix.Designer.cs">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
@@ -355,6 +461,7 @@
     <Content Include="Areas\Mvc\Views\Guest\Home.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Content\Images\casino-default.jpg" />
     <Content Include="Content\Images\costs.svg" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
     <Content Include="Content\Images\exit.png" />
@@ -401,6 +508,11 @@
     <Content Include="Content\Styles\exceptionaire-style.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.bootstrap.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.bootstrap.min.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.css" />
+    <Content Include="Content\Styles\ng-tags-input\ng-tags-input.min.css" />
+    <Content Include="Content\Styles\_app\admin.css" />
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
@@ -462,11 +574,18 @@
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\Login.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_viewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Logs\Index.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
     <Content Include="Areas\Mvc\Views\Guest\FAQ.cshtml" />
-    <Content Include="connectionStrings.config" />
+    <Content Include="connectionStrings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Content\Images\diagram_white.svg" />
     <Content Include="Content\Images\games_white.svg" />
     <Content Include="Content\Images\cube.svg" />
@@ -552,6 +671,8 @@
     <Content Include="Scripts\moment\moment-with-locales.min.js" />
     <Content Include="Scripts\moment\moment.js" />
     <Content Include="Scripts\moment\moment.min.js" />
+    <Content Include="Scripts\ng-tags-input\ng-tags-input.js" />
+    <Content Include="Scripts\ng-tags-input\ng-tags-input.min.js" />
     <Content Include="Scripts\spin\spin.js" />
     <Content Include="Scripts\spin\spin.min.js" />
     <Content Include="Scripts\_app\app.js" />
@@ -698,7 +819,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
@@ -707,6 +827,75 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\201601301303283_Init CustPortfolio Key.resx">
+      <DependentUpon>201601301303283_Init CustPortfolio Key.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602011056104_CustFundShares.resx">
+      <DependentUpon>201602011056104_CustFundShares.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602021921345_Decimal numShares.resx">
+      <DependentUpon>201602021921345_Decimal numShares.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602041028159_Add invGainLoss in InvBalance.resx">
+      <DependentUpon>201602041028159_Add invGainLoss in InvBalance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602042130150_PurchasedStockValue.resx">
+      <DependentUpon>201602042130150_PurchasedStockValue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602091155456_CurrencyListX.resx">
+      <DependentUpon>201602091155456_CurrencyListX.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602111100324_CustFundShares_Simplified.resx">
+      <DependentUpon>201602111100324_CustFundShares_Simplified.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602140845493_Trx.resx">
+      <DependentUpon>201602140845493_Trx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602162235481_Decimal Precision.resx">
+      <DependentUpon>201602162235481_Decimal Precision.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602171111398_Decimal Precision 29.16.resx">
+      <DependentUpon>201602171111398_Decimal Precision 29.16.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602172221201_New Shares Fund Price Del.resx">
+      <DependentUpon>201602172221201_New Shares Fund Price Del.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602291353494_CustFundSoldShare.resx">
+      <DependentUpon>201602291353494_CustFundSoldShare.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603101532458_Conf_Table.resx">
+      <DependentUpon>201603101532458_Conf_Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604061021304_Remove CustSoldFurndShares-Add CashBalance.resx">
+      <DependentUpon>201604061021304_Remove CustSoldFurndShares-Add CashBalance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604081406555_Add Currency to ApplicationUser.resx">
+      <DependentUpon>201604081406555_Add Currency to ApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604141437311_Remove Unique from PlatformCustomerId and make it nullable.resx">
+      <DependentUpon>201604141437311_Remove Unique from PlatformCustomerId and make it nullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604211050117_Remove GamBalance in ApplicationUser.resx">
+      <DependentUpon>201604211050117_Remove GamBalance in ApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605161506044_Add fund YTD.resx">
+      <DependentUpon>201605161506044_Add fund YTD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605181742395_Increase Description Len TransactionType.resx">
+      <DependentUpon>201605181742395_Increase Description Len TransactionType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605182136365_GzTrxSelfReferencing.resx">
+      <DependentUpon>201605182136365_GzTrxSelfReferencing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605222154593_Transactions split to Gm Gz.resx">
+      <DependentUpon>201605222154593_Transactions split to Gm Gz.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605231928177_Refactor GmTrx.resx">
+      <DependentUpon>201605231928177_Refactor GmTrx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605240943157_Required Currency.resx">
+      <DependentUpon>201605240943157_Required Currency.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605241348387_Remove uniqueness of Risk Portfolios.resx">
       <DependentUpon>201605241348387_Remove uniqueness of Risk Portfolios.cs</DependentUpon>
     </EmbeddedResource>
@@ -731,6 +920,9 @@
     <EmbeddedResource Include="Migrations\201606080939594_ActiveGzCustomer.resx">
       <DependentUpon>201606080939594_ActiveGzCustomer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606101950312_LogEntry-Table.resx">
+      <DependentUpon>201606101950312_LogEntry-Table.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606111158443_fix.resx">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </EmbeddedResource>
@@ -749,6 +941,21 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <TypeScriptTarget>ES3</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
@@ -763,7 +970,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>63659</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:63659/</IISUrl>
+          <IISUrl>https://localhost:44300/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -5,7 +5,7 @@
     function ctrlFactory($rootScope, $scope, emWamp, auth, localStorageService, constants, message) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
-        $scope.reCaptchaPublicKey = constants.reCaptchaPublicKey;
+        $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
         $scope.waiting = false;
         $scope.responseMsg = null;
 
@@ -41,9 +41,6 @@
 
                         $scope.nsOk();
                     }
-
-                    //$scope.emErrorMsg = response.emError;
-                    //$scope.gzErrorMsg = response.gzError;
                 }
             });
         }
