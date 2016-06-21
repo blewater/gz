@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="Package"
   DTS:PackageType="5"
-  DTS:VersionBuild="12"
-  DTS:VersionGUID="{56C0B006-FB93-42B6-A74E-20B7C6DC11D4}">
+  DTS:VersionBuild="14"
+  DTS:VersionGUID="{34DE8DCD-008C-4D0A-919C-1FFAA391ACE7}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -37,7 +37,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAAG4FsfovH8ysJH6ESwfxEcLeWYlQ6GXP2/lca0NgTBuAAAAAAOgAAAAAIAACAAAAANjCARyWknb+TRxTxZ6ChA+amYsi6RM8RtX1Yl1bqy1iAAAABeYhPOc/l0V9nRpIJ/yisuIBhuisQs2LIiEFtxyAG40EAAAACX9gw/RkfJw2Sd5Gud1XUDFNb1CPBmoSqCDAQEF6vJC/GmTXoZOcqMwJRTfvyOQxTaCYA7lz4xYTqtW4D+T6Gq</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACg1c9MEAGSEdNZ0ZEVLNWsWAKJoQca4nad/zNXan/VnAAAAAAOgAAAAAIAACAAAADJ4YFmyyKLBRuE1/MxVrRI26Pxzx+X/Gl57VQr663zbSAAAAB2sFatYbPuHx/5kAcUkV4GrHelWfcDMhmY/CrvEpCS2UAAAAC+dYJuVturtklMepmft7yUs+m2LxgJHjyZxaUhj24sPUn2RHtk7ygzVNKQ7QSZlaS7z4vd7YAov/TGzKfkCF6l</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -200,27 +200,27 @@
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
                       dataType="wstr"
-                      length="512"
+                      length="256"
                       name="Username" />
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Role]"
                       dataType="wstr"
-                      length="512"
+                      length="256"
                       name="Role" />
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Player status]"
                       dataType="wstr"
-                      length="512"
+                      length="256"
                       name="Player status" />
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Block reason]"
                       dataType="wstr"
-                      length="512"
+                      length="256"
                       name="Block reason" />
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
                       dataType="wstr"
-                      length="512"
+                      length="256"
                       name="Email address" />
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
@@ -231,7 +231,7 @@
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
                       dataType="wstr"
-                      length="512"
+                      length="256"
                       name="Currency" />
                     <externalMetadataColumn
                       refId="Package\Extract Everymatrix Data\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
