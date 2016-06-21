@@ -1,0 +1,750 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="6/11/2016 4:01:37 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="OPTIPLEX"
+  DTS:CreatorName="OPTIPLEX\Mario"
+  DTS:DTSID="{09F4723F-6CB5-489D-BF61-CE04EA0BE657}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="13.0.1601.5"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="EtlGmRptPackage"
+  DTS:PackageType="5"
+  DTS:VersionBuild="37"
+  DTS:VersionGUID="{639CDCC7-221B-4CB0-B153-4B1B89097254}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[Excel Connection Manager]"
+      DTS:CreationName="EXCEL"
+      DTS:DTSID="{2BA9CFE8-106A-4636-B7CE-D5618BD788FF}"
+      DTS:ObjectName="Excel Connection Manager">
+      <DTS:PropertyExpression
+        DTS:Name="ExcelFilePath">@[User::InputFolder]+ @[User::FileName]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\sc\gz\inRpt\;Extended Properties=&quot;EXCEL 12.0 XML;HDR=YES&quot;;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[outRpt]"
+      DTS:CreationName="FILE"
+      DTS:DTSID="{1ED2E44C-F82F-4B5D-80F6-268F9163374A}"
+      DTS:ObjectName="outRpt">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:FileUsageType="2"
+          DTS:ConnectionString="D:\sc\gz\outRpt" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa]"
+      DTS:CreationName="ADO.NET:System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+      DTS:DTSID="{D1719C09-104C-4DC9-833A-3AAE12523B7C}"
+      DTS:ObjectName="tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=tcp:gzdbdev.database.windows.net;User ID=gzdbdevsa;Initial Catalog=gzDbDev;Persist Security Info=True;Application Name=SSIS-Package-{D1719C09-104C-4DC9-833A-3AAE12523B7C}tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABDPI0em0QgJWS0jgCPP7IytuQnZVFwF1jsMq8S3/3XHQAAAAAOgAAAAAIAACAAAAC+uUvhuq1tXNgnOwVKd0+bhhUMv2JKIIgdyFwhBpc7HiAAAAD7MQ2E7M9FuqTggy8E3k+5H+Y9BtPmRAD1WH09YEg0EUAAAACJ124vlyNdnct7U6wlzo+0SjNHXf4t6d1fP7WOI46qtBN8iKROBq8n75/KJ8q3AokB7EibZ5zylPl/vEtbt1zK</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{1698A58E-2154-4FD8-8EE8-17C249E43B59}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="FileName">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{2A01F688-2ED8-4A62-8743-5BE3BCC3D171}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="InputFolder">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\sc\gz\inRpt\</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Foreach Loop Container"
+      DTS:CreationName="STOCK:FOREACHLOOP"
+      DTS:Description="Foreach Loop Container"
+      DTS:DTSID="{0984126B-5F09-4113-82BE-9925D4D009D7}"
+      DTS:ExecutableType="STOCK:FOREACHLOOP"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Foreach Loop Container">
+      <DTS:ForEachEnumerator
+        DTS:CreationName="Microsoft.ForEachFileEnumerator"
+        DTS:DTSID="{85483794-6CED-48AC-912C-B4853E498D0E}"
+        DTS:ObjectName="{85483794-6CED-48AC-912C-B4853E498D0E}">
+        <DTS:PropertyExpression
+          DTS:Name="Directory">@[User::InputFolder]</DTS:PropertyExpression>
+        <DTS:ObjectData>
+          <ForEachFileEnumeratorProperties>
+            <FEFEProperty
+              Folder="D:\sc\gz\inRpt\" />
+            <FEFEProperty
+              FileSpec="*.*" />
+            <FEFEProperty
+              FileNameRetrievalType="1" />
+            <FEFEProperty
+              Recurse="0" />
+          </ForEachFileEnumeratorProperties>
+        </DTS:ObjectData>
+      </DTS:ForEachEnumerator>
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Data Flow Task"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:DelayValidation="True"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{4912B461-FF91-4F81-9541-BB71BF2E4363}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Data Flow Task"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination"
+                  componentClassID="Microsoft.ManagedComponentHost"
+                  contactInfo="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination.;Microsoft Corporation; Microsoft SQL Server; © Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;2"
+                  description="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination."
+                  name="ADO NET Destination"
+                  usesDispositions="true"
+                  version="2">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="The Destination database table name."
+                      expressionType="Notify"
+                      name="TableOrViewName"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">"dbo"."PlayerRevRpt"</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the number of rows per batch. The default is 0 which uses the same size as SSIS internal buffer. "
+                      expressionType="Notify"
+                      name="BatchSize">0</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out. A value of 0 indicates infinite time-out. "
+                      expressionType="Notify"
+                      name="CommandTimeout">30</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Specifies whether to use the SqlBulkCopy interface to improve the performance of bulk insert operations. Only certain providers support this interface."
+                      expressionType="Notify"
+                      name="UseBulkInsertWhenPossible">true</property>
+                    <property
+                      dataType="System.String"
+                      name="UserComponentTypeName">Microsoft.ADONETDestination</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Connections[IDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa]"
+                      connectionManagerRefId="Package.ConnectionManagers[tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa]"
+                      description="Managed connection manager"
+                      name="IDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input]"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="ADO NET Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[User ID]"
+                          cachedDataType="r8"
+                          cachedName="User ID"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Username]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Username"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Role]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Role"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Role]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Player status]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Player status"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Player status]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Block reason]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Block reason"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Block reason]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Email address]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Email address"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Total deposits amount]"
+                          cachedDataType="r8"
+                          cachedName="Total deposits amount"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Currency]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Currency"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Net revenue]"
+                          cachedDataType="r8"
+                          cachedName="Net revenue"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Gross revenue]"
+                          cachedDataType="r8"
+                          cachedName="Gross revenue"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Gross revenue]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Real money balance]"
+                          cachedDataType="r8"
+                          cachedName="Real money balance"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
+                          dataType="r8"
+                          name="User ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
+                          dataType="wstr"
+                          length="256"
+                          name="Username" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Role]"
+                          dataType="wstr"
+                          length="256"
+                          name="Role" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Player status]"
+                          dataType="wstr"
+                          length="256"
+                          name="Player status" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Block reason]"
+                          dataType="wstr"
+                          length="256"
+                          name="Block reason" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
+                          dataType="wstr"
+                          length="256"
+                          name="Email address" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
+                          dataType="numeric"
+                          name="Total deposits amount"
+                          precision="19"
+                          scale="255" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
+                          dataType="wstr"
+                          length="256"
+                          name="Currency" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
+                          dataType="numeric"
+                          name="Net revenue"
+                          precision="19"
+                          scale="255" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Gross revenue]"
+                          dataType="numeric"
+                          name="Gross revenue"
+                          precision="19"
+                          scale="255" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
+                          dataType="numeric"
+                          name="Real money balance"
+                          precision="19"
+                          scale="255" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Outputs[ADO NET Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="ADO NET Destination Error Output"
+                      synchronousInputId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report"
+                  componentClassID="Microsoft.ExcelSource"
+                  contactInfo="Excel Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Excel Source"
+                  name="Everymatrix Monthly Losses Report"
+                  usesDispositions="true"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">'Page 1$'</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.String"
+                      description="The variable that contains the SQL command to be executed."
+                      name="SqlCommandVariable"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">0</property>
+                    <property
+                      dataType="System.String"
+                      description="The mapping from parameters in the SQL command to variables."
+                      name="ParameterMapping"></property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[Excel Connection Manager]"
+                      connectionManagerRefId="Package.ConnectionManagers[Excel Connection Manager]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output]"
+                      name="Excel Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]"
+                          dataType="r8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[User ID]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]"
+                          name="User ID"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Username]"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]"
+                          name="Username"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Role]"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]"
+                          name="Role"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Player status]"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]"
+                          name="Player status"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Block reason]"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]"
+                          name="Block reason"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Email address]"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]"
+                          name="Email address"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]"
+                          dataType="r8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Total deposits amount]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]"
+                          name="Total deposits amount"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Currency]"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]"
+                          name="Currency"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]"
+                          dataType="r8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Net revenue]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]"
+                          name="Net revenue"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]"
+                          dataType="r8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Gross revenue]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]"
+                          name="Gross revenue"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]"
+                          dataType="r8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Real money balance]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]"
+                          name="Real money balance"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[User ID]"
+                          dataType="r8"
+                          name="User ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Username]"
+                          dataType="wstr"
+                          length="255"
+                          name="Username" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Role]"
+                          dataType="wstr"
+                          length="255"
+                          name="Role" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Player status]"
+                          dataType="wstr"
+                          length="255"
+                          name="Player status" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Block reason]"
+                          dataType="wstr"
+                          length="255"
+                          name="Block reason" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Email address]"
+                          dataType="wstr"
+                          length="255"
+                          name="Email address" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Total deposits amount]"
+                          dataType="r8"
+                          name="Total deposits amount" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Currency]"
+                          dataType="wstr"
+                          length="255"
+                          name="Currency" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Net revenue]"
+                          dataType="r8"
+                          name="Net revenue" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Gross revenue]"
+                          dataType="r8"
+                          name="Gross revenue" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Real money balance]"
+                          dataType="r8"
+                          name="Real money balance" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output]"
+                      isErrorOut="true"
+                      name="Excel Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[User ID]"
+                          dataType="r8"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[User ID]"
+                          name="User ID" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Username]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Username]"
+                          name="Username" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Role]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Role]"
+                          name="Role" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Player status]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Player status]"
+                          name="Player status" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Block reason]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Block reason]"
+                          name="Block reason" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Email address]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Email address]"
+                          name="Email address" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Total deposits amount]"
+                          dataType="r8"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Total deposits amount]"
+                          name="Total deposits amount" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Currency]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Currency]"
+                          name="Currency" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Net revenue]"
+                          dataType="r8"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Net revenue]"
+                          name="Net revenue" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Gross revenue]"
+                          dataType="r8"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Gross revenue]"
+                          name="Gross revenue" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Real money balance]"
+                          dataType="r8"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Real money balance]"
+                          name="Real money balance" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Foreach Loop Container\Data Flow Task.Paths[Excel Source Output]"
+                  endId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input]"
+                  name="Excel Source Output"
+                  startId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:ForEachVariableMappings>
+        <DTS:ForEachVariableMapping
+          DTS:CreationName=""
+          DTS:DTSID="{A7A070BE-D881-45DF-970D-42C8346F7D76}"
+          DTS:ObjectName="{A7A070BE-D881-45DF-970D-42C8346F7D76}"
+          DTS:ValueIndex="0"
+          DTS:VariableName="User::FileName" />
+      </DTS:ForEachVariableMappings>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="151,42"
+          Id="Package\Foreach Loop Container\Data Flow Task"
+          TopLeft="68.5,49.5" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="341,263"
+          Size="341,306"
+          Id="Package\Foreach Loop Container"
+          TopLeft="69.5,151.5" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Foreach Loop Container\Data Flow Task">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="179,42"
+          Id="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination"
+          TopLeft="136,352" />
+        <NodeLayout
+          Size="244,42"
+          Id="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report"
+          TopLeft="121,193" />
+        <EdgeLayout
+          Id="Package\Foreach Loop Container\Data Flow Task.Paths[Excel Source Output]"
+          TopLeft="243,235">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-17.5,117"
+              Start="0,0"
+              End="-17.5,109.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,54.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,54.5"
+                    Point2="0,58.5"
+                    Point3="-4,58.5" />
+                  <mssgle:LineSegment
+                    End="-13.5,58.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-13.5,58.5"
+                    Point2="-17.5,58.5"
+                    Point3="-17.5,62.5" />
+                  <mssgle:LineSegment
+                    End="-17.5,109.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
