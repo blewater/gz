@@ -26,26 +26,26 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">OPTIPLEX</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAACAAAAAAAQZgAAAAEAACAAAAC4SNK9hYpAZInTFcX8L60/i/oWHC6nrgCGi8o+z6aplQAAAAAOgAAAAAIAACAAAAAfamBsiQqNsdiDJJw4hr+82Itb33kXjrKUSthses8GPZAAAADw5qzm0qex4NH8tlhLzMSUxn642CMOjc+8w3acOPxEtM2JqXfksiQ+oZRIxM4VUnUoMtwgYCYP5IdQHvHGhkjIs8vNDG5vis89BBuMiy1kRcwEauVU5VzE8EqlziKKolcgfmHPwmOZU2zpy5bvS9z9+UxIhPYUa9A9Zrmr22xtwEDCEmJl20RiNqnJWmbFxlZAAAAAoNXz7d9WUZYp4yLXQ+Wki3BP7Jt+fvX6TIB12nycuhtPYi3zcwBPjuZDbXGJudhCpsydp2lp/PN4iK/03BjKrg==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAACAAAAAAAQZgAAAAEAACAAAAC/b7XKNrYn9wpsI7QAAqR9pap1ndKlUyyN0IYWASuhSwAAAAAOgAAAAAIAACAAAAB0aA8zKW9LNI1/0GvW8NEq+6jMlv0Vo0XQ1fcABGgd1ZAAAABNP7l0vej7mvMVYnL6B5F+kbyXKFkqluEzSIMR9ZLOefBVyZftFPEWIgk1+l7FITM9SgmigErEhAlpuPa6mUEaHlO2b01TY8JMr/EK9K6uP+meqeNjwQWNpisbJnnbnn6KhH/IWlZH/7S/rTeRxdxLuOdJ8aVk+U3FJFsi3I1FBQHWH2ALQZWLhAbjnRnahhpAAAAATN0WhTVKMFjDZsjwCgRL/8TnD4DL59eh7t3dDKCdP0UFYBpLUsn3y2xm3U6N4wSq2oAcnFXa8rLay57waDKvvg==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
-          <SSIS:Package SSIS:Name="Package.dtsx" SSIS:EntryPoint="1" />
+          <SSIS:Package SSIS:Name="EtlGmRptPackage.dtsx" SSIS:EntryPoint="1" />
         </SSIS:Packages>
         <SSIS:ConnectionManagers />
         <SSIS:DeploymentInfo>
           <SSIS:ProjectConnectionParameters />
           <SSIS:PackageInfo>
-            <SSIS:PackageMetaData SSIS:Name="Package.dtsx">
+            <SSIS:PackageMetaData SSIS:Name="EtlGmRptPackage.dtsx">
               <SSIS:Properties>
-                <SSIS:Property SSIS:Name="ID">{840A5CB9-5A56-4E1C-A3D4-324DC497420C}</SSIS:Property>
-                <SSIS:Property SSIS:Name="Name">Package</SSIS:Property>
+                <SSIS:Property SSIS:Name="ID">{09F4723F-6CB5-489D-BF61-CE04EA0BE657}</SSIS:Property>
+                <SSIS:Property SSIS:Name="Name">EtlGmRptPackage</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">7</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">36</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{6BB995D9-ECFF-47C3-A022-A65EB751B44F}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{B9E060EA-5B33-4A6F-B78B-D93C39FEA1D4}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -63,22 +63,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\sc\gz\docs\gm_dev_201606.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</SSIS:Property>
-                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
-                  </SSIS:Properties>
-                </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.Excel Connection Manager.ExcelFilePath">
-                  <SSIS:Properties>
-                    <SSIS:Property SSIS:Name="ID">
-                    </SSIS:Property>
-                    <SSIS:Property SSIS:Name="CreationName">
-                    </SSIS:Property>
-                    <SSIS:Property SSIS:Name="Description">
-                    </SSIS:Property>
-                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">D:\sc\gz\docs\gm_dev_201606.xlsx</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\sc\gz\inRpt\;Extended Properties="Excel 12.0 XML;HDR=YES";</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -151,7 +136,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">D:\sc\gz\docs\gm_dev_201606.xlsx</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">D:\sc\gz\inRpt\</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -166,6 +151,21 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.outRpt.ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">D:\sc\gz\outRpt</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
