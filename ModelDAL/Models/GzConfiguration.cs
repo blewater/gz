@@ -39,7 +39,7 @@ namespace gzDAL.Models {
 
         private float commissionPcnt = 1.5f;
         /// <summary>
-        /// Greenzorro percentage fee % i.e. 1.5 -> Amount * 0.015
+        /// greenzorro percentage fee % i.e. 1.5 -> Amount * 0.015
         /// </summary>
         [Required]
         public float COMMISSION_PCNT {

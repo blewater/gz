@@ -15,15 +15,19 @@ namespace gzWeb
             ));
 
             bundles.Add(new StyleBundle("~/css/fa").Include(
-                "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
+                "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()
             ));
 
-            bundles.Add(new StyleBundle("~/css/app_old").Include(
-                //"~/Content/Site.css"
-                "~/Content/Styles/_app/template/basic.css"
-                , "~/Content/Styles/_app/template/acorns.css"
-                , "~/Content/Styles/_app/template/donut.css"
+            bundles.Add(new StyleBundle("~/css/modules").Include(
+                "~/Content/Styles/ng-tags-input/ng-tags-input.min.css"
             ));
+
+            //bundles.Add(new StyleBundle("~/css/app_old").Include(
+            //    //"~/Content/Site.css"
+            //    "~/Content/Styles/_app/template/basic.css"
+            //    , "~/Content/Styles/_app/template/acorns.css"
+            //    , "~/Content/Styles/_app/template/donut.css"
+            //));
             bundles.Add(new StyleBundle("~/css/app").Include(
                 //"~/Content/Site.css"
                 "~/Content/Styles/_app/basic.css"
@@ -35,6 +39,7 @@ namespace gzWeb
                 , "~/Content/Styles/_app/auth.css"
                 , "~/Content/Styles/_app/investments.css"
                 , "~/Content/Styles/_app/games.css"
+                , "~/Content/Styles/_app/admin.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
                 //, "~/Content/Styles/_app/exceptionaire/exceptionaire-meterialize.css"
                 //, "~/Content/Styles/_app/exceptionaire/exceptionaire-style.css"
@@ -95,6 +100,7 @@ namespace gzWeb
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
+                , "~/Scripts/ng-tags-input/ng-tags-input.min.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 //, "~/Scripts/_modules/styleInjector.js"

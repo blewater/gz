@@ -1,0 +1,30 @@
+﻿@model List<gzDAL.Models.LogEntry>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Application</th>
+            <th>Date</th>
+            <th>Level</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var entry in Model)
+        {
+            <tr>
+                <td>@entry.Application</td>
+                <td>@entry.Logged</td>
+                <td>@entry.Level</td>
+                <td>@entry.Message</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -86,36 +86,56 @@
         // #endregion
 
         // #region Session Management
-        function watchBalance() {
-            if (factory.data.gamingAccount) {
-                emWamp.watchBalance(factory.data.gamingAccount, function(data) {
-                    factory.data.gamingAccount.amount = data.amount;
-                    storeAuthData();
-                    $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
-                });
-            } else
-                console.log("watchBalance: No Gaming account to watch.");
-        }
-        function unwatchBalance() {
-            if (factory.data.gamingAccount) {
-                emWamp.unwatchBalance(factory.data.gamingAccount);
-            } else
-                console.log("unwatchBalance: No Gaming account to unwatch.");
-        }
-        function getGamingAccountAndWatchBalance() {
-            if (!factory.data.gamingAccount) {
-                emBanking.getGamingAccounts(true, false).then(function (result) {
-                    factory.data.gamingAccount = result.accounts[0];
-                    storeAuthData();
-                    $rootScope.$broadcast(constants.events.AUTH_CHANGED);
-                    watchBalance();
-                }, function (error) {
-                    console.log(error.desc);
-                });
-            }
-            else
-                watchBalance();
-        }
+
+        //function watchBalance() {
+        //    if (factory.data.gamingAccount) {
+        //        emWamp.watchBalance(factory.data.gamingAccount, function(data) {
+        //            factory.data.gamingAccount.amount = data.amount;
+        //            storeAuthData();
+        //            $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
+        //        });
+        //    } else
+        //        console.log("watchBalance: No Gaming account to watch.");
+        //}
+        //function unwatchBalance() {
+        //    if (factory.data.gamingAccount) {
+        //        emWamp.unwatchBalance(factory.data.gamingAccount);
+        //    } else
+        //        console.log("unwatchBalance: No Gaming account to unwatch.");
+        //}
+        //function getGamingAccountAndWatchBalance() {
+        //    if (!factory.data.gamingAccount) {
+        //        emBanking.getGamingAccounts(true, false).then(function (result) {
+        //            factory.data.gamingAccount = result.accounts[0];
+        //            storeAuthData();
+        //            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+        //            watchBalance();
+        //        }, function (error) {
+        //            console.log(error.desc);
+        //        });
+        //    }
+        //    else
+        //        watchBalance();
+        //}
+
+        $rootScope.$on(constants.events.REQUEST_ACCOUNT_BALANCE, function (event, args) {
+            var expectBalance = args && args.expectBalance ? args.expectBalance : true;
+            var expectBonus = args && args.expectBonus ? args.expectBonus : true;
+            var callback = args && args.callback ? args.callback : angular.noop;
+            factory.getGamingAccounts(expectBalance, expectBonus, callback);
+        });
+
+        factory.getGamingAccounts = function (expectBalance, expectBonus, callback) {
+            emBanking.getGamingAccounts(expectBalance, expectBonus).then(function (result) {
+                factory.data.gamingAccount = result.accounts[0];
+                storeAuthData();
+                $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
+                if (angular.isFunction(callback))
+                    callback();
+            }, function (error) {
+                console.log(error.desc);
+            });
+        };
 
         //function onSessionDisconnected() {
         //    clearGamingData();
@@ -129,7 +149,8 @@
                 emWamp.getSessionInfo().then(function (sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
                         setGamingAuthData(sessionInfo);
-                        getGamingAccountAndWatchBalance();
+                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                        //getGamingAccountAndWatchBalance();
 
                         if (args.initialized === true && $rootScope.routeData.category === constants.categories.wandering) {
                             if (factory.data.isGamer)
@@ -146,13 +167,39 @@
             }
             //else if (args.code === 2) {
             //}
+            else if (args.code === 3) {
+                //message.info(args.desc);
+                factory.logout(args.desc);
+            }
             else {
                 // TODO Check other codes
-                emLogout();
+                factory.logout();
                 //$location.path(constants.routes.home.path);
                 //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
             }
         });
+
+        //var requestPath = undefined;
+        //factory.nonAuthRedirect = function () {
+        //    var path = $location.url();
+        //    if (path && path !== constants.routes.home.path)
+        //        requestPath = path;
+        //    $location.path(constants.routes.home.path);
+        //};
+        //factory.loginRedirect = function () {
+        //    if (angular.isDefined(requestPath))
+        //        $location.path(requestPath);
+        //    else if (factory.data.isGamer)
+        //        $location.path(constants.routes.games.path);
+        //    else if (factory.data.isInvestor)
+        //        $location.path(constants.routes.summary.path);
+        //};
+        //var currentRoute = $route.current.$$route;
+        //if (!auth.authorize(currentRoute.roles))
+        //    $location.path(constants.routes.home.path);
+        //else
+        //    setRouteData(currentRoute);
+
         // #endregion
 
         // #region Authorize
@@ -178,18 +225,18 @@
         function gzLogout() {
             clearInvestmentData();
         }
-        function emLogout() {
+        function emLogout(reason) {
             clearGamingData();
-            unwatchBalance();
+            //unwatchBalance();
             emWamp.logout();
             //$location.path(constants.routes.home.path);
             //$window.location.reload();
-            $window.location.href = constants.routes.home.path;
+            $window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
         }
 
-        factory.logout = function () {
+        factory.logout = function (reason) {
             gzLogout();
-            emLogout();
+            emLogout(reason);
             //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
 
             // TODO
@@ -221,7 +268,7 @@
                 password: password
             };
             if (captcha) {
-                params.captchaPublicKey = constants.reCaptchaPublicKey;
+                params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey)
                 params.captchaChallenge = "";
                 params.captchaResponse = vcRecaptchaService.getResponse();
             }
@@ -237,29 +284,17 @@
         factory.login = function (usernameOrEmail, password, captcha) {
             var q = $q.defer();
             emLogin(usernameOrEmail, password, captcha).then(function(emLoginResult) {
-                    //for (var i = 0; i < emLoginResult.roles.length; i++)
-                    //    console.log("==========> EveryMatrix Role " + i + ": " + emLoginResult.roles[i]);
-                    //factory.data.push(emLoginResult.roles[i]);
-                    //storeAuthData();
-                    if (emLoginResult.hasToEnterCaptcha)
-                        q.resolve({ enterCaptcha: true });
-                    else {
+                if (emLoginResult.hasToEnterCaptcha)
+                    q.resolve({ enterCaptcha: true });
+                else {
                     gzLogin(usernameOrEmail, password).then(function () {
-                            emWamp.getSessionInfo().then(function(sessionInfo) {
-                                api.setUserId(sessionInfo.userID);
-                            }, function(error) {
-
-                            });
-                        //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
-                        //$location.path(constants.routes.games.path);
                         q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
                     });
                 }
             }, function (emLoginError) {
                 gzLogin(usernameOrEmail, password).then(function () {
-                    //$location.path(constants.routes.summary.path);
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
                 }, function (gzLoginError) {
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
@@ -333,7 +368,15 @@
                 gzLogin(parameters.username, parameters.password).then(function (gzLoginResult) {
                     emRegister(parameters).then(function (emRegisterResult) {
                         emLogin(parameters.username, parameters.password).then(function (emLoginResult) {
-                            q.resolve(true);
+                            emWamp.getSessionInfo().then(function (sessionInfo) {
+                                api.finalizeRegistration(sessionInfo.userID).then(function () {
+                                    q.resolve(true);
+                                }, function (finalizeError) {
+                                    q.reject(finalizeError);
+                                });
+                            }, function (getSessionInfoError) {
+                                q.reject(getSessionInfoError);
+                            });
                         }, function (emLoginError) {
                             q.reject(emLoginError);
                         });
@@ -371,7 +414,7 @@
                 emWamp.sendResetPwdEmail({
                     email: email,
                     changePwdURL: changePwdUrl,
-                    captchaPublicKey: constants.reCaptchaPublicKey,
+                    captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
                     captchaChallenge: "",
                     captchaResponse: vcRecaptchaService.getResponse()
                 }).then(function (result) {
@@ -415,7 +458,7 @@
             emWamp.changePassword({
                 oldPassword: oldPassword,
                 newPassword: newPassword,
-                captchaPublicKey: constants.reCaptchaPublicKey,
+                captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
                 captchaChallenge: "",
                 captchaResponse: vcRecaptchaService.getResponse()
             }).then(function (emChangeResult) {
@@ -446,6 +489,7 @@
             }, function (response) {
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
+                localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
             });
 
             emWamp.init();

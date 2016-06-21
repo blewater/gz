@@ -14,7 +14,7 @@ namespace gzDAL.DTO {
         /// </summary>
         public decimal InvestAmount { get; set; }
         /// <summary>
-        /// The present market value without deducting Greenzorro or Fund fees
+        /// The present market value without deducting greenzorro or Fund fees
         /// </summary>
         public decimal MarketPrice { get; set; }
         /// <summary>

@@ -3,105 +3,227 @@
 }
 
 <div class="contact">
-    <div class="container">
-        <div class="row">         
-            <div class="col-md-12 contact-content">
-                <div class="contact-top">
-                    <div class="row">
-                        <div class="col-md-offset-0 col-md-12">
-                            <div id="gz-map">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.6492417642344!2d-0.10076458422958447!3d51.519650779637196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b54184b30e7%3A0xa3c61aec5b4e4d1f!2zODAgTG9uZyBMbiwgTG9uZG9uIEVDMUEgOUVULCDOl869z4nOvM6tzr3OvyDOks6xz4POr867zrXOuc6_!5e0!3m2!1sel!2sus!4v1465462411110" width="700" height="520" frameborder="0" style="border:0" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                        <div class="col-md-offset-2 col-md-8 divider main-divider"></div>
-                    </div>
-                </div>
 
-                <div class="contact-bottom">
-                    <div class="row">
-                        <div class="col-md-6 col-md-offset-0">
-                            <div class="col-md-12 text-center social-media">
-                                <h3>Follow us</h3>
-                                <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
-                                <div class="col-md-12">
-                                    <a target="_blank" href="https://www.facebook.com/Greenzorro-520872994721625/timeline/">
-                                        <div class="social-circle">
-                                            <i class="fa fa-facebook"></i>
-                                        </div>
-                                    </a>
-                                    <a target="_blank" href="https://twitter.com/GrZorro">
-                                        <div class="social-circle">
-                                            <i class="fa fa-twitter"></i>
-                                        </div>
-                                    </a>
-                                    <a target="_blank" href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home">
-                                        <div class="social-circle">
-                                            <i class="fa fa-linkedin"></i>
-                                        </div>
-                                    </a>
-                                    <a target="_blank" href="https://www.instagram.com/greenzorro_official/">
-                                        <div class="social-circle">
-                                            <i class="fa fa-instagram"></i>
-                                        </div>
-                                    </a>
+    <section class="top-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 contact-content">
+                    <div class="contact-top">
+                        <div class="row">
+                            <div class="col-md-offset-0 col-md-12">
+                                <div id="gz-map">
+                                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.6492417642344!2d-0.10076458422958447!3d51.519650779637196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b54184b30e7%3A0xa3c61aec5b4e4d1f!2zODAgTG9uZyBMbiwgTG9uZG9uIEVDMUEgOUVULCDOl869z4nOvM6tzr3OvyDOks6xz4POr867zrXOuc6_!5e0!3m2!1sel!2sus!4v1465462411110" width="700" height="520" frameborder="0" style="border:0" allowfullscreen></iframe>
                                 </div>
-                            </div>
-                            <div class="col-md-12 text-center contact-info">
-                                <h3>Contact Info</h3>
-                                <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
-                                <div class="col-md-12">
-                                    <p><b><b>Greenzorro LTD.</b></b></p>
-                                    <p>80-83 , Long Lane LONDON EC1A 9ET</p>
-                                    <a target="_blank" href="mailto:contact@greenzorro.com">contact@greenzorro.com</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-md-offset-0">
-                            <h3 class="text-center">Contact us</h3>
-                            <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
-                            <div class="col-md-12">
-                                <form name="contactForm" class="contact-form" novalidate>
-                                    <div class="form-group">
-                                        <input type="text" id="name" name="name" class="form-control" ng-model="name" placeholder="Name" required/>
-                                        <span ng-show="contactForm.name.$touched || (contactForm.name.$dirty && contactForm.name.$invalid)">
-                                            <span ng-show="contactForm.name.$error.required">Name is required.</span>
-                                        </span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="email" id="email" name="email" class="form-control" ng-model="email" placeholder="E-mail" required/>
-                                        <span ng-show="contactForm.email.$touched && contactForm.email.$invalid">
-                                            <span ng-show="contactForm.email.$error.required">Email is required.</span>
-                                            <span ng-show="contactForm.email.$error.email">Invalid email address.</span>
-                                        </span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" id="subject" name="subject" class="form-control" ng-model="subject" placeholder="Subject" required/>
-                                        <span ng-show="contactForm.subject.$touched || (contactForm.subject.$dirty && contactForm.subject.$invalid)">
-                                            <span ng-show="contactForm.subject.$error.required">Subject is required.</span>
-                                        </span>
-                                    </div>
-                                    <div class="message-card">
-                                        <div class="form-group">
-                                            <textarea type="text" id="message" name="message" rows="10" class="form-control" ng-model="message" placeholder="Enter your message here" required/>
-                                            <span ng-show="contactForm.message.$touched || (contactForm.message.$dirty && contactForm.message.$invalid)">
-                                                <span ng-show="contactForm.message.$error.required">Message is required.</span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div vc-recaptcha key="reCaptchaPublicKey" class="recaptcha-wrap"></div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button ng-disabled="contactForm.$invalid" class="btn-gz pull-right" type="submit">Send</button>
-                                        </div>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+
+    <div class="col-xs-12 logo-holder">
+        <span class="circle-bg">
+            <img class="center-block" src="@Url.Content("~/Content/Images/logo_no_bg.svg")" />
+        </span>
     </div>
+
+    <section class="middle-section">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 contact-content">
+                    <div class="col-xs-10 col-xs-offset-1 col-md-offset-1 col-md-3 text-center social-media">
+                        <div class="row">
+
+                            <h4><b>Connect:</b></h4>
+                            <p>
+                                <a target="_blank" href="https://www.facebook.com/greenzorro-520872994721625/timeline/">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                                <a target="_blank" href="https://twitter.com/GrZorro">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                                <a target="_blank" href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                                <a target="_blank" href="https://www.instagram.com/greenzorro_official/">
+                                    <i class="fa fa-instagram"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <div class="col-xs-10 col-xs-offset-1 col-md-offset-0 col-md-4 text-center contact-info">
+                        <h4><b>Address: </b></h4>
+                        <p>80-83 , Long Lane LONDON EC1A 9ET</p>
+                    </div>
+
+                    <div class="col-xs-10 col-xs-offset-1 col-md-offset-0 col-md-3 text-center contact-info">
+                        <h4><b>Email: </b></h4>
+                        <p><a target="_blank" href="mailto:contact@greenzorro.com">contact@greenzorro.com</a></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="bottom-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 contact-content">
+                    <div class="contact-bottom">
+                        <div class="row">
+
+                            <div class="col-md-12 col-md-offset-0">
+                                <h3 class="text-center">Contact us</h3>
+                                <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
+                                <div class="col-md-12">
+                                    <form name="contactForm" class="contact-form" novalidate>
+                                        <div class="col-md-8 col-md-offset-2">
+                                            <div class="form-group">
+                                                <input type="text" id="name" name="name" class="form-control" ng-model="name" placeholder="Name" required />
+                                                <span ng-show="contactForm.name.$touched || (contactForm.name.$dirty && contactForm.name.$invalid)">
+                                                    <span ng-show="contactForm.name.$error.required">Name is required.</span>
+                                                </span>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="email" id="email" name="email" class="form-control" ng-model="email" placeholder="E-mail" required />
+                                                <span ng-show="contactForm.email.$touched && contactForm.email.$invalid">
+                                                    <span ng-show="contactForm.email.$error.required">Email is required.</span>
+                                                    <span ng-show="contactForm.email.$error.email">Invalid email address.</span>
+                                                </span>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" id="subject" name="subject" class="form-control" ng-model="subject" placeholder="Subject" required />
+                                                <span ng-show="contactForm.subject.$touched || (contactForm.subject.$dirty && contactForm.subject.$invalid)">
+                                                    <span ng-show="contactForm.subject.$error.required">Subject is required.</span>
+                                                </span>
+                                            </div>
+
+
+
+                                            <div class="message-card">
+                                                <div class="form-group">
+                                                    <textarea type="text" id="message" name="message" rows="10" class="form-control" ng-model="message" placeholder="Enter your message here" required />
+                                                    <span ng-show="contactForm.message.$touched || (contactForm.message.$dirty && contactForm.message.$invalid)">
+                                                        <span ng-show="contactForm.message.$error.required">Message is required.</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-xs-10 col-sm-12">
+                                                        <div vc-recaptcha key="reCaptchaPublicKey" class="recaptcha-wrap"></div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12">
+                                                        <button ng-disabled="contactForm.$invalid" class="btn-gz" type="submit">Send</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @*<section class="bottom-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 contact-content">
+                    <div class="contact-bottom">
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-0">
+                                <div class="col-md-12 text-center social-media">
+                                    <h3>Follow us</h3>
+                                    <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
+                                    <div class="col-md-12">
+                                        <a target="_blank" href="https://www.facebook.com/greenzorro-520872994721625/timeline/">
+                                            <i class="fa fa-facebook"></i>
+                                        </a>
+                                        <a target="_blank" href="https://twitter.com/GrZorro">
+                                            <i class="fa fa-twitter"></i>
+                                        </a>
+                                        <a target="_blank" href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home">
+                                            <i class="fa fa-linkedin"></i>
+                                        </a>
+                                        <a target="_blank" href="https://www.instagram.com/greenzorro_official/">
+                                            <i class="fa fa-instagram"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 text-center contact-info">
+                                    <h3>Contact Info</h3>
+                                    <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
+                                    <div class="col-md-12">
+                                        <p><b><b>greenzorro ltd</b></b></p>
+                                        <p>80-83, Long Lane London EC1A 9ET</p>
+                                        <a target="_blank" href="mailto:contact@greenzorro.com">contact@greenzorro.com</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-0">
+                                <h3 class="text-center">Contact us</h3>
+                                <div class="col-md-offset-4 col-md-4 divider small-divider"></div>
+                                <div class="col-md-12">
+                                    <form name="contactForm" class="contact-form" novalidate>
+                                        <div class="form-group">
+                                            <input type="text" id="name" name="name" class="form-control" ng-model="name" placeholder="Name" required />
+                                            <span ng-show="contactForm.name.$touched || (contactForm.name.$dirty && contactForm.name.$invalid)">
+                                                <span ng-show="contactForm.name.$error.required">Name is required.</span>
+                                            </span>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="email" id="email" name="email" class="form-control" ng-model="email" placeholder="E-mail" required />
+                                            <span ng-show="contactForm.email.$touched && contactForm.email.$invalid">
+                                                <span ng-show="contactForm.email.$error.required">Email is required.</span>
+                                                <span ng-show="contactForm.email.$error.email">Invalid email address.</span>
+                                            </span>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" id="subject" name="subject" class="form-control" ng-model="subject" placeholder="Subject" required />
+                                            <span ng-show="contactForm.subject.$touched || (contactForm.subject.$dirty && contactForm.subject.$invalid)">
+                                                <span ng-show="contactForm.subject.$error.required">Subject is required.</span>
+                                            </span>
+                                        </div>
+                                        <div class="message-card">
+                                            <div class="form-group">
+                                                <textarea type="text" id="message" name="message" rows="10" class="form-control" ng-model="message" placeholder="Enter your message here" required />
+                                                <span ng-show="contactForm.message.$touched || (contactForm.message.$dirty && contactForm.message.$invalid)">
+                                                    <span ng-show="contactForm.message.$error.required">Message is required.</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-10 col-sm-7">
+                                                <div vc-recaptcha key="reCaptchaPublicKey" class="recaptcha-wrap"></div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-5">
+                                                <button ng-disabled="contactForm.$invalid" class="btn-gz pull-right" type="submit">Send</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>*@
+
 </div>

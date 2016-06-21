@@ -1,11 +1,11 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "changePasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', 'vcRecaptchaService', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, auth, message, vcRecaptchaService) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', 'vcRecaptchaService', 'localStorageService', ctrlFactory]);
+    function ctrlFactory($scope, constants, emWamp, auth, message, vcRecaptchaService, localStorageService) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
-        $scope.reCaptchaPublicKey = constants.reCaptchaPublicKey;
+        $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
 
         $scope.model = {
             oldPassword: undefined,

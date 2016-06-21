@@ -38,10 +38,6 @@
             Languages: 17179869184
         };
 
-        _service.getGameCategories = function () {
-            return emWamp.call("/casino#getGameCategories");
-        };
-
         /// <summary>
         /// Query the casino games according to specific condition indicated in input parameters.
         /// </summary>
@@ -100,7 +96,7 @@
         };
 
         _service.getGameCategories = function () {
-            return emWamp.call("/casino#getGameCategories");
+            return emWamp.call("/casino#getGameCategories", { filterByPlatform: null });
         };
 
         _service.getGameVendors = function () {
