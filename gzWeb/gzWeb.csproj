@@ -512,6 +512,7 @@
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.bootstrap.min.css" />
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.css" />
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.min.css" />
+    <Content Include="Content\Styles\_app\admin.css" />
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
