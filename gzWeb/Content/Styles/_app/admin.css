@@ -7,6 +7,10 @@
 
 .logs-admin h3 { margin: 50px 0; }
 
+.logs-admin .filter-form .form-group .form-control { height: 40px }
+.logs-admin .filter-form .form-group .btn-gz { width: 100%; margin-top: 0; height: 39px; }
+
+.logs-admin .table { overflow-x: scroll; }
 .logs-admin .table thead tr { background-color: #27A95C; }
 
 .logs-admin .btn-gz { width: 150px; }
@@ -17,3 +21,12 @@
 .logs-admin .table tbody .Debug,
 .logs-admin .table tbody .Info,
 .logs-admin .table tbody .Trace { background-color: #c0c0c0 }
+
+.logs-admin .logs-pagination .pagination a { color: #27A95C; }
+.logs-admin .logs-pagination .pagination .active a { background-color: #27A95C; border-color: #27A95C; color: #fff; }
+
+.log-entry-modal-content .modal-body ul li { list-style: none; padding: 10px 0; }
+.log-entry-modal-content .modal-body ul li:nth-of-type(2n+1) { background-color: #f2f2f2; }
+.logs-admin .modal .modal-dialog { max-height: 1000px; width: 800px; }
+
+log-entry-modal-content .table thead { display: none; }
