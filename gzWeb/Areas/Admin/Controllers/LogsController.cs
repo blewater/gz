@@ -29,7 +29,7 @@ namespace gzWeb.Areas.Admin.Controllers
             if (toDate.HasValue)
                 logEntries = logEntries.Where(x => x.Logged <= toDate.Value);
 
-            return View("Index", logEntries.Skip(pageSize*(page - 1)).Take(pageSize));
+            return View("Index", logEntries.Skip(pageSize*(page - 1)).Take(pageSize).ToList());
         }
     }
 }
