@@ -154,6 +154,10 @@
       <HintPath>..\packages\SimpleInjector.Integration.Web.3.1.2\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SimpleInjector.Integration.Web.Mvc, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.3.1.2\lib\net40\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SimpleInjector.Integration.WebApi, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.Integration.WebApi.3.1.2\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
       <Private>True</Private>
@@ -568,6 +572,9 @@
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\Login.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_viewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
@@ -808,7 +815,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>

@@ -93,6 +93,11 @@ namespace gzDAL.Conf
                 UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser, int>(dataProtectionProvider.Create("ASP.NET Identity"));
         }
 
+        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options,
+                                             IOwinContext context)
+        {
+            return new ApplicationUserManager(new CustomUserStore(context.Get<ApplicationDbContext>()), new DataProtectionProviderFactory(() => options.DataProtectionProvider));
+        }
     }
 
     
@@ -103,6 +108,10 @@ namespace gzDAL.Conf
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
             : base(userManager, authenticationManager)
         {
+        }
+        public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
+        {
+            return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
         }
 
         //public override Task<ClaimsIdentity> CreateUserIdentityAsync(ApplicationUser user)
