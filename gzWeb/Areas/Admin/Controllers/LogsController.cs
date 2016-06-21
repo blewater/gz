@@ -9,10 +9,18 @@ namespace gzWeb.Areas.Admin.Controllers
 {
     public class LogsController : Controller
     {
+        private readonly ApplicationDbContext _dbContext;
+
+        public LogsController()
+        {
+            // TODO: (xdinos) inject
+            _dbContext = new ApplicationDbContext();
+        }
+
         // GET: Admin/Logs
         public ActionResult Index()
         {
-            List<LogEntry> model = null;
+            List<LogEntry> model = _dbContext.LogEntries.Take(30).ToList();
 
             return View("Index", model);
         }
