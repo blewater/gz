@@ -34,14 +34,22 @@ namespace gzWeb.Areas.Admin.Controllers
                 toDate = fromDate.Value.AddMonths(1);
 
             logEntries = logEntries.Where(x => x.Logged >= fromDate.Value && x.Logged <= toDate.Value);
-
+            var totalPages = (int)Math.Ceiling((float)logEntries.Count() / pageSize);
 
             return View("Index", new LogViewModel
             {
+                CurrentPage = page,
+                TotalPages = totalPages,
+                LogLevel = logLevel,
                 FromDate = fromDate.Value,
                 ToDate = toDate.Value,
                 LogEntries = logEntries.OrderBy(x => x.Logged).Skip(pageSize * (page - 1)).Take(pageSize).ToList()
             });
+        }
+
+        public PartialViewResult GetEntry(int id)
+        {
+            return PartialView("_LogEntryModal", _dbContext.LogEntries.Single(x => x.Id == id));
         }
     }
 }
