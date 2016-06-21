@@ -1,4 +1,5 @@
 ﻿using gzDAL.Models;
+using gzWeb.Areas.Admin.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +25,23 @@ namespace gzWeb.Areas.Admin.Controllers
 
             if (!String.IsNullOrEmpty(logLevel))
                 logEntries = logEntries.Where(x => x.Level == logLevel);
-            if (fromDate.HasValue)
-                logEntries = logEntries.Where(x => x.Logged >= fromDate.Value);
-            if (toDate.HasValue)
-                logEntries = logEntries.Where(x => x.Logged <= toDate.Value);
 
-            return View("Index", logEntries.Skip(pageSize*(page - 1)).Take(pageSize).ToList());
+            var now = DateTime.Now;
+            if (!fromDate.HasValue)
+                fromDate = now.AddMonths(-1);
+
+            if (!toDate.HasValue)
+                toDate = fromDate.Value.AddMonths(1);
+
+            logEntries = logEntries.Where(x => x.Logged >= fromDate.Value && x.Logged <= toDate.Value);
+
+
+            return View("Index", new LogViewModel
+            {
+                FromDate = fromDate.Value,
+                ToDate = toDate.Value,
+                LogEntries = logEntries.OrderBy(x => x.Logged).Skip(pageSize * (page - 1)).Take(pageSize).ToList()
+            });
         }
     }
 }

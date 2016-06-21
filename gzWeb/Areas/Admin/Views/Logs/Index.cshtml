@@ -1,30 +1,76 @@
-﻿@model List<gzDAL.Models.LogEntry>
+﻿@model gzWeb.Areas.Admin.Models.LogViewModel
 @{
     ViewBag.Title = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<div class="logs-admin">
 
-<table>
-    <thead>
-        <tr>
-            <th>Application</th>
-            <th>Date</th>
-            <th>Level</th>
-            <th>Message</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var entry in Model)
-        {
-            <tr>
-                <td>@entry.Application</td>
-                <td>@entry.Logged</td>
-                <td>@entry.Level</td>
-                <td>@entry.Message</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <article>
 
+        <div class="container-fluid">
+            <h3 class="text-center">Logs History</h3>
+
+            @using (Html.BeginForm("Index", "Logs", new { Area = "Admin" }, FormMethod.Get))
+            {
+            <div class="filter-form">
+                <div class="row">
+                    <input type="hidden" name="page" value="1" />
+                    <input type="hidden" name="pageSize" value="20" />
+                    <div class="col-md-3 form-group date">
+                        <input type="date" class="form-control" placeholder="From Date"  name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")"/>
+                    </div>
+                    <div class="col-md-3 form-group date">
+                        <input type="date" class="form-control" placeholder="To Date"  name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")"/>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <select name="logLevel" class="form-control">
+                            <option value="">All</option>
+                            <option value="Debug">Debug</option>
+                            <option value="Error">Error</option>
+                            <option>Fatal</option>
+                            <option>Info</option>
+                            <option>Trace</option>
+                            <option>Warn</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <button type="submit" class="btn-gz">Filter</button>
+                    </div>
+                </div>
+            </div>
+            }
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table .table-striped table-bordered center-block">
+                        <thead class="text-center">
+                            <tr>
+                                <th class="col-md-1 text-center">Application</th>
+                                <th class="col-md-2 text-center">Date</th>
+                                <th class="col-md-1 text-center">Level</th>
+                                <th class="col-md-8 text-center">Message</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.LogEntries)
+                            {
+                                <tr class="@entry.Level">
+                                    <td class="text-center">@entry.Application</td>
+                                    <td class="text-center">@entry.Logged</td>
+                                    <td class="text-center">@entry.Level</td>
+                                    <td class="">@entry.Message</td>
+                                    <td>
+                                        <button class="btn-gz">Show Details</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </article>
+
+</div>
