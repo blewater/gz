@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">OPTIPLEX</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAxtdARz/PF0GIc/NaFZU3SQAAAAACAAAAAAAQZgAAAAEAACAAAAD7N8Zdp2zWeixqI8KkWHU6TvdRDwC8R6ITrmXxHWmSuQAAAAAOgAAAAAIAACAAAAAehK4kQ912WTBT2CaPTBohAt/UsI8xEMTYfvHnjOy6EZAAAAAkkYF5eFaquiCqo5edT1pp5HKoEyLqQCeQ+Ah/8zNrH4nS4CE9WhVnm4fG0XSsHzXez0rVa4CPzMQ6gHSOvbSBkhZTEMWJDamb00Bxnh/wZkzY5Xcfc0Pe+HNo2ieSSKBUGG2xTw+fLVAIQrSk+NbOMUp6SNfPj8/McuCeNtFTkNV2db0OT3hyUaSbZ3NXxxJAAAAA5pmhmzIZS/4Ojyj3EmItxFs/4njOIi+aSSKTPHc4AM46mKT4V37hmc+nPRhAMlk1A0Jd9ophPVNJoYEQQh4+lA==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAACAAAAAAAQZgAAAAEAACAAAAC4SNK9hYpAZInTFcX8L60/i/oWHC6nrgCGi8o+z6aplQAAAAAOgAAAAAIAACAAAAAfamBsiQqNsdiDJJw4hr+82Itb33kXjrKUSthses8GPZAAAADw5qzm0qex4NH8tlhLzMSUxn642CMOjc+8w3acOPxEtM2JqXfksiQ+oZRIxM4VUnUoMtwgYCYP5IdQHvHGhkjIs8vNDG5vis89BBuMiy1kRcwEauVU5VzE8EqlziKKolcgfmHPwmOZU2zpy5bvS9z9+UxIhPYUa9A9Zrmr22xtwEDCEmJl20RiNqnJWmbFxlZAAAAAoNXz7d9WUZYp4yLXQ+Wki3BP7Jt+fvX6TIB12nycuhtPYi3zcwBPjuZDbXGJudhCpsydp2lp/PN4iK/03BjKrg==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -42,10 +42,10 @@
                 <SSIS:Property SSIS:Name="Name">Package</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">2</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">7</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{67709CF2-4FB7-4F49-A512-E4060E86FBF1}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{6BB995D9-ECFF-47C3-A022-A65EB751B44F}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -63,7 +63,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\download\values.xlsx;Extended Properties="Excel 12.0 XML;HDR=YES";</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\sc\gz\docs\gm_dev_201606.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -78,7 +78,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">D:\download\values.xlsx</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">D:\sc\gz\docs\gm_dev_201606.xlsx</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -151,7 +151,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">D:\download\values.xlsx</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">D:\sc\gz\docs\gm_dev_201606.xlsx</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -169,7 +169,7 @@
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.gzdbdev.database.windows.net.gzdbdevsa.ConnectionString">
+                <SSIS:Parameter SSIS:Name="CM.tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa.ConnectionString">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -180,11 +180,11 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">Data Source=gzdbdev.database.windows.net;User ID=gzdbdevsa;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">Data Source=tcp:gzdbdev.database.windows.net;User ID=gzdbdevsa;Initial Catalog=gzDbDev;Persist Security Info=True;Application Name=SSIS-Package-{D1719C09-104C-4DC9-833A-3AAE12523B7C}tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa;</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.gzdbdev.database.windows.net.gzdbdevsa.InitialCatalog">
+                <SSIS:Parameter SSIS:Name="CM.tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa.InitialCatalog">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -195,10 +195,11 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">gzDbDev</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.gzdbdev.database.windows.net.gzdbdevsa.Password">
+                <SSIS:Parameter SSIS:Name="CM.tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa.Password">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -212,7 +213,7 @@
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.gzdbdev.database.windows.net.gzdbdevsa.RetainSameConnection">
+                <SSIS:Parameter SSIS:Name="CM.tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa.RetainSameConnection">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -227,7 +228,7 @@
                     <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.gzdbdev.database.windows.net.gzdbdevsa.ServerName">
+                <SSIS:Parameter SSIS:Name="CM.tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa.ServerName">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -238,11 +239,11 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">gzdbdev.database.windows.net</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">tcp:gzdbdev.database.windows.net</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.gzdbdev.database.windows.net.gzdbdevsa.UserName">
+                <SSIS:Parameter SSIS:Name="CM.tcp:gzdbdev.database.windows.net.gzDbDev.gzdbdevsa.UserName">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -276,7 +277,13 @@
         <ConnectionSecurityMappings />
         <DatabaseStorageLocations />
         <TargetServerVersion>SQLServer2016</TargetServerVersion>
-        <ParameterConfigurationValues />
+        <ParameterConfigurationValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2016-06-21T15:34:59.4102896Z</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationValues>
       </Options>
     </Configuration>
   </Configurations>
