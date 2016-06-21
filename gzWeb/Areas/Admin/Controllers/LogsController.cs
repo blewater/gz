@@ -18,11 +18,18 @@ namespace gzWeb.Areas.Admin.Controllers
         }
 
         // GET: Admin/Logs
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 20, string logLevel = null, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            List<LogEntry> model = _dbContext.LogEntries.Take(30).ToList();
+            IQueryable<LogEntry> logEntries = _dbContext.LogEntries;
 
-            return View("Index", model);
+            if (!String.IsNullOrEmpty(logLevel))
+                logEntries = logEntries.Where(x => x.Level == logLevel);
+            if (fromDate.HasValue)
+                logEntries = logEntries.Where(x => x.Logged >= fromDate.Value);
+            if (toDate.HasValue)
+                logEntries = logEntries.Where(x => x.Logged <= toDate.Value);
+
+            return View("Index", logEntries.Skip(pageSize*(page - 1)).Take(pageSize));
         }
     }
 }
