@@ -24,6 +24,7 @@ using NLog.Owin.Logging;
 using Owin;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
+using SimpleInjector.Integration.Web.Mvc;
 using SimpleInjector.Integration.WebApi;
 
 [assembly: OwinStartupAttribute(typeof(gzWeb.Startup))]
@@ -62,6 +63,9 @@ namespace gzWeb
             var config = new HttpConfiguration();
             
             var container = InitializeSimpleInjector(app, config, mapperConfiguration);
+
+            //DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
+
             ConfigureAuth(app, () => container.GetInstance<ApplicationUserManager>());
 
             WebApiConfig.Register(config);
