@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EtlGmRptPackage"
   DTS:PackageType="5"
-  DTS:VersionBuild="51"
-  DTS:VersionGUID="{EA6B79FC-E5B0-4FF2-B9E3-779D783898DC}">
+  DTS:VersionBuild="52"
+  DTS:VersionGUID="{FAA70380-ECE6-4A24-A19F-4F3BE7F8C121}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -50,7 +50,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADUnLs4c4QCYSN3mZeqCm0Z2FwRKI3q4E4cqoY6tSEiPgAAAAAOgAAAAAIAACAAAAADQp4BGG4aSGa5GnfWfyxKa4oswRJzaYfiFiQNIu3tDiAAAACvIKikil9ROQ6mt/XGHRCayyR2ZD9xQGOoHBtVdkOM0EAAAADY7c/UyZXumk9X1jGGGg69e7deOr3oluTViPYi2lDv24tUOzGAuflxasdx6vrgEmcK9E4cFwnnVcA1rQ/68nef</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABbfZUgoZJCxY3yyJViX+x6H8ia7BB1lLzr6IJNrpE86wAAAAAOgAAAAAIAACAAAADicCJiYUbOdNNn09yt+XFDaM53AObU1k40hhjHInpIViAAAAChD680r4m71MRjTTmr53LyaM8mexhsFyGpcjkKJKSkf0AAAADud9xmARsS7JdDWyfeU3FCKLIag0NN1pChvDyHEDvl9IRNWEroQefvqYPxgXS5pSDdH1s3oCkrZpwcPmKNqKyi</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -59,7 +59,9 @@
     <DTS:Variable
       DTS:CreationName=""
       DTS:DTSID="{20DF320D-4A51-4BAD-9188-5D32FBA8C2F2}"
-      DTS:IncludeInDebugDump="6789"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="@[User::RootFolder] + &quot;\\outRpt\\&quot;"
+      DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="ArchiveFolder">
       <DTS:VariableValue
@@ -78,6 +80,8 @@
     <DTS:Variable
       DTS:CreationName=""
       DTS:DTSID="{2A01F688-2ED8-4A62-8743-5BE3BCC3D171}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="@[User::RootFolder]+ &quot;\\inRpt\\&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="InputFolder">
@@ -94,6 +98,15 @@
       DTS:ObjectName="InputFullPath">
       <DTS:VariableValue
         DTS:DataType="8">D:\sc\gz\inRpt\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{48847A18-6404-4251-BD99-5B7EA5733B3D}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="RootFolder">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\sc\gz</DTS:VariableValue>
     </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
