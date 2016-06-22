@@ -293,6 +293,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\EmailTemplatesController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
     <Compile Include="Areas\Admin\Models\LogViewModel.cs" />
@@ -581,6 +582,10 @@
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\Logs\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Logs\_LogEntryModal.cshtml" />
+    <Content Include="Areas\Admin\Views\EmailTemplates\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\EmailTemplates\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\EmailTemplates\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\EmailTemplates\Create.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
