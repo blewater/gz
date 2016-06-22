@@ -43,7 +43,7 @@ namespace gzWeb.Areas.Admin.Controllers
                 LogLevel = logLevel,
                 FromDate = fromDate.Value,
                 ToDate = toDate.Value,
-                LogEntries = logEntries.OrderBy(x => x.Logged).Skip(pageSize * (page - 1)).Take(pageSize).ToList()
+                LogEntries = logEntries.OrderByDescending(x => x.Logged).Skip(pageSize * (page - 1)).Take(pageSize).ToList()
             });
         }
 
