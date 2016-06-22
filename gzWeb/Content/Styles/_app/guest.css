@@ -20,19 +20,18 @@
 
 .guest .home .row { padding: 10px; }
 
+.guest .home .container { padding: 30px 0; }
 .guest .home .top .container {
 	padding-bottom: 0;
 	padding-top: 50px;
 }
-
-.guest .home .container { padding: 60px 0; }
 
 /*** top section ***/
 .guest .home .top .laptop-big {
 	position: absolute;
 	height: 300px;
 	bottom: -10px;
-	z-index: 100;
+	/*z-index: 100;*/
 }
 
 .guest .home .top .right-heading { color: white; }
@@ -77,14 +76,19 @@
 }
 
 /*** middle section ***/
-.guest .home .middle h3 {
-	margin-top: 40px;
-	font-size: 20px;
+.guest .home .middle .prompt {
+	margin: 30px 0;
+	font-size: 18px;
+    font-weight: bold;
 }
 
-.guest .home .middle .say-hello { margin-bottom: 45px; }
-
+/*.guest .home .middle .prompt.prompt-say-hello { }
+.guest .home .middle .prompt.prompt-to-achieve { }*/
 .guest .home .middle p { margin-top: 20px; }
+.guest .home .middle img {
+    float: left;
+    margin-right: 10px;
+}
 
 /*** bottom section ***/
 .guest .home .bottom h3 { 
@@ -119,7 +123,6 @@
 /**************** XS - MD ********************/
 @media (max-width: 1199px) {
     .guest .home .top .laptop-big { height: 280px; bottom: -9px; }
-    .guest .home .middle .say-hello { margin-bottom: 0; }
 }
 
 /**************** XS - SM ********************/
@@ -134,6 +137,11 @@
     .guest .home .top .right-heading h5 { margin: 20px 0; }
     .guest .home .top .right-heading .watch-video { width: 180px; margin: 20px auto 0; }
 	.guest .home .top .laptop-big { left: calc(50% - 244.31px); }
+
+    .guest .home .middle .prompt {
+	    font-size: 16px;
+        margin: 20px 0;
+    }
 
     .guest .home .bottom .process-item { padding: 0; height: 250px }
 	.guest .home .bottom .process-item h4 { font-size: 18px; }
