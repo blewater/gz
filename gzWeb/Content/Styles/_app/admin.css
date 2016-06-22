@@ -9,15 +9,11 @@
 .logs-admin .logs-table { margin-top: 50px; }
 
 .logs-admin .logs-table .table-head { 
-    background: #27A95C;
-    background: -webkit-linear-gradient(#f2f2f2, #27A95C);
-    background: -o-linear-gradient(#f2f2f2, #27A95C);
-    background: -moz-linear-gradient(#f2f2f2, #27A95C);
-    background: linear-gradient(#f2f2f2, #27A95C);
+    background-image: linear-gradient(to bottom, #1c7d43 0%, #27A95C 100%);
     height: 120px; 
-    display: block;
     bottom: -20px; 
     margin: 0 1px;
+    color: #fff;
 }
 
 .logs-admin .logs-table .table-controls { height: 50px; bottom: -15px; }
@@ -58,13 +54,28 @@
 
 .admin-login .login-interface { padding: 0; box-shadow: 2px 2px 2px 2px #c0c0c0; }
 
-.admin-login .heading { height: 200px; background: #fff; padding-top: 40px; }
+.admin .heading { height: 200px; background: #fff; padding-top: 40px; }
 
-.admin-login .content { padding-top: 100px; }
+.admin .content { padding-top: 100px; }
 .admin-login .content .logo-icon { margin-top: -140px;   }
 .admin-login .content .logo-icon img { height: 80px; border-radius: 50%; box-shadow: 2px 1px 2px #707070; }
-.admin-login .content .form-group { position: relative; }
-.admin-login .content .form-group .checkbox { margin-left: 20px; color: white; }
-.admin-login .content .form-group .checkbox label { margin-left: -12px; }
-.admin-login .content .form-group .btn-gz { width: 150px; text-transform: uppercase; margin-bottom: 50px; margin-top: 30px; }
+.admin .content .form-group { position: relative; }
+.admin .content .form-group .checkbox { margin-left: 20px; color: white; }
+.admin .content .form-group .checkbox label { margin-left: -12px; }
+.admin .content .form-group .btn-gz { width: 150px; text-transform: uppercase; margin-bottom: 50px; margin-top: 30px; }
 /*endregion*/
+
+/*region emailTemplates*/
+.admin-create .table-interface { margin-top: 80px; }
+
+.admin-create .table-interface .table thead tr { background-color: #27A95C; }
+.admin-create .table-interface .table tbody tr:nth-of-type(2n+1) { background: #c0c0c0; }
+.admin-create .table-interface .table tbody tr td a { color: #27A95C; }
+/*endregion*/
+
+/*region emailTemplates/Actions*/
+.admin .content .form-group textarea { width: 100%; padding: 5px; }
+
+.admin .content dl { margin-bottom: 50px; color: #fff; }
+.admin .content .form-group label { color: white; }
+.admin .content a { color: white; padding: 5px; }
