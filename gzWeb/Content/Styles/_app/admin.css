@@ -5,28 +5,47 @@
 	background:#F2F2F2;
 }
 
-.logs-admin h3 { margin: 50px 0; }
+/*region Logs*/
+.logs-admin .logs-table { margin-top: 50px; }
 
-.logs-admin .filter-form .form-group .form-control { height: 40px }
-.logs-admin .filter-form .form-group .btn-gz { width: 100%; margin-top: 0; height: 39px; }
+.logs-admin .logs-table .table-head { 
+    background: #27A95C;
+    background: -webkit-linear-gradient(#f2f2f2, #27A95C);
+    height: 120px; 
+    display: block;
+    bottom: -20px; 
+    margin: 0 1px;
+}
+
+.logs-admin .logs-table .table-controls { height: 50px; bottom: -15px; }
+
+.logs-admin .logs-table .filters-form .form-group { left: -10px; bottom: -15px; display: block; }
+.logs-admin .logs-table .filters-form .form-group .form-control { height: 30px; color: #27A95C; }
+.logs-admin .logs-table .filters-form .form-group .btn-gz { width: 100%; margin-top: 0; height: 29px; line-height: 1; }
+
+.logs-admin .logs-table .logs-pagination .pagination { float: right; margin-right: 5px; }
+.logs-admin .logs-table .logs-pagination .pagination a { color: #27A95C; height: 30px; line-height: 1; bottom: 10px }
+.logs-admin .logs-table .logs-pagination .pagination .active a { background-color: #27A95C; border-color: #27A95C; color: #fff; }
 
 .logs-admin .table { overflow-x: scroll; }
 .logs-admin .table thead tr { background-color: #27A95C; }
 
-.logs-admin .btn-gz { width: 150px; }
+.logs-admin .logs-table .table tbody .btn-gz { width: 150px; }
 
-.logs-admin .table tbody .Fatal { background-color: #ff0000; }
-.logs-admin .table tbody .Error { background-color: #ff3300; }
-.logs-admin .table tbody .Warn { background-color: #ff8000; }
-.logs-admin .table tbody .Debug,
-.logs-admin .table tbody .Info,
-.logs-admin .table tbody .Trace { background-color: #c0c0c0 }
-
-.logs-admin .logs-pagination .pagination a { color: #27A95C; }
-.logs-admin .logs-pagination .pagination .active a { background-color: #27A95C; border-color: #27A95C; color: #fff; }
+.logs-admin .logs-table .table tbody .Fatal { background-color: #ff0000; }
+.logs-admin .logs-table .table tbody .Error { background-color: #ff3300; }
+.logs-admin .logs-table .table tbody .Warn { background-color: #ff8000; }
+.logs-admin .logs-table .table tbody .Debug,
+.logs-admin .logs-table .table tbody .Info,
+.logs-admin .logs-table .table tbody .Trace { background-color: #c0c0c0 }
 
 .log-entry-modal-content .modal-body ul li { list-style: none; padding: 10px 0; }
 .log-entry-modal-content .modal-body ul li:nth-of-type(2n+1) { background-color: #f2f2f2; }
 .logs-admin .modal .modal-dialog { max-height: 1000px; width: 800px; }
 
-log-entry-modal-content .table thead { display: none; }
+@media (max-width: 991px){
+    .logs-admin .logs-table .table-head { height: 357px; }
+    .logs-admin .logs-table .filters-form .form-group .btn-gz { margin: 0 auto; }
+    .logs-admin .logs-table .logs-pagination .pagination { float: none; margin-left: calc(50% - 180px); }
+}
+/*endregion*/
