@@ -52,3 +52,19 @@
     .logs-admin .logs-table .logs-pagination .pagination { float: none; margin-left: calc(50% - 180px); }
 }
 /*endregion*/
+
+/*region login*/
+#loginForm { margin-top: 50px; }
+
+.admin-login .login-interface { padding: 0; box-shadow: 2px 2px 2px 2px #c0c0c0; }
+
+.admin-login .heading { height: 200px; background: #fff; padding-top: 40px; }
+
+.admin-login .content { padding-top: 100px; }
+.admin-login .content .logo-icon { margin-top: -140px;   }
+.admin-login .content .logo-icon img { height: 80px; border-radius: 50%; box-shadow: 2px 1px 2px #707070; }
+.admin-login .content .form-group { position: relative; }
+.admin-login .content .form-group .checkbox { margin-left: 20px; color: white; }
+.admin-login .content .form-group .checkbox label { margin-left: -12px; }
+.admin-login .content .form-group .btn-gz { width: 150px; text-transform: uppercase; margin-bottom: 50px; margin-top: 30px; }
+/*endregion*/
