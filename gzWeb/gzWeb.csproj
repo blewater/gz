@@ -720,7 +720,6 @@
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\footerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\loginCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerCtrl.js" />
