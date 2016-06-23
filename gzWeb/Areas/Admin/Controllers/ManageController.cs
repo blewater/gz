@@ -7,19 +7,19 @@ using gzDAL.Models;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
-    public class UsersController : Controller
+    public class ManageController : Controller
     {
 
         private readonly ApplicationDbContext _dbContext;
 
-        public UsersController()
+        public ManageController()
         {
             // TODO: (xdinos) inject
             _dbContext = new ApplicationDbContext();
         }
 
         // GET: Admin/Users
-        public ActionResult Index()
+        public ActionResult Users()
         {
             return View(_dbContext.Users.ToList());
         }
