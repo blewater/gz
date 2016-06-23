@@ -1,27 +1,26 @@
-﻿@model IEnumerable<gzDAL.Models.EmailTemplate>
+﻿@model IEnumerable<gzDAL.Models.ApplicationUser>
 
 @{
+    ViewBag.Title = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<div class="admin-create">
+<div class="admin admin-create">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 table-interface">
-                <p>
-                    @Html.ActionLink("Create New", "Create")
-                </p>
+                
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="col-md-1 text-center">
-                                @Html.DisplayNameFor(model => model.Code)
+                            <th class="col-md-3 text-center">
+                                @Html.DisplayNameFor(model => model.UserName)
                             </th>
                             <th class="col-md-3 text-center">
-                                @Html.DisplayNameFor(model => model.Subject)
+                                @Html.DisplayNameFor(model => model.LastName)
                             </th>
-                            <th class="col-md-6 text-center">
-                                @Html.DisplayNameFor(model => model.Body)
+                            <th class="col-md-5 text-center">
+                                @Html.DisplayNameFor(model => model.FirstName)
                             </th>
                             <th class="col-md-1"></th>
                         </tr>
@@ -32,13 +31,13 @@
                         {
                             <tr>
                                 <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Code)
+                                    @Html.DisplayFor(modelItem => item.UserName)
                                 </td>
                                 <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Subject)
+                                    @Html.DisplayFor(modelItem => item.LastName)
                                 </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Body)
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.FirstName)
                                 </td>
                                 <td class="text-center">
                                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
@@ -46,7 +45,7 @@
                                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                                 </td>
                             </tr>
-                         }
+                        }
                     </tbody>
 
                 </table>
@@ -54,3 +53,5 @@
         </div>
     </div>
 </div>
+
+
