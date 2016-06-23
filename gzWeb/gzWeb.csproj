@@ -589,6 +589,7 @@
     <Content Include="Areas\Admin\Views\EmailTemplates\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\_Header.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\Users.cshtml" />
+    <Content Include="Areas\Admin\Views\Manage\Roles.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
