@@ -23,5 +23,11 @@ namespace gzWeb.Areas.Admin.Controllers
         {
             return View(_dbContext.Users.ToList());
         }
+
+        // GET: Admin/Users
+        public ActionResult Roles()
+        {
+            return View(_dbContext.Roles.ToList());
+        }
     }
 }
