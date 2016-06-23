@@ -1,0 +1,57 @@
+﻿@model IEnumerable<gzDAL.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin-create">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 table-interface">
+                
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-md-1 text-center">
+                                @Html.DisplayNameFor(model => model.UserName)
+                            </th>
+                            <th class="col-md-3 text-center">
+                                @Html.DisplayNameFor(model => model.LastName)
+                            </th>
+                            <th class="col-md-6 text-center">
+                                @Html.DisplayNameFor(model => model.FirstName)
+                            </th>
+                            <th class="col-md-1"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.UserName)
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.LastName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FirstName)
+                                </td>
+                                <td class="text-center">
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
