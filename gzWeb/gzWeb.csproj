@@ -296,6 +296,7 @@
     <Compile Include="Areas\Admin\Controllers\EmailTemplatesController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ManageController.cs" />
     <Compile Include="Areas\Admin\Models\LogViewModel.cs" />
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
@@ -586,6 +587,9 @@
     <Content Include="Areas\Admin\Views\EmailTemplates\Details.cshtml" />
     <Content Include="Areas\Admin\Views\EmailTemplates\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\EmailTemplates\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Header.cshtml" />
+    <Content Include="Areas\Admin\Views\Manage\Users.cshtml" />
+    <Content Include="Areas\Admin\Views\Manage\Roles.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
