@@ -5,7 +5,7 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<div class="admin-create">
+<div class="admin admin-create">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 table-interface">
@@ -13,13 +13,13 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="col-md-1 text-center">
+                            <th class="col-md-3 text-center">
                                 @Html.DisplayNameFor(model => model.UserName)
                             </th>
                             <th class="col-md-3 text-center">
                                 @Html.DisplayNameFor(model => model.LastName)
                             </th>
-                            <th class="col-md-6 text-center">
+                            <th class="col-md-5 text-center">
                                 @Html.DisplayNameFor(model => model.FirstName)
                             </th>
                             <th class="col-md-1"></th>
@@ -36,7 +36,7 @@
                                 <td class="text-center">
                                     @Html.DisplayFor(modelItem => item.LastName)
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @Html.DisplayFor(modelItem => item.FirstName)
                                 </td>
                                 <td class="text-center">
