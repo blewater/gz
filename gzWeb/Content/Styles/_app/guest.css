@@ -408,15 +408,15 @@
 /* #endregion */
 
 /* #region FAQ*/
-.guest .faq {
-}
+.guest .faq { margin: 50px 0; display: block; }
 
-#faq-body { background-color: #eee}
+#faq-body { background-color: #eee; }
+
 
 .guest .faq-heading {
-	font-weight: 900;
+	font-weight: 600;
 	margin-bottom: -20px;
-	font-size: 50px;
+	font-size: 40px;
 }
 
 .guest .faq h3 { 
@@ -424,6 +424,8 @@
 	padding : 25px 0px 15px; 
 	color: #727272; 
 }
+
+.guest .faq .panel-group .panel .panel-heading { background-image: none; background-color: #f2f2f2; position: relative; }
 
 .guest .faq .panel-group .panel .panel-heading  .panel-title  a  { color: #727272; font-size: 20px; }
 
@@ -434,11 +436,6 @@
 .guest .faq .panel-group .panel { 
 	border-left: none; 
 	border-right: none;
-}
-
-.guest .faq .panel-group .panel .panel-heading { 
-	background-color: #eee;
-	position: relative;	
 }
 
 .guest .faq .panel-group .panel .panel-heading  .panel-title a:hover,
