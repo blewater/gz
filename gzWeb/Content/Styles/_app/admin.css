@@ -66,11 +66,11 @@
 /*endregion*/
 
 /*region emailTemplates*/
-.admin-create .table-interface { margin-top: 80px; }
+.admin .table-interface { margin-top: 80px; }
 
-.admin-create .table-interface .table thead tr { background-color: #27A95C; }
-.admin-create .table-interface .table tbody tr:nth-of-type(2n+1) { background: #c0c0c0; }
-.admin-create .table-interface .table tbody tr td a { color: #27A95C; }
+.admin .table-interface .table thead tr { background-color: #27A95C; }
+.admin .table-interface .table tbody tr:nth-of-type(2n+1) { background: #c0c0c0; }
+.admin .table-interface .table tbody tr td a { color: #27A95C; }
 /*endregion*/
 
 /*region emailTemplates/Actions*/
