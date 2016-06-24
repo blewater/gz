@@ -1,0 +1,53 @@
+﻿@model gzDAL.Models.CustomRole
+
+@{
+    ViewBag.Title = "Role Details";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin admin-details">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 details-interface">
+
+                <div class="col-md-12 text-center">
+                    <div class="row heading">
+                        <h2 class="text-gz">Role Details</h2>
+                        <h4>Manage</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-12 bg-gz">
+                    <div class="row content">
+                        <div class="col-xs-8 col-xs-offset-2">
+                            <dl class="dl-horizontal">
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Id)
+                                </dt>
+
+                                <dd>
+                                    @Html.DisplayFor(model => model.Id)
+                                </dd>
+
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </dt>
+
+                                <dd>
+                                    @Html.DisplayFor(model => model.Name)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                @Html.ActionLink("Edit", "RoleEdit", new { id = Model.Id }) |
+                                @Html.ActionLink("Back to List", "Roles")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

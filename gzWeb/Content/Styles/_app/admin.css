@@ -79,3 +79,11 @@
 .admin .content dl { margin-bottom: 50px; color: #fff; }
 .admin .content .form-group label { color: white; }
 .admin .content a { color: white; padding: 5px; }
+
+/*region Manage*/
+
+/*endregion*/
+
+.admin { margin-top: 100px; }
+
+.admin .admin-details .list { margin-left: 30px; }
