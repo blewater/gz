@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EtlGmRptPackage"
   DTS:PackageType="5"
-  DTS:VersionBuild="103"
-  DTS:VersionGUID="{CD58C769-2FED-4BEC-A7AD-770B7A8D8D18}">
+  DTS:VersionBuild="106"
+  DTS:VersionGUID="{A4CA1975-9B03-42E1-8CB5-A40C096D3702}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -49,7 +49,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABWa2FopIIOF5eBbKewVkZFxl5dZEJZ8aRLsYiO3m8jcwAAAAAOgAAAAAIAACAAAACU5WI35CG/BZB15wGFONgq5XhpmsmsS15Y1j9roqgtRyAAAADlptixvIrfy1cbcWhlQRepnj8ZzIvm8kCAaLHaY2vII0AAAAAewa9oG1eKNrX/4jY9t6EAjarDns3inTkeRx3JmbRUC+oHPxSnyGDBYPw0wsjaTc3RHpxZ2OqfwDM2ES5aA5EV</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADYSk/gX0BTIutJ3scUDjNfMTmjADqKpMSN62tOzkHjIQAAAAAOgAAAAAIAACAAAABPT1CpFZM3qDFW8+P0w+j5YJ+sH/oxQTwR9rJnkJeOyyAAAABWeQ2xsfubYijqC1JQ8BC2W/r9IIQZb26v7dsKUyRgA0AAAAD8faIU7hgZQmFOR3ew7ScZMuC7JQsk5it2nuxOfJXoAkCtw1uNjQkJKyJXFkjxkYET4pxPhuIXJ03HBNCUADWt</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -239,19 +239,6 @@
                       name="ADO NET Destination Input">
                       <inputColumns>
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[User ID]"
-                          cachedDataType="r8"
-                          cachedName="User ID"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
-                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]" />
-                        <inputColumn
-                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Username]"
-                          cachedDataType="wstr"
-                          cachedLength="255"
-                          cachedName="Username"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
-                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]" />
-                        <inputColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Role]"
                           cachedDataType="wstr"
                           cachedLength="255"
@@ -280,42 +267,98 @@
                           externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
                           lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]" />
                         <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[RowNum]"
+                          cachedDataType="i4"
+                          cachedName="RowNum"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[RowNum]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[RowNum]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[NetLossInUSD]"
+                          cachedDataType="cy"
+                          cachedName="NetLossInUSD"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[NetLossInUSD]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[NetLossInUSD]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[UpdatedOnUtc]"
+                          cachedDataType="date"
+                          cachedName="UpdatedOnUtc"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[UpdatedOnUtc]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[CreatedOnUtc]"
+                          cachedDataType="date"
+                          cachedName="CreatedOnUtc"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[CreatedOnUtc]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[CreatedOnUtc]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[YearMonth]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="6"
+                          cachedName="YearMonth"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[YearMonth]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[YearMonth]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[User ID]"
+                          cachedDataType="i8"
+                          cachedName="User ID"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Username]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="64"
+                          cachedName="Username"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]" />
+                        <inputColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Total deposits amount]"
-                          cachedDataType="r8"
+                          cachedDataType="cy"
                           cachedName="Total deposits amount"
                           externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
-                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]" />
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]" />
                         <inputColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Currency]"
-                          cachedDataType="wstr"
-                          cachedLength="255"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="3"
                           cachedName="Currency"
                           externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
-                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]" />
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]" />
                         <inputColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Net revenue]"
-                          cachedDataType="r8"
+                          cachedDataType="cy"
                           cachedName="Net revenue"
                           externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
-                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]" />
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]" />
                         <inputColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Gross revenue]"
-                          cachedDataType="r8"
+                          cachedDataType="cy"
                           cachedName="Gross revenue"
                           externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Gross revenue]"
-                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]" />
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]" />
                         <inputColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Real money balance]"
-                          cachedDataType="r8"
+                          cachedDataType="cy"
                           cachedName="Real money balance"
                           externalMetadataColumnId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
-                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]" />
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[RowNum]"
+                          dataType="i4"
+                          name="RowNum" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[YearMonth]"
+                          dataType="wstr"
+                          length="6"
+                          name="YearMonth" />
+                        <externalMetadataColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
-                          dataType="r8"
+                          dataType="i8"
                           name="User ID" />
                         <externalMetadataColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
@@ -351,7 +394,7 @@
                         <externalMetadataColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
                           dataType="wstr"
-                          length="256"
+                          length="3"
                           name="Currency" />
                         <externalMetadataColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
@@ -366,11 +409,25 @@
                           precision="19"
                           scale="255" />
                         <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[NetLossInUSD]"
+                          dataType="numeric"
+                          name="NetLossInUSD"
+                          precision="19"
+                          scale="255" />
+                        <externalMetadataColumn
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
                           dataType="numeric"
                           name="Real money balance"
                           precision="19"
                           scale="255" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[CreatedOnUtc]"
+                          dataType="dbTimeStamp"
+                          name="CreatedOnUtc" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[UpdatedOnUtc]"
+                          dataType="dbTimeStamp"
+                          name="UpdatedOnUtc" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -392,6 +449,237 @@
                           refId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
                           dataType="i4"
                           lineageId="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion"
+                  componentClassID="Microsoft.DataConvert"
+                  contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Data Conversion"
+                  name="Data Conversion"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input]"
+                      name="Data Conversion Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[User ID]"
+                          cachedDataType="r8"
+                          cachedName="User ID"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Gross revenue]"
+                          cachedDataType="r8"
+                          cachedName="Gross revenue"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Currency]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Currency"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Username]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Username"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Total deposits amount]"
+                          cachedDataType="r8"
+                          cachedName="Total deposits amount"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Net revenue]"
+                          cachedDataType="r8"
+                          cachedName="Net revenue"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Real money balance]"
+                          cachedDataType="r8"
+                          cachedName="Real money balance"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]" />
+                      </inputColumns>
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output]"
+                      exclusionGroup="1"
+                      name="Data Conversion Output"
+                      synchronousInputId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
+                          dataType="i8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
+                          name="User ID"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
+                          dataType="cy"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
+                          name="Gross revenue"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="3"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
+                          name="Currency"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="64"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
+                          name="Username"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
+                          dataType="cy"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
+                          name="Total deposits amount"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
+                          dataType="cy"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
+                          name="Net revenue"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
+                          dataType="cy"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
+                          name="Real money balance"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Data Conversion Error Output"
+                      synchronousInputId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -783,6 +1071,14 @@ public class Variables
         ParentComponent = Component;
     }
 
+    public String FileYearMonthDay
+    {
+        get
+        {
+            return (String)(ParentComponent.ReadOnlyVariables["FileYearMonthDay"].GetValueWithContext(ScriptComponent.EvaluatorContext));
+        }
+    }
+
 }
 ]]></arrayElement>
                         <arrayElement
@@ -990,6 +1286,10 @@ public class ScriptMain : UserComponent
      */
     #endregion
 
+    // New internal variable to store the rownumber
+    private int _rowNumber = 0;
+    private string _yearMonth;
+
     /// <summary>
     /// This method is called once, before rows begin to be processed in the data flow.
     ///
@@ -998,9 +1298,8 @@ public class ScriptMain : UserComponent
     public override void PreExecute()
     {
         base.PreExecute();
-        /*
-         * Add your code here
-         */
+
+        _yearMonth = Variables.FileYearMonthDay.Substring(0, 6);
     }
 
     /// <summary>
@@ -1026,11 +1325,16 @@ public class ScriptMain : UserComponent
     ///  Row.ZipCode = zipCode
     /// </summary>
     /// <param name="Row">The row that is currently passing through the component</param>
-    public override void Input0_ProcessInputRow(Input0Buffer Row)
-    {
-        /*
-         * Add your code here
-         */
+    public override void Input0_ProcessInputRow(Input0Buffer Row) {
+
+        _rowNumber++;
+        Row.RowNum = _rowNumber;
+
+        Row.CreatedOnUtc = DateTime.UtcNow;
+        Row.UpdatedOnUtc = DateTime.UtcNow;
+
+        Row.NetLossInUSD = Row.DataConversionGrossrevenue;
+        Row.YearMonth = _yearMonth;
     }
 
 }
@@ -1058,6 +1362,221 @@ public class Input0Buffer: ScriptBuffer
     public Input0Buffer(PipelineBuffer Buffer, int[] BufferColumnIndexes, OutputNameMap OutputMap)
         : base(Buffer, BufferColumnIndexes, OutputMap)
     {
+    }
+
+    public Int64 DataConversionUserID
+    {
+        get
+        {
+            return Buffer.GetInt64(BufferColumnIndexes[0]);
+        }
+    }
+    public bool DataConversionUserID_IsNull
+    {
+        get
+        {
+            return IsNull(0);
+        }
+    }
+
+    public String DataConversionUsername
+    {
+        get
+        {
+            return Buffer.GetString(BufferColumnIndexes[1]);
+        }
+    }
+    public bool DataConversionUsername_IsNull
+    {
+        get
+        {
+            return IsNull(1);
+        }
+    }
+
+    public String DataConversionCurrency
+    {
+        get
+        {
+            return Buffer.GetString(BufferColumnIndexes[2]);
+        }
+    }
+    public bool DataConversionCurrency_IsNull
+    {
+        get
+        {
+            return IsNull(2);
+        }
+    }
+
+    public Decimal DataConversionGrossrevenue
+    {
+        get
+        {
+            return Buffer.GetDecimal(BufferColumnIndexes[3]);
+        }
+    }
+    public bool DataConversionGrossrevenue_IsNull
+    {
+        get
+        {
+            return IsNull(3);
+        }
+    }
+
+    public Decimal DataConversionTotaldepositsamount
+    {
+        get
+        {
+            return Buffer.GetDecimal(BufferColumnIndexes[4]);
+        }
+    }
+    public bool DataConversionTotaldepositsamount_IsNull
+    {
+        get
+        {
+            return IsNull(4);
+        }
+    }
+
+    public Decimal DataConversionNetrevenue
+    {
+        get
+        {
+            return Buffer.GetDecimal(BufferColumnIndexes[5]);
+        }
+    }
+    public bool DataConversionNetrevenue_IsNull
+    {
+        get
+        {
+            return IsNull(5);
+        }
+    }
+
+    public Decimal DataConversionRealmoneybalance
+    {
+        get
+        {
+            return Buffer.GetDecimal(BufferColumnIndexes[6]);
+        }
+    }
+    public bool DataConversionRealmoneybalance_IsNull
+    {
+        get
+        {
+            return IsNull(6);
+        }
+    }
+
+    public Int32 RowNum
+    {
+        set
+        {
+            this[7] = value;
+        }
+    }
+    public bool RowNum_IsNull
+    {
+        set
+        {
+            if (value)
+            {
+                SetNull(7);
+            }
+            else
+            {
+                throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.");
+            }
+        }
+    }
+
+    public Decimal NetLossInUSD
+    {
+        set
+        {
+            this[8] = value;
+        }
+    }
+    public bool NetLossInUSD_IsNull
+    {
+        set
+        {
+            if (value)
+            {
+                SetNull(8);
+            }
+            else
+            {
+                throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.");
+            }
+        }
+    }
+
+    public DateTime UpdatedOnUtc
+    {
+        set
+        {
+            this[9] = value;
+        }
+    }
+    public bool UpdatedOnUtc_IsNull
+    {
+        set
+        {
+            if (value)
+            {
+                SetNull(9);
+            }
+            else
+            {
+                throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.");
+            }
+        }
+    }
+
+    public DateTime CreatedOnUtc
+    {
+        set
+        {
+            this[10] = value;
+        }
+    }
+    public bool CreatedOnUtc_IsNull
+    {
+        set
+        {
+            if (value)
+            {
+                SetNull(10);
+            }
+            else
+            {
+                throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.");
+            }
+        }
+    }
+
+    public String YearMonth
+    {
+        set
+        {
+            this[11] = value;
+        }
+    }
+    public bool YearMonth_IsNull
+    {
+        set
+        {
+            if (value)
+            {
+                SetNull(11);
+            }
+            else
+            {
+                throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.");
+            }
+        }
     }
 
     new public bool NextRow()
@@ -1219,6 +1738,28 @@ namespace SC_8d802c423a984aa5a859582d03b22932.Properties {
 		<msb:File Include="main.cs"/>
 		<msb:File Include="BufferWrapper.cs"/>
 		<msb:File Include="ComponentWrapper.cs"/>
+		<msb:Breakpoint Include="014fe11be16a466fb226cf79faa42930">
+			<msb:FileName>main.cs</msb:FileName>
+			<msb:ColumnNumber>9</msb:ColumnNumber>
+			<msb:Enabled>True</msb:Enabled>
+			<msb:LineNumber>92</msb:LineNumber>
+			<msb:Condition></msb:Condition>
+			<msb:ConditionType>1</msb:ConditionType>
+			<msb:Language></msb:Language>
+			<msb:HitCountType>1</msb:HitCountType>
+			<msb:HitCountTarget>1</msb:HitCountTarget>
+		</msb:Breakpoint>
+		<msb:Breakpoint Include="1e16d2f79820443bad6fed999aab301d">
+			<msb:FileName>main.cs</msb:FileName>
+			<msb:ColumnNumber>9</msb:ColumnNumber>
+			<msb:Enabled>True</msb:Enabled>
+			<msb:LineNumber>120</msb:LineNumber>
+			<msb:Condition></msb:Condition>
+			<msb:ConditionType>1</msb:ConditionType>
+			<msb:Language>C#</msb:Language>
+			<msb:HitCountType>1</msb:HitCountType>
+			<msb:HitCountTarget>1</msb:HitCountTarget>
+		</msb:Breakpoint>
 	</msb:ItemGroup>
 </c:Project>]]></arrayElement>
                         <arrayElement
@@ -1354,104 +1895,158 @@ namespace SC_8d802c423a984aa5a859582d03b22932.Properties {
                         <arrayElement
                           dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAPcPa1cAAAAAAAAAAOAAIiALATAAABAAAAAIAAAAAAAAYi8A
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDAG+tbVcAAAAAAAAAAOAAIiALATAAABwAAAAIAAAAAAAASjoA
 AAAgAAAAQAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACAAAAAAgAAAAAAAAMAYIUAABAA
-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
+ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAPg5AABPAAAAAEAAAEgEAAAAAAAAAAAAAAAAAAAA
 AAAAAGAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-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
-AwDDAwAABACXAwAAAQDDAwAAAQC1BQAAAQA+BQAAAQA+BQAAAQCtAgkA3gMBABEA3gMGABkA3gMK
-ACkA3gMQADEA3gMQADkA3gMQAEEA3gMQAEkA3gMQAFEA3gMQAFkA3gMQAGEA3gMQAGkA3gMGAJkA
-3gMGALkA3gMVAMkA3gMGAIkAlgIGAIkAoQIGAHEA3gMbAHEAsQUlAHEAAgUlAIkA3gMGANEA6AQp
-AIkAzgQwAJEA3gMGAOEAYQA2AOEAuQU9AKEA3gNCAMEA3gMGACkAcwDZAC4ACwCxAC4AEwC6AC4A
-GwDZAC4AIwDiAC4AKwALAS4AMwALAS4AOwALAS4AQwDiAC4ASwARAS4AUwALAS4AWwAoAUMAYwBy
-AUkAcwDZAOEAewByAeMAawByAQcAAQAIAAMAAADOA6IAAADDAKcAAAASBawAAgAPAAMAAgAQAAUA
-AQARAAUAAgASAAcABIAAAAEAAAAAAAAAAAAAAAAAAQAAAAQAAAAAAAAAAAAAAEkANgAAAAAADAAA
-AAAAAAAAAAAAUgBIBQAAAAAMAAAAAAAAAAAAAABSAGUFAAAAAAQAAAAAAAAAAAAAAEkAEgMAAAAA
-AAAAAAEAAAAvBAAAAAAAU0NfOGQ4MDJjNDIzYTk4NGFhNWE4NTk1ODJkMDNiMjI5MzIAPE1vZHVs
-ZT4ASW5wdXRJRABtc2NvcmxpYgBkZWZhdWx0SW5zdGFuY2UAUnVudGltZVR5cGVIYW5kbGUAR2V0
-VHlwZUZyb21IYW5kbGUASW5wdXROYW1lAE1pY3Jvc29mdC5TcWxTZXJ2ZXIuRHRzLlBpcGVsaW5l
-AFR5cGUAZ2V0X0N1bHR1cmUAc2V0X0N1bHR1cmUAcmVzb3VyY2VDdWx0dXJlAEFwcGxpY2F0aW9u
-U2V0dGluZ3NCYXNlAEVkaXRvckJyb3dzYWJsZVN0YXRlAENvbXBpbGVyR2VuZXJhdGVkQXR0cmli
-dXRlAERlYnVnZ2VyTm9uVXNlckNvZGVBdHRyaWJ1dGUARGVidWdnYWJsZUF0dHJpYnV0ZQBFZGl0
-b3JCcm93c2FibGVBdHRyaWJ1dGUAQXNzZW1ibHlUaXRsZUF0dHJpYnV0ZQBBc3NlbWJseVRyYWRl
-bWFya0F0dHJpYnV0ZQBUYXJnZXRGcmFtZXdvcmtBdHRyaWJ1dGUAQXNzZW1ibHlDb25maWd1cmF0
-aW9uQXR0cmlidXRlAEFzc2VtYmx5RGVzY3JpcHRpb25BdHRyaWJ1dGUAQ29tcGlsYXRpb25SZWxh
-eGF0aW9uc0F0dHJpYnV0ZQBBc3NlbWJseVByb2R1Y3RBdHRyaWJ1dGUAQXNzZW1ibHlDb3B5cmln
-aHRBdHRyaWJ1dGUAU1NJU1NjcmlwdENvbXBvbmVudEVudHJ5UG9pbnRBdHRyaWJ1dGUAQXNzZW1i
-bHlDb21wYW55QXR0cmlidXRlAFJ1bnRpbWVDb21wYXRpYmlsaXR5QXR0cmlidXRlAFByZUV4ZWN1
-dGUAUG9zdEV4ZWN1dGUAdmFsdWUAU3lzdGVtLlJ1bnRpbWUuVmVyc2lvbmluZwBTdHJpbmcAU3lz
-dGVtLkNvbXBvbmVudE1vZGVsAFNDXzhkODAyYzQyM2E5ODRhYTVhODU5NTgyZDAzYjIyOTMyLmRs
-bABTeXN0ZW0AcmVzb3VyY2VNYW4AU2NyaXB0TWFpbgBTeXN0ZW0uQ29uZmlndXJhdGlvbgBTeXN0
-ZW0uR2xvYmFsaXphdGlvbgBTeXN0ZW0uUmVmbGVjdGlvbgBTdHJpbmdDb21wYXJpc29uAEN1bHR1
-cmVJbmZvAE91dHB1dE5hbWVNYXAAT3V0cHV0TWFwAElucHV0MEJ1ZmZlcgBQaXBlbGluZUJ1ZmZl
-cgBTY3JpcHRCdWZmZXIAZ2V0X1Jlc291cmNlTWFuYWdlcgAuY3RvcgAuY2N0b3IAU3lzdGVtLkRp
-YWdub3N0aWNzAFN5c3RlbS5SdW50aW1lLkNvbXBpbGVyU2VydmljZXMAU3lzdGVtLlJlc291cmNl
-cwBTQ184ZDgwMmM0MjNhOTg0YWE1YTg1OTU4MmQwM2IyMjkzMi5Qcm9wZXJ0aWVzLlJlc291cmNl
-cy5yZXNvdXJjZXMARGVidWdnaW5nTW9kZXMAU0NfOGQ4MDJjNDIzYTk4NGFhNWE4NTk1ODJkMDNi
-MjI5MzIuUHJvcGVydGllcwBWYXJpYWJsZXMAQnVmZmVyQ29sdW1uSW5kZXhlcwBHZXRDb2x1bW5J
-bmRleGVzAFNldHRpbmdzAEVxdWFscwBDb25uZWN0aW9ucwBPYmplY3QARW5kT2ZSb3dzZXQAZ2V0
-X0RlZmF1bHQAVXNlckNvbXBvbmVudABQYXJlbnRDb21wb25lbnQAU2NyaXB0Q29tcG9uZW50AE1p
-Y3Jvc29mdC5TcWxTZXJ2ZXIuVHhTY3JpcHQATWljcm9zb2Z0LlNxbFNlcnZlci5QaXBlbGluZUhv
-c3QASW5wdXQwX1Byb2Nlc3NJbnB1dABJbnB1dDBfUHJvY2Vzc0lucHV0Um93AE5leHRSb3cAZ2V0
-X0Fzc2VtYmx5AAAAAA9JAG4AcAB1AHQAIAAwAABxUwBDAF8AOABkADgAMAAyAGMANAAyADMAYQA5
-ADgANABhAGEANQBhADgANQA5ADUAOAAyAGQAMAAzAGIAMgAyADkAMwAyAC4AUAByAG8AcABlAHIA
-dABpAGUAcwAuAFIAZQBzAG8AdQByAGMAZQBzAAAAjt/orM+zHUOr/5RvGKe33wAEIAEBCAMgAAEF
-IAEBEREEIAEBDgUgAQERWQkgAwESPR0IEkEDIAACBiACAg4RbQUgAR0ICAYAARJxEXUEIAASeQYg
-AgEOEnkIt3pcVhk04IkIiYRdzYCAzJEDBhIUAwYSGAMGEkUDBhJRAwYSVQMGEiAFIAEBEgwJIAQB
-CA4SPRJBBSABARJFBAAAElEEAAASVQUAAQESVQQAABIgAwAAAQQIABJRBAgAElUECAASIAgBAAgA
-AAAAAB4BAAEAVAIWV3JhcE5vbkV4Y2VwdGlvblRocm93cwEIAQACAAAAAAAoAQAjU0NfOGQ4MDJj
-NDIzYTk4NGFhNWE4NTk1ODJkMDNiMjI5MzIAAAUBAAAAABYBABFDb3B5cmlnaHQgQCAgMjAxNgAA
-SQEAGi5ORVRGcmFtZXdvcmssVmVyc2lvbj12NC41AQBUDhRGcmFtZXdvcmtEaXNwbGF5TmFtZRIu
-TkVUIEZyYW1ld29yayA0LjUEAQAAAAC0AAAAzsrvvgEAAACRAAAAbFN5c3RlbS5SZXNvdXJjZXMu
-UmVzb3VyY2VSZWFkZXIsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJh
-bCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OSNTeXN0ZW0uUmVzb3VyY2VzLlJ1bnRp
-bWVSZXNvdXJjZVNldAIAAAAAAAAAAAAAAFBBRFBBRFC0AAAAOC8AAAAAAAAAAAAAUi8AAAAgAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAEQvAAAAAAAAAAAAAAAAX0NvckRsbE1haW4AbXNjb3JlZS5kbGwA
-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
+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
+AAUAEyEAAAAAhgjsBFMABQAcIQAAAACGCKAJzwAFADEhAAAAAIYIrAVTAAUAOiEAAAAAhgiOA9MA
+BQBPIQAAAACGCA4FUwAFAFghAAAAAIYIpQjTAAUAbSEAAAAAhgh/BVMABQB2IQAAAACGCK0D0wAF
+AIshAAAAAIYINAVTAAUAlCEAAAAAhgjTANMABQCpIQAAAACGCMIEUwAFALIhAAAAAIYI7wUBAAUA
+wSEAAAAAhghtBdgABgDYIQAAAACGCJcA3QAHAOchAAAAAIYIegTYAAgA/iEAAAAAhgixAOMACQAO
+IgAAAACGCJIE2AAKACYiAAAAAIYIwgDjAAsANiIAAAAAhgiqBNgADABOIgAAAACGCPgDEAANAFki
+AAAAAIYIWAXYAA4AcSIAAAAAhgCDCVMADwB5IgAAAACGAF8IUwAPAIEiAAAAAIYYLwcGAA8AoSIA
+AAAAxgAQCekADwDGIgAAAADGAQkJxQATANkiAAAAAMYBbAnFABQA2yIAAAAAhhgvB/MAFQDqIgAA
+AACGGC8H8wAWAPkiAAAAAIYIiwnPABcAHyMAAAAAgxgvBwYAFwAnIwAAAACTCPMG+QAXAFMjAAAA
+AJMIfgH+ABcAWiMAAAAAkwiKAQMBFwBiIwAAAACWCGsICQEYAGkjAAAAAIYYLwcGABgAcSMAAAAA
+kRg1Bw4BGAAAAAEAhwkAAAEA7AYAAAIAFwgAAAMAkgYAAAEAiAMAAAEAiAMAAAEAiAMAAAEAiAMA
+AAEAiAMAAAEAiAMAAAEAiAMAAAEAiAMAAAEAiAMAAAEAiAMAAAEAjwAAAAIAKgEAAAMA7AYAAAQA
+kgYAAAEA7AYAAAEAhwkAAAEAmwgAAAEAmwgAAAEAiAMJAC8HAQARAC8HBgAZAC8HCgApAC8HEAAx
+AC8HEAA5AC8HEABBAC8HEABJAC8HEABRAC8HEABZAC8HEABhAC8HEABpAC8HBgCpAC8HBgDJAC8H
+FQDZAC8HBgCZAHEDBgDhAO4DGwCZAHwDBgCRAGEJIQBxAC8HJgBxAOwGMABxABcINAB5AGQAOABx
+AMcFPQB5AOQDQgB5ABEERwBxAN8FTQBxAM4FAQDxAC8HEABxAIMJUwBxAF8IUwCZAC8HBgDhAEUI
+VwCZACsIXgChAC8HBgCZAAEIZAABAdYFagCZAEwJcQAJAR0JdwAhARgBfgAhAbsJhwCxAC8HjQDR
+AC8HBgAuAAsAOwEuABMARAEuABsAYwEuACMAbAEuACsAlQEuADMAlQEuADsAlQEuAEMAbAEuAEsA
+mwEuAFMAlQEuAFsAsgFDAGMA/AHjAGsA/AEhAXsA/AFJA3MAYwFpA3MAYwEDAAEABgAZAAcAGgAI
+ABwAAAB6ABIBAABeBBYBAAA4ARoBAADwBBYBAACkCRoBAACwBRYBAACSAx4BAAASBRYBAACpCB4B
+AACDBRYBAACxAx4BAAA4BRYBAADXAB4BAADGBBYBAADzBSMBAABxBRYBAACbAB4BAAB+BBYBAAC1
+ACcBAACWBBYBAADGACcBAACuBBYBAAD8AxoBAABcBRYBAACPCRoBAAD3BiwBAACeATEBAABvCDYB
+AgAGAAMAAgAHAAUAAgAIAAcAAgAJAAkAAgAKAAsAAgALAA0AAgAMAA8AAgANABEAAgAOABMAAgAP
+ABUAAgAQABcAAgARABkAAgASABsAAgATAB0AAQAUAB8AAQAVACEAAQAWACMAAQAXACUAAQAYACcA
+AQAZACkAAQAaACsAAQAbAC0AAQAcAC8AAQAdADEAAgAmADMAAgAoADUAAgApADcAAQAqADcAAgAr
+ADkABIAAAAEAAAAAAAAAAAAAAAAAOgAAAAQAAAAAAAAAAAAAAJUAqAAAAAAADAAAAAAAAAAAAAAA
+ngDLCAAAAAAMAAAAAAAAAAAAAACeAOgIAAAAAAQAAAAAAAAAAAAAAJUA6AUAAAAADAAAAAAAAAAA
+AAAAngCcBgAAAAAAAAAAAQAAAIAHAAAAAABJRFRTVmFyaWFibGUxMDAASURUU1ZhcmlhYmxlczEw
+MABJRFRTRXZhbHVhdG9yQ29udGV4dDEwMABTQ184ZDgwMmM0MjNhOTg0YWE1YTg1OTU4MmQwM2Iy
+MjkzMgBJbnQzMgBHZXRJbnQ2NAA8TW9kdWxlPgBnZXRfRGF0YUNvbnZlcnNpb25Vc2VySUQASW5w
+dXRJRABzZXRfTmV0TG9zc0luVVNEAG1zY29ybGliAHNldF9VcGRhdGVkT25VdGMAc2V0X0NyZWF0
+ZWRPblV0YwBnZXRfRGF0YUNvbnZlcnNpb25SZWFsbW9uZXliYWxhbmNlAGRlZmF1bHRJbnN0YW5j
+ZQBSdW50aW1lVHlwZUhhbmRsZQBHZXRUeXBlRnJvbUhhbmRsZQBJbnB1dE5hbWUAZ2V0X0RhdGFD
+b252ZXJzaW9uVXNlcm5hbWUARGF0ZVRpbWUATWljcm9zb2Z0LlNxbFNlcnZlci5EdHMuUGlwZWxp
+bmUAVHlwZQBnZXRfQ3VsdHVyZQBzZXRfQ3VsdHVyZQByZXNvdXJjZUN1bHR1cmUAQXBwbGljYXRp
+b25TZXR0aW5nc0Jhc2UARWRpdG9yQnJvd3NhYmxlU3RhdGUAQ29tcGlsZXJHZW5lcmF0ZWRBdHRy
+aWJ1dGUARGVidWdnZXJOb25Vc2VyQ29kZUF0dHJpYnV0ZQBEZWJ1Z2dhYmxlQXR0cmlidXRlAEVk
+aXRvckJyb3dzYWJsZUF0dHJpYnV0ZQBBc3NlbWJseVRpdGxlQXR0cmlidXRlAEFzc2VtYmx5VHJh
+ZGVtYXJrQXR0cmlidXRlAFRhcmdldEZyYW1ld29ya0F0dHJpYnV0ZQBBc3NlbWJseUNvbmZpZ3Vy
+YXRpb25BdHRyaWJ1dGUAQXNzZW1ibHlEZXNjcmlwdGlvbkF0dHJpYnV0ZQBDb21waWxhdGlvblJl
+bGF4YXRpb25zQXR0cmlidXRlAEFzc2VtYmx5UHJvZHVjdEF0dHJpYnV0ZQBBc3NlbWJseUNvcHly
+aWdodEF0dHJpYnV0ZQBTU0lTU2NyaXB0Q29tcG9uZW50RW50cnlQb2ludEF0dHJpYnV0ZQBBc3Nl
+bWJseUNvbXBhbnlBdHRyaWJ1dGUAUnVudGltZUNvbXBhdGliaWxpdHlBdHRyaWJ1dGUAUHJlRXhl
+Y3V0ZQBQb3N0RXhlY3V0ZQB2YWx1ZQBnZXRfRGF0YUNvbnZlcnNpb25Hcm9zc3JldmVudWUAZ2V0
+X0RhdGFDb252ZXJzaW9uTmV0cmV2ZW51ZQBTeXN0ZW0uUnVudGltZS5WZXJzaW9uaW5nAEdldFN0
+cmluZwBTdWJzdHJpbmcAc2V0X1llYXJNb250aABfeWVhck1vbnRoAEdldERlY2ltYWwAU3lzdGVt
+LkNvbXBvbmVudE1vZGVsAFNDXzhkODAyYzQyM2E5ODRhYTVhODU5NTgyZDAzYjIyOTMyLmRsbABn
+ZXRfRGF0YUNvbnZlcnNpb25Vc2VySURfSXNOdWxsAHNldF9OZXRMb3NzSW5VU0RfSXNOdWxsAHNl
+dF9VcGRhdGVkT25VdGNfSXNOdWxsAHNldF9DcmVhdGVkT25VdGNfSXNOdWxsAGdldF9EYXRhQ29u
+dmVyc2lvblJlYWxtb25leWJhbGFuY2VfSXNOdWxsAGdldF9EYXRhQ29udmVyc2lvblVzZXJuYW1l
+X0lzTnVsbABnZXRfRGF0YUNvbnZlcnNpb25Hcm9zc3JldmVudWVfSXNOdWxsAGdldF9EYXRhQ29u
+dmVyc2lvbk5ldHJldmVudWVfSXNOdWxsAHNldF9ZZWFyTW9udGhfSXNOdWxsAHNldF9Sb3dOdW1f
+SXNOdWxsAGdldF9EYXRhQ29udmVyc2lvblRvdGFsZGVwb3NpdHNhbW91bnRfSXNOdWxsAGdldF9E
+YXRhQ29udmVyc2lvbkN1cnJlbmN5X0lzTnVsbABTZXROdWxsAGdldF9JdGVtAHNldF9JdGVtAFN5
+c3RlbQBzZXRfUm93TnVtAHJlc291cmNlTWFuAFNjcmlwdE1haW4AU3lzdGVtLkNvbmZpZ3VyYXRp
+b24AU3lzdGVtLkdsb2JhbGl6YXRpb24AU3lzdGVtLlJlZmxlY3Rpb24ASW52YWxpZE9wZXJhdGlv
+bkV4Y2VwdGlvbgBTdHJpbmdDb21wYXJpc29uAEN1bHR1cmVJbmZvAE91dHB1dE5hbWVNYXAAT3V0
+cHV0TWFwAE1pY3Jvc29mdC5TcWxTZXJ2ZXIuRFRTUnVudGltZVdyYXAAX3Jvd051bWJlcgBJbnB1
+dDBCdWZmZXIAUGlwZWxpbmVCdWZmZXIAU2NyaXB0QnVmZmVyAGdldF9SZXNvdXJjZU1hbmFnZXIA
+TWljcm9zb2Z0LlNxbFNlcnZlci5EdHMuUnVudGltZS5XcmFwcGVyAC5jdG9yAC5jY3RvcgBTeXN0
+ZW0uRGlhZ25vc3RpY3MAU3lzdGVtLlJ1bnRpbWUuQ29tcGlsZXJTZXJ2aWNlcwBTeXN0ZW0uUmVz
+b3VyY2VzAFNDXzhkODAyYzQyM2E5ODRhYTVhODU5NTgyZDAzYjIyOTMyLlByb3BlcnRpZXMuUmVz
+b3VyY2VzLnJlc291cmNlcwBEZWJ1Z2dpbmdNb2RlcwBTQ184ZDgwMmM0MjNhOTg0YWE1YTg1OTU4
+MmQwM2IyMjkzMi5Qcm9wZXJ0aWVzAGdldF9SZWFkT25seVZhcmlhYmxlcwBCdWZmZXJDb2x1bW5J
+bmRleGVzAEdldENvbHVtbkluZGV4ZXMAU2V0dGluZ3MARXF1YWxzAENvbm5lY3Rpb25zAE9iamVj
+dABFbmRPZlJvd3NldABnZXRfRGVmYXVsdABVc2VyQ29tcG9uZW50AFBhcmVudENvbXBvbmVudABT
+Y3JpcHRDb21wb25lbnQAZ2V0X0RhdGFDb252ZXJzaW9uVG90YWxkZXBvc2l0c2Ftb3VudABNaWNy
+b3NvZnQuU3FsU2VydmVyLlR4U2NyaXB0AE1pY3Jvc29mdC5TcWxTZXJ2ZXIuUGlwZWxpbmVIb3N0
+AElucHV0MF9Qcm9jZXNzSW5wdXQAR2V0VmFsdWVXaXRoQ29udGV4dABTY3JpcHRDb21wb25lbnRF
+dmFsQ29udGV4dABnZXRfRXZhbHVhdG9yQ29udGV4dABnZXRfVXRjTm93AElucHV0MF9Qcm9jZXNz
+SW5wdXRSb3cATmV4dFJvdwBnZXRfRmlsZVllYXJNb250aERheQBnZXRfRGF0YUNvbnZlcnNpb25D
+dXJyZW5jeQBnZXRfQXNzZW1ibHkAAICbSQBzAE4AdQBsAGwAIABwAHIAbwBwAGUAcgB0AHkAIABj
+AGEAbgBuAG8AdAAgAGIAZQAgAHMAZQB0ACAAdABvACAARgBhAGwAcwBlAC4AIABBAHMAcwBpAGcA
+bgAgAGEAIAB2AGEAbAB1AGUAIAB0AG8AIAB0AGgAZQAgAGMAbwBsAHUAbQBuACAAaQBuAHMAdABl
+AGEAZAAuAAAPSQBuAHAAdQB0ACAAMAAAIUYAaQBsAGUAWQBlAGEAcgBNAG8AbgB0AGgARABhAHkA
+AHFTAEMAXwA4AGQAOAAwADIAYwA0ADIAMwBhADkAOAA0AGEAYQA1AGEAOAA1ADkANQA4ADIAZAAw
+ADMAYgAyADIAOQAzADIALgBQAHIAbwBwAGUAcgB0AGkAZQBzAC4AUgBlAHMAbwB1AHIAYwBlAHMA
+AAAARxRSuW/fFUGfLPvS2LPSYwAEIAEBCAMgAAEFIAEBEREEIAEBDgUgAQERYQUgAg4ICAQAABFJ
+CSADARI9HQgSQQMGEj0DBh0IBCABCggEIAECCAQgAQ4IBSABEUUIBSACAQgcAyAAAgYgAgIOEX0F
+IAEdCAgFIAASgIEGIAESgIUcBQAAEoCJBiABHBKAjQgAARKAkRGAlQUgABKAmQcgAgEOEoCZCLd6
+XFYZNOCJCImEXc2AgMyRAgYIAgYOAwYSFAMGEhgDBhJNAwYSWQMGEl0DBhIgBSABARIMAyAACgMg
+AA4EIAARRQQgAQECBSABARFFBSABARFJCSAEAQgOEj0SQQUgAQESTQQAABJZBAAAEl0FAAEBEl0E
+AAASIAMAAAEDKAAKAygAAgMoAA4EKAARRQMoAAgEKAARSQQIABJZBAgAEl0ECAASIAgBAAgAAAAA
+AB4BAAEAVAIWV3JhcE5vbkV4Y2VwdGlvblRocm93cwEIAQACAAAAAAAoAQAjU0NfOGQ4MDJjNDIz
+YTk4NGFhNWE4NTk1ODJkMDNiMjI5MzIAAAUBAAAAABYBABFDb3B5cmlnaHQgQCAgMjAxNgAASQEA
+Gi5ORVRGcmFtZXdvcmssVmVyc2lvbj12NC41AQBUDhRGcmFtZXdvcmtEaXNwbGF5TmFtZRIuTkVU
+IEZyYW1ld29yayA0LjUEAQAAAAAAALQAAADOyu++AQAAAJEAAABsU3lzdGVtLlJlc291cmNlcy5S
+ZXNvdXJjZVJlYWRlciwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFs
+LCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5I1N5c3RlbS5SZXNvdXJjZXMuUnVudGlt
+ZVJlc291cmNlU2V0AgAAAAAAAAAAAAAAUEFEUEFEULQAAAAgOgAAAAAAAAAAAAA6OgAAACAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAALDoAAAAAAAAAAAAAAABfQ29yRGxsTWFpbgBtc2NvcmVlLmRsbAAA
+AAAA/yUAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAABABAAAAAYAACAAAAAAAAAAAAAAAAAAAABAAEAAAAwAACAAAAAAAAAAAAAAAAAAAABAAAA
-AABIAAAAWEAAAOwDAAAAAAAAAAAAAOwDNAAAAFYAUwBfAFYARQBSAFMASQBPAE4AXwBJAE4ARgBP
-AAAAAAC9BO/+AAABAAAAAQAAAAAAAAABAAAAAAA/AAAAAAAAAAQAAAACAAAAAAAAAAAAAAAAAAAA
-RAAAAAEAVgBhAHIARgBpAGwAZQBJAG4AZgBvAAAAAAAkAAQAAABUAHIAYQBuAHMAbABhAHQAaQBv
-AG4AAAAAAAAAsARMAwAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAAAoAwAAAQAwADAA
-MAAwADAANABiADAAAAAaAAEAAQBDAG8AbQBtAGUAbgB0AHMAAAAAAAAAIgABAAEAQwBvAG0AcABh
-AG4AeQBOAGEAbQBlAAAAAAAAAAAAcAAkAAEARgBpAGwAZQBEAGUAcwBjAHIAaQBwAHQAaQBvAG4A
-AAAAAFMAQwBfADgAZAA4ADAAMgBjADQAMgAzAGEAOQA4ADQAYQBhADUAYQA4ADUAOQA1ADgAMgBk
-ADAAMwBiADIAMgA5ADMAMgAAADAACAABAEYAaQBsAGUAVgBlAHIAcwBpAG8AbgAAAAAAMQAuADAA
-LgAwAC4AMAAAAHAAKAABAEkAbgB0AGUAcgBuAGEAbABOAGEAbQBlAAAAUwBDAF8AOABkADgAMAAy
-AGMANAAyADMAYQA5ADgANABhAGEANQBhADgANQA5ADUAOAAyAGQAMAAzAGIAMgAyADkAMwAyAC4A
-ZABsAGwAAABIABIAAQBMAGUAZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABDAG8AcAB5AHIAaQBn
-AGgAdAAgAEAAIAAgADIAMAAxADYAAAAqAAEAAQBMAGUAZwBhAGwAVAByAGEAZABlAG0AYQByAGsA
-cwAAAAAAAAAAAHgAKAABAE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABTAEMAXwA4
-AGQAOAAwADIAYwA0ADIAMwBhADkAOAA0AGEAYQA1AGEAOAA1ADkANQA4ADIAZAAwADMAYgAyADIA
-OQAzADIALgBkAGwAbAAAAGgAJAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAAUwBDAF8AOABk
-ADgAMAAyAGMANAAyADMAYQA5ADgANABhAGEANQBhADgANQA5ADUAOAAyAGQAMAAzAGIAMgAyADkA
-MwAyAAAANAAIAAEAUAByAG8AZAB1AGMAdABWAGUAcgBzAGkAbwBuAAAAMQAuADAALgAwAC4AMAAA
-ADgACAABAEEAcwBzAGUAbQBiAGwAeQAgAFYAZQByAHMAaQBvAG4AAAAxAC4AMAAuADAALgAwAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB
+ABAAAAAYAACAAAAAAAAAAAAAAAAAAAABAAEAAAAwAACAAAAAAAAAAAAAAAAAAAABAAAAAABIAAAA
+WEAAAOwDAAAAAAAAAAAAAOwDNAAAAFYAUwBfAFYARQBSAFMASQBPAE4AXwBJAE4ARgBPAAAAAAC9
+BO/+AAABAAAAAQAAAAAAAAABAAAAAAA/AAAAAAAAAAQAAAACAAAAAAAAAAAAAAAAAAAARAAAAAEA
+VgBhAHIARgBpAGwAZQBJAG4AZgBvAAAAAAAkAAQAAABUAHIAYQBuAHMAbABhAHQAaQBvAG4AAAAA
+AAAAsARMAwAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAAAoAwAAAQAwADAAMAAwADAA
+NABiADAAAAAaAAEAAQBDAG8AbQBtAGUAbgB0AHMAAAAAAAAAIgABAAEAQwBvAG0AcABhAG4AeQBO
+AGEAbQBlAAAAAAAAAAAAcAAkAAEARgBpAGwAZQBEAGUAcwBjAHIAaQBwAHQAaQBvAG4AAAAAAFMA
+QwBfADgAZAA4ADAAMgBjADQAMgAzAGEAOQA4ADQAYQBhADUAYQA4ADUAOQA1ADgAMgBkADAAMwBi
+ADIAMgA5ADMAMgAAADAACAABAEYAaQBsAGUAVgBlAHIAcwBpAG8AbgAAAAAAMQAuADAALgAwAC4A
+MAAAAHAAKAABAEkAbgB0AGUAcgBuAGEAbABOAGEAbQBlAAAAUwBDAF8AOABkADgAMAAyAGMANAAy
+ADMAYQA5ADgANABhAGEANQBhADgANQA5ADUAOAAyAGQAMAAzAGIAMgAyADkAMwAyAC4AZABsAGwA
+AABIABIAAQBMAGUAZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABDAG8AcAB5AHIAaQBnAGgAdAAg
+AEAAIAAgADIAMAAxADYAAAAqAAEAAQBMAGUAZwBhAGwAVAByAGEAZABlAG0AYQByAGsAcwAAAAAA
+AAAAAHgAKAABAE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABTAEMAXwA4AGQAOAAw
+ADIAYwA0ADIAMwBhADkAOAA0AGEAYQA1AGEAOAA1ADkANQA4ADIAZAAwADMAYgAyADIAOQAzADIA
+LgBkAGwAbAAAAGgAJAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAAUwBDAF8AOABkADgAMAAy
+AGMANAAyADMAYQA5ADgANABhAGEANQBhADgANQA5ADUAOAAyAGQAMAAzAGIAMgAyADkAMwAyAAAA
+NAAIAAEAUAByAG8AZAB1AGMAdABWAGUAcgBzAGkAbwBuAAAAMQAuADAALgAwAC4AMAAAADgACAAB
+AEEAcwBzAGUAbQBiAGwAeQAgAFYAZQByAHMAaQBvAG4AAAAxAC4AMAAuADAALgAwAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -1459,7 +2054,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAwAAABkPwAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAwAAABMOgAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -1468,7 +2063,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                       </arrayElements>
                     </property>
                     <property
@@ -1485,7 +2080,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                       dataType="System.String"
                       description="Specifies a comma-separated list of read-only variables."
                       name="ReadOnlyVariables"
-                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ScriptUIVariablePickerDlg"></property>
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ScriptUIVariablePickerDlg">User::FileYearMonthDay</property>
                     <property
                       dataType="System.String"
                       description="Specifies a comma-separated list of read/write variables."
@@ -1498,13 +2093,38 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                       name="BreakpointCollection"
                       typeConverter="NOTBROWSABLE">
                       <arrayElements
-                        arrayElementCount="0" />
+                        arrayElementCount="2">
+                        <arrayElement
+                          dataType="System.String">&lt;SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"&gt;
+&lt;SOAP-ENV:Body&gt;
+&lt;a1:ScriptBreakpointInfo id="ref-1" xmlns:a1="http://schemas.microsoft.com/clr/nsassem/Microsoft.SqlServer.VSTAHosting/Microsoft.SqlServer.VSTAScriptingLib%2C%20Version%3D12.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3D89845dcd8080cc91"&gt;
+&lt;Enabled&gt;true&lt;/Enabled&gt;
+&lt;File id="ref-3"&gt;main.cs&lt;/File&gt;
+&lt;FileLine&gt;92&lt;/FileLine&gt;
+&lt;FileColumn&gt;9&lt;/FileColumn&gt;
+&lt;/a1:ScriptBreakpointInfo&gt;
+&lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;
+</arrayElement>
+                        <arrayElement
+                          dataType="System.String">&lt;SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"&gt;
+&lt;SOAP-ENV:Body&gt;
+&lt;a1:ScriptBreakpointInfo id="ref-1" xmlns:a1="http://schemas.microsoft.com/clr/nsassem/Microsoft.SqlServer.VSTAHosting/Microsoft.SqlServer.VSTAScriptingLib%2C%20Version%3D12.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3D89845dcd8080cc91"&gt;
+&lt;Enabled&gt;true&lt;/Enabled&gt;
+&lt;File id="ref-3"&gt;main.cs&lt;/File&gt;
+&lt;FileLine&gt;120&lt;/FileLine&gt;
+&lt;FileColumn&gt;9&lt;/FileColumn&gt;
+&lt;/a1:ScriptBreakpointInfo&gt;
+&lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;
+</arrayElement>
+                      </arrayElements>
                     </property>
                     <property
                       dataType="System.String"
                       description="Checksum to match component metedata against compiled codes."
                       name="MetadataChecksum"
-                      typeConverter="NOTBROWSABLE">5b93d44bd88ef5c5e6214bcd6db4e103</property>
+                      typeConverter="NOTBROWSABLE">0a306f74daa7565b45822d0bcbbd5b01</property>
                     <property
                       dataType="System.String"
                       description="Checksum to match component metedata against compiled codes."
@@ -1519,6 +2139,54 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                       refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0]"
                       hasSideEffects="true"
                       name="Input 0">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0].Columns[Data Conversion.User ID]"
+                          cachedDataType="i8"
+                          cachedName="User ID"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
+                          name="Data Conversion.User ID" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0].Columns[Data Conversion.Username]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="64"
+                          cachedName="Username"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
+                          name="Data Conversion.Username" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0].Columns[Data Conversion.Currency]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="3"
+                          cachedName="Currency"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
+                          name="Data Conversion.Currency" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0].Columns[Data Conversion.Gross revenue]"
+                          cachedDataType="cy"
+                          cachedName="Gross revenue"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
+                          name="Data Conversion.Gross revenue" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0].Columns[Data Conversion.Total deposits amount]"
+                          cachedDataType="cy"
+                          cachedName="Total deposits amount"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
+                          name="Data Conversion.Total deposits amount" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0].Columns[Data Conversion.Net revenue]"
+                          cachedDataType="cy"
+                          cachedName="Net revenue"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
+                          name="Data Conversion.Net revenue" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0].Columns[Data Conversion.Real money balance]"
+                          cachedDataType="cy"
+                          cachedName="Real money balance"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
+                          name="Data Conversion.Real money balance" />
+                      </inputColumns>
                       <externalMetadataColumns />
                     </input>
                   </inputs>
@@ -1527,6 +2195,35 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                       refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0]"
                       name="Output 0"
                       synchronousInputId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[RowNum]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[RowNum]"
+                          name="RowNum" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[NetLossInUSD]"
+                          dataType="cy"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[NetLossInUSD]"
+                          name="NetLossInUSD" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]"
+                          dataType="date"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]"
+                          name="UpdatedOnUtc" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[CreatedOnUtc]"
+                          dataType="date"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[CreatedOnUtc]"
+                          name="CreatedOnUtc" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[YearMonth]"
+                          codePage="1252"
+                          dataType="str"
+                          length="6"
+                          lineageId="Package\Foreach Loop Container\Data Flow Task\Script Component.Outputs[Output 0].Columns[YearMonth]"
+                          name="YearMonth" />
+                      </outputColumns>
                       <externalMetadataColumns />
                     </output>
                   </outputs>
@@ -1534,8 +2231,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
               </components>
               <paths>
                 <path
-                  refId="Package\Foreach Loop Container\Data Flow Task.Paths[Excel Source Output]"
+                  refId="Package\Foreach Loop Container\Data Flow Task.Paths[Data Conversion Output]"
                   endId="Package\Foreach Loop Container\Data Flow Task\Script Component.Inputs[Input 0]"
+                  name="Data Conversion Output"
+                  startId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Outputs[Data Conversion Output]" />
+                <path
+                  refId="Package\Foreach Loop Container\Data Flow Task.Paths[Excel Source Output]"
+                  endId="Package\Foreach Loop Container\Data Flow Task\Data Conversion.Inputs[Data Conversion Input]"
                   name="Excel Source Output"
                   startId="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output]" />
                 <path
@@ -3143,29 +3845,67 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         <NodeLayout
           Size="163,42"
           Id="Package\Foreach Loop Container\Data Flow Task\Script Component"
-          TopLeft="149,263" />
+          TopLeft="163,355" />
         <NodeLayout
           Size="179,42"
           Id="Package\Foreach Loop Container\Data Flow Task\ADO NET Destination"
-          TopLeft="136,352" />
+          TopLeft="140,446" />
         <NodeLayout
           Size="244,42"
           Id="Package\Foreach Loop Container\Data Flow Task\Everymatrix Monthly Losses Report"
-          TopLeft="91,149" />
+          TopLeft="90,149" />
         <EdgeLayout
           Id="Package\Foreach Loop Container\Data Flow Task.Paths[Output 0]"
-          TopLeft="228,305">
+          TopLeft="244.5,397">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,47"
+              EndConnector="-15,49"
               Start="0,0"
-              End="0,39.5">
+              End="-15,41.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,39.5" />
+                    End="0,20.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,20.5"
+                    Point2="0,24.5"
+                    Point3="-4,24.5" />
+                  <mssgle:LineSegment
+                    End="-11,24.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-11,24.5"
+                    Point2="-15,24.5"
+                    Point3="-15,28.5" />
+                  <mssgle:LineSegment
+                    End="-15,41.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="156,42"
+          Id="Package\Foreach Loop Container\Data Flow Task\Data Conversion"
+          TopLeft="139.5,243.5" />
+        <EdgeLayout
+          Id="Package\Foreach Loop Container\Data Flow Task.Paths[Excel Source Output]"
+          TopLeft="214.75,191">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,52.5"
+              Start="0,0"
+              End="0,45">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,45" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3175,31 +3915,31 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Foreach Loop Container\Data Flow Task.Paths[Excel Source Output]"
-          TopLeft="213,191">
+          Id="Package\Foreach Loop Container\Data Flow Task.Paths[Data Conversion Output]"
+          TopLeft="217.5,285.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="17.5,72"
+              EndConnector="27,69.5"
               Start="0,0"
-              End="17.5,64.5">
+              End="27,62">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,32" />
+                    End="0,30.75" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,32"
-                    Point2="0,36"
-                    Point3="4,36" />
+                    Point1="0,30.75"
+                    Point2="0,34.75"
+                    Point3="4,34.75" />
                   <mssgle:LineSegment
-                    End="13.5,36" />
+                    End="23,34.75" />
                   <mssgle:CubicBezierSegment
-                    Point1="13.5,36"
-                    Point2="17.5,36"
-                    Point3="17.5,40" />
+                    Point1="23,34.75"
+                    Point2="27,34.75"
+                    Point3="27,38.75" />
                   <mssgle:LineSegment
-                    End="17.5,64.5" />
+                    End="27,62" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
