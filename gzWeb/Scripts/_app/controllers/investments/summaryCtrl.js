@@ -7,16 +7,17 @@
 
         var sellingValuesFetched = false;
 
-        $scope.openVintages = function(title, vintages, canWithdraw) {
+        $scope.openVintages = function (title, vintages, withdrawMode) {
             return message.modal(title, {
                 nsSize: '700px',
                 nsTemplate: '/partials/messages/summaryVintages.html',
                 nsCtrl: 'summaryVintagesCtrl',
-                nsStatic: canWithdraw,
+                nsStatic: withdrawMode,
                 nsParams: {
                     vintages: vintages,
-                    canWithdraw: canWithdraw,
+                    withdrawMode: withdrawMode,
                     currency: $scope.currency
+                    //model: $scope.model
                 }
             });
         };
@@ -83,6 +84,7 @@
                 return api.getSummaryData();
             }, function (response) {
                 $scope.model = response.Result;
+                $scope.model.OkToWithdraw = false;
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
         }

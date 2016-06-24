@@ -3,14 +3,16 @@
 }
 
 <script type="text/ng-template" id="withdrawTpl.html">
-    <div class="withdraw" ng-click="!model.OkToWithdraw || withdraw()" ng-class="{'disabled': !model.OkToWithdraw }">
+    @*!model.OkToWithdraw ||*@ 
+    @*ng-class="{'disabled': !model.OkToWithdraw }"*@
+    <div class="withdraw" ng-click="withdraw()">
         <img src="@Url.Content("~/Content/Images/cash.svg")" alt=" cash" />
         <span>WITHDRAW</span>
     </div>
-    <div class="withdraw-msg" ng-if="!model.OkToWithdraw">
+    @*<div class="withdraw-msg" ng-if="!model.OkToWithdraw">
         <i class="fa fa-exclamation-triangle text-warning"></i>
         <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
-    </div>
+    </div>*@
 </script>
 
 <script type="text/ng-template" id="backToGamesTpl.html">
