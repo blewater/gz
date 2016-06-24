@@ -9,7 +9,7 @@
 
         $scope.openVintages = function(title, vintages, canWithdraw) {
             return message.modal(title, {
-                nsSize: '600px',
+                nsSize: '700px',
                 nsTemplate: '/partials/messages/summaryVintages.html',
                 nsCtrl: 'summaryVintagesCtrl',
                 nsStatic: canWithdraw,
@@ -40,7 +40,7 @@
         };
 
         function withdrawVintages() {
-            var promise = $scope.openVintages('Available Portfolios for withdrawal', $scope.vintages, true);
+            var promise = $scope.openVintages('Available funds for withdrawal', $scope.vintages, true);
             promise.then(function (updatedVintages) {
                 api.call(function () {
                     return api.withdrawVintages(updatedVintages);
