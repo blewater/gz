@@ -591,6 +591,8 @@
     <Content Include="Areas\Admin\Views\Manage\Users.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\Roles.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\RoleCreate.cshtml" />
+    <Content Include="Areas\Admin\Views\Manage\RoleEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\Manage\RoleDetails.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
