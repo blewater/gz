@@ -297,6 +297,8 @@
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageController.cs" />
+    <Compile Include="Areas\Admin\Models\EmailsViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\UsersViewModel.cs" />
     <Compile Include="Areas\Admin\Models\LogViewModel.cs" />
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
