@@ -8,55 +8,67 @@
             <h2 class="faq-heading">FAQ</h2>
         </div>
 
-        <div class="row">
-            <h3>About greenzorro</h3>
-            <div class="panel-group" id="accordion {{x.id}}" ng-repeat="x in aboutGreenzorro">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion {{x.id}}" href="#collapse{{x.id}}">
-                                {{ x.Q }}
-                                <img class="custom-caret" src="..\..\..\Content\Images\custom-caret-48px.svg" />
-                            </a>
-                        </h4>
+        <div class="row faq-section" ng-repeat="section in faqSections">
+            <h3>{{section.name}}</h3>
+            <div class="faq-group">
+                <div class="faq-item" ng-repeat="qa in section.items" ng-init="qa.expanded = false;"  ng-class="{'expanded':qa.expanded}">
+                    <div class="faq-head" ng-click="expand($parent.$index, $index)">
+                        <span>{{qa.Q}}</span>
+                        <i class="pull-right fa fa-chevron-right"></i>
                     </div>
-                    <div id="collapse{{x.id}}" class="panel-collapse collapse">
-                        <div class="panel-body" ng-bind-html="getHtml(x.A)"></div>
-                    </div>
+                    <div class="faq-body" ng-bind-html="getHtml(qa.A)"></div>
                 </div>
             </div>
-            <h3>Games</h3>
-            <div class="panel-group" ng-repeat="x in games">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" href="#collapse{{x.id}}">
-                                {{ x.Q }}
-                                <img class="custom-caret" src="..\..\..\Content\Images\custom-caret-48px.svg" />
-                            </a>
-                        </h4>
+
+
+            @*<div class="panel-group" ng-repeat="x in aboutGreenzorro">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a ng-click="expand($index)">
+                                    <span>{{ x.Q }}</span>
+                                    <i class="fa" ></i>
+                                    <img class="custom-caret" src="..\..\..\Content\Images\custom-caret-48px.svg" />
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse{{x.id}}" class="panel-collapse collapse">
+                            <div class="panel-body" ng-bind-html="getHtml(x.A)"></div>
+                        </div>
                     </div>
-                    <div id="collapse{{x.id}}" class="panel-collapse collapse">
-                        <div class="panel-body" ng-bind-html="getHtml(x.A)"></div>
+                </div>*@
+            @*<h3>Games</h3>
+                <div class="panel-group" ng-repeat="x in games">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#collapse{{x.id}}">
+                                    {{ x.Q }}
+                                    <img class="custom-caret" src="..\..\..\Content\Images\custom-caret-48px.svg" />
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse{{x.id}}" class="panel-collapse collapse">
+                            <div class="panel-body" ng-bind-html="getHtml(x.A)"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <h3>Investments</h3>
-            <div class="panel-group" ng-repeat="x in investments">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" href="#collapse{{x.id}}">
-                                {{ x.Q }}
-                                <img class="custom-caret" src="..\..\..\Content\Images\custom-caret-48px.svg" />
-                            </a>
-                        </h4>
+                <h3>Investments</h3>
+                <div class="panel-group" ng-repeat="x in investments">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#collapse{{x.id}}">
+                                    {{ x.Q }}
+                                    <img class="custom-caret" src="..\..\..\Content\Images\custom-caret-48px.svg" />
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse{{x.id}}" class="panel-collapse collapse">
+                            <div class="panel-body" ng-bind-html="getHtml(x.A)"></div>
+                        </div>
                     </div>
-                    <div id="collapse{{x.id}}" class="panel-collapse collapse">
-                        <div class="panel-body" ng-bind-html="getHtml(x.A)"></div>
-                    </div>
-                </div>
-            </div>
+                </div>*@
         </div>
     </div>
 </div>
