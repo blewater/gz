@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -69,6 +70,9 @@ namespace gzWeb.Areas.Admin.Controllers
                 return View(model);
             }
 
+            _dbContext.Roles.Add(model);
+            _dbContext.SaveChanges();
+
             return RedirectToAction("Roles", "Manage", new { Area = "Admin" });
         }
 
@@ -84,6 +88,9 @@ namespace gzWeb.Areas.Admin.Controllers
             {
                 return View(model);
             }
+
+            _dbContext.Roles.AddOrUpdate(model);
+            _dbContext.SaveChanges();
 
             return RedirectToAction("Roles", "Manage", new { Area = "Admin" });
         }
