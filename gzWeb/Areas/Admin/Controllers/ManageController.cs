@@ -3,14 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using gzDAL.Conf;
 using gzDAL.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
     public class ManageController : Controller
     {
-
+        private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _dbContext;
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
         public ManageController()
         {
@@ -23,6 +38,17 @@ namespace gzWeb.Areas.Admin.Controllers
         {
             return View(_dbContext.Users.ToList());
         }
+
+        //[HttpPost]
+        //public ActionResult UserAddToRole(int userId, int roleId)
+        //{
+        //    var role = _dbContext.Roles.SingleOrDefault(x => x.Id == roleId);
+
+        //    if (role)
+        //    UserManager.AddToRole()
+        //}
+
+        #region Roles
 
         // GET: Admin/Users
         public ActionResult Roles()
@@ -50,7 +76,7 @@ namespace gzWeb.Areas.Admin.Controllers
         {
             return View(_dbContext.Roles.Single(x => x.Id == id));
         }
-
+        
         [HttpPost]
         public ActionResult RoleEdit(CustomRole model)
         {
@@ -66,5 +92,7 @@ namespace gzWeb.Areas.Admin.Controllers
         {
             return View(_dbContext.Roles.Single(x => x.Id == id));
         }
+
+        #endregion
     }
 }
