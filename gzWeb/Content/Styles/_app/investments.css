@@ -30,9 +30,10 @@
 .side-box .side-box-table .side-box-table-head {
     font-size: 20px;
     color: #646464;
-    -ms-opacity: 0.5;
-    opacity: 0.5;
+    /*-ms-opacity: 0.5;
+    opacity: 0.5;*/
     padding-bottom: 5px;
+    font-weight: 500;
 }
 
 .side-box .side-box-table .side-box-table-body {
@@ -48,7 +49,7 @@
 }
 .side-box .side-box-table .side-box-table-body .text-right {
     color:#000;
-    font-size: 15px;
+    font-size: 20px;
     -ms-opacity: 0.65;
     opacity: 0.65;
 }
@@ -95,6 +96,12 @@
 .investments .summary .summary-section.investments-schedule {
 }
 
+/*.investments .summary .summary-section.gaming-activities .side-box-table-head h4 {
+    margin-left: 15px;
+}*/ 
+
+
+
 .investments .summary .side-box {
     min-height: 300px;    
 }
@@ -125,6 +132,8 @@
 .investments .summary .vintages-box .vintages-box-table { }
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-head {
     padding-bottom: 20px;
+    font-size: 20px;
+    font-weight: 500;
 }
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-body {
     font-size: 18px;
@@ -232,8 +241,10 @@
     background-color: #27A95C;
 }
 .investments .summary .back-to-games:hover {
-    -ms-opacity: 0.8;
-    opacity: 0.8;
+    /*-ms-opacity: 0.8;
+    opacity: 0.8;*/
+    background-color: #07893C;
+    border-color: #07893C;
 }
 
 .investments .summary .back-to-games img {
