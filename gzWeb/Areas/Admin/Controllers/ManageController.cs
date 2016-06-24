@@ -29,5 +29,42 @@ namespace gzWeb.Areas.Admin.Controllers
         {
             return View(_dbContext.Roles.ToList());
         }
+
+        public ActionResult RoleCreate()
+        {
+            return View(new CustomRole());
+        }
+
+        [HttpPost]
+        public ActionResult RoleCreate(CustomRole model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("Roles", "Manage", new { Area = "Admin" });
+        }
+
+        public ActionResult RoleEdit(int id)
+        {
+            return View(_dbContext.Roles.Single(x => x.Id == id));
+        }
+
+        [HttpPost]
+        public ActionResult RoleEdit(CustomRole model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("Roles", "Manage", new { Area = "Admin" });
+        }
+
+        public ActionResult RoleDetails(int id)
+        {
+            return View(_dbContext.Roles.Single(x => x.Id == id));
+        }
     }
 }
