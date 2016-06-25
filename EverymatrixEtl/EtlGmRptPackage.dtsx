@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EtlGmRptPackage"
   DTS:PackageType="5"
-  DTS:VersionBuild="109"
-  DTS:VersionGUID="{DA118A9A-B107-4375-89D6-2388F9726C49}">
+  DTS:VersionBuild="110"
+  DTS:VersionGUID="{58B09499-3FB5-48AE-9954-F46BCE1A548B}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -49,7 +49,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADOsfnm2R2L3GDUH00au2pxfVgv6HBrsGHs6PKzgoCaUwAAAAAOgAAAAAIAACAAAADYkbPitbIPXWgVh997OV3xyAeYn6MtTVHJLdFS13NOlyAAAADfunlDwxZPVtEjLVGFR/gT88z+GAqSSySRAj4qfqcw6EAAAACwwFCoKHQ736oYMpXGVNMhcA94/BxpNov2UDa8X+aZER/JRO+35JESbPrgyzuGtE0SR84cThyIp+FbKzhzwD9M</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACO9BvgZ9244Mz4KFe98jBzNMWVtUOSFuQNAM7C0lHSowAAAAAOgAAAAAIAACAAAAD9loIPf5icpg6WR1J2RMzkHgmHeeg/X89I4m82oOsuriAAAAAcQmcL1OFq0nPlbq4BHw6zX3rA6nIUg9pOJno9gecJ8kAAAACl1bRM1Lq7Qs1aFACYNFdCYVUHzG0snkozCIVmwTsdisPfdWeuy4k/W4CHGh69HMgxPoDWRgPsU285bF0aCC1/</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -156,13 +156,13 @@
   </DTS:Variables>
   <DTS:Executables>
     <DTS:Executable
-      DTS:refId="Package\Foreach Loop Container"
+      DTS:refId="Package\Foreach Excel File Loop Container"
       DTS:CreationName="STOCK:FOREACHLOOP"
       DTS:Description="Foreach Loop Container"
       DTS:DTSID="{0984126B-5F09-4113-82BE-9925D4D009D7}"
       DTS:ExecutableType="STOCK:FOREACHLOOP"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Foreach Loop Container">
+      DTS:ObjectName="Foreach Excel File Loop Container">
       <DTS:ForEachEnumerator
         DTS:CreationName="Microsoft.ForEachFromVarEnumerator"
         DTS:DTSID="{64407808-30FB-4B5F-B462-5C6F4586E519}"
@@ -175,7 +175,7 @@
       <DTS:Variables />
       <DTS:Executables>
         <DTS:Executable
-          DTS:refId="Package\Foreach Loop Container\Archive an Excel File System Task"
+          DTS:refId="Package\Foreach Excel File Loop Container\Archive an Excel File System Task"
           DTS:CreationName="Microsoft.FileSystemTask"
           DTS:Description="File System Task"
           DTS:DTSID="{60DD03BE-74F2-4C13-90D7-7D9244D852C0}"
@@ -196,7 +196,7 @@
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task"
+          DTS:refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task"
           DTS:CreationName="Microsoft.Pipeline"
           DTS:Description="Process a Excel File Data Flow Task"
           DTS:DTSID="{4912B461-FF91-4F81-9541-BB71BF2E4363}"
@@ -210,7 +210,7 @@
               version="1">
               <components>
                 <component
-                  refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion"
+                  refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion"
                   componentClassID="Microsoft.DataConvert"
                   contactInfo="Data Conversion;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
                   description="Data Conversion"
@@ -218,63 +218,63 @@
                   usesDispositions="true">
                   <inputs>
                     <input
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]"
                       name="Data Conversion Input">
                       <inputColumns>
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[User ID]"
                           cachedDataType="r8"
                           cachedName="User ID"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]" />
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Gross revenue]"
                           cachedDataType="r8"
                           cachedName="Gross revenue"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]" />
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Currency]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="Currency"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]" />
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Username]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="Username"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]" />
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Total deposits amount]"
                           cachedDataType="r8"
                           cachedName="Total deposits amount"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]" />
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Net revenue]"
                           cachedDataType="r8"
                           cachedName="Net revenue"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]" />
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input].Columns[Real money balance]"
                           cachedDataType="r8"
                           cachedName="Real money balance"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]" />
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]" />
                       </inputColumns>
                       <externalMetadataColumns />
                     </input>
                   </inputs>
                   <outputs>
                     <output
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output]"
                       exclusionGroup="1"
                       name="Data Conversion Output"
-                      synchronousInputId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]">
+                      synchronousInputId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
                           dataType="i8"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
                           name="User ID"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -282,7 +282,7 @@
                               containsID="true"
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
-                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]}</property>
+                              name="SourceInputColumnLineageID">#{Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -290,11 +290,11 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
                           dataType="cy"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
                           name="Gross revenue"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -302,7 +302,7 @@
                               containsID="true"
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
-                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]}</property>
+                              name="SourceInputColumnLineageID">#{Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -310,13 +310,13 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           length="3"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
                           name="Currency"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -324,7 +324,7 @@
                               containsID="true"
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
-                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]}</property>
+                              name="SourceInputColumnLineageID">#{Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -332,13 +332,13 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           length="64"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
                           name="Username"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -346,7 +346,7 @@
                               containsID="true"
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
-                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]}</property>
+                              name="SourceInputColumnLineageID">#{Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -354,11 +354,11 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
                           dataType="cy"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
                           name="Total deposits amount"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -366,7 +366,7 @@
                               containsID="true"
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
-                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]}</property>
+                              name="SourceInputColumnLineageID">#{Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -374,11 +374,11 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
                           dataType="cy"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
                           name="Net revenue"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -386,7 +386,7 @@
                               containsID="true"
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
-                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]}</property>
+                              name="SourceInputColumnLineageID">#{Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -394,11 +394,11 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
                           dataType="cy"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
                           name="Real money balance"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -406,7 +406,7 @@
                               containsID="true"
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
-                              name="SourceInputColumnLineageID">#{Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]}</property>
+                              name="SourceInputColumnLineageID">#{Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -417,22 +417,22 @@
                       <externalMetadataColumns />
                     </output>
                     <output
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output]"
                       exclusionGroup="1"
                       isErrorOut="true"
                       name="Data Conversion Error Output"
-                      synchronousInputId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]">
+                      synchronousInputId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
                           dataType="i4"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
                           name="ErrorCode"
                           specialFlags="1" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
                           dataType="i4"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -441,7 +441,7 @@
                   </outputs>
                 </component>
                 <component
-                  refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report"
+                  refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report"
                   componentClassID="Microsoft.ExcelSource"
                   contactInfo="Excel Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
                   description="Excel Source"
@@ -483,7 +483,7 @@
                   </properties>
                   <connections>
                     <connection
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Connections[OleDbConnection]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Connections[OleDbConnection]"
                       connectionManagerID="Package.ConnectionManagers[Excel Connection Manager]"
                       connectionManagerRefId="Package.ConnectionManagers[Excel Connection Manager]"
                       description="The OLE DB runtime connection used to access the database."
@@ -491,245 +491,245 @@
                   </connections>
                   <outputs>
                     <output
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output]"
                       name="Excel Source Output">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]"
                           dataType="r8"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[User ID]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[User ID]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[User ID]"
                           name="User ID"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Username]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Username]"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Username]"
                           name="Username"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Role]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Role]"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]"
                           name="Role"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Player status]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Player status]"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]"
                           name="Player status"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Block reason]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Block reason]"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]"
                           name="Block reason"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Email address]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Email address]"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]"
                           name="Email address"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]"
                           dataType="r8"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Total deposits amount]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Total deposits amount]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Total deposits amount]"
                           name="Total deposits amount"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Currency]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Currency]"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Currency]"
                           name="Currency"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]"
                           dataType="r8"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Net revenue]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Net revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Net revenue]"
                           name="Net revenue"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]"
                           dataType="r8"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Gross revenue]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Gross revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Gross revenue]"
                           name="Gross revenue"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]"
                           dataType="r8"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Real money balance]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]"
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Real money balance]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Real money balance]"
                           name="Real money balance"
                           truncationRowDisposition="FailComponent" />
                       </outputColumns>
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[User ID]"
                           dataType="r8"
                           name="User ID" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Username]"
                           dataType="wstr"
                           length="255"
                           name="Username" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Role]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Role]"
                           dataType="wstr"
                           length="255"
                           name="Role" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Player status]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Player status]"
                           dataType="wstr"
                           length="255"
                           name="Player status" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Block reason]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Block reason]"
                           dataType="wstr"
                           length="255"
                           name="Block reason" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Email address]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Email address]"
                           dataType="wstr"
                           length="255"
                           name="Email address" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Total deposits amount]"
                           dataType="r8"
                           name="Total deposits amount" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Currency]"
                           dataType="wstr"
                           length="255"
                           name="Currency" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Net revenue]"
                           dataType="r8"
                           name="Net revenue" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Gross revenue]"
                           dataType="r8"
                           name="Gross revenue" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].ExternalColumns[Real money balance]"
                           dataType="r8"
                           name="Real money balance" />
                       </externalMetadataColumns>
                     </output>
                     <output
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output]"
                       isErrorOut="true"
                       name="Excel Source Error Output">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[User ID]"
                           dataType="r8"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[User ID]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[User ID]"
                           name="User ID" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Username]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Username]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Username]"
                           name="Username" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Role]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Role]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Role]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Role]"
                           name="Role" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Player status]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Player status]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Player status]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Player status]"
                           name="Player status" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Block reason]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Block reason]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Block reason]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Block reason]"
                           name="Block reason" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Email address]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Email address]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Email address]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Email address]"
                           name="Email address" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Total deposits amount]"
                           dataType="r8"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Total deposits amount]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Total deposits amount]"
                           name="Total deposits amount" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Currency]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Currency]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Currency]"
                           name="Currency" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Net revenue]"
                           dataType="r8"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Net revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Net revenue]"
                           name="Net revenue" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Gross revenue]"
                           dataType="r8"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Gross revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Gross revenue]"
                           name="Gross revenue" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Real money balance]"
                           dataType="r8"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Real money balance]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[Real money balance]"
                           name="Real money balance" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorCode]"
                           dataType="i4"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorCode]"
                           name="ErrorCode"
                           specialFlags="1" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
                           dataType="i4"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -738,7 +738,7 @@
                   </outputs>
                 </component>
                 <component
-                  refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination"
+                  refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination"
                   componentClassID="Microsoft.ManagedComponentHost"
                   contactInfo="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination.;Microsoft Corporation; Microsoft SQL Server; © Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;2"
                   description="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination."
@@ -774,7 +774,7 @@
                   </properties>
                   <connections>
                     <connection
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Connections[IDbConnection]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Connections[IDbConnection]"
                       connectionManagerID="Package.ConnectionManagers[.\SQLEXPRESS.gzDevDb]"
                       connectionManagerRefId="Package.ConnectionManagers[.\SQLEXPRESS.gzDevDb]"
                       description="Managed connection manager"
@@ -782,199 +782,199 @@
                   </connections>
                   <inputs>
                     <input
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input]"
                       errorRowDisposition="FailComponent"
                       hasSideEffects="true"
                       name="ADO NET Destination Input">
                       <inputColumns>
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Role]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Role]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="Role"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Role]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Role]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Role]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Player status]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Player status]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="Player status"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Player status]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Player status]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Player status]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Block reason]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Block reason]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="Block reason"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Block reason]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Block reason]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Block reason]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Email address]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Email address]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="Email address"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output].Columns[Email address]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[RowNum]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[RowNum]"
                           cachedDataType="i4"
                           cachedName="RowNum"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[RowNum]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[RowNum]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[RowNum]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[RowNum]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[NetLossInUSD]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[NetLossInUSD]"
                           cachedDataType="cy"
                           cachedName="NetLossInUSD"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[NetLossInUSD]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[NetLossInUSD]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[NetLossInUSD]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[NetLossInUSD]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[UpdatedOnUtc]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[UpdatedOnUtc]"
                           cachedDataType="date"
                           cachedName="UpdatedOnUtc"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[UpdatedOnUtc]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[UpdatedOnUtc]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[CreatedOnUtc]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[CreatedOnUtc]"
                           cachedDataType="date"
                           cachedName="CreatedOnUtc"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[CreatedOnUtc]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[CreatedOnUtc]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[CreatedOnUtc]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[CreatedOnUtc]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[YearMonth]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[YearMonth]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="6"
                           cachedName="YearMonth"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[YearMonth]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[YearMonth]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[YearMonth]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[YearMonth]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[User ID]"
                           cachedDataType="i8"
                           cachedName="User ID"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Username]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="64"
                           cachedName="Username"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Total deposits amount]"
                           cachedDataType="cy"
                           cachedName="Total deposits amount"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Currency]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="3"
                           cachedName="Currency"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Net revenue]"
                           cachedDataType="cy"
                           cachedName="Net revenue"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Gross revenue]"
                           cachedDataType="cy"
                           cachedName="Gross revenue"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Gross revenue]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Gross revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].Columns[Real money balance]"
                           cachedDataType="cy"
                           cachedName="Real money balance"
-                          externalMetadataColumnId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]" />
+                          externalMetadataColumnId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[RowNum]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[RowNum]"
                           dataType="i4"
                           name="RowNum" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[YearMonth]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[YearMonth]"
                           dataType="wstr"
                           length="6"
                           name="YearMonth" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[User ID]"
                           dataType="i8"
                           name="User ID" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Username]"
                           dataType="wstr"
                           length="256"
                           name="Username" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Role]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Role]"
                           dataType="wstr"
                           length="256"
                           name="Role" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Player status]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Player status]"
                           dataType="wstr"
                           length="256"
                           name="Player status" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Block reason]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Block reason]"
                           dataType="wstr"
                           length="256"
                           name="Block reason" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Email address]"
                           dataType="wstr"
                           length="256"
                           name="Email address" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Total deposits amount]"
                           dataType="numeric"
                           name="Total deposits amount"
                           precision="19"
                           scale="255" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Currency]"
                           dataType="wstr"
                           length="3"
                           name="Currency" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Net revenue]"
                           dataType="numeric"
                           name="Net revenue"
                           precision="19"
                           scale="255" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Gross revenue]"
                           dataType="numeric"
                           name="Gross revenue"
                           precision="19"
                           scale="255" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[NetLossInUSD]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[NetLossInUSD]"
                           dataType="numeric"
                           name="NetLossInUSD"
                           precision="19"
                           scale="255" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[Real money balance]"
                           dataType="numeric"
                           name="Real money balance"
                           precision="19"
                           scale="255" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[CreatedOnUtc]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[CreatedOnUtc]"
                           dataType="dbTimeStamp"
                           name="CreatedOnUtc" />
                         <externalMetadataColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[UpdatedOnUtc]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input].ExternalColumns[UpdatedOnUtc]"
                           dataType="dbTimeStamp"
                           name="UpdatedOnUtc" />
                       </externalMetadataColumns>
@@ -982,22 +982,22 @@
                   </inputs>
                   <outputs>
                     <output
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output]"
                       exclusionGroup="1"
                       isErrorOut="true"
                       name="ADO NET Destination Error Output"
-                      synchronousInputId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input]">
+                      synchronousInputId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input]">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
                           dataType="i4"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
                           name="ErrorCode"
                           specialFlags="1" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
                           dataType="i4"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -1006,7 +1006,7 @@
                   </outputs>
                 </component>
                 <component
-                  refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component"
+                  refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component"
                   componentClassID="Microsoft.ManagedComponentHost"
                   contactInfo="Includes and runs custom script code. For example, apply a business rule that limits the range of valid values in an &quot;income&quot; column or add values in two columns and calculate the average of the sum.;Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;10"
                   description="Includes and runs custom script code. For example, apply a business rule that limits the range of valid values in an &quot;income&quot; column or add values in two columns and calculate the average of the sum."
@@ -2157,55 +2157,55 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                   </properties>
                   <inputs>
                     <input
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0]"
                       hasSideEffects="true"
                       name="Input 0">
                       <inputColumns>
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.User ID]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.User ID]"
                           cachedDataType="i8"
                           cachedName="User ID"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[User ID]"
                           name="Data Conversion.User ID" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Username]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Username]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="64"
                           cachedName="Username"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Username]"
                           name="Data Conversion.Username" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Currency]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Currency]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="3"
                           cachedName="Currency"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Currency]"
                           name="Data Conversion.Currency" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Gross revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Gross revenue]"
                           cachedDataType="cy"
                           cachedName="Gross revenue"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Gross revenue]"
                           name="Data Conversion.Gross revenue" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Total deposits amount]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Total deposits amount]"
                           cachedDataType="cy"
                           cachedName="Total deposits amount"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Total deposits amount]"
                           name="Data Conversion.Total deposits amount" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Net revenue]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Net revenue]"
                           cachedDataType="cy"
                           cachedName="Net revenue"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Net revenue]"
                           name="Data Conversion.Net revenue" />
                         <inputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Real money balance]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0].Columns[Data Conversion.Real money balance]"
                           cachedDataType="cy"
                           cachedName="Real money balance"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output].Columns[Real money balance]"
                           name="Data Conversion.Real money balance" />
                       </inputColumns>
                       <externalMetadataColumns />
@@ -2213,36 +2213,36 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                   </inputs>
                   <outputs>
                     <output
-                      refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0]"
+                      refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0]"
                       name="Output 0"
-                      synchronousInputId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0]">
+                      synchronousInputId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0]">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[RowNum]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[RowNum]"
                           dataType="i4"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[RowNum]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[RowNum]"
                           name="RowNum" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[NetLossInUSD]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[NetLossInUSD]"
                           dataType="cy"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[NetLossInUSD]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[NetLossInUSD]"
                           name="NetLossInUSD" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]"
                           dataType="date"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[UpdatedOnUtc]"
                           name="UpdatedOnUtc" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[CreatedOnUtc]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[CreatedOnUtc]"
                           dataType="date"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[CreatedOnUtc]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[CreatedOnUtc]"
                           name="CreatedOnUtc" />
                         <outputColumn
-                          refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[YearMonth]"
+                          refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[YearMonth]"
                           codePage="1252"
                           dataType="str"
                           length="6"
-                          lineageId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[YearMonth]"
+                          lineageId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0].Columns[YearMonth]"
                           name="YearMonth" />
                       </outputColumns>
                       <externalMetadataColumns />
@@ -2252,26 +2252,26 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
               </components>
               <paths>
                 <path
-                  refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task.Paths[Data Conversion Output]"
-                  endId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0]"
+                  refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task.Paths[Data Conversion Output]"
+                  endId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Inputs[Input 0]"
                   name="Data Conversion Output"
-                  startId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output]" />
+                  startId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Outputs[Data Conversion Output]" />
                 <path
-                  refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task.Paths[Excel Source Output]"
-                  endId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]"
+                  refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task.Paths[Excel Source Output]"
+                  endId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion.Inputs[Data Conversion Input]"
                   name="Excel Source Output"
-                  startId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output]" />
+                  startId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report.Outputs[Excel Source Output]" />
                 <path
-                  refId="Package\Foreach Loop Container\Process an Excel File Data Flow Task.Paths[Output 0]"
-                  endId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input]"
+                  refId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task.Paths[Output 0]"
+                  endId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination.Inputs[ADO NET Destination Input]"
                   name="Output 0"
-                  startId="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0]" />
+                  startId="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component.Outputs[Output 0]" />
               </paths>
             </pipeline>
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Foreach Loop Container\Set YearMonth Var Script Task"
+          DTS:refId="Package\Foreach Excel File Loop Container\Set YearMonth Var Script Task"
           DTS:CreationName="Microsoft.ScriptTask"
           DTS:Description="Script Task"
           DTS:DTSID="{FA04DAC0-E4DF-48A2-9763-9F2BB99E0BCD}"
@@ -2912,21 +2912,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       </DTS:Executables>
       <DTS:PrecedenceConstraints>
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint]"
+          DTS:refId="Package\Foreach Excel File Loop Container.PrecedenceConstraints[Constraint]"
           DTS:CreationName=""
           DTS:DTSID="{AA1D90B1-4095-40F2-B01D-5C1018F7330B}"
-          DTS:From="Package\Foreach Loop Container\Process an Excel File Data Flow Task"
+          DTS:From="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint"
-          DTS:To="Package\Foreach Loop Container\Archive an Excel File System Task" />
+          DTS:To="Package\Foreach Excel File Loop Container\Archive an Excel File System Task" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 1]"
+          DTS:refId="Package\Foreach Excel File Loop Container.PrecedenceConstraints[Constraint 1]"
           DTS:CreationName=""
           DTS:DTSID="{F5565007-05FC-4FDB-AAF0-EF72F995B0EE}"
-          DTS:From="Package\Foreach Loop Container\Set YearMonth Var Script Task"
+          DTS:From="Package\Foreach Excel File Loop Container\Set YearMonth Var Script Task"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 1"
-          DTS:To="Package\Foreach Loop Container\Process an Excel File Data Flow Task" />
+          DTS:To="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task" />
       </DTS:PrecedenceConstraints>
       <DTS:ForEachVariableMappings>
         <DTS:ForEachVariableMapping
@@ -3704,7 +3704,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:From="Package\Read Excel Filenames Script Task"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
-      DTS:To="Package\Foreach Loop Container"
+      DTS:To="Package\Foreach Excel File Loop Container"
       DTS:Value="2" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
@@ -3721,18 +3721,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="195,51"
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task"
           TopLeft="75.5,85.5" />
         <NodeLayout
           Size="158,42"
-          Id="Package\Foreach Loop Container\Archive an Excel File System Task"
+          Id="Package\Foreach Excel File Loop Container\Archive an Excel File System Task"
           TopLeft="77,172" />
         <NodeLayout
           Size="222,42"
-          Id="Package\Foreach Loop Container\Set YearMonth Var Script Task"
+          Id="Package\Foreach Excel File Loop Container\Set YearMonth Var Script Task"
           TopLeft="66,10" />
         <EdgeLayout
-          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint]"
+          Id="Package\Foreach Excel File Loop Container.PrecedenceConstraints[Constraint]"
           TopLeft="173,136.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3766,7 +3766,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 1]"
+          Id="Package\Foreach Excel File Loop Container.PrecedenceConstraints[Constraint 1]"
           TopLeft="131.5,52">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3804,7 +3804,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
           IsExpanded="True"
           PanelSize="507,321"
           Size="507,364"
-          Id="Package\Foreach Loop Container"
+          Id="Package\Foreach Excel File Loop Container"
           TopLeft="69.5,176.5" />
         <NodeLayout
           Size="135,55"
@@ -3850,24 +3850,24 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     </LayoutInfo>
   </Package>
   <TaskHost
-    design-time-name="Package\Foreach Loop Container\Process an Excel File Data Flow Task">
+    design-time-name="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task">
     <LayoutInfo>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="175,52"
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Transform each player row Script Component"
           TopLeft="163,355" />
         <NodeLayout
           Size="179,58"
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination"
           TopLeft="140,446" />
         <NodeLayout
           Size="244,42"
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report"
           TopLeft="90,149" />
         <EdgeLayout
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task.Paths[Output 0]"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task.Paths[Output 0]"
           TopLeft="250.5,407">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3902,10 +3902,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         </EdgeLayout>
         <NodeLayout
           Size="156,42"
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Data Conversion"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Data Conversion"
           TopLeft="139.5,243.5" />
         <EdgeLayout
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task.Paths[Excel Source Output]"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task.Paths[Excel Source Output]"
           TopLeft="214.75,191">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3927,7 +3927,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Foreach Loop Container\Process an Excel File Data Flow Task.Paths[Data Conversion Output]"
+          Id="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task.Paths[Data Conversion Output]"
           TopLeft="217.5,285.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3964,7 +3964,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination">
+    design-time-name="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Insert into PlayerRevRpt ADO NET Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -3972,7 +3972,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\Foreach Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report">
+    design-time-name="Package\Foreach Excel File Loop Container\Process an Excel File Data Flow Task\Everymatrix Monthly Losses Report">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
