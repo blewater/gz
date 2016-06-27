@@ -21,25 +21,26 @@ namespace gzWeb.Areas.Admin.Controllers
         // GET: Admin/EmailTemplates
         public ActionResult Index(int page = 1, int pageSize = 20, string searchTerm = null)
         {
-            var query = _dbContext.EmailTemplates;
+            var query = _dbContext.EmailTemplates.AsQueryable();
             if (!String.IsNullOrEmpty(searchTerm))
-                query.Where(x => x.Code == searchTerm || x.Subject == searchTerm);
+            {
+                query = query.Where(x => x.Code.Contains(searchTerm) ||
+                                         x.Subject.Contains(searchTerm));
+            }
 
             var totalPages = (int)Math.Ceiling((float)query.Count() / pageSize);
-
-            //return View(_dbContext.EmailTemplates.ToList());
-
             return View("Index", new EmailsViewModel
-            {
-                CurrentPage = page,
-                TotalPages = totalPages,
-                SearchTerm = searchTerm,
-                EmailsEntries = query.OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList()
-            });
+                                 {
+                                         CurrentPage = page,
+                                         TotalPages = totalPages,
+                                         SearchTerm = searchTerm,
+                                         EmailsEntries =
+                                                 query.OrderBy(x => x.Id)
+                                                      .Skip((page - 1)*pageSize)
+                                                      .Take(pageSize)
+                                                      .ToList()
+                                 });
         }
-
-
-
 
         public ActionResult Create()
         {

@@ -38,9 +38,13 @@ namespace gzWeb.Areas.Admin.Controllers
         // GET: Admin/Users
         public ActionResult Users(int page = 1, int pageSize = 20, string searchTerm = null)
         {
-            var query = _dbContext.Users;
+            var query = _dbContext.Users.AsQueryable();
             if (!String.IsNullOrEmpty(searchTerm))
-                query.Where(x => x.UserName == searchTerm || x.FirstName == searchTerm || x.LastName == searchTerm);
+            {
+                query = query.Where(x => x.UserName.Contains(searchTerm) ||
+                                         x.FirstName.Contains(searchTerm) ||
+                                         x.LastName.Contains(searchTerm));
+            }
 
             var totalPages = (int)Math.Ceiling((float)query.Count() / pageSize);
 

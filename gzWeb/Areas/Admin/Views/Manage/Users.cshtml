@@ -78,8 +78,11 @@
                                     <th class="col-md-3 text-center">
                                         Last Name
                                     </th>
-                                    <th class="col-md-5 text-center">
+                                    <th class="col-md-3 text-center">
                                         First Name
+                                    </th>
+                                    <th class="col-md-2 text-center">
+                                        Cassino Id
                                     </th>
                                     <th class="col-md-1"></th>
                                 </tr>
@@ -97,6 +100,9 @@
                                         </td>
                                         <td class="text-center">
                                             @Html.DisplayFor(modelItem => item.FirstName)
+                                        </td>
+                                        <td class="text-center">
+                                            @Html.DisplayFor(modelItem => item.GmCustomerId)
                                         </td>
                                         <td class="text-center">
                                             @Html.ActionLink("Delete", "Delete", new { id = item.Id })
