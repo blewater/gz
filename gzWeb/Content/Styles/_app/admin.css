@@ -37,7 +37,15 @@
 .admin .table { overflow-x: scroll; }
 .admin .table thead tr { background-color: #27A95C; }
 
+/*region emailTemplates/edit-details*/
 
+.admin .content .form-group textarea { width: 100%; padding: 5px; }
+
+.admin .content dl { margin-bottom: 50px; color: #fff; }
+
+.admin .content .form-group label { color: white; }
+
+.admin .content a { color: white; padding: 5px; }
 
 @media (max-width: 991px) {
     .admin .admin-table .table-head { height: 357px; }
