@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using gzDAL.Conf;
 using gzDAL.Models;
 using gzDAL.Repos;
+using gzDAL.Repos.Interfaces;
 using gzWeb.Areas.Mvc.Models;
 using Microsoft.AspNet.Identity.Owin;
 
