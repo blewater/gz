@@ -9,11 +9,17 @@
     @Styles.Render("~/css/fa")
     @Styles.Render("~/css/modules")
     @Styles.Render("~/css/app")
-    <style 
 </head>
 <body>
 <div>
+    <div>
+        @Html.Partial("_Header")
+    </div>
+
     @RenderBody()
 </div>
+    @Scripts.Render("~/js/jquery")
+    @Scripts.Render("~/js/bootstrap")
+    @RenderSection("scripts", false)
 </body>
 </html>
