@@ -515,15 +515,18 @@
 }
 
 .auth.mgmt-modal .mgmt-content.left-content { 
-    border-right: 1px dashed white;
-    left: 0;
     top: 0;
-    position: absolute;
+    left: 14%;
 }
+
+/*.auth.mgmt-modal.deposit .mgmt-content.right-content { width: 35%; }*/
+.auth.mgmt-modal.withdraw .mgmt-content.left-content { left: 20%; }
 
 .auth.mgmt-modal .mgmt-content.right-content {  
     right: 0;
     top: 0;
+    height: 100%;
+    border-left: 1px dashed white;
 }
 
 .auth.mgmt-modal .mgmt-content .modal-btn-gz {
@@ -545,6 +548,7 @@
         position: static;
         padding-bottom: 150px;
         border-right: none;
+        padding-top: 0;
     }
 
     .auth.mgmt-modal .mgmt-content.right-content {
@@ -553,11 +557,6 @@
         position: static;
         width: 100%;       
     }
-}
-
-/**************** XS - SM ********************/
-@media (max-width: 991px) {
-    .auth.mgmt-modal .mgmt-content.left-content { padding-top: 0; }
 }
 /* #endregion */
 
@@ -708,7 +707,7 @@
 .auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-moz-placeholder { color: white; font-size: 18px; }
 .auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-ms-input-placeholder { color: white; font-size: 18px; }
 
-.auth.mgmt-modal.bonuses .mgmt-content .modal-btn-gz { margin: 12px -1px; }
+.auth.mgmt-modal.bonuses .mgmt-content .modal-btn-gz { margin: 12px 0; }
 /* #endregion */
 
 /* #region Transaction History */

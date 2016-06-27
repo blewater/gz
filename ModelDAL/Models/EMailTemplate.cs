@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Web.Mvc;
 
 namespace gzDAL.Models
 {
@@ -15,6 +16,7 @@ namespace gzDAL.Models
         public string Subject { get; set; }
 
         [Required]
+        [AllowHtml]
         public string Body { get; set; }
     }
 }

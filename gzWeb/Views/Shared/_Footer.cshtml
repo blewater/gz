@@ -1,4 +1,12 @@
-﻿<footer class="bg-gz" ng-controller="footerCtrl" ng-hide="playing">
+﻿@using System.Reflection
+@using gzWeb.Providers
+<footer class="bg-gz" ng-controller="footerCtrl" ng-hide="playing">
+    @{
+        var assembly = Assembly.GetAssembly(typeof (ApplicationOAuthProvider));
+        var assemblyName = assembly.GetName().Name;
+        var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
+        var versionField = gitVersionInformationType.GetField("InformationalVersion");
+    }
     <div class="container">
         <div class="footer-menu cl-effect text-center">
             <a ng-href="/transparency">TRANSPARENCY</a>
@@ -15,15 +23,16 @@
             <a href="mailto:contact@greenzorro.com" target="_blank"><i class="fa fa-envelope" ng-class="{'fa-lg': !xs}"></i></a>
             <a href="http://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker" ng-class="{'fa-lg': !xs}"></i></a>
         </div>
-        
+
         <div class="copyright text-center">
             &copy; {{copyrightYears}} | greenzorro ltd | All rights reserved
         </div>
         <div class="company-registration text-center">
             <span>Company registration number: 9320285</span>
             <span class="company-registration-separator"> | </span>
-            <br class="company-registration-separator" /> 
+            <br class="company-registration-separator"/>
             <span>Registered in England & Wales</span>
+            <span>@versionField.GetValue(null)</span>
         </div>
     </div>
 </footer>

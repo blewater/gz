@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using gzDAL.Models;
+using gzDAL.Repos.Interfaces;
 using SendGrid;
 using RazorEngine;
 using RazorEngine.Templating;

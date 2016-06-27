@@ -6,7 +6,7 @@
 }
 
 
-<div class="admin admin-edit">
+<div class="admin admin-edit admin-actions">
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2 edit-interface">
@@ -22,40 +22,42 @@
                     <div class="row content">
                         @using (Html.BeginForm())
                         {
+                            <input type="hidden" name="jsonData" value="@ViewBag.JsonData"/>
+                            
                             @Html.AntiForgeryToken()
 
                             <div class="col-xs-8 col-xs-offset-2">
                                 <div class="form-horizontal">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
                                     @Html.HiddenFor(model => model.Id)
 
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.LabelFor(model => model.Code, htmlAttributes: new {@class = "control-label col-md-2"})
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.Code, new {htmlAttributes = new {@class = "form-control"}})
+                                            @Html.ValidationMessageFor(model => model.Code, "", new {@class = "text-danger"})
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.Subject, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.LabelFor(model => model.Subject, htmlAttributes: new {@class = "control-label col-md-2"})
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.Subject, new {htmlAttributes = new {@class = "form-control"}})
+                                            @Html.ValidationMessageFor(model => model.Subject, "", new {@class = "text-danger"})
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.Body, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.LabelFor(model => model.Body, htmlAttributes: new {@class = "control-label col-md-2"})
                                         <div class="col-md-10">
-                                            @Html.TextAreaFor(model => model.Body, new { rows = 10, htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                                            @Html.TextAreaFor(model => model.Body, new {rows = 10, htmlAttributes = new {@class = "form-control"}})
+                                            @Html.ValidationMessageFor(model => model.Body, "", new {@class = "text-danger"})
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <div class="col-md-offset-2 col-md-10">
-                                            <input type="submit" value="Save" class="btn btn-default" />
+                                            <input type="submit" value="Save" class="btn btn-default"/>
                                         </div>
                                     </div>
                                 </div>
@@ -67,13 +69,23 @@
                                 </div>
                             </div>
                         }
-
-                                
-
                     </div>
                 </div>
-
             </div>
+        </div>
+
+        <div class="row">
+            @using (Html.BeginForm("Edit", "EmailTemplates", FormMethod.Get))
+            {
+                <input type="hidden" name="id" value="@Model.Id" />
+                <textarea name="jsonData">@ViewBag.JsonData</textarea>
+                <input type="submit" value="Preview" class="btn btn-default" />
+            }
+
+            <div>
+                @Html.Raw(ViewBag.EmailTemplate)
+            </div>
+
         </div>
     </div>
 </div>
