@@ -1,15 +1,15 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
-        $scope.gamesImgOff = imgDir + "games_white.svg";
-        $scope.gamesImgOn = imgDir + "games_green.svg";
-        $scope.investmentsImgOff = imgDir + "diagram_white.svg";
-        $scope.investmentsImgOn = imgDir + "diagram_green.svg";
+        $scope.gamesImgOff = imgDir + "games_green.svg";
+        $scope.gamesImgOn = imgDir + "games_white.svg";
+        $scope.investmentsImgOff = imgDir + "diagram_green.svg";
+        $scope.investmentsImgOn = imgDir + "diagram_white.svg";
 
         $scope.routes = {
             guest: [
@@ -111,5 +111,13 @@
         $scope._init('header', loadAuthData);
 
         $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
+
+        $scope.expandCollapseMobileMenu = function(){
+            $rootScope.mobileMenuExpanded = !$rootScope.mobileMenuExpanded
+            if ($rootScope.mobileMenuExpanded)
+                chat.hide()
+            else
+                chat.show()
+        }
     }
 })();

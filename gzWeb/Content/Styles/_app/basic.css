@@ -22,6 +22,18 @@ body {
     background: #F2F2F2;
     overflow-x: hidden;
 }
+body.mobile-menu {
+    overflow-y: hidden;
+}
+
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 999999;
+}
+
+
 .content-wrap {
     position: relative;
     height: 100%;
@@ -29,6 +41,7 @@ body {
 }
 
 .view-container {
+    margin-top: 70px;
 }
 
 
