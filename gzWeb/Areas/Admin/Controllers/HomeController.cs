@@ -13,7 +13,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Administrators")]
+    //[Authorize(Roles = "Administrators")]
     public class HomeController : Controller
     {
         private ApplicationSignInManager _signInManager;
