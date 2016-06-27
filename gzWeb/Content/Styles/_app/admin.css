@@ -10,51 +10,79 @@
 .admin.admin-actions { margin-top: 100px; }
 
 .admin .admin-table .table-head { 
-    background-image: linear-gradient(to bottom, #1c7d43 0%, #27A95C 100%);
-    height: 120px; 
+    background-color: #27A95C;
+    height: 130px; 
     bottom: -20px; 
     margin: 0 1px;
     color: #fff;
 }
 
 .admin .admin-table .table-head a { color: #fff; line-height: 5; padding-left: 5px; display: block; }
-.admin.admin-email .admin-table.emails-table .table-head a { margin-left: -15px; }
 
 .admin .admin-table .table-controls { height: 50px; bottom: -15px; }
+.admin .admin-table .table-head .table-controls .filters-form a { width: 90px; }
 
 .admin .admin-table .filters-form .form-group { left: -10px; bottom: -15px; display: block; }
 .admin .admin-table .filters-form .form-group .form-control { height: 30px; color: #27A95C; }
 .admin .admin-table .filters-form .form-group .btn-gz { width: 100%; margin-top: 0; height: 29px; line-height: 1; }
 
-.admin .admin-table .logs-pagination .pagination { float: right; margin-right: 5px; }
-.admin .admin-table .logs-pagination .pagination a { color: #27A95C; height: 30px; line-height: 1; bottom: 10px }
-.admin .admin-table .logs-pagination .pagination .active a { background-color: #27A95C; border-color: #27A95C; color: #fff; }
+.admin .admin-table .admin-pagination .pagination { float: right; margin-right: 5px; }
+.admin .admin-table .admin-pagination .pagination a { color: #27A95C; height: 30px; line-height: 1; bottom: 10px }
+.admin .admin-table .admin-pagination .pagination .active a { background-color: #27A95C; border-color: #27A95C; color: #fff; }
+
+.admin .table-interface .table thead tr { background-color: #27A95C; color: #fff; }  
+.admin .table-interface .table tbody tr:nth-of-type(2n+1) { background: #c0c0c0; }
+.admin .table-interface .table tbody tr td a { color: #27A95C; }
 
 .admin .table { overflow-x: scroll; }
 .admin .table thead tr { background-color: #27A95C; }
+
+
 
 @media (max-width: 991px) {
     .admin .admin-table .table-head { height: 357px; }
     .admin .admin-table .filters-form .form-group .btn-gz { margin: 0 auto; }
 }
-/**/
+/*endregion*/
+
+/*region Users*/
+@media (max-width: 991px) {
+    .admin.admin-users .admin-table .table-head { height: 220px; }
+    .admin.admin-users .admin-table .table-head .table-controls .admin-pagination .pagination { margin-right: 25px; }
+}
+/*endregion*/
+
+/*region Roles*/
+@media (max-width: 991px) {
+    .admin.admin-roles .admin-table .table-head { height: 120px; }
+}
+/*endregion*/
+
+/*region Emails*/
+.admin.admin-emails .admin-table .table-head .table-controls .filters-form .col-md-1 { padding-left: 0; display: block; }
+
+@media (max-width: 991px) {
+    .admin.admin-emails .admin-table .table-head { height: 300px; }
+    .admin.admin-emails .admin-table .table-head .table-controls .admin-pagination .pagination { margin-right: 25px; }
+}
+/*endregion*/
 
 /*region Logs*/
-.logs-admin .admin-table .table tbody .btn-gz { width: 150px; }
+.admin-logs .admin-table .table tbody .btn-gz { width: 150px; }
 
-.logs-admin .admin-table .table tbody .Fatal { background-color: #ff0000; }
-.logs-admin .admin-table .table tbody .Error { background-color: #ff3300; }
-.logs-admin .admin-table .table tbody .Warn { background-color: #ff8000; }
-.logs-admin .admin-table .table tbody .Debug,
-.logs-admin .admin-table .table tbody .Info,
-.logs-admin .admin-table .table tbody .Trace { background-color: #c0c0c0 }
+.admin-logs .admin-table .table tbody .Fatal { background-color: #ff0000; }
+.admin-logs .admin-table .table tbody .Error { background-color: #ff3300; }
+.admin-logs .admin-table .table tbody .Warn { background-color: #ff8000; }
+.admin-logs .admin-table .table tbody .Debug,
+.admin-logs .admin-table .table tbody .Info,
+.admin-logs .admin-table .table tbody .Trace { background-color: #c0c0c0; }
 
 .log-entry-modal-content .modal-body ul li { list-style: none; padding: 10px 0; }
 .log-entry-modal-content .modal-body ul li:nth-of-type(2n+1) { background-color: #f2f2f2; }
-.logs-admin .modal .modal-dialog { max-height: 1000px; width: 800px; }
+.admin-logs .modal .modal-dialog { max-height: 1000px; width: 800px; }
 
 @media (max-width: 991px){
-    .logs-admin .admin-table .logs-pagination .pagination { float: none; margin-left: calc(50% - 180px); }
+    .admin-logs .admin-table .admin-pagination .pagination { float: none; margin-left: calc(50% - 140px); }
 }
 /*endregion*/
 
@@ -73,26 +101,3 @@
 .admin .content .form-group .checkbox label { margin-left: -12px; }
 .admin .content .form-group .btn-gz { width: 150px; text-transform: uppercase; margin-bottom: 50px; margin-top: 30px; }
 /*endregion*/
-
-/*region emailTemplates*/
-/*.admin .table-interface { margin-top: 80px; }*/
-
-.admin .table-interface .table thead tr { background-color: #27A95C; }
-.admin .table-interface .table tbody tr:nth-of-type(2n+1) { background: #c0c0c0; }
-.admin .table-interface .table tbody tr td a { color: #27A95C; }
-/*endregion*/
-
-/*region emailTemplates/Actions*/
-.admin .content .form-group textarea { width: 100%; padding: 5px; }
-
-.admin .content dl { margin-bottom: 50px; color: #fff; }
-.admin .content .form-group label { color: white; }
-.admin .content a { color: white; padding: 5px; }
-
-/*region Manage*/
-
-/*endregion*/
-
-
-
-.admin .admin-details .list { margin-left: 30px; }
