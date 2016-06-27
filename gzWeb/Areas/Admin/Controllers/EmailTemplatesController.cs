@@ -73,7 +73,6 @@ namespace gzWeb.Areas.Admin.Controllers
 
         public ActionResult Edit(int id, string jsonData)
         {
-            //return View(_dbContext.EmailTemplates.Single(x => x.Id == id));
             var model = _dbContext.EmailTemplates.Single(x => x.Id == id);
             if (!String.IsNullOrEmpty(jsonData))
             {
