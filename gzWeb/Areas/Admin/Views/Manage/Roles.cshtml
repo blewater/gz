@@ -6,49 +6,64 @@
 }
 
 <div class="admin admin-roles">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12 table-interface">
 
-                <p>
-                    @Html.ActionLink("Create New", "Create")
-                </p>
+    <article>
+        <div class="container-fluid">
+            <div class="admin-table">
+                <div class="table-head">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <h3 class="text-center">Roles</h3>
+                        </div>
+                    </div>
 
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="col-md-1 text-center">
-                                @Html.DisplayNameFor(model => model.Id)
-                            </th>
-                            <th class="col-md-3 text-center">
-                                @Html.DisplayNameFor(model => model.Name)
-                            </th>
-                            <th class="col-md-1"></th>
-                        </tr>
-                    </thead>
+                    <div class="col-md-12 table-controls">
+                        <div class="row">
+                            <div class="filters-form">
+                                <p>
+                                    @Html.ActionLink("Create New", "RoleCreate")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Id)
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </td>
-                                <td class="text-center">
-                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
+                    <div class="col-md-12 table-interface">
+                        <div class="row">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-1 text-center">
+                                            @Html.DisplayNameFor(model => model.Id)
+                                        </th>
+                                        <th class="col-md-3 text-center">
+                                            @Html.DisplayNameFor(model => model.Name)
+                                        </th>
+                                    </tr>
+                                </thead>
 
-                </table>
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                @Html.DisplayFor(modelItem => item.Id)
+                                            </td>
+                                            <td class="text-center">
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                
             </div>
         </div>
-    </div>
+    </article>
+
 </div>
 

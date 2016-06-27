@@ -4,11 +4,11 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<div class="logs-admin">
+<div class="admin admin-logs">
 
     <article>
         <div class="container-fluid">
-            <div class="logs-table">
+            <div class="admin-table">
                 <div class="table-head">
                     <div class="col-md-12">
                         <div class="row">
@@ -59,7 +59,7 @@
                                 </div>
                             }
 
-                            <div class="col-md-5 logs-pagination">
+                            <div class="col-md-5 admin-pagination">
                                 <div class="row">
                                     <nav style="@(Model.TotalPages <= 1 ? "display:none;": "")">
                                         <ul class="pagination">

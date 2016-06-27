@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using gzDAL.Models;
+using gzWeb.Areas.Admin.Models;
+using Glimpse.Core.Extensions;
+using RazorEngine;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
@@ -18,12 +24,29 @@ namespace gzWeb.Areas.Admin.Controllers
         }
 
         // GET: Admin/EmailTemplates
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 20, string searchTerm = null)
         {
-            return View(_dbContext.EmailTemplates.ToList());
+            var query = _dbContext.EmailTemplates.AsQueryable();
+            if (!String.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(x => x.Code.Contains(searchTerm) ||
+                                         x.Subject.Contains(searchTerm));
+            }
+
+            var totalPages = (int)Math.Ceiling((float)query.Count() / pageSize);
+            return View("Index", new EmailsViewModel
+                                 {
+                                         CurrentPage = page,
+                                         TotalPages = totalPages,
+                                         SearchTerm = searchTerm,
+                                         EmailsEntries =
+                                                 query.OrderBy(x => x.Id)
+                                                      .Skip((page - 1)*pageSize)
+                                                      .Take(pageSize)
+                                                      .ToList()
+                                 });
         }
 
-        
         public ActionResult Create()
         {
             return View(new EmailTemplate());
@@ -48,13 +71,21 @@ namespace gzWeb.Areas.Admin.Controllers
             return View(_dbContext.EmailTemplates.Single(x => x.Id == id));
         }
 
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int id, string jsonData)
         {
-            return View(_dbContext.EmailTemplates.Single(x => x.Id == id));
+            var model = _dbContext.EmailTemplates.Single(x => x.Id == id);
+            if (!String.IsNullOrEmpty(jsonData))
+            {
+                ViewBag.JsonData = jsonData;
+                var objData = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonData);
+                using (var service = RazorEngineService.Create(new TemplateServiceConfiguration()))
+                    ViewBag.EmailTemplate = service.RunCompile(model.Body, "body", null, objData);
+            }
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult Edit(EmailTemplate model)
+        public ActionResult Edit(EmailTemplate model, string jsonData)
         {
             if (!ModelState.IsValid)
             {
@@ -64,7 +95,8 @@ namespace gzWeb.Areas.Admin.Controllers
             _dbContext.EmailTemplates.AddOrUpdate(model, _dbContext);
             _dbContext.SaveChanges();
 
-            return RedirectToAction("Index", "EmailTemplates", new { Area = "Admin" });
+            //return RedirectToAction("Index", "EmailTemplates", new { Area = "Admin" });
+            return RedirectToAction("Edit", "EmailTemplates", new {Area = "Admin", id = model.Id, jsonData = jsonData });
         }
     }
 }
