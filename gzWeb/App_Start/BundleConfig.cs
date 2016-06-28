@@ -114,9 +114,8 @@ namespace gzWeb
 
                 , "~/Scripts/_app/controllers/authCtrl.js"
                 , "~/Scripts/_app/controllers/templates/headerCtrl.js"
-                , "~/Scripts/_app/controllers/templates/footerCtrl.js"
                 , "~/Scripts/_app/controllers/templates/headerNewCtrl.js"
-                , "~/Scripts/_app/controllers/templates/footerNewCtrl.js"
+                , "~/Scripts/_app/controllers/templates/footerCtrl.js"
                 , "~/Scripts/_app/controllers/templates/depositCreditCardCtrl.js"
                 , "~/Scripts/_app/controllers/templates/depositTrustlyCtrl.js"
                 , "~/Scripts/_app/controllers/guest/homeCtrl.js"
@@ -173,8 +172,6 @@ namespace gzWeb
                 , "~/Scripts/_app/services/nsMessageService/nsPromptCtrl.js"
                 , "~/Scripts/_app/services/nsMessageService/nsConfirmCtrl.js"
                 , "~/Scripts/_app/services/nsMessageService/nsMessageService.js"
-
-                //, "~/Scripts/_app/exceptionaire/exceptionaire-materialize.min.js"
             ));
             #endregion
         }

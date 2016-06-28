@@ -18,49 +18,51 @@
                 //}
 
                 //var clickevent = mobilecheck() ? 'touchstart' : 'click';
-                var $body = angular.element('body');
-                $body.addClass('slide');
-                var $overlay = angular.element('<div class="slide-overlay slide"></div>');
-                $body.prepend($overlay);
-                var $slidingItems = angular.element('.slide');
 
-                function open() {
-                    $slidingItems.removeClass('slide-close').addClass('slide-open');
-                }
-                function close() {
-                    $slidingItems.removeClass('slide-open').addClass('slide-close');
-                }
 
-                $scope.opened = false;
-                $scope.toggleOpenClose = function () {
-                    $scope.opened = !$scope.opened;
-                    if ($scope.opened)
-                        open();
-                    else
-                        close();
-                };
 
-                $overlay.on('click', function () {
-                    close();
-                });
+                //var $body = angular.element('body');
+                //$body.addClass('slide');
+                //var $overlay = angular.element('<div class="slide-overlay slide"></div>');
+                //$body.prepend($overlay);
+                //var $slidingItems = angular.element('.slide');
+
+                //function open() {
+                //    $slidingItems.removeClass('slide-close').addClass('slide-open');
+                //}
+                //function close() {
+                //    $slidingItems.removeClass('slide-open').addClass('slide-close');
+                //}
+
+                //$scope.opened = false;
+                //$scope.toggleOpenClose = function () {
+                //    $scope.opened = !$scope.opened;
+                //    if ($scope.opened)
+                //        open();
+                //    else
+                //        close();
+                //};
+
+                //$overlay.on('click', function () {
+                //    close();
+                //});
             });
         }
 
-        $scope.routes = {
-            guest: [
-                constants.routes.transparency,
-                constants.routes.about
-            ],
-            investment: [
-                constants.routes.summary,
-                constants.routes.portfolio,
-                constants.routes.performance
-                //constants.routes.activity
-            ]
-        }
-        $scope.getClass = function (path) {
-            return $location.path() === path ? 'focus' : '';
-        }
+        //$scope.routes = {
+        //    guest: [
+        //        constants.routes.transparency,
+        //        constants.routes.about
+        //    ],
+        //    investment: [
+        //        constants.routes.summary,
+        //        constants.routes.portfolio,
+        //        constants.routes.performance
+        //    ]
+        //}
+        //$scope.getClass = function (path) {
+        //    return $location.path() === path ? 'focus' : '';
+        //}
         
         function init() {
             initializeMobileCheck();

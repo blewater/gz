@@ -236,6 +236,7 @@ namespace gzDAL.Models
         public DbSet<SoldVintage> SoldVintages { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
         public DbSet<LogEntry> LogEntries { get; set; }
+        public DbSet<DynamicPage> DynamicPages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

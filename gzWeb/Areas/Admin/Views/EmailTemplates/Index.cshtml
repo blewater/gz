@@ -4,7 +4,7 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<div class="admin admin-email">
+<div class="admin admin-emails">
 
     <article>
         <div class="container-fluid">
@@ -41,7 +41,7 @@
                                 </div>
                             }
 
-                            <div class="col-md-5 logs-pagination">
+                            <div class="col-md-5 admin-pagination">
                                 <div class="row">
                                     <nav style="@(Model.TotalPages <= 1 ? "display:none;": "")">
                                         <ul class="pagination">
@@ -103,7 +103,7 @@
                                             @Html.DisplayFor(modelItem => item.Body)
                                         </td>
                                         <td class="text-center">
-                                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                            @Html.ActionLink("Edit", "Edit", new {id = item.Id}) |
                                             @Html.ActionLink("Details", "Details", new { id = item.Id })
                                         </td>
                                     </tr>

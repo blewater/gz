@@ -67,7 +67,7 @@ footer .footer-menu a {
 footer .footer-social {
     height: 40px;
     line-height: 40px;
-    margin: 5px 0 15px;
+    margin: 5px 0 10px;
     /*border-bottom: 1px dashed #fff;*/
 }
 footer .footer-social a {
@@ -105,7 +105,7 @@ footer .company-registration {
     font-size: 11px;
     height: 15px;
     line-height: 15px;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
 }
 
 footer .company-registration span.company-registration-separator { display: inline-block; }

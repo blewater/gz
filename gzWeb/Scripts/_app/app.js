@@ -62,7 +62,8 @@ var APP = (function () {
                     setRouteData(currentRoute);
 
                 $rootScope.$on('$routeChangeStart', function (event, next, current) {
-                    $rootScope.loading = true;                    
+                    $rootScope.loading = true;
+                    $rootScope.mobileMenuExpanded = false;
                     if (next && !auth.authorize(next.roles))
                         $location.path(constants.routes.home.path);
                 });
