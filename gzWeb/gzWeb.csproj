@@ -437,6 +437,10 @@
     <Compile Include="Migrations\201606271858401_Unique Index CustPortfolio.Designer.cs">
       <DependentUpon>201606271858401_Unique Index CustPortfolio.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.cs" />
+    <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.Designer.cs">
+      <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -947,6 +951,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606271858401_Unique Index CustPortfolio.resx">
       <DependentUpon>201606271858401_Unique Index CustPortfolio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606272141528_InvBalance RiskType Optimization.resx">
+      <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
