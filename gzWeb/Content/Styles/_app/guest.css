@@ -20,7 +20,7 @@
 
 .guest .home .row { padding: 10px; }
 
-.guest .home .container { padding: 30px 0; }
+/*.guest .home .container { padding: 30px 0; }*/
 .guest .home .top .container {
 	padding-bottom: 0;
 	padding-top: 50px;
@@ -419,7 +419,7 @@
 
 /* #region FAQ*/
 .guest .faq {
-    padding: 60px 0;
+    padding: 60px 10px;
 }
 .guest .faq .faq-group {
     margin-bottom: 20px;
@@ -431,7 +431,7 @@
 .guest .faq .faq-group .faq-item .faq-head {
     background-color: #eee;
     border: 1px solid #ddd;
-    padding: 10px 15px;
+    padding: 10px 20px 10px 15px;
     color: #727272;
     cursor: pointer;
     transition: all 0.4s ease 0s;
@@ -449,6 +449,9 @@
     line-height: 16px;
     transform: rotate(0deg);
     transition: all 0.4s ease 0s;
+    position: absolute;
+    top: 13px;
+    right: 15px;
 }
 .guest .faq .faq-group .faq-item.expanded .faq-head i {
     transform: rotate(90deg);
