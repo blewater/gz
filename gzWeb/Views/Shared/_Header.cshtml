@@ -47,7 +47,7 @@
                     </span>
                 </span>
                 <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
-                    <li class="text-center"><h5><b>{{fullname}}</b></h5></li>
+                    <li><h5><b>{{fullname}}</b></h5></li>
                     <li role="separator" class="divider"></li>
                     <li><a ng-click="changePassword()">Change Password</a></li>
                     <li><a ng-click="logout()">Logout</a></li>
@@ -67,7 +67,7 @@
 </script>
 
 <header ng-controller="headerCtrl" ng-hide="playing">
-    <nav class="navbar navbar-default navbar-static-top" ng-class="{'navbar-initial': !scrolled}">
+    <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a id="logo" class="navbar-brand" href="/">
@@ -85,14 +85,14 @@
                 </button>
             </div>
 
-            <div class="visible-lg collapse navbar-collapse">
+            <div class="visible-lg navbar-desktop-menu">
                 <div ng-include src="'navbar-menu.html'"></div>
             </div>
         </div>
-        <div class="hidden-lg navbar-mobile-menu" ng-class="{'expanded': mobileMenuExpanded}">
-            <div ng-include src="'navbar-menu.html'"></div>
-        </div>
     </nav>
+    <div class="hidden-lg navbar-mobile-menu" ng-class="{'expanded': mobileMenuExpanded}">
+        <div ng-include src="'navbar-menu.html'"></div>
+    </div>
     <div ng-if="inDebugMode"
          style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;"
          ng-style="{'height': collapsed ? '35px' : auto, 'width': collapsed ? '30px' : '300px'}" ng-init="collapsed = true;">

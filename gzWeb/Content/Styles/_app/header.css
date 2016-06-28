@@ -128,12 +128,16 @@
     background-color: #27A95C;
     color: #fff;    
 }
+.user-info .dropdown-menu > li h5 {
+    padding: 3px 10px;
+}
+
 .user-info .dropdown-menu > li > a:hover,
 .user-info .dropdown-menu > li > a:focus {
     color: #27A95C;
 }
 
-.navbar-collapse {
+/*.navbar-collapse {
     background-color: #27A95C;
     padding-bottom: 10px;
     border: none;
@@ -166,23 +170,23 @@
 	font-weight:300;
 	color:#646464;
     cursor: pointer;
-}
+}*/
 
 
-.navbar .links{
+.links{
 	float: left;
 }
-.navbar .links ul {
+.links ul {
     list-style-type: none;
     margin-top: 25px;
 }
-.navbar .links ul li{
+.links ul li{
 	display: inline;
 	margin-right: 20px;
     position: relative;
 }
 
-.navbar .links a {
+.links a {
     text-decoration:none;
     text-transform: uppercase;
 	color:#f2f2f2;
@@ -199,10 +203,10 @@
     transition: all 0.3s ease;
 }
 
-.navbar .links a:hover,
-.navbar .links a:focus,
-.navbar .links a:active,
-.navbar .links a.focus {
+.links a:hover,
+.links a:focus,
+.links a:active,
+.links a.focus {
     color:#fff;
 }
 
@@ -350,17 +354,17 @@
     .navbar-toggle {
         display: block;
     }
-    .navbar-collapse {
+    /*.navbar-collapse {
         text-align: center;
         border-top: 1px solid transparent;
         -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
         -ms-box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-    }
+    }*/
 
-    .navbar-collapse.collapse {
+    /*.navbar-collapse.collapse {
         display: none!important;
-    }
+    }*/
     .navbar-nav {
         float: none!important;
         margin: 7.5px -15px;
@@ -372,7 +376,7 @@
         padding-top: 10px;
         padding-bottom: 10px;
     }
-        .navbar-text {
+    .navbar-text {
         float: none;
         margin: 15px 0;
     }
@@ -406,11 +410,11 @@
         float: none;
         margin: 14px auto 0;
     }
-    .navbar .links{
+    .links{
         float: none;
     }
     
-    .navbar .links ul li {
+    .links ul li {
         display: block;
         margin: 15px auto 0;
     }
@@ -419,22 +423,15 @@
 
 
 
-.navbar button.btn-gz {
+header button.btn-gz,
+header button.btn-gz.btn-gz-alt {
     margin: 18px 0 0;
 	font-size:12px;
     border: 1px solid #f2f2f2;
     border: 1px solid rgba(242,242,242,0.5);
 }
-.navbar button.btn-gz:hover{
-    border: 1px solid #f2f2f2;
-    border: 1px solid rgba(242,242,242,0.5);
-}
-
-.navbar button.btn-gz.btn-gz-alt {
-    border: 1px solid #f2f2f2;
-    border: 1px solid rgba(242,242,242,0.5);
-}
-.navbar button.btn-gz.btn-gz-alt:hover{
+header button.btn-gz:hover,
+header button.btn-gz.btn-gz-alt:hover {
     border: 1px solid #f2f2f2;
     border: 1px solid rgba(242,242,242,0.5);
 }
@@ -443,35 +440,35 @@
 
 
 
-.navbar .switch {
+header .switch {
     float: right;
 }
 
-.navbar .switch .on,
-.navbar .switch .off {
+header .switch .on,
+header .switch .off {
     display: inline-block;
     padding: 5px 10px;
     margin-top: 18px;
     border: 1px solid #f2f2f2;
     float: right;
 }
-.navbar .switch .on {
+header .switch .on {
     background-color: #27A95C;
 }
-/*.navbar .switch .on:hover {
+/*header .switch .on:hover {
     background-color: #27A95C;
 }*/
-.navbar .switch .off {
+header .switch .off {
     background-color: #f2f2f2;
     cursor: default;
 }
-.navbar .switch .on img,
-.navbar .switch .off img {
+header .switch .on img,
+header .switch .off img {
     width: 26px;
     height: 24px;
 }
 
-.navbar .switch .divider {
+header .switch .divider {
     margin-top: 18px;
     padding: 18px 0;
     border-right-color: #27A95C;
@@ -492,6 +489,8 @@
     height: 100%;
     width: 100%;
     padding: 15px;
+    color:#fff;
+    z-index: 999999;
     /*margin: -100%;*/
     /*display: none;*/
     opacity: 0;
@@ -507,7 +506,21 @@
 .navbar-mobile-menu.expanded {
     /*margin-left: 0;*/
     /*display: block;*/
+    z-index: 999999;
     opacity: 1;
     background-color: #27A95C;
-    z-index: 1;
 }
+
+
+    /*.navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }*/
+
