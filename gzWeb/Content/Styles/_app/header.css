@@ -1,5 +1,10 @@
 ﻿@charset "utf-8";
 
+header {
+    min-height: 69px;
+}
+
+
 .navbar.navbar-default {
     height:70px;
 	width:100%;
@@ -12,6 +17,7 @@
     -webkit-box-shadow: none;
     -ms-box-shadow: none;
     box-shadow: none;
+    z-index: 999999;
 }
 
 /*.navbar.navbar-default.navbar-initial{
@@ -490,7 +496,7 @@ header .switch .divider {
     width: 100%;
     padding: 15px;
     color:#fff;
-    z-index: 999999;
+    /*z-index: 999999;*/
     /*margin: -100%;*/
     /*display: none;*/
     opacity: 0;
