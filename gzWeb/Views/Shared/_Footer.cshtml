@@ -1,12 +1,13 @@
 ﻿@using System.Reflection
 @using gzWeb.Providers
+@{
+    var assembly = Assembly.GetAssembly(typeof(ApplicationOAuthProvider));
+    var assemblyName = assembly.GetName().Name;
+    var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
+    var versionField = gitVersionInformationType.GetField("InformationalVersion");
+}
+
 <footer class="bg-gz" ng-controller="footerCtrl" ng-hide="playing">
-    @{
-        var assembly = Assembly.GetAssembly(typeof (ApplicationOAuthProvider));
-        var assemblyName = assembly.GetName().Name;
-        var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
-        var versionField = gitVersionInformationType.GetField("InformationalVersion");
-    }
     <div class="container">
         <div class="footer-menu cl-effect text-center">
             <a ng-href="/transparency">TRANSPARENCY</a>
@@ -32,8 +33,8 @@
             <span class="company-registration-separator"> | </span>
             <br class="company-registration-separator"/>
             <span>Registered in England & Wales</span>
-            <span>@versionField.GetValue(null)</span>
         </div>
+        <div class="text-center">@versionField.GetValue(null)</div>
     </div>
 </footer>
 
