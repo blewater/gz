@@ -437,6 +437,14 @@
     <Compile Include="Migrations\201606111158443_fix.Designer.cs">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.cs" />
+    <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.Designer.cs">
+      <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281306336_Add_DynamicPages.cs" />
+    <Compile Include="Migrations\201606281306336_Add_DynamicPages.Designer.cs">
+      <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -943,6 +951,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606111158443_fix.resx">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.resx">
+      <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281306336_Add_DynamicPages.resx">
+      <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
