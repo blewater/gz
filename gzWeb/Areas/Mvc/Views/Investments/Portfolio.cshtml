@@ -8,7 +8,7 @@
             <div class="text-center">
                 <div class="invest-prompt">
                     @*Please select your next month’s investment plan:*@
-                    Please select which investment your bonus should trail
+                    Please select which investment plan your bonus should trail
                 </div>
             </div>
         </div>
@@ -64,12 +64,11 @@
                                 <div class="holding-weight">{{holding.Weight | number : 2}}%</div>
                             </div>
                         </div>
-                        <div class="hr"></div>
                         <div class="row expected-roi">
                             <div class="col-xs-7 text-left">
                                 <div>Expected annual Return on Investment</div>
                             </div>
-                            <div class="col-xs-5 text-right">
+                            <div class="col-xs-5 text-right expected-roi-percent">
                                 <div>{{plan.ROI | number : 2}}%</div>
                             </div>
                         </div>

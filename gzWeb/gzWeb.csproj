@@ -134,6 +134,10 @@
       <HintPath>..\packages\NLog.Web.4.2.1\lib\net35\NLog.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RazorEngine, Version=3.8.2.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.8.2\lib\net45\RazorEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
       <Private>True</Private>
@@ -304,6 +308,7 @@
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
+    <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.Designer.cs">
       <DependentUpon>201601301303283_Init CustPortfolio Key.cs</DependentUpon>
@@ -440,6 +445,18 @@
     <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.cs" />
     <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.Designer.cs">
       <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.cs" />
+    <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.Designer.cs">
+      <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281306336_Add_DynamicPages.cs" />
+    <Compile Include="Migrations\201606281306336_Add_DynamicPages.Designer.cs">
+      <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs" />
+    <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.Designer.cs">
+      <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -737,7 +754,6 @@
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\footerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\loginCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerCtrl.js" />
@@ -955,6 +971,15 @@
     <EmbeddedResource Include="Migrations\201606272141528_InvBalance RiskType Optimization.resx">
       <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.resx">
+      <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281306336_Add_DynamicPages.resx">
+      <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.resx">
+      <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModelDAL\gzDAL.csproj">
@@ -1016,6 +1041,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets'))" />
   </Target>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
@@ -1023,6 +1049,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
     <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
+  <Import Project="..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.5.4\build\dotnet\GitVersionTask.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

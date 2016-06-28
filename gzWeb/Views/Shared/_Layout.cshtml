@@ -14,32 +14,33 @@
     @Styles.Render("~/css/bootstrap")
     @Styles.Render("~/css/fa")
     @Styles.Render("~/css/modules")
+    <link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,500,700,400italic,500italic,700italic&subset=latin,greek' rel='stylesheet' type='text/css'>
     @Styles.Render("~/css/app")
 </head>
-    <body ng-cloak>        
-        <!--<span class="ribbon"><span class="ribbon-text">Alpha</span></span>-->
-        <!--<div class="content-wrap">-->
-        <div class="non-footer">
-            @Html.Partial("_Header")
-            @RenderBody()
-        </div>
-        <div class="footer">
-            @Html.Partial("_Footer")
-        </div>
-        <!--</div>-->
+<body ng-cloak ng-class="{'mobile-menu':mobileMenuExpanded}">
+    <!--<span class="ribbon"><span class="ribbon-text">Alpha</span></span>-->
+    <!--<div class="content-wrap">-->
+    <div class="non-footer">
+        @Html.Partial("_Header")
+        @RenderBody()
+    </div>
+    <div class="footer">
+        @Html.Partial("_Footer")
+    </div>
+    <!--</div>-->
 
-        @Scripts.Render("~/js/jquery")
-        <script>AUTOBAHN_DEBUG = true;</script>
-        <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz" type="text/javascript"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?libraries=places" type="text/javascript"></script>
-        <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit" type="text/javascript" async defer></script>
-        @Html.Raw(JSNLog.JavascriptLogging.Configure())
-        @Scripts.Render("~/js/plugins")
-        @Scripts.Render("~/js/bootstrap")
-        @Scripts.Render("~/js/d3")
-        @Scripts.Render("~/js/angular")
-        @Scripts.Render("~/js/modules")
-        @*<script src="~/Scripts/jsnlog/logToServer.js"></script>*@
-        @Scripts.Render("~/js/app")
-    </body>
+    @Scripts.Render("~/js/jquery")
+    <script>AUTOBAHN_DEBUG = true;</script>
+    <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz" type="text/javascript"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places" type="text/javascript"></script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit" type="text/javascript" async defer></script>
+    @Html.Raw(JSNLog.JavascriptLogging.Configure())
+    @Scripts.Render("~/js/plugins")
+    @Scripts.Render("~/js/bootstrap")
+    @Scripts.Render("~/js/d3")
+    @Scripts.Render("~/js/angular")
+    @Scripts.Render("~/js/modules")
+    @*<script src="~/Scripts/jsnlog/logToServer.js"></script>*@
+    @Scripts.Render("~/js/app")
+</body>
 </html>

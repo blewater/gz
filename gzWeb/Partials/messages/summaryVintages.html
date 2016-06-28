@@ -2,12 +2,12 @@
     <form class="form-horizontal" name="form" ng-submit="withdraw()" role="form" novalidate>
         <div class="row header">
             <div class="col-xs-12">
-                <div ng-if="!canWithdraw" class="col-xs-6 text-left">Vintage</div>
-                <div ng-if="!canWithdraw" class="col-xs-6 text-right">Invested</div>
-                <div ng-if="canWithdraw" class="col-xs-2 text-left">Vintage</div>
-                <div ng-if="canWithdraw" class="col-xs-4 text-right">You have invested</div>
-                <div ng-if="canWithdraw" class="col-xs-4 text-right">You will receive</div>
-                <div ng-if="canWithdraw" class="col-xs-2 text-center">Withdraw</div>
+                <div ng-if="!withdrawMode" class="col-xs-6 text-left">Vintage</div>
+                <div ng-if="!withdrawMode" class="col-xs-6 text-right">Invested</div>
+                <div ng-if="withdrawMode" class="col-xs-2 text-left">Vintage</div>
+                <div ng-if="withdrawMode" class="col-xs-4 text-right">Invested on your behalf</div>
+                <div ng-if="withdrawMode" class="col-xs-4 text-right">You will receive</div>
+                <div ng-if="withdrawMode" class="col-xs-2 text-center">Withdraw</div>
             </div>
         </div>
 
@@ -20,27 +20,32 @@
                 'height': group.isCollapsed ? 0 : group.length * 20,
                 'display': group.hide ? 'none' : 'block'
             }">
-                <div class="month" ng-repeat="vintage in group" ng-class="{'sold': canWithdraw && vintage.Sold, 'locked': canWithdraw && vintage.Locked, 'selected': canWithdraw && vintage.Selected}">
-                    <div ng-if="!canWithdraw" class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                    <div ng-if="!canWithdraw" class="col-xs-6 text-right">{{vintage.InvestAmount | isoCurrency : currency : 0}}</div>
-                    <div ng-if="canWithdraw" class="col-xs-2 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                    <div ng-if="canWithdraw" class="col-xs-4 text-right">{{vintage.InvestAmount | isoCurrency : currency : 0}}</div>
-                    <div ng-if="canWithdraw" class="col-xs-4 text-right">{{vintage.SellingValue | isoCurrency : currency : 0}}</div>
-                    <div ng-if="canWithdraw" class="col-xs-2 text-right">
+                <div class="month" ng-repeat="vintage in group" ng-class="{'sold': withdrawMode && vintage.Sold, 'locked': withdrawMode && vintage.Locked, 'selected': withdrawMode && vintage.Selected}">
+                    <div ng-if="!withdrawMode" class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
+                    <div ng-if="!withdrawMode" class="col-xs-6 text-right">{{vintage.InvestAmount | isoCurrency : currency : 0}}</div>
+                    <div ng-if="withdrawMode" class="col-xs-2 text-left">{{vintage.Date | date : 'MMMM'}}</div>
+                    <div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.InvestAmount | isoCurrency : currency : 0}}</div>
+                    <div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.SellingValue | isoCurrency : currency : 0}}</div>
+                    <div ng-if="withdrawMode" class="col-xs-2 text-right">
                         <gz-check-box gz-model="vintage" gz-value="Selected" gz-disabled="vintage.Sold || vintage.Locked"></gz-check-box>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div ng-if="canWithdraw" class="row">
-            <div class="col-xs-6 text-left total">Total gains from sales</div>
+
+        <div ng-if="withdrawMode" class="row">
+            <div class="col-xs-6 text-left total">Total amount to be withdrawn</div>
             <div class="col-xs-6 text-right total amount">{{totalGain() | isoCurrency : currency : 0}}</div>
         </div>
 
-        <div ng-if="canWithdraw" class="row">
+        <div ng-if="withdrawMode" class="row">
             <div class="col-xs-12 text-center">
                 <button type="submit" class="btn-gz" ng-disabled="thereIsNoSelectedVintage()">Withdraw</button>
+                <div class="withdraw-msg">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <span>Each vintage can be withdrawn post 3 months since initial investment</span>
+                    <!--<span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>-->
+                </div>
             </div>
         </div>
     </form>
