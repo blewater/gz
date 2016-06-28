@@ -25,10 +25,10 @@ namespace gzDAL.Models
         public bool Live { get; set; }
 
         [Required]
-        public bool LiveFrom { get; set; }
+        public DateTime LiveFrom { get; set; }
 
         [Required]
-        public bool LiveTo { get; set; }
+        public DateTime LiveTo { get; set; }
 
         [Required]
         [AllowHtml]
