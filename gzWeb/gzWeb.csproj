@@ -308,6 +308,7 @@
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
+    <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.Designer.cs">
       <DependentUpon>201601301303283_Init CustPortfolio Key.cs</DependentUpon>
@@ -444,6 +445,10 @@
     <Compile Include="Migrations\201606281306336_Add_DynamicPages.cs" />
     <Compile Include="Migrations\201606281306336_Add_DynamicPages.Designer.cs">
       <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs" />
+    <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.Designer.cs">
+      <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -957,6 +962,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606281306336_Add_DynamicPages.resx">
       <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.resx">
+      <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
