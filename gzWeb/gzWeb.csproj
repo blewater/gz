@@ -740,6 +740,7 @@
     <Content Include="Scripts\_app\directives\gzFeaturedGames.js" />
     <Content Include="Scripts\_app\directives\gzFeaturedGame.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
+    <Content Include="Scripts\_app\directives\gzPlanHoldingsChart.js" />
     <Content Include="Scripts\_app\services\authService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\account\registerDepositCtrl.js" />
@@ -767,7 +768,7 @@
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
     <Content Include="Scripts\_app\directives\gzPerformanceGraph.js" />
-    <Content Include="Scripts\_app\directives\gzPortfolioChart.js" />
+    <Content Include="Scripts\_app\directives\gzPlansAllocationChart.js" />
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
     <Content Include="Scripts\_app\services\emBanking.js" />
