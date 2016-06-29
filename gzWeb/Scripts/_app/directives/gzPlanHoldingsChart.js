@@ -1,7 +1,7 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzPortfolioChart', ['iso4217', '$filter', directiveFactory]);
+    APP.directive('gzPlanHoldingsChart', ['iso4217', '$filter', directiveFactory]);
 
     function directiveFactory(iso4217, $filter) {
         return {
