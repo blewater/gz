@@ -462,6 +462,10 @@
     <Compile Include="Migrations\201606281618354_Sync twin migrations.Designer.cs">
       <DependentUpon>201606281618354_Sync twin migrations.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.cs" />
+    <Compile Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.Designer.cs">
+      <DependentUpon>201606291929085_Remove RiskPortfolio Col in InvBalance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -987,6 +991,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606281618354_Sync twin migrations.resx">
       <DependentUpon>201606281618354_Sync twin migrations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.resx">
+      <DependentUpon>201606291929085_Remove RiskPortfolio Col in InvBalance.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
