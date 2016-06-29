@@ -149,7 +149,8 @@ namespace gzWeb
                 , "~/Scripts/_app/controllers/account/myProfileCtrl.js"
 
 
-                , "~/Scripts/_app/directives/gzPortfolioChart.js"
+                , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
+                , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"
                 , "~/Scripts/_app/directives/gzPerformanceGraph.js"
                 , "~/Scripts/_app/directives/gzCheckBox.js"
                 , "~/Scripts/_app/directives/gzSelect.js"
