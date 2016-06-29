@@ -438,6 +438,14 @@
     <Compile Include="Migrations\201606111158443_fix.Designer.cs">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606271858401_Unique Index CustPortfolio.cs" />
+    <Compile Include="Migrations\201606271858401_Unique Index CustPortfolio.Designer.cs">
+      <DependentUpon>201606271858401_Unique Index CustPortfolio.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.cs" />
+    <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.Designer.cs">
+      <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.cs" />
     <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.Designer.cs">
       <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
@@ -449,6 +457,10 @@
     <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs" />
     <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.Designer.cs">
       <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281618354_Sync twin migrations.cs" />
+    <Compile Include="Migrations\201606281618354_Sync twin migrations.Designer.cs">
+      <DependentUpon>201606281618354_Sync twin migrations.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -958,6 +970,12 @@
     <EmbeddedResource Include="Migrations\201606111158443_fix.resx">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606271858401_Unique Index CustPortfolio.resx">
+      <DependentUpon>201606271858401_Unique Index CustPortfolio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606272141528_InvBalance RiskType Optimization.resx">
+      <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.resx">
       <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
     </EmbeddedResource>
@@ -966,6 +984,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.resx">
       <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281618354_Sync twin migrations.resx">
+      <DependentUpon>201606281618354_Sync twin migrations.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -38,6 +38,12 @@ namespace gzDAL.Models {
         public decimal? CashBalance { get; set; }
 
         /// <summary>
+        /// Query optimization. Save the portfolio risk type used to calculate this balance.
+        /// </summary>
+        [Required]
+        public int PortfolioRiskEnum { get; set; } = (int) RiskToleranceEnum.Medium;
+
+        /// <summary>
         /// The positive or negative difference compared to the last month.
         /// </summary>
         private decimal invGainLoss = 0;
