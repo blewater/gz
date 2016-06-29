@@ -126,6 +126,7 @@
     <Compile Include="CurrencyHelper.cs" />
     <Compile Include="DTO\PortfolioFundDTO.cs" />
     <Compile Include="DTO\PortfolioReturnsDTO.cs" />
+    <Compile Include="DTO\PortfolioDto.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
     <Compile Include="DTO\CustFundShareDto.cs" />
