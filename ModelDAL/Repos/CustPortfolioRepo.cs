@@ -149,7 +149,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public IEnumerable<PortfolioDto> GetCustomerPlans(int customerId) {
 
-            var customerPortfolio = GetNextMonthsCustomerPortfolio(customerId);
+            var selCustomerPortfolioId = GetNextMonthsCustomerPortfolio(customerId).Id;
 
             var portfolioDtos = (from p in db.Portfolios
                 join c in db.CustPortfolios on p.Id equals c.PortfolioId
@@ -166,7 +166,6 @@ namespace gzDAL.Repos
                     Color = g.Key.Color,
                     ROI = g.Key.PortFunds.Select(f => f.Weight*f.Fund.YearToDate/100).Sum(),
                     Risk = (RiskToleranceEnum) g.Key.RiskTolerance,
-                    Selected = g.Key.Id == customerPortfolio.Id,
                     AllocatedAmount = g.Sum(b => b.CashInvestment),
                     Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
                         Name = f.Fund.HoldingName,
@@ -183,7 +182,6 @@ namespace gzDAL.Repos
                             Color = p.Color,
                             ROI = p.PortFunds.Select(f => f.Weight*f.Fund.YearToDate/100).Sum(),
                             Risk = (RiskToleranceEnum) p.RiskTolerance,
-                            Selected = false,
                             AllocatedAmount = 0M,
                             Holdings = p.PortFunds.Select(f => new HoldingDto {
                                 Name = f.Fund.HoldingName,
@@ -194,10 +192,11 @@ namespace gzDAL.Repos
 
             // Calculate allocation percentange
             var totalSum = portfolioDtos.Sum(p => p.AllocatedAmount);
-            if (totalSum != 0) {
-                foreach (var portfolioDto in portfolioDtos) {
+            foreach (var portfolioDto in portfolioDtos) {
+                if (totalSum != 0) {
                     portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
                 }
+                portfolioDto.Selected = portfolioDto.Id == selCustomerPortfolioId;
             }
 
             return portfolioDtos;
