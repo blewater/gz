@@ -29,7 +29,8 @@
                     var innerRadius = minDimension - externalPadding - donutThickness;
                     var fontSize = 14 * outerRadius / 100;
                     var duration = 400;
-
+                    for (var k = 0; k < plans.length; k++)
+                        plans[k].Gamma = plans[k].AllocatedPercent / 30;
                     var canvas =
                         root.append("svg")
                             .attr("width", minDimension * 2)
@@ -51,12 +52,25 @@
                         .sort(function (d, i) { return i; });
 
                     function showTooltip(plan) {
-                        var title = '<div class="row"><div class="col-xs-6">Plan: </div><div class="col-xs-6 text-right">' + plan.Title+ '</div></div>';
-                        var percent = '<div class="row"><div class="col-xs-6">Percent: </div><div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 2) + '</div></div>';
-                        var amount = '<div class="row"><div class="col-xs-6">Amount: </div><div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 2) + '</div></div>';
-                        var html = title + percent + amount;
+                        var html =
+                            '<div class="row">' +
+                                '<div class="col-xs-12 text-center">' + plan.Title + ' plan</div>' +
+                            '</div>' +
+                            '<br />' +
+                            '<div class="row">' +
+                                '<div class="col-xs-12"><i>Allocation details</i></div>' +
+                            '</div>' +
+                            '<div class="row">' +
+                                '<div class="col-xs-6">Percent</div>' +
+                                '<div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 1) + '</div>' +
+                            '</div>' +
+                            '<div class="row">' +
+                                '<div class="col-xs-6">Amount</div>' +
+                                '<div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 0) + '</div>' +
+                            '</div>';
+
                         tooltip.html(html)
-                            .style("background-color", d3.rgb("#27A95C").darker(plan.AllocatedPercent / 10))
+                            .style("background-color", d3.rgb("#27A95C").darker(plan.Gamma))
                             .style("opacity", 1)
                             .show();
                     };
@@ -65,9 +79,50 @@
                     };
                     function moveTooltip() {
                         tooltip
-                            .style("left", function () { return (d3.event.pageX - 110) + "px"; })
-                            .style("top", function () { return (d3.event.pageY - 80) + "px"; });
+                            .style("left", function () { return (d3.event.pageX - 100) + "px"; })
+                            .style("top", function () { return (d3.event.pageY - 100) + "px"; });
                     };
+
+                    function overTooltip(d) {
+                        var el = d3.select(this);
+                        el.select("path")
+                            .transition()
+                            .delay(duration / 4)
+                            .duration(duration / 2)
+                            .ease('linear')
+                            .attrTween("d", function (_d) {
+                                var i = d3.interpolate(_d.outerRadius, outerRadius);
+                                return function (t) {
+                                    return arc.outerRadius(i(t))(_d);
+                                };
+                            });
+                        el.select("text")
+                            .transition()
+                            .delay(duration / 4)
+                            .duration(duration / 2)
+                            .attr("font-size", fontSize * 1.2 + "px");
+                        showTooltip(d.data);
+                    }
+                    function outTooltip() {
+                        var el = d3.select(this);
+                        el.select("path")
+                            .transition()
+                            .delay(duration / 4)
+                            .duration(duration / 2)
+                            .ease('linear')
+                            .attrTween("d", function (d) {
+                                var i = d3.interpolate(outerRadius, outerRadius - extension);
+                                return function (t) {
+                                    return arc.outerRadius(i(t))(d);
+                                };
+                            });
+                        el.select("text")
+                            .transition()
+                            .delay(duration / 4)
+                            .duration(duration / 2)
+                            .attr("font-size", fontSize + "px");
+                        hideTooltip();
+                    }
 
                     var arcs =
                         group.selectAll(".arc")
@@ -77,46 +132,8 @@
                             .attr('pointer-events', 'none')
                         .each(function (d) { d.outerRadius = outerRadius - extension; })
                             .attr("d", arc)
-                            .on("mouseover", function (d) {
-                                var el = d3.select(this);
-                                el.select("path")
-                                    .transition()
-                                    .delay(duration / 4)
-                                    .duration(duration / 2)
-                                    .ease('linear')
-                                    .attrTween("d", function (_d) {
-                                        var i = d3.interpolate(_d.outerRadius, outerRadius);
-                                        return function (t) {
-                                            return arc.outerRadius(i(t))(_d);
-                                        };
-                                    });
-                                el.select("text")
-                                    .transition()
-                                    .delay(duration / 4)
-                                    .duration(duration / 2)
-                                    .attr("font-size", fontSize * 1.2 + "px");
-                                showTooltip(d.data);
-                            })
-                            .on("mouseout", function () {
-                                var el = d3.select(this);
-                                el.select("path")
-                                    .transition()
-                                    .delay(duration / 4)
-                                    .duration(duration / 2)
-                                    .ease('linear')
-                                    .attrTween("d", function (d) {
-                                        var i = d3.interpolate(outerRadius, outerRadius - extension);
-                                        return function (t) {
-                                            return arc.outerRadius(i(t))(d);
-                                        };
-                                    });
-                                el.select("text")
-                                    .transition()
-                                    .delay(duration / 4)
-                                    .duration(duration / 2)
-                                    .attr("font-size", fontSize + "px");
-                                hideTooltip();
-                            })
+                            .on("mouseover", overTooltip)
+                            .on("mouseout", outTooltip)
                             .on("mousemove", moveTooltip);
 
                     arcs.transition()
@@ -126,7 +143,7 @@
 
                     arcs.append("path")
                         .attr("fill", function (d, i) {
-                            return d3.rgb("#27A95C").darker(d.data.AllocatedPercent / 10);
+                            return d3.rgb("#27A95C").darker(d.data.Gamma);
                         })
                         .transition()
                         .delay(function (d, i) {
@@ -151,6 +168,7 @@
                         .style('fill', '#fff')
                         .attr("font-size", 0 + "px")
                         .style('opacity', 0)
+                        .attr('pointer-events', 'none')
                         .transition()
                         .delay(duration * 2)
                         .duration(duration)
