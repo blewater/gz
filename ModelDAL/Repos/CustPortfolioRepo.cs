@@ -194,8 +194,10 @@ namespace gzDAL.Repos
 
             // Calculate allocation percentange
             var totalSum = portfolioDtos.Sum(p => p.AllocatedAmount);
-            foreach (var portfolioDto in portfolioDtos) {
-                portfolioDto.AllocatedPercent = (float) (100* portfolioDto.AllocatedAmount/totalSum);
+            if (totalSum != 0) {
+                foreach (var portfolioDto in portfolioDtos) {
+                    portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
+                }
             }
 
             return portfolioDtos;
