@@ -17,21 +17,22 @@ namespace gzDAL.Models {
         public int Id { get; set; }
 
         [Required]
-        [Index("CustomerId_Mon_idx_custp", IsUnique = false, Order = 1)]
+        [Index("CustomerId_Mon_idx_custp", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
 
         [Required, StringLength(6)]
-        [Index("CustomerId_Mon_idx_custp", IsUnique = false, Order = 2)]
+        [Index("CustomerId_Mon_idx_custp", IsUnique = true, Order = 2)]
         public string YearMonth { get; set; }
+
+        [Required]
+        [Index("CustomerId_Mon_idx_custp", IsUnique = true, Order = 3)]
+        public int PortfolioId { get; set; }
+        [ForeignKey("PortfolioId")]
+        public virtual Portfolio Portfolio { get; set; }
 
         // Customer
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
-
-        [Required]
-        public int PortfolioId { get; set; }
-        [ForeignKey("PortfolioId")]
-        public virtual Portfolio Portfolio { get; set; }
 
         [Required]
         public float Weight { get; set; }
