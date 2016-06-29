@@ -466,6 +466,10 @@
     <Compile Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.Designer.cs">
       <DependentUpon>201606291929085_Remove RiskPortfolio Col in InvBalance.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606292009538_Add InvBalanceIndexes.cs" />
+    <Compile Include="Migrations\201606292009538_Add InvBalanceIndexes.Designer.cs">
+      <DependentUpon>201606292009538_Add InvBalanceIndexes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -994,6 +998,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.resx">
       <DependentUpon>201606291929085_Remove RiskPortfolio Col in InvBalance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606292009538_Add InvBalanceIndexes.resx">
+      <DependentUpon>201606292009538_Add InvBalanceIndexes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

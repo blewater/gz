@@ -16,10 +16,12 @@ namespace gzDAL.Models {
 
         [Required]
         [Index("CustomerId_Mon_idx_invbal", IsUnique=true, Order=1)]
+        [Index("CustomerId_Only_idx_invbal", IsUnique = false)]
         public int CustomerId { get; set; }
 
         [Required]
         [Index("CustomerId_Mon_idx_invbal", IsUnique = true, Order=2)]
+        [Index("YearMonth_Only_idx_invbal", IsUnique = false)]
         [StringLength(6)]
         public string YearMonth { get; set; }
 
