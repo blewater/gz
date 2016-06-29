@@ -68,6 +68,7 @@
 
 /*region Emails*/
 .admin.admin-emails .admin-table .table-head .table-controls .filters-form .col-md-1 { padding-left: 0; display: block; }
+.admin.admin-emails .admin-table .table tbody tr td { max-height: 50px; }
 
 @media (max-width: 991px) {
     .admin.admin-emails .admin-table .table-head { height: 300px; }
@@ -93,8 +94,8 @@
     .admin-logs .admin-table .admin-pagination .pagination { float: none; margin-left: calc(50% - 140px); }
 }
 /*endregion*/
-
 /*region login*/
+
 #loginForm { margin-top: 50px; }
 
 .admin-login .login-interface { padding: 0; box-shadow: 2px 2px 2px 2px #c0c0c0; }
@@ -108,4 +109,15 @@
 .admin .content .form-group .checkbox { margin-left: 20px; color: white; }
 .admin .content .form-group .checkbox label { margin-left: -12px; }
 .admin .content .form-group .btn-gz { width: 150px; text-transform: uppercase; margin-bottom: 50px; margin-top: 30px; }
+/*endregion*/
+
+/*region EmailTemplate/Edit*/
+.admin.admin-edit.email-edit { margin-top: 20px; }
+.admin.admin-edit.email-edit .edit-interface .heading { padding: 0 20px; height: 100px; }
+.admin.admin-edit.email-edit .edit-interface .form-group textarea { width: 100%; }
+.admin.admin-edit.email-edit .edit-interface .heading a { line-height: 12; color: #27A95C; }
+.admin.admin-edit.email-edit .edit-interface .view-holder { margin-top: 100px; border-top: 1px solid #fff; }
+.admin.admin-edit.email-edit .edit-interface .view-holder .view-header { color: #fff;  }
+.admin.admin-edit.email-edit .edit-interface .view-holder .template-preview { margin-top: 10px; margin-bottom: 100px; background-color: white; padding: 20px; }
+
 /*endregion*/
