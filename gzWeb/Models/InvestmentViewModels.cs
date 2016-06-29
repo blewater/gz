@@ -23,6 +23,7 @@ namespace gzWeb.Models
         public bool Selected { get; set; }
         public RiskToleranceEnum Risk { get; set; }
         public float AllocatedPercent { get; set; }
+        public decimal AllocatedAmount { get; set; }
         public IEnumerable<HoldingViewModel> Holdings { get; set; }
     }
 

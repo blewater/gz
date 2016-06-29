@@ -310,27 +310,24 @@ namespace gzWeb.Controllers
         #endregion
 
         #region Methods
-        public IEnumerable<PlanViewModel> GetCustomerPlans(int customerId, decimal nextInvestAmount = 0)
-        {
-            var customerPortfolio = _custPortfolioRepo.GetNextMonthsCustomerPortfolio(customerId);
-            var customerPortfolioId = customerPortfolio != null
-                                        ? customerPortfolio.Id
-                                        : 0;
-            var portfolios = _dbContext.Portfolios
-                .Where(x => x.IsActive)
+        public IEnumerable<PlanViewModel> GetCustomerPlans(int customerId, decimal nextInvestAmount = 0) {
+
+            var portfolioDtos = _custPortfolioRepo.GetCustomerPlans(customerId);
+            var portfolios = portfolioDtos
                 .Select(p => new PlanViewModel() {
                     Id = p.Id,
                     Title = p.Title,
                     Color = p.Color,
-                    //AllocatedPercent = p.Id == customerPortfolioId ? 100 : 0,
-                    //AllocatedAmount = p.Id == customerPortfolioId ? nextInvestAmount : 0,
-                    ROI = p.PortFunds.Select(f => f.Weight * f.Fund.YearToDate / 100).Sum(),
-                    Risk = p.RiskTolerance,
-                    Selected = p.Id == customerPortfolioId,
-                    Holdings = p.PortFunds.Select(f => new HoldingViewModel() {
-                        Name = f.Fund.HoldingName,
-                        Weight = f.Weight
-                    })
+                    AllocatedPercent = p.AllocatedPercent,
+                    AllocatedAmount = p.AllocatedAmount,
+                    ROI = p.ROI,
+                    Risk = p.Risk,
+                    Selected = p.Selected,
+                    Holdings = p.Holdings
+                        .Select(h=> new HoldingViewModel() {
+                            Name = h.Name,
+                            Weight = h.Weight
+                        })
                 })
                 .ToList();
 

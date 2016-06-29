@@ -64,13 +64,15 @@ namespace gzWeb.Tests.Controllers
         /// 
         /// </summary>
         [Test]
-        public void GetSummaryDataWithNewCustomer() {
+        public void InvestementApiController_GetCustomerPlans() {
 
             var user = manager.FindByEmail("info@nessos.gr");
 
             // Act
             var result = investmentsApiController.GetCustomerPlans(user.Id);
-            Assert.IsNotNull(result);
+
+            // 3 Active Portfolios
+            Assert.IsNotNull(result.Count() == 3);
         }
 
         [Test]

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
@@ -139,6 +141,68 @@ namespace gzDAL.Repos
 
         /// <summary>
         /// 
+        /// Get all available portfolios along with customer allocations.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="nextInvestAmount"></param>
+        /// <returns></returns>
+        public IEnumerable<PortfolioDto> GetCustomerPlans(int customerId) {
+
+            var customerPortfolio = GetNextMonthsCustomerPortfolio(customerId);
+
+            var portfolioDtos = (from p in db.Portfolios
+                join c in db.CustPortfolios on p.Id equals c.PortfolioId
+                join b in db.InvBalances on
+                    new {CustomerId = c.CustomerId, YearMonth = c.YearMonth} equals
+                    new {CustomerId = b.CustomerId, YearMonth = b.YearMonth}
+                where c.CustomerId == customerId
+                      && !db.SoldVintages.Any(s => s.VintageYearMonth == b.YearMonth && s.CustomerId == b.CustomerId)
+                group b by p
+                into g
+                select new PortfolioDto {
+                    Id = g.Key.Id,
+                    Title = g.Key.Title,
+                    Color = g.Key.Color,
+                    ROI = g.Key.PortFunds.Select(f => f.Weight*f.Fund.YearToDate/100).Sum(),
+                    Risk = (RiskToleranceEnum) g.Key.RiskTolerance,
+                    Selected = g.Key.Id == customerPortfolio.Id,
+                    AllocatedAmount = g.Sum(b => b.CashInvestment),
+                    Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
+                        Name = f.Fund.HoldingName,
+                        Weight = f.Weight
+                    })
+                }).AsEnumerable()
+                /*** Union with non-allocated customer portfolio ****/
+                .Union(
+                    (from p in db.Portfolios
+                        where p.IsActive
+                        select new PortfolioDto {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Color = p.Color,
+                            ROI = p.PortFunds.Select(f => f.Weight*f.Fund.YearToDate/100).Sum(),
+                            Risk = (RiskToleranceEnum) p.RiskTolerance,
+                            Selected = false,
+                            AllocatedAmount = 0M,
+                            Holdings = p.PortFunds.Select(f => new HoldingDto {
+                                Name = f.Fund.HoldingName,
+                                Weight = f.Weight
+                            })
+                        }), new PortfolioComparer())
+                .ToList();
+
+            // Calculate allocation percentange
+            var totalSum = portfolioDtos.Sum(p => p.AllocatedAmount);
+            foreach (var portfolioDto in portfolioDtos) {
+                portfolioDto.AllocatedPercent = (float) (100* portfolioDto.AllocatedAmount/totalSum);
+            }
+
+            return portfolioDtos;
+        }
+
+        /// <summary>
+        /// 
         /// Get the latest YearMonth of a saved customer portfolio selection
         /// By business rules there will be a globally default portfolio for all customers
         /// 
@@ -151,9 +215,22 @@ namespace gzDAL.Repos
 
             return db.CustPortfolios
                 .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, yearMonthStr, StringComparison.Ordinal) <= 0)
-                .OrderByDescending(p => p.YearMonth)
-                .Select(p => p.YearMonth)
-                .First();
+                .Max(p=>p.YearMonth);
         }
     }
+    /// <summary>
+    /// 
+    /// Union comparer for the GetCustomerP
+    /// 
+    /// </summary>
+    class PortfolioComparer : IEqualityComparer<PortfolioDto> {
+        public bool Equals(PortfolioDto p1, PortfolioDto p2) {
+            return p1.Id == p2.Id;
+        }
+
+        public int GetHashCode(PortfolioDto p) {
+            return p.Id.GetHashCode();
+        }
+    }
+
 }
