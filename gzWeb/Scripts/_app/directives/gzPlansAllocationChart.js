@@ -1,22 +1,22 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzPortfolioChart', ['iso4217', '$filter', directiveFactory]);
+    APP.directive('gzPlansAllocationChart', ['iso4217', '$filter', directiveFactory]);
 
     function directiveFactory(iso4217, $filter) {
         return {
             restrict: 'A',
             scope: {
-                gzPlan: '=',
+                gzPlans: '=',
                 gzInvestmentAmount: '=',
                 gzCurrency: '@',
             },
             link: function (scope, element, attrs) {
-                scope.$watch('gzPlan', function (newValue, oldValue) {
+                scope.$watch('gzPlans', function (newValue, oldValue) {
                     drawDonut(newValue);
                 });
 
-                function drawDonut (plan) {
+                function drawDonut (plans) {
                     var root = d3.select(element[0]);
                     root.select("svg").remove();
                     var rootWidth = root.node().getBoundingClientRect().width;
@@ -47,16 +47,16 @@
                                 .padAngle(0.02);
 
                     var pie = d3.layout.pie()
-                        .value(function (d) { return d.Weight === 0 ? 3 : d.Weight; })
+                        .value(function (d) { return d.AllocatedPercent === 0 ? 3 : d.AllocatedPercent; })
                         .sort(function (d, i) { return i; });
 
-                    function showTooltip(holding) {
-                        var name = '<div class="row"><div class="col-xs-6">Holding Name: </div><div class="col-xs-6 text-right">' + holding.Name + '</div></div>';
-                        var weight = '<div class="row"><div class="col-xs-6">Portfolio Weight: </div><div class="col-xs-6 text-right">% ' + $filter('number')(holding.Weight, 2) + '</div></div>';
-                        var value = '<div class="row"><div class="col-xs-6">Current Value: </div><div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')((scope.gzInvestmentAmount * holding.Weight / 100), 2) + '</div></div>';
-                        var html = name + weight + value;
+                    function showTooltip(plan) {
+                        var title = '<div class="row"><div class="col-xs-6">Plan: </div><div class="col-xs-6 text-right">' + plan.Title+ '</div></div>';
+                        var percent = '<div class="row"><div class="col-xs-6">Percent: </div><div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 2) + '</div></div>';
+                        var amount = '<div class="row"><div class="col-xs-6">Amount: </div><div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 2) + '</div></div>';
+                        var html = title + percent + amount;
                         tooltip.html(html)
-                            .style("background-color", d3.rgb("#27A95C").darker(holding.Weight / 10))
+                            .style("background-color", d3.rgb("#27A95C").darker(plan.AllocatedPercent / 10))
                             .style("opacity", 1)
                             .show();
                     };
@@ -71,7 +71,7 @@
 
                     var arcs =
                         group.selectAll(".arc")
-                            .data(pie(plan.Holdings))
+                            .data(pie(plans))
                         .enter().append("g")
                             .attr("class", "arc")
                             .attr('pointer-events', 'none')
@@ -95,7 +95,6 @@
                                     .delay(duration / 4)
                                     .duration(duration / 2)
                                     .attr("font-size", fontSize * 1.2 + "px");
-                                //showHoldingInfo(d.data, "#27A95C");
                                 showTooltip(d.data);
                             })
                             .on("mouseout", function () {
@@ -127,16 +126,16 @@
 
                     arcs.append("path")
                         .attr("fill", function (d, i) {
-                            return d3.rgb("#27A95C").darker(d.data.Weight / 10);
+                            return d3.rgb("#27A95C").darker(d.data.AllocatedPercent / 10);
                         })
                         .transition()
                         .delay(function (d, i) {
-                            var totalPercent = d3.sum(plan.Holdings.slice(0, i), function (x) {
+                            var totalPercent = d3.sum(plans.slice(0, i), function (x) {
                                 return x.percent;
                             });
                             return duration * totalPercent / 100;
                         })
-                        .duration(function (d, i) { return duration * d.data.Weight / 100; })
+                        .duration(function (d, i) { return duration * d.data.AllocatedPercent / 100; })
                         .ease('linear')
                         .attrTween('d', function (d) {
                             var interpolateAngle = d3.interpolate(d.startAngle, d.endAngle);
@@ -161,35 +160,7 @@
                             var c = arc.centroid(d);
                             return "translate(" + c[0] * 0.8 + "," + c[1] * 0.8 + ")";
                         })
-                        .text(function (d) { return d.data.Weight; });
-
-                    //var holdingWeight = group.append("text").style("text-anchor", "middle").attr("font-weight", "bold").style("font-size", "0px").attr("dy", "-15px");
-                    //var holdingName = group.append("text").style("text-anchor", "middle").attr("font-weight", "bold").style("font-size", "0px").attr("dy", "0.35em");
-                    //var holdingValue = group.append("text").style("text-anchor", "middle").attr("font-weight", "bold").style("font-size", "0px").attr("dy", "25px");
-                    //function showHoldingElement(el, text, color) {
-                    //    el.attr("fill", color)
-                    //        .transition()
-                    //        .duration(duration)
-                    //        .ease('elastic')
-                    //        .style("font-size", "14px")
-                    //        .text(text);
-                    //}
-                    //function hideHoldingElement(el) {
-                    //    el.transition()
-                    //        .duration(duration)
-                    //        .ease('elastic')
-                    //        .style("font-size", "0");
-                    //}
-                    //function showHoldingInfo(holding, color) {
-                    //    showHoldingElement(holdingName, holding.Name, color);
-                    //    showHoldingElement(holdingWeight, "% " + holding.Weight + ".00", color);
-                    //    showHoldingElement(holdingValue, "€ " + scope.gzInvestmentAmount * holding.Weight / 100, color);
-                    //}
-                    //function hideHoldingInfo() {
-                    //    hideHoldingElement(holdingName);
-                    //    hideHoldingElement(holdingWeight);
-                    //    hideHoldingElement(holdingValue);
-                    //}
+                        .text(function (d) { return d.data.AllocatedPercent; });
                 }
             }
         };
