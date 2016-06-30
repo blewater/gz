@@ -66,7 +66,7 @@
                             '</div>' +
                             '<div class="row">' +
                                 '<div class="col-xs-6">Amount</div>' +
-                                '<div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 0) + '</div>' +
+                                '<div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 2) + '</div>' +
                             '</div>';
 
                         tooltip.html(html)
