@@ -1,25 +1,23 @@
 ﻿<div class="values">
     <div class="col-xs-4 value text-center">
         <div class="value-top">Years</div>
-        <div class="value-middle">{{getYear()}}</div>
+        <div class="value-middle">{{getYear() | number : 1}}</div>
         <div class="value-bottom"></div>
     </div>
     <div class="col-xs-4 value text-center">
         <div class="value-top">Projected Value</div>
         <div class="value-middle value-bold">{{getProjectedValue() | isoCurrency : gzCurrency : 0}}</div>
         <div class="value-bottom">({{getProfit() > 0 ? '+' : ''}}{{getProfit() | isoCurrency : gzCurrency : 0}})</div>
-        <!--<div class="value-middle">{{model.currency}}<span format="'comma'" count-to="{{model.projectedValue}}" value="{{modelFrom.projectedValue}}" duration="{{model.countDuration}}"></span></div>
-        <div class="value-bottom">({{model.profit >= 0 ? '+' : '-'}}{{model.currency}}<span count-to="{{model.profit}}" value="{{modelFrom.profit}}" duration="{{model.countDuration}}"></span>)</div>-->
     </div>
     <div class="col-xs-4 value text-center">
-        <div class="value-top">Annual Contribution</div>
-        <div class="value-middle">{{annualContribution | isoCurrency : gzCurrency : 0}}</div>
+        <div class="value-top">Monthly Bonus Invested</div>
+        <div class="value-middle">{{monthlyContribution | isoCurrency : gzCurrency : 0}}</div>
         <div class="value-bottom"></div>
     </div>
 </div>
 <div class="plans clearfix col-xs-12 col-sm-offset-3 col-sm-6">
     <div class="col-xs-4 plan text-center" ng-repeat="plan in plans">
-        <button type="button" ng-disabled="plan.Selected" ng-click="selectPlan(plan)">
+        <button type="button" ng-class="{'selected':plan.Selected}" ng-click="selectPlan(plan)">
             <span>{{plan.Title}}</span>
             <span class="plan-roi">(%{{plan.ROI | number : 2}})</span>
         </button>
@@ -27,7 +25,7 @@
 </div>
 <div class="prompt clearfix col-xs-12 col-sm-offset-3 col-sm-6">
     <div class="col-xs-12 plan text-center">
-        Drag and slide the pointer
+        Drag and slide the arrows
     </div>
 </div>
 <div id="canvas" class="clearfix"></div>

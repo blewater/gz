@@ -743,7 +743,7 @@
     line-height: 36px;
     margin: 7px 0;
     padding: 0;
-    border: 1px solid #27A95C;
+    border: none;
     background: none;
     -webkit-box-shadow: none;
     -ms-box-shadow: none;
@@ -760,11 +760,21 @@
     -o-transition: background 0.3s ease;
     transition: background 0.3s ease;
 }
-.investments .performance .plans button:disabled,
-.investments .performance .plans button:hover {
-	background:#27A95C;
-	color:#fff;
+.investments .performance .plans button.selected {
+    font-weight: 800;
 }
+.investments .performance .plans button.selected,
+.investments .performance .plans button:hover {
+    position: relative;
+    -ms-text-shadow: 1px 1px 1px #ffffff, 1px 1px 5px #27A95C;
+    text-shadow: 1px 1px 1px #ffffff, 1px 1px 5px #27A95C;
+    text-decoration: underline;
+}
+
+
+
+
+
 .investments .performance .plans button:disabled {
     cursor: default;
 }
@@ -777,6 +787,7 @@
     position: absolute;
     text-transform: uppercase;
     margin-top: 180px;
+    font-size: 12px;
 }
 
 .investments .performance #canvas {
@@ -797,9 +808,9 @@
 }
 
 
-.investments .performance #canvas .handler {
+/*.investments .performance #canvas .handler {
     cursor: move;
-}
+}*/
 
 /* #region triangles with animations */
 .investments .performance #canvas .handler .triangle {
@@ -809,6 +820,19 @@
     fill: rgba(255, 255, 255, 0.8);
     /*display: none;*/
 }
+.investments .performance #canvas .handler .triangle.inactive {
+    opacity: 0.2;
+}
+
+.investments .performance #canvas .handler .triangle-top,
+.investments .performance #canvas .handler .triangle-bottom {
+    cursor: n-resize;
+}
+.investments .performance #canvas .handler .triangle-left,
+.investments .performance #canvas .handler .triangle-right {
+    cursor: e-resize;
+}
+
 
 /*.investments .performance #canvas .handler:hover .triangle,
 .investments .performance #canvas .handler .triangle.active {
