@@ -4,9 +4,9 @@
 
 <div class="performance">
     <div class="title text-center">
-        Check your expected returns
+        Check your expected returns - Portfolio simulation
     </div>
-    <gz-performance-graph ng-if="model" gz-plans="model.Plans" gz-principal-amount="getPrincipalAmount()" gz-currency="{{currency}}"></gz-performance-graph>
+    <gz-performance-graph ng-if="model" gz-plans="model.Plans" gz-monthly-contribution="getMonthlyContribution()" gz-currency="{{currency}}"></gz-performance-graph>
 </div>
 
 
