@@ -33,12 +33,6 @@
                 return api.getPortfolioData();
             }, function (response) {
                 $scope.model = response.Result;
-                for (var i = 0; i < $scope.model.Plans.length; i++) {
-                    //if (!$scope.model.Plans[i].AllocatedPercent) {
-                    //    $scope.model.Plans[i].AllocatedPercent = Math.round((i * (100 / $scope.model.Plans.length)) * 10) / 10;
-                    //    $scope.model.Plans[i].AllocatedAmount = 256000 * ($scope.model.Plans[i].AllocatedPercent / 100);
-                    //}
-                }
                 $scope.model.SelectedPlan = $filter('filter')($scope.model.Plans, { Selected: true })[0];
                 $scope.model.SelectedIndex = $scope.model.Plans.indexOf($scope.model.SelectedPlan);
             });
