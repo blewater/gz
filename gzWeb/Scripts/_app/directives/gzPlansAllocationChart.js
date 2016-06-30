@@ -62,7 +62,7 @@
                             '</div>' +
                             '<div class="row">' +
                                 '<div class="col-xs-6">Percent</div>' +
-                                '<div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 1) + '</div>' +
+                                '<div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 2) + '</div>' +
                             '</div>' +
                             '<div class="row">' +
                                 '<div class="col-xs-6">Amount</div>' +
@@ -178,7 +178,7 @@
                             var c = arc.centroid(d);
                             return "translate(" + c[0] * 0.8 + "," + c[1] * 0.8 + ")";
                         })
-                        .text(function (d) { return d.data.AllocatedPercent; });
+                        .text(function (d) { return $filter('number')(d.data.AllocatedPercent, 0); });
                 }
             }
         };
