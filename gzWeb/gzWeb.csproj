@@ -297,10 +297,12 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\DynamicPagesController.cs" />
     <Compile Include="Areas\Admin\Controllers\EmailTemplatesController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageController.cs" />
+    <Compile Include="Areas\Admin\Models\DynamicViewModel.cs" />
     <Compile Include="Areas\Admin\Models\EmailsViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UsersViewModel.cs" />
     <Compile Include="Areas\Admin\Models\LogViewModel.cs" />
@@ -632,6 +634,10 @@
     <Content Include="Areas\Admin\Views\Manage\RoleCreate.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\RoleEdit.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\RoleDetails.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Index.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
