@@ -37,27 +37,19 @@ namespace gzDAL.Models {
         /// <summary>
         /// Optional Cash balance only for the where the portfolio was sold.
         /// </summary>
-        public decimal? CashBalance { get; set; }
+        public decimal? CashBalance { get; set; } = 0;
 
         /// <summary>
         /// The positive or negative difference compared to the last month.
         /// </summary>
-        private decimal invGainLoss = 0;
-        public decimal InvGainLoss {
-            get { return invGainLoss; }
-            set { invGainLoss = value; }
-        }
+        public decimal InvGainLoss { get; set; } = 0;
 
         /// <summary>
         /// The month's cash investment
         /// </summary>
-        private decimal cashInvestment = 0;
-        public decimal CashInvestment {
-            get { return cashInvestment; }
-            set { cashInvestment = value; }
-        }
+        public decimal CashInvestment { get; set; } = 0;
 
         [Required]
-        public DateTime UpdatedOnUTC { get; set; }
+        public DateTime UpdatedOnUTC { get; set; } = DateTime.UtcNow;
     }
 }

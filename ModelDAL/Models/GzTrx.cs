@@ -14,19 +14,23 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required, Index("CustomerId_Mon_idx_gztransaction", IsUnique = false, Order = 1)]
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 1)]
+        [Index("IX_CustomerId_TId_Amnt", IsUnique = false, Order = 1)]
+        [Required]
         public int CustomerId { get; set; }
-        [ForeignKey("CustomerId")]
-        public virtual ApplicationUser Customer { get; set; }
 
-        [Index("CustomerId_Mon_idx_gztransaction",IsUnique = false, Order = 2)]
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 2)]
         [Required, StringLength(6)]
         public string YearMonthCtd { get; set; }
 
-        [Index("CustomerId_Mon_idx_gztransaction", IsUnique = false, Order = 3)]
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 3)]
+        [Index("IX_CustomerId_TId_Amnt", IsUnique = false, Order = 2)]
         [ForeignKey("Type")]
         public int TypeId { get; set; }
-        public virtual GzTrxType Type { get; set; }
+
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 4)]
+        [Index("IX_CustomerId_TId_Amnt", IsUnique = false, Order = 3)]
+        public decimal Amount { get; set; }
 
         /// <summary>
         /// 
@@ -52,7 +56,13 @@ namespace gzDAL.Models {
 
         [Required]
         public DateTime CreatedOnUtc { get; set; }
+        #region Foreign Entities
 
-        public decimal Amount { get; set; }
+        [ForeignKey("CustomerId")]
+        public virtual ApplicationUser Customer { get; set; }
+
+        public virtual GzTrxType Type { get; set; }
+
+        #endregion
     }
 }

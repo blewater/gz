@@ -36,16 +36,18 @@ namespace gzDAL.Models {
         public DateTime UpdatedOnUtc { get; set; }
 
         #region Total Monthly Shares
+
         /// <summary>
         /// Total number of shares for month
         /// </summary>
         [Required]
-        public decimal SharesNum { get; set; }
+        public decimal SharesNum { get; set; } = 0;
+
         /// <summary>
         /// $ Value of NumShares: Total number of shares for month.
         /// </summary>
         [Required]
-        public decimal SharesValue { get; set; }
+        public decimal SharesValue { get; set; } = 0;
 
         /// <summary>
         /// Price of newly bought shares in month
