@@ -17,11 +17,14 @@ namespace gzDAL.Models {
         [Required]
         [Index("CustomerId_Mon_idx_invbal", IsUnique=true, Order=1)]
         [Index("CustomerId_Only_idx_invbal", IsUnique = false)]
+        [Index("IDX_InvBalance_CustomerId_YearMonth_CashInv", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
 
         [Required]
         [Index("CustomerId_Mon_idx_invbal", IsUnique = true, Order=2)]
         [Index("YearMonth_Only_idx_invbal", IsUnique = false)]
+        [Index("IDX_InvBalance_CustomerId_YearMonth_CashInv", IsUnique = true, Order = 2)]
+        [Column(TypeName = "char")]
         [StringLength(6)]
         public string YearMonth { get; set; }
 
@@ -47,6 +50,7 @@ namespace gzDAL.Models {
         /// <summary>
         /// The month's cash investment
         /// </summary>
+        [Index("IDX_InvBalance_CustomerId_YearMonth_CashInv", IsUnique = true, Order = 3)]
         public decimal CashInvestment { get; set; } = 0;
 
         [Required]

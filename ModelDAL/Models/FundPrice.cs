@@ -22,6 +22,7 @@ namespace gzDAL.Models {
         /// <summary>
         /// The completed after 4pm trade day that we use the closing price.
         /// </summary>
+        [Column(TypeName = "char")]
         [StringLength(8)]
         [Index("FundId_YMD_idx", IsUnique = true, Order = 2)]
         public string YearMonthDay { get; set; }

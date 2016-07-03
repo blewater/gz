@@ -24,11 +24,15 @@ namespace gzDAL.Models {
         [Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 2)]
         [Index("IX_Sold_Vintages_Cust_VintageYearMonth", IsUnique = true, Order = 2)]
         [Index("IX_Sold_Vintages_VintageYearMonth")]
-        [Required, StringLength(6)]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
+        [Required]
         public string VintageYearMonth { get; set; }
 
         [Index("CustomerId_Mon_idx_gzSoldVintage",IsUnique = true, Order = 3)]
-        [Required, StringLength(6)]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
+        [Required]
         public string YearMonth { get; set; }
 
         [Required]
