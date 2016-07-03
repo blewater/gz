@@ -20,7 +20,9 @@ namespace gzDAL.Models {
         public int CustomerId { get; set; }
 
         [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 2)]
-        [Required, StringLength(6)]
+        [Required]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
         public string YearMonthCtd { get; set; }
 
         [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 3)]
