@@ -14,12 +14,16 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required, Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 1)]
+        [Required]
+        [Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 1)]
+        [Index("IX_Sold_Vintages_Cust_VintageYearMonth", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
         [Index("CustomerId_Mon_idx_gzSoldVintage", IsUnique = true, Order = 2)]
+        [Index("IX_Sold_Vintages_Cust_VintageYearMonth", IsUnique = true, Order = 2)]
+        [Index("IX_Sold_Vintages_VintageYearMonth")]
         [Required, StringLength(6)]
         public string VintageYearMonth { get; set; }
 

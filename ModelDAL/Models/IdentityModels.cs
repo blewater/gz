@@ -61,14 +61,8 @@ namespace gzDAL.Models
         /// <summary>
         /// Whether the account is closed and no longer a Gz customer.
         /// </summary>
-        private bool _closedGzAccount;
         [Required]
-        public bool ClosedGzAccount {
-            get { return _closedGzAccount; }
-            set { _closedGzAccount = value; }
-        }
-
-
+        public bool ClosedGzAccount { get; set; }
 
         /// <summary>
         /// Must get from Casino Operator

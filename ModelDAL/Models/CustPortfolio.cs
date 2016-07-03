@@ -26,6 +26,7 @@ namespace gzDAL.Models {
 
         [Required]
         [Index("CustomerId_Mon_idx_custp", IsUnique = true, Order = 3)]
+        [Index("IX_CustPortfolio_PortfolioId_Only")]
         public int PortfolioId { get; set; }
         [ForeignKey("PortfolioId")]
         public virtual Portfolio Portfolio { get; set; }
