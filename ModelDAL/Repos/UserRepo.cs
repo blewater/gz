@@ -16,13 +16,12 @@ namespace gzDAL.Repos
     public class UserRepo : IUserRepo
     {
         private readonly ApplicationDbContext _db;
-        private readonly GzTransactionRepo _gzTransactionRepo;
-        private readonly InvBalanceRepo _invBalanceRepo;
-        private readonly ICurrencyRateRepo _currencyRateRepo;
+        private readonly IGzTransactionRepo _gzTransactionRepo;
+        private readonly IInvBalanceRepo _invBalanceRepo;
 
         public UserRepo(ApplicationDbContext db, 
-            GzTransactionRepo gzTransactionRepo, 
-            InvBalanceRepo invBalanceRepo)
+            IGzTransactionRepo gzTransactionRepo, 
+            IInvBalanceRepo invBalanceRepo)
         {
             this._db = db;
             this._gzTransactionRepo = gzTransactionRepo;
@@ -44,14 +43,13 @@ namespace gzDAL.Repos
 
             var totalInvestmentReturns = _db.InvBalances
                 .Where(b => b.CustomerId == userId)
-                .Select(b => b.InvGainLoss)
-                .DeferredSum()
+                .DeferredSum(b => (decimal?)b.SoldAmount)
                 .FutureValue();
 
             var lastBalanceRow = _db.InvBalances
                 .Where(i => i.CustomerId == userId)
                 .OrderByDescending(i => i.YearMonth)
-                .Select(b => new { b.UpdatedOnUTC, b.Balance })
+                .Select(b => new { UpdatedOnUTC = b.UpdatedOnUtc, b.Balance })
                 .DeferredFirstOrDefault()
                 .FutureValue();
 
@@ -71,13 +69,15 @@ namespace gzDAL.Repos
 
             var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
             var lastInvestmentAmount = _db.Database
-                .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount()",
+                .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
                     new SqlParameter("@CustomerId", userId),
                     new SqlParameter("@YearMonth", thisYearMonthStr),
                     new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.CreditedPlayingLoss))
                 .SingleOrDefault();
 
             var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(userId);
+
+            var totalDeposits = _gzTransactionRepo.GetTotalDeposit(userId);
 
             var lastBalanceRowValue = lastBalanceRow.Value;
 
@@ -86,18 +86,18 @@ namespace gzDAL.Repos
             var userSummaryDto = new UserSummaryDTO() {
                 
                 Currency = CurrencyHelper.GetSymbol(user.Currency),
-                InvestmentsBalance = lastBalanceRowValue.Balance,
-                TotalDeposits = _gzTransactionRepo.GetTotalDeposit(userId),
+                InvestmentsBalance = lastBalanceRowValue?.Balance??0M,
+                TotalDeposits = totalDeposits,
                 TotalWithdrawals = totalWithdrawalsAmount,
 
                 TotalInvestments = totalInvestmentsAmount,
 
                 // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
-                TotalInvestmentsReturns = totalInvestmentReturns.Value,
+                TotalInvestmentsReturns = totalInvestmentReturns.Value??0,
 
                 NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                 LastInvestmentAmount = lastInvestmentAmount,
-                StatusAsOf = lastBalanceRowValue.UpdatedOnUTC,
+                StatusAsOf = lastBalanceRowValue?.UpdatedOnUTC ?? DateTime.UtcNow.AddDays(-1),
                 Vintages = vintages,
 
                 // Withdrawal eligibility

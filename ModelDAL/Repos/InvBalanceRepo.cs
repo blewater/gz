@@ -37,7 +37,7 @@ namespace gzDAL.Repos {
             DateTime lastUpdated = _db.InvBalances
                 .Where(i => i.CustomerId == customerId)
                 .OrderByDescending(i => i.Id)
-                .Select(i => i.UpdatedOnUTC)
+                .Select(i => i.UpdatedOnUtc)
                 .FirstOrDefault();
 
             if (lastUpdated.Year == 1) {
@@ -70,7 +70,7 @@ namespace gzDAL.Repos {
                 .Single();
 
             var vintagesList = _db.Database
-                .SqlQuery<VintageDto>("SELECT YearMonthStr, InvestAmount, Sold FROM dbo.GetVintages()",
+                .SqlQuery<VintageDto>("SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold FROM dbo.GetVintages(@CustomerId)",
                     new SqlParameter("@CustomerId", customerId))
                 .ToList();
             foreach (var dto in vintagesList) {
@@ -119,16 +119,17 @@ namespace gzDAL.Repos {
             decimal monthlySharesValue = 0;
 
             var vintageSoldValue =
-                _db.SoldVintages
+                _db.InvBalances
                     .Where(v => v.CustomerId == customerId
-                                && v.VintageYearMonth == yearMonthStr)
-                    .Select(v => new {Amount = v.MarketAmount, v.Fees})
-                    .FirstOrDefault();
+                                && v.YearMonth == yearMonthStr
+                                && v.Sold)
+                    .Select(v => new {Amount = v.SoldAmount, v.SoldFees})
+                    .SingleOrDefault();
 
             if (vintageSoldValue != null) {
 
-                fees = vintageSoldValue.Fees;
-                monthlySharesValue = vintageSoldValue.Amount;
+                fees = vintageSoldValue.SoldFees.Value;
+                monthlySharesValue = vintageSoldValue.Amount.Value;
 
             }
             else {
@@ -228,9 +229,11 @@ namespace gzDAL.Repos {
             }
 
             var alreadySold =
-                _db.SoldVintages
+                _db.InvBalances
                     .Any(v => v.CustomerId == customerId
-                              && v.VintageYearMonth == vintageDto.YearMonthStr);
+                              && v.YearMonth == vintageDto.YearMonthStr
+                              && v.Sold
+                              );
 
             if (alreadySold) {
                 int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
@@ -254,15 +257,13 @@ namespace gzDAL.Repos {
         public ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId) {
 
             var customerVintages = GetCustomerVintages(customerId)
-                .Select(v => new VintageDto() {
-                     SellingValue = GetVintageSellingValue(
-                         customerId, 
-                         v.YearMonthStr),
-                     InvestAmount = v.InvestAmount,
-                     YearMonthStr = v.YearMonthStr,
-                     Locked = v.Locked,
-                     Sold = v.Sold
-                 }).ToList();
+                .ToList();
+            foreach (var dto in customerVintages) {
+                dto.SellingValue = GetVintageSellingValue(
+                    customerId,
+                    dto.YearMonthStr);
+
+            }
 
             return customerVintages;
         }
@@ -399,7 +400,7 @@ namespace gzDAL.Repos {
                             CashBalance = remainingCashAmount,
                             InvGainLoss = invGainLoss,
                             CashInvestment = -remainingCashAmount,
-                            UpdatedOnUTC = updatedDateTimeUtc
+                            UpdatedOnUtc = updatedDateTimeUtc
                         });
 
                 _db.Database.Log = null;
@@ -467,11 +468,12 @@ namespace gzDAL.Repos {
             var newSharesVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue);
             var prevMonthsSharesPricedNow = monthlySharesValue - newSharesVal;
 
-            var soldVintagesMarketAmount = _db.SoldVintages
-                .Where(sv => sv.CustomerId == customerId && sv.YearMonth == yearMonthCurrentStr)
-                .Select(sv => sv.MarketAmount)
-                .DefaultIfEmpty(0)
-                .Sum();
+            var soldVintagesMarketAmount = _db.InvBalances
+                .Where(sv => sv.CustomerId == customerId 
+                    && sv.SoldYearMonth == yearMonthCurrentStr
+                    && sv.Sold
+                    )
+                .Sum(sv => (decimal ?) sv.SoldAmount) ?? 0;
 
             var prevMonthsSharesBalance = GetPrevMonthInvestmentBalance(customerId, yearCurrent, monthCurrent);
 
@@ -548,7 +550,7 @@ namespace gzDAL.Repos {
                                 Balance = monthlyBalance,
                                 InvGainLoss = invGainLoss,
                                 CashInvestment = cashToInvest,
-                                UpdatedOnUTC = createdOnUtc
+                                UpdatedOnUtc = createdOnUtc
                     });
                 });
         }

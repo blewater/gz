@@ -227,7 +227,6 @@ namespace gzDAL.Models
         public DbSet<InvBalance> InvBalances { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }
-        public DbSet<SoldVintage> SoldVintages { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
         public DbSet<LogEntry> LogEntries { get; set; }
         public DbSet<DynamicPage> DynamicPages { get; set; }

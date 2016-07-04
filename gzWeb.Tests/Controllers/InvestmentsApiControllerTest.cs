@@ -179,6 +179,7 @@ namespace gzWeb.Tests.Controllers
             IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
             IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);
             ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(db);
+            IUserRepo userRepo = new UserRepo(db, gzTransactionRepo, invBalanceRepo);
 
             // Arrange
             controller = new InvestmentsApiController(
@@ -188,6 +189,7 @@ namespace gzWeb.Tests.Controllers
                     custFundShareRepo,
                     currencyRateRepo,
                     custPortfolioRepo,
+                    userRepo,
                     mapper,
                     new ApplicationUserManager(new CustomUserStore(db), new DataProtectionProviderFactory(() => null)));
             return db;

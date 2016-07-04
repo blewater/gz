@@ -40,33 +40,11 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public decimal GetTotalDeposit(int customerId) {
 
-            decimal totalDeposits = 0;
+            decimal totalDeposits = _db.Database
 
-            var customerIds =
-                _db.Users.Where(u => u.Id == customerId)
-                    .Select(u => new {
-                        u.GmCustomerId,
-                        u.Email
-                    })
-                    .Single();
-
-            if (customerIds.GmCustomerId.HasValue) {
-
-                totalDeposits =
-                    _db.GmTrxs
-                        .Where(t => t.CustomerId == customerIds.GmCustomerId &&
-                                    t.Type.Code == GmTransactionTypeEnum.Deposit)
-                        .Select(t => t)
-                        .Sum(t => (decimal?)t.Amount) ?? 0;
-            } else {
-
-                totalDeposits =
-                    _db.GmTrxs
-                        .Where(t => t.CustomerEmail == customerIds.Email &&
-                                    t.Type.Code == GmTransactionTypeEnum.Deposit)
-                        .Select(t => t)
-                        .Sum(t => (decimal?) t.Amount) ?? 0;
-            }
+                .SqlQuery<decimal>("Select * From dbo.GetTotalDeposits(@customerId)",
+                    new SqlParameter("@CustomerId", customerId))
+                .SingleOrDefault();
 
             return totalDeposits;
         }
@@ -144,9 +122,6 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         private bool IsWithdrawalEligible(int customerId, out DateTime eligibleWithdrawDate, out int lockInDays) {
 
-            //var cacheDuration = new CacheItemPolicy() {
-            //    SlidingExpiration = TimeSpan.FromDays(1)
-            //};
             var task = _db.GzConfigurations
                 .FromCacheAsync(DateTime.UtcNow.AddDays(1));
             var confRow = task.Result;
@@ -162,12 +137,12 @@ namespace gzDAL.Repos {
             //    .FirstOrDefault();
 
             DateTime earliestLoss = _db.Database
-                .SqlQuery<DateTime>("Select dbo.GetMinDateTrx()",
+                .SqlQuery<DateTime>("Select dbo.GetMinDateTrx(@CustomerId, @TrxType)",
                     new SqlParameter("@CustomerId", customerId),
                     new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
                 .SingleOrDefault<DateTime>();
 
-            if (earliestLoss.Year == 1) {
+            if (earliestLoss.Year == 1900) {
                 earliestLoss = DateTime.UtcNow;
             }
 
@@ -302,7 +277,7 @@ namespace gzDAL.Repos {
                     NewSharesNum = dto.NewSharesNum,
                     NewSharesValue = dto.NewSharesValue,
                     SharesFundPriceId = dto.SharesFundPriceId,
-                    SoldVintageId = dto.SoldVintageId,
+                    SoldInvBalanceId = dto.SoldInvBalanceId,
 
                     // Update timestamp to IN param
                     UpdatedOnUtc = soldOnUtc
@@ -310,19 +285,19 @@ namespace gzDAL.Repos {
                 });
             }
 
-            _db.SoldVintages.AddOrUpdate(
-                v => new {v.CustomerId, v.VintageYearMonth},
-                new SoldVintage() {
-                    CustomerId = customerId,
-                    VintageYearMonth = vintage.YearMonthStr,
-                    MarketAmount = vintage.MarketPrice,
-                    Fees = vintage.Fees,
-                    YearMonth = soldOnUtc.ToStringYearMonth(),
-                    VintageShares = vintageCustFundShares,
-                    // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
-                    UpdatedOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
-                }
-            );
+            var vintageToBeSold = _db.InvBalances
+                .Where(b => b.Id == vintage.InvBalanceId)
+                .Select(b => b)
+                .Single();
+            vintageToBeSold.Sold = true;
+            vintageToBeSold.SoldAmount = vintage.MarketPrice;
+            vintageToBeSold.SoldShares = vintageCustFundShares;
+            vintageToBeSold.SoldFees = vintage.Fees;
+            vintageToBeSold.SoldOnUtc = soldOnUtc.Truncate(TimeSpan.FromSeconds(1));
+            vintageToBeSold.UpdatedOnUtc = vintageToBeSold.SoldOnUtc.Value;
+            vintageToBeSold.SoldYearMonth = vintage.YearMonthStr;
+
+            _db.SaveChangesAsync();
         }
 
         /// <summary>

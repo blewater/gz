@@ -487,6 +487,10 @@
     <Compile Include="Migrations\201607032152070_InvBalance_CashInv_Idx.Designer.cs">
       <DependentUpon>201607032152070_InvBalance_CashInv_Idx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607041000197_Consolidate_SoldVintage_InvBalance.cs" />
+    <Compile Include="Migrations\201607041000197_Consolidate_SoldVintage_InvBalance.Designer.cs">
+      <DependentUpon>201607041000197_Consolidate_SoldVintage_InvBalance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1027,6 +1031,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607032152070_InvBalance_CashInv_Idx.resx">
       <DependentUpon>201607032152070_InvBalance_CashInv_Idx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607041000197_Consolidate_SoldVintage_InvBalance.resx">
+      <DependentUpon>201607041000197_Consolidate_SoldVintage_InvBalance.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
