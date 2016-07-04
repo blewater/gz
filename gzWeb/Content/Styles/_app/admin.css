@@ -7,7 +7,7 @@
 
 /*region Generic*/
 .admin .admin-table { margin-top: 80px; }
-.admin.admin-actions { margin-top: 100px; }
+.admin.admin-create { margin-top: 20px; }
 
 .admin .admin-table .table-head { 
     background-color: #27A95C;
@@ -39,13 +39,24 @@
 
 /*region emailTemplates/edit-details*/
 
+.admin { margin-top: 20px; }
+.admin .admin-interface .heading { padding: 0 20px; height: 100px; }
+.admin .admin-interface .heading a { line-height: 12; color: #27A95C; }
+.admin .admin-interface .view-holder { margin-top: 100px; border-top: 1px solid #fff; }
+.admin .admin-interface .view-holder .view-header { color: #fff;  }
+.admin .admin-interface .view-holder .template-preview { margin-top: 10px; margin-bottom: 100px; background-color: white; padding: 20px; }
+
 .admin .content .form-group textarea { width: 100%; padding: 5px; }
+
+.admin.admin-details .content dl dd { padding-bottom: 15px; }
 
 .admin .content dl { margin-bottom: 50px; color: #fff; }
 
 .admin .content .form-group label { color: white; }
 
 .admin .content a { color: white; padding: 5px; }
+
+.admin .admin-interface input[type="submit"] { margin-top: 50px; margin-bottom: 100px }
 
 @media (max-width: 991px) {
     .admin .admin-table .table-head { height: 357px; }
@@ -111,13 +122,20 @@
 .admin .content .form-group .btn-gz { width: 150px; text-transform: uppercase; margin-bottom: 50px; margin-top: 30px; }
 /*endregion*/
 
-/*region EmailTemplate/Edit*/
-.admin.admin-edit.email-edit { margin-top: 20px; }
-.admin.admin-edit.email-edit .edit-interface .heading { padding: 0 20px; height: 100px; }
-.admin.admin-edit.email-edit .edit-interface .form-group textarea { width: 100%; }
-.admin.admin-edit.email-edit .edit-interface .heading a { line-height: 12; color: #27A95C; }
-.admin.admin-edit.email-edit .edit-interface .view-holder { margin-top: 100px; border-top: 1px solid #fff; }
-.admin.admin-edit.email-edit .edit-interface .view-holder .view-header { color: #fff;  }
-.admin.admin-edit.email-edit .edit-interface .view-holder .template-preview { margin-top: 10px; margin-bottom: 100px; background-color: white; padding: 20px; }
+/*ACE Editor region*/
+.ace_editor { width: 100%!important; min-height: 100%!important; }
 
+.admin.admin-details.dynamic-details .admin-interface .ace_editor { margin-bottom: 100px; }
 /*endregion*/
+
+/*region DynamicPages*/
+.admin input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+.admin.dynamic-create .admin-interface .form-group label,
+.admin.dynamic-edit .admin-interface .form-group label { margin-top: 21px; }
+
+.admin.admin-details.dynamic-details .admin-interface .content h4:nth-of-type(2n+1) { text-decoration: underline; margin-top: 25px; color: #fff; }
+.admin.admin-details.dynamic-details .admin-interface .content h4 { text-align: left; color: #ccc; }
