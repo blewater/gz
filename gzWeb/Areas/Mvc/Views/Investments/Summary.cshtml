@@ -67,7 +67,7 @@
                         <div class="vintages-box-table-body">
                             <div class="row" ng-repeat="vintage in vintages.slice(0, 3)" ng-if="vintages.length > 0">
                                 <div class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                                <div class="col-xs-6 text-right">{{vintage.InvestAmount | isoCurrency : currency : 0}}</div>
+                                <div class="col-xs-6 text-right">{{vintage.InvestmentAmount | isoCurrency : currency : 0}}</div>
                             </div>
                             <div class="row" ng-if="vintages.length === 0">
                                 <div class="col-xs-12 text-left">No vintages yet.</div>
