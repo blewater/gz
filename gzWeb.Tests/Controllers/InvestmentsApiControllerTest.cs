@@ -146,7 +146,7 @@ namespace gzWeb.Tests.Controllers
             foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
                     vintageViewModel.YearMonthStr,
-                    vintageViewModel.InvestAmount,
+                    vintageViewModel.InvestmentAmount,
                     vintageViewModel.SellingValue,
                     vintageViewModel.Sold,
                     vintageViewModel.Locked);
@@ -163,7 +163,7 @@ namespace gzWeb.Tests.Controllers
             foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}", 
                     vintageViewModel.YearMonthStr, 
-                    vintageViewModel.InvestAmount, 
+                    vintageViewModel.InvestmentAmount, 
                     vintageViewModel.SellingValue,
                     vintageViewModel.Sold,
                     vintageViewModel.Locked);
