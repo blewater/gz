@@ -17,13 +17,16 @@ namespace gzDAL.Models {
         [Required]
         [Index("CustomerId_Mon_idx_invbal", IsUnique=true, Order=1)]
         [Index("CustomerId_Only_idx_invbal", IsUnique = false)]
-        [Index("IDX_InvBalance_CustomerId_YearMonth_CashInv", IsUnique = true, Order = 1)]
+        [Index("IDX_InvBalance_Cust_YM_Sold", IsUnique = true, Order = 1)]
+        [Index("IDX_InvBalance_Cust_SoldYM_Sold", Order = 1)]
+        [Index("IDX_InvBalance_Cust_YM_CashInv", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
 
         [Required]
         [Index("CustomerId_Mon_idx_invbal", IsUnique = true, Order=2)]
         [Index("YearMonth_Only_idx_invbal", IsUnique = false)]
-        [Index("IDX_InvBalance_CustomerId_YearMonth_CashInv", IsUnique = true, Order = 2)]
+        [Index("IDX_InvBalance_Cust_YM_Sold", IsUnique = true, Order = 2)]
+        [Index("IDX_InvBalance_Cust_YM_CashInv", IsUnique = true, Order = 2)]
         [Column(TypeName = "char")]
         [StringLength(6)]
         public string YearMonth { get; set; }
@@ -38,6 +41,12 @@ namespace gzDAL.Models {
         public decimal Balance { get; set; }
 
         /// <summary>
+        /// The month's cash investment
+        /// </summary>
+        [Index("IDX_InvBalance_Cust_YM_CashInv", IsUnique = true, Order = 3)]
+        public decimal CashInvestment { get; set; } = 0;
+
+        /// <summary>
         /// Optional Cash balance only for the where the portfolio was sold.
         /// </summary>
         public decimal? CashBalance { get; set; } = 0;
@@ -47,13 +56,24 @@ namespace gzDAL.Models {
         /// </summary>
         public decimal InvGainLoss { get; set; } = 0;
 
-        /// <summary>
-        /// The month's cash investment
-        /// </summary>
-        [Index("IDX_InvBalance_CustomerId_YearMonth_CashInv", IsUnique = true, Order = 3)]
-        public decimal CashInvestment { get; set; } = 0;
+        #region Sold Info
+
+
+        [Index("IDX_InvBalance_Cust_SoldYM_Sold", Order = 2)]
+        [Index("IDX_InvBalance_Cust_YM_Sold", IsUnique = true, Order = 3)]
+        public bool Sold { get; set; }
+
+        [Index("IDX_InvBalance_Cust_SoldYM_Sold", Order = 3)]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
+        public string SoldYearMonth { get; set; }
+        public decimal? SoldAmount { get; set; }
+        public decimal? SoldFees { get; set; }
+        public DateTime? SoldOnUtc { get; set; }
+        public virtual ICollection<CustFundShare> SoldShares { get; set; }
+#endregion
 
         [Required]
-        public DateTime UpdatedOnUTC { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedOnUtc { get; set; } = DateTime.UtcNow;
     }
 }

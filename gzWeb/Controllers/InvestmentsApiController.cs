@@ -35,6 +35,7 @@ namespace gzWeb.Controllers
             ICustFundShareRepo custFundShareRepo,
             ICurrencyRateRepo currencyRateRepo,
             ICustPortfolioRepo custPortfolioRepo,
+            IUserRepo userRepo,
             IMapper mapper,
             ApplicationUserManager userManager):base(userManager)
         {
@@ -44,6 +45,7 @@ namespace gzWeb.Controllers
             _custFundShareRepo = custFundShareRepo;
             _currencyRateRepo = currencyRateRepo;
             _custPortfolioRepo = custPortfolioRepo;
+            _userRepo = userRepo;
             _mapper = mapper;
         }
         #endregion
@@ -159,16 +161,13 @@ namespace gzWeb.Controllers
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
 
             var customerVintages = _invBalanceRepo
-            .GetCustomerVintagesSellingValue(user.Id)
+                .GetCustomerVintagesSellingValue(user.Id);
 
             // Convert to User currency
-            .Select(v => new VintageDto() {
-                YearMonthStr = v.YearMonthStr,
-                InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
-                SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
-                Locked = v.Locked,
-                Sold = v.Sold
-            }).ToList();
+            foreach (var dto in customerVintages) {
+                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount*usdToUserRate);
+                dto.SellingValue = DbExpressions.RoundCustomerBalanceAmount(dto.SellingValue*usdToUserRate);
+            }
 
             var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
             return vintages;
@@ -200,7 +199,7 @@ namespace gzWeb.Controllers
             var inUserRateVintages =
             updatedVintages.Select(v => new VintageViewModel() {
                  YearMonthStr = v.YearMonthStr,
-                 InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
+                 InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount * usdToUserRate),
                  SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
                  Locked = v.Locked,
                  Sold = v.Sold

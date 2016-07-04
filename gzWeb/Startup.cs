@@ -21,6 +21,7 @@ using Owin;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Integration.WebApi;
+using Z.EntityFramework.Plus;
 
 [assembly: OwinStartupAttribute(typeof(gzWeb.Startup))]
 namespace gzWeb {
@@ -68,6 +69,11 @@ namespace gzWeb {
             app.UseJSNLog();
             app.UseNLog();
 
+            //-------- Caching Configuration
+            var db = new ApplicationDbContext();
+            var task = db.GzConfigurations
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            
             //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
         }
 

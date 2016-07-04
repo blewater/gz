@@ -7,12 +7,13 @@ using gzDAL.Models;
 
 namespace gzDAL.DTO {
     public class VintageDto {
+        public int InvBalanceId { get; set; }
         public string YearMonthStr { get; set; }
         /// <summary>
         /// This month's <see cref="YearMonthStr"/> customers' cash amount that "invested" in 
         /// purchasing shares.
         /// </summary>
-        public decimal InvestAmount { get; set; }
+        public decimal InvestmentAmount { get; set; }
         /// <summary>
         /// The present market value without deducting greenzorro or Fund fees
         /// </summary>

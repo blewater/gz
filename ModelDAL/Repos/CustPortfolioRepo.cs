@@ -157,7 +157,7 @@ namespace gzDAL.Repos
                     new {CustomerId = c.CustomerId, YearMonth = c.YearMonth} equals
                     new {CustomerId = b.CustomerId, YearMonth = b.YearMonth}
                 where c.CustomerId == customerId
-                      && !db.SoldVintages.Any(s => s.VintageYearMonth == b.YearMonth && s.CustomerId == b.CustomerId)
+                      && !b.Sold
                 group b by p
                 into g
                 select new PortfolioDto {
@@ -190,7 +190,7 @@ namespace gzDAL.Repos
                         }), new PortfolioComparer())
                 .ToList();
 
-            // Calculate allocation percentange
+            // Calculate allocation percentage
             var totalSum = portfolioDtos.Sum(p => p.AllocatedAmount);
             foreach (var portfolioDto in portfolioDtos) {
                 if (totalSum != 0) {

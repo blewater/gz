@@ -77,9 +77,9 @@ namespace gzDAL.Models {
         /// <summary>
         /// If the month's vintage has been sold
         /// </summary>
-        public int? SoldVintageId { get; set; }
-        [ForeignKey("SoldVintageId")]
-        public virtual SoldVintage SoldVintage { get; set; }
+        public int? SoldInvBalanceId { get; set; }
+        [ForeignKey("SoldInvBalanceId")]
+        public virtual InvBalance SoldInvBalance { get; set; }
 
         #endregion
 

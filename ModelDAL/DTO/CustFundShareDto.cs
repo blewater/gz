@@ -29,7 +29,7 @@ namespace gzDAL.DTO {
 
         public int? SharesFundPriceId { get; set; }
 
-        public int? SoldVintageId { get; set; }
+        public int? SoldInvBalanceId { get; set; }
 
         #region NewShares
 
