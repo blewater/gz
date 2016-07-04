@@ -104,6 +104,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
@@ -118,12 +119,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Z.EntityFramework.Plus.EF6, Version=1.2.5.0, Culture=neutral, PublicKeyToken=59b66d028979105b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Z.EntityFramework.Plus.EF6.1.2.5\lib\net45\Z.EntityFramework.Plus.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conf\ConnRetryConf.cs" />
     <Compile Include="Conf\IdentityConfig.cs" />
     <Compile Include="Conf\TestSeeder.cs" />
     <Compile Include="CurrencyHelper.cs" />
+    <Compile Include="DTO\UserSummaryDTO.cs" />
     <Compile Include="DTO\PortfolioFundDTO.cs" />
     <Compile Include="DTO\PortfolioReturnsDTO.cs" />
     <Compile Include="DTO\PortfolioDto.cs" />
@@ -141,6 +147,8 @@
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\SoldVintage.cs" />
     <Compile Include="Models\TestDbContext.cs" />
+    <Compile Include="Repos\Interfaces\IUserRepo.cs" />
+    <Compile Include="Repos\UserRepo.cs" />
     <Compile Include="Repos\CurrencyRateRepo.cs" />
     <Compile Include="Models\CustFundShare.cs" />
     <Compile Include="Repos\CustFundShareRepo.cs" />
@@ -176,6 +184,7 @@
     <Compile Include="ModelUtil\YQLFundCurrencyInq.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

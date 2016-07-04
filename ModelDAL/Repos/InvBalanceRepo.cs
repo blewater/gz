@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Data.SqlClient;
 using System.Globalization;
+using System.Runtime.Caching;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
+using Z.EntityFramework.Plus;
 
 namespace gzDAL.Repos {
     public class InvBalanceRepo : IInvBalanceRepo {
@@ -55,30 +58,25 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public ICollection<VintageDto> GetCustomerVintages(int customerId) {
 
-            var lockInDays = _db.GzConfigurations
+            //var cacheDuration = new CacheItemPolicy() {
+            //    SlidingExpiration = TimeSpan.FromDays(1)
+            //};
+            var task = _db.GzConfigurations
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            var confRow = task.Result;
+
+            var lockInDays = confRow
                 .Select(c => c.LOCK_IN_NUM_DAYS)
                 .Single();
 
-            var vintagesList = (
-                from b in _db.InvBalances
-                    where b.CustomerId == customerId && b.CashInvestment > 0
-                from sv in _db.SoldVintages
-                    .Where(sv => sv.VintageYearMonth == b.YearMonth && sv.CustomerId == customerId)
-                    .DefaultIfEmpty()
-                orderby b.YearMonth descending
-                select new {
-                    b.YearMonth,
-                    b.CashInvestment,
-                    Sold = sv.Id != null // wrong warning due to ignoring the DefaultIfEmpty above
-                })
-                .AsEnumerable()
-                .Select(b=>new VintageDto {
-                    YearMonthStr = b.YearMonth,
-                    InvestAmount = b.CashInvestment,
-                    Locked = lockInDays - (DateTime.UtcNow - DbExpressions.GetDtYearMonthStrToEndOfMonth(b.YearMonth)).TotalDays > 0,
-                    Sold = b.Sold
-                    // ToList to avoid repeating db queries
-                }).ToList();
+            var vintagesList = _db.Database
+                .SqlQuery<VintageDto>("SELECT YearMonthStr, InvestAmount, Sold FROM dbo.GetVintages()",
+                    new SqlParameter("@CustomerId", customerId))
+                .ToList();
+            foreach (var dto in vintagesList) {
+                dto.Locked = lockInDays -
+                             (DateTime.UtcNow - DbExpressions.GetDtYearMonthStrToEndOfMonth(dto.YearMonthStr)).TotalDays > 0;
+            }
 
             return vintagesList;
         }

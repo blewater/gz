@@ -4,12 +4,15 @@ using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
+using Z.EntityFramework.Plus;
+using System.Runtime.Caching;
 
 namespace gzDAL.Repos {
 
@@ -141,13 +144,28 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         private bool IsWithdrawalEligible(int customerId, out DateTime eligibleWithdrawDate, out int lockInDays) {
 
-            lockInDays = _db.GzConfigurations.Select(c => c.LOCK_IN_NUM_DAYS).Single();
+            //var cacheDuration = new CacheItemPolicy() {
+            //    SlidingExpiration = TimeSpan.FromDays(1)
+            //};
+            var task = _db.GzConfigurations
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            var confRow = task.Result;
 
-            DateTime earliestLoss = _db.GzTrxs.Where(
-                t => t.CustomerId == customerId && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
-                .OrderBy(t => t.Id)
-                .Select(t => t.CreatedOnUtc)
-                .FirstOrDefault();
+            lockInDays = confRow
+                .Select(c => c.LOCK_IN_NUM_DAYS)
+                .Single();
+
+            //DateTime earliestLoss = _db.GzTrxs.Where(
+            //    t => t.CustomerId == customerId && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
+            //    .OrderBy(t => t.Id)
+            //    .Select(t => t.CreatedOnUtc)
+            //    .FirstOrDefault();
+
+            DateTime earliestLoss = _db.Database
+                .SqlQuery<DateTime>("Select dbo.GetMinDateTrx()",
+                    new SqlParameter("@CustomerId", customerId),
+                    new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
+                .SingleOrDefault<DateTime>();
 
             if (earliestLoss.Year == 1) {
                 earliestLoss = DateTime.UtcNow;

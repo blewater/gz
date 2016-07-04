@@ -7,7 +7,7 @@ namespace gzDAL.DTO
 {
 
     /// <summary>
-    /// Customer Values buffer for values communication between controller views
+    /// Customer Values buffer for values communication between DAL and controller
     /// </summary>
     public class CustomerDTO {
 

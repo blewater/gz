@@ -1,14 +1,11 @@
-﻿using System.Configuration;
-using System.Data.Entity;
+﻿using System;
+using System.Configuration;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using AutoMapper;
-using Common.Logging.NLog;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.Models;
@@ -18,18 +15,15 @@ using gzWeb.Models;
 using JSNLog;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataProtection;
 using NLog.Owin.Logging;
 using Owin;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
-using SimpleInjector.Integration.Web.Mvc;
 using SimpleInjector.Integration.WebApi;
 
 [assembly: OwinStartupAttribute(typeof(gzWeb.Startup))]
-namespace gzWeb
-{
+namespace gzWeb {
     //public interface IOwinContextProvider
     //{
     //    IOwinContext CurrentContext { get; }
@@ -80,7 +74,6 @@ namespace gzWeb
         private static Container InitializeSimpleInjector(IAppBuilder app, HttpConfiguration config, MapperConfiguration automapperConfig)
         {
             var container = new Container();
-            //container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
             container.Options.DefaultScopedLifestyle = new WebApiRequestLifestyle();
 
             app.Use(async (context, next) =>
@@ -90,14 +83,6 @@ namespace gzWeb
                                   await next();
                               }
                           });
-
-            //app.Use(async (context, next) =>
-            //              {
-            //                  CallContext.LogicalSetData("IOwinContext", context);
-            //                  await next();
-            //              });
-
-            //container.RegisterSingleton<IOwinContextProvider>(new CallContextOwinContextProvider());
 
             container.RegisterSingleton<MapperConfiguration>(automapperConfig);
             container.Register<IMapper>(() => automapperConfig.CreateMapper(container.GetInstance));
@@ -109,6 +94,7 @@ namespace gzWeb
             container.Register(()=>new ApplicationDbContext(), Lifestyle.Scoped);
             container.Register<ApplicationUserManager>(Lifestyle.Scoped);
             container.Register<IUserStore<ApplicationUser, int>, CustomUserStore>(Lifestyle.Scoped);
+            container.Register<IUserRepo, UserRepo>(Lifestyle.Scoped);
             container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
             container.Register<ICurrencyRateRepo, CurrencyRateRepo>(Lifestyle.Scoped);
             container.Register<ICustPortfolioRepo, CustPortfolioRepo>(Lifestyle.Scoped);

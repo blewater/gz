@@ -26,6 +26,7 @@ namespace gzWeb.Tests.Controllers
         private InvestmentsApiController investmentsApiController;
         private ApplicationDbContext db;
         private ApplicationUserManager manager;
+        private UserRepo _userRepo;
         private IMapper mapper;
 
         [OneTimeSetUp]
@@ -41,6 +42,11 @@ namespace gzWeb.Tests.Controllers
 
             manager = new ApplicationUserManager(new CustomUserStore(db),
                                                      new DataProtectionProviderFactory(() => null));
+            var trxRepo = new GzTransactionRepo(db);
+            _userRepo = new UserRepo(
+                db
+                , trxRepo,
+                new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), trxRepo));
         }
 
         [Test]
@@ -114,12 +120,16 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public void GetSummaryDataWithUser()
-        {
-            var user = manager.FindByEmail("info@nessos.gr");
+        public void GetSummaryDataWithUser() {
+
+            var userId = db.Users
+                .Where(u => u.Email == "info@nessos.gr")
+                .Select(u => u.Id).Single();
+            ApplicationUser user;
+            var summaryDto = _userRepo.GetSummaryData(userId, out user);
 
             // Act
-            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user);
+            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user, summaryDto);
             Assert.IsNotNull(result);
 
             // Is this formula correct?

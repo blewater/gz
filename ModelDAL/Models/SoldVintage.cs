@@ -35,6 +35,10 @@ namespace gzDAL.Models {
         [Required]
         public string YearMonth { get; set; }
 
+        //public int InvBalanceId { get; set; }
+        //[ForeignKey("InvBalanceId")]
+        //public virtual InvBalance InvBalance { get; set; }
+
         [Required]
         public decimal MarketAmount { get; set; }
 
