@@ -8,7 +8,7 @@
 <div class="admin admin-edit email-edit">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12 edit-interface">
+            <div class="col-md-12 admin-interface">
 
                 <div class="col-md-6 @*text-center*@">
                     <div class="row heading">
@@ -45,12 +45,8 @@
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             @Html.LabelFor(model => model.Body, htmlAttributes: new { @class = "control-label" })
-                                            @*@Html.TextAreaFor(model => model.Body, new { rows = 20, htmlAttributes = new { @class = "form-control" } })*@
                                             <textarea class="form-control" rows="20" data-editor="html" name="Body" id="Body">@Model.Body</textarea>
                                             @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
-                                            @*<div id="body">
-                                               @Html.DisplayFor(model => model.Body)
-                                            </div>*@
                                         </div>
                                     </div>
 
@@ -74,7 +70,6 @@
                                             @*<input type="hidden" name="id" value="@Model.Id" />*@
                                             <label for="data" class="control-label">Data</label>
                                             <textarea class="form-control" rows=20 data-editor="json" name="jsonData">@ViewBag.JsonData</textarea>
-                                            @*<div id="data"></div>*@
                                         </div>
                                         @*}*@
                                     </div>                                    
@@ -112,26 +107,6 @@
 @section scripts{
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
     <script>
-        //$(function () {
-        //    var data = ace.edit("data");
-        //    data.setTheme("ace/theme/solarized_light");
-        //    data.getSession().setMode("ace/mode/json");
-
-        //    var body = ace.edit("body");
-        //    body.setTheme("ace/theme/solarized_light");
-        //    body.getSession().setMode("ace/mode/html");
-
-        //    var DataTextarea = jQuery('textarea[name="jsonData"]');
-        //    data.getSession().on("change", function () {
-        //        DataTextarea.val(data.getValue());
-        //    });
-
-        //    var HtmlTextarea = jQuery('textarea[name="Body"]');
-        //    body.getSession().on("change", function () {
-        //        HtmlTextarea.val(body.getValue());
-        //    });
-        //});
-
         // Hook up ACE editor to all textareas with data-editor attribute
         $(function () {
             $('textarea[data-editor]').each(function () {
