@@ -351,7 +351,7 @@
 	.guest .about .about-top .background-image {
 	    position: fixed;
         display: block;
-		z-index: 1;
+		/*z-index: 1;*/
 		top: 30px;
         left: 0;
 
@@ -372,9 +372,9 @@
 
     .guest .about .about-top .idea-container { 
 		position: relative;
-	    left: 0;
+	    /*left: 0;
 	    right: 0;
-	    z-index: 9999;
+	    z-index: 9999;*/
 		margin-bottom: 30px;
 	}
 
