@@ -19,6 +19,7 @@ using gzWeb.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using NLog.LayoutRenderers;
+using Z.EntityFramework.Plus;
 
 namespace gzWeb.Controllers
 {
@@ -53,11 +54,14 @@ namespace gzWeb.Controllers
         [HttpGet]
         public IHttpActionResult GetSummaryData() {
 
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var userId = User.Identity.GetUserId<int>();
+            ApplicationUser user;
+            var summaryDto = _userRepo.GetSummaryData(userId, out user);
+
             if (user == null)
                 return OkMsg(new object(), "User not found!");
-            
-            return OkMsg(((IInvestmentsApi)this).GetSummaryData(user));
+
+            return OkMsg(((IInvestmentsApi)this).GetSummaryData(user, summaryDto));
         }
 
         /// <summary>
@@ -66,54 +70,46 @@ namespace gzWeb.Controllers
         /// 
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="summaryDto"></param>
         /// <returns></returns>
-        SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user)
+        SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto)
         {
             CurrencyInfo userCurrency;
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(user.Id);
 
-            var customerVintages = //_gzTransactionRepo
-                //.GetCustomerVintages(user.Id)
-                _invBalanceRepo.GetCustomerVintages(user.Id)
-
-                // Convert to User currency
-                .Select(v => new VintageDto() {
-                    InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
-                    YearMonthStr = v.YearMonthStr,
-                    Locked = v.Locked,
-                    Sold = v.Sold
-                }).ToList();
-
-            var vintagesVMs = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
-
             var summaryDvm = new SummaryDataViewModel
             {
                 //Currency = userCurrency.Symbol,
                 //Culture = "en-GB",
-                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
-                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.GetTotalDeposit(user.Id)),
-                TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalWithdrawals),
+                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.InvestmentsBalance),
+                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalDeposits),
+                TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalWithdrawals),
 
                 //TODO: from the EveryMatrix Web API
                 //GamingBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate),
 
-                TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalInvestments),
+                TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalInvestments),
 
                 // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
-                TotalInvestmentsReturns = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalInvestmentReturns),
+                TotalInvestmentsReturns = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalInvestmentsReturns),
 
                 NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.LastInvestmentAmount),
-                StatusAsOf = _invBalanceRepo.GetLastUpdatedDateTime(user.Id),
-                Vintages = vintagesVMs,
+                LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.LastInvestmentAmount),
+                StatusAsOf = summaryDto.StatusAsOf,
+                //Vintages = vintagesVMs,
 
                 // Withdrawal eligibility
-                LockInDays = withdrawalEligibility.LockInDays,
-                EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
-                OkToWithdraw = withdrawalEligibility.OkToWithdraw,
-                Prompt = withdrawalEligibility.Prompt
+                LockInDays = summaryDto.LockInDays,
+                EligibleWithdrawDate = summaryDto.EligibleWithdrawDate,
+                OkToWithdraw = summaryDto.OkToWithdraw,
+                Prompt = summaryDto.Prompt
             };
+
+            summaryDvm.Vintages = summaryDto.Vintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+            foreach (var dto in summaryDvm.Vintages) {
+                dto.InvestAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestAmount * usdToUserRate);
+            }
 
             return summaryDvm;
         }
@@ -342,6 +338,7 @@ namespace gzWeb.Controllers
         private readonly ICurrencyRateRepo _currencyRateRepo;
         private readonly ICustFundShareRepo _custFundShareRepo;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IUserRepo _userRepo;
         private readonly ApplicationDbContext _dbContext;
         #endregion
 
