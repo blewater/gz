@@ -57,6 +57,33 @@ namespace gzWeb.Areas.Admin.Controllers
             });
         }
 
+        public ActionResult UserEdit(int id)
+        {
+            var user = _dbContext.Users.Single(x => x.Id == id);
+            var roles = _dbContext.Roles.ToList();
+            var rolesOfUser = roles.Where(x => x.Users.Any(r => r.RoleId == user.Id)).ToList();
+            return View(new UserViewModel
+            {
+                User = user,
+                Roles = roles,
+                RolesOfUser = rolesOfUser
+            });
+        }
+
+        [HttpPost]
+        public ActionResult UserEdit(ApplicationUser model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            _dbContext.Users.AddOrUpdate(model);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Users", "Manage", new { Area = "Admin" });
+        }
+
 
         //[HttpPost]
         //public ActionResult UserAddToRole(int userId, int roleId)
@@ -96,7 +123,15 @@ namespace gzWeb.Areas.Admin.Controllers
 
         public ActionResult RoleEdit(int id)
         {
-            return View(_dbContext.Roles.Single(x => x.Id == id));
+            var role = _dbContext.Roles.Single(x => x.Id == id);
+            var users = _dbContext.Users.ToList();
+            var usersOfRole = users.Where(x => x.Roles.Any(r => r.RoleId == role.Id)).ToList();
+            return View(new RoleViewModel
+            {
+                Role = role,
+                Users = users,
+                UsersOfRole = usersOfRole
+            });
         }
         
         [HttpPost]
