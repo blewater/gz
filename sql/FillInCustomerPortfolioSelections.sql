@@ -8,71 +8,52 @@ ORDER BY b.CustomerId, b.YearMonth
 
 */
 
+Begin Tran
+
 DECLARE userIds_cursor CURSOR
 FOR
    SELECT id 
    FROM dbo.AspNetUsers
 OPEN userIds_cursor
 DECLARE @CustomerId INT
---SET @tablename = 'authors'
 FETCH NEXT FROM userIds_cursor INTO @CustomerId
 WHILE (@@FETCH_STATUS <> -1)
 BEGIN
 	IF (@@FETCH_STATUS <> -2)
 	BEGIN   
 		PRINT '**** Begin Customer Ids Outer Cursor, CustomerId: ' + CAST(@CustomerId AS VARCHAR)
-
+​
 		DECLARE 
 			@yearMonthDay DATE = '01/01/2015',
 			@yearMonth NVARCHAR(6),
 			@portfolioId INT,
 			@monthsDiff INT
-
+​
 /*** Loop through each customer and insert the missing monthly portfolio ***/
 		SET @yearMonth = FORMAT(@yearMonthDay,'yyyyMM')
 		WHILE (1=1)
 		BEGIN
-
+​
 			/** Insert missing CustPortfolios ***/
 			SELECT @portfolioId = PortfolioId
 				FROM dbo.CustPortfolios
 				WHERE CustomerId = @CustomerId AND YearMonth = @yearMonth
 			IF @@ROWCOUNT = 0
 			BEGIN   
-
+​
 				SET @portfolioId = 3
 				INSERT INTO dbo.CustPortfolios (CustomerId, YearMonth, PortfolioId, Weight, UpdatedOnUTC)
 	  			SELECT @CustomerId, @yearMonth, @portfolioId, 100, GETUTCDATE()
-
+​
 				PRINT 'Inserted CustomerPortfolio: CustomerId: ' + CAST(@CustomerId AS VARCHAR) + ', YearMonth: ' + @yearMonth + '.'
 			END
-
-			/** Update missing InvBalance Risk ***/
-/*			SELECT @PortfolioRiskEnum = PortfolioRiskEnum
-				FROM dbo.InvBalances
-				WHERE CustomerId = @CustomerId AND YearMonth = @yearMonth
-		    -- if found but it's 0
-			IF @@ROWCOUNT = 1 AND @PortfolioRiskEnum = 0
-			BEGIN   
-
-				SELECT @PortfolioRiskEnum = RiskTolerance
-				FROM dbo.Portfolios
-				WHERE Id = @portfolioId
-
-				UPDATE dbo.InvBalances 
-					SET PortfolioRiskEnum = @PortfolioRiskEnum,
-						UpdatedOnUTC = GETUTCDATE()
-				WHERE CustomerId = @CustomerId AND YearMonth = @yearMonth
-		
-				PRINT 'Updated InvBalance PortfolioRiskEnum to ' + CAST(@PortfolioRiskEnum AS VARCHAR) + ' for customerId: ' + CAST(@CustomerId AS VARCHAR) + ', YearMonth: ' + @yearMonth + '.'
-			END */
-
+​
 			SET @yearMonthDay = DATEADD(m, 1, @yearMonthDay)
 			SET @yearMonth = FORMAT(@yearMonthDay,'yyyyMM')
 			SET @monthsDiff = DATEDIFF(m, GETUTCDATE(), @yearMonthDay)
 			IF @monthsDiff > 2 BREAK; /* + 2 months from present */
 		END
-
+​
 		PRINT '**** End Inserting loop into CustPortfolios'
 	END
 	FETCH NEXT FROM userIds_cursor INTO @CustomerId
@@ -80,3 +61,5 @@ BEGIN
 END
 CLOSE userIds_cursor
 DEALLOCATE userIds_cursor
+
+commit tran;

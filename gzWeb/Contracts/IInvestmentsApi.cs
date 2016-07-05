@@ -8,7 +8,7 @@ namespace gzWeb.Contracts
 {
     public interface IInvestmentsApi
     {
-        SummaryDataViewModel GetSummaryData(ApplicationUser user);
+        SummaryDataViewModel GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto);
 
         IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user);
 

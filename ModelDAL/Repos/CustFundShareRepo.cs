@@ -471,10 +471,10 @@ namespace gzDAL.Repos {
         /// <param name="portfolioFundDtos"></param>
         private void SetShareValuesBySoldVintagesOffset(int customerId, string currentYearMonthStr, Dictionary<int, PortfolioFundDTO> portfolioFundDtos) {
 
-            var soldVintageYearMonths = _db.SoldVintages
+            var soldVintageYearMonths = _db.InvBalances
                 .Where(sv => sv.CustomerId == customerId
-                             && sv.YearMonth == currentYearMonthStr)
-                .Select(sv => sv.VintageYearMonth).ToList();
+                             && sv.SoldYearMonth == currentYearMonthStr)
+                .Select(sv => sv.YearMonth).ToList();
 
             if (soldVintageYearMonths.Count > 0) {
 
@@ -534,7 +534,7 @@ namespace gzDAL.Repos {
                         NewSharesNum = c.NewSharesNum,
                         NewSharesValue = c.NewSharesValue,
                         SharesFundPriceId = c.SharesFundPriceId,
-                        SoldVintageId = c.SoldVintageId,
+                        SoldInvBalanceId = c.SoldInvBalanceId,
                         UpdatedOnUtc = c.UpdatedOnUtc
                     }).ToList();
                 

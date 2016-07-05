@@ -19,6 +19,7 @@ using gzWeb.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using NLog.LayoutRenderers;
+using Z.EntityFramework.Plus;
 
 namespace gzWeb.Controllers
 {
@@ -34,6 +35,7 @@ namespace gzWeb.Controllers
             ICustFundShareRepo custFundShareRepo,
             ICurrencyRateRepo currencyRateRepo,
             ICustPortfolioRepo custPortfolioRepo,
+            IUserRepo userRepo,
             IMapper mapper,
             ApplicationUserManager userManager):base(userManager)
         {
@@ -43,6 +45,7 @@ namespace gzWeb.Controllers
             _custFundShareRepo = custFundShareRepo;
             _currencyRateRepo = currencyRateRepo;
             _custPortfolioRepo = custPortfolioRepo;
+            _userRepo = userRepo;
             _mapper = mapper;
         }
         #endregion
@@ -53,11 +56,14 @@ namespace gzWeb.Controllers
         [HttpGet]
         public IHttpActionResult GetSummaryData() {
 
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var userId = User.Identity.GetUserId<int>();
+            ApplicationUser user;
+            var summaryDto = _userRepo.GetSummaryData(userId, out user);
+
             if (user == null)
                 return OkMsg(new object(), "User not found!");
-            
-            return OkMsg(((IInvestmentsApi)this).GetSummaryData(user));
+
+            return OkMsg(((IInvestmentsApi)this).GetSummaryData(user, summaryDto));
         }
 
         /// <summary>
@@ -66,54 +72,46 @@ namespace gzWeb.Controllers
         /// 
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="summaryDto"></param>
         /// <returns></returns>
-        SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user)
+        SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto)
         {
             CurrencyInfo userCurrency;
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(user.Id);
 
-            var customerVintages = //_gzTransactionRepo
-                //.GetCustomerVintages(user.Id)
-                _invBalanceRepo.GetCustomerVintages(user.Id)
-
-                // Convert to User currency
-                .Select(v => new VintageDto() {
-                    InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
-                    YearMonthStr = v.YearMonthStr,
-                    Locked = v.Locked,
-                    Sold = v.Sold
-                }).ToList();
-
-            var vintagesVMs = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
-
             var summaryDvm = new SummaryDataViewModel
             {
                 //Currency = userCurrency.Symbol,
                 //Culture = "en-GB",
-                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
-                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.GetTotalDeposit(user.Id)),
-                TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalWithdrawals),
+                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.InvestmentsBalance),
+                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalDeposits),
+                TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalWithdrawals),
 
                 //TODO: from the EveryMatrix Web API
                 //GamingBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate),
 
-                TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalInvestments),
+                TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalInvestments),
 
                 // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
-                TotalInvestmentsReturns = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.TotalInvestmentReturns),
+                TotalInvestmentsReturns = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalInvestmentsReturns),
 
                 NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.LastInvestmentAmount),
-                StatusAsOf = _invBalanceRepo.GetLastUpdatedDateTime(user.Id),
-                Vintages = vintagesVMs,
+                LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.LastInvestmentAmount),
+                StatusAsOf = summaryDto.StatusAsOf,
+                //Vintages = vintagesVMs,
 
                 // Withdrawal eligibility
-                LockInDays = withdrawalEligibility.LockInDays,
-                EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
-                OkToWithdraw = withdrawalEligibility.OkToWithdraw,
-                Prompt = withdrawalEligibility.Prompt
+                LockInDays = summaryDto.LockInDays,
+                EligibleWithdrawDate = summaryDto.EligibleWithdrawDate,
+                OkToWithdraw = summaryDto.OkToWithdraw,
+                Prompt = summaryDto.Prompt
             };
+
+            summaryDvm.Vintages = summaryDto.Vintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+            foreach (var dto in summaryDvm.Vintages) {
+                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount * usdToUserRate);
+            }
 
             return summaryDvm;
         }
@@ -163,16 +161,13 @@ namespace gzWeb.Controllers
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
 
             var customerVintages = _invBalanceRepo
-            .GetCustomerVintagesSellingValue(user.Id)
+                .GetCustomerVintagesSellingValue(user.Id);
 
             // Convert to User currency
-            .Select(v => new VintageDto() {
-                YearMonthStr = v.YearMonthStr,
-                InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
-                SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
-                Locked = v.Locked,
-                Sold = v.Sold
-            }).ToList();
+            foreach (var dto in customerVintages) {
+                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount*usdToUserRate);
+                dto.SellingValue = DbExpressions.RoundCustomerBalanceAmount(dto.SellingValue*usdToUserRate);
+            }
 
             var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
             return vintages;
@@ -204,7 +199,7 @@ namespace gzWeb.Controllers
             var inUserRateVintages =
             updatedVintages.Select(v => new VintageViewModel() {
                  YearMonthStr = v.YearMonthStr,
-                 InvestAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestAmount * usdToUserRate),
+                 InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount * usdToUserRate),
                  SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
                  Locked = v.Locked,
                  Sold = v.Sold
@@ -342,6 +337,7 @@ namespace gzWeb.Controllers
         private readonly ICurrencyRateRepo _currencyRateRepo;
         private readonly ICustFundShareRepo _custFundShareRepo;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IUserRepo _userRepo;
         private readonly ApplicationDbContext _dbContext;
         #endregion
 
@@ -349,27 +345,27 @@ namespace gzWeb.Controllers
         
         private static IList<VintageViewModel> _dummyVintages = new[]
         {
-            new VintageViewModel {YearMonthStr = "201407", InvestAmount = 100M, SellingValue = 102M, Locked = true },
-            new VintageViewModel {YearMonthStr = "201408", InvestAmount = 100M, SellingValue = 109M, Locked = true },
-            new VintageViewModel {YearMonthStr = "201409", InvestAmount = 100M, SellingValue = 107M, Locked = true },
-            new VintageViewModel {YearMonthStr = "201410", InvestAmount = 100M, SellingValue = 112M, Locked = true },
-            new VintageViewModel {YearMonthStr = "201411", InvestAmount = 100M, SellingValue = 111M, Locked = true },
-            new VintageViewModel {YearMonthStr = "201412", InvestAmount = 100M, SellingValue = 106M },
-            new VintageViewModel {YearMonthStr = "201501", InvestAmount = 100M, SellingValue = 107M },
-            new VintageViewModel {YearMonthStr = "201502", InvestAmount = 100M, SellingValue = 103M },
-            new VintageViewModel {YearMonthStr = "201503", InvestAmount = 100M, SellingValue = 105M, Sold = true},
-            new VintageViewModel {YearMonthStr = "201504", InvestAmount = 100M, SellingValue = 105M },
-            new VintageViewModel {YearMonthStr = "201505", InvestAmount = 100M, SellingValue = 102M },
-            new VintageViewModel {YearMonthStr = "201506", InvestAmount = 100M, SellingValue = 106M },
-            new VintageViewModel {YearMonthStr = "201507", InvestAmount = 100M, SellingValue = 107M, Sold = true },
-            new VintageViewModel {YearMonthStr = "201508", InvestAmount = 100M, SellingValue = 109M },
-            new VintageViewModel {YearMonthStr = "201509", InvestAmount = 100M, SellingValue = 100M },
-            new VintageViewModel {YearMonthStr = "201510", InvestAmount = 100M, SellingValue = 106M },
-            new VintageViewModel {YearMonthStr = "201511", InvestAmount = 100M, SellingValue = 108M, Sold = true },
-            new VintageViewModel {YearMonthStr = "201512", InvestAmount = 100M, SellingValue = 105M },
-            new VintageViewModel {YearMonthStr = "201601", InvestAmount = 200M, SellingValue = 204M },
-            new VintageViewModel {YearMonthStr = "201602", InvestAmount = 80M, SellingValue = 93M },
-            new VintageViewModel {YearMonthStr = "201603", InvestAmount = 150M, SellingValue = 158M },
+            new VintageViewModel {YearMonthStr = "201407", InvestmentAmount = 100M, SellingValue = 102M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201408", InvestmentAmount = 100M, SellingValue = 109M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201409", InvestmentAmount = 100M, SellingValue = 107M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201410", InvestmentAmount = 100M, SellingValue = 112M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201411", InvestmentAmount = 100M, SellingValue = 111M, Locked = true },
+            new VintageViewModel {YearMonthStr = "201412", InvestmentAmount = 100M, SellingValue = 106M },
+            new VintageViewModel {YearMonthStr = "201501", InvestmentAmount = 100M, SellingValue = 107M },
+            new VintageViewModel {YearMonthStr = "201502", InvestmentAmount = 100M, SellingValue = 103M },
+            new VintageViewModel {YearMonthStr = "201503", InvestmentAmount = 100M, SellingValue = 105M, Sold = true},
+            new VintageViewModel {YearMonthStr = "201504", InvestmentAmount = 100M, SellingValue = 105M },
+            new VintageViewModel {YearMonthStr = "201505", InvestmentAmount = 100M, SellingValue = 102M },
+            new VintageViewModel {YearMonthStr = "201506", InvestmentAmount = 100M, SellingValue = 106M },
+            new VintageViewModel {YearMonthStr = "201507", InvestmentAmount = 100M, SellingValue = 107M, Sold = true },
+            new VintageViewModel {YearMonthStr = "201508", InvestmentAmount = 100M, SellingValue = 109M },
+            new VintageViewModel {YearMonthStr = "201509", InvestmentAmount = 100M, SellingValue = 100M },
+            new VintageViewModel {YearMonthStr = "201510", InvestmentAmount = 100M, SellingValue = 106M },
+            new VintageViewModel {YearMonthStr = "201511", InvestmentAmount = 100M, SellingValue = 108M, Sold = true },
+            new VintageViewModel {YearMonthStr = "201512", InvestmentAmount = 100M, SellingValue = 105M },
+            new VintageViewModel {YearMonthStr = "201601", InvestmentAmount = 200M, SellingValue = 204M },
+            new VintageViewModel {YearMonthStr = "201602", InvestmentAmount = 80M, SellingValue = 93M },
+            new VintageViewModel {YearMonthStr = "201603", InvestmentAmount = 150M, SellingValue = 158M },
         };
         private static IList<HoldingViewModel> _dummyHoldings = new[]
         {

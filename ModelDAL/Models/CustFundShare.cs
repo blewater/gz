@@ -17,8 +17,10 @@ namespace gzDAL.Models {
         [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
 
-        [Required, StringLength(6)]
+        [Required]
         [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 2)]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
         public string YearMonth { get; set; }
 
         [Required]
@@ -36,16 +38,18 @@ namespace gzDAL.Models {
         public DateTime UpdatedOnUtc { get; set; }
 
         #region Total Monthly Shares
+
         /// <summary>
         /// Total number of shares for month
         /// </summary>
         [Required]
-        public decimal SharesNum { get; set; }
+        public decimal SharesNum { get; set; } = 0;
+
         /// <summary>
         /// $ Value of NumShares: Total number of shares for month.
         /// </summary>
         [Required]
-        public decimal SharesValue { get; set; }
+        public decimal SharesValue { get; set; } = 0;
 
         /// <summary>
         /// Price of newly bought shares in month
@@ -73,9 +77,9 @@ namespace gzDAL.Models {
         /// <summary>
         /// If the month's vintage has been sold
         /// </summary>
-        public int? SoldVintageId { get; set; }
-        [ForeignKey("SoldVintageId")]
-        public virtual SoldVintage SoldVintage { get; set; }
+        public int? SoldInvBalanceId { get; set; }
+        [ForeignKey("SoldInvBalanceId")]
+        public virtual InvBalance SoldInvBalance { get; set; }
 
         #endregion
 
