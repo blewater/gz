@@ -558,6 +558,7 @@
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
+    <Content Include="Content\Styles\_app\carousel.css" />
     <Content Include="Content\Styles\_app\guest.css" />
     <Content Include="Content\Styles\_app\games.css" />
     <Content Include="Content\Styles\_app\headerNew.css" />
@@ -651,6 +652,7 @@
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
+    <Content Include="Partials\directives\gzCarousel.html" />
     <Content Include="Partials\directives\gzFeaturedGames.html" />
     <Content Include="Partials\directives\gzFeaturedGame.html" />
     <Content Include="Partials\directives\gzFieldOk.html" />
@@ -697,6 +699,10 @@
     <Content Include="Scripts\angular-recaptcha\angular-recaptcha.min.js" />
     <Content Include="Scripts\angular-spinner\angular-spinner.js" />
     <Content Include="Scripts\angular-spinner\angular-spinner.min.js" />
+    <Content Include="Scripts\angular-touch\angular-touch.js" />
+    <Content Include="Scripts\angular-touch\angular-touch.min.js" />
+    <Content Include="Scripts\angular-ui-router\angular-ui-router.js" />
+    <Content Include="Scripts\angular-ui-router\angular-ui-router.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
@@ -716,7 +722,6 @@
     <Content Include="Scripts\d3-tip\d3-tip.js" />
     <Content Include="Scripts\d3\d3.js" />
     <Content Include="Scripts\d3\d3.min.js" />
-    <Content Include="Scripts\exceptionaire-materialize.min.js" />
     <Content Include="Scripts\jsnlog\jsnlog.js" />
     <Content Include="Scripts\jsnlog\jsnlog.min.js" />
     <Content Include="Scripts\jsnlog\logToServer.js" />
@@ -745,6 +750,7 @@
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />
     <Content Include="Scripts\_app\directives\gzAuthAccess.js" />
+    <Content Include="Scripts\_app\directives\gzCarousel.js" />
     <Content Include="Scripts\_app\directives\gzFeaturedGames.js" />
     <Content Include="Scripts\_app\directives\gzFeaturedGame.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
@@ -800,7 +806,11 @@
     <Content Include="Scripts\angular-spinner\angular-spinner.min.js.map" />
     <Content Include="Scripts\angular-filter\angular-filter.min.js.map" />
     <Content Include="Scripts\angular-moment\angular-moment.min.js.map" />
+    <Content Include="Scripts\d3\README.md" />
     <Content Include="Scripts\d3\LICENSE" />
+    <Content Include="Scripts\d3\CHANGES.md" />
+    <Content Include="Scripts\d3\API.md" />
+    <Content Include="Scripts\angular-touch\angular-touch.min.js.map" />
     <None Include="Scripts\jquery\jquery-1.12.0.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.min.js" />
