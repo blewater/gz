@@ -69,9 +69,9 @@ namespace gzWeb {
             app.UseJSNLog();
             app.UseNLog();
 
-            //-------- Caching Configuration
+            //-------- Global Caching Configuration of Single GzConfiguration Row
             var db = new ApplicationDbContext();
-            var task = db.GzConfigurations
+            db.GzConfigurations
                 .FromCacheAsync(DateTime.UtcNow.AddDays(1));
             
             //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());

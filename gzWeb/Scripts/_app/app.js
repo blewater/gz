@@ -6,10 +6,11 @@ var APP = (function () {
     var app = angular.module(id, [
         // Angular modules 
         'ngRoute',
-        'ngResource',
-        'ngAnimate',
-        'ngSanitize',
-        'ngCookies'
+        , 'ngResource'
+        , 'ngAnimate'
+        , 'ngSanitize'
+        , 'ngCookies'
+        , 'ngTouch'
 
         // Custom modules 
         , 'customDirectives'
@@ -31,6 +32,7 @@ var APP = (function () {
         , 'vcRecaptcha'
         , 'isoCurrency'
         , 'ngTagsInput'
+        //, 'angular-carousel'
         //, 'logToServer'
     ]);
 

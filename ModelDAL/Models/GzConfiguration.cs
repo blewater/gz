@@ -27,15 +27,11 @@ namespace gzDAL.Models {
             set { id = value; }
         }
 
-        private int lockInNumDays = 180;
         /// <summary>
         /// Number of days to enforce lock In Period before caching out portfolio funds 
         /// </summary>
         [Required]
-        public int LOCK_IN_NUM_DAYS {
-            get { return lockInNumDays; }
-            set { lockInNumDays = value; }
-        }
+        public int LOCK_IN_NUM_DAYS { get; set; } = 90;
 
         private float commissionPcnt = 1.5f;
         /// <summary>
