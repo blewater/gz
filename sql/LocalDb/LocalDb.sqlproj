@@ -4,16 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>AzureDevDb</Name>
+    <Name>LocalDb</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{92d484da-55f9-490d-b423-f269a7930b40}</ProjectGuid>
+    <ProjectGuid>{828afa2e-b616-415a-91a0-22eec557a32c}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>AzureDevDb</RootNamespace>
-    <AssemblyName>AzureDevDb</AssemblyName>
+    <RootNamespace>LocalDb</RootNamespace>
+    <AssemblyName>LocalDb</AssemblyName>
     <ModelCollation>1033,CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
@@ -23,7 +23,7 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
-    <DefaultCollation>SQL_Latin1_General_CP1_CI_AI</DefaultCollation>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
     <DefaultFilegroup>PRIMARY</DefaultFilegroup>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -64,35 +64,71 @@
     <Folder Include="dbo\Functions\" />
   </ItemGroup>
   <ItemGroup>
+    <Build Include="dbo\Tables\PlayerRevRpt.sql" />
+    <Build Include="dbo\Tables\FundPrices_bak.sql" />
+    <Build Include="dbo\Tables\azAspNetUsersDev.sql" />
+    <Build Include="dbo\Tables\CurrencyRates_bak.sql" />
+    <Build Include="dbo\Tables\DynamicPages.sql" />
+    <Build Include="dbo\Tables\__MigrationHistory.sql" />
+    <Build Include="dbo\Tables\EmailTemplates.sql" />
     <Build Include="dbo\Tables\GmTrxs.sql" />
     <Build Include="dbo\Tables\GmTrxTypes.sql" />
-    <Build Include="dbo\Tables\EmailTemplates.sql" />
-    <Build Include="dbo\Tables\LogEntries.sql" />
-    <Build Include="dbo\Tables\DynamicPages.sql" />
-    <Build Include="dbo\Tables\FundPrices.sql" />
-    <Build Include="dbo\Tables\CustPortfolios.sql" />
+    <Build Include="dbo\Tables\CurrencyListXes.sql" />
     <Build Include="dbo\Tables\CurrencyRates.sql" />
+    <Build Include="dbo\Tables\CustFundShares.sql" />
     <Build Include="dbo\Tables\AspNetUsers.sql" />
     <Build Include="dbo\Tables\AspNetUserClaims.sql" />
-    <Build Include="dbo\Tables\GzTrxs.sql" />
-    <Build Include="dbo\Tables\InvBalances.sql" />
-    <Build Include="dbo\Tables\GzTrxTypes.sql" />
-    <Build Include="dbo\Tables\AspNetUserLogins.sql" />
-    <Build Include="dbo\Tables\AspNetUserRoles.sql" />
+    <Build Include="dbo\Tables\CustPortfolios.sql" />
+    <Build Include="dbo\Tables\LogEntries.sql" />
     <Build Include="dbo\Tables\Portfolios.sql" />
     <Build Include="dbo\Tables\PortFunds.sql" />
     <Build Include="dbo\Tables\Funds.sql" />
-    <Build Include="dbo\Tables\PlayerRevRpt.sql" />
-    <Build Include="dbo\Tables\AspNetRoles.sql" />
-    <Build Include="dbo\Tables\__MigrationHistory.sql" />
-    <Build Include="dbo\Tables\CustFundShares.sql" />
-    <Build Include="dbo\Tables\CurrencyListXes.sql" />
+    <Build Include="dbo\Tables\GzTrxs.sql" />
+    <Build Include="dbo\Tables\GzTrxTypes.sql" />
+    <Build Include="dbo\Tables\InvBalances.sql" />
+    <Build Include="dbo\Tables\AspNetUserLogins.sql" />
+    <Build Include="dbo\Tables\AspNetUserRoles.sql" />
+    <Build Include="dbo\Tables\FundPrices.sql" />
     <Build Include="dbo\Tables\GzConfigurations.sql" />
+    <Build Include="dbo\Tables\AspNetRoles.sql" />
     <Build Include="dbo\Functions\GetTotalTrxAmount.sql" />
     <Build Include="dbo\Functions\GetLatestTrxAmount.sql" />
     <Build Include="dbo\Functions\GetMinDateTrx.sql" />
     <Build Include="dbo\Functions\GetVintages.sql" />
     <Build Include="dbo\Functions\GetMonthsTrxAmount.sql" />
     <Build Include="dbo\Functions\GetTotalDeposits.sql" />
+    <Build Include="dbo\Tables\PortFunds.sql" />
+    <Build Include="dbo\Tables\Portfolios.sql" />
+    <Build Include="dbo\Tables\PlayerRevRpt.sql" />
+    <Build Include="dbo\Tables\LogEntries.sql" />
+    <Build Include="dbo\Tables\InvBalances.sql" />
+    <Build Include="dbo\Tables\GzTrxTypes.sql" />
+    <Build Include="dbo\Tables\GzTrxs.sql" />
+    <Build Include="dbo\Tables\GzConfigurations.sql" />
+    <Build Include="dbo\Tables\GmTrxTypes.sql" />
+    <Build Include="dbo\Tables\GmTrxs.sql" />
+    <Build Include="dbo\Tables\Funds.sql" />
+    <Build Include="dbo\Tables\FundPrices_bak.sql" />
+    <Build Include="dbo\Tables\FundPrices.sql" />
+    <Build Include="dbo\Tables\EmailTemplates.sql" />
+    <Build Include="dbo\Tables\DynamicPages.sql" />
+    <Build Include="dbo\Tables\CustPortfolios.sql" />
+    <Build Include="dbo\Tables\CustFundShares.sql" />
+    <Build Include="dbo\Tables\CurrencyRates_bak.sql" />
+    <Build Include="dbo\Tables\CurrencyRates.sql" />
+    <Build Include="dbo\Tables\CurrencyListXes.sql" />
+    <Build Include="dbo\Tables\azAspNetUsersDev.sql" />
+    <Build Include="dbo\Tables\AspNetUsers.sql" />
+    <Build Include="dbo\Tables\AspNetUserRoles.sql" />
+    <Build Include="dbo\Tables\AspNetUserLogins.sql" />
+    <Build Include="dbo\Tables\AspNetUserClaims.sql" />
+    <Build Include="dbo\Tables\AspNetRoles.sql" />
+    <Build Include="dbo\Tables\__MigrationHistory.sql" />
+    <Build Include="dbo\Functions\GetTotalTrxAmount.sql" />
+    <Build Include="dbo\Functions\GetMinDateTrx.sql" />
+    <Build Include="dbo\Functions\GetLatestTrxAmount.sql" />
+    <Build Include="dbo\Functions\GetVintages.sql" />
+    <Build Include="dbo\Functions\GetTotalDeposits.sql" />
+    <Build Include="dbo\Functions\GetMonthsTrxAmount.sql" />
   </ItemGroup>
 </Project>
