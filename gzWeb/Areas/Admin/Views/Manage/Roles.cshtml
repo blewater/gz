@@ -36,9 +36,10 @@
                                         <th class="col-md-1 text-center">
                                             @Html.DisplayNameFor(model => model.Id)
                                         </th>
-                                        <th class="col-md-3 text-center">
+                                        <th class="col-md-10 text-center">
                                             @Html.DisplayNameFor(model => model.Name)
                                         </th>
+                                        <th class="col-md-1"></th>
                                     </tr>
                                 </thead>
 
@@ -52,6 +53,9 @@
                                             </td>
                                             <td class="text-center">
                                                 @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td class="text-center">
+                                                @Html.ActionLink("Edit", "RoleEdit", new { id = item.Id })
                                             </td>
                                         </tr>
                                     }

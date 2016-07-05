@@ -13,4 +13,18 @@ namespace gzWeb.Areas.Admin.Models
         public string SearchTerm { get; set; }
         public List<ApplicationUser> UsersEntries { get; set; }
     }
+
+    public class UserViewModel
+    {
+        public ApplicationUser User { get; set; }
+        public List<CustomRole> Roles { get; set; }
+        public List<CustomRole> RolesOfUser { get; set; }
+    }
+
+    public class RoleViewModel
+    {
+        public CustomRole Role { get; set; }
+        public List<ApplicationUser> Users { get; set; }
+        public List<ApplicationUser> UsersOfRole { get; set; }
+    }
 }
