@@ -660,6 +660,7 @@
     <Content Include="Areas\Admin\Views\DynamicPages\Details.cshtml" />
     <Content Include="Areas\Admin\Views\DynamicPages\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\DynamicPages\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Manage\UserEdit.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
