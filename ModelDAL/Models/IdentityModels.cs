@@ -61,14 +61,8 @@ namespace gzDAL.Models
         /// <summary>
         /// Whether the account is closed and no longer a Gz customer.
         /// </summary>
-        private bool _closedGzAccount;
         [Required]
-        public bool ClosedGzAccount {
-            get { return _closedGzAccount; }
-            set { _closedGzAccount = value; }
-        }
-
-
+        public bool ClosedGzAccount { get; set; }
 
         /// <summary>
         /// Must get from Casino Operator
@@ -233,7 +227,6 @@ namespace gzDAL.Models
         public DbSet<InvBalance> InvBalances { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }
-        public DbSet<SoldVintage> SoldVintages { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
         public DbSet<LogEntry> LogEntries { get; set; }
         public DbSet<DynamicPage> DynamicPages { get; set; }

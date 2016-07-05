@@ -20,12 +20,15 @@ namespace gzDAL.Models {
         [Index("CustomerId_Mon_idx_custp", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
 
-        [Required, StringLength(6)]
+        [Required]
         [Index("CustomerId_Mon_idx_custp", IsUnique = true, Order = 2)]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
         public string YearMonth { get; set; }
 
         [Required]
         [Index("CustomerId_Mon_idx_custp", IsUnique = true, Order = 3)]
+        [Index("IX_CustPortfolio_PortfolioId_Only")]
         public int PortfolioId { get; set; }
         [ForeignKey("PortfolioId")]
         public virtual Portfolio Portfolio { get; set; }

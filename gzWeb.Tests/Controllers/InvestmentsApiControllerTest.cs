@@ -26,6 +26,7 @@ namespace gzWeb.Tests.Controllers
         private InvestmentsApiController investmentsApiController;
         private ApplicationDbContext db;
         private ApplicationUserManager manager;
+        private UserRepo _userRepo;
         private IMapper mapper;
 
         [OneTimeSetUp]
@@ -41,6 +42,11 @@ namespace gzWeb.Tests.Controllers
 
             manager = new ApplicationUserManager(new CustomUserStore(db),
                                                      new DataProtectionProviderFactory(() => null));
+            var trxRepo = new GzTransactionRepo(db);
+            _userRepo = new UserRepo(
+                db
+                , trxRepo,
+                new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), trxRepo));
         }
 
         [Test]
@@ -114,12 +120,16 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public void GetSummaryDataWithUser()
-        {
-            var user = manager.FindByEmail("info@nessos.gr");
+        public void GetSummaryDataWithUser() {
+
+            var userId = db.Users
+                .Where(u => u.Email == "info@nessos.gr")
+                .Select(u => u.Id).Single();
+            ApplicationUser user;
+            var summaryDto = _userRepo.GetSummaryData(userId, out user);
 
             // Act
-            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user);
+            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user, summaryDto);
             Assert.IsNotNull(result);
 
             // Is this formula correct?
@@ -136,7 +146,7 @@ namespace gzWeb.Tests.Controllers
             foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
                     vintageViewModel.YearMonthStr,
-                    vintageViewModel.InvestAmount,
+                    vintageViewModel.InvestmentAmount,
                     vintageViewModel.SellingValue,
                     vintageViewModel.Sold,
                     vintageViewModel.Locked);
@@ -153,7 +163,7 @@ namespace gzWeb.Tests.Controllers
             foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}", 
                     vintageViewModel.YearMonthStr, 
-                    vintageViewModel.InvestAmount, 
+                    vintageViewModel.InvestmentAmount, 
                     vintageViewModel.SellingValue,
                     vintageViewModel.Sold,
                     vintageViewModel.Locked);
@@ -169,6 +179,7 @@ namespace gzWeb.Tests.Controllers
             IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
             IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);
             ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(db);
+            IUserRepo userRepo = new UserRepo(db, gzTransactionRepo, invBalanceRepo);
 
             // Arrange
             controller = new InvestmentsApiController(
@@ -178,6 +189,7 @@ namespace gzWeb.Tests.Controllers
                     custFundShareRepo,
                     currencyRateRepo,
                     custPortfolioRepo,
+                    userRepo,
                     mapper,
                     new ApplicationUserManager(new CustomUserStore(db), new DataProtectionProviderFactory(() => null)));
             return db;

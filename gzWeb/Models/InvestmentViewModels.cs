@@ -7,7 +7,7 @@ namespace gzWeb.Models
     public class VintageViewModel
     {
         public string YearMonthStr { get; set; }
-        public decimal InvestAmount { get; set; }
+        public decimal InvestmentAmount { get; set; }
         public decimal SellingValue { get; set; }
         public bool Locked { get; set; }
         public bool Sold { get; set; }
