@@ -22,12 +22,6 @@ namespace gzWeb
                 "~/Content/Styles/ng-tags-input/ng-tags-input.min.css"
             ));
 
-            //bundles.Add(new StyleBundle("~/css/app_old").Include(
-            //    //"~/Content/Site.css"
-            //    "~/Content/Styles/_app/template/basic.css"
-            //    , "~/Content/Styles/_app/template/acorns.css"
-            //    , "~/Content/Styles/_app/template/donut.css"
-            //));
             bundles.Add(new StyleBundle("~/css/app").Include(
                 //"~/Content/Site.css"
                 "~/Content/Styles/_app/basic.css"
@@ -38,12 +32,10 @@ namespace gzWeb
                 , "~/Content/Styles/_app/guest.css"
                 , "~/Content/Styles/_app/auth.css"
                 , "~/Content/Styles/_app/investments.css"
+                , "~/Content/Styles/_app/carousel.css"
                 , "~/Content/Styles/_app/games.css"
                 , "~/Content/Styles/_app/admin.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
-                //, "~/Content/Styles/_app/exceptionaire/exceptionaire-meterialize.css"
-                //, "~/Content/Styles/_app/exceptionaire/exceptionaire-style.css"
-                //, "~/Content/Styles/_app/exceptionaire/exceptionaire-media.css"
             ));
             #endregion
             
@@ -84,6 +76,7 @@ namespace gzWeb
                 , "~/Scripts/angular-animate/angular-animate.min.js"
                 , "~/Scripts/angular-sanitize/angular-sanitize.min.js"
                 , "~/Scripts/angular-cookies/angular-cookies.min.js"
+                , "~/Scripts/angular-touch/angular-touch.min.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/modules").Include(
@@ -158,6 +151,7 @@ namespace gzWeb
                 , "~/Scripts/_app/directives/gzAuthAccess.js"
                 , "~/Scripts/_app/directives/gzFeaturedGame.js"
                 , "~/Scripts/_app/directives/gzFeaturedGames.js"
+                , "~/Scripts/_app/directives/gzCarousel.js"
 
                 , "~/Scripts/_app/services/emWamp.js"
                 , "~/Scripts/_app/services/emCasino.js"

@@ -16,7 +16,8 @@
                 aggregate: aggregate,
                 shuffle: shuffle,
                 swap: swap,
-                applyWithDelay: applyWithDelay
+                applyWithDelay: applyWithDelay,
+                rotate: rotate
             },
             ui: {
                 getTemplate: getTemplate,
@@ -110,6 +111,9 @@
                     applyWithDelay(array, func, delay, callback);
                 }, delay);
             }
+        }
+        function rotate(array, count) {
+            return array.push.apply(array, array.splice(0, count % array.length))
         }
         // #endregion
 
