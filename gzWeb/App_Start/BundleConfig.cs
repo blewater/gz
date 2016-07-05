@@ -38,8 +38,12 @@ namespace gzWeb
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
             ));
             #endregion
-            
+
             #region Scripts
+            bundles.Add(new ScriptBundle("~/js/global").Include(
+                "~/Scripts/_app/global.js"
+            ));
+
             bundles.Add(new ScriptBundle("~/js/jquery").Include(
                 "~/Scripts/jquery/jquery-{version}.js"
             ));
@@ -161,6 +165,7 @@ namespace gzWeb
                 , "~/Scripts/_app/services/apiService.js"
                 , "~/Scripts/_app/services/helpersService.js"
                 , "~/Scripts/_app/services/chatService.js"
+                , "~/Scripts/_app/services/iovationService.js"
 
                 , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.js"

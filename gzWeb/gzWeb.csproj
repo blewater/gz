@@ -761,6 +761,7 @@
     <Content Include="Scripts\spin\spin.js" />
     <Content Include="Scripts\spin\spin.min.js" />
     <Content Include="Scripts\_app\app.js" />
+    <Content Include="Scripts\_app\global.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\account\myProfileCtrl.js" />
@@ -783,6 +784,7 @@
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="Scripts\_app\directives\gzPlanHoldingsChart.js" />
     <Content Include="Scripts\_app\services\authService.js" />
+    <Content Include="Scripts\_app\services\iovationService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\account\registerDepositCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerPaymentMethodsCtrl.js" />
