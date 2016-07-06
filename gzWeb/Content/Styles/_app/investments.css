@@ -627,8 +627,11 @@
     text-shadow: 1px 1px 1px #555;
 }
 
-.holding-info {
+.tooltip {
     position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
     margin: 10px;
     padding: 5px;
     font: 12px sans-serif;
@@ -638,18 +641,19 @@
     -ms-border-radius: 5px;
     border-radius: 5px;
     pointer-events: none;
-    width: 220px;
+    width: 200px;
 
     -webkit-box-shadow: 0 0 3px 0 #fff;
     -ms-box-shadow: 0 0 3px 0 #fff;
     box-shadow: 0 0 3px 0 #fff;
-    /*-webkit-transition: opacity 400ms linear;
-    -moz-transition: opacity 400ms linear;
-    -ms-transition: opacity 400ms linear;
-    -o-transition: opacity 400ms linear;
-    transition: opacity 400ms linear;*/
+
+    -webkit-transition: opacity 200ms linear;
+    -moz-transition: opacity 200ms linear;
+    -ms-transition: opacity 200ms linear;
+    -o-transition: opacity 200ms linear;
+    transition: opacity 200ms linear;
 }
-/*.holding-info .key {
+/*.tooltip .key {
     position: absolute;			
     text-align: center;
     margin: 10px;
