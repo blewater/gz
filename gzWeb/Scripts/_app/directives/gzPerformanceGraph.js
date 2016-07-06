@@ -357,6 +357,15 @@
                         .attr("r", 4)
                         .style("fill", "#fff");
 
+                    handler.append('rect')
+                        .attr("class", "handlerRect")
+                        .style("fill", "transparent")
+                        .attr("x", -30)
+                        .attr("y", -30)
+                        .attr("width", 60)
+                        .attr("height", 60);
+
+
                     var playLoop = true;
                     var loopDuration = 800;
                     function loop(el, transformTo, transformFrom) {
@@ -381,20 +390,21 @@
                     }
 
                     var horizontal, vertical;
+                    var triangleSymbol = d3.symbol().type(d3.symbolTriangle);
                     var triangleTop = handler.append("path")
-                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(0, -20)")
                         .attr("class", "triangle triangle-top triangle-vertical");
                     var triangleRight = handler.append("path")
-                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(20, 0)rotate(90)")
                         .attr("class", "triangle triangle-right triangle-horizontal");
                     var triangleLeft = handler.append("path")
-                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(-20, 0)rotate(-90)")
                         .attr("class", "triangle triangle-left triangle-horizontal");
                     var triangleBottom = handler.append("path")
-                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(0, 20)rotate(180)")
                         .attr("class", "triangle triangle-bottom triangle-vertical");
 
@@ -452,6 +462,7 @@
 
                         function mousemove() {
                             playLoop = false;
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
                             trianglesHorizontal.classed('inactive', true);
                             var mousePosition = d3.mouse(graphRect.node());
                             $scope.monthlyContribution = calcNewMonthlyContribution(initialMousePosition[1], mousePosition[1]);
@@ -463,7 +474,7 @@
                             trianglesHorizontal.classed('inactive', false);
                             projections.classed("active", false);
                             graphRect.on("mousemove", null).on("mouseup", null);
-                            triangles.on("mouseup", null);
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; })).on("mouseup", null);
                             projections.on("mouseup", null);
                         }
                     });
@@ -488,6 +499,7 @@
 
                         function mousemove() {
                             playLoop = false;
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
                             trianglesVertical.classed('inactive', true);
                             var mousePosition = d3.mouse(graphRect.node());
                             $scope.year = x.invert(mousePosition[0]);
@@ -499,9 +511,15 @@
                             trianglesVertical.classed('inactive', false);
                             projections.classed("active", false);
                             graphRect.on("mousemove", null).on("mouseup", null);
-                            triangles.on("mouseup", null);
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; })).on("mouseup", null);
                             projections.on("mouseup", null);
                         }
+                    });
+
+                    handler.on("mouseover", function () {
+                        triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
+                    }).on("mouseleave", function () {
+                        triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; }));
                     });
 
                     //handler.on("mouseover", function () {
