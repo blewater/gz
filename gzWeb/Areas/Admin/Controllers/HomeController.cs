@@ -14,7 +14,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
-    //[Authorize(Roles = "Administrators")]
+    [Authorize(Roles = "Administrator")]
     public class HomeController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -73,9 +73,18 @@ namespace gzWeb.Areas.Admin.Controllers
                 return View(model);
             }
 
+            var user = ApplicationDbContext.Create()
+                                           .Users
+                                           .SingleOrDefault(x => x.UserName == model.Email || x.Email == model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(model);
+            }
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+
             switch (result)
             {
                 case SignInStatus.Success:
@@ -85,6 +94,7 @@ namespace gzWeb.Areas.Admin.Controllers
                 case SignInStatus.RequiresVerification:
                     //return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
+
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);

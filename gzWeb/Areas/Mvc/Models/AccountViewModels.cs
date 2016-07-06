@@ -43,8 +43,8 @@ namespace gzWeb.Areas.Mvc.Models {
 
     public class LoginViewModel {
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
+        [Display(Name = "Username / Email")]
+        //[EmailAddress]
         public string Email { get; set; }
 
         [Required]

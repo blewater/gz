@@ -21,6 +21,15 @@ namespace gzWeb.Areas.Admin.Models
         public List<CustomRole> RolesOfUser { get; set; }
     }
 
+    public class UserViewPostModel
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string GmCustomerId { get; set; }
+        public List<int> RolesOfUser { get; set; }
+    }
+
     public class RoleViewModel
     {
         public CustomRole Role { get; set; }
