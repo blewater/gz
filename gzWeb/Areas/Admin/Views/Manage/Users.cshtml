@@ -72,8 +72,11 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th class="col-md-3 text-center">
+                                    <th class="col-md-2 text-center">
                                         User Name
+                                    </th>
+                                    <th class="col-md-2 text-center">
+                                        Email
                                     </th>
                                     <th class="col-md-3 text-center">
                                         Last Name
@@ -81,7 +84,7 @@
                                     <th class="col-md-3 text-center">
                                         First Name
                                     </th>
-                                    <th class="col-md-2 text-center">
+                                    <th class="col-md-1 text-center">
                                         Casino Id
                                     </th>
                                     <th class="col-md-1"></th>
@@ -94,6 +97,9 @@
                                     <tr>
                                         <td class="text-center">
                                             @Html.DisplayFor(modelItem => item.UserName)
+                                        </td>
+                                        <td class="text-center">
+                                            @Html.DisplayFor(modelItem => item.Email)
                                         </td>
                                         <td class="text-center">
                                             @Html.DisplayFor(modelItem => item.LastName)
