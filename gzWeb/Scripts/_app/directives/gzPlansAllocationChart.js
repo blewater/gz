@@ -41,7 +41,7 @@
                     //var tooltip = d3.tip().attr('class', 'tooltip');
                     //canvas.call(tooltip);
                     
-                    var tooltip = d3.select("body").append("div").attr('class', 'tooltip');
+                    var tooltip = d3.select("body").append("div").attr('class', 'portfolio-chart-tooltip');
                     
                     var arc = d3.arc()
                                 .innerRadius(outerRadius - extension)
@@ -54,20 +54,18 @@
 
                     function showTooltip(plan) {
                         var html =
-                            '<div class="row">' +
-                                '<div class="col-xs-12 text-center">' + plan.Title + ' plan</div>' +
+                            '<div class="row title">' +
+                                '<div class="col-xs-12 text-center">' + plan.Title + '</div>' +
                             '</div>' +
-                            '<br />' +
-                            '<div class="row">' +
-                                '<div class="col-xs-12"><i>Allocation details</i></div>' +
-                            '</div>' +
-                            '<div class="row">' +
-                                '<div class="col-xs-6">Percent</div>' +
-                                '<div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 2) + '</div>' +
-                            '</div>' +
-                            '<div class="row">' +
-                                '<div class="col-xs-6">Amount</div>' +
-                                '<div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 2) + '</div>' +
+                            '<div class="row details">' +
+                                '<div class="percent">' +
+                                    '<div class="col-xs-6">Allocation:</div>' +
+                                    '<div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 1) + '</div>' +
+                                '</div>' +
+                                '<div class="amount">' +
+                                    '<div class="col-xs-6">Amount:</div>' +
+                                    '<div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 1) + '</div>' +
+                                '</div>'
                             '</div>';
 
                         tooltip.html(html)
@@ -79,8 +77,8 @@
                     };
                     function moveTooltip() {
                         tooltip
-                            .style("left", function () { return (d3.event.pageX - 100) + "px"; })
-                            .style("top", function () { return (d3.event.pageY - 100) + "px"; });
+                            .style("left", function () { return (d3.event.pageX - 90) + "px"; })
+                            .style("top", function () { return (d3.event.pageY - 160) + "px"; });
                     };
 
                     function overTooltip(d) {
