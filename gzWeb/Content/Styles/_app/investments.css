@@ -627,13 +627,13 @@
     text-shadow: 1px 1px 1px #555;
 }
 
-.tooltip {
+.portfolio-chart-tooltip {
     position: absolute;
     top: 0;
     left: 0;
     opacity: 0;
     margin: 10px;
-    padding: 5px;
+    padding: 10px;
     font: 12px sans-serif;
     background: #27A95C;
     color: #fff;
@@ -641,7 +641,8 @@
     -ms-border-radius: 5px;
     border-radius: 5px;
     pointer-events: none;
-    width: 200px;
+    width: 180px;
+    height: 120px;
 
     -webkit-box-shadow: 0 0 3px 0 #fff;
     -ms-box-shadow: 0 0 3px 0 #fff;
@@ -653,6 +654,18 @@
     -o-transition: opacity 200ms linear;
     transition: opacity 200ms linear;
 }
+.portfolio-chart-tooltip .title {
+    font-size: 14px;
+    margin: 20px auto;
+}
+.portfolio-chart-tooltip .percent {
+
+}
+.portfolio-chart-tooltip .amount {
+
+}
+
+
 /*.tooltip .key {
     position: absolute;			
     text-align: center;
