@@ -29,11 +29,14 @@ namespace gzDAL.Models
 
         [NotMapped]
         public decimal InvBalance {
-            get {
-                return InvBalances
-                    .OrderByDescending(b => b.YearMonth)
-                    .Select(b => b.Balance)
-                    .FirstOrDefault();
+            get
+            {
+                return InvBalances != null
+                               ? InvBalances
+                                         .OrderByDescending(b => b.YearMonth)
+                                         .Select(b => b.Balance)
+                                         .FirstOrDefault()
+                               : 0M;
             }
         }
         public virtual ICollection<InvBalance> InvBalances { get; set; }

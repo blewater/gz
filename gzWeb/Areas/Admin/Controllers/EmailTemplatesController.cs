@@ -13,6 +13,7 @@ using RazorEngine.Templating;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class EmailTemplatesController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
