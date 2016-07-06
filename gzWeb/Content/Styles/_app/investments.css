@@ -627,10 +627,13 @@
     text-shadow: 1px 1px 1px #555;
 }
 
-.holding-info {
+.portfolio-chart-tooltip {
     position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
     margin: 10px;
-    padding: 5px;
+    padding: 10px;
     font: 12px sans-serif;
     background: #27A95C;
     color: #fff;
@@ -638,18 +641,32 @@
     -ms-border-radius: 5px;
     border-radius: 5px;
     pointer-events: none;
-    width: 220px;
+    width: 180px;
+    height: 120px;
 
     -webkit-box-shadow: 0 0 3px 0 #fff;
     -ms-box-shadow: 0 0 3px 0 #fff;
     box-shadow: 0 0 3px 0 #fff;
-    /*-webkit-transition: opacity 400ms linear;
-    -moz-transition: opacity 400ms linear;
-    -ms-transition: opacity 400ms linear;
-    -o-transition: opacity 400ms linear;
-    transition: opacity 400ms linear;*/
+
+    -webkit-transition: opacity 200ms linear;
+    -moz-transition: opacity 200ms linear;
+    -ms-transition: opacity 200ms linear;
+    -o-transition: opacity 200ms linear;
+    transition: opacity 200ms linear;
 }
-/*.holding-info .key {
+.portfolio-chart-tooltip .title {
+    font-size: 14px;
+    margin: 20px auto;
+}
+.portfolio-chart-tooltip .percent {
+
+}
+.portfolio-chart-tooltip .amount {
+
+}
+
+
+/*.tooltip .key {
     position: absolute;			
     text-align: center;
     margin: 10px;

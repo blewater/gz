@@ -766,6 +766,7 @@
     <Content Include="Scripts\spin\spin.js" />
     <Content Include="Scripts\spin\spin.min.js" />
     <Content Include="Scripts\_app\app.js" />
+    <Content Include="Scripts\_app\global.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\account\myProfileCtrl.js" />
@@ -788,6 +789,7 @@
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="Scripts\_app\directives\gzPlanHoldingsChart.js" />
     <Content Include="Scripts\_app\services\authService.js" />
+    <Content Include="Scripts\_app\services\iovationService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\account\registerDepositCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerPaymentMethodsCtrl.js" />
@@ -838,10 +840,6 @@
     <Content Include="Scripts\angular-spinner\angular-spinner.min.js.map" />
     <Content Include="Scripts\angular-filter\angular-filter.min.js.map" />
     <Content Include="Scripts\angular-moment\angular-moment.min.js.map" />
-    <Content Include="Scripts\d3\README.md" />
-    <Content Include="Scripts\d3\LICENSE" />
-    <Content Include="Scripts\d3\CHANGES.md" />
-    <Content Include="Scripts\d3\API.md" />
     <Content Include="Scripts\angular-touch\angular-touch.min.js.map" />
     <None Include="Scripts\jquery\jquery-1.12.0.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.js" />

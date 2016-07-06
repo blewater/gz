@@ -38,49 +38,47 @@
 
                     var group = canvas.append("g").attr("transform", "translate(" + minDimension + "," + minDimension + ")");
 
-                    var tooltip = d3.tip().attr('class', 'holding-info');
-
-                    canvas.call(tooltip);
-
-                    var arc = d3.svg.arc()
+                    //var tooltip = d3.tip().attr('class', 'tooltip');
+                    //canvas.call(tooltip);
+                    
+                    var tooltip = d3.select("body").append("div").attr('class', 'portfolio-chart-tooltip');
+                    
+                    var arc = d3.arc()
                                 .innerRadius(outerRadius - extension)
                                 .padRadius(outerRadius - extension)
                                 .padAngle(0.02);
 
-                    var pie = d3.layout.pie()
+                    var pie = d3.pie()
                         .value(function (d) { return d.AllocatedPercent === 0 ? 3 : d.AllocatedPercent; })
                         .sort(function (d, i) { return i; });
 
                     function showTooltip(plan) {
                         var html =
-                            '<div class="row">' +
-                                '<div class="col-xs-12 text-center">' + plan.Title + ' plan</div>' +
+                            '<div class="row title">' +
+                                '<div class="col-xs-12 text-center">' + plan.Title + '</div>' +
                             '</div>' +
-                            '<br />' +
-                            '<div class="row">' +
-                                '<div class="col-xs-12"><i>Allocation details</i></div>' +
-                            '</div>' +
-                            '<div class="row">' +
-                                '<div class="col-xs-6">Percent</div>' +
-                                '<div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 2) + '</div>' +
-                            '</div>' +
-                            '<div class="row">' +
-                                '<div class="col-xs-6">Amount</div>' +
-                                '<div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 2) + '</div>' +
+                            '<div class="row details">' +
+                                '<div class="percent">' +
+                                    '<div class="col-xs-6">Allocation:</div>' +
+                                    '<div class="col-xs-6 text-right">% ' + $filter('number')(plan.AllocatedPercent, 1) + '</div>' +
+                                '</div>' +
+                                '<div class="amount">' +
+                                    '<div class="col-xs-6">Amount:</div>' +
+                                    '<div class="col-xs-6 text-right">' + iso4217.getCurrencyByCode(scope.gzCurrency).symbol + ' ' + $filter('number')(plan.AllocatedAmount, 1) + '</div>' +
+                                '</div>'
                             '</div>';
 
                         tooltip.html(html)
                             .style("background-color", d3.rgb("#27A95C").darker(plan.Gamma))
-                            .style("opacity", 1)
-                            .show();
+                            .style("opacity", 1);
                     };
                     function hideTooltip() {
-                        tooltip.hide().style("opacity", 0);
+                        tooltip.style("opacity", 0);
                     };
                     function moveTooltip() {
                         tooltip
-                            .style("left", function () { return (d3.event.pageX - 100) + "px"; })
-                            .style("top", function () { return (d3.event.pageY - 100) + "px"; });
+                            .style("left", function () { return (d3.event.pageX - 90) + "px"; })
+                            .style("top", function () { return (d3.event.pageY - 160) + "px"; });
                     };
 
                     function overTooltip(d) {
@@ -89,7 +87,7 @@
                             .transition()
                             .delay(duration / 4)
                             .duration(duration / 2)
-                            .ease('linear')
+                            .ease(d3.easeLinear)
                             .attrTween("d", function (_d) {
                                 var i = d3.interpolate(_d.outerRadius, outerRadius);
                                 return function (t) {
@@ -109,7 +107,7 @@
                             .transition()
                             .delay(duration / 4)
                             .duration(duration / 2)
-                            .ease('linear')
+                            .ease(d3.easeLinear)
                             .attrTween("d", function (d) {
                                 var i = d3.interpolate(outerRadius, outerRadius - extension);
                                 return function (t) {
@@ -153,7 +151,7 @@
                             return duration * totalPercent / 100;
                         })
                         .duration(function (d, i) { return duration * d.data.AllocatedPercent / 100; })
-                        .ease('linear')
+                        .ease(d3.easeLinear)
                         .attrTween('d', function (d) {
                             var interpolateAngle = d3.interpolate(d.startAngle, d.endAngle);
                             var interpolateRadius = d3.interpolate(innerRadius, d.outerRadius);

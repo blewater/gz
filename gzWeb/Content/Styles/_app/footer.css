@@ -59,7 +59,7 @@ footer .pull-right a i {
 footer .footer-menu {
     height: 40px;
     line-height: 40px;
-    margin: 10px 0 5px;
+    margin-top: 10px;
 }
 footer .footer-menu a {
     margin: 0 10px;
@@ -67,7 +67,7 @@ footer .footer-menu a {
 footer .footer-social {
     height: 40px;
     line-height: 40px;
-    margin: 5px 0 10px;
+    margin-bottom: 10px;
     /*border-bottom: 1px dashed #fff;*/
 }
 footer .footer-social a {
