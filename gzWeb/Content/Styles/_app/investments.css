@@ -760,7 +760,9 @@
     line-height: 36px;
     margin: 7px 0;
     padding: 0;
-    border: none;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
     background: none;
     -webkit-box-shadow: none;
     -ms-box-shadow: none;
@@ -771,21 +773,22 @@
     font-size: 16px;
     letter-spacing: 1px;
     cursor: pointer;
-    -webkit-transition: background 0.3s ease;
-    -moz-transition: background 0.3s ease;
-    -ms-transition: background 0.3s ease;
-    -o-transition: background 0.3s ease;
-    transition: background 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
 .investments .performance .plans button.selected {
     font-weight: 800;
+    background-color: #fff;
+    border-color: #27A95C;
+    -webkit-box-shadow: 0 0 3px 0 #27A95C;
+    -ms-box-shadow: 0 0 3px 0 #27A95C;
+    box-shadow: 0 0 3px 0 #27A95C;
 }
-.investments .performance .plans button.selected,
 .investments .performance .plans button:hover {
-    position: relative;
-    -ms-text-shadow: 1px 1px 1px #ffffff, 1px 1px 5px #27A95C;
-    text-shadow: 1px 1px 1px #ffffff, 1px 1px 5px #27A95C;
-    text-decoration: underline;
+    font-weight: 800;
 }
 
 
@@ -824,18 +827,13 @@
     stroke-opacity: 0.5;
 }
 
-
-/*.investments .performance #canvas .handler {
-    cursor: move;
-}*/
-
-/* #region triangles with animations */
+/* #region triangles with animation */
 .investments .performance #canvas .handler .triangle {
     stroke: #27a95c;
     stroke-width: 1px;
     fill: #ffffff;
     fill: rgba(255, 255, 255, 0.8);
-    /*display: none;*/
+    padding: 10px;
 }
 .investments .performance #canvas .handler .triangle.inactive {
     opacity: 0.2;
