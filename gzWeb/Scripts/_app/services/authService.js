@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation) {
         var factory = {};
 
         // #region AuthData
@@ -265,7 +265,8 @@
             var q = $q.defer();
             var params = {
                 usernameOrEmail: usernameOrEmail,
-                password: password
+                password: password,
+                iovationBlackbox: iovation.getBlackbox()
             };
             if (captcha) {
                 params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey)
@@ -329,7 +330,8 @@
                 language: parameters.language,
                 emailVerificationURL: parameters.emailVerificationURL,
                 securityQuestion: parameters.securityQuestion,
-                securityAnswer: parameters.securityAnswer
+                securityAnswer: parameters.securityAnswer,
+                iovationBlackbox: iovation.getBlackbox()
             });
         }
 

@@ -13,6 +13,7 @@ using RazorEngine.Templating;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class DynamicPagesController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
