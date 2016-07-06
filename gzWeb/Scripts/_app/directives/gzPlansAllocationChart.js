@@ -38,16 +38,17 @@
 
                     var group = canvas.append("g").attr("transform", "translate(" + minDimension + "," + minDimension + ")");
 
-                    var tooltip = d3.tip().attr('class', 'holding-info');
-
-                    canvas.call(tooltip);
-
-                    var arc = d3.svg.arc()
+                    //var tooltip = d3.tip().attr('class', 'tooltip');
+                    //canvas.call(tooltip);
+                    
+                    var tooltip = d3.select("body").append("div").attr('class', 'tooltip');
+                    
+                    var arc = d3.arc()
                                 .innerRadius(outerRadius - extension)
                                 .padRadius(outerRadius - extension)
                                 .padAngle(0.02);
 
-                    var pie = d3.layout.pie()
+                    var pie = d3.pie()
                         .value(function (d) { return d.AllocatedPercent === 0 ? 3 : d.AllocatedPercent; })
                         .sort(function (d, i) { return i; });
 
@@ -71,11 +72,10 @@
 
                         tooltip.html(html)
                             .style("background-color", d3.rgb("#27A95C").darker(plan.Gamma))
-                            .style("opacity", 1)
-                            .show();
+                            .style("opacity", 1);
                     };
                     function hideTooltip() {
-                        tooltip.hide().style("opacity", 0);
+                        tooltip.style("opacity", 0);
                     };
                     function moveTooltip() {
                         tooltip
@@ -89,7 +89,7 @@
                             .transition()
                             .delay(duration / 4)
                             .duration(duration / 2)
-                            .ease('linear')
+                            .ease(d3.easeLinear)
                             .attrTween("d", function (_d) {
                                 var i = d3.interpolate(_d.outerRadius, outerRadius);
                                 return function (t) {
@@ -109,7 +109,7 @@
                             .transition()
                             .delay(duration / 4)
                             .duration(duration / 2)
-                            .ease('linear')
+                            .ease(d3.easeLinear)
                             .attrTween("d", function (d) {
                                 var i = d3.interpolate(outerRadius, outerRadius - extension);
                                 return function (t) {
@@ -153,7 +153,7 @@
                             return duration * totalPercent / 100;
                         })
                         .duration(function (d, i) { return duration * d.data.AllocatedPercent / 100; })
-                        .ease('linear')
+                        .ease(d3.easeLinear)
                         .attrTween('d', function (d) {
                             var interpolateAngle = d3.interpolate(d.startAngle, d.endAngle);
                             var interpolateRadius = d3.interpolate(innerRadius, d.outerRadius);

@@ -201,15 +201,13 @@
                     //yAxisPosition = { x: -height / 2, y: -80 };
 
 
-                    x = d3.scale.linear()
+                    x = d3.scaleLinear()
                         //.domain(d3.extent(this.axisData.x, function (d) { return d; }))
                         .range([0, width]);
-                    y = d3.scale.linear()
+                    y = d3.scaleLinear()
                         //.domain([0, d3.max(this.monthlyLineData, function (d) { return d[1]; }) << 2])
                         .range([height, 0]).nice();
-                    xAxis = d3.svg.axis()
-                        .scale(x)
-                        .orient("bottom")
+                    xAxis = d3.axisBottom(x)
                         //.tickValues(d3.range(totalYears))
                         .tickFormat(function (d) {
                             var year = thisYear + d;
@@ -234,33 +232,31 @@
 
                             ////return (thisYear + Math.floor(d / 10)).toString();
                         });
-                    yAxis = d3.svg.axis()
-                        .scale(y)
-                        .orient("left")
+                    yAxis = d3.axisLeft(y)
                         //.ticks(4)
                         .tickFormat(function (d) {
-                            return iso4217.getCurrencyByCode($scope.gzCurrency).symbol + d3.format(",f")(d);
+                            return iso4217.getCurrencyByCode($scope.gzCurrency).symbol + $filter('number')(d, 0);// d3.format(",f")(d);
                         });
 
-                    avg = d3.svg.line()
-                        .interpolate("cardinal")
+                    avg = d3.line()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y(function (d) { return y(d.y.amount); });
 
-                    area = d3.svg.area()
-                        .interpolate("cardinal")
+                    area = d3.area()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y0(function (d) { return y(d.y0.amount); })
                         .y1(function (d) { return y(d.y1.amount); });
 
-                    area2 = d3.svg.area()
-                        .interpolate("cardinal")
+                    area2 = d3.area()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y0(function (d) { return y(d.y00.amount); })
                         .y1(function (d) { return y(d.y11.amount); });
 
-                    area3 = d3.svg.area()
-                        .interpolate("cardinal")
+                    area3 = d3.area()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y0(function (d) { return y(d.y000.amount); })
                         .y1(function (d) { return y(d.y111.amount); });
@@ -368,12 +364,12 @@
                             el.transition()
                                 .duration(loopDuration)
                                 .attr("transform", transformTo)
-                                .each("end", function () {
+                                .on("end", function () {
                                     if (playLoop)
                                         el.transition()
                                             .duration(loopDuration)
                                             .attr("transform", transformFrom)
-                                            .each("end", repeat);
+                                            .on("end", repeat);
                                 });
                         })();
                     }
@@ -381,25 +377,25 @@
                         loop(triangleTop, "translate(0, -25)", "translate(0, -20)");
                         loop(triangleRight, "translate(25, 0)rotate(90)", "translate(20, 0)rotate(90)");
                         loop(triangleLeft, "translate(-25, 0)rotate(-90)", "translate(-20, 0)rotate(-90)");
-                        loop(triangleBottom, "translate(0, 25)", "translate(0, 20)");
+                        loop(triangleBottom, "translate(0, 25)rotate(180)", "translate(0, 20)rotate(180)");
                     }
 
                     var horizontal, vertical;
                     var triangleTop = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function() { return 25; }))
+                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
                         .attr("transform", "translate(0, -20)")
                         .attr("class", "triangle triangle-top triangle-vertical");
                     var triangleRight = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
                         .attr("transform", "translate(20, 0)rotate(90)")
                         .attr("class", "triangle triangle-right triangle-horizontal");
                     var triangleLeft = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
+                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
                         .attr("transform", "translate(-20, 0)rotate(-90)")
                         .attr("class", "triangle triangle-left triangle-horizontal");
                     var triangleBottom = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-down").size(function () { return 25; }))
-                        .attr("transform", "translate(0, 20)")
+                        .attr("d", d3.symbol().type(d3.symbolTriangle).size(function () { return 25; }))
+                        .attr("transform", "translate(0, 20)rotate(180)")
                         .attr("class", "triangle triangle-bottom triangle-vertical");
 
                     startLoops();
