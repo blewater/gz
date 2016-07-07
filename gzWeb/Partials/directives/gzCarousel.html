@@ -1,11 +1,8 @@
 ﻿<div class="gz-carousel">
-    <!--'height': $index === currentIndex ? '100%' : 'calc(100% - 40px)',
-    'margin-top': $index === currentIndex ? '0' : '20px',
-    'margin-bottom': $index === currentIndex ? '0' : '20px',-->
-    <div class="gz-slide" ng-repeat="slide in gzSlides track by $index" ng-style="{
-                    'margin-left': calcMarginLeft($index),
-                    'z-index': calcZIndex($index),
-                 }" ng-mouseover="onHover()" ng-mouseleave="onLeave()">
+    <div ng-repeat="slide in gzSlides track by $index"
+         class="gz-slide" ng-class="{'current': $index === currentIndex}"
+         ng-style="{ 'margin-left': calcMarginLeft($index), 'z-index': calcZIndex($index) }"
+         ng-mouseover="onHover()" ng-mouseleave="onLeave()">
         <img class="gz-slide-bg" ng-src="{{slide.backgroundImage}}" />
         <div class="gz-slide-title text-shadow-dark">{{slide.title}}</div>
         <div class="gz-slide-subtitle text-shadow-dark">{{slide.subtitle}}</div>
@@ -25,8 +22,5 @@
     </div>
     <div class="gz-carousel-indicators" ng-show="showIndicators">
         <div class="gz-carousel-indicator" ng-class="{'current': $index === currentIndex}" ng-repeat="slide in gzSlides" ng-click="gotoSlide($index)"></div>
-    </div>
-    <div class="gz-carousel-progress" ng-show="showProgress">
-        <div class="gz-carousel-progress-bar" ng-style="{'width': progress + '%'}"></div>
     </div>
 </div>
