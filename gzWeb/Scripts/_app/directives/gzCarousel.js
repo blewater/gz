@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzCarousel', ['helpers', '$timeout', '$interval', directiveFactory]);
+    APP.directive('gzCarousel', ['helpers', '$timeout', directiveFactory]);
 
-    function directiveFactory(helpers, $timeout, $interval) {
+    function directiveFactory(helpers, $timeout) {
         return {
             restrict: 'E',
             scope: {
@@ -14,37 +14,25 @@
                 return helpers.ui.getTemplate('partials/directives/gzCarousel.html');
             },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-                var TRANSITION_DELAY = 3000;
-                var WAIT_DELAY = 5000;
+                var DELAY = 10000;
                 var timeoutPromise = undefined;
-                var intervalPromise = undefined;
-                var transitionTime = null, waitTime = null;
                 $scope.currentIndex = 0;
                 $scope.showControls = !('gzNoControls' in $attrs);
                 $scope.showIndicators = !('gzNoIndicators' in $attrs);
-                $scope.showProgress = !('gzNoProgress' in $attrs);
                 
                 function normalizeIndex(index) {
                     return (index + $scope.gzSlides.length) % $scope.gzSlides.length;
                 }
 
-                function setSlide(index) {
-                    $scope.currentIndex = normalizeIndex(index);
+                function autoplay(index) {
                     timeoutPromise = $timeout(function () {
                         setSlide(index + 1);
-                    }, TRANSITION_DELAY + WAIT_DELAY);
+                    }, DELAY);
+                }
 
-                    transitionTime = new Date().getTime() + TRANSITION_DELAY;
-                    waitTime = new Date().getTime() + TRANSITION_DELAY + WAIT_DELAY;
-                    if (!angular.isDefined(intervalPromise)) {
-                        intervalPromise = $interval(function () {
-                            var now = new Date().getTime();
-                            $scope.progress =
-                                now < transitionTime
-                                ? ((transitionTime - now) / TRANSITION_DELAY) * 100
-                                : 100 - ((waitTime - now) / WAIT_DELAY) * 100;
-                        }, 10);
-                    }
+                function setSlide(index) {
+                    $scope.currentIndex = normalizeIndex(index);
+                    autoplay(index);
                 }
 
                 $scope.gotoNext = function () {
@@ -64,9 +52,7 @@
                         $timeout.cancel(timeoutPromise);
                 };
                 $scope.onLeave = function () {
-                    timeoutPromise = $timeout(function () {
-                        setSlide($scope.currentIndex + 1);
-                    }, TRANSITION_DELAY + WAIT_DELAY);
+                    autoplay($scope.currentIndex);
                 };
 
                 $scope.calcMarginLeft = function (index) {
@@ -94,8 +80,6 @@
                 $scope.$on("$destroy", function (event) {
                     if (angular.isDefined(timeoutPromise))
                         $timeout.cancel(timeoutPromise);
-                    if (angular.isDefined(intervalPromise))
-                        $interval.cancel(intervalPromise);
                 });
             }]
         };
