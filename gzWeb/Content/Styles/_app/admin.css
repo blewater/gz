@@ -65,6 +65,8 @@
 
 /*region Users*/
 .admin.admin-edit.user-edit .admin-interface .content .form-group input { margin-bottom: 10px; }
+.admin.admin-edit.user-edit .admin-interface .content .listboxes .form-group select { margin-bottom: 0; }
+.admin.admin-edit.user-edit .admin-interface .content .form-group input[value="Save"] { top: -80px; margin-bottom: 100px!important; }
 
 @media (max-width: 991px) {
     .admin.admin-users .admin-table .table-head { height: 220px; }
@@ -108,7 +110,7 @@
 /*endregion*/
 
 /*region login*/
-#loginForm { margin-top: 50px; }
+#loginForm { margin-top: 100px; }
 
 .admin-login .login-interface { padding: 0; box-shadow: 2px 2px 2px 2px #c0c0c0; }
 
