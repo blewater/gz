@@ -27,17 +27,18 @@
         };
 
         $scope.withdraw = function () {
-            if (!sellingValuesFetched) {
-                api.call(function() {
-                    return api.getVintagesWithSellingValues();
-                }, function (getVintagesRsponse) {
-                    sellingValuesFetched = true;
-                    $scope.vintages = processVintages(getVintagesRsponse.Result);
-                    withdrawVintages();
-                });
-            }
-            else
-                withdrawVintages();
+            withdrawVintages();
+            //if (!sellingValuesFetched) {
+            //    api.call(function() {
+            //        return api.getVintagesWithSellingValues();
+            //    }, function (getVintagesRsponse) {
+            //        sellingValuesFetched = true;
+            //        $scope.vintages = processVintages(getVintagesRsponse.Result);
+            //        withdrawVintages();
+            //    });
+            //}
+            //else
+            //    withdrawVintages();
         };
 
         function withdrawVintages() {
