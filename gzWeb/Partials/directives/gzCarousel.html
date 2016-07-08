@@ -1,15 +1,17 @@
 ﻿<div class="gz-carousel">
-    <div ng-repeat="slide in gzSlides track by $index"
-         class="gz-slide" ng-class="{'current': $index === currentIndex}"
-         ng-style="{ 'margin-left': calcMarginLeft($index), 'z-index': calcZIndex($index) }"
-         ng-mouseover="onHover()" ng-mouseleave="onLeave()">
-        <img class="gz-slide-bg" ng-src="{{slide.backgroundImage}}" />
-        <div class="gz-slide-title text-shadow-dark">{{slide.title}}</div>
-        <div class="gz-slide-subtitle text-shadow-dark">{{slide.subtitle}}</div>
-        <div class="gz-slide-action">
-            <button type="button" class="btn-gz btn-gz-alt" ng-click="slide.action()">
-                Play now
-            </button>
+    <div class="gz-carousel-slides">
+        <div ng-repeat="slide in gzSlides track by $index"
+             class="gz-slide" ng-class="{'current': $index === currentIndex}"
+             ng-style="{ 'margin-left': calcMarginLeft($index), 'z-index': calcZIndex($index) }"
+             ng-mouseover="onHover()" ng-mouseleave="onLeave()">
+            <img class="gz-slide-bg" ng-src="{{slide.backgroundImage}}" />
+            <div class="gz-slide-title text-shadow-dark">{{slide.title}}</div>
+            <div class="gz-slide-subtitle text-shadow-dark">{{slide.subtitle}}</div>
+            <div class="gz-slide-action">
+                <button type="button" class="btn-gz btn-gz-alt" ng-click="slide.action()">
+                    Play now
+                </button>
+            </div>
         </div>
     </div>
     <div class="gz-carousel-control gz-carousel-control-previous" ng-click="gotoPrevious()" ng-show="showControls">

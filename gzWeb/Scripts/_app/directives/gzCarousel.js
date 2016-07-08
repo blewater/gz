@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzCarousel', ['helpers', '$timeout', directiveFactory]);
+    APP.directive('gzCarousel', ['helpers', '$timeout', '$window', directiveFactory]);
 
-    function directiveFactory(helpers, $timeout) {
+    function directiveFactory(helpers, $timeout, $window) {
         return {
             restrict: 'E',
             scope: {
@@ -14,6 +14,18 @@
                 return helpers.ui.getTemplate('partials/directives/gzCarousel.html');
             },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+                //var IMG_WIDTH = 1920;
+                //var IMG_HEIGHT = 1200;
+                //var aspect = IMG_WIDTH / IMG_HEIGHT;
+
+                //angular.element($window).bind('resize', function () {
+                //    console.log(($window.innerWidth * IMG_HEIGHT) / IMG_WIDTH);
+                //});                
+                //$scope.calcHeight = function () {
+                //    var bigHeigth = (windowWidth * IMG_HEIGHT) / IMG_WIDTH;
+                //    console.log()
+                //};
+
                 var DELAY = 10000;
                 var timeoutPromise = undefined;
                 $scope.currentIndex = 0;
