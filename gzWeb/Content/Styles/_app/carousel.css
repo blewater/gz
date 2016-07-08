@@ -91,10 +91,6 @@
     transition: opacity 1s ease-in-out 0s;
 }
 .gz-carousel .gz-slide.current .gz-slide-action {
-    position: absolute;
-    left: 20%;
-    top: 55%;
-    z-index: 4;
     opacity: 1;
     -webkit-transition: opacity 2s ease-in-out 4s; 
     -moz-transition: opacity 2s ease-in-out 4s;
@@ -124,18 +120,18 @@
         height: 200px;
     }
     .gz-carousel .gz-slide .gz-slide-title {
-        top: 25%;
+        top: 30%;
         font-size: 28px;
     }
     .gz-carousel .gz-slide .gz-slide-subtitle {
         font-size: 20px;
     }
     .gz-carousel .gz-slide .gz-slide-action {
-        top: 65%;
+        top: 60%;
     }
     .gz-carousel .gz-slide .gz-slide-action .btn-gz.btn-gz-alt {
-        height: 24px;
-        line-height: 24px;
+        height: 32px;
+        line-height: 32px;
         font-size: 20px;
     }
 }
@@ -214,6 +210,12 @@
 .gz-carousel:hover .gz-carousel-control { -ms-opacity: 1; opacity: 1; }
 .gz-carousel:hover .gz-carousel-control.gz-carousel-control-previous { left: 0; }
 .gz-carousel:hover .gz-carousel-control.gz-carousel-control-next { right: 0; }
+
+@media (max-width: 767px) {
+    .gz-carousel .gz-carousel-control { width: 40px; }
+    .gz-carousel .gz-carousel-control.gz-carousel-control-previous { left: -40px; }
+    .gz-carousel .gz-carousel-control.gz-carousel-control-next { right: -40px; }
+}
 /* #endregion */
 
 
@@ -262,5 +264,14 @@
 }
 .gz-carousel .gz-carousel-indicator.current {
     background-color: #fff;
+}
+
+
+@media (max-width: 767px) {
+    .gz-carousel .gz-carousel-indicators {
+        height: 40px;
+        line-height: 40px;
+        bottom: -40px;
+    }
 }
 /* #endregion */
