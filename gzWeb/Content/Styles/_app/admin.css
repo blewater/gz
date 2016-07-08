@@ -152,3 +152,53 @@
 .admin.admin-edit.manage-pages .admin-interface .content .listboxes .form-group .btn { margin-top: 130px; margin-bottom: 0; }
 .admin.admin-edit.manage-pages .admin-interface .content .listboxes .col-xs-5 { padding: 0; }
 /*endregion*/
+
+/*region Admin Main Page*/
+.admin.admin-main .bg-holder {
+    /*border: 1px solid black;*/
+    width: 500px;
+    position: relative;
+    margin: 0 auto;
+    top: 80px;
+}
+
+.admin.admin-main img { 
+    width: 500px; 
+    opacity: .3;
+}
+
+.admin.admin-main .admin-title {
+    position: absolute;
+    bottom: 70px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #27A95C;
+    opacity: .3;
+}
+
+@media (max-width: 510px) {
+    .admin.admin-main .bg-holder {
+    width: 250px;
+    top: 80px;
+    }
+
+    .admin.admin-main img { 
+        width: 250px; 
+    }
+
+    .admin.admin-main .admin-title {
+        bottom: 25px;
+        right: 10px;
+        font-size: 18px;
+    }
+}
+
+/*region Admin Header*/
+.admin-header .user-info { margin-top: 0; bottom: 10px; }
+.admin-header .user-info .dropdown-menu { top: 30px; }
+    .admin-header .user-info .dropdown-menu li {
+        display: block;
+        margin-right: 0;
+    }
+.admin-header .user-info .dropdown-menu li a { padding-top: 7px; }
