@@ -114,7 +114,7 @@
 
         function getFeaturedGames() {
             getMostPopularGames();
-            getRecommendedGames();
+            //getRecommendedGames();
             //getBiggestWinGames();
             //getLastPlayedGames();
             //getMostPlayedGames();
@@ -129,8 +129,7 @@
                 for (i = 0; i < getCategoriesResult.categories.length; i++) {
                     $scope.gameCategories.push({
                         name: getCategoriesResult.categories[i],
-                        selected: true,
-                        collapsed: false,
+                        selected: false,
                         searching: false,
                         currentPageIndex: 0,
                         totalGameCount: 0,
@@ -138,7 +137,6 @@
                         games: []
                     });
                 }
-                $scope.searchGames();
             }, logError);
         };
         $scope.getCategoryTitle = function (name) {
@@ -158,7 +156,10 @@
         }
 
         $scope.onCategorySelected = function (category) {
-            fetchGamesByCategory(category);
+            category.selected = !category.selected;
+            if (category.games.length === 0) {
+
+            }
         };
 
 
@@ -176,7 +177,6 @@
             category.searching = true;
             emCasino.getGames({
                 filterByCategory: [category.name],
-                filterByName: getNameTags(),
                 filterByPlatform: null,
                 expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail,
                 pageSize: pageSize,
