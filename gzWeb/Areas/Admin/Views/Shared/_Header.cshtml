@@ -1,11 +1,14 @@
-﻿<div class="admin-header">
+﻿@using Microsoft.AspNet.Identity
+<div class="admin-header">
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a id="logo" class="navbar-brand" href="/">
-                    <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo"/>
-                    <span class="version">admin</span>
-                    <h2 class="visible-lg">greenzorro</h2>
+                <a id="logo" class="navbar-brand" href="@Url.Action("Index", "Home", new {Area = "Admin"})">
+                    <img src="@Url.Content("~/Content/images/logo.svg")" alt="greenzorro"/>
+                    <h2 class="relative">
+                        greenzorro
+                        <span class="version">admin</span>
+                    </h2>
                 </a>
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse-section">
                     <span class="sr-only">Toggle navigation</span>
@@ -24,6 +27,27 @@
                             <li><a href="@Url.Action("Index", "EmailTemplates", new {Area = "Admin"})">Emails</a></li>
                             <li><a href="@Url.Action("Index", "Logs", new {Area = "Admin"})">Logs</a></li>
                             <li><a href="@Url.Action("Index", "DynamicPages", new {Area = "Admin"})">Dynamic Pages</a></li>
+                            @if (Request.IsAuthenticated)
+                            {
+                                using (Html.BeginForm("LogOff", "Home", FormMethod.Post, new { id = "logoutForm", @class="pull-right", Area = "Admin" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                <li>
+                                    <span class="user-info pull-right">
+                                        <span class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown">
+                                            <span class="user-initials img-circle">
+                                                <span class="user-initials-text">IN</span>
+                                            </span>
+                                        </span>
+                                        <ul class="dropdown-menu dropdown-menu-right">                                        
+                                            <li><h5>@User.Identity.GetUserName()</h5></li>
+                                            <li role="separator" class="divider"></li>
+                                            <li><a class="text-center" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                                        </ul>
+                                    </span>
+                                </li>
+                                }
+                            }
                         </ul>
                     </div>
                 </div>
