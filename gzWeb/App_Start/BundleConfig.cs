@@ -19,7 +19,6 @@ namespace gzWeb
             ));
 
             bundles.Add(new StyleBundle("~/css/modules").Include(
-                "~/Content/Styles/ng-tags-input/ng-tags-input.min.css"
             ));
 
             bundles.Add(new StyleBundle("~/css/app").Include(
@@ -91,13 +90,11 @@ namespace gzWeb
                 , "~/Scripts/angular-moment/angular-moment.min.js"
                 , "~/Scripts/angular-match-media/match-media.js"
                 , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
-                , "~/Scripts/angular-count-to/angular-count-to.min.js"
                 , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
                 , "~/Scripts/angular-wamp/angular-wamp.js" // TODO: "~/Scripts/angular-wamp/angular-wamp.min.js"
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
-                , "~/Scripts/ng-tags-input/ng-tags-input.min.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 //, "~/Scripts/_modules/styleInjector.js"

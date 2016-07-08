@@ -25,14 +25,11 @@ var APP = (function () {
         , 'matchMedia'
         , 'LocalStorageModule'
         , 'angularSpinner'
-        , 'countTo'
         , 'FBAngular'
         , 'vxWamp'
         , 'ngAutocomplete'
         , 'vcRecaptcha'
         , 'isoCurrency'
-        , 'ngTagsInput'
-        //, 'angular-carousel'
         //, 'logToServer'
     ]);
 
