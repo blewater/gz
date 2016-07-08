@@ -10,7 +10,9 @@ using gzDAL.Models;
 using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
 using gzWeb.Areas.Mvc.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
@@ -60,7 +62,7 @@ namespace gzWeb.Areas.Admin.Controllers
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
-
+       
         //
         // POST: /Account/Login
         [HttpPost]
@@ -101,6 +103,14 @@ namespace gzWeb.Areas.Admin.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LogOff()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Index", "Home");
+        }
+
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -110,19 +120,12 @@ namespace gzWeb.Areas.Admin.Controllers
             return RedirectToAction("Index", "Home", new {Area = "Admin"});
         }
 
-        public async Task<ActionResult> SendTestEmail()
+        private IAuthenticationManager AuthenticationManager
         {
-            var dataObj = new Dictionary<object, object>
-                          {
-                                  {"FirstName", "Dinos"},
-                                  {"LastName", "Chatzopoulos"}
-                          };
-
-            await _emailService.SendEmail("testEmail", new MailAddress("xdinos@gmail.com", "from me"), "xdinos@gmail.com", dataObj);
-
-            return RedirectToAction("Index");
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
         }
-
-        private readonly IEmailService _emailService;
     }
 }
