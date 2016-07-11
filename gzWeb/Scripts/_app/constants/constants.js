@@ -158,6 +158,7 @@
             sm_rel_green: { radius: 5, width: 2, length: 4, color: '#27A95C', position: 'relative', top: '0' },
             xs_rel_white: { radius: 4, width: 2, length: 3, color: '#fff', position: 'relative', top: '0' },
             xs_rel_green: { radius: 4, width: 2, length: 3, color: '#27A95C', position: 'relative', top: '0' },
+            xs_abs_green: { radius: 4, width: 2, length: 3, color: '#27A95C', position: 'absolute', top: '50%' },
         },
         storageKeys: {
             version: 'gz_version',
