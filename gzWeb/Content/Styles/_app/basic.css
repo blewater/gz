@@ -22,6 +22,7 @@ body {
     font-weight: 300;
     background: #F2F2F2;
     overflow-x: hidden;
+    z-index: 0;
 }
 body.mobile-menu {
     overflow-y: hidden;
