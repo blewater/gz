@@ -765,6 +765,8 @@
     <Content Include="Scripts\spin\spin.js" />
     <Content Include="Scripts\spin\spin.min.js" />
     <Content Include="Scripts\_app\app.js" />
+    <Content Include="Scripts\_app\constants\emConCfg.js" />
+    <Content Include="Scripts\_app\constants\emConCfg-Stage.js" />
     <Content Include="Scripts\_app\global.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />

@@ -32,14 +32,14 @@
         }]);
     }]);
 
-    APP.config(['$wampProvider', 'constants', function ($wampProvider, constants) {        
+    APP.config(['$wampProvider', 'emConCfg', function ($wampProvider, emConCfg) {        
         $wampProvider.init({
             transports: [
-                { 'type': 'websocket', 'url': constants.webSocketApiUrl },
-                { 'type': 'longpoll', 'url': constants.fallbackApiUrl }
+                { 'type': 'websocket', 'url': emConCfg.webSocketApiUrl },
+                { 'type': 'longpoll', 'url': emConCfg.fallbackApiUrl }
             ],
-            url: constants.websocketApiUrl,
-            realm: constants.domainPrefix
+            url: emConCfg.websocketApiUrl,
+            realm: emConCfg.domainPrefix
         });
     }]);
 

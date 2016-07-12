@@ -1,4 +1,6 @@
-﻿using System.Web.Optimization;
+﻿using System;
+using System.Configuration;
+using System.Web.Optimization;
 
 namespace gzWeb
 {
@@ -100,76 +102,81 @@ namespace gzWeb
                 //, "~/Scripts/_modules/styleInjector.js"
             ));
 
-            bundles.Add(new ScriptBundle("~/js/app").Include(
-                "~/Scripts/_app/app.js"
-            ).Include(
-                "~/Scripts/_app/configuration/config.js"
-                , "~/Scripts/_app/constants/constants.js"
+            var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
+            var everyMatrixStage = !string.IsNullOrEmpty(everyMatrixStageSetting) && Convert.ToBoolean(everyMatrixStageSetting);
 
-                , "~/Scripts/_app/controllers/authCtrl.js"
-                , "~/Scripts/_app/controllers/templates/headerCtrl.js"
-                , "~/Scripts/_app/controllers/templates/headerNewCtrl.js"
-                , "~/Scripts/_app/controllers/templates/footerCtrl.js"
-                , "~/Scripts/_app/controllers/templates/depositCreditCardCtrl.js"
-                , "~/Scripts/_app/controllers/templates/depositTrustlyCtrl.js"
-                , "~/Scripts/_app/controllers/guest/homeCtrl.js"
-                , "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
-                , "~/Scripts/_app/controllers/guest/aboutCtrl.js"
-                , "~/Scripts/_app/controllers/guest/contactCtrl.js"
-                , "~/Scripts/_app/controllers/guest/faqCtrl.js"
-                , "~/Scripts/_app/controllers/guest/playgroundCtrl.js"
-                , "~/Scripts/_app/controllers/investments/summaryCtrl.js"
-                , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
-                , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
-                , "~/Scripts/_app/controllers/investments/activityCtrl.js"
-                , "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
-                , "~/Scripts/_app/controllers/games/gamesCtrl.js"
-                , "~/Scripts/_app/controllers/games/gameCtrl.js"
-                , "~/Scripts/_app/controllers/account/registerCtrl.js"
-                , "~/Scripts/_app/controllers/account/loginCtrl.js"
-                , "~/Scripts/_app/controllers/account/forgotPasswordCtrl.js"
-                , "~/Scripts/_app/controllers/account/resetPasswordCtrl.js"
-                , "~/Scripts/_app/controllers/account/changePasswordCtrl.js"
-                , "~/Scripts/_app/controllers/account/registerAccountCtrl.js"
-                , "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
-                , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
-                , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
-                //ACCOUNT MANAGEMENT
-                , "~/Scripts/_app/controllers/account/depositCtrl.js"
-                , "~/Scripts/_app/controllers/account/withdrawCtrl.js"
-                , "~/Scripts/_app/controllers/account/pendingWithdrawalsCtrl.js"
-                , "~/Scripts/_app/controllers/account/transactionHistoryCtrl.js"
-                , "~/Scripts/_app/controllers/account/bonusesCtrl.js"
-                , "~/Scripts/_app/controllers/account/myProfileCtrl.js"
+            bundles.Add(new ScriptBundle("~/js/app")
+                                .Include("~/Scripts/_app/app.js")
+                                .Include("~/Scripts/_app/configuration/config.js"
+                                        , "~/Scripts/_app/constants/constants.js"
+                                        , everyMatrixStage
+                                                  ? "~/Scripts/_app/constants/emConCfg-stage.js"
+                                                  : "~/Scripts/_app/constants/emConCfg.js"
 
+                                        , "~/Scripts/_app/controllers/authCtrl.js"
+                                        , "~/Scripts/_app/controllers/templates/headerCtrl.js"
+                                        , "~/Scripts/_app/controllers/templates/headerNewCtrl.js"
+                                        , "~/Scripts/_app/controllers/templates/footerCtrl.js"
+                                        , "~/Scripts/_app/controllers/templates/depositCreditCardCtrl.js"
+                                        , "~/Scripts/_app/controllers/templates/depositTrustlyCtrl.js"
+                                        , "~/Scripts/_app/controllers/guest/homeCtrl.js"
+                                        , "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
+                                        , "~/Scripts/_app/controllers/guest/aboutCtrl.js"
+                                        , "~/Scripts/_app/controllers/guest/contactCtrl.js"
+                                        , "~/Scripts/_app/controllers/guest/faqCtrl.js"
+                                        , "~/Scripts/_app/controllers/guest/playgroundCtrl.js"
+                                        , "~/Scripts/_app/controllers/investments/summaryCtrl.js"
+                                        , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
+                                        , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
+                                        , "~/Scripts/_app/controllers/investments/activityCtrl.js"
+                                        , "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
+                                        , "~/Scripts/_app/controllers/games/gamesCtrl.js"
+                                        , "~/Scripts/_app/controllers/games/gameCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/registerCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/loginCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/forgotPasswordCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/resetPasswordCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/changePasswordCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/registerAccountCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
+                                        //ACCOUNT MANAGEMENT
+                                        , "~/Scripts/_app/controllers/account/depositCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/withdrawCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/pendingWithdrawalsCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/transactionHistoryCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/bonusesCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/myProfileCtrl.js"
 
-                , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
-                , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"
-                , "~/Scripts/_app/directives/gzPerformanceGraph.js"
-                , "~/Scripts/_app/directives/gzCheckBox.js"
-                , "~/Scripts/_app/directives/gzSelect.js"
-                , "~/Scripts/_app/directives/gzFieldOk.js"
-                , "~/Scripts/_app/directives/gzAuthAccess.js"
-                , "~/Scripts/_app/directives/gzFeaturedGame.js"
-                , "~/Scripts/_app/directives/gzFeaturedGames.js"
-                , "~/Scripts/_app/directives/gzCarousel.js"
+                                        , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
+                                        , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"
+                                        , "~/Scripts/_app/directives/gzPerformanceGraph.js"
+                                        , "~/Scripts/_app/directives/gzCheckBox.js"
+                                        , "~/Scripts/_app/directives/gzSelect.js"
+                                        , "~/Scripts/_app/directives/gzFieldOk.js"
+                                        , "~/Scripts/_app/directives/gzAuthAccess.js"
+                                        , "~/Scripts/_app/directives/gzFeaturedGame.js"
+                                        , "~/Scripts/_app/directives/gzFeaturedGames.js"
+                                        , "~/Scripts/_app/directives/gzCarousel.js"
 
-                , "~/Scripts/_app/services/emWamp.js"
-                , "~/Scripts/_app/services/emCasino.js"
-                , "~/Scripts/_app/services/emBanking.js"
-                , "~/Scripts/_app/services/authInterceptor.js"
-                , "~/Scripts/_app/services/authService.js"
-                , "~/Scripts/_app/services/apiService.js"
-                , "~/Scripts/_app/services/helpersService.js"
-                , "~/Scripts/_app/services/chatService.js"
-                , "~/Scripts/_app/services/iovationService.js"
+                                        , "~/Scripts/_app/services/emWamp.js"
+                                        , "~/Scripts/_app/services/emCasino.js"
+                                        , "~/Scripts/_app/services/emBanking.js"
+                                        , "~/Scripts/_app/services/authInterceptor.js"
+                                        , "~/Scripts/_app/services/authService.js"
+                                        , "~/Scripts/_app/services/apiService.js"
+                                        , "~/Scripts/_app/services/helpersService.js"
+                                        , "~/Scripts/_app/services/chatService.js"
+                                        , "~/Scripts/_app/services/iovationService.js"
 
-                , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
-                , "~/Scripts/_app/services/nsMessageService/nsMessages.js"
-                , "~/Scripts/_app/services/nsMessageService/nsPromptCtrl.js"
-                , "~/Scripts/_app/services/nsMessageService/nsConfirmCtrl.js"
-                , "~/Scripts/_app/services/nsMessageService/nsMessageService.js"
-            ));
+                                        , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
+                                        , "~/Scripts/_app/services/nsMessageService/nsMessages.js"
+                                        , "~/Scripts/_app/services/nsMessageService/nsPromptCtrl.js"
+                                        , "~/Scripts/_app/services/nsMessageService/nsConfirmCtrl.js"
+                                        , "~/Scripts/_app/services/nsMessageService/nsMessageService.js"
+                                ));
+
             #endregion
         }
     }
