@@ -302,11 +302,13 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\CarouselEntriesController.cs" />
     <Compile Include="Areas\Admin\Controllers\DynamicPagesController.cs" />
     <Compile Include="Areas\Admin\Controllers\EmailTemplatesController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageController.cs" />
+    <Compile Include="Areas\Admin\Models\CarouselEntriesViewModel.cs" />
     <Compile Include="Areas\Admin\Models\DynamicViewModel.cs" />
     <Compile Include="Areas\Admin\Models\EmailsViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UsersViewModel.cs" />
@@ -497,6 +499,10 @@
     <Compile Include="Migrations\201607061508209_SQL_Functions.Designer.cs">
       <DependentUpon>201607061508209_SQL_Functions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607121223531_Add_CarouselEntry.cs" />
+    <Compile Include="Migrations\201607121223531_Add_CarouselEntry.Designer.cs">
+      <DependentUpon>201607121223531_Add_CarouselEntry.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -665,6 +671,10 @@
     <Content Include="Areas\Admin\Views\DynamicPages\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\DynamicPages\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\UserEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Edit.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
@@ -1057,6 +1067,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607061508209_SQL_Functions.resx">
       <DependentUpon>201607061508209_SQL_Functions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607121223531_Add_CarouselEntry.resx">
+      <DependentUpon>201607121223531_Add_CarouselEntry.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
