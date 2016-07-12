@@ -141,16 +141,7 @@
         //version: 0.7,
         //debugMode: true,
         html5Mode: true,
-
-        // staging
-        webSocketApiUrl: 'wss://webapi-stage.everymatrix.com/v2',
-        fallbackApiUrl: 'https://fb-webapi-stage.everymatrix.com',
-
-        // production
-        //webSocketApiUrl: 'wss://api3.everymatrix.com/v2',
-        //fallbackApiUrl: 'https://comet3.everymatrix.com',
-
-        domainPrefix: 'http://www.greenzorro.com',
+        
         emailVerificationUrl: 'localhost:63659/activate?key=',
 
         area: "/Mvc",
