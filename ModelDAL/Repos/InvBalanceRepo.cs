@@ -96,6 +96,7 @@ namespace gzDAL.Repos {
             var invGainSumTask = _db.InvBalances
                 .Where(i => i.CustomerId == customerId)
                 .Select(i=>i.InvGainLoss)
+                .DefaultIfEmpty(0)
                 .DeferredSum()
                 // Cache 4 Hours
                 .FromCacheAsync(DateTime.UtcNow.AddHours(4));
