@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[CurrencyRates] (
+CREATE TABLE [dbo].[CurrencyRates] (
     [Id]            INT              IDENTITY (1, 1) NOT NULL,
     [TradeDateTime] DATETIME         NOT NULL,
     [FromTo]        CHAR (6)         NOT NULL,
@@ -8,7 +8,10 @@
 );
 
 
+
+
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [CurrRate_ftd_idx]
-    ON [dbo].[CurrencyRates]([TradeDateTime] ASC, [FromTo] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [IDX_CurrRate_FT_TDT]
+    ON [dbo].[CurrencyRates]([FromTo] ASC, [TradeDateTime] DESC)
+    INCLUDE([rate]);
 

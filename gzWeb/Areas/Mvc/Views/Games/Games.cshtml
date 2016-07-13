@@ -3,23 +3,49 @@
 }
 <div class="games-list">
     <div class="full-width">
-        <gz-carousel gz-slides="carouselGames"></gz-carousel> 
+        <gz-carousel gz-slides="carouselGames"></gz-carousel>
     </div>
 
-    <div class="search-panel">
+    <div class="filters">
         <div class="container-fluid">
-            <div class="search-categories col-xs-12 col-sm-6 col-lg-9">
-                <span ng-repeat="category in gameCategories">
-                    <a class="" ng-click="onCategorySelected(category)">
-                        {{getCategoryTitle(category.name)}}
-                    </a>
-                </span>
+            <div class="col-xs-12 col-sm-6 col-lg-9">
+                <div class="categories">
+                    <span ng-repeat="category in gameCategories">
+                        <a class="" ng-click="onCategorySelected(category)">
+                            {{getCategoryTitle(category.name)}}
+                        </a>
+                    </span>
+                </div>
             </div>
-            <div class="search-game col-xs-12 col-sm-6 col-lg-3">
-                <input type="search" placeholder="SEARCH GAME" class="form-control" ng-model="searchInput" ng-focus="searchFocused = true" ng-blur="searchFocused = false">
-                <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':searchFocused || searchInput}">
-                    <i class="fa fa-search"></i>
-                </span>
+            <div class="col-xs-12 col-sm-6 col-lg-3">
+                <div class="live-search">
+                    <input type="search" placeholder="SEARCH GAME" class="form-control" ng-model="liveSearch.input"
+                           ng-focus="onLiveSearchFocused()" ng-blur="onLiveSearchBlurred()" ng-change="onLiveSearchChange()">
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused': liveSearch.focused || liveSearch.input}">
+                        <i ng-show="!liveSearch.searching" class="fa fa-search"></i>
+                        <span ng-show="liveSearch.searching" us-spinner="spinnerGreenXsAbs"></span>
+                    </span>
+                    <ul class="media-list live-search-results" ng-show="liveSearch.input.length > 2">
+                        <li ng-show="liveSearch.games.length === 0" class="no-results">No games to display</li>
+                        <li ng-hide="liveSearch.games.length === 0" class="media" ng-class="{'selected': g.selected}" ng-repeat="g in liveSearch.games" ng-click="selectResult($index)">
+                            <div class="media-left">
+                                <a ng-click="onGameSelected(g.slug)">
+                                    <img class="media-object" ng-src="{{g.logo}}">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">{{g.name}}</h4>
+                                <div>{{g.description}}</div>
+                            </div>
+                        </li>
+                        <li ng-show="liveSearch.games.length < liveSearch.totalGameCount" class="more-results">
+                            <button type="button" ng-click="onLoadMore()">
+                                <span>Load more</span>
+                                <span class="badge">{{liveSearch.totalGameCount - liveSearch.games.length}}</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

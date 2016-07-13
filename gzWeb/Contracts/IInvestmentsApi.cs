@@ -12,7 +12,7 @@ namespace gzWeb.Contracts
 
         IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user);
 
-        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
+        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, bool bypassQueue = false);
 
         IEnumerable<PlanViewModel> GetCustomerPlans(int customerId, decimal nextInvestAmount = 0);
     }

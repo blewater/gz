@@ -172,8 +172,14 @@ namespace gzDAL.Conf
         /// <param name="custId"></param>
         private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
 
-            new InvBalanceRepo(context, 
-                new CustFundShareRepo(context, new CustPortfolioRepo(context)), new GzTransactionRepo(context))
+            var custPortfolioRepo = new CustPortfolioRepo(context);
+            new InvBalanceRepo(
+                context, 
+                new CustFundShareRepo(
+                    context,
+                    custPortfolioRepo), 
+                new GzTransactionRepo(context), 
+                custPortfolioRepo)
                 .SaveDbCustomerMonthlyBalancesByTrx(custId);
         }
 

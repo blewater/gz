@@ -4,8 +4,6 @@ using System.Reactive.Linq;
 using System.Runtime.Remoting.Messaging;
 using gzCpcLib.Task;
 using NLog;
-using PostSharp.Patterns.Diagnostics;
-using PostSharp.Extensibility;
 
 namespace gzCpcLib.Options {
 
@@ -35,7 +33,6 @@ namespace gzCpcLib.Options {
             this._customerBalUpd = inCustomerBalUpd;
         }
 
-        [Log]
         public void ProcessOptions() {
 
             if (!_cpcOptions.ParsingSuccess) {
