@@ -328,12 +328,17 @@ namespace gzWeb.Controllers {
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
+            DateTime? latestBalanceUpdateDatetime;
+            var balance = _invBalanceRepo.GetCachedLatestBalanceTimestamp(
+                _invBalanceRepo.CacheLatestBalance(user.Id), out latestBalanceUpdateDatetime);
+
+
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
 
             var model = new PerformanceDataViewModel
             {
-                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
+                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * balance),
                 NextExpectedInvestment = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth())),
                 Plans = GetCustomerPlans(user.Id)
             };
