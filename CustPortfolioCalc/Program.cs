@@ -5,8 +5,6 @@ using gzCpcLib.Task;
 using gzDAL.Models;
 using gzDAL.Repos;
 using NLog;
-using PostSharp.Patterns.Diagnostics;
-using PostSharp.Extensibility;
 
 namespace CustPortfoliosCalc {
 
@@ -15,8 +13,6 @@ namespace CustPortfoliosCalc {
         const int SleepIntervalMillis = 250;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [Log]
-        [LogException]
         public static void Main(string[] args) {
 
             try {
@@ -33,11 +29,11 @@ namespace CustPortfoliosCalc {
             }
         }
 
-        [Log]
         private static void ProcessParsedOptions(CpcOptions options) {
 
             var db = new ApplicationDbContext();
 
+            var custPortfolioRepo = new CustPortfolioRepo(db);
             var optionsActions = new OptionsActions(
                 options,
                 new ExchRatesUpdTask(),
@@ -46,8 +42,9 @@ namespace CustPortfoliosCalc {
                     db,
                     new InvBalanceRepo(
                         db,
-                        new CustFundShareRepo(db, new CustPortfolioRepo(db)),
-                        new GzTransactionRepo(db))));
+                        new CustFundShareRepo(db, custPortfolioRepo),
+                        new GzTransactionRepo(db), 
+                        custPortfolioRepo)));
 
             optionsActions.ProcessOptions();
 
