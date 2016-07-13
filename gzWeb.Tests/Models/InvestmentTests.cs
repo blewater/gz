@@ -51,33 +51,6 @@ namespace gzWeb.Tests.Models {
         }
 
         [Test]
-        public void VintagesSellingValues() {
-            using (var db = new ApplicationDbContext(null)) {
-
-                var custIdList = db.Users
-                    .Where(u => new List<string>() {
-
-                        "6month@allocation.com",
-                        "info@nessos.gr",
-                        "testuser@gz.com"
-
-                    }.Contains(u.Email)).Select(u => u.Id).ToList();
-
-                foreach (var custId in custIdList) {
-
-                    var balRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db));
-
-                    var customerVintages = balRepo.GetCustomerVintages(custId);
-
-                    foreach (var customerVintage in customerVintages) {
-
-                        var soldShares = balRepo.GetCustomerVintagesSellingValue(custId);
-                    }
-                }
-            }
-        }
-
-        [Test]
         public void SaveDbSellPortfolio() {
 
             using (var db = new ApplicationDbContext(null)) {
@@ -90,10 +63,17 @@ namespace gzWeb.Tests.Models {
                 var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
                     23, 00, 00);
 
+                var custPortfolioRepo = new CustPortfolioRepo(db);
+                RiskToleranceEnum monthsPortfolioRisk;
                 var soldShares = new InvBalanceRepo(
                     db, 
-                    new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
-                    .SaveDbSellAllCustomerFundsShares(custId, lastMonthDay);
+                    new CustFundShareRepo(db, custPortfolioRepo),
+                    new GzTransactionRepo(db),
+                    custPortfolioRepo)
+                    .SaveDbSellAllCustomerFundsShares(
+                        custId, 
+                        lastMonthDay, 
+                        out monthsPortfolioRisk);
 
                 Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
 
@@ -101,48 +81,25 @@ namespace gzWeb.Tests.Models {
         }
 
         [Test]
-        public void SaveDbUpdCustomerBalancesByTrx() {
-
-            using (var db = new ApplicationDbContext(null)) {
-
-                CreateTestCustomer(db, TestUser6Month(db));
-                CreateTestCustomer(db, TestInfo(db));
-                CreateTestCustomer(db, TestUser(db));
-
-                var custIdList = db.Users
-                    .Where(u => new List<string>() {
-
-                        "6month@allocation.com",
-                        "info@nessos.gr",
-                        "testuser@gz.com"
-
-                    }.Contains(u.Email)).Select(u=>u.Id).ToList();
-
-                foreach (var custId in custIdList) {
-
-                    // Add invested Customer Portfolio
-                    CreateTestCustomerPortfolioSelections(custId);
-
-                    CreateTestPlayerLossTransactions(custId);
-                    CreateTestPlayerDepositWidthdrawnTransactions(custId);
-
-                    new InvBalanceRepo(
-                        db, 
-                        new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
-                        new GzTransactionRepo(db))
-                        .SaveDbCustomerMonthlyBalancesByTrx(custId);
-                }
-            }
-        }
-
-        [Test]
         public void SaveDbAfterCleanTrxTblUpdBalancesByTrx() {
 
-            string[] customerEmails = new string[] { "info@nessos.gr", "testuser@gz.com", "6month@allocation.com" };
+            string[] customerEmails = new string[] {
+                "salem8@gmail.com",
+                "info@nessos.gr",
+                "testuser@gz.com",
+                "6month@allocation.com"
+            };
 
             using (ApplicationDbContext db = new ApplicationDbContext(null)) {
 
-                foreach (var customerEmail in customerEmails) {
+                var custPortfolioRepo = new CustPortfolioRepo(db);
+                var invBalance = new InvBalanceRepo(
+                    db,
+                    new CustFundShareRepo(db, custPortfolioRepo),
+                    new GzTransactionRepo(db),
+                    custPortfolioRepo);
+
+                    foreach (var customerEmail in customerEmails) {
 
                     int custId = db.Users
                         .Where(u => u.Email == customerEmail)
@@ -152,24 +109,15 @@ namespace gzWeb.Tests.Models {
                     if (custId != 0) {
 
                         db.Database.ExecuteSqlCommand("Delete GzTrxs Where CustomerId = " + custId);
-                        db.Database.ExecuteSqlCommand("Delete GmTrxs Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Delete CustFundShares Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Update InvBalances Set Sold = 0 Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
                         CreateTestCustomerPortfolioSelections(custId);
 
-
                         CreateTestPlayerLossTransactions(custId);
 
-                        // Create Deposit only Transactions
-                        CreateTestPlayerDepositTransactions(custId);
-
-                        new InvBalanceRepo(
-                            db, 
-                            new CustFundShareRepo(db, new CustPortfolioRepo(db)), 
-                            new GzTransactionRepo(db))
-                            .SaveDbCustomerAllMonthlyBalances(custId);
+                        invBalance.SaveDbCustomerAllMonthlyBalances(custId);
                     }
 
                 }
@@ -191,33 +139,11 @@ namespace gzWeb.Tests.Models {
             }
         }
 
-        public void CreateTestPlayerDepositTransactions(int custId) {
-            using (var db = new ApplicationDbContext(null)) {
-                var gzTrx = new GzTransactionRepo(db);
-
-                // Add deposit, withdrawals
-                gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
-                    amount: 3500, createdOnUtc: new DateTime(2015, 7, 15));
-                gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
-                    amount: 8000, createdOnUtc: new DateTime(2015, 7, 15));
-            }
-        }
-
         public void CreateTestPlayerLossTransactions(int custId) {
             using (var db = new ApplicationDbContext(null)) {
                 var gzTrx = new GzTransactionRepo(db);
 
-                // Add playing losses for first 6 months of 2015
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 160, createdOnUtc: new DateTime(2015, 1, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 120, createdOnUtc: new DateTime(2015, 2, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, createdOnUtc: new DateTime(2015, 3, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 170, createdOnUtc: new DateTime(2015, 4, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 300, createdOnUtc: new DateTime(2015, 5, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, createdOnUtc: new DateTime(2015, 6, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 200, createdOnUtc: new DateTime(2016, 1, 1));
-                gzTrx.SaveDbPlayingLoss(customerId: custId, totPlayinLossAmount: 100, createdOnUtc: new DateTime(2015, 9, 30));
-
-                var startYearMonthStr = "201510";
+                var startYearMonthStr = "201501";
                 var endYeerMonthStr = DateTime.UtcNow.ToStringYearMonth();
 
                 while (startYearMonthStr.BeforeEq(endYeerMonthStr)) {
@@ -226,7 +152,12 @@ namespace gzWeb.Tests.Models {
                         new DateTime(
                             int.Parse(startYearMonthStr.Substring(0, 4)),
                             int.Parse(startYearMonthStr.Substring(4, 2)), 
-                            15);
+                            15,
+                            19,
+                            12,
+                            59,
+                            333,
+                            DateTimeKind.Utc);
 
                     gzTrx.SaveDbPlayingLoss(
                         customerId: custId, 
@@ -241,24 +172,43 @@ namespace gzWeb.Tests.Models {
         [Test]
         public void SaveDbUpdAllCustomerBalances() {
             using (var db = new ApplicationDbContext(null)) {
-                new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
+
+                var custPortfolioRepo = new CustPortfolioRepo(db);
+                new InvBalanceRepo(db, 
+                    new CustFundShareRepo(db, custPortfolioRepo), 
+                    new GzTransactionRepo(db), 
+                    custPortfolioRepo)
+                    
                     .SaveDbAllCustomersMonthlyBalances();
             }
         }
 
         [Test]
         public void SaveDbUpdOneCustomerOneMonthBalance() {
+            UpdateInvBalanceOneMonth("201501");
+        }
+
+        private static void UpdateInvBalanceOneMonth(string yearMonth) {
+
             using (var db = new ApplicationDbContext(null)) {
+
+                var custPortfolioRepo = new CustPortfolioRepo(db);
                 new InvBalanceRepo(
-                    db, 
-                    new CustFundShareRepo(db, new CustPortfolioRepo(db)), new GzTransactionRepo(db))
+                    db,
+                    new CustFundShareRepo(db, custPortfolioRepo), new GzTransactionRepo(db), custPortfolioRepo)
                     .SaveDbCustomerMonthlyBalance(
-                    /** 6month User **/
-                        db.Users.Where(u => u.Email == "info@nessos.gr")
-                        .Select(u => u.Id)
+                        /** 6month User **/
+                        db.Users.Where(u => u.Email == "salem8@gmail.com")
+                            .Select(u => u.Id)
                             /** Update month balance **/
-                        .Single(), "201606");
+                            .Single(), yearMonth);
             }
+        }
+
+        [Test]
+        public void SaveDbUpdOneCustomerPresentMonthBalance() {
+            var yearMonthNow = DateTime.UtcNow.ToStringYearMonth();
+            UpdateInvBalanceOneMonth(yearMonthNow);
         }
 
         private int CreateTestCustomer(ApplicationDbContext db, ApplicationUser newUser) {

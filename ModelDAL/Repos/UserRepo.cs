@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using gzDAL.ModelsUtil;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using gzDAL.DTO;
 using gzDAL.Models;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using Z.EntityFramework.Plus;
+using NLog;
 
 namespace gzDAL.Repos
 {
@@ -18,6 +22,7 @@ namespace gzDAL.Repos
         private readonly ApplicationDbContext _db;
         private readonly IGzTransactionRepo _gzTransactionRepo;
         private readonly IInvBalanceRepo _invBalanceRepo;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public UserRepo(ApplicationDbContext db, 
             IGzTransactionRepo gzTransactionRepo, 
@@ -28,86 +33,117 @@ namespace gzDAL.Repos
             this._invBalanceRepo = invBalanceRepo;
         }
 
+        private Task<IEnumerable<ApplicationUser>> CacheUser(int userId) {
+
+            var userQtask = _db.Users
+                .Where(u => u.Id == userId)
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+
+            return userQtask;
+        }
+        private ApplicationUser GetCachedUser(Task<IEnumerable<ApplicationUser>> userTask) {
+
+            var userRow = userTask.Result;
+            return userRow
+                .SingleOrDefault();
+        }
+
+        public ApplicationUser GetCachedUser(int userId) {
+            return GetCachedUser(CacheUser(userId));
+        }
+
         /// <summary>
         /// 
         /// Perform all the Summary SQL Queries in a optimized fashion to fill up the summary DTO object.
         /// 
         /// </summary>
         /// <returns></returns>
-        public UserSummaryDTO GetSummaryData(int userId, out ApplicationUser user) {
+        public UserSummaryDTO GetSummaryData(int userId, out ApplicationUser userRet) {
 
-            var futureUser = _db.Users
-                .Where(u => u.Id == userId)
-                .DeferredSingleOrDefault()
-                .FutureValue();
+            userRet = null;
+            UserSummaryDTO summaryDtoRet = null;
 
-            var totalInvestmentReturns = _db.InvBalances
-                .Where(b => b.CustomerId == userId)
-                .DeferredSum(b => (decimal?)b.SoldAmount)
-                .FutureValue();
+            try {
 
-            var lastBalanceRow = _db.InvBalances
-                .Where(i => i.CustomerId == userId)
-                .OrderByDescending(i => i.YearMonth)
-                .Select(b => new { UpdatedOnUTC = b.UpdatedOnUtc, b.Balance })
-                .DeferredFirstOrDefault()
-                .FutureValue();
+                //--------------- Start async queries
+                var userQtask = CacheUser(userId);
+                var latestBalanceTask = _invBalanceRepo.CacheLatestBalance(userId);
+                var invGainLossTask = _invBalanceRepo.CacheInvestmentReturns(userId);
 
-            decimal totalWithdrawalsAmount = _db.Database
-                .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
-                    new SqlParameter("@CustomerId", userId),
-                    new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.TransferToGaming))
-                .Single<decimal>();
+                //---------------- Execute SQL Functions
+                decimal totalWithdrawalsAmount = _db.Database
+                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.TransferToGaming))
+                    .Single<decimal>();
 
-            decimal totalInvestmentsAmount = _db.Database
-                .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@CustomerId, @TrxType)",
-                    new SqlParameter("@CustomerId", userId),
-                    new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
-                .Single<decimal>();
+                decimal totalInvestmentsAmount = _db.Database
+                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@CustomerId, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.CreditedPlayingLoss))
+                    .Single<decimal>();
 
-            var vintages = _invBalanceRepo.GetCustomerVintages(userId);
+                var vintages = _invBalanceRepo.GetCustomerVintages(userId);
 
-            var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
-            var lastInvestmentAmount = _db.Database
-                .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
-                    new SqlParameter("@CustomerId", userId),
-                    new SqlParameter("@YearMonth", thisYearMonthStr),
-                    new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.CreditedPlayingLoss))
-                .SingleOrDefault();
+                var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
+                var lastInvestmentAmount = _db.Database
+                    .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@YearMonth", thisYearMonthStr),
+                        new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.CreditedPlayingLoss))
+                    .SingleOrDefault();
 
-            var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(userId);
+                var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(userId);
 
-            var totalDeposits = _gzTransactionRepo.GetTotalDeposit(userId);
+                var totalDeposits = _gzTransactionRepo.GetTotalDeposit(userId);
 
-            var lastBalanceRowValue = lastBalanceRow.Value;
+                //-------------- Retrieve previously executed async query results
 
-            user = futureUser.Value;
+                // user
+                var userRow = userQtask.Result;
+                userRet = userRow
+                    .SingleOrDefault();
+                if (userRet == null) {
+                    _logger.Error("User with id {0} is null in GetSummaryData()", userId);
+                }
 
-            var userSummaryDto = new UserSummaryDTO() {
-                
-                Currency = CurrencyHelper.GetSymbol(user.Currency),
-                InvestmentsBalance = lastBalanceRowValue?.Balance??0M,
-                TotalDeposits = totalDeposits,
-                TotalWithdrawals = totalWithdrawalsAmount,
+                // balance, last update
+                DateTime? latestBalanceUpdateDatetime;
+                var balance = _invBalanceRepo.GetCachedLatestBalanceTimestamp(latestBalanceTask,
+                    out latestBalanceUpdateDatetime);
 
-                TotalInvestments = totalInvestmentsAmount,
+                // investment gain or loss
+                var invGainLossSum = _invBalanceRepo.GetCachedInvestmentReturns(invGainLossTask);
 
-                // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
-                TotalInvestmentsReturns = totalInvestmentReturns.Value??0,
+                summaryDtoRet = new UserSummaryDTO() {
 
-                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                LastInvestmentAmount = lastInvestmentAmount,
-                StatusAsOf = lastBalanceRowValue?.UpdatedOnUTC ?? DateTime.UtcNow.AddDays(-1),
-                Vintages = vintages,
+                    Currency = CurrencyHelper.GetSymbol(userRet.Currency),
+                    InvestmentsBalance = balance,
+                    TotalDeposits = totalDeposits,
+                    TotalWithdrawals = totalWithdrawalsAmount,
 
-                // Withdrawal eligibility
-                LockInDays = withdrawalEligibility.LockInDays,
-                EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
-                OkToWithdraw = withdrawalEligibility.OkToWithdraw,
-                Prompt = withdrawalEligibility.Prompt
-            };
+                    TotalInvestments = totalInvestmentsAmount,
 
-            return userSummaryDto;
+                    // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
+                    TotalInvestmentsReturns = invGainLossSum,
+
+                    NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
+                    LastInvestmentAmount = lastInvestmentAmount,
+                    StatusAsOf = latestBalanceUpdateDatetime ?? DateTime.UtcNow.AddDays(-1),
+                    Vintages = vintages,
+
+                    // Withdrawal eligibility
+                    LockInDays = withdrawalEligibility.LockInDays,
+                    EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
+                    OkToWithdraw = withdrawalEligibility.OkToWithdraw,
+                    Prompt = withdrawalEligibility.Prompt
+                };
+            }
+            catch (Exception ex) {
+                _logger.Error(ex, "Exception in GetSummaryData()");
+            }
+
+            return summaryDtoRet;
         }
     }
 }

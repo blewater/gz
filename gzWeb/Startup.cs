@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -69,12 +70,47 @@ namespace gzWeb {
             app.UseJSNLog();
             app.UseNLog();
 
-            //-------- Global Caching Configuration of Single GzConfiguration Row
+            CacheGlobalData();
+
+            //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
+        }
+
+        /// <summary>
+        /// 
+        /// Cache global database data applicable to all customers
+        /// 
+        /// </summary>
+        private static void CacheGlobalData() {
+
+//-------- Global Caching Configuration of Single GzConfiguration Row
             var db = new ApplicationDbContext();
             db.GzConfigurations
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
-            
-            //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
+
+                // 7 days cache
+                .FromCacheAsync(DateTime.UtcNow.AddDays(7));
+
+            //-------- Cache Fund prices for 2 hours
+            var funds = db.FundPrices
+                .Where(f => f.YearMonthDay == db.FundPrices.Select(d => f.YearMonthDay).Max())
+                .Select(f => new {f.Id, f.ClosingPrice})
+                .AsEnumerable();
+            foreach (var fund in funds) {
+                var key = "fundid" + fund.Id;
+
+                // 2 hours cache
+                MemoryCache.Default.Set(key, fund.ClosingPrice, DateTimeOffset.UtcNow.AddHours(2));
+            }
+
+            //-------- Cache Currencies for 4 hours
+            var rateObj = db.CurrencyRates
+                .Where(x => x.TradeDateTime == db.CurrencyRates.Select(r => r.TradeDateTime).Max())
+                .Select(x => new {x.FromTo, x.rate});
+            foreach (var rateObjVal in rateObj) {
+                var key = rateObjVal.FromTo;
+
+                // 4 hours cache
+                MemoryCache.Default.Set(key, rateObjVal.rate, DateTimeOffset.UtcNow.AddHours(4));
+            }
         }
 
         private static Container InitializeSimpleInjector(IAppBuilder app, HttpConfiguration config, MapperConfiguration automapperConfig)
