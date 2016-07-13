@@ -119,11 +119,32 @@ namespace gzWeb.Controllers {
 
         /// <summary>
         /// 
+        /// HttpPost the Vintages to have their Selling Values calculated.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult GetVintagesWithSellingValues(IList<VintageViewModel> vintages) {
+
+            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+
+            var userVintages = GetVintagesSellingValuesByUser(user, vintages);
+
+            return OkMsg(() => userVintages);
+        }
+
+        /************** Obsolete ***********/
+        /// <summary>
+        /// 
         /// HttpGet the Vintages with their Selling Values calculated
         /// 
         /// </summary>
         /// <returns></returns>
-        [HttpGet] public IHttpActionResult GetVintagesWithSellingValues()
+        [Obsolete]
+        [HttpGet]
+        public IHttpActionResult GetVintagesWithSellingValues()
         {
             var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
@@ -141,6 +162,7 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
+        [Obsolete]
         public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user) {
 
             CurrencyInfo userCurrency;
@@ -158,6 +180,36 @@ namespace gzWeb.Controllers {
             var vintages = customerVintages
                 .Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
             return vintages;
+        }
+
+        /// <summary>
+        /// 
+        /// Get the customer vintages with their selling value converted to the user currency.
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVM) {
+
+            CurrencyInfo userCurrency;
+            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+
+            var vintageDtos = vintagesVM
+                .Select(t => _mapper.Map<VintageViewModel, VintageDto>(t)).ToList();
+
+            var customerVintages = _invBalanceRepo
+                .GetCustomerVintagesSellingValue(user.Id, vintageDtos);
+
+            // Convert to User currency
+            foreach (var dto in customerVintages) {
+                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount * usdToUserRate);
+                dto.SellingValue = DbExpressions.RoundCustomerBalanceAmount(dto.SellingValue * usdToUserRate);
+            }
+
+            var vintagesVmRet = vintageDtos
+                .Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+
+            return vintagesVmRet;
         }
 
         /// <summary>

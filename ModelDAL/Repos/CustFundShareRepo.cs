@@ -318,7 +318,7 @@ namespace gzDAL.Repos {
                 var fundId = custFundShare.FundId;
 
                 // Calculate the current fund shares value
-                float fundPrice = GetLatestFundPrice(fundId);
+                float fundPrice = GetCachedLatestFundPrice(fundId);
 
                 // Calculate this month current fund value including the new cash investment
                 custFundShare.SharesValue = custFundShare.SharesNum * (decimal)fundPrice;
@@ -357,10 +357,12 @@ namespace gzDAL.Repos {
         /// 
         /// Gets the latest stored fund price for a traded fund share.
         /// 
+        /// Cached for 2 hours.
+        /// 
         /// </summary>
         /// <param name="fundId"></param>
         /// <returns></returns>
-        private float GetLatestFundPrice(int fundId) {
+        private float GetCachedLatestFundPrice(int fundId) {
 
             var key = "fundid" + fundId;
 
