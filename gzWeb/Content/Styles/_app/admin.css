@@ -195,10 +195,29 @@
 }
 
 /*region Admin Header*/
-.admin-header .user-info { margin-top: 0; bottom: 10px; }
-.admin-header .user-info .dropdown-menu { top: 30px; }
+.admin-header .navigation-menu { right: 80px; position: absolute; }
+.admin-header .navigation-menu ul li { display: inline-block; margin-right: 20px; }
+.admin-header .navigation-menu ul li a { display: block; color: #fff; text-transform: uppercase; text-decoration: none; top: 25px; }
+
+.admin-header .user-info { margin-top: 25px; bottom: 10px; float: right; right: 0; }
+.admin-header .user-info .dropdown-menu { top: 52px; }
     .admin-header .user-info .dropdown-menu li {
         display: block;
         margin-right: 0;
     }
 .admin-header .user-info .dropdown-menu li a { padding-top: 7px; }
+
+.admin-header .mobile-menu { display: none; }
+.admin-header .navbar .navbar-header .navbar-brand .version.mobile { display: none; }
+
+.admin-header .mobile-menu .dropdown-menu { background-color: #27A95C; top: 67px; position: fixed; padding: 20px 10px; width: 100%; border: none; border-radius: 0; }
+.admin-header .mobile-menu .dropdown-menu li a { padding-top: 10px; color: #fff; text-transform: uppercase; }
+.admin-header .mobile-menu .dropdown-menu > li > a:hover { background-color: #27A95C!important; background-image: none; }
+
+@media (max-width: 991px) {
+    .admin-header .navbar .navbar-header .navbar-brand .relative { display: none; }
+    .admin-header .navbar .navbar-header .navbar-brand .version.mobile { display: block; left: 40px; }
+
+    .admin-header .navigation-menu { display: none; }
+    .admin-header .mobile-menu { display: block; width: 100px; margin: 0 auto; right: 15px; }
+}
