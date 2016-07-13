@@ -23,7 +23,7 @@ namespace gzWeb.Controllers
         public IHttpActionResult Carousel()
         {
             var now = DateTime.UtcNow;
-            return OkMsg(() => _dbContext.DynamicPages.Where(x => x.Live && x.Category == "carousel" && x.LiveFrom >= now && x.LiveTo <= now));
+            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && x.LiveFrom >= now && x.LiveTo <= now));
         }
 
         [Route("Page")]

@@ -27,18 +27,6 @@ namespace gzDAL.Models
         [Required]
         public DateTime Birthday { get; set; }
 
-        [NotMapped]
-        public decimal InvBalance {
-            get
-            {
-                return InvBalances != null
-                               ? InvBalances
-                                         .OrderByDescending(b => b.YearMonth)
-                                         .Select(b => b.Balance)
-                                         .FirstOrDefault()
-                               : 0M;
-            }
-        }
         public virtual ICollection<InvBalance> InvBalances { get; set; }
         public virtual ICollection<GzTrx> GzTrxs { get; set; }
 
@@ -51,15 +39,8 @@ namespace gzDAL.Models
         [Required]
         public string Currency { get; set; }
 
-        /// <summary>
-        /// Whether the account is disabled temporarily for any reason
-        /// </summary>
-        private bool _disabledGzCustomer = false;
         [Required]
-        public bool DisabledGzCustomer {
-            get { return _disabledGzCustomer; }
-            set { _disabledGzCustomer = value; }
-        }
+        public bool DisabledGzCustomer { get; set; } = false;
 
         /// <summary>
         /// Whether the account is closed and no longer a Gz customer.
@@ -72,50 +53,6 @@ namespace gzDAL.Models
         /// </summary>
         [Required]
         public bool ActiveCustomerIdInPlatform { get; set; }
-
-#region Calculated fields
-
-        [NotMapped]
-        public decimal LastInvestmentAmount {
-            get {
-                return GzTrxs
-                    .Where(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss
-                                && t.YearMonthCtd == DateTime.UtcNow.ToStringYearMonth())
-                    .Select(t => t.Amount)
-                    .Sum();
-            }
-        }
-        [NotMapped]
-        public decimal TotalInvestmentReturns {
-            get {
-                return 
-                    InvBalances
-                    .Select(b => b.InvGainLoss)
-                    .Sum();
-            }
-        }
-        [NotMapped]
-        public decimal TotalInvestments {
-            get {
-                return
-                    GzTrxs
-                    .Where(t => t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
-                    .Select(t => t.Amount)
-                    .Sum();
-            }
-        }
-        [NotMapped]
-        public decimal TotalWithdrawals {
-            get {
-                return 
-                    GzTrxs
-                    .Where(t => t.Type.Code == GzTransactionTypeEnum.TransferToGaming)
-                    .Select(t => t.Amount)
-                    .Sum();
-            }
-        }
-        
-#endregion
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager, string authenticationType)
         {
@@ -233,6 +170,7 @@ namespace gzDAL.Models
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
         public DbSet<LogEntry> LogEntries { get; set; }
         public DbSet<DynamicPage> DynamicPages { get; set; }
+        public DbSet<CarouselEntry> CarouselEntries { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

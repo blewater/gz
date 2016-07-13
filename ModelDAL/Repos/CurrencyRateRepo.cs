@@ -4,8 +4,11 @@ using System.Linq;
 using System.Web;
 using gzDAL.ModelsUtil;
 using System.Data.Entity.Migrations;
+using System.Runtime.Caching;
 using gzDAL.Models;
 using gzDAL.Repos.Interfaces;
+using Z.EntityFramework.Plus;
+
 
 namespace gzDAL.Repos
 {
@@ -27,12 +30,23 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public decimal GetLastCurrencyRateFromUSD(string currencyCodeTo)
         {
-            var code = String.Format("USD{0}", currencyCodeTo.ToUpperInvariant());
-            return db.CurrencyRates
-                .Where(x => x.FromTo == code)
-                .OrderByDescending(x => x.TradeDateTime)
-                .Select(r => r.rate)
-                .FirstOrDefault();
+            var key = $"USD{currencyCodeTo.ToUpperInvariant()}";
+            var rate = (decimal ?)MemoryCache.Default.Get(key);
+
+            if (!rate.HasValue) {
+
+                rate = db.CurrencyRates
+                    .Where(x => x.FromTo == key)
+                    .OrderByDescending(x => x.TradeDateTime)
+                    .Select(r => r.rate)
+                    .FirstOrDefault();
+
+                // 2 hours cache
+                MemoryCache.Default.Set(key, rate.Value, DateTimeOffset.UtcNow.AddHours(2));
+
+            }
+
+            return rate.Value;
         }
 
         /// <summary>

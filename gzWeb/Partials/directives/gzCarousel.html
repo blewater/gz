@@ -1,4 +1,4 @@
-﻿<div class="gz-carousel">
+﻿<div class="gz-carousel" ng-swipe-left="gotoNext()" ng-swipe-right="gotoPrevious()">
     <div class="gz-carousel-slides">
         <div ng-repeat="slide in gzSlides track by $index"
              class="gz-slide" ng-class="{'current': $index === currentIndex}"

@@ -9,6 +9,8 @@ namespace gzDAL.Repos.Interfaces
 
         decimal GetTotalDeposit(int customerId);
 
+        decimal LastInvestmentAmount(int customerId, string yearMonthStr);
+
         IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
 
         bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);
