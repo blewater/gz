@@ -1,0 +1,64 @@
+﻿@model gzWeb.Areas.Admin.Models.CarouselEntriesViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Code")
+        </th>
+        <th>
+            @Html.DisplayName("Title")
+        </th>
+        <th>
+            @Html.DisplayName("SubTitle")
+        </th>
+        <th>
+            @Html.DisplayName("Live")
+        </th>
+        <th>
+            @Html.DisplayName("LiveFrom")
+        </th>
+        <th>
+            @Html.DisplayName("LiveTo")
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.Entries) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SubTitle)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Live)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LiveFrom)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LiveTo)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

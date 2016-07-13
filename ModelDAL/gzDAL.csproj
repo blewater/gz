@@ -145,6 +145,7 @@
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
     <Compile Include="DTO\CustFundShareDto.cs" />
+    <Compile Include="Models\CarouselEntry.cs" />
     <Compile Include="Models\DbSetExtensions.cs" />
     <Compile Include="Models\DynamicPage.cs" />
     <Compile Include="Models\EmailTemplate.cs" />
