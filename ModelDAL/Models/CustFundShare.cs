@@ -58,6 +58,13 @@ namespace gzDAL.Models {
         public int? SharesFundPriceId { get; set; }
         public virtual FundPrice SharesFundPrice { get; set; }
 
+        /// <summary>
+        /// Link to month's invBalance
+        /// </summary>
+        public int? InvBalanceId { get; set; }
+        [ForeignKey("InvBalanceId")]
+        public virtual InvBalance InvBalance { get; set; }
+
         #endregion
         #region NewShares
 
@@ -75,13 +82,27 @@ namespace gzDAL.Models {
         #region Sold Vintage
 
         /// <summary>
-        /// If the month's vintage has been sold
+        /// $ Value of NumShares: Total number of shares for month.
         /// </summary>
-        public int? SoldInvBalanceId { get; set; }
-        [ForeignKey("SoldInvBalanceId")]
-        public virtual InvBalance SoldInvBalance { get; set; }
-
+        public decimal? SoldSharesValue { get; set; }
+        public int? SoldSharesFundPriceId { get; set; }
+        public DateTime? SoldOnUtc { get; set; }
         #endregion
 
     }
+
+    /// <summary>
+    /// 
+    /// Comparer for linq expressions
+    /// 
+    /// </summary>
+    public class CustFundComparer : IEqualityComparer<CustFundShare> {
+        public bool Equals(CustFundShare x, CustFundShare y) {
+            return x.Id == y.Id;
+        }
+        public int GetHashCode(CustFundShare custFundShare) {
+            return custFundShare.Id.GetHashCode();
+        }
+    }
+
 }
