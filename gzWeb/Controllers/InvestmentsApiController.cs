@@ -119,11 +119,12 @@ namespace gzWeb.Controllers {
 
         /// <summary>
         /// 
-        /// HttpGet the Vintages with their Selling Values calculated
+        /// Get the Vintages with their Selling Values calculated
         /// 
         /// </summary>
         /// <returns></returns>
-        [HttpGet] public IHttpActionResult GetVintagesWithSellingValues()
+        [HttpPost]
+        public IHttpActionResult GetVintagesWithSellingValues(IList<VintageViewModel> vintages)
         {
             var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
