@@ -8,42 +8,101 @@
 }
 
 /* #region search */
-.games-list .search-panel {
+.games-list .filters {
     background-color: #dfdfdf;
     padding: 50px 0;
+    position: relative;
 }
 
-.games-list .search-panel .search-categories {
+.games-list .filters .categories {
     line-height: 34px;
 }
-.games-list .search-panel .search-categories a {
+.games-list .filters .categories a {
     color: #000;
     text-decoration: none;
     margin: 0 10px;
     font-weight: 500;
 }
-.games-list .search-panel .search-categories a:first-of-type {
+.games-list .filters .categories a:first-of-type {
     margin-left: 10px;
 }
-.games-list .search-panel .search-categories a:last-of-type {
+.games-list .filters .categories a:last-of-type {
     margin-right: 10px;
 }
-.games-list .search-panel .search-categories a:hover,
-.games-list .search-panel .search-categories a:focus,
-.games-list .search-panel .search-categories a:active {
+.games-list .filters .categories a:hover,
+.games-list .filters .categories a:focus,
+.games-list .filters .categories a:active {
     color: #000;
 }
 
 
-.games-list .search-panel .search-game {
+.games-list .filters .live-search {
+    /*position: relative;*/
 }
-.games-list .search-panel .search-game input {
+.games-list .filters .live-search input {
     height: 34px;
     border-radius: 4px;
 }
-.games-list .search-panel .search-game .form-control-feedback {
+.games-list .filters .live-search .form-control-feedback {
     margin-right: 18px;
     line-height: 34px;
+}
+
+.games-list .filters .live-search-results {
+    position: absolute;
+    top: 35px;
+    right: 15px;
+    background-color: #fff;
+    border: 1px #ccc solid;
+    width: 690px;
+    max-width: calc(100vw - 75px);
+    height: 200px;
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+.games-list .filters .live-search-results.media-list {
+    overflow-y: auto;
+}
+.games-list .filters .live-search-results.media-list .media {
+    padding: 5px;
+    margin: 0;
+    background-color: #fff;
+}
+.games-list .filters .live-search-results.media-list .media:hover {
+    background-color: #f2f2f2;
+}
+.games-list .filters .live-search-results.media-list .media.selected {
+    background-color: #27A95C;
+    color: #fff;
+}
+
+.games-list .filters .live-search-results.media-list .no-results {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+}
+.games-list .filters .live-search-results.media-list .more-results {
+    text-align: center;
+}
+.games-list .filters .live-search-results.media-list .more-results button {
+    width: 100%;
+    border: 1px solid #fff;
+    padding: 10px;
+    text-decoration: none;
+    background-color: #27A95C;
+    color: #fff;
+}
+.games-list .filters .live-search-results.media-list .more-results button .badge {
+    background-color: #fff;
+    color: #27A95C;
+}
+
+@media (max-width: 767px) {
+    .games-list .filters .live-search input,
+    .games-list .filters .live-search .form-control-feedback {
+        margin-top: 10px;
+    }
 }
 /* #endregion */
 
