@@ -24,10 +24,13 @@ namespace gzWeb.Tests.Controllers
         protected const string UnitTestDb = "gzTestDb";
 
         private InvestmentsApiController investmentsApiController;
-        private ApplicationDbContext db;
+        private ApplicationDbContext _db;
         private ApplicationUserManager manager;
         private UserRepo _userRepo;
         private IMapper mapper;
+        private InvBalanceRepo _invBalanceRepo;
+        private CustPortfolioRepo _custPortfolioRepo;
+        private GzTransactionRepo _gzTransactionRepo;
 
         [OneTimeSetUp]
         public void Setup() {
@@ -38,15 +41,22 @@ namespace gzWeb.Tests.Controllers
             });
             mapper = config.CreateMapper();
 
-            db = CreateInvestmentsApiController(out investmentsApiController);
-
-            manager = new ApplicationUserManager(new CustomUserStore(db),
+            _db = new ApplicationDbContext();
+            manager = new ApplicationUserManager(new CustomUserStore(_db),
                                                      new DataProtectionProviderFactory(() => null));
-            var trxRepo = new GzTransactionRepo(db);
+            _gzTransactionRepo = new GzTransactionRepo(_db);
+            _custPortfolioRepo = new CustPortfolioRepo(_db);
+            _invBalanceRepo = new InvBalanceRepo(_db, 
+                new CustFundShareRepo(_db,
+                _custPortfolioRepo), 
+                _gzTransactionRepo, 
+                _custPortfolioRepo);
             _userRepo = new UserRepo(
-                db
-                , trxRepo,
-                new InvBalanceRepo(db, new CustFundShareRepo(db, new CustPortfolioRepo(db)), trxRepo));
+                _db,
+                _gzTransactionRepo,
+                _invBalanceRepo);
+
+            _db = CreateInvestmentsApiController(out investmentsApiController);
         }
 
         [Test]
@@ -82,16 +92,35 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public void GetCustomerPlans() {
-            var user = manager.FindByEmail("info@nessos.gr");
-
-            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
-        }
-
-        [Test]
         public void SaveDbVintages() {
 
             var user = manager.FindByEmail("info@nessos.gr");
+
+            var vintagesDto = SellOneVintage(user);
+
+            // Mark for selling earliest and latest available
+            var earliestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
+                .OrderBy(v => v.YearMonthStr)
+                .First();
+            earliestVin.Selected = true;
+            var latestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
+                .OrderByDescending(v => v.YearMonthStr)
+                .First();
+            latestVin.Selected = true;
+
+            _invBalanceRepo.SetVintagesMarketPrices(user.Id, vintagesDto);
+
+            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto, bypassQueue: true);
+        }
+
+        [Test]
+        public void TestSellingAVintage() {
+
+            var user = manager.FindByEmail("salem8@gmail.com");
+            var vintagesDto = SellOneVintage(user);
+        }
+
+        private ICollection<VintageDto> SellOneVintage(ApplicationUser user) {
 
             var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
 
@@ -104,26 +133,21 @@ namespace gzWeb.Tests.Controllers
 
             ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
-            vintagesDto = investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
 
-            // Mark for selling earliest and latest available
-            var earliestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
-                .OrderBy(v => v.YearMonthStr)
-                .First();
-            earliestVin.Selected = true;
-            var latestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
-                .OrderByDescending(v => v.YearMonthStr)
-                .First();
-            latestVin.Selected = true;
+            _invBalanceRepo.SetVintagesMarketPrices(user.Id, vintagesDto);
 
-            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
+            vintagesDto = investmentsApiController.SaveDbSellVintages(
+                user.Id, 
+                vintagesDto,
+                bypassQueue: true);
+            return vintagesDto;
         }
 
         [Test]
         public void GetSummaryDataWithUser() {
 
-            var userId = db.Users
-                .Where(u => u.Email == "info@nessos.gr")
+            var userId = _db.Users
+                .Where(u => u.Email == "salem8@gmail.com")
                 .Select(u => u.Id).Single();
             ApplicationUser user;
             var summaryDto = _userRepo.GetSummaryData(userId, out user);
@@ -173,26 +197,22 @@ namespace gzWeb.Tests.Controllers
 
         private ApplicationDbContext CreateInvestmentsApiController(out InvestmentsApiController controller)
         {
-            ApplicationDbContext db = new ApplicationDbContext();
-            ICustPortfolioRepo custPortfolioRepo = new CustPortfolioRepo(db);
-            ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(db, custPortfolioRepo);
-            IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
-            IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);
-            ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(db);
-            IUserRepo userRepo = new UserRepo(db, gzTransactionRepo, invBalanceRepo);
+            ICustPortfolioRepo custPortfolioRepo = new CustPortfolioRepo(_db);
+            ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(_db, custPortfolioRepo);
+            ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(_db);
 
             // Arrange
             controller = new InvestmentsApiController(
-                    db,
-                    invBalanceRepo,
-                    gzTransactionRepo,
+                    _db,
+                    _invBalanceRepo,
+                    _gzTransactionRepo,
                     custFundShareRepo,
                     currencyRateRepo,
-                    custPortfolioRepo,
-                    userRepo,
+                    _custPortfolioRepo,
+                    _userRepo,
                     mapper,
-                    new ApplicationUserManager(new CustomUserStore(db), new DataProtectionProviderFactory(() => null)));
-            return db;
+                    new ApplicationUserManager(new CustomUserStore(_db), new DataProtectionProviderFactory(() => null)));
+            return _db;
         }
     }
 }

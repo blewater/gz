@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Web;
 using System.Web.Http;
+using System.Threading.Tasks;
+using System.Web.Hosting;
 using AutoMapper;
 using gzDAL;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.Models;
 using gzDAL.ModelUtil;
-using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
 using gzWeb.Contracts;
 using gzWeb.Models;
-using gzWeb.Utilities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using NLog.LayoutRenderers;
-using Z.EntityFramework.Plus;
+using RestSharp.Deserializers;
 
-namespace gzWeb.Controllers
-{
+namespace gzWeb.Controllers {
     [Authorize]
     // TODO: [RoutePrefix("api/Investments")]
     public class InvestmentsApiController : BaseApiController, IInvestmentsApi
@@ -78,39 +72,31 @@ namespace gzWeb.Controllers
         {
             CurrencyInfo userCurrency;
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
-            var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(user.Id);
 
-            var summaryDvm = new SummaryDataViewModel
-            {
-                //Currency = userCurrency.Symbol,
-                //Culture = "en-GB",
-                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.InvestmentsBalance),
-                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalDeposits),
-                TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalWithdrawals),
-
-                //TODO: from the EveryMatrix Web API
-                //GamingBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate),
-
-                TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalInvestments),
-
-                // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
-                TotalInvestmentsReturns = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.TotalInvestmentsReturns),
-
+            var summaryDvm = new SummaryDataViewModel {
+                InvestmentsBalance =
+                    DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*summaryDto.InvestmentsBalance),
+                TotalDeposits = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*summaryDto.TotalDeposits),
+                TotalWithdrawals = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*summaryDto.TotalWithdrawals),
+                TotalInvestments = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*summaryDto.TotalInvestments),
+                TotalInvestmentsReturns =
+                    DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*summaryDto.TotalInvestmentsReturns),
                 NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                LastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * summaryDto.LastInvestmentAmount),
+                LastInvestmentAmount =
+                    DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*summaryDto.LastInvestmentAmount),
                 StatusAsOf = summaryDto.StatusAsOf,
-                //Vintages = vintagesVMs,
-
-                // Withdrawal eligibility
                 LockInDays = summaryDto.LockInDays,
                 EligibleWithdrawDate = summaryDto.EligibleWithdrawDate,
                 OkToWithdraw = summaryDto.OkToWithdraw,
-                Prompt = summaryDto.Prompt
+                Prompt = summaryDto.Prompt,
+                Vintages = summaryDto.Vintages.Select(t => 
+                    _mapper
+                    .Map<VintageDto, VintageViewModel>(t)).ToList()
             };
 
-            summaryDvm.Vintages = summaryDto.Vintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
-            foreach (var dto in summaryDvm.Vintages) {
-                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount * usdToUserRate);
+            foreach (var vm in summaryDvm.Vintages) {
+                vm.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(vm.InvestmentAmount * usdToUserRate);
+                vm.SellingValue = DbExpressions.RoundCustomerBalanceAmount(vm.SellingValue * usdToUserRate);
             }
 
             return summaryDvm;
@@ -139,7 +125,7 @@ namespace gzWeb.Controllers
         /// <returns></returns>
         [HttpGet] public IHttpActionResult GetVintagesWithSellingValues()
         {
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -169,7 +155,8 @@ namespace gzWeb.Controllers
                 dto.SellingValue = DbExpressions.RoundCustomerBalanceAmount(dto.SellingValue*usdToUserRate);
             }
 
-            var vintages = customerVintages.Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+            var vintages = customerVintages
+                .Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
             return vintages;
         }
 
@@ -182,22 +169,28 @@ namespace gzWeb.Controllers
         /// <returns></returns>
         [HttpPost]
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages) {
-            var vintagesDtos = vintages.Select(v =>
-                _mapper.Map<VintageViewModel, VintageDto>(v))
+
+            var vintagesDtos = vintages
+                .AsParallel()
+                .Select(v => _mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
 
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
-            var userId = user.Id;
+            var userId = User.Identity.GetUserId<int>();
+
+            // Set market price on it
+            _invBalanceRepo.SetVintagesMarketPrices(userId, vintagesDtos);
+            // Sell Vintages
+            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
+
+            // Handle Response
+            var user = _userRepo.GetCachedUser(userId);
 
             // Get user currency rate
             CurrencyInfo userCurrency;
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
 
-            // Sell Vintages
-            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
-
             var inUserRateVintages =
-            updatedVintages.Select(v => new VintageViewModel() {
+            updatedVintages.AsParallel().Select(v => new VintageViewModel() {
                  YearMonthStr = v.YearMonthStr,
                  InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount * usdToUserRate),
                  SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue * usdToUserRate),
@@ -210,17 +203,33 @@ namespace gzWeb.Controllers
 
         /// <summary>
         /// 
-        /// Public interface unit test friendly method.
+        /// Interface call fro selling vintage
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
+        /// <param name="bypassQueue">True for unit tests</param>
         /// <returns></returns>
-        public ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages) {
+        public ICollection<VintageDto> SaveDbSellVintages(
+            int customerId, 
+            ICollection<VintageDto> vintages,
+            bool bypassQueue = false) {
 
-            var updatedVintages = _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
+            if (!bypassQueue) {
+                HostingEnvironment.QueueBackgroundWorkItem(
+                    ct =>
+                        _invBalanceRepo.SaveDbSellVintages(customerId, vintages));
+            }
+            else {
+                _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
+            }
 
-            return updatedVintages;
+            // Presume the intended vintages were sold
+            foreach (var dto in vintages.Where(v=>v.Selected)) {
+                dto.Sold = true;
+            }
+
+            return vintages;
         }
 
         #endregion
@@ -229,13 +238,13 @@ namespace gzWeb.Controllers
         [HttpGet]
         public IHttpActionResult GetPortfolioData()
         {
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
             CurrencyInfo userCurrency;
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
-            var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*user.LastInvestmentAmount);
+            var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*_gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth()));
 
             var now = DateTime.Now;
             var model = new PortfolioDataViewModel
@@ -252,7 +261,7 @@ namespace gzWeb.Controllers
         {
             return OkMsg(() =>
             {
-                var user = UserManager.FindById(User.Identity.GetUserId<int>());
+                var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
                 if (user == null)
                     return OkMsg(new object(), "User not found!");
                 return OkMsg(() => _custPortfolioRepo.SaveDbCustomerSelectNextMonthsPortfolio(user.Id, plan.Risk));
@@ -262,9 +271,8 @@ namespace gzWeb.Controllers
 
         #region Performance
         [HttpGet]
-        public IHttpActionResult GetPerformanceData()
-        {
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+        public IHttpActionResult GetPerformanceData() {
+            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -274,7 +282,7 @@ namespace gzWeb.Controllers
             var model = new PerformanceDataViewModel
             {
                 InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.InvBalance),
-                NextExpectedInvestment = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * user.LastInvestmentAmount),
+                NextExpectedInvestment = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth())),
                 Plans = GetCustomerPlans(user.Id)
             };
             return OkMsg(model);

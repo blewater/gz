@@ -31,11 +31,17 @@ namespace gzWeb.Controllers
         private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _dbContext;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IUserRepo _userRepo;
 
-        public AccountApiController(ApplicationUserManager userManager, ApplicationDbContext dbContext, ICustPortfolioRepo custPortfolioRepo)
+        public AccountApiController(
+            ApplicationUserManager userManager, 
+            ApplicationDbContext dbContext, 
+            ICustPortfolioRepo custPortfolioRepo,
+            IUserRepo userRepo)
                 : base(userManager)
         {
             _dbContext = dbContext;
+            _userRepo = userRepo;
             _custPortfolioRepo = custPortfolioRepo;
         }
 
@@ -431,7 +437,7 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
                 return Ok("User not found!");
 
@@ -446,7 +452,7 @@ namespace gzWeb.Controllers
         [Route("FinalizeRegistration")]
         public IHttpActionResult FinalizeRegistration(int userId)
         {
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 

@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
+using NLog;
 
 namespace gzDAL.Repos
 {
     public class CustPortfolioRepo : ICustPortfolioRepo
     {
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly ApplicationDbContext db;
         public CustPortfolioRepo(ApplicationDbContext db)
         {
@@ -32,7 +35,7 @@ namespace gzDAL.Repos
 
             if (customerId <= 0) {
 
-                throw new Exception("Invalid Customer Id: " + customerId);
+                _logger.Error("SaveDbCustMonthsPortfolioMix(): Invalid Customer Id: {0}", customerId);
             }
 
             this.SaveDbCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
@@ -77,16 +80,15 @@ namespace gzDAL.Repos
 
             } else {
 
-                //Not thread atomic but ok...within a single request context
                 db.CustPortfolios.AddOrUpdate(
-                    // Assume UpdatedOnUTC remains constant for same trx
-                    // to support idempotent transactions
                     cp => new { cp.CustomerId, cp.YearMonth },
                         new CustPortfolio {
                             CustomerId = customerId,
+                            // Get the most recent active portfolio for the risk type
                             PortfolioId = db.Portfolios
                                 .Where(p => p.RiskTolerance == riskType && p.IsActive)
-                                .Select(p => p.Id).Single(),
+                                .Select(p => p.Id)
+                                .Single(),
                             YearMonth = DbExpressions.GetStrYearMonth(portfYear, portfMonth),
                             UpdatedOnUTC = UpdatedOnUTC,
                             Weight = weight
@@ -136,7 +138,7 @@ namespace gzDAL.Repos
                 db.CustPortfolios
                     .Where(p => p.YearMonth == portfolioMonth && p.CustomerId == customerId)
                     .Select(cp => cp.Portfolio)
-                    .Single();
+                    .SingleOrDefault();
         }
 
         /// <summary>
