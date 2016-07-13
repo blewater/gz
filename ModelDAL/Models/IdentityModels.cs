@@ -27,15 +27,6 @@ namespace gzDAL.Models
         [Required]
         public DateTime Birthday { get; set; }
 
-        [NotMapped]
-        public decimal InvBalance {
-            get
-            {
-                return InvBalances?.OrderByDescending(b => b.YearMonth)
-                    .Select(b => b.Balance)
-                    .FirstOrDefault() ?? 0M;
-            }
-        }
         public virtual ICollection<InvBalance> InvBalances { get; set; }
         public virtual ICollection<GzTrx> GzTrxs { get; set; }
 
