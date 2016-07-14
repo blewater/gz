@@ -31,22 +31,18 @@ namespace gzDAL.Repos
         public decimal GetLastCurrencyRateFromUSD(string currencyCodeTo)
         {
             var key = $"USD{currencyCodeTo.ToUpperInvariant()}";
-            var rate = (decimal ?)MemoryCache.Default.Get(key);
 
-            if (!rate.HasValue) {
+            var rate = db.CurrencyRates
+                .Where(x => x.FromTo == key
+                            && x.TradeDateTime == db.CurrencyRates
+                                .Where(r => r.FromTo == x.FromTo)
+                                .Select(r => r.TradeDateTime).Max())
+                .Select(r => r.rate)
+                .DeferredSingle()
+                .FromCacheAsync()
+                .Result;
 
-                rate = db.CurrencyRates
-                    .Where(x => x.FromTo == key)
-                    .OrderByDescending(x => x.TradeDateTime)
-                    .Select(r => r.rate)
-                    .FirstOrDefault();
-
-                // 2 hours cache
-                MemoryCache.Default.Set(key, rate.Value, DateTimeOffset.UtcNow.AddHours(2));
-
-            }
-
-            return rate.Value;
+            return rate;
         }
 
         /// <summary>

@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using gzDAL.ModelsUtil;
-using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using gzDAL.DTO;
 using gzDAL.Models;
