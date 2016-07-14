@@ -12,7 +12,7 @@ namespace gzWeb.Utilities {
         public GlobalScheduledJobsRegistry() {
 
             // Run every 1 hour
-            Schedule<GlobalCacheScheduledJob>().ToRunNow().AndEvery(1).Minutes();
+            Schedule<GlobalCacheScheduledJob>().ToRunNow().AndEvery(1).Hours();
         }
         
     }
