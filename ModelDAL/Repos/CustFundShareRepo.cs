@@ -364,24 +364,19 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         private float GetCachedLatestFundPrice(int fundId) {
 
-            var key = "fundid" + fundId;
+            // Find latest closing price
+            var closingPrice = _db.FundPrices
+                .Where(f => f.FundId == fundId
+                            && f.YearMonthDay == _db.FundPrices
+                                .Where(p => p.FundId == f.FundId)
+                                .Select(p => p.YearMonthDay)
+                                .Max())
+                .Select(f => f.ClosingPrice)
+                .DeferredSingle()
+                .FromCacheAsync(DateTime.UtcNow.AddHours(2))
+                .Result;
 
-            var closingPrice = (float?)MemoryCache.Default.Get(key);
-
-            if (!closingPrice.HasValue) {
-
-                // Find latest closing price
-                closingPrice = _db.FundPrices
-                    .Where(f => f.FundId == fundId)
-                    .OrderByDescending(f => f.YearMonthDay)
-                    .Select(f => f.ClosingPrice)
-                    .First();
-
-                // 2 hours cache
-                MemoryCache.Default.Set(key, closingPrice.Value, DateTimeOffset.UtcNow.AddHours(2));
-            }
-            
-            return closingPrice.Value;
+            return closingPrice;
         }
 
         /// <summary>
