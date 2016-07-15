@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
 using gzDAL.Repos.Interfaces;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.OAuth;
 using gzDAL.Conf;
 using gzDAL.Models;
 using gzWeb.Areas.Mvc.Models;
 using gzWeb.Models;
+using gzWeb.Utilities;
 
 namespace gzWeb.Controllers
 {
@@ -32,6 +27,7 @@ namespace gzWeb.Controllers
         private readonly ApplicationDbContext _dbContext;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
         private readonly IUserRepo _userRepo;
+        private readonly ICacheUserData _cacheUserData;
 
         public AccountApiController(
             ApplicationUserManager userManager, 
@@ -450,7 +446,7 @@ namespace gzWeb.Controllers
 
         [HttpPost]
         [Route("FinalizeRegistration")]
-        public IHttpActionResult FinalizeRegistration(int userId)
+        public IHttpActionResult FinalizeRegistration(int gmUserId)
         {
             var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
@@ -460,7 +456,7 @@ namespace gzWeb.Controllers
             {
                 if (!user.GmCustomerId.HasValue)
                 {
-                    user.GmCustomerId = userId;
+                    user.GmCustomerId = gmUserId;
                     _dbContext.SaveChanges();
                 }
 
@@ -629,6 +625,21 @@ namespace gzWeb.Controllers
         [HttpPost]
         public IHttpActionResult Reload()
         {
+            return Ok();
+        }
+
+        /// GET api/Account/CacheUserData
+        [Authorize] // Redundant for 
+        [Route("CacheUserData")]
+        public IHttpActionResult CacheUserData() {
+
+            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+            if (user == null)
+                return Ok("User not found!");
+
+            // Don't run till it's tested.
+            //Task.Run(() => _cacheUserData.Query(user.Id));
+
             return Ok();
         }
     }

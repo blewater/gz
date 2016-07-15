@@ -8,6 +8,7 @@ using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
 using NLog;
+using Z.EntityFramework.Plus;
 
 namespace gzDAL.Repos
 {
@@ -173,7 +174,12 @@ namespace gzDAL.Repos
                         Name = f.Fund.HoldingName,
                         Weight = f.Weight
                     })
-                }).AsEnumerable()
+                })
+
+                // Cache 1 Day
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1))
+                .Result
+                .AsEnumerable()
                 /*** Union with non-allocated customer portfolio ****/
                 .Union(
                     (from p in db.Portfolios
@@ -189,7 +195,11 @@ namespace gzDAL.Repos
                                 Name = f.Fund.HoldingName,
                                 Weight = f.Weight
                             })
-                        }), new PortfolioComparer())
+                        })
+
+                        // Cache 1 day
+                        .FromCacheAsync(DateTime.UtcNow.AddDays(1))
+                        .Result, new PortfolioComparer())
                 .ToList();
 
             // Calculate allocation percentage
