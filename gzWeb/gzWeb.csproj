@@ -544,10 +544,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utilities\CacheUserData.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
-    <Compile Include="Utilities\DebugTextWriter.cs" />
     <Compile Include="Utilities\GlobalCacheScheduledJob.cs" />
     <Compile Include="Utilities\GlobalScheduledJobsRegistry.cs" />
+    <Compile Include="Utilities\ICacheUserData.cs" />
     <Compile Include="Utilities\OkWithMessageResult.cs" />
     <Compile Include="Utilities\Response.cs" />
   </ItemGroup>
