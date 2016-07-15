@@ -623,17 +623,16 @@ namespace gzWeb.Controllers
         }
 
         /// GET api/Account/CacheUserData
-        [Authorize] // Redundant for 
+        [Authorize] // Redundant by defaull all class methods are
         [Route("CacheUserData")]
-        [HttpGet]
-        public IHttpActionResult CacheUserData() {
+        [HttpPost]
+        public async Task<IHttpActionResult> CacheUserData() {
 
             var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
             if (user == null)
                 return Ok("User not found!");
 
-            // Don't run till it's tested.
-            //Task.Run(() => _cacheUserData.Query(user.Id));
+            await Task.Run(() => _cacheUserData.Query(user.Id));
 
             return Ok();
         }
