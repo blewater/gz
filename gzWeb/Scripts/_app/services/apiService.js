@@ -14,7 +14,7 @@
             guest: apiBaseUrl('guest'),
             games: apiBaseUrl('games'),
             investments: apiBaseUrl('investments'),
-            account: apiBaseUrl('account')
+            //account: apiBaseUrl('account')
         };
         factory.urls = urls;
         // #endregion
@@ -61,7 +61,7 @@
                 headers: { "Content-Type": "application/x-www-form-urlencoded" }
             });
         }
-        
+
         factory.register = function (parameters) {
             return $http.post('/api/Account/Register', parameters);
         }
@@ -87,10 +87,10 @@
         }
 
         factory.getDeploymentInfo = function () {
-            return $http.get(urls.account + 'getDeploymentInfo');
+            return $http.get('/api/Account/GetDeploymentInfo');
         }
-        factory.reload = function () {
-            return $http.post(urls.account + 'reload');
+        factory.cacheUserData = function () {
+            return $http.get('/api/Account/CacheUserData');
         }
         // #endregion
 

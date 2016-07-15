@@ -289,6 +289,7 @@
                     q.resolve({ enterCaptcha: true });
                 else {
                     gzLogin(usernameOrEmail, password).then(function () {
+                        api.cacheUserData();
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
                         q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
@@ -296,6 +297,7 @@
                 }
             }, function (emLoginError) {
                 gzLogin(usernameOrEmail, password).then(function () {
+                    api.cacheUserData();
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
                 }, function (gzLoginError) {
                     q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
