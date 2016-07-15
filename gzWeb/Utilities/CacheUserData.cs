@@ -1,7 +1,14 @@
-﻿using gzDAL.Models;
+﻿using System.Linq;
+using gzDAL.Models;
 using gzDAL.Repos.Interfaces;
 
 namespace gzWeb.Utilities {
+
+    /// <summary>
+    /// 
+    /// Query time intensive functions asynchronously that cache their results.
+    /// 
+    /// </summary>
     public class CacheUserData : ICacheUserData {
 
         private readonly IInvBalanceRepo _invBalanceRepo;
@@ -29,7 +36,7 @@ namespace gzWeb.Utilities {
                 ApplicationUser user;
                 var summary = _userRepo.GetSummaryData(userId, out user);
 
-                _invBalanceRepo.SetVintagesMarketPrices(userId, summary.Vintages);
+                _invBalanceRepo.GetCustomerVintagesSellingValue(user.Id, summary.Vintages.ToList());
 
                 _custPortfolioRepo.GetCustomerPlans(userId);
 
