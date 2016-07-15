@@ -34,11 +34,15 @@ var APP = (function () {
     ]);
 
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat) {
+        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers',
+        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers) {
             $rootScope.loading = true;
             $rootScope.initialized = false;
             localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
+
+            angular.element(document).ready(function () {
+                $rootScope.mobile = helpers.ui.isMobile();
+            });
 
             auth.init();
 

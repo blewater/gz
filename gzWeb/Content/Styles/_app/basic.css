@@ -13,6 +13,8 @@
 html {
     position: relative;
     height: 100%;
+}
+html.mobile {
     overflow-x: hidden;
 }
 body {

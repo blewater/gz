@@ -15,6 +15,8 @@ using gzDAL.Models;
 using gzWeb.Areas.Mvc.Models;
 using gzWeb.Models;
 using gzWeb.Utilities;
+using System.Reflection;
+using gzWeb.Providers;
 
 namespace gzWeb.Controllers
 {
@@ -598,9 +600,9 @@ namespace gzWeb.Controllers
 
         #endregion
 
-        [AllowAnonymous]
-        [Route("GetDeploymentInfo")]
-        public IHttpActionResult GetDeploymentInfo()
+
+        // #region GetDeploymentInfo
+        private bool IsInDebugMode()
         {
             var debug =
 #if DEBUG
@@ -608,19 +610,39 @@ namespace gzWeb.Controllers
 #else
                 false;
 #endif
-
+            return debug;
+        }
+        private string GetVersion()
+        {
+            //return typeof(MvcApplication).Assembly.GetName().Version.ToString();
+            var assembly = Assembly.GetAssembly(typeof(ApplicationOAuthProvider));
+            var assemblyName = assembly.GetName().Name;
+            var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
+            var versionField = gitVersionInformationType.GetField("InformationalVersion");
+            return versionField.GetValue(null).ToString();
+        }
+        private string GetReCaptchaSiteKey()
+        {
             var host = Request.RequestUri.Host;
             if (host == "localhost")
                 host = "www.greenzorro.com";
             var appKey = "ReCaptchaSiteKey@" + host;
             var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings[appKey];
+            return reCaptchaSiteKey;
+        }
+
+        [AllowAnonymous]
+        [Route("GetDeploymentInfo")]
+        public IHttpActionResult GetDeploymentInfo()
+        {
             return OkMsg(new
             {
-                Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
-                Debug = debug,
-                ReCaptchaSiteKey = reCaptchaSiteKey
+                Debug = IsInDebugMode(),
+                Version = GetVersion(),
+                ReCaptchaSiteKey = GetReCaptchaSiteKey()
             });
         }
+        // #endregion
 
         /// GET api/Account/CacheUserData
         [Authorize] // Redundant by defaull all class methods are
