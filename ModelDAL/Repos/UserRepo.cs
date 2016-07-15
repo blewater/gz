@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using gzDAL.ModelsUtil;
-using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using gzDAL.DTO;
 using gzDAL.Models;
@@ -33,19 +27,19 @@ namespace gzDAL.Repos
             this._invBalanceRepo = invBalanceRepo;
         }
 
-        private Task<IEnumerable<ApplicationUser>> CacheUser(int userId) {
+        private Task<ApplicationUser> CacheUser(int userId) {
 
             var userQtask = _db.Users
                 .Where(u => u.Id == userId)
+                .DeferredSingleOrDefault()
                 .FromCacheAsync(DateTime.UtcNow.AddDays(1));
 
             return userQtask;
         }
-        private ApplicationUser GetCachedUser(Task<IEnumerable<ApplicationUser>> userTask) {
+        private ApplicationUser GetCachedUser(Task<ApplicationUser> userTask) {
 
             var userRow = userTask.Result;
-            return userRow
-                .SingleOrDefault();
+            return userRow;
         }
 
         public ApplicationUser GetCachedUser(int userId) {
@@ -100,9 +94,7 @@ namespace gzDAL.Repos
                 //-------------- Retrieve previously executed async query results
 
                 // user
-                var userRow = userQtask.Result;
-                userRet = userRow
-                    .SingleOrDefault();
+                userRet = userQtask.Result;
                 if (userRet == null) {
                     _logger.Error("User with id {0} is null in GetSummaryData()", userId);
                 }
