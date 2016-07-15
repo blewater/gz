@@ -10,7 +10,7 @@ namespace gzWeb.Migrations
             DropIndex("dbo.FundPrices", "FundId_YMD_idx");
             AlterColumn("dbo.FundPrices", "YearMonthDay", c => c.String(nullable: false, maxLength: 8, fixedLength: true, unicode: false));
             Sql(@"CREATE UNIQUE INDEX IDX_FundPrice_Id_YMD
-                ON gzDevDb.dbo.FundPrices (FundId, YearMonthDay DESC)
+                ON FundPrices (FundId, YearMonthDay DESC)
                 INCLUDE (ClosingPrice)
                 ON [PRIMARY]");
         }

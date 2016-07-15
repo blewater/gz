@@ -1,7 +1,5 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Linq;
-using System.Runtime.Caching;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -22,7 +20,8 @@ using Owin;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Integration.WebApi;
-using Z.EntityFramework.Plus;
+using FluentScheduler;
+using gzWeb.Utilities;
 
 [assembly: OwinStartupAttribute(typeof(gzWeb.Startup))]
 namespace gzWeb {
@@ -70,47 +69,10 @@ namespace gzWeb {
             app.UseJSNLog();
             app.UseNLog();
 
-            CacheGlobalData();
+            // Start the scheduler
+            JobManager.Initialize(new GlobalScheduledJobsRegistry());
 
             //app.CreatePerOwinContext(() => container.GetInstance<ApplicationUserManager>());
-        }
-
-        /// <summary>
-        /// 
-        /// Cache global database data applicable to all customers
-        /// 
-        /// </summary>
-        private static void CacheGlobalData() {
-
-//-------- Global Caching Configuration of Single GzConfiguration Row
-            var db = new ApplicationDbContext();
-            db.GzConfigurations
-
-                // 7 days cache
-                .FromCacheAsync(DateTime.UtcNow.AddDays(7));
-
-            //-------- Cache Fund prices for 2 hours
-            var funds = db.FundPrices
-                .Where(f => f.YearMonthDay == db.FundPrices.Select(d => f.YearMonthDay).Max())
-                .Select(f => new {f.Id, f.ClosingPrice})
-                .AsEnumerable();
-            foreach (var fund in funds) {
-                var key = "fundid" + fund.Id;
-
-                // 2 hours cache
-                MemoryCache.Default.Set(key, fund.ClosingPrice, DateTimeOffset.UtcNow.AddHours(2));
-            }
-
-            //-------- Cache Currencies for 4 hours
-            var rateObj = db.CurrencyRates
-                .Where(x => x.TradeDateTime == db.CurrencyRates.Select(r => r.TradeDateTime).Max())
-                .Select(x => new {x.FromTo, x.rate});
-            foreach (var rateObjVal in rateObj) {
-                var key = rateObjVal.FromTo;
-
-                // 4 hours cache
-                MemoryCache.Default.Set(key, rateObjVal.rate, DateTimeOffset.UtcNow.AddHours(4));
-            }
         }
 
         private static Container InitializeSimpleInjector(IAppBuilder app, HttpConfiguration config, MapperConfiguration automapperConfig)

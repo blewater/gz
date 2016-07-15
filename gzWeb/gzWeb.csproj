@@ -69,6 +69,10 @@
       <HintPath>..\packages\Common.Logging.NLog20.3.3.1\lib\net40\Common.Logging.NLog20.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentScheduler, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.4.1.2\lib\net40\FluentScheduler.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Glimpse.Ado, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glimpse.Ado.1.7.3\lib\net45\Glimpse.Ado.dll</HintPath>
       <Private>True</Private>
@@ -515,6 +519,10 @@
     <Compile Include="Migrations\201607121223531_Add_CarouselEntry.Designer.cs">
       <DependentUpon>201607121223531_Add_CarouselEntry.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607130756384_alter functions.cs" />
+    <Compile Include="Migrations\201607130756384_alter functions.Designer.cs">
+      <DependentUpon>201607130756384_alter functions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -538,6 +546,8 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\DebugTextWriter.cs" />
+    <Compile Include="Utilities\GlobalCacheScheduledJob.cs" />
+    <Compile Include="Utilities\GlobalScheduledJobsRegistry.cs" />
     <Compile Include="Utilities\OkWithMessageResult.cs" />
     <Compile Include="Utilities\Response.cs" />
   </ItemGroup>
@@ -775,8 +785,6 @@
     <Content Include="Scripts\autobahn.min.js" />
     <Content Include="Scripts\d3\d3.js" />
     <Content Include="Scripts\d3\d3.min.js" />
-    <Content Include="Scripts\jsnlog.js" />
-    <Content Include="Scripts\jsnlog.min.js" />
     <Content Include="Scripts\jsnlog\jsnlog.js" />
     <Content Include="Scripts\jsnlog\jsnlog.min.js" />
     <Content Include="Scripts\jsnlog\logToServer.js" />
@@ -933,7 +941,6 @@
     <Content Include="Areas\Mvc\Views\Games\Games.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Scripts\jsnlog\jsnlog.js.map" />
-    <Content Include="Scripts\jsnlog.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1094,6 +1101,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607121223531_Add_CarouselEntry.resx">
       <DependentUpon>201607121223531_Add_CarouselEntry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607130756384_alter functions.resx">
+      <DependentUpon>201607130756384_alter functions.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

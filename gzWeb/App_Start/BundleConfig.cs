@@ -66,7 +66,6 @@ namespace gzWeb
 
             bundles.Add(new ScriptBundle("~/js/d3").Include(
                 "~/Scripts/d3/d3.min.js"
-                , "~/Scripts/d3-tip/d3-tip.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/plugins").Include(

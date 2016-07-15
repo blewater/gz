@@ -96,6 +96,7 @@ namespace gzDAL.Repos {
             var invGainSumTask = _db.InvBalances
                 .Where(i => i.CustomerId == customerId)
                 .Select(i=>i.InvGainLoss)
+                .DefaultIfEmpty(0)
                 .DeferredSum()
                 // Cache 4 Hours
                 .FromCacheAsync(DateTime.UtcNow.AddHours(4));
@@ -259,29 +260,6 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Calculate the vintage in latest fund market value and deduct fees. The amount the customer
-        /// would receive.
-        /// unless it has been sold already in which case return that value
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearMonthStr"></param>
-        /// <param name="monthsCustomerFunds"></param>
-        /// <returns>Sold Value with fees deducted. The amount the customer would receive.</returns>
-        private decimal GetVintageSellingValue(int customerId, string yearMonthStr, out IEnumerable<CustFundShareDto> monthsCustomerFunds) {
-
-            decimal fees;
-            decimal vintageMarketPrice = GetVintageValuePricedNow(
-                    customerId,
-                    yearMonthStr,
-                    out monthsCustomerFunds,
-                    out fees);
-
-            return vintageMarketPrice - fees;
-        }
-
-        /// <summary>
-        /// 
         /// Get the vintages with the selling value calculated if not sold
         /// 
         /// -- or
@@ -302,11 +280,10 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Get the vintages with the selling value calculated if not sold
+        /// Get the vintages with the selling value calculated if not sold.
         /// 
-        /// -- or
-        /// 
-        /// their selling value when they were sold.
+        /// Calculate the vintage in latest fund market value and deduct fees. The amount the customer
+        /// would receive.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
@@ -314,16 +291,23 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId, List<VintageDto> customerVintages) {
 
-            foreach (var dto in customerVintages.Where(v=>v.SellingValue==0)) {
+            foreach (var dto in customerVintages
+                .Where(v=>v.SellingValue==0 && !v.Locked)) {
 
-                if (dto.SellingValue == 0) {
-                    IEnumerable<CustFundShareDto> customerShares;
-                    dto.SellingValue = GetVintageSellingValue(
+                // out var declarations
+                IEnumerable<CustFundShareDto> customerVintageShares;
+                decimal fees;
+
+                // Call to calculate latest selling price
+                decimal vintageMarketPrice = GetVintageValuePricedNow(
                         customerId,
                         dto.YearMonthStr,
-                        out customerShares);
-                    dto.CustomerVintageShares = customerShares;
-                }
+                        out customerVintageShares,
+                        out fees);
+
+                // Save the selling price and shares
+                dto.CustomerVintageShares = customerVintageShares;
+                dto.SellingValue = vintageMarketPrice - fees;
             }
 
             return customerVintages;
