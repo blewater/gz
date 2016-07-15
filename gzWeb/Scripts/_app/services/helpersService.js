@@ -153,7 +153,7 @@
             tabIndex = isNaN(tabIndex) ? -1 : tabIndex;
             return element.is(":input, a[href], area[href], iframe") || tabIndex > -1;
         }
-        functionisnMobile() {
+        function isMobile() {
             function mobileCheck() {
                 var check = false;
                 (function (a) {
