@@ -599,6 +599,7 @@ namespace gzWeb.Controllers
         #endregion
 
         [AllowAnonymous]
+        [Route("GetDeploymentInfo")]
         public IHttpActionResult GetDeploymentInfo()
         {
             var debug =
@@ -621,16 +622,10 @@ namespace gzWeb.Controllers
             });
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        public IHttpActionResult Reload()
-        {
-            return Ok();
-        }
-
         /// GET api/Account/CacheUserData
         [Authorize] // Redundant for 
         [Route("CacheUserData")]
+        [HttpGet]
         public IHttpActionResult CacheUserData() {
 
             var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
