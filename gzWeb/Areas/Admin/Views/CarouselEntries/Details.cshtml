@@ -5,79 +5,105 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<div class="admin admin-details admin-actions">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 details-interface">
 
-<div>
-    <h4>CarouselEntry</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Code)
-        </dt>
+                <div class="col-md-12 text-center">
+                    <div class="row heading">
+                        <h2 class="text-gz">Role Details</h2>
+                        <h4>Manage</h4>
+                    </div>
+                </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Code)
-        </dd>
+                <div class="col-md-12 bg-gz">
+                    <div class="row content">
+                        <div class="col-xs-8 col-xs-offset-2">
+                            <dl class="dl-horizontal">
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Id)
+                                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Id)
+                                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Code)
+                                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.SubTitle)
-        </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Code)
+                                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.SubTitle)
-        </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Title)
+                                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ActionUrl)
-        </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Title)
+                                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.ActionUrl)
-        </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.SubTitle)
+                                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.BackroudImageUrl)
-        </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.SubTitle)
+                                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.BackroudImageUrl)
-        </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.ActionUrl)
+                                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Live)
-        </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.ActionUrl)
+                                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Live)
-        </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.BackroudImageUrl)
+                                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.LiveFrom)
-        </dt>
+                                <dd style="width:100px; max-width:100px; min-width:100px;">
+                                    @Html.DisplayFor(model => model.BackroudImageUrl)
+                                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.LiveFrom)
-        </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Live)
+                                </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.LiveTo)
-        </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Live)
+                                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.LiveTo)
-        </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.LiveFrom)
+                                </dt>
 
-    </dl>
+                                <dd>
+                                    @Html.DisplayFor(model => model.LiveFrom)
+                                </dd>
+
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.LiveTo)
+                                </dt>
+
+                                <dd>
+                                    @Html.DisplayFor(model => model.LiveTo)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+                                @Html.ActionLink("Back to List", "Index")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
