@@ -35,12 +35,14 @@ namespace gzWeb.Controllers
             ApplicationUserManager userManager, 
             ApplicationDbContext dbContext, 
             ICustPortfolioRepo custPortfolioRepo,
-            IUserRepo userRepo)
+            IUserRepo userRepo, 
+            ICacheUserData cacheUserData)
                 : base(userManager)
         {
             _dbContext = dbContext;
             _userRepo = userRepo;
             _custPortfolioRepo = custPortfolioRepo;
+            _cacheUserData = cacheUserData;
         }
 
         #region accessTokenFormat Constructor
@@ -654,7 +656,8 @@ namespace gzWeb.Controllers
             if (user == null)
                 return Ok("User not found!");
 
-            await Task.Run(() => _cacheUserData.Query(user.Id));
+            //await Task.Run(() => _cacheUserData.Query(user.Id));
+            _cacheUserData.Query(user.Id);
 
             return Ok();
         }
