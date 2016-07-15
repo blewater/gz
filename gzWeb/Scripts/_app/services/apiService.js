@@ -98,8 +98,8 @@
         factory.getSummaryData = function () {
             return $http.get(urls.investments + 'getSummaryData');
         };
-        factory.getVintagesWithSellingValues = function () {
-            return $http.get(urls.investments + 'getVintagesWithSellingValues');
+        factory.getVintagesWithSellingValues = function (vintages) {
+            return $http.post(urls.investments + 'getVintagesWithSellingValues', vintages);
         };
         factory.withdrawVintages = function (vintages) {
             return $http.post(urls.investments + 'withdrawVintages', vintages);
