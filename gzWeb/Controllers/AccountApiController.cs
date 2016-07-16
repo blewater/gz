@@ -437,7 +437,7 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return Ok("User not found!");
 
@@ -450,9 +450,9 @@ namespace gzWeb.Controllers
 
         [HttpPost]
         [Route("FinalizeRegistration")]
-        public IHttpActionResult FinalizeRegistration(int gmUserId)
-        {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+        public IHttpActionResult FinalizeRegistration(int gmUserId) {
+
+            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 

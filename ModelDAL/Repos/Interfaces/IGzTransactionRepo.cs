@@ -1,6 +1,7 @@
 ﻿using gzDAL.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using gzDAL.DTO;
 
 namespace gzDAL.Repos.Interfaces
@@ -19,9 +20,9 @@ namespace gzDAL.Repos.Interfaces
 
         decimal GetWithdrawnFees(decimal liquidationAmount);
 
-        WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId);
+        Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId);
 
-        bool GetEnabledWithdraw(int customerId);
+        Task<bool> GetEnabledWithdraw(int customerId);
 
         void SaveDbGmTransaction(int customerId, GmTransactionTypeEnum gzTransactionType, decimal amount,
             DateTime createdOnUtc);
