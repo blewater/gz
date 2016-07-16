@@ -281,7 +281,7 @@ namespace gzWeb.Controllers {
                         {
                             NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                             NextExpectedInvestment = investmentAmount,
-                            Plans = GetCustomerPlans(user.Id, investmentAmount)
+                            Plans = await GetCustomerPlansAsync(user.Id, investmentAmount)
                         };
             return OkMsg(model);
         }
@@ -318,7 +318,7 @@ namespace gzWeb.Controllers {
             {
                 InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * invBalanceRes.Item1),
                 NextExpectedInvestment = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth())),
-                Plans = GetCustomerPlans(user.Id)
+                Plans = await GetCustomerPlansAsync(user.Id)
             };
             return OkMsg(model);
         }
@@ -347,9 +347,9 @@ namespace gzWeb.Controllers {
         #endregion
 
         #region Methods
-        public IEnumerable<PlanViewModel> GetCustomerPlans(int customerId, decimal nextInvestAmount = 0) {
+        public async Task<IEnumerable<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0) {
 
-            var portfolioDtos = _custPortfolioRepo.GetCustomerPlans(customerId);
+            var portfolioDtos = await _custPortfolioRepo.GetCustomerPlansAsync(customerId);
             var portfolios = portfolioDtos
                 .Select(p => new PlanViewModel() {
                     Id = p.Id,
@@ -361,7 +361,7 @@ namespace gzWeb.Controllers {
                     Risk = p.Risk,
                     Selected = p.Selected,
                     Holdings = p.Holdings
-                        .Select(h=> new HoldingViewModel() {
+                        .Select(h => new HoldingViewModel() {
                             Name = h.Name,
                             Weight = h.Weight
                         })

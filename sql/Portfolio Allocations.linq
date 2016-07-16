@@ -1,14 +1,9 @@
 <Query Kind="Program">
   <Connection>
-    <ID>e8080104-016b-4eda-8d39-c3f62cd60115</ID>
+    <ID>eac52b14-3979-444b-a13b-e212aaecf64f</ID>
     <Persist>true</Persist>
-    <Server>gzdbprod.database.windows.net</Server>
-    <SqlSecurity>true</SqlSecurity>
-    <UserName>gzdbprdsa</UserName>
-    <Password>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAI5Ols6ju+kG5oRXNMFgrmAAAAAACAAAAAAAQZgAAAAEAACAAAAC9njGnTct/jKk0JL4DoOuU81wsu81SvixGsCWwTnAKBgAAAAAOgAAAAAIAACAAAACI2GLYoWKCmWNM8v/Y6ro5ukT6TERdIvMEnTn85dLH9yAAAACDPUJ2iAcrw7ils0QdgMuv2EG197xHJVuXhrcEhmYR4UAAAAAQt8ex8I+JZFtzVB3MhVbKEUkd5sKSgh3llsN5qKlcH1pTKFYmu5FpjobhhXTV32sODQUV912W3KTRazWJCQVj</Password>
-    <DbVersion>Azure</DbVersion>
-    <IsProduction>true</IsProduction>
-    <Database>gzDbProd</Database>
+    <Server>localhost\sqlexpress</Server>
+    <Database>gzDevDb</Database>
     <ShowServer>true</ShowServer>
   </Connection>
 </Query>
@@ -22,8 +17,8 @@ void Main()
 						 join b in InvBalances on
 							 new { CustomerId = c.CustomerId, YearMonth = c.YearMonth } equals
 							 new { CustomerId = b.CustomerId, YearMonth = b.YearMonth }
-						 where c.CustomerId == 7
-							   && !SoldVintages.Any(s => s.VintageYearMonth == b.YearMonth && s.CustomerId == b.CustomerId)
+						 where c.CustomerId == 8
+							   && !b.Sold
 						 group b by p
 		into g
 						 select new PortfolioDto

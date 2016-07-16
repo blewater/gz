@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Threading.Tasks;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
@@ -150,11 +151,11 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="nextInvestAmount"></param>
         /// <returns></returns>
-        public IEnumerable<PortfolioDto> GetCustomerPlans(int customerId) {
+        public async Task<IEnumerable<PortfolioDto>> GetCustomerPlansAsync(int customerId) {
 
             var selCustomerPortfolioId = GetNextMonthsCustomerPortfolio(customerId).Id;
 
-            var portfolioDtos = (from p in db.Portfolios
+            var portfolioDtos = (await (from p in db.Portfolios
                 join c in db.CustPortfolios on p.Id equals c.PortfolioId
                 join b in db.InvBalances on
                     new {CustomerId = c.CustomerId, YearMonth = c.YearMonth} equals
@@ -177,12 +178,11 @@ namespace gzDAL.Repos
                 })
 
                 // Cache 1 Day
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1))
-                .Result
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1)))
                 .AsEnumerable()
                 /*** Union with non-allocated customer portfolio ****/
                 .Union(
-                    (from p in db.Portfolios
+                    await (from p in db.Portfolios
                         where p.IsActive
                         select new PortfolioDto {
                             Id = p.Id,
@@ -199,7 +199,7 @@ namespace gzDAL.Repos
 
                         // Cache 1 day
                         .FromCacheAsync(DateTime.UtcNow.AddDays(1))
-                        .Result, new PortfolioComparer())
+                        , new PortfolioComparer())
                 .ToList();
 
             // Calculate allocation percentage
