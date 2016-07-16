@@ -1,5 +1,7 @@
-﻿namespace gzWeb.Utilities {
+﻿using System.Threading.Tasks;
+
+namespace gzWeb.Utilities {
     public interface ICacheUserData {
-        void Query(int userId);
+        Task Query(int userId);
     }
 }

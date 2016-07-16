@@ -44,12 +44,12 @@ namespace gzDAL.Repos
         /// <returns></returns>
         private Task<ApplicationUser> CacheUser(int userId) {
 
-            var userQtask = _db.Users
-                .Where(u => u.Id == userId)
-                .DeferredSingleOrDefault()
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+                var userQtask = _db.Users
+                    .Where(u => u.Id == userId)
+                    .DeferredSingleOrDefault()
+                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
 
-            return userQtask;
+                return userQtask;
         }
 
         /// <summary>
@@ -86,34 +86,19 @@ namespace gzDAL.Repos
 
                 //--------------- Start async queries
                 var userQtask = CacheUser(userId);
-                var latestBalanceTask = _invBalanceRepo.CacheLatestBalance(userId);
-                var invGainLossTask = _invBalanceRepo.CacheInvestmentReturns(userId);
+                var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
+                var invGainLossTask = _invBalanceRepo.CacheInvestmentReturnsAsync(userId);
 
                 //---------------- Execute SQL Functions
-                decimal totalWithdrawalsAmount = await _db.Database
-                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.TransferToGaming))
-                    .SingleAsync();
+                var totalWithdrawalsAmount = await _gzTransactionRepo.GetTotalWithdrawalsAmountAsync(userId);
 
-                decimal totalInvestmentsAmount = await _db.Database
-                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@CustomerId, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
-                    .SingleAsync();
+                var totalInvestmentsAmount = await _gzTransactionRepo.GetTotalInvestmentsAmountAsync(userId);
 
                 var vintages = _invBalanceRepo.GetCustomerVintages(userId);
 
-                var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
-                var lastInvestmentAmount = await _db.Database
-                    .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@YearMonth", thisYearMonthStr),
-                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
-                    .SingleOrDefaultAsync();
+                var lastInvestmentAmount = await _gzTransactionRepo.GetLastInvestmentAmountAsync(userId);
 
                 var withdrawalEligibility = await _gzTransactionRepo.GetWithdrawEligibilityDataAsync(userId);
-
 
                 var totalDeposits = _gzTransactionRepo.GetTotalDeposit(userId);
 
@@ -131,6 +116,7 @@ namespace gzDAL.Repos
                 // investment gain or loss
                 decimal invGainLossSum = await _invBalanceRepo.GetCachedInvestmentReturnsAsync(invGainLossTask);
 
+                // Package all the results
                 summaryDtoRet = new UserSummaryDTO() {
 
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),

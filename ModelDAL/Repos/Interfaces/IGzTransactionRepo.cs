@@ -12,6 +12,12 @@ namespace gzDAL.Repos.Interfaces
 
         decimal LastInvestmentAmount(int customerId, string yearMonthStr);
 
+        Task<decimal> GetLastInvestmentAmountAsync(int userId);
+
+        Task<decimal> GetTotalInvestmentsAmountAsync(int userId);
+
+        Task<decimal> GetTotalWithdrawalsAmountAsync(int userId);
+
         IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
 
         bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);

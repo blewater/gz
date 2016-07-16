@@ -48,10 +48,10 @@ namespace gzWeb.Controllers {
 
         #region Summary
         [HttpGet]
-        public IHttpActionResult GetSummaryData() {
+        public async Task<IHttpActionResult> GetSummaryData() {
 
             var userId = User.Identity.GetUserId<int>();
-            var tuple = _userRepo.GetSummaryDataAsync(userId).Result;
+            var tuple = await _userRepo.GetSummaryDataAsync(userId);
             var user = tuple.Item2;
             var summaryDto = tuple.Item1;
 
@@ -125,33 +125,13 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IHttpActionResult GetVintagesWithSellingValues(IList<VintageViewModel> vintages) {
+        public async Task<IHttpActionResult> GetVintagesWithSellingValues(IList<VintageViewModel> vintages) {
 
-            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
             var userVintages = GetVintagesSellingValuesByUser(user, vintages);
-
-            return OkMsg(() => userVintages);
-        }
-
-        /************** Obsolete ***********/
-        /// <summary>
-        /// 
-        /// HttpGet the Vintages with their Selling Values calculated
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete]
-        [HttpGet]
-        public IHttpActionResult GetVintagesWithSellingValues() {
-
-            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
-            if (user == null)
-                return OkMsg(new object(), "User not found!");
-
-            var userVintages = GetVintagesSellingValuesByUser(user);
 
             return OkMsg(() => userVintages);
         }
@@ -221,7 +201,7 @@ namespace gzWeb.Controllers {
         /// <param name="vintages"></param>
         /// <returns></returns>
         [HttpPost]
-        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages) {
+        public async Task<IHttpActionResult> WithdrawVintages(IList<VintageViewModel> vintages) {
 
             var vintagesDtos = vintages
                 .Select(v => _mapper.Map<VintageViewModel, VintageDto>(v))
@@ -229,13 +209,11 @@ namespace gzWeb.Controllers {
 
             var userId = User.Identity.GetUserId<int>();
 
-            // Set market price on it
-            _invBalanceRepo.SetVintagesMarketPrices(userId, vintagesDtos);
             // Sell Vintages
             var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
 
             // Handle Response
-            var user = _userRepo.GetCachedUserAsync(userId).Result;
+            var user = await _userRepo.GetCachedUserAsync(userId);
 
             // Get user currency rate
             CurrencyInfo userCurrency;
@@ -267,14 +245,15 @@ namespace gzWeb.Controllers {
             ICollection<VintageDto> vintages,
             bool bypassQueue = false) {
 
-            if (!bypassQueue) {
-                HostingEnvironment.QueueBackgroundWorkItem(
-                    ct =>
-                        _invBalanceRepo.SaveDbSellVintages(customerId, vintages));
-            }
-            else {
+            // Not compatible with IIS Express... With Azure maybe?
+            //if (!bypassQueue) {
+            //    HostingEnvironment.QueueBackgroundWorkItem(
+            //        ct =>
+            //            _invBalanceRepo.SaveDbSellVintages(customerId, vintages));
+            //}
+            //else {
                 _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
-            }
+            //}
 
             // Presume the intended vintages were sold
             foreach (var dto in vintages.Where(v=>v.Selected)) {
@@ -288,9 +267,9 @@ namespace gzWeb.Controllers {
 
         #region Portfolio
         [HttpGet]
-        public IHttpActionResult GetPortfolioData() {
+        public async Task<IHttpActionResult> GetPortfolioData() {
 
-            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -298,7 +277,6 @@ namespace gzWeb.Controllers {
             decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
             var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*_gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth()));
 
-            var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
                             NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
@@ -309,13 +287,14 @@ namespace gzWeb.Controllers {
         }
 
         [HttpPost]
-        public IHttpActionResult SetPlanSelection(PlanViewModel plan)
+        public async Task<IHttpActionResult> SetPlanSelection(PlanViewModel plan)
         {
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+
             return OkMsg(() =>
             {
-                var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
-                if (user == null)
-                    return OkMsg(new object(), "User not found!");
                 return OkMsg(() => _custPortfolioRepo.SaveDbCustomerSelectNextMonthsPortfolio(user.Id, plan.Risk));
             });
         }
@@ -323,15 +302,13 @@ namespace gzWeb.Controllers {
 
         #region Performance
         [HttpGet]
-        public IHttpActionResult GetPerformanceData() {
+        public async Task<IHttpActionResult> GetPerformanceData() {
 
-            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            DateTime? latestBalanceUpdateDatetime;
-            var balance = _invBalanceRepo.GetCachedLatestBalanceTimestamp(
-                _invBalanceRepo.CacheLatestBalance(user.Id), out latestBalanceUpdateDatetime);
+            var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(_invBalanceRepo.CacheLatestBalanceAsync(user.Id));
 
 
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
@@ -339,7 +316,7 @@ namespace gzWeb.Controllers {
 
             var model = new PerformanceDataViewModel
             {
-                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * balance),
+                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * invBalanceRes.Item1),
                 NextExpectedInvestment = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth())),
                 Plans = GetCustomerPlans(user.Id)
             };
@@ -475,3 +452,4 @@ namespace gzWeb.Controllers {
         #endregion
     }
 }
+
