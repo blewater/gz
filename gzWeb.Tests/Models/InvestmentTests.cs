@@ -81,11 +81,12 @@ namespace gzWeb.Tests.Models {
         }
 
         [Test]
-        public void SaveDbAfterCleanTrxTblUpdBalancesByTrx() {
+        public void SaveDbAfterCleanTrxTblUpdBalances() {
 
             string[] customerEmails = new string[] {
                 "salem8@gmail.com",
                 "info@nessos.gr",
+                "info1@nessos.gr",
                 "testuser@gz.com",
                 "6month@allocation.com"
             };
@@ -144,7 +145,7 @@ namespace gzWeb.Tests.Models {
                 var gzTrx = new GzTransactionRepo(db);
 
                 var startYearMonthStr = "201501";
-                var endYeerMonthStr = DateTime.UtcNow.ToStringYearMonth();
+                var endYeerMonthStr = DateTime.UtcNow.AddMonths(2).ToStringYearMonth();
 
                 while (startYearMonthStr.BeforeEq(endYeerMonthStr)) {
 

@@ -52,9 +52,9 @@ namespace gzWeb.Controllers {
         public async Task<IHttpActionResult> GetSummaryData() {
 
             var userId = User.Identity.GetUserId<int>();
-            var tuple = await _userRepo.GetSummaryDataAsync(userId);
-            var user = tuple.Item2;
-            var summaryDto = tuple.Item1;
+            var summaryRes = await _userRepo.GetSummaryDataAsync(userId);
+            var user = summaryRes.Item2;
+            var summaryDto = summaryRes.Item1;
 
             if (user == null)
                 return OkMsg(new object(), "User not found!");
