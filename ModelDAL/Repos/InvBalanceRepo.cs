@@ -189,6 +189,8 @@ namespace gzDAL.Repos {
         /// 
         /// Checks for selling preconditions before attempting to return the present selling value.
         /// 
+        /// De-selects a Vintage for selling if sold already or locked (slipped through error validation cracks).
+        /// 
         /// Throws an exception if vintage is already sold or not available for selling.
         /// 
         /// </summary>
@@ -215,6 +217,10 @@ namespace gzDAL.Repos {
 
                         vintageDto.CustomerVintageShares = monthsCustomerShares;
                         vintageDto.Fees = fees;
+                    }
+                    else {
+                        // Deselect it for selling it
+                        vintageDto.Selected = false;
                     }
                 }
             }
@@ -344,6 +350,10 @@ namespace gzDAL.Repos {
         /// <param name="vintages"></param>
         /// <returns></returns>
         public void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages) {
+
+            // Set latest market price on it.. they may have left the browser window open 
+            // for a long time (stock market-wise) before hitting withdraw
+            SetVintagesMarketPrices(customerId, vintages);
 
             ConnRetryConf.TransactWithRetryStrategy(_db,
 
