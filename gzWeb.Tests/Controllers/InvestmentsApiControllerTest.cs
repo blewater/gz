@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
 using gzDAL.Conf;
@@ -68,9 +70,9 @@ namespace gzWeb.Tests.Controllers
             Assert.IsNotNull(result);
         }
 
-        private IHttpActionResult GetSummaryData() {
+        private async Task<IHttpActionResult> GetSummaryData() {
             // Act
-            IHttpActionResult result = investmentsApiController.GetSummaryData();
+            IHttpActionResult result = await investmentsApiController.GetSummaryData();
             return result;
         }
 
@@ -144,12 +146,13 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public void GetSummaryDataWithUser() {
+        public async Task GetSummaryDataWithUser() {
 
+            var s = Stopwatch.StartNew();
             var userId = _db.Users
                 .Where(u => u.Email == "salem8@gmail.com")
                 .Select(u => u.Id).Single();
-            var tuple = _userRepo.GetSummaryDataAsync(userId).Result;
+            var tuple = await _userRepo.GetSummaryDataAsync(userId);
             var user = tuple.Item2;
             var summaryDto = tuple.Item1;
 
@@ -160,6 +163,9 @@ namespace gzWeb.Tests.Controllers
             // Is this formula correct?
             // var gainLossDiff = result.TotalInvestmentsReturns - (result.InvestmentsBalance - result.TotalInvestments);
             // Assert.IsTrue(gainLossDiff == 0);
+
+            var elapsed = s.Elapsed;
+            Console.WriteLine($"Elapsed: {elapsed.Milliseconds.ToString("F")} milliseconds.");
         }
 
         [Test]

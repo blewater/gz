@@ -45,14 +45,15 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
+        /// <param name="db"></param>
         /// <returns></returns>
-        public Task<IEnumerable<InvBalance>> CacheLatestBalance(int customerId) {
+        public Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId) {
 
             var lastBalanceRowTask = _db.InvBalances
-                .Where(i => i.CustomerId == customerId 
-                    && i.YearMonth == _db.InvBalances.Where(b=>b.CustomerId == i.CustomerId)
-                        .Select(b=>b.YearMonth)
-                        .Max())
+                .Where(i => i.CustomerId == customerId
+                            && i.YearMonth == _db.InvBalances.Where(b => b.CustomerId == i.CustomerId)
+                                .Select(b => b.YearMonth)
+                                .Max())
                 // Cache 4 hours
                 .FromCacheAsync(DateTime.UtcNow.AddHours(4));
 
@@ -91,11 +92,11 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public Task<Decimal> CacheInvestmentReturns(int customerId) {
+        public Task<Decimal> CacheInvestmentReturnsAsync(int customerId) {
 
             var invGainSumTask = _db.InvBalances
                 .Where(i => i.CustomerId == customerId)
-                .Select(i=>i.InvGainLoss)
+                .Select(i => i.InvGainLoss)
                 .DefaultIfEmpty(0)
                 .DeferredSum()
                 // Cache 4 Hours
