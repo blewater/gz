@@ -15,6 +15,7 @@ using gzWeb.Contracts;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
 using RestSharp.Deserializers;
+using Z.EntityFramework.Plus;
 
 namespace gzWeb.Controllers {
     [Authorize]
@@ -245,15 +246,14 @@ namespace gzWeb.Controllers {
             ICollection<VintageDto> vintages,
             bool bypassQueue = false) {
 
-            // Not compatible with IIS Express... With Azure maybe?
-            //if (!bypassQueue) {
-            //    HostingEnvironment.QueueBackgroundWorkItem(
-            //        ct =>
-            //            _invBalanceRepo.SaveDbSellVintages(customerId, vintages));
-            //}
-            //else {
+            if (!bypassQueue) {
+                // Compatible only with IIS hosting
+                HostingEnvironment.QueueBackgroundWorkItem(
+                    ct =>
+                        _invBalanceRepo.SaveDbSellVintages(customerId, vintages));
+            } else {
                 _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
-            //}
+            }
 
             // Presume the intended vintages were sold
             foreach (var dto in vintages.Where(v=>v.Selected)) {
@@ -330,18 +330,17 @@ namespace gzWeb.Controllers {
         [HttpGet]
         public IHttpActionResult GetPortfolios()
         {
-            return OkMsg(() =>
-            {
+            return OkMsg(() => {
                 var portfolios =
                     _dbContext.Portfolios
-                              .Where(x => x.IsActive)
-                              .Select(x => new
-                                      {
-                                          x.Id,
-                                          x.RiskTolerance,
-                                          Funds = x.PortFunds.Select(f => new {f.Fund.HoldingName, f.Weight})
-                                      })
-                              .ToList();
+                        .Where(x => x.IsActive)
+                        .Select(x => new {
+                            x.Id,
+                            x.RiskTolerance,
+                            Funds = x.PortFunds.Select(f => new {f.Fund.HoldingName, f.Weight})
+                        })
+                        .FromCacheAsync(DateTime.UtcNow.AddDays(1))
+                        .Result;
                 return portfolios;
             });
         }
