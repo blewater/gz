@@ -51,8 +51,9 @@ namespace gzWeb.Controllers {
         public IHttpActionResult GetSummaryData() {
 
             var userId = User.Identity.GetUserId<int>();
-            ApplicationUser user;
-            var summaryDto = _userRepo.GetSummaryData(userId, out user);
+            var tuple = _userRepo.GetSummaryDataAsync(userId).Result;
+            var user = tuple.Item2;
+            var summaryDto = tuple.Item1;
 
             if (user == null)
                 return OkMsg(new object(), "User not found!");
@@ -126,7 +127,7 @@ namespace gzWeb.Controllers {
         [HttpPost]
         public IHttpActionResult GetVintagesWithSellingValues(IList<VintageViewModel> vintages) {
 
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -144,9 +145,9 @@ namespace gzWeb.Controllers {
         /// <returns></returns>
         [Obsolete]
         [HttpGet]
-        public IHttpActionResult GetVintagesWithSellingValues()
-        {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+        public IHttpActionResult GetVintagesWithSellingValues() {
+
+            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -223,7 +224,6 @@ namespace gzWeb.Controllers {
         public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages) {
 
             var vintagesDtos = vintages
-                .AsParallel()
                 .Select(v => _mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
 
@@ -235,7 +235,7 @@ namespace gzWeb.Controllers {
             var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
 
             // Handle Response
-            var user = _userRepo.GetCachedUser(userId);
+            var user = _userRepo.GetCachedUserAsync(userId).Result;
 
             // Get user currency rate
             CurrencyInfo userCurrency;
@@ -288,9 +288,9 @@ namespace gzWeb.Controllers {
 
         #region Portfolio
         [HttpGet]
-        public IHttpActionResult GetPortfolioData()
-        {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+        public IHttpActionResult GetPortfolioData() {
+
+            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -313,7 +313,7 @@ namespace gzWeb.Controllers {
         {
             return OkMsg(() =>
             {
-                var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+                var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
                 if (user == null)
                     return OkMsg(new object(), "User not found!");
                 return OkMsg(() => _custPortfolioRepo.SaveDbCustomerSelectNextMonthsPortfolio(user.Id, plan.Risk));
@@ -324,7 +324,8 @@ namespace gzWeb.Controllers {
         #region Performance
         [HttpGet]
         public IHttpActionResult GetPerformanceData() {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+
+            var user = _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>()).Result;
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 

@@ -65,21 +65,21 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="lastBalanceRowTask"></param>
-        /// <param name="lastUpdatedBalanceOn">Out parameter of the last updated timestamp</param>
-        /// <returns>Balance Amount of last month.</returns>
-        public decimal GetCachedLatestBalanceTimestamp(
-            Task<IEnumerable<InvBalance>> lastBalanceRowTask, 
-            out DateTime? lastUpdatedBalanceOn) {
+        /// <returns>
+        /// 1. Balance Amount of last month
+        /// 2. Last updated timestamp of invBalance.
+        /// </returns>
+        public async Task<Tuple<decimal, DateTime?>> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask) {
 
-            var res = lastBalanceRowTask.Result;
+            var res = await lastBalanceRowTask;
 
             var lastMonthsBalanceRow = res
                 .Select(b => new { b.Balance, b.UpdatedOnUtc })
                 .SingleOrDefault();
 
-            lastUpdatedBalanceOn = lastMonthsBalanceRow?.UpdatedOnUtc;
+            var lastUpdatedBalanceOn = lastMonthsBalanceRow?.UpdatedOnUtc;
 
-            return lastMonthsBalanceRow?.Balance??0;
+            return Tuple.Create(lastMonthsBalanceRow?.Balance??0, lastUpdatedBalanceOn);
         }
 
         /// <summary>
@@ -111,9 +111,9 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="invGainSumTask"></param>
         /// <returns>Balance Amount of last month.</returns>
-        public decimal GetCachedInvestmentReturns(Task<decimal> invGainSumTask) {
+        public async Task<decimal> GetCachedInvestmentReturnsAsync(Task<decimal> invGainSumTask) {
 
-            var invGainSum = invGainSumTask.Result;
+            var invGainSum = await invGainSumTask;
 
             return invGainSum;
         }

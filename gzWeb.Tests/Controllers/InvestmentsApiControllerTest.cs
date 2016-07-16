@@ -149,8 +149,9 @@ namespace gzWeb.Tests.Controllers
             var userId = _db.Users
                 .Where(u => u.Email == "salem8@gmail.com")
                 .Select(u => u.Id).Single();
-            ApplicationUser user;
-            var summaryDto = _userRepo.GetSummaryData(userId, out user);
+            var tuple = _userRepo.GetSummaryDataAsync(userId).Result;
+            var user = tuple.Item2;
+            var summaryDto = tuple.Item1;
 
             // Act
             var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user, summaryDto);
