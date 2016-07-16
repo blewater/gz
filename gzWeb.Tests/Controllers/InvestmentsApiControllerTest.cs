@@ -82,12 +82,12 @@ namespace gzWeb.Tests.Controllers
         /// 
         /// </summary>
         [Test]
-        public void InvestementApiController_GetCustomerPlans() {
+        public async Task InvestementApiController_GetCustomerPlans() {
 
-            var user = manager.FindByEmail("info@nessos.gr");
+            var user = await manager.FindByEmailAsync("info@nessos.gr");
 
             // Act
-            var result = investmentsApiController.GetCustomerPlans(user.Id);
+            var result = await investmentsApiController.GetCustomerPlansAsync(user.Id);
 
             // 3 Active Portfolios
             Assert.IsNotNull(result.Count() == 3);

@@ -656,7 +656,6 @@ namespace gzWeb.Controllers
             if (user == null)
                 return Ok("User not found!");
 
-            //await Task.Run(() => _cacheUserData.Query(user.Id));
             await _cacheUserData.Query(user.Id);
 
             return Ok();
