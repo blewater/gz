@@ -73,7 +73,7 @@ namespace gzWeb.Controllers {
         SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto)
         {
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var summaryDvm = new SummaryDataViewModel {
                 InvestmentsBalance =
@@ -110,12 +110,12 @@ namespace gzWeb.Controllers {
         /// 
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="userCurrency"></param>
         /// <returns></returns>
-        private decimal GetUserCurrencyRate(ApplicationUser user, out CurrencyInfo userCurrency) {
+        private decimal GetUserCurrencyRate(ApplicationUser user) {
 
-            userCurrency = CurrencyHelper.GetSymbol(user.Currency);
+            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+
             return usdToUserRate;
         }
 
@@ -148,7 +148,7 @@ namespace gzWeb.Controllers {
         public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user) {
 
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var customerVintages = _invBalanceRepo
                 .GetCustomerVintagesSellingValue(user.Id);
@@ -174,7 +174,7 @@ namespace gzWeb.Controllers {
         public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVM) {
 
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var vintageDtos = vintagesVM
                 .Select(t => _mapper.Map<VintageViewModel, VintageDto>(t)).ToList();
@@ -218,7 +218,7 @@ namespace gzWeb.Controllers {
 
             // Get user currency rate
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var inUserRateVintages =
             updatedVintages.AsParallel().Select(v => new VintageViewModel() {
@@ -274,7 +274,7 @@ namespace gzWeb.Controllers {
                 return OkMsg(new object(), "User not found!");
 
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
             var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*_gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth()));
 
             var model = new PortfolioDataViewModel
