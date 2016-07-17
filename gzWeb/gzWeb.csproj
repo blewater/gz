@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -19,10 +19,10 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44300</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
+    <IISExpressSSLPort>44377</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -53,20 +53,24 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AutoMapper, Version=4.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=5.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.5.0.2\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Common.Logging.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Common.Logging.NLog20, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.NLog20.3.0.0\lib\net40\Common.Logging.NLog20.dll</HintPath>
+    <Reference Include="Common.Logging.NLog20, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.NLog20.3.3.1\lib\net40\Common.Logging.NLog20.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentScheduler, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.4.1.2\lib\net40\FluentScheduler.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Glimpse.Ado, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -89,8 +93,8 @@
       <HintPath>..\packages\Glimpse.Mvc5.1.5.3\lib\net45\Glimpse.Mvc5.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="JSNLog, Version=2.17.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\JSNLog.2.17.1\lib\net40\JSNLog.dll</HintPath>
+    <Reference Include="JSNLog, Version=2.17.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JSNLog.2.17.4\lib\net40\JSNLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -119,7 +123,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.2.3\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.3.5\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog.Extended, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -127,39 +131,43 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog.Owin.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.Owin.Logging.1.0\lib\net45\NLog.Owin.Logging.dll</HintPath>
+      <HintPath>..\packages\NLog.Owin.Logging.1.0.1\lib\net45\NLog.Owin.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog.Web, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.Web.4.2.1\lib\net35\NLog.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RazorEngine, Version=3.8.2.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.8.2\lib\net45\RazorEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RouteDebugger, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\routedebugger.2.1.4.0\lib\net40\RouteDebugger.dll</HintPath>
+    <Reference Include="RouteDebugger, Version=2.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\routedebugger.2.1.5\lib\net40\RouteDebugger.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.3.1.2\lib\net45\SimpleInjector.dll</HintPath>
+    <Reference Include="SimpleInjector, Version=3.2.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.2.0\lib\net45\SimpleInjector.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector.Extensions.ExecutionContextScoping, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.Extensions.ExecutionContextScoping.3.1.2\lib\net45\SimpleInjector.Extensions.ExecutionContextScoping.dll</HintPath>
+    <Reference Include="SimpleInjector.Extensions.ExecutionContextScoping, Version=3.2.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Extensions.ExecutionContextScoping.3.2.0\lib\net45\SimpleInjector.Extensions.ExecutionContextScoping.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector.Integration.Web, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.Integration.Web.3.1.2\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
+    <Reference Include="SimpleInjector.Integration.Web, Version=3.2.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.3.2.0\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector.Integration.Web.Mvc, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.3.1.2\lib\net40\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
+    <Reference Include="SimpleInjector.Integration.Web.Mvc, Version=3.2.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.3.2.0\lib\net45\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleInjector.Integration.WebApi, Version=3.1.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.Integration.WebApi.3.1.2\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
+    <Reference Include="SimpleInjector.Integration.WebApi, Version=3.2.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.WebApi.3.2.0\lib\net45\SimpleInjector.Integration.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -170,6 +178,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -233,11 +242,15 @@
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+      <HintPath>..\packages\WebActivatorEx.2.1.0\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Z.EntityFramework.Plus.EF6, Version=1.2.5.0, Culture=neutral, PublicKeyToken=59b66d028979105b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Z.EntityFramework.Plus.EF6.1.2.5\lib\net45\Z.EntityFramework.Plus.EF6.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -293,10 +306,14 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\CarouselEntriesController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DynamicPagesController.cs" />
     <Compile Include="Areas\Admin\Controllers\EmailTemplatesController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageController.cs" />
+    <Compile Include="Areas\Admin\Models\CarouselEntriesViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\DynamicViewModel.cs" />
     <Compile Include="Areas\Admin\Models\EmailsViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UsersViewModel.cs" />
     <Compile Include="Areas\Admin\Models\LogViewModel.cs" />
@@ -304,6 +321,7 @@
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
+    <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.Designer.cs">
       <DependentUpon>201601301303283_Init CustPortfolio Key.cs</DependentUpon>
@@ -433,6 +451,78 @@
     <Compile Include="Migrations\201606111158443_fix.Designer.cs">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606271858401_Unique Index CustPortfolio.cs" />
+    <Compile Include="Migrations\201606271858401_Unique Index CustPortfolio.Designer.cs">
+      <DependentUpon>201606271858401_Unique Index CustPortfolio.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.cs" />
+    <Compile Include="Migrations\201606272141528_InvBalance RiskType Optimization.Designer.cs">
+      <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.cs" />
+    <Compile Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.Designer.cs">
+      <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281306336_Add_DynamicPages.cs" />
+    <Compile Include="Migrations\201606281306336_Add_DynamicPages.Designer.cs">
+      <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs" />
+    <Compile Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.Designer.cs">
+      <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606281618354_Sync twin migrations.cs" />
+    <Compile Include="Migrations\201606281618354_Sync twin migrations.Designer.cs">
+      <DependentUpon>201606281618354_Sync twin migrations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.cs" />
+    <Compile Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.Designer.cs">
+      <DependentUpon>201606291929085_Remove RiskPortfolio Col in InvBalance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201606292009538_Add InvBalanceIndexes.cs" />
+    <Compile Include="Migrations\201606292009538_Add InvBalanceIndexes.Designer.cs">
+      <DependentUpon>201606292009538_Add InvBalanceIndexes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607031638440_Index Optimizations.cs" />
+    <Compile Include="Migrations\201607031638440_Index Optimizations.Designer.cs">
+      <DependentUpon>201607031638440_Index Optimizations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607032105402_Char6 len CashInvestment Index.cs" />
+    <Compile Include="Migrations\201607032105402_Char6 len CashInvestment Index.Designer.cs">
+      <DependentUpon>201607032105402_Char6 len CashInvestment Index.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607032152070_InvBalance_CashInv_Idx.cs" />
+    <Compile Include="Migrations\201607032152070_InvBalance_CashInv_Idx.Designer.cs">
+      <DependentUpon>201607032152070_InvBalance_CashInv_Idx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607041000197_Consolidate_SoldVintage_InvBalance.cs" />
+    <Compile Include="Migrations\201607041000197_Consolidate_SoldVintage_InvBalance.Designer.cs">
+      <DependentUpon>201607041000197_Consolidate_SoldVintage_InvBalance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607061508209_SQL_Functions.cs" />
+    <Compile Include="Migrations\201607061508209_SQL_Functions.Designer.cs">
+      <DependentUpon>201607061508209_SQL_Functions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607072253518_CurrRate_Index.cs" />
+    <Compile Include="Migrations\201607072253518_CurrRate_Index.Designer.cs">
+      <DependentUpon>201607072253518_CurrRate_Index.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607080025135_FundPrice_Alter_Index.cs" />
+    <Compile Include="Migrations\201607080025135_FundPrice_Alter_Index.Designer.cs">
+      <DependentUpon>201607080025135_FundPrice_Alter_Index.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607121108567_Sold_CustFund_Columns.cs" />
+    <Compile Include="Migrations\201607121108567_Sold_CustFund_Columns.Designer.cs">
+      <DependentUpon>201607121108567_Sold_CustFund_Columns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607121223531_Add_CarouselEntry.cs" />
+    <Compile Include="Migrations\201607121223531_Add_CarouselEntry.Designer.cs">
+      <DependentUpon>201607121223531_Add_CarouselEntry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607130756384_alter functions.cs" />
+    <Compile Include="Migrations\201607130756384_alter functions.Designer.cs">
+      <DependentUpon>201607130756384_alter functions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -454,8 +544,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utilities\CacheUserData.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
-    <Compile Include="Utilities\DebugTextWriter.cs" />
+    <Compile Include="Utilities\GlobalCacheScheduledJob.cs" />
+    <Compile Include="Utilities\GlobalScheduledJobsRegistry.cs" />
+    <Compile Include="Utilities\ICacheUserData.cs" />
     <Compile Include="Utilities\OkWithMessageResult.cs" />
     <Compile Include="Utilities\Response.cs" />
   </ItemGroup>
@@ -521,6 +614,7 @@
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
+    <Content Include="Content\Styles\_app\carousel.css" />
     <Content Include="Content\Styles\_app\guest.css" />
     <Content Include="Content\Styles\_app\games.css" />
     <Content Include="Content\Styles\_app\headerNew.css" />
@@ -570,7 +664,6 @@
     <Content Include="Areas\Mvc\Views\Shared\_GamesLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
-    <Content Include="Areas\Mvc\Views\Investments\Index.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Register.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Login.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_AuthLayout.cshtml" />
@@ -595,6 +688,15 @@
     <Content Include="Areas\Admin\Views\Manage\RoleCreate.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\RoleEdit.cshtml" />
     <Content Include="Areas\Admin\Views\Manage\RoleDetails.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\DynamicPages\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Manage\UserEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\CarouselEntries\Edit.cshtml" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
@@ -611,9 +713,11 @@
     <Content Include="Content\Images\diagram_green.svg" />
     <Content Include="Content\Images\games_green.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Contact.cshtml" />
+    <Content Include="Areas\Mvc\Views\Investments\TestSummary.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
+    <Content Include="Partials\directives\gzCarousel.html" />
     <Content Include="Partials\directives\gzFeaturedGames.html" />
     <Content Include="Partials\directives\gzFeaturedGame.html" />
     <Content Include="Partials\directives\gzFieldOk.html" />
@@ -660,6 +764,10 @@
     <Content Include="Scripts\angular-recaptcha\angular-recaptcha.min.js" />
     <Content Include="Scripts\angular-spinner\angular-spinner.js" />
     <Content Include="Scripts\angular-spinner\angular-spinner.min.js" />
+    <Content Include="Scripts\angular-touch\angular-touch.js" />
+    <Content Include="Scripts\angular-touch\angular-touch.min.js" />
+    <Content Include="Scripts\angular-ui-router\angular-ui-router.js" />
+    <Content Include="Scripts\angular-ui-router\angular-ui-router.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
@@ -676,10 +784,8 @@
     <Content Include="Scripts\angular\angular.js" />
     <Content Include="Scripts\angular\angular.min.js" />
     <Content Include="Scripts\autobahn.min.js" />
-    <Content Include="Scripts\d3-tip\d3-tip.js" />
     <Content Include="Scripts\d3\d3.js" />
     <Content Include="Scripts\d3\d3.min.js" />
-    <Content Include="Scripts\exceptionaire-materialize.min.js" />
     <Content Include="Scripts\jsnlog\jsnlog.js" />
     <Content Include="Scripts\jsnlog\jsnlog.min.js" />
     <Content Include="Scripts\jsnlog\logToServer.js" />
@@ -692,6 +798,9 @@
     <Content Include="Scripts\spin\spin.js" />
     <Content Include="Scripts\spin\spin.min.js" />
     <Content Include="Scripts\_app\app.js" />
+    <Content Include="Scripts\_app\constants\emConCfg.js" />
+    <Content Include="Scripts\_app\constants\emConCfg-Stage.js" />
+    <Content Include="Scripts\_app\global.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\account\myProfileCtrl.js" />
@@ -708,10 +817,13 @@
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />
     <Content Include="Scripts\_app\directives\gzAuthAccess.js" />
+    <Content Include="Scripts\_app\directives\gzCarousel.js" />
     <Content Include="Scripts\_app\directives\gzFeaturedGames.js" />
     <Content Include="Scripts\_app\directives\gzFeaturedGame.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
+    <Content Include="Scripts\_app\directives\gzPlanHoldingsChart.js" />
     <Content Include="Scripts\_app\services\authService.js" />
+    <Content Include="Scripts\_app\services\iovationService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
     <Content Include="Scripts\_app\controllers\account\registerDepositCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerPaymentMethodsCtrl.js" />
@@ -729,7 +841,6 @@
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\footerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\loginCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerCtrl.js" />
@@ -739,7 +850,7 @@
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
     <Content Include="Scripts\_app\directives\gzPerformanceGraph.js" />
-    <Content Include="Scripts\_app\directives\gzPortfolioChart.js" />
+    <Content Include="Scripts\_app\directives\gzPlansAllocationChart.js" />
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
     <Content Include="Scripts\_app\services\emBanking.js" />
@@ -763,7 +874,7 @@
     <Content Include="Scripts\angular-spinner\angular-spinner.min.js.map" />
     <Content Include="Scripts\angular-filter\angular-filter.min.js.map" />
     <Content Include="Scripts\angular-moment\angular-moment.min.js.map" />
-    <Content Include="Scripts\d3\LICENSE" />
+    <Content Include="Scripts\angular-touch\angular-touch.min.js.map" />
     <None Include="Scripts\jquery\jquery-1.12.0.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.min.js" />
@@ -941,6 +1052,60 @@
     <EmbeddedResource Include="Migrations\201606111158443_fix.resx">
       <DependentUpon>201606111158443_fix.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606271858401_Unique Index CustPortfolio.resx">
+      <DependentUpon>201606271858401_Unique Index CustPortfolio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606272141528_InvBalance RiskType Optimization.resx">
+      <DependentUpon>201606272141528_InvBalance RiskType Optimization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281303160_Add_Index_For_Code_In_EmailTemplates.resx">
+      <DependentUpon>201606281303160_Add_Index_For_Code_In_EmailTemplates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281306336_Add_DynamicPages.resx">
+      <DependentUpon>201606281306336_Add_DynamicPages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281327185_Change_DynamicPages_From_And_To_To_DateTime.resx">
+      <DependentUpon>201606281327185_Change_DynamicPages_From_And_To_To_DateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606281618354_Sync twin migrations.resx">
+      <DependentUpon>201606281618354_Sync twin migrations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606291929085_Remove RiskPortfolio Col in InvBalance.resx">
+      <DependentUpon>201606291929085_Remove RiskPortfolio Col in InvBalance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606292009538_Add InvBalanceIndexes.resx">
+      <DependentUpon>201606292009538_Add InvBalanceIndexes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607031638440_Index Optimizations.resx">
+      <DependentUpon>201607031638440_Index Optimizations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607032105402_Char6 len CashInvestment Index.resx">
+      <DependentUpon>201607032105402_Char6 len CashInvestment Index.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607032152070_InvBalance_CashInv_Idx.resx">
+      <DependentUpon>201607032152070_InvBalance_CashInv_Idx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607041000197_Consolidate_SoldVintage_InvBalance.resx">
+      <DependentUpon>201607041000197_Consolidate_SoldVintage_InvBalance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607061508209_SQL_Functions.resx">
+      <DependentUpon>201607061508209_SQL_Functions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607072253518_CurrRate_Index.resx">
+      <DependentUpon>201607072253518_CurrRate_Index.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607080025135_FundPrice_Alter_Index.resx">
+      <DependentUpon>201607080025135_FundPrice_Alter_Index.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607121108567_Sold_CustFund_Columns.resx">
+      <DependentUpon>201607121108567_Sold_CustFund_Columns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607121223531_Add_CarouselEntry.resx">
+      <DependentUpon>201607121223531_Add_CarouselEntry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607130756384_alter functions.resx">
+      <DependentUpon>201607130756384_alter functions.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModelDAL\gzDAL.csproj">
@@ -999,16 +1164,15 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets'))" />
   </Target>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
-  </Target>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.6.0\build\dotnet\GitVersionTask.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

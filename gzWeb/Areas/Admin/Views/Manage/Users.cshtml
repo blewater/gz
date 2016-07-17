@@ -5,11 +5,11 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<div class="admin users-admin">
+<div class="admin admin-users">
 
     <article>
         <div class="container-fluid">
-            <div class="admin-table logs-table">
+            <div class="admin-table">
                 <div class="table-head">
                     <div class="col-md-12">
                         <div class="row">
@@ -36,7 +36,7 @@
                                 </div>
                             }
 
-                            <div class="col-md-5 logs-pagination">
+                            <div class="col-md-5 admin-pagination">
                                 <div class="row">
                                     <nav style="@(Model.TotalPages <= 1 ? "display:none;": "")">
                                         <ul class="pagination">
@@ -72,8 +72,11 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th class="col-md-3 text-center">
+                                    <th class="col-md-2 text-center">
                                         User Name
+                                    </th>
+                                    <th class="col-md-2 text-center">
+                                        Email
                                     </th>
                                     <th class="col-md-3 text-center">
                                         Last Name
@@ -81,8 +84,8 @@
                                     <th class="col-md-3 text-center">
                                         First Name
                                     </th>
-                                    <th class="col-md-2 text-center">
-                                        Cassino Id
+                                    <th class="col-md-1 text-center">
+                                        Casino Id
                                     </th>
                                     <th class="col-md-1"></th>
                                 </tr>
@@ -96,6 +99,9 @@
                                             @Html.DisplayFor(modelItem => item.UserName)
                                         </td>
                                         <td class="text-center">
+                                            @Html.DisplayFor(modelItem => item.Email)
+                                        </td>
+                                        <td class="text-center">
                                             @Html.DisplayFor(modelItem => item.LastName)
                                         </td>
                                         <td class="text-center">
@@ -105,7 +111,7 @@
                                             @Html.DisplayFor(modelItem => item.GmCustomerId)
                                         </td>
                                         <td class="text-center">
-                                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                            @Html.ActionLink("Edit", "UserEdit", new { id = item.Id })
                                         </td>
                                     </tr>
                                 }

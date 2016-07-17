@@ -17,8 +17,10 @@ namespace gzDAL.Models {
         [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 1)]
         public int CustomerId { get; set; }
 
-        [Required, StringLength(6)]
+        [Required]
         [Index("CustFundShareId_YMD_idx", IsUnique = true, Order = 2)]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
         public string YearMonth { get; set; }
 
         [Required]
@@ -36,16 +38,18 @@ namespace gzDAL.Models {
         public DateTime UpdatedOnUtc { get; set; }
 
         #region Total Monthly Shares
+
         /// <summary>
         /// Total number of shares for month
         /// </summary>
         [Required]
-        public decimal SharesNum { get; set; }
+        public decimal SharesNum { get; set; } = 0;
+
         /// <summary>
         /// $ Value of NumShares: Total number of shares for month.
         /// </summary>
         [Required]
-        public decimal SharesValue { get; set; }
+        public decimal SharesValue { get; set; } = 0;
 
         /// <summary>
         /// Price of newly bought shares in month
@@ -53,6 +57,13 @@ namespace gzDAL.Models {
         [ForeignKey("SharesFundPrice")]
         public int? SharesFundPriceId { get; set; }
         public virtual FundPrice SharesFundPrice { get; set; }
+
+        /// <summary>
+        /// Link to month's invBalance
+        /// </summary>
+        public int? InvBalanceId { get; set; }
+        [ForeignKey("InvBalanceId")]
+        public virtual InvBalance InvBalance { get; set; }
 
         #endregion
         #region NewShares
@@ -71,13 +82,27 @@ namespace gzDAL.Models {
         #region Sold Vintage
 
         /// <summary>
-        /// If the month's vintage has been sold
+        /// $ Value of NumShares: Total number of shares for month.
         /// </summary>
-        public int? SoldVintageId { get; set; }
-        [ForeignKey("SoldVintageId")]
-        public virtual SoldVintage SoldVintage { get; set; }
-
+        public decimal? SoldSharesValue { get; set; }
+        public int? SoldSharesFundPriceId { get; set; }
+        public DateTime? SoldOnUtc { get; set; }
         #endregion
 
     }
+
+    /// <summary>
+    /// 
+    /// Comparer for linq expressions
+    /// 
+    /// </summary>
+    public class CustFundComparer : IEqualityComparer<CustFundShare> {
+        public bool Equals(CustFundShare x, CustFundShare y) {
+            return x.Id == y.Id;
+        }
+        public int GetHashCode(CustFundShare custFundShare) {
+            return custFundShare.Id.GetHashCode();
+        }
+    }
+
 }

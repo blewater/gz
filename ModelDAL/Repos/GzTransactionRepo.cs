@@ -4,12 +4,17 @@ using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
+using Z.EntityFramework.Plus;
+using System.Runtime.Caching;
+using System.Threading.Tasks;
+using NLog;
 
 namespace gzDAL.Repos {
 
@@ -21,6 +26,7 @@ namespace gzDAL.Repos {
     /// </summary>
     public class GzTransactionRepo : IGzTransactionRepo {
         private readonly ApplicationDbContext _db;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public GzTransactionRepo(ApplicationDbContext db) {
             this._db = db;
@@ -37,35 +43,106 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public decimal GetTotalDeposit(int customerId) {
 
-            decimal totalDeposits = 0;
+            decimal totalDeposits = _db.Database
 
-            var customerIds =
-                _db.Users.Where(u => u.Id == customerId)
-                    .Select(u => new {
-                        u.GmCustomerId,
-                        u.Email
-                    })
-                    .Single();
-
-            if (customerIds.GmCustomerId.HasValue) {
-
-                totalDeposits =
-                    _db.GmTrxs
-                        .Where(t => t.CustomerId == customerIds.GmCustomerId &&
-                                    t.Type.Code == GmTransactionTypeEnum.Deposit)
-                        .Select(t => t)
-                        .Sum(t => (decimal?)t.Amount) ?? 0;
-            } else {
-
-                totalDeposits =
-                    _db.GmTrxs
-                        .Where(t => t.CustomerEmail == customerIds.Email &&
-                                    t.Type.Code == GmTransactionTypeEnum.Deposit)
-                        .Select(t => t)
-                        .Sum(t => (decimal?) t.Amount) ?? 0;
-            }
+                .SqlQuery<decimal>("Select * From dbo.GetTotalDeposits(@customerId)",
+                    new SqlParameter("@CustomerId", customerId))
+                .SingleOrDefault();
 
             return totalDeposits;
+        }
+
+        /// <summary>
+        /// 
+        /// Last pending loss to be invested
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="yearMonthStr"></param>
+        /// <returns></returns>
+        public decimal LastInvestmentAmount(int customerId, string yearMonthStr) {
+
+            string key = "lastinvestmentamount" + customerId + yearMonthStr;
+            var lastInvestmentAmount = (decimal?)MemoryCache.Default.Get(key);
+
+            if (!lastInvestmentAmount.HasValue) {
+                lastInvestmentAmount = _db.Database
+                    .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
+                        new SqlParameter("@CustomerId", customerId),
+                        new SqlParameter("@YearMonth", yearMonthStr),
+                        new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.CreditedPlayingLoss))
+                    .SingleOrDefault();
+
+                // 1 day cache
+                MemoryCache.Default.Set(key, lastInvestmentAmount.Value, DateTimeOffset.UtcNow.AddDays(1));
+            }
+            return lastInvestmentAmount.Value;
+        }
+
+        /// <summary>
+        /// 
+        /// Get month's playling loss
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<decimal> GetLastInvestmentAmountAsync(int userId) {
+
+            using (var db = new ApplicationDbContext()) {
+
+                var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
+
+                var lastInvestmentAmount = await db.Database
+                    .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@YearMonth", thisYearMonthStr),
+                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
+                    .SingleOrDefaultAsync();
+
+                return lastInvestmentAmount;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Get Total playing loss
+        ///   
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<decimal> GetTotalInvestmentsAmountAsync(int userId) {
+
+            using (var db = new ApplicationDbContext()) {
+
+                decimal totalInvestmentsAmount = await db.Database
+                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@CustomerId, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
+                    .SingleAsync();
+
+                return totalInvestmentsAmount;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Get Total Liquidation or investment sales.
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<decimal> GetTotalWithdrawalsAmountAsync(int userId) {
+
+            using (var db = new ApplicationDbContext()) {
+
+                decimal totalWithdrawalsAmount = await db.Database
+                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.TransferToGaming))
+                    .SingleAsync();
+
+                return totalWithdrawalsAmount;
+            }
         }
 
         /// <summary>
@@ -84,14 +161,6 @@ namespace gzDAL.Repos {
             }
 
             var customerIds =
-
-//_db.GzTrxs
-//.Where(LaterEq(startYearMonthStr))
-//.Where(BeforeEq(endYearMonthStr))
-//.OrderBy(t => t.CustomerId)
-//.Select(t => t.CustomerId)
-//.Distinct()
-//.ToList();
 
                 from t in _db.GzTrxs
                 join c in _db.Users on t.CustomerId equals c.Id
@@ -112,13 +181,15 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId) {
+        public async Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId) {
 
             string prompt = "First available withdrawal on: ";
 
-            DateTime eligibleWithdrawDate;
-            int lockInDays;
-            bool okToWithdraw = IsWithdrawalEligible(customerId, out eligibleWithdrawDate, out lockInDays);
+            var task = IsWithdrawalEligible(customerId);
+            var tuple = await task;
+            var eligibleWithdrawDate = tuple.Item2;
+            var lockInDays = tuple.Item3;
+            bool okToWithdraw = tuple.Item1;
 
             var retValues = new WithdrawEligibilityDTO() {
                 LockInDays = lockInDays,
@@ -139,24 +210,30 @@ namespace gzDAL.Repos {
         /// <param name="eligibleWithdrawDate"></param>
         /// <param name="lockInDays"></param>
         /// <returns></returns>
-        private bool IsWithdrawalEligible(int customerId, out DateTime eligibleWithdrawDate, out int lockInDays) {
+        private async Task<Tuple<bool, DateTime, int>> IsWithdrawalEligible(int customerId) {
 
-            lockInDays = _db.GzConfigurations.Select(c => c.LOCK_IN_NUM_DAYS).Single();
+            var task = _db.GzConfigurations
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            var confRow = task.Result;
 
-            DateTime earliestLoss = _db.GzTrxs.Where(
-                t => t.CustomerId == customerId && t.Type.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
-                .OrderBy(t => t.Id)
-                .Select(t => t.CreatedOnUtc)
-                .FirstOrDefault();
+            var lockInDays = confRow
+                .Select(c => c.LOCK_IN_NUM_DAYS)
+                .Single();
 
-            if (earliestLoss.Year == 1) {
+            DateTime earliestLoss = await _db.Database
+                .SqlQuery<DateTime>("Select dbo.GetMinDateTrx(@CustomerId, @TrxType)",
+                    new SqlParameter("@CustomerId", customerId),
+                    new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
+                .SingleOrDefaultAsync();
+
+            if (earliestLoss.Year == 1900) {
                 earliestLoss = DateTime.UtcNow;
             }
 
-            eligibleWithdrawDate = earliestLoss.AddDays(lockInDays);
+            var eligibleWithdrawDate = earliestLoss.AddDays(lockInDays);
 
             bool okToWithdraw = eligibleWithdrawDate < DateTime.UtcNow;
-            return okToWithdraw;
+            return Tuple.Create(okToWithdraw, eligibleWithdrawDate, lockInDays);
         }
 
         /// <summary>
@@ -166,11 +243,15 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public bool GetEnabledWithdraw(int customerId) {
+        public async Task<bool> GetEnabledWithdraw(int customerId) {
 
-            DateTime eligibleWithdrawDate;
-            int lockInDays;
-            bool okToWithdraw = IsWithdrawalEligible(customerId, out eligibleWithdrawDate, out lockInDays);
+            var task = IsWithdrawalEligible(customerId);
+            var tuple = await task;
+            bool okToWithdraw = tuple.Item1;
+
+            // Not needed
+            //var eligibleWithdrawDate = tuple.Item2;
+            //var lockInDays = tuple.Item3;
 
             return okToWithdraw;
         }
@@ -266,45 +347,69 @@ namespace gzDAL.Repos {
         private void SaveDbSoldVintage(
             int customerId, 
             VintageDto vintage, 
-            DateTime soldOnUtc) 
-        {
-            List<CustFundShare> vintageCustFundShares = new List<CustFundShare>();
+            DateTime soldOnUtc) {
 
-            // Copy DTOs back to the entities
-            foreach (var dto in vintage.CustomerVintageShares) {
+            SaveDbSoldVintageCustFundShares(customerId, vintage, soldOnUtc);
 
-                vintageCustFundShares.Add(new CustFundShare() {
+            SaveDbSoldVintageInvBalance(customerId, vintage, soldOnUtc);
+        }
 
-                    Id = dto.Id,
-                    FundId = dto.FundId,
-                    CustomerId = dto.CustomerId,
-                    YearMonth = dto.YearMonth,
-                    SharesNum = dto.SharesNum,
-                    SharesValue = dto.SharesValue,
-                    NewSharesNum = dto.NewSharesNum,
-                    NewSharesValue = dto.NewSharesValue,
-                    SharesFundPriceId = dto.SharesFundPriceId,
-                    SoldVintageId = dto.SoldVintageId,
+        /// <summary>
+        /// 
+        /// Update custFundShares with sold values for a sold vintage
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        /// <param name="soldOnUtc"></param>
+        private void SaveDbSoldVintageInvBalance(int customerId, VintageDto vintage, DateTime soldOnUtc) {
 
-                    // Update timestamp to IN param
-                    UpdatedOnUtc = soldOnUtc
+            try {
+                var vintageToBeSold = _db.InvBalances
+                    .Where(b => b.Id == vintage.InvBalanceId)
+                    .Select(b => b)
+                    .Single();
+                vintageToBeSold.Sold = true;
+                vintageToBeSold.SoldAmount = vintage.MarketPrice - vintage.Fees;
+                vintageToBeSold.SoldFees = vintage.Fees;
+                vintageToBeSold.SoldOnUtc = soldOnUtc.Truncate(TimeSpan.FromSeconds(1));
+                vintageToBeSold.UpdatedOnUtc = vintageToBeSold.SoldOnUtc.Value;
+                // this is set to the month sold
+                vintageToBeSold.SoldYearMonth = soldOnUtc.ToStringYearMonth();
 
-                });
+                _db.SaveChanges();
             }
+            catch (Exception ex) {
+                _logger.Error("While selling vintage: {0}, for customerId: {1}, updating invBalance: Exception {2}", vintage.YearMonthStr, customerId, ex);
+            }
+        }
 
-            _db.SoldVintages.AddOrUpdate(
-                v => new {v.CustomerId, v.VintageYearMonth},
-                new SoldVintage() {
-                    CustomerId = customerId,
-                    VintageYearMonth = vintage.YearMonthStr,
-                    MarketAmount = vintage.MarketPrice,
-                    Fees = vintage.Fees,
-                    YearMonth = soldOnUtc.ToStringYearMonth(),
-                    VintageShares = vintageCustFundShares,
-                    // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
-                    UpdatedOnUtc = DbExpressions.Truncate(soldOnUtc, TimeSpan.FromSeconds(1))
+        /// <summary>
+        /// 
+        /// Update InvBalance for a sold vintage.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintage"></param>
+        /// <param name="soldOnUtc"></param>
+        private void SaveDbSoldVintageCustFundShares(int customerId, VintageDto vintage, DateTime soldOnUtc) {
+
+            try {
+                // Copy DTOs back to the InvBalance(vintage).CustFundShare entity
+                foreach (var dto in vintage.CustomerVintageShares) {
+
+                    var custFundShare = _db.CustFundShares
+                        .SingleOrDefault(s => s.Id == dto.Id);
+
+                    custFundShare.SoldSharesValue = dto.NewSharesValue;
+                    custFundShare.SoldOnUtc = soldOnUtc;
+                    custFundShare.SharesFundPriceId = dto.SharesFundPriceId;
                 }
-            );
+                _db.SaveChanges();
+            }
+            catch (Exception ex) {
+                _logger.Error("While selling vintage: {0}, for customerId: {1}, updating custFundShares: Exception {2}", vintage.YearMonthStr, customerId, ex);
+            }
         }
 
         /// <summary>
@@ -412,13 +517,20 @@ namespace gzDAL.Repos {
         /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
         private decimal GetWithdrawnFees(decimal liquidationAmount, out decimal gzFeesAmount, out decimal fundsFeesAmount) {
 
+            var confTask = _db.GzConfigurations
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+
+            var confRow = confTask.Result;
+
             gzFeesAmount = liquidationAmount *
                 // COMMISSION_PCNT: Database Configuration Value
-                (decimal)_db.GzConfigurations.Select(c => c.COMMISSION_PCNT).Single() / 100;
+                (decimal)confRow.Select(c => c.COMMISSION_PCNT)
+                    .Single() / 100;
 
             fundsFeesAmount = liquidationAmount *
                 // FUND_FEE_PCNT: Database Configuration Value
-                (decimal)_db.GzConfigurations.Select(c => c.FUND_FEE_PCNT).Single() / 100;
+                (decimal)confRow.Select(c => c.FUND_FEE_PCNT)
+                    .Single() / 100;
 
             return gzFeesAmount + fundsFeesAmount;
         }

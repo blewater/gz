@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 using gzDAL.DTO;
 using gzDAL.Models;
@@ -8,12 +9,12 @@ namespace gzWeb.Contracts
 {
     public interface IInvestmentsApi
     {
-        SummaryDataViewModel GetSummaryData(ApplicationUser user);
+        SummaryDataViewModel GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto);
 
         IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user);
 
-        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
+        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, bool bypassQueue = false);
 
-        IEnumerable<PlanViewModel> GetCustomerPlans(int customerId, decimal nextInvestAmount = 0);
+        Task<IEnumerable<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0);
     }
 }

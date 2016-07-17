@@ -1,0 +1,144 @@
+﻿@model gzDAL.Models.DynamicPage
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin admin-edit dynamic-edit">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 admin-interface">
+
+                <div class="col-md-6 @*text-center*@">
+                    <div class="row heading">
+                        <h2 class="text-gz">Edit</h2>
+                        <h4>Dynamic Page</h4>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row heading text-right">
+                        @Html.ActionLink("Back to List", "Index")
+                    </div>
+                </div>
+
+                <div class="col-md-12 bg-gz">
+                    <div class="row content">
+                        @using (Html.BeginForm())
+                        {
+                            @*<input type="hidden" name="jsonData" value="@ViewBag.JsonData"/>*@
+                            
+                            @Html.AntiForgeryToken()
+
+                            <div class="col-xs-10 col-xs-offset-1 col-md-3">
+                                <div class="row">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.Id)
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label" })
+                                            @Html.DropDownListFor(model => model.Category, new SelectList(new string[] { "Carousel", "Dynamic Page" }, Model.Category), new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.LabelFor(model => model.Live, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => model.Live, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Live, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.LabelFor(model => model.LiveFrom, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => model.LiveFrom, new { htmlAttributes = new { @class = "form-control", type="date" } })
+                                            @Html.ValidationMessageFor(model => model.LiveFrom, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.LabelFor(model => model.LiveTo, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => model.LiveTo, new { htmlAttributes = new { @class = "form-control", type="date" } })
+                                            @Html.ValidationMessageFor(model => model.LiveTo, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+
+                            <div class="col-xs-10 col-xs-offset-1 col-md-7 col-md-offset-0">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.LabelFor(model => model.Html, htmlAttributes: new { @class = "control-label" })
+                                            <textarea class="form-control" rows=20 data-editor="html" name="Html">@Model.Html</textarea>
+                                            @*@Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-10 col-xs-offset-1">
+                                <div class="row center-block">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-md-2 pull-right">
+                                            <input type="submit" value="Save" class="btn btn-default col-xs-12" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section scripts{
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+<script>
+    // Hook up ACE editor to all textareas with data-editor attribute
+    $(function () {
+        $('textarea[data-editor]').each(function () {
+            var textarea = $(this);
+
+            var mode = textarea.data('editor');
+
+            var editDiv = $('<div>', {
+                position: 'absolute',
+                width: textarea.width(),
+                height: textarea.height(),
+                'class': textarea.attr('class')
+            }).insertBefore(textarea);
+
+            textarea.css('display', 'none');
+
+            var editor = ace.edit(editDiv[0]);
+            editor.renderer.setShowGutter(false);
+            editor.getSession().setValue(textarea.val());
+            editor.getSession().setMode("ace/mode/" + mode);
+            // editor.setTheme("ace/theme/idle_fingers");
+
+            // copy back to textarea on form submit...
+            textarea.closest('form').submit(function () {
+                textarea.val(editor.getSession().getValue());
+            })
+
+        });
+    });
+</script>
+}

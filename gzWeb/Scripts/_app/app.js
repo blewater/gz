@@ -6,10 +6,11 @@ var APP = (function () {
     var app = angular.module(id, [
         // Angular modules 
         'ngRoute',
-        'ngResource',
-        'ngAnimate',
-        'ngSanitize',
-        'ngCookies'
+        , 'ngResource'
+        , 'ngAnimate'
+        , 'ngSanitize'
+        , 'ngCookies'
+        , 'ngTouch'
 
         // Custom modules 
         , 'customDirectives'
@@ -24,22 +25,24 @@ var APP = (function () {
         , 'matchMedia'
         , 'LocalStorageModule'
         , 'angularSpinner'
-        , 'countTo'
         , 'FBAngular'
         , 'vxWamp'
         , 'ngAutocomplete'
         , 'vcRecaptcha'
         , 'isoCurrency'
-        , 'ngTagsInput'
         //, 'logToServer'
     ]);
 
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat) {
+        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers',
+        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers) {
             $rootScope.loading = true;
             $rootScope.initialized = false;
             localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
+
+            angular.element(document).ready(function () {
+                $rootScope.mobile = helpers.ui.isMobile();
+            });
 
             auth.init();
 
@@ -62,7 +65,8 @@ var APP = (function () {
                     setRouteData(currentRoute);
 
                 $rootScope.$on('$routeChangeStart', function (event, next, current) {
-                    $rootScope.loading = true;                    
+                    $rootScope.loading = true;
+                    $rootScope.mobileMenuExpanded = false;
                     if (next && !auth.authorize(next.roles))
                         $location.path(constants.routes.home.path);
                 });

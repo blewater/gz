@@ -1,18 +1,39 @@
 ﻿<header class="nav-header" ng-controller="headerNewCtrl">
     <div class="container-fluid">
         <a class="nav-brand" href="/">
-            <img src="@Url.Content("~/Content/images/logo.svg")" alt="Logo" />
+            <img src="../../Content/images/logo.svg" alt="Logo" />
             <span class="brand-name">greenzorro</span>
         </a>
-        <a class="nav-toggle" ng-click="toggleOpenClose()">
+        <a class="nav-toggle" ng-click="toggleDrawer()">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="toggle-icon" ng-class="{'nav-drawer-opened': drawerOpened}">
+                <span class="icon-bar icon-top-bar"></span>
+                <span class="icon-bar icon-middle-bar"></span>
+                <span class="icon-bar icon-bottom-bar"></span>
+            </span>
+            <span class="toggle-label">Menu</span>
+            @*<i class="toggle-icon fa" ng-class="{'fa-bars': !opened, 'fa-times': opened}"></i>*@
+        </a>
+
+
+
+
+        @*<a class="nav-toggle" ng-click="toggleOpenClose()">
             <span class="sr-only">Toggle navigation</span>
             <i class="toggle-icon fa" ng-class="{'fa-bars': !opened, 'fa-times': opened}"></i>
             <span class="toggle-label hidden">Menu</span>
-        </a>
 
-        <nav class="nav-drawer">
+            <span class="navbar-toggle collapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar icon-top-bar"></span>
+                <span class="icon-bar icon-middle-bar"></span>
+                <span class="icon-bar icon-bottom-bar"></span>
+            </span>
+        </a>*@
+
+        @*<nav class="nav-drawer">
             Test
-        </nav>
+        </nav>*@
 
         @*<nav class="underline-effect">
             <ul>

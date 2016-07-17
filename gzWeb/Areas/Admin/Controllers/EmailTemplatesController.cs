@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using gzDAL.Models;
 using gzWeb.Areas.Admin.Models;
+using Glimpse.Core.Extensions;
+using RazorEngine;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class EmailTemplatesController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
@@ -68,11 +74,19 @@ namespace gzWeb.Areas.Admin.Controllers
 
         public ActionResult Edit(int id)
         {
-            return View(_dbContext.EmailTemplates.Single(x => x.Id == id));
+            var model = _dbContext.EmailTemplates.Single(x => x.Id == id);
+            //if (!String.IsNullOrEmpty(jsonData))
+            //{
+            //    ViewBag.JsonData = jsonData;
+            //    var objData = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonData);
+            //    using (var service = RazorEngineService.Create(new TemplateServiceConfiguration()))
+            //        ViewBag.EmailTemplate = service.RunCompile(model.Body, "body", null, objData);
+            //}
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult Edit(EmailTemplate model)
+        public ActionResult Edit(EmailTemplate model, string jsonData)
         {
             if (!ModelState.IsValid)
             {
@@ -82,7 +96,17 @@ namespace gzWeb.Areas.Admin.Controllers
             _dbContext.EmailTemplates.AddOrUpdate(model, _dbContext);
             _dbContext.SaveChanges();
 
-            return RedirectToAction("Index", "EmailTemplates", new { Area = "Admin" });
+            if (!String.IsNullOrEmpty(jsonData))
+            {
+                ViewBag.JsonData = jsonData;
+                var objData = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonData);
+                using (var service = RazorEngineService.Create(new TemplateServiceConfiguration()))
+                    ViewBag.EmailTemplate = service.RunCompile(model.Body, "body", null, objData);
+            }
+            return View(model);
+
+            ////return RedirectToAction("Index", "EmailTemplates", new { Area = "Admin" });
+            //return RedirectToAction("Edit", "EmailTemplates", new {Area = "Admin", id = model.Id, jsonData = jsonData });
         }
     }
 }

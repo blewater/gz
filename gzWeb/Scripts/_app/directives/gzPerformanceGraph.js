@@ -8,8 +8,8 @@
             restrict: 'EA',
             scope: {
                 gzPlans: '=',
-                gzPrincipalAmount: '=',
-                gzCurrency: '@',
+                gzMonthlyContribution: '=',
+                gzCurrency: '@'
             },
             templateUrl: function() {
                 return helpers.ui.getTemplate('partials/directives/gzPerformanceGraph.html');
@@ -20,11 +20,11 @@
                 for (var j = 0; j < $scope.plans.length; j++)
                     $scope.plans[j].returnRate = Math.round($scope.plans[j].ROI * 100) / 10000;
                 $scope.plan = $filter('filter')($scope.plans, { Selected: true })[0];
-                $scope.year = 1;
-                $scope.annualContribution = 100;
+                $scope.year = 5;
+                $scope.monthlyContribution = $scope.gzMonthlyContribution;
                 $scope.projectedValue = 0;
                 $scope.profit = 0;
-                $scope.principalAmount = $scope.gzPrincipalAmount > 0 ? $scope.gzPrincipalAmount : $scope.annualContribution;
+                //$scope.principalAmount = $scope.gzPrincipalAmount > 0 ? $scope.gzPrincipalAmount : $scope.annualContribution;
                 var duration = 300;
                 var divergence = 0.2;
                 var data;
@@ -53,20 +53,20 @@
                     for (var t = 0; t <= totalYears; t++) {
                         data.push({
                             x: t,
-                            y111: project($scope.principalAmount, $scope.plan.returnRate + $scope.plan.returnRate * divergence * 3, t, $scope.annualContribution),
-                            y11: project($scope.principalAmount, $scope.plan.returnRate + $scope.plan.returnRate * divergence * 2, t, $scope.annualContribution),
-                            y1: project($scope.principalAmount, $scope.plan.returnRate + $scope.plan.returnRate * divergence, t, $scope.annualContribution),
-                            y: project($scope.principalAmount, $scope.plan.returnRate, t, $scope.annualContribution),
-                            y0: project($scope.principalAmount, $scope.plan.returnRate - $scope.plan.returnRate * divergence, t, $scope.annualContribution),
-                            y00: project($scope.principalAmount, $scope.plan.returnRate - $scope.plan.returnRate * divergence * 2, t, $scope.annualContribution),
-                            y000: project($scope.principalAmount, $scope.plan.returnRate - $scope.plan.returnRate * divergence * 3, t, $scope.annualContribution)
+                            y111: project($scope.plan.returnRate + $scope.plan.returnRate * divergence * 3, t, $scope.monthlyContribution),
+                            y11: project($scope.plan.returnRate + $scope.plan.returnRate * divergence * 2, t, $scope.monthlyContribution),
+                            y1: project($scope.plan.returnRate + $scope.plan.returnRate * divergence, t, $scope.monthlyContribution),
+                            y: project($scope.plan.returnRate, t, $scope.monthlyContribution),
+                            y0: project($scope.plan.returnRate - $scope.plan.returnRate * divergence, t, $scope.monthlyContribution),
+                            y00: project($scope.plan.returnRate - $scope.plan.returnRate * divergence * 2, t, $scope.monthlyContribution),
+                            y000: project($scope.plan.returnRate - $scope.plan.returnRate * divergence * 3, t, $scope.monthlyContribution)
                         });
                     }
                     x.domain(d3.extent(data, function (d) { return d.x; }));
                     y.domain(d3.extent(data, function (d) { return d.y.amount; }));
                 }
                 $scope.getYear = function() {
-                    return Math.ceil($scope.year);
+                    return Math.round($scope.year * 2) / 2;
                 }
                 $scope.getProjectedValue = function() {
                     return Math.round($scope.projectedValue);
@@ -100,7 +100,7 @@
                     $timeout(function () {
                         computeData();
 
-                        var projection = project($scope.principalAmount, $scope.plan.returnRate, $scope.year, $scope.annualContribution);
+                        var projection = project($scope.plan.returnRate, $scope.year, $scope.monthlyContribution);
                         $scope.projectedValue = projection.amount;
                         $scope.profit = projection.profit;
 
@@ -131,15 +131,19 @@
                     }, 0);
                 }
 
-                function project(principal, rate, year, annual) {
-                    //if (rate < 0)
-                    //    rate = 0;
-                    var pow = Math.pow(1 + rate, year);
-                    var compoundInterestForPrincipal = principal * pow;
-                    var futureValues = annual * ((pow - 1) / rate);
-                    var totalContributions = principal + annual * year;
-                    var projectedAmount = compoundInterestForPrincipal + futureValues;
-                    var projectedProfit = projectedAmount - totalContributions;
+                function project(rate, year, monthly) {
+                    //var pow = Math.pow(1 + rate, year);
+                    //var compoundInterestForPrincipal = principal * pow;
+                    //var futureValues = annual * ((pow - 1) / rate);
+                    //var totalContributions = principal + annual * year;
+                    //var projectedAmount = compoundInterestForPrincipal + futureValues;
+                    //var projectedProfit = projectedAmount - totalContributions;
+                    var r = rate / 12;
+                    var P = monthly;
+                    var n = year * 12;
+                    var projectedAmount = (1 + r) * P * ((Math.pow(1 + r, n) - 1) / r);
+                    var projectedProfit = projectedAmount - (year * 12 * monthly);
+
                     return {
                         amount: projectedAmount,
                         profit: projectedProfit
@@ -197,15 +201,13 @@
                     //yAxisPosition = { x: -height / 2, y: -80 };
 
 
-                    x = d3.scale.linear()
+                    x = d3.scaleLinear()
                         //.domain(d3.extent(this.axisData.x, function (d) { return d; }))
                         .range([0, width]);
-                    y = d3.scale.linear()
+                    y = d3.scaleLinear()
                         //.domain([0, d3.max(this.monthlyLineData, function (d) { return d[1]; }) << 2])
                         .range([height, 0]).nice();
-                    xAxis = d3.svg.axis()
-                        .scale(x)
-                        .orient("bottom")
+                    xAxis = d3.axisBottom(x)
                         //.tickValues(d3.range(totalYears))
                         .tickFormat(function (d) {
                             var year = thisYear + d;
@@ -230,33 +232,31 @@
 
                             ////return (thisYear + Math.floor(d / 10)).toString();
                         });
-                    yAxis = d3.svg.axis()
-                        .scale(y)
-                        .orient("left")
+                    yAxis = d3.axisLeft(y)
                         //.ticks(4)
                         .tickFormat(function (d) {
-                            return iso4217.getCurrencyByCode($scope.gzCurrency).symbol + d3.format(",f")(d);
+                            return iso4217.getCurrencyByCode($scope.gzCurrency).symbol + $filter('number')(d, 0);// d3.format(",f")(d);
                         });
 
-                    avg = d3.svg.line()
-                        .interpolate("cardinal")
+                    avg = d3.line()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y(function (d) { return y(d.y.amount); });
 
-                    area = d3.svg.area()
-                        .interpolate("cardinal")
+                    area = d3.area()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y0(function (d) { return y(d.y0.amount); })
                         .y1(function (d) { return y(d.y1.amount); });
 
-                    area2 = d3.svg.area()
-                        .interpolate("cardinal")
+                    area2 = d3.area()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y0(function (d) { return y(d.y00.amount); })
                         .y1(function (d) { return y(d.y11.amount); });
 
-                    area3 = d3.svg.area()
-                        .interpolate("cardinal")
+                    area3 = d3.area()
+                        .curve(d3.curveCardinal)
                         .x(function (d) { return x(d.x); })
                         .y0(function (d) { return y(d.y000.amount); })
                         .y1(function (d) { return y(d.y111.amount); });
@@ -344,6 +344,8 @@
 
                     handler = svg.append("g")
                         .attr("class", "handler")
+                        .attr("width", 60)
+                        .attr("height", 60)
                         .attr("transform", function () {
                             return "translate(" + handlerPosition.x + "," + handlerPosition.y + ")";
                         });
@@ -355,116 +357,264 @@
                         .attr("r", 4)
                         .style("fill", "#fff");
 
-                    var triangleTop = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function() { return 25; }))
-                        .attr("transform", "translate(0, -20)")
-                        .attr("class", "triangle triangle-top");
-                    var triangleRight = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
-                        .attr("transform", "translate(20, 0)rotate(90)")
-                        .attr("class", "triangle triangle-right");
-                    var triangleLeft = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-up").size(function () { return 25; }))
-                        .attr("transform", "translate(-20, 0)rotate(-90)")
-                        .attr("class", "triangle triangle-left");
-                    var triangleBottom = handler.append("path")
-                        .attr("d", d3.svg.symbol().type("triangle-down").size(function () { return 25; }))
-                        .attr("transform", "translate(0, 20)")
-                        .attr("class", "triangle triangle-bottom");
+                    handler.append('rect')
+                        .attr("class", "handlerRect")
+                        .style("fill", "transparent")
+                        .attr("x", -30)
+                        .attr("y", -30)
+                        .attr("width", 60)
+                        .attr("height", 60);
 
-                    handler.on("mouseover", function () {
-                        var loopDuration = 800;
-                        function move(el, transformTo, transformFrom) {
-                            (function repeat() {
-                                el.transition()
-                                    .duration(loopDuration)
-                                    .attr("transform", transformTo)
-                                    .each("end", function () {
+
+                    var playLoop = true;
+                    var loopDuration = 800;
+                    function loop(el, transformTo, transformFrom) {
+                        (function repeat() {
+                            el.transition()
+                                .duration(loopDuration)
+                                .attr("transform", transformTo)
+                                .on("end", function () {
+                                    if (playLoop)
                                         el.transition()
                                             .duration(loopDuration)
                                             .attr("transform", transformFrom)
-                                            .each("end", repeat);
-                                    });
-                            })();
-                        }
-                        move(triangleTop, "translate(0, -25)", "translate(0, -20)");
-                        move(triangleRight, "translate(25, 0)rotate(90)", "translate(20, 0)rotate(90)");
-                        move(triangleLeft, "translate(-25, 0)rotate(-90)", "translate(-20, 0)rotate(-90)");
-                        move(triangleBottom, "translate(0, 25)", "translate(0, 20)");
-                        d3.select(this).on("mouseover", null);
-                    });
-                    handler.on("mouseleave", function () {
-                        triangleTop.attr("transform", "translate(0, -20)");
-                        triangleRight.attr("transform", "translate(20, 0)rotate(90)");
-                        triangleLeft.attr("transform", "translate(-20, 0)rotate(-90)");
-                        triangleBottom.attr("transform", "translate(0, 20)");
-                    });
+                                            .on("end", repeat);
+                                });
+                        })();
+                    }
+                    function startLoops() {
+                        loop(triangleTop, "translate(0, -25)", "translate(0, -20)");
+                        loop(triangleRight, "translate(25, 0)rotate(90)", "translate(20, 0)rotate(90)");
+                        loop(triangleLeft, "translate(-25, 0)rotate(-90)", "translate(-20, 0)rotate(-90)");
+                        loop(triangleBottom, "translate(0, 25)rotate(180)", "translate(0, 20)rotate(180)");
+                    }
 
-                    handler.on("mousedown", function () {
+                    var horizontal, vertical;
+                    var triangleSymbol = d3.symbol().type(d3.symbolTriangle);
+                    var triangleTop = handler.append("path")
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
+                        .attr("transform", "translate(0, -20)")
+                        .attr("class", "triangle triangle-top triangle-vertical");
+                    var triangleRight = handler.append("path")
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
+                        .attr("transform", "translate(20, 0)rotate(90)")
+                        .attr("class", "triangle triangle-right triangle-horizontal");
+                    var triangleLeft = handler.append("path")
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
+                        .attr("transform", "translate(-20, 0)rotate(-90)")
+                        .attr("class", "triangle triangle-left triangle-horizontal");
+                    var triangleBottom = handler.append("path")
+                        .attr("d", triangleSymbol.size(function () { return 25; }))
+                        .attr("transform", "translate(0, 20)rotate(180)")
+                        .attr("class", "triangle triangle-bottom triangle-vertical");
+
+                    startLoops();
+                    
+                    var trianglesVertical = d3.selectAll(".triangle-vertical");
+                    var trianglesHorizontal = d3.selectAll(".triangle-horizontal");
+                    var triangles = d3.selectAll(".triangle");
+                    var projections = d3.selectAll(".projection");
+
+
+                    trianglesVertical.on("mouseover", function () {
+                        playLoop = false;
+                        trianglesHorizontal.classed('inactive', true);
+                    })
+                    .on("mouseleave", function () {
+                        playLoop = true;
+                        startLoops();
+                        trianglesHorizontal.classed('inactive', false);
+                    })
+                    .on("mousedown", function () {
                         var startTime = new Date().getTime();
                         var initialMousePosition = d3.mouse(graphRect.node());
-                        var initialAnnualContribution = $scope.annualContribution;
-                        var triangles = d3.selectAll(".triangle").classed("active", true);
-                        var projections = d3.selectAll(".projection").classed("active", true);
-                        var r = graphRect.on("mousemove", mousemove).on("mouseup", mouseup);//.on("mouseout", mouseRectOut);
-                        triangles.on("mouseup", mouseup);//.on("mouseout", mouseTrianglesOut);
-                        projections.on("mouseup", mouseup);//.on("mouseout", mouseProjectionsOut);
-                        //var rectOut = false;
-                        //var trianglesOut = false;
-                        //var projectionsOut = false;
+                        var initialMonthlyContribution = $scope.monthlyContribution;
+
+                        projections.classed("active", true);
+                        graphRect.on("mousemove", mousemove).on("mouseup", mouseup);
+                        triangles.on("mouseup", mouseup);
+                        projections.on("mouseup", mouseup);
                         d3.event.preventDefault();
 
-                        //var recalcTimer;
-
-                        function calcNewAnnualContribution(initialY, mouseY) {
-                            var newAnnualContribution;
+                        function calcNewMonthlyContribution(initialY, mouseY) {
+                            var newMonthlyContribution;
                             initialY = graphRectHeight / 2;
                             if (initialY < mouseY) {
-                                //if (angular.isDefined(recalcTimer))
-                                //     $timeout.cancel(recalcTimer);
                                 var belowDiff = mouseY - initialY;
                                 var belowWhole = graphRectHeight - initialY;
                                 var belowPercent = belowDiff / belowWhole;
-                                newAnnualContribution = (1 - belowPercent) * initialAnnualContribution;
-                                if (newAnnualContribution < 0)
-                                    newAnnualContribution = 0;
+                                newMonthlyContribution = (1 - belowPercent) * initialMonthlyContribution;
+                                if (newMonthlyContribution < 0)
+                                    newMonthlyContribution = 0;
                             }
                             else {
-                                //recalcTimer = $timeout(function () {
-                                //    $scope.annualContribution = calcNewAnnualContribution(initialY, mouseY);
-                                //    calculateProjection(handlerAnimationStates.dragging);
-                                //}, 2000);
                                 var currentTime = new Date().getTime();
                                 var timeDiff = currentTime - startTime;
                                 var factor = timeDiff <= 3000 ? 3 : Math.ceil(timeDiff / 1000);
-                                //console.log(factor);
                                 var aboveDiff = initialY - mouseY;
                                 var aboveWhole = initialY;
-                                var aboveMax = initialAnnualContribution * factor;
+                                var aboveMax = initialMonthlyContribution * factor;
                                 var abovePercent = aboveDiff / aboveWhole;
-                                newAnnualContribution = initialAnnualContribution + abovePercent * aboveMax;
+                                newMonthlyContribution = initialMonthlyContribution + abovePercent * aboveMax;
                             }
-
-                            return newAnnualContribution;
+                            return newMonthlyContribution;
                         }
 
                         function mousemove() {
+                            playLoop = false;
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
+                            trianglesHorizontal.classed('inactive', true);
                             var mousePosition = d3.mouse(graphRect.node());
-                            $scope.year = x.invert(mousePosition[0]);
-                            $scope.annualContribution = calcNewAnnualContribution(initialMousePosition[1], mousePosition[1]);
+                            $scope.monthlyContribution = calcNewMonthlyContribution(initialMousePosition[1], mousePosition[1]);
                             calculateProjection(handlerAnimationStates.dragging);
                         }
 
                         function mouseup() {
-                            triangles.classed("active", false);
+                            playLoop = true;
+                            trianglesHorizontal.classed('inactive', false);
                             projections.classed("active", false);
-                            r.on("mousemove", null).on("mouseup", null);//.on("mouseout", null);
-                            triangles.on("mouseup", null);//.on("mouseout", null);
-                            projections.on("mouseup", null);//.on("mouseout", null);
-
-                            //if (angular.isDefined(recalcTimer))
-                            //    $timeout.cancel(recalcTimer);
+                            graphRect.on("mousemove", null).on("mouseup", null);
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; })).on("mouseup", null);
+                            projections.on("mouseup", null);
                         }
+                    });
+
+                    trianglesHorizontal.on("mouseover", function () {
+                        playLoop = false;
+                        trianglesVertical.classed('inactive', true);
+                    })
+                    .on("mouseleave", function () {
+                        playLoop = true;
+                        startLoops();
+                        trianglesVertical.classed('inactive', false);
+                    })
+                    .on("mousedown", function () {
+                        var initialMousePosition = d3.mouse(graphRect.node());
+
+                        projections.classed("active", true);
+                        graphRect.on("mousemove", mousemove).on("mouseup", mouseup);
+                        triangles.on("mouseup", mouseup);
+                        projections.on("mouseup", mouseup);
+                        d3.event.preventDefault();
+
+                        function mousemove() {
+                            playLoop = false;
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
+                            trianglesVertical.classed('inactive', true);
+                            var mousePosition = d3.mouse(graphRect.node());
+                            $scope.year = x.invert(mousePosition[0]);
+                            calculateProjection(handlerAnimationStates.dragging);
+                        }
+
+                        function mouseup() {
+                            playLoop = true;
+                            trianglesVertical.classed('inactive', false);
+                            projections.classed("active", false);
+                            graphRect.on("mousemove", null).on("mouseup", null);
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; })).on("mouseup", null);
+                            projections.on("mouseup", null);
+                        }
+                    });
+
+                    handler.on("mouseover", function () {
+                        triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
+                    }).on("mouseleave", function () {
+                        triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; }));
+                    });
+
+                    //handler.on("mouseover", function () {
+                    //    triangleTop.attr("transform", "translate(0, -20)");
+                    //    triangleRight.attr("transform", "translate(20, 0)rotate(90)");
+                    //    triangleLeft.attr("transform", "translate(-20, 0)rotate(-90)");
+                    //    triangleBottom.attr("transform", "translate(0, 20)");
+                    //});
+
+
+
+                    ////handler.on("mouseover", function () {
+                    ////    var loopDuration = 800;
+                    ////    function move(el, transformTo, transformFrom) {
+                    ////        (function repeat() {
+                    ////            el.transition()
+                    ////                .duration(loopDuration)
+                    ////                .attr("transform", transformTo)
+                    ////                .each("end", function () {
+                    ////                    el.transition()
+                    ////                        .duration(loopDuration)
+                    ////                        .attr("transform", transformFrom)
+                    ////                        .each("end", repeat);
+                    ////                });
+                    ////        })();
+                    ////    }
+                    ////    move(triangleTop, "translate(0, -25)", "translate(0, -20)");
+                    ////    move(triangleRight, "translate(25, 0)rotate(90)", "translate(20, 0)rotate(90)");
+                    ////    move(triangleLeft, "translate(-25, 0)rotate(-90)", "translate(-20, 0)rotate(-90)");
+                    ////    move(triangleBottom, "translate(0, 25)", "translate(0, 20)");
+                    ////    d3.select(this).on("mouseover", null);
+                    ////});
+                    ////handler.on("mouseleave", function () {
+                    ////    triangleTop.attr("transform", "translate(0, -20)");
+                    ////    triangleRight.attr("transform", "translate(20, 0)rotate(90)");
+                    ////    triangleLeft.attr("transform", "translate(-20, 0)rotate(-90)");
+                    ////    triangleBottom.attr("transform", "translate(0, 20)");
+                    ////});
+
+                    //handler.on("mousedown", function () {
+                    //    var startTime = new Date().getTime();
+                    //    var initialMousePosition = d3.mouse(graphRect.node());
+                    //    var initialMonthlyContribution = $scope.monhtlyContribution;
+                    //    var triangles = d3.selectAll(".triangle").classed("active", true);
+                    //    var projections = d3.selectAll(".projection").classed("active", true);
+                    //    var r = graphRect.on("mousemove", mousemove).on("mouseup", mouseup);//.on("mouseout", mouseRectOut);
+                    //    triangles.on("mouseup", mouseup);//.on("mouseout", mouseTrianglesOut);
+                    //    projections.on("mouseup", mouseup);//.on("mouseout", mouseProjectionsOut);
+                    //    //var rectOut = false;
+                    //    //var trianglesOut = false;
+                    //    //var projectionsOut = false;
+                    //    d3.event.preventDefault();
+
+                    //    function calcNewMonthlyContribution(initialY, mouseY) {
+                    //        var newMonthlyContribution;
+                    //        initialY = graphRectHeight / 2;
+                    //        if (initialY < mouseY) {
+                    //            var belowDiff = mouseY - initialY;
+                    //            var belowWhole = graphRectHeight - initialY;
+                    //            var belowPercent = belowDiff / belowWhole;
+                    //            newMonthlyContribution = (1 - belowPercent) * initialMonthlyContribution;
+                    //            if (newMonthlyContribution < 0)
+                    //                newMonthlyContribution = 0;
+                    //        }
+                    //        else {
+                    //            var currentTime = new Date().getTime();
+                    //            var timeDiff = currentTime - startTime;
+                    //            var factor = timeDiff <= 3000 ? 3 : Math.ceil(timeDiff / 1000);
+                    //            var aboveDiff = initialY - mouseY;
+                    //            var aboveWhole = initialY;
+                    //            var aboveMax = initialMonthlyContribution * factor;
+                    //            var abovePercent = aboveDiff / aboveWhole;
+                    //            newMonthlyContribution = initialMonthlyContribution + abovePercent * aboveMax;
+                    //        }
+
+                    //        return newMonthlyContribution;
+                    //    }
+
+                    //    function mousemove() {
+                    //        var mousePosition = d3.mouse(graphRect.node());
+                    //        $scope.year = x.invert(mousePosition[0]);
+                    //        //$scope.monthlyContribution = calcNewMonthlyContribution(initialMousePosition[1], mousePosition[1]);
+                    //        calculateProjection(handlerAnimationStates.dragging);
+                    //    }
+
+                    //    function mouseup() {
+                    //        triangles.classed("active", false);
+                    //        projections.classed("active", false);
+                    //        r.on("mousemove", null).on("mouseup", null);//.on("mouseout", null);
+                    //        triangles.on("mouseup", null);//.on("mouseout", null);
+                    //        projections.on("mouseup", null);//.on("mouseout", null);
+
+                    //        //if (angular.isDefined(recalcTimer))
+                    //        //    $timeout.cancel(recalcTimer);
+                    //    }
 
                         //function mouseRectOut() {
                         //    rectOut = true;
@@ -482,7 +632,7 @@
                         //    if (rectOut && trianglesOut && projectionsOut)
                         //        mouseup();
                         //}
-                    });
+                    //});
                 }
 
                 function init() {

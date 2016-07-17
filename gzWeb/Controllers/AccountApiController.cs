@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.ModelBinding;
 using gzDAL.Repos.Interfaces;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.OAuth;
 using gzDAL.Conf;
 using gzDAL.Models;
 using gzWeb.Areas.Mvc.Models;
 using gzWeb.Models;
+using gzWeb.Utilities;
+using System.Reflection;
+using gzWeb.Providers;
 
 namespace gzWeb.Controllers
 {
@@ -31,12 +28,21 @@ namespace gzWeb.Controllers
         private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _dbContext;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IUserRepo _userRepo;
+        private readonly ICacheUserData _cacheUserData;
 
-        public AccountApiController(ApplicationUserManager userManager, ApplicationDbContext dbContext, ICustPortfolioRepo custPortfolioRepo)
+        public AccountApiController(
+            ApplicationUserManager userManager, 
+            ApplicationDbContext dbContext, 
+            ICustPortfolioRepo custPortfolioRepo,
+            IUserRepo userRepo, 
+            ICacheUserData cacheUserData)
                 : base(userManager)
         {
             _dbContext = dbContext;
+            _userRepo = userRepo;
             _custPortfolioRepo = custPortfolioRepo;
+            _cacheUserData = cacheUserData;
         }
 
         #region accessTokenFormat Constructor
@@ -431,7 +437,7 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return Ok("User not found!");
 
@@ -444,9 +450,9 @@ namespace gzWeb.Controllers
 
         [HttpPost]
         [Route("FinalizeRegistration")]
-        public IHttpActionResult FinalizeRegistration(int userId)
-        {
-            var user = UserManager.FindById(User.Identity.GetUserId<int>());
+        public async Task<IHttpActionResult> FinalizeRegistration(int gmUserId) {
+
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -454,7 +460,7 @@ namespace gzWeb.Controllers
             {
                 if (!user.GmCustomerId.HasValue)
                 {
-                    user.GmCustomerId = userId;
+                    user.GmCustomerId = gmUserId;
                     _dbContext.SaveChanges();
                 }
 
@@ -596,8 +602,9 @@ namespace gzWeb.Controllers
 
         #endregion
 
-        [AllowAnonymous]
-        public IHttpActionResult GetDeploymentInfo()
+
+        // #region GetDeploymentInfo
+        private bool IsInDebugMode()
         {
             var debug =
 #if DEBUG
@@ -605,24 +612,52 @@ namespace gzWeb.Controllers
 #else
                 false;
 #endif
-
+            return debug;
+        }
+        private string GetVersion()
+        {
+            //return typeof(MvcApplication).Assembly.GetName().Version.ToString();
+            var assembly = Assembly.GetAssembly(typeof(ApplicationOAuthProvider));
+            var assemblyName = assembly.GetName().Name;
+            var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
+            var versionField = gitVersionInformationType.GetField("InformationalVersion");
+            return versionField.GetValue(null).ToString();
+        }
+        private string GetReCaptchaSiteKey()
+        {
             var host = Request.RequestUri.Host;
             if (host == "localhost")
                 host = "www.greenzorro.com";
             var appKey = "ReCaptchaSiteKey@" + host;
             var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings[appKey];
-            return OkMsg(new
-            {
-                Version = typeof(MvcApplication).Assembly.GetName().Version.ToString(),
-                Debug = debug,
-                ReCaptchaSiteKey = reCaptchaSiteKey
-            });
+            return reCaptchaSiteKey;
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        public IHttpActionResult Reload()
+        [Route("GetDeploymentInfo")]
+        public IHttpActionResult GetDeploymentInfo()
         {
+            return OkMsg(new
+            {
+                Debug = IsInDebugMode(),
+                Version = GetVersion(),
+                ReCaptchaSiteKey = GetReCaptchaSiteKey()
+            });
+        }
+        // #endregion
+
+        /// GET api/Account/CacheUserData
+        [Authorize] // Redundant by defaull all class methods are
+        [Route("CacheUserData")]
+        [HttpPost]
+        public async Task<IHttpActionResult> CacheUserData() {
+
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+                return Ok("User not found!");
+
+            await _cacheUserData.Query(user.Id);
+
             return Ok();
         }
     }

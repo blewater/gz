@@ -14,7 +14,7 @@
             guest: apiBaseUrl('guest'),
             games: apiBaseUrl('games'),
             investments: apiBaseUrl('investments'),
-            account: apiBaseUrl('account')
+            //account: apiBaseUrl('account')
         };
         factory.urls = urls;
         // #endregion
@@ -61,7 +61,7 @@
                 headers: { "Content-Type": "application/x-www-form-urlencoded" }
             });
         }
-        
+
         factory.register = function (parameters) {
             return $http.post('/api/Account/Register', parameters);
         }
@@ -87,10 +87,10 @@
         }
 
         factory.getDeploymentInfo = function () {
-            return $http.get(urls.account + 'getDeploymentInfo');
+            return $http.get('/api/Account/GetDeploymentInfo');
         }
-        factory.reload = function () {
-            return $http.post(urls.account + 'reload');
+        factory.cacheUserData = function () {
+            return $http.post('/api/Account/CacheUserData');
         }
         // #endregion
 
@@ -98,8 +98,8 @@
         factory.getSummaryData = function () {
             return $http.get(urls.investments + 'getSummaryData');
         };
-        factory.getVintagesWithSellingValues = function () {
-            return $http.get(urls.investments + 'getVintagesWithSellingValues');
+        factory.getVintagesWithSellingValues = function (vintages) {
+            return $http.post(urls.investments + 'getVintagesWithSellingValues', vintages);
         };
         factory.withdrawVintages = function (vintages) {
             return $http.post(urls.investments + 'withdrawVintages', vintages);

@@ -25,6 +25,7 @@ namespace gzDAL.Models {
         public virtual ApplicationUser Customer { get; set; }
 
         [Index]
+        [Column(TypeName = "char")]
         [StringLength(6)]
         public string YearMonthCtd { get; set; }
 

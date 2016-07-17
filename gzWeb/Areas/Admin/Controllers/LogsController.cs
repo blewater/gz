@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class LogsController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

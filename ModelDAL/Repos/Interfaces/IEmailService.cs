@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace gzDAL.Repos
+namespace gzDAL.Repos.Interfaces
 {
     public interface IEmailService
     {

@@ -30,9 +30,10 @@
 .side-box .side-box-table .side-box-table-head {
     font-size: 20px;
     color: #646464;
-    -ms-opacity: 0.5;
-    opacity: 0.5;
+    /*-ms-opacity: 0.5;
+    opacity: 0.5;*/
     padding-bottom: 5px;
+    font-weight: 500;
 }
 
 .side-box .side-box-table .side-box-table-body {
@@ -48,7 +49,7 @@
 }
 .side-box .side-box-table .side-box-table-body .text-right {
     color:#000;
-    font-size: 15px;
+    font-size: 20px;
     -ms-opacity: 0.65;
     opacity: 0.65;
 }
@@ -95,6 +96,12 @@
 .investments .summary .summary-section.investments-schedule {
 }
 
+/*.investments .summary .summary-section.gaming-activities .side-box-table-head h4 {
+    margin-left: 15px;
+}*/ 
+
+
+
 .investments .summary .side-box {
     min-height: 300px;    
 }
@@ -125,6 +132,8 @@
 .investments .summary .vintages-box .vintages-box-table { }
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-head {
     padding-bottom: 20px;
+    font-size: 20px;
+    font-weight: 500;
 }
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-body {
     font-size: 18px;
@@ -180,7 +189,7 @@
 .investments .summary .withdraw.disabled {
     border-color: #e1e1e1;
     background-color: #ddd;
-    cursor: not-allowed;
+    cursor: default;
 }
 .investments .summary .withdraw.disabled:hover {
     background-color: #ddd;
@@ -232,8 +241,10 @@
     background-color: #27A95C;
 }
 .investments .summary .back-to-games:hover {
-    -ms-opacity: 0.8;
-    opacity: 0.8;
+    /*-ms-opacity: 0.8;
+    opacity: 0.8;*/
+    background-color: #07893C;
+    border-color: #07893C;
 }
 
 .investments .summary .back-to-games img {
@@ -489,7 +500,11 @@
     border-top: 1px solid #000;
 }
 .investments .portfolio .portfolio-plans .plan .details .expected-roi {
+    margin-top: 10px;
     font-weight: bold;
+}
+.investments .portfolio .portfolio-plans .plan .details .expected-roi .expected-roi-percent {
+    font-size: 15px;
 }
 
 
@@ -556,7 +571,7 @@
 }
 .investments .portfolio .portfolio-plans .plan .selection button:disabled {
     border: 1px solid #fff;
-    cursor: not-allowed;
+    cursor: default;
 }
 .investments .portfolio .portfolio-plans .plan .selection button:disabled:hover {
     background: none;
@@ -568,7 +583,6 @@
 .investments .portfolio .portfolio-plans .plan .selection button:hover .spinner{
 	color:#fff;
 }
-
 
 
 .investments .portfolio .current-portfolio {
@@ -613,10 +627,13 @@
     text-shadow: 1px 1px 1px #555;
 }
 
-.holding-info {
+.portfolio-chart-tooltip {
     position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
     margin: 10px;
-    padding: 5px;
+    padding: 10px;
     font: 12px sans-serif;
     background: #27A95C;
     color: #fff;
@@ -624,18 +641,32 @@
     -ms-border-radius: 5px;
     border-radius: 5px;
     pointer-events: none;
-    width: 220px;
+    width: 180px;
+    height: 120px;
 
     -webkit-box-shadow: 0 0 3px 0 #fff;
     -ms-box-shadow: 0 0 3px 0 #fff;
     box-shadow: 0 0 3px 0 #fff;
-    /*-webkit-transition: opacity 400ms linear;
-    -moz-transition: opacity 400ms linear;
-    -ms-transition: opacity 400ms linear;
-    -o-transition: opacity 400ms linear;
-    transition: opacity 400ms linear;*/
+
+    -webkit-transition: opacity 200ms linear;
+    -moz-transition: opacity 200ms linear;
+    -ms-transition: opacity 200ms linear;
+    -o-transition: opacity 200ms linear;
+    transition: opacity 200ms linear;
 }
-/*.holding-info .key {
+.portfolio-chart-tooltip .title {
+    font-size: 14px;
+    margin: 20px auto;
+}
+.portfolio-chart-tooltip .percent {
+
+}
+.portfolio-chart-tooltip .amount {
+
+}
+
+
+/*.tooltip .key {
     position: absolute;			
     text-align: center;
     margin: 10px;
@@ -661,6 +692,12 @@
     .investments .portfolio .portfolio-plans .plan .title { font-size: 13px; }
     .investments .portfolio .portfolio-plans .plan .balance { font-size: 16px; }
     .investments .portfolio .portfolio-plans .plan .selection button { font-size: 12px; }
+}
+
+@media (max-width: 396px) {
+    .investments .portfolio .portfolio-plans .plan .selection button:disabled i {
+        display: none;
+    }
 }
 /* #endregion */
 
@@ -705,7 +742,7 @@
     padding-top: 0;
 }
 .investments .performance .values .value-bottom {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 300;
     color: #646464;
 }
@@ -723,7 +760,9 @@
     line-height: 36px;
     margin: 7px 0;
     padding: 0;
-    border: 1px solid #27A95C;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
     background: none;
     -webkit-box-shadow: none;
     -ms-box-shadow: none;
@@ -734,19 +773,30 @@
     font-size: 16px;
     letter-spacing: 1px;
     cursor: pointer;
-    -webkit-transition: background 0.3s ease;
-    -moz-transition: background 0.3s ease;
-    -ms-transition: background 0.3s ease;
-    -o-transition: background 0.3s ease;
-    transition: background 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
-.investments .performance .plans button:disabled,
+.investments .performance .plans button.selected {
+    font-weight: 800;
+    background-color: #fff;
+    border-color: #27A95C;
+    -webkit-box-shadow: 0 0 3px 0 #27A95C;
+    -ms-box-shadow: 0 0 3px 0 #27A95C;
+    box-shadow: 0 0 3px 0 #27A95C;
+}
 .investments .performance .plans button:hover {
-	background:#27A95C;
-	color:#fff;
+    font-weight: 800;
 }
+
+
+
+
+
 .investments .performance .plans button:disabled {
-    cursor: not-allowed;
+    cursor: default;
 }
 
 .investments .performance .plans .plan .plan-roi {
@@ -757,6 +807,7 @@
     position: absolute;
     text-transform: uppercase;
     margin-top: 180px;
+    font-size: 12px;
 }
 
 .investments .performance #canvas {
@@ -776,93 +827,32 @@
     stroke-opacity: 0.5;
 }
 
-
-.investments .performance #canvas .handler {
-    cursor: move;
-}
-
-/* #region triangles with animations */
+/* #region triangles with animation */
 .investments .performance #canvas .handler .triangle {
     stroke: #27a95c;
     stroke-width: 1px;
     fill: #ffffff;
     fill: rgba(255, 255, 255, 0.8);
-    display: none;
-
-    /*-webkit-animation-duration: 2s;
-    -moz-animation-duration: 2s;
-    -ms-animation-duration: 2s;
-    -o-animation-duration: 2s;
-    animation-duration: 2s;
-    -webkit-animation-iteration-count: infinite;
-    -moz-animation-iteration-count: infinite;
-    -ms-animation-iteration-count: infinite;
-    -o-animation-iteration-count: infinite;
-    animation-iteration-count: infinite;
-    -webkit-animation-direction: alternate;
-    -moz-animation-direction: alternate;
-    -ms-animation-direction: alternate;
-    -o-animation-direction: alternate;
-    animation-direction: alternate;
-    -webkit-animation-timing-function: ease-in-out;
-    -moz-animation-timing-function: ease-in-out;
-    -ms-animation-timing-function: ease-in-out;
-    -o-animation-timing-function: ease-in-out;
-    animation-timing-function: ease-in-out;*/
+    padding: 10px;
+}
+.investments .performance #canvas .handler .triangle.inactive {
+    opacity: 0.2;
 }
 
-.investments .performance #canvas .handler:hover .triangle,
+.investments .performance #canvas .handler .triangle-top,
+.investments .performance #canvas .handler .triangle-bottom {
+    cursor: n-resize;
+}
+.investments .performance #canvas .handler .triangle-left,
+.investments .performance #canvas .handler .triangle-right {
+    cursor: e-resize;
+}
+
+
+/*.investments .performance #canvas .handler:hover .triangle,
 .investments .performance #canvas .handler .triangle.active {
     display: block;
-}
-
-
-/*.investments .performance #canvas .handler .triangle.triangle-top {
-    -webkit-animation-name: triangle-top;
-    -moz-animation-name: triangle-top;
-    -ms-animation-name: triangle-top;
-    -o-animation-name: triangle-top;
-    animation-name: triangle-top;
-}
-.investments .performance #canvas .handler .triangle.triangle-bottom {
-    -webkit-animation-name: triangle-bottom;
-    -moz-animation-name: triangle-bottom;
-    -ms-animation-name: triangle-bottom;
-    -o-animation-name: triangle-bottom;
-    animation-name: triangle-bottom;
-}
-.investments .performance #canvas .handler .triangle.triangle-left {
-    -webkit-animation-name: triangle-left;
-    -moz-animation-name: triangle-left;
-    -ms-animation-name: triangle-left;
-    -o-animation-name: triangle-left;
-    animation-name: triangle-left;
-}
-.investments .performance #canvas .handler .triangle.triangle-right {
-    -webkit-animation-name: triangle-right;
-    -moz-animation-name: triangle-right;
-    -ms-animation-name: triangle-right;
-    -o-animation-name: triangle-right;
-    animation-name: triangle-right;
-}
-
-
-@-webkit-keyframes triangle-top {
-    0%   {margin-top:0;}
-    100% {margin-top:-10px;}
-}
-
-@-moz-keyframes triangle-top {
-    0%   {margin-top:0;}
-    100% {margin-top:-10px;}
-}
-
-@keyframes triangle-top {
-    0%   {margin-top:0;}
-    100% {margin-top:-10px;}
-
 }*/
-/* #endregion */
 
 .investments .performance #canvas .projection {
     stroke: transparent;
@@ -871,9 +861,6 @@
     stroke: #27a95c;
     stroke: rgba(39, 169, 92, 0.4);
 }
-
-
-
 
 
 @media (min-width: 768px) {
