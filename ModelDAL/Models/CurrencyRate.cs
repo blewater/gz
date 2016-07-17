@@ -14,9 +14,12 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Index("CurrRate_ftd_idx", IsUnique = true, Order = 1), Required]
+        [Index("IDX_CurrRate_FT_TDT", IsUnique = true, Order = 2), Required]
         public DateTime TradeDateTime { get; set; }
-        [StringLength(6), Index("CurrRate_ftd_idx", IsUnique = true, Order = 2), Required]
+
+        [Index("IDX_CurrRate_FT_TDT", IsUnique = true, Order = 1), Required]
+        [Column(TypeName = "char")]
+        [StringLength(6)]
         public string FromTo { get; set; }
 
         [Required]

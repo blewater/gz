@@ -13,7 +13,7 @@ namespace gzWeb.Providers
     {
         private readonly Func<ApplicationUserManager> _userManagerFactory;
         private readonly string _publicClientId;
-        private readonly Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public ApplicationOAuthProvider(string publicClientId, Func<ApplicationUserManager> userManagerFactory)
         {

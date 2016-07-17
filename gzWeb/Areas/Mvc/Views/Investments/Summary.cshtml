@@ -3,14 +3,16 @@
 }
 
 <script type="text/ng-template" id="withdrawTpl.html">
-    <div class="withdraw" ng-click="!model.OkToWithdraw || withdraw()" ng-class="{'disabled': !model.OkToWithdraw }">
+    @*!model.OkToWithdraw ||*@ 
+    @*ng-class="{'disabled': !model.OkToWithdraw }"*@
+    <div class="withdraw" ng-click="withdraw()">
         <img src="@Url.Content("~/Content/Images/cash.svg")" alt=" cash" />
         <span>WITHDRAW</span>
     </div>
-    <div class="withdraw-msg" ng-if="!model.OkToWithdraw">
+    @*<div class="withdraw-msg" ng-if="!model.OkToWithdraw">
         <i class="fa fa-exclamation-triangle text-warning"></i>
         <span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>
-    </div>
+    </div>*@
 </script>
 
 <script type="text/ng-template" id="backToGamesTpl.html">
@@ -36,7 +38,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12 col-lg-6 col-lg-push-3">
+        <div class="col-xs-offset-1 col-xs-10 col-lg-offset-0 col-lg-6 col-lg-push-3">
             <div class="summary-section investments-overview">
                 <div class="text-center">
                     <img src="@Url.Content("~/Content/Images/invest.svg")" alt="Diagram" class="icon" />
@@ -59,13 +61,13 @@
                     <div class="vintages-box-table">
                         <div class="vintages-box-table-head">
                             <div class="row">
-                                <div class="col-xs-12 text-left"><b>Investment vintages</b></div>
+                                <div class="col-xs-12 text-left">Investment vintages</div>
                             </div>
                         </div>
                         <div class="vintages-box-table-body">
                             <div class="row" ng-repeat="vintage in vintages.slice(0, 3)" ng-if="vintages.length > 0">
                                 <div class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                                <div class="col-xs-6 text-right">{{vintage.InvestAmount | isoCurrency : currency : 0}}</div>
+                                <div class="col-xs-6 text-right">{{vintage.InvestmentAmount | isoCurrency : currency : 0}}</div>
                             </div>
                             <div class="row" ng-if="vintages.length === 0">
                                 <div class="col-xs-12 text-left">No vintages yet.</div>
@@ -81,7 +83,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-6 col-lg-3 col-lg-pull-6">
+        <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-lg-3 col-lg-pull-6">
             <div class="summary-section gaming-activities">
                 <div class="text-center">
                     <img src="@Url.Content("~/Content/Images/diagram.svg")" alt="Diagram" class="icon" />
@@ -89,25 +91,21 @@
                 <div class="side-box">
                     <div class="side-box-table">
                         <div class="side-box-table-head">
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <h4>Gaming Activities</h4>
-                                </div>
-                            </div>
+                            <div>Gaming Activities</div>
                         </div>
                         <div class="side-box-table-body">
                             <div class="row">
-                                <div class="col-xs-8 text-left"><div class="row">Cash In</div></div>
-                                <div class="col-xs-4 text-right"><div class="row">{{model.TotalDeposits | isoCurrency : currency : 0}}</div></div>
+                                <div class="col-xs-8 text-left">Cash In</div>
+                                <div class="col-xs-4 text-right">{{model.TotalDeposits | isoCurrency : currency : 0}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-8 text-left"><div class="row">Cash Out</div></div>
-                                <div class="col-xs-4 text-right"><div class="row">{{model.TotalWithdrawals | isoCurrency : currency : 0}}</div></div>
+                                <div class="col-xs-8 text-left">Cash Out</div>
+                                <div class="col-xs-4 text-right">{{model.TotalWithdrawals | isoCurrency : currency : 0}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-8 text-left"><div class="row">Gaming Balance</div></div>
-                                <div ng-if="hasGamingBalance" class="col-xs-4 text-right"><div class="row">{{gamingBalance | isoCurrency : currency : 0}}</div></div>
-                                <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><div class="row"><i>offline</i></div></div>
+                                <div class="col-xs-8 text-left">Gaming Balance</div>
+                                <div ng-if="hasGamingBalance" class="col-xs-4 text-right">{{gamingBalance | isoCurrency : currency : 0}}</div>
+                                <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><i>offline</i></div>
                             </div>
                         </div>
                     </div>
@@ -115,7 +113,7 @@
                 <div class="visible-lg" ng-include src="'backToGamesTpl.html'"></div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-6 col-lg-3">
+        <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-lg-3">
             <div class="summary-section investments-schedule">
                 <div class="text-center">
                     <img src="@Url.Content("~/Content/Images/calendar.svg")" alt="Diagram" class="icon" />
@@ -149,7 +147,7 @@
                         <div class="side-box-table-foot">
                             <div class="row">
                                 <div class="col-xs-12 text-left">
-                                    *Status as of {{model.StatusAsOf | date : 'MMM d, h:mm a'}} - 50% of net losses (cach in - cash out - bonus balance allocated to investments)
+                                    *Status as of {{model.StatusAsOf | date : 'MMM d, h:mm a'}} - 50% of net losses (cash in - cash out - bonus balance allocated to investments)
                                 </div>
                             </div>
                         </div>
@@ -160,9 +158,9 @@
         </div>
     </div>
     <div class="row hidden-lg">
-        <div class="col-xs-12 col-sm-6 col-sm-push-6" ng-include src="'withdrawTpl.html'">
+        <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-sm-push-6" ng-include src="'withdrawTpl.html'">
         </div>
-        <div class="col-xs-12 col-sm-6 col-sm-pull-6" ng-include src="'backToGamesTpl.html'">
+        <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-sm-pull-6" ng-include src="'backToGamesTpl.html'">
         </div>
     </div>
 </div>

@@ -1,20 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using gzDAL.DTO;
+using gzDAL.Models;
 
-namespace gzDAL.Repos.Interfaces
-{
+namespace gzDAL.Repos.Interfaces {
     public interface IInvBalanceRepo {
-        DateTime GetLastUpdatedDateTime(int customerId);
-        Dictionary<int, PortfolioFundDTO> GetCustomerSharesBalancesForMonth(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest, out decimal monthlyBalance, out decimal invGainLoss);
+
+        Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId);
+        Task<Tuple<decimal, DateTime?>> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask);
+        Task<Decimal> CacheInvestmentReturnsAsync(int customerId);
+        Task<decimal> GetCachedInvestmentReturnsAsync(Task<decimal> invGainSumTask);
+        void SetVintagesMarketPrices(int customerId, IEnumerable<VintageDto> vintages);
+        Dictionary<int, PortfolioFundDTO> GetCustomerSharesBalancesForMonth(
+            int customerId, 
+            int yearCurrent, 
+            int monthCurrent, 
+            decimal cashToInvest, 
+            out decimal monthlyBalance, 
+            out decimal invGainLoss,
+            out RiskToleranceEnum monthsPortfolioRisk);
 
         ICollection<VintageDto> GetCustomerVintages(int customerId);
 
         ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId);
+        ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId, List<VintageDto> customerVintages);
+        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
 
-        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
-
-        bool SaveDbSellAllCustomerFundsShares(int customerId, DateTime updatedDateTimeUtc, int yearCurrent = 0,
+        bool SaveDbSellAllCustomerFundsShares(
+            int customerId, 
+            DateTime updatedDateTimeUtc, 
+            out RiskToleranceEnum monthsPortfolioRisk, 
+            int yearCurrent = 0,
             int monthCurrent = 0);
 
         void SaveDbCustomerAllMonthlyBalances(int customerId, string startYearMonthStr = null, string endYearMonthStr = null);

@@ -1,14 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
+using System.Threading.Tasks;
+using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
+using NLog;
+using Z.EntityFramework.Plus;
 
 namespace gzDAL.Repos
 {
     public class CustPortfolioRepo : ICustPortfolioRepo
     {
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly ApplicationDbContext db;
         public CustPortfolioRepo(ApplicationDbContext db)
         {
@@ -30,7 +37,7 @@ namespace gzDAL.Repos
 
             if (customerId <= 0) {
 
-                throw new Exception("Invalid Customer Id: " + customerId);
+                _logger.Error("SaveDbCustMonthsPortfolioMix(): Invalid Customer Id: {0}", customerId);
             }
 
             this.SaveDbCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
@@ -75,16 +82,15 @@ namespace gzDAL.Repos
 
             } else {
 
-                //Not thread atomic but ok...within a single request context
                 db.CustPortfolios.AddOrUpdate(
-                    // Assume UpdatedOnUTC remains constant for same trx
-                    // to support idempotent transactions
                     cp => new { cp.CustomerId, cp.YearMonth },
                         new CustPortfolio {
                             CustomerId = customerId,
+                            // Get the most recent active portfolio for the risk type
                             PortfolioId = db.Portfolios
                                 .Where(p => p.RiskTolerance == riskType && p.IsActive)
-                                .Select(p => p.Id).Single(),
+                                .Select(p => p.Id)
+                                .Single(),
                             YearMonth = DbExpressions.GetStrYearMonth(portfYear, portfMonth),
                             UpdatedOnUTC = UpdatedOnUTC,
                             Weight = weight
@@ -134,7 +140,78 @@ namespace gzDAL.Repos
                 db.CustPortfolios
                     .Where(p => p.YearMonth == portfolioMonth && p.CustomerId == customerId)
                     .Select(cp => cp.Portfolio)
-                    .Single();
+                    .SingleOrDefault();
+        }
+
+        /// <summary>
+        /// 
+        /// Get all available portfolios along with customer allocations.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="nextInvestAmount"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<PortfolioDto>> GetCustomerPlansAsync(int customerId) {
+
+            var selCustomerPortfolioId = GetNextMonthsCustomerPortfolio(customerId).Id;
+
+            var portfolioDtos = (await (from p in db.Portfolios
+                join c in db.CustPortfolios on p.Id equals c.PortfolioId
+                join b in db.InvBalances on
+                    new {CustomerId = c.CustomerId, YearMonth = c.YearMonth} equals
+                    new {CustomerId = b.CustomerId, YearMonth = b.YearMonth}
+                where c.CustomerId == customerId
+                      && !b.Sold
+                group b by p
+                into g
+                select new PortfolioDto {
+                    Id = g.Key.Id,
+                    Title = g.Key.Title,
+                    Color = g.Key.Color,
+                    ROI = g.Key.PortFunds.Select(f => f.Weight*f.Fund.YearToDate/100).Sum(),
+                    Risk = (RiskToleranceEnum) g.Key.RiskTolerance,
+                    AllocatedAmount = g.Sum(b => b.CashInvestment),
+                    Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
+                        Name = f.Fund.HoldingName,
+                        Weight = f.Weight
+                    })
+                })
+
+                // Cache 1 Day
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1)))
+                .AsEnumerable()
+                /*** Union with non-allocated customer portfolio ****/
+                .Union(
+                    await (from p in db.Portfolios
+                        where p.IsActive
+                        select new PortfolioDto {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Color = p.Color,
+                            ROI = p.PortFunds.Select(f => f.Weight*f.Fund.YearToDate/100).Sum(),
+                            Risk = (RiskToleranceEnum) p.RiskTolerance,
+                            AllocatedAmount = 0M,
+                            Holdings = p.PortFunds.Select(f => new HoldingDto {
+                                Name = f.Fund.HoldingName,
+                                Weight = f.Weight
+                            })
+                        })
+
+                        // Cache 1 day
+                        .FromCacheAsync(DateTime.UtcNow.AddDays(1))
+                        , new PortfolioComparer())
+                .ToList();
+
+            // Calculate allocation percentage
+            var totalSum = portfolioDtos.Sum(p => p.AllocatedAmount);
+            foreach (var portfolioDto in portfolioDtos) {
+                if (totalSum != 0) {
+                    portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
+                }
+                portfolioDto.Selected = portfolioDto.Id == selCustomerPortfolioId;
+            }
+
+            return portfolioDtos;
         }
 
         /// <summary>
@@ -151,9 +228,22 @@ namespace gzDAL.Repos
 
             return db.CustPortfolios
                 .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, yearMonthStr, StringComparison.Ordinal) <= 0)
-                .OrderByDescending(p => p.YearMonth)
-                .Select(p => p.YearMonth)
-                .First();
+                .Max(p=>p.YearMonth);
         }
     }
+    /// <summary>
+    /// 
+    /// Union comparer for the GetCustomerP
+    /// 
+    /// </summary>
+    class PortfolioComparer : IEqualityComparer<PortfolioDto> {
+        public bool Equals(PortfolioDto p1, PortfolioDto p2) {
+            return p1.Id == p2.Id;
+        }
+
+        public int GetHashCode(PortfolioDto p) {
+            return p.Id.GetHashCode();
+        }
+    }
+
 }

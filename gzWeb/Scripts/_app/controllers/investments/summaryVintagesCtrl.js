@@ -41,7 +41,7 @@
             var flattened = getFlattened();
             var selected = $filter('where')(flattened, {'Selected': true, 'Sold': false});
             return helpers.array.aggregate(selected, 0, function (s, v) {
-                return s + (v.SellingValue - v.InvestAmount);
+                return s + v.SellingValue;
             });
         };
 

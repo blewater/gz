@@ -14,14 +14,22 @@ html {
     position: relative;
     height: 100%;
 }
+html.mobile {
+    overflow-x: hidden;
+}
 body {
     position: relative;
     height: 100%;
-    font-family: Helvetica;
+    font-family: 'Fira Sans', sans-serif !important;
     font-weight: 300;
     background: #F2F2F2;
     overflow-x: hidden;
+    z-index: 0;
 }
+body.mobile-menu {
+    overflow-y: hidden;
+}
+
 .content-wrap {
     position: relative;
     height: 100%;
@@ -29,6 +37,11 @@ body {
 }
 
 .view-container {
+    /*margin-top: 70px;*/
+    /*position: fixed;
+    width: 100%;
+    height: 100%;
+    display: block;*/
 }
 
 
@@ -346,7 +359,6 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     background:#27A95C;
     color:#fff;
     text-decoration:none;
-    font-family:arial,sans-serif;
     text-align:center;
     font-weight:bold;
     padding:5px 40px;

@@ -12,6 +12,7 @@ using gzWeb.Areas.Admin.Models;
 
 namespace gzWeb.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class ManageController : Controller
     {
         private ApplicationUserManager _userManager;
@@ -43,7 +44,8 @@ namespace gzWeb.Areas.Admin.Controllers
             {
                 query = query.Where(x => x.UserName.Contains(searchTerm) ||
                                          x.FirstName.Contains(searchTerm) ||
-                                         x.LastName.Contains(searchTerm));
+                                         x.LastName.Contains(searchTerm) ||
+                                         x.Email.Contains(searchTerm));
             }
 
             var totalPages = (int)Math.Ceiling((float)query.Count() / pageSize);
@@ -55,6 +57,42 @@ namespace gzWeb.Areas.Admin.Controllers
                 SearchTerm = searchTerm,
                 UsersEntries = query.OrderBy(x=>x.Id).Skip((page-1)*pageSize).Take(pageSize).ToList()
             });
+        }
+
+        public ActionResult UserEdit(int id)
+        {
+            var user = _dbContext.Users.Single(x => x.Id == id);
+            var roles = _dbContext.Roles.ToList();
+            var rolesOfUser = roles.Where(x => x.Users.Any(r => r.UserId == user.Id)).ToList();
+
+            roles.RemoveAll(x => rolesOfUser.Any(r => r.Id == x.Id));
+
+            return View(new UserViewModel
+                        {
+                                User = user,
+                                Roles = roles,
+                                RolesOfUser = rolesOfUser
+                        });
+        }
+
+        [HttpPost]
+        public ActionResult UserEdit(UserViewPostModel model)
+        {
+            if (!ModelState.IsValid)
+                return RedirectToAction("UserEdit", "Manage", new {Area = "Admin", id = model.Id});
+
+            var user = _dbContext.Users.Single(x => x.Id == model.Id);
+            var rolesOfUser = user.Roles.ToList();
+            foreach (var userRole in rolesOfUser)
+                user.Roles.Remove(userRole);
+
+            foreach (var roleId in model.RolesOfUser)
+                user.Roles.Add(new CustomUserRole {RoleId = roleId, UserId = user.Id});
+
+            _dbContext.Users.AddOrUpdate(user);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Users", "Manage", new { Area = "Admin" });
         }
 
 
@@ -96,7 +134,15 @@ namespace gzWeb.Areas.Admin.Controllers
 
         public ActionResult RoleEdit(int id)
         {
-            return View(_dbContext.Roles.Single(x => x.Id == id));
+            var role = _dbContext.Roles.Single(x => x.Id == id);
+            var users = _dbContext.Users.ToList();
+            var usersOfRole = users.Where(x => x.Roles.Any(r => r.RoleId == role.Id)).ToList();
+            return View(new RoleViewModel
+            {
+                Role = role,
+                Users = users,
+                UsersOfRole = usersOfRole
+            });
         }
         
         [HttpPost]

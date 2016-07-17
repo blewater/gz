@@ -15,15 +15,17 @@ namespace gzDAL.Models {
         [ForeignKey("FundId")]
         virtual public Fund Fund { get; set; }
 
+        [Index("IDX_FundPrice_Id_YMD", IsUnique = true, Order = 1)]
         [Required]
-        [Index("FundId_YMD_idx", IsUnique = true, Order = 1)]
         public int FundId { get; set; }
 
         /// <summary>
         /// The completed after 4pm trade day that we use the closing price.
         /// </summary>
+        [Index("IDX_FundPrice_Id_YMD", IsUnique = true, Order = 2)]
+        [Required]
+        [Column(TypeName = "char")]
         [StringLength(8)]
-        [Index("FundId_YMD_idx", IsUnique = true, Order = 2)]
         public string YearMonthDay { get; set; }
 
         [Required]

@@ -1,9 +1,9 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emBanking", ["$q", "emWamp", emBankingFunc]);
+    APP.factory("emBanking", ["$q", "emWamp", "iovation", emBankingFunc]);
 
-    function emBankingFunc($q, emWamp) {
+    function emBankingFunc($q, emWamp, iovation) {
 
         var _service = {};
 
@@ -291,7 +291,8 @@
         // The field requirement is different per different payment method and user.
         // Using getPaymentMethodCfg to query the required field of the specific payment method.
         //
-        _service.prepare = function(parameters) {
+        _service.prepare = function (parameters) {
+            parameters.iovationBlackbox = iovation.getBlackbox();
             return emWamp.call("/user/deposit#prepare", parameters);
         };
 

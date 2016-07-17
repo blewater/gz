@@ -7,16 +7,17 @@
 
         var sellingValuesFetched = false;
 
-        $scope.openVintages = function(title, vintages, canWithdraw) {
+        $scope.openVintages = function (title, vintages, withdrawMode) {
             return message.modal(title, {
-                nsSize: '600px',
+                nsSize: '700px',
                 nsTemplate: '/partials/messages/summaryVintages.html',
                 nsCtrl: 'summaryVintagesCtrl',
-                nsStatic: canWithdraw,
+                nsStatic: withdrawMode,
                 nsParams: {
                     vintages: vintages,
-                    canWithdraw: canWithdraw,
+                    withdrawMode: withdrawMode,
                     currency: $scope.currency
+                    //model: $scope.model
                 }
             });
         };
@@ -28,7 +29,7 @@
         $scope.withdraw = function () {
             if (!sellingValuesFetched) {
                 api.call(function() {
-                    return api.getVintagesWithSellingValues();
+                    return api.getVintagesWithSellingValues($scope.vintages);
                 }, function (getVintagesRsponse) {
                     sellingValuesFetched = true;
                     $scope.vintages = processVintages(getVintagesRsponse.Result);
@@ -40,7 +41,7 @@
         };
 
         function withdrawVintages() {
-            var promise = $scope.openVintages('Available Portfolios for withdrawal', $scope.vintages, true);
+            var promise = $scope.openVintages('Available funds for withdrawal', $scope.vintages, true);
             promise.then(function (updatedVintages) {
                 api.call(function () {
                     return api.withdrawVintages(updatedVintages);
@@ -83,6 +84,7 @@
                 return api.getSummaryData();
             }, function (response) {
                 $scope.model = response.Result;
+                $scope.model.OkToWithdraw = false;
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
         }

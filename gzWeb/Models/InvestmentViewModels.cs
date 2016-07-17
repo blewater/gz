@@ -6,12 +6,16 @@ namespace gzWeb.Models
 {
     public class VintageViewModel
     {
+        public int InvBalanceId { get; set; }
         public string YearMonthStr { get; set; }
-        public decimal InvestAmount { get; set; }
+        public decimal InvestmentAmount { get; set; }
         public decimal SellingValue { get; set; }
         public bool Locked { get; set; }
-        public bool Sold { get; set; }
         public bool Selected { get; set; }
+        public bool Sold { get; set; }
+        public decimal SoldAmount { get; set; }
+        public decimal SoldFees { get; set; }
+        public decimal SoldYearMonth { get; set; }
     }
 
     public class PlanViewModel
@@ -22,6 +26,8 @@ namespace gzWeb.Models
         public string Color { get; set; }
         public bool Selected { get; set; }
         public RiskToleranceEnum Risk { get; set; }
+        public float AllocatedPercent { get; set; }
+        public decimal AllocatedAmount { get; set; }
         public IEnumerable<HoldingViewModel> Holdings { get; set; }
     }
 

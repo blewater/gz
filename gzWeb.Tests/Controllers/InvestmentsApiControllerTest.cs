@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
 using gzDAL.Conf;
@@ -24,9 +26,13 @@ namespace gzWeb.Tests.Controllers
         protected const string UnitTestDb = "gzTestDb";
 
         private InvestmentsApiController investmentsApiController;
-        private ApplicationDbContext db;
+        private ApplicationDbContext _db;
         private ApplicationUserManager manager;
+        private UserRepo _userRepo;
         private IMapper mapper;
+        private InvBalanceRepo _invBalanceRepo;
+        private CustPortfolioRepo _custPortfolioRepo;
+        private GzTransactionRepo _gzTransactionRepo;
 
         [OneTimeSetUp]
         public void Setup() {
@@ -37,10 +43,22 @@ namespace gzWeb.Tests.Controllers
             });
             mapper = config.CreateMapper();
 
-            db = CreateInvestmentsApiController(out investmentsApiController);
-
-            manager = new ApplicationUserManager(new CustomUserStore(db),
+            _db = new ApplicationDbContext();
+            manager = new ApplicationUserManager(new CustomUserStore(_db),
                                                      new DataProtectionProviderFactory(() => null));
+            _gzTransactionRepo = new GzTransactionRepo(_db);
+            _custPortfolioRepo = new CustPortfolioRepo(_db);
+            _invBalanceRepo = new InvBalanceRepo(_db, 
+                new CustFundShareRepo(_db,
+                _custPortfolioRepo), 
+                _gzTransactionRepo, 
+                _custPortfolioRepo);
+            _userRepo = new UserRepo(
+                _db,
+                _gzTransactionRepo,
+                _invBalanceRepo);
+
+            _db = CreateInvestmentsApiController(out investmentsApiController);
         }
 
         [Test]
@@ -52,9 +70,9 @@ namespace gzWeb.Tests.Controllers
             Assert.IsNotNull(result);
         }
 
-        private IHttpActionResult GetSummaryData() {
+        private async Task<IHttpActionResult> GetSummaryData() {
             // Act
-            IHttpActionResult result = investmentsApiController.GetSummaryData();
+            IHttpActionResult result = await investmentsApiController.GetSummaryData();
             return result;
         }
 
@@ -64,26 +82,47 @@ namespace gzWeb.Tests.Controllers
         /// 
         /// </summary>
         [Test]
-        public void GetSummaryDataWithNewCustomer() {
+        public async Task InvestementApiController_GetCustomerPlans() {
 
-            var user = manager.FindByEmail("info@nessos.gr");
+            var user = await manager.FindByEmailAsync("info@nessos.gr");
 
             // Act
-            var result = investmentsApiController.GetCustomerPlans(user.Id);
-            Assert.IsNotNull(result);
-        }
+            var result = await investmentsApiController.GetCustomerPlansAsync(user.Id);
 
-        [Test]
-        public void GetCustomerPlans() {
-            var user = manager.FindByEmail("info@nessos.gr");
-
-            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
+            // 3 Active Portfolios
+            Assert.IsNotNull(result.Count() == 3);
         }
 
         [Test]
         public void SaveDbVintages() {
 
             var user = manager.FindByEmail("info@nessos.gr");
+
+            var vintagesDto = SellOneVintage(user);
+
+            // Mark for selling earliest and latest available
+            var earliestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
+                .OrderBy(v => v.YearMonthStr)
+                .First();
+            earliestVin.Selected = true;
+            var latestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
+                .OrderByDescending(v => v.YearMonthStr)
+                .First();
+            latestVin.Selected = true;
+
+            _invBalanceRepo.SetVintagesMarketPrices(user.Id, vintagesDto);
+
+            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto, bypassQueue: true);
+        }
+
+        [Test]
+        public void TestSellingAVintage() {
+
+            var user = manager.FindByEmail("salem8@gmail.com");
+            var vintagesDto = SellOneVintage(user);
+        }
+
+        private ICollection<VintageDto> SellOneVintage(ApplicationUser user) {
 
             var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
 
@@ -96,33 +135,37 @@ namespace gzWeb.Tests.Controllers
 
             ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
-            vintagesDto = investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
 
-            // Mark for selling earliest and latest available
-            var earliestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
-                .OrderBy(v => v.YearMonthStr)
-                .First();
-            earliestVin.Selected = true;
-            var latestVin = vintagesDto.Where(v => !v.Locked && !v.Sold)
-                .OrderByDescending(v => v.YearMonthStr)
-                .First();
-            latestVin.Selected = true;
+            _invBalanceRepo.SetVintagesMarketPrices(user.Id, vintagesDto);
 
-            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
+            vintagesDto = investmentsApiController.SaveDbSellVintages(
+                user.Id, 
+                vintagesDto,
+                bypassQueue: true);
+            return vintagesDto;
         }
 
         [Test]
-        public void GetSummaryDataWithUser()
-        {
-            var user = manager.FindByEmail("info@nessos.gr");
+        public async Task GetSummaryDataWithUser() {
+
+            var s = Stopwatch.StartNew();
+            var userId = _db.Users
+                .Where(u => u.Email == "salem8@gmail.com")
+                .Select(u => u.Id).Single();
+            var tuple = await _userRepo.GetSummaryDataAsync(userId);
+            var user = tuple.Item2;
+            var summaryDto = tuple.Item1;
 
             // Act
-            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user);
+            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user, summaryDto);
             Assert.IsNotNull(result);
 
             // Is this formula correct?
             // var gainLossDiff = result.TotalInvestmentsReturns - (result.InvestmentsBalance - result.TotalInvestments);
             // Assert.IsTrue(gainLossDiff == 0);
+
+            var elapsed = s.Elapsed;
+            Console.WriteLine($"Elapsed: {elapsed.Milliseconds.ToString("F")} milliseconds.");
         }
 
         [Test]
@@ -132,9 +175,26 @@ namespace gzWeb.Tests.Controllers
 
             var vintages = investmentsApiController.GetVintagesSellingValuesByUser(user);
             foreach (var vintageViewModel in vintages) {
+                Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
+                    vintageViewModel.YearMonthStr,
+                    vintageViewModel.InvestmentAmount,
+                    vintageViewModel.SellingValue,
+                    vintageViewModel.Sold,
+                    vintageViewModel.Locked);
+                Assert.IsNotNull(vintageViewModel.SellingValue);
+            }
+        }
+
+        [Test]
+        public void GetPortfoliosAllocationValues() {
+
+            var user = manager.FindByEmail("6month@allocation.com");
+
+            var vintages = investmentsApiController.GetVintagesSellingValuesByUser(user);
+            foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}", 
                     vintageViewModel.YearMonthStr, 
-                    vintageViewModel.InvestAmount, 
+                    vintageViewModel.InvestmentAmount, 
                     vintageViewModel.SellingValue,
                     vintageViewModel.Sold,
                     vintageViewModel.Locked);
@@ -144,24 +204,22 @@ namespace gzWeb.Tests.Controllers
 
         private ApplicationDbContext CreateInvestmentsApiController(out InvestmentsApiController controller)
         {
-            ApplicationDbContext db = new ApplicationDbContext();
-            ICustPortfolioRepo custPortfolioRepo = new CustPortfolioRepo(db);
-            ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(db, custPortfolioRepo);
-            IGzTransactionRepo gzTransactionRepo = new GzTransactionRepo(db);
-            IInvBalanceRepo invBalanceRepo = new InvBalanceRepo(db, custFundShareRepo, gzTransactionRepo);
-            ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(db);
+            ICustPortfolioRepo custPortfolioRepo = new CustPortfolioRepo(_db);
+            ICustFundShareRepo custFundShareRepo = new CustFundShareRepo(_db, custPortfolioRepo);
+            ICurrencyRateRepo currencyRateRepo = new CurrencyRateRepo(_db);
 
             // Arrange
             controller = new InvestmentsApiController(
-                    db,
-                    invBalanceRepo,
-                    gzTransactionRepo,
+                    _db,
+                    _invBalanceRepo,
+                    _gzTransactionRepo,
                     custFundShareRepo,
                     currencyRateRepo,
-                    custPortfolioRepo,
+                    _custPortfolioRepo,
+                    _userRepo,
                     mapper,
-                    new ApplicationUserManager(new CustomUserStore(db), new DataProtectionProviderFactory(() => null)));
-            return db;
+                    new ApplicationUserManager(new CustomUserStore(_db), new DataProtectionProviderFactory(() => null)));
+            return _db;
         }
     }
 }
