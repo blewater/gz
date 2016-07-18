@@ -14,25 +14,30 @@
     position: relative;
 }
 
-.games-list .filters .categories {
+.games-list .filters .filter-categories {
     line-height: 34px;
 }
-.games-list .filters .categories a {
+.games-list .filters .filter-categories a {
     color: #000;
     text-decoration: none;
-    margin: 0 10px;
+    padding: 10px;
     font-weight: 500;
 }
-.games-list .filters .categories a:first-of-type {
-    margin-left: 10px;
+/*.games-list .filters .filter-categories a:first-of-type {
+    margin-left: 0;
 }
-.games-list .filters .categories a:last-of-type {
-    margin-right: 10px;
-}
+.games-list .filters .filter-categories a:last-of-type {
+    margin-right: 0;
+}*/
 .games-list .filters .categories a:hover,
 .games-list .filters .categories a:focus,
 .games-list .filters .categories a:active {
     color: #000;
+}
+
+.games-list .filters .filter-categories a.selected {
+    color: #fff;
+    background-color: #27A95C;
 }
 
 
@@ -108,13 +113,121 @@
 
 
 /* #region categories */
-.game-categories .category { margin-top: 20px; }
-.game-categories .category .title {
+.categories .category {
+    margin: 20px;
+}
+.categories .category .title {
     font-size: 18px;
     font-weight: 700;
     margin: 30px 0 15px;
 }
-.game-categories .category .game { padding: 0; }
+.categories .category .game {
+    padding: 0;
+    -webkit-transition: all 50ms ease;
+    -moz-transition: all 50ms ease;
+    -ms-transition: all 50ms ease;
+    -o-transition: all 50ms ease;
+    transition: all 50ms ease;
+}
+.categories .category .game.ng-enter {
+    opacity: 0;
+}
+.categories .category .game.ng-enter-active {
+    opacity: 1;
+}
+/*@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}*/
+
+
+.categories .category .game a {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 10;
+    top: 0;
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.categories .category .game:hover a {
+    background-color: rgba(39, 169, 92, 0.6);
+}
+.categories .category .game a .name {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    display: block;
+    bottom: 0;
+    color: transparent;
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.categories .category .game:hover a .name {
+    color: #fff;
+}
+
+
+.categories .category .game a .play-btn {
+    position: absolute;
+    z-index: 5;
+    width: 28px;
+    height: 28px;
+    left: calc(50% - 14px);
+    top: calc(50% - 14px);
+    -ms-opacity: 0;
+    opacity: 0;
+    color: #fff;
+
+    -webkit-transition: all 0.3s ease; 
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.categories .category .game a .play-btn i.fa-play-circle{
+    position: absolute;
+    z-index: 6;
+    width: 28px;
+    height: 28px;
+    left: calc(50% - 14px);
+    top: calc(50% - 14px);
+    color: #fff;
+}
+.categories .category .game a .play-btn i.fa-circle{
+    position: absolute;
+    z-index: 5;
+    width: 18px;
+    height: 18px;
+    left: calc(50% - 9px);
+    top: calc(50% - 9px);
+    color: #27a95c;
+}
+
+.categories .category .game:hover a .play-btn {
+    -ms-opacity: 1;
+    opacity: 1;
+}
+
+.categories .category .load-more {
+    margin: 5px 0;
+    height: 28px;
+    line-height: 28px;
+}
 /* #endregion */
 
 
@@ -157,7 +270,7 @@
     -webkit-box-shadow: 0 0 50px 0 #fff;
     -ms-box-shadow: 0 0 50px 0 #fff;
     box-shadow: 0 0 50px 0 #fff;*/
-    background-color: #27A95C;
+    background-color: #27a95c;
     border: 1px solid #fff;
     border-top: none;
 }

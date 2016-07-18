@@ -455,7 +455,7 @@ header .switch .off {
     display: inline-block;
     padding: 5px 10px;
     margin-top: 18px;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #fff;
     float: right;
 }
 header .switch .on {
@@ -465,7 +465,7 @@ header .switch .on {
     background-color: #27A95C;
 }*/
 header .switch .off {
-    background-color: #f2f2f2;
+    background-color: #fff;
     cursor: default;
 }
 header .switch .on img,
@@ -480,7 +480,7 @@ header .switch .divider {
     border-right-color: #27A95C;
     border-right-width: 1px;
     border-right-style: solid;
-    background-color: #f2f2f2;
+    background-color: #fff;
     float: right;
 }
 
