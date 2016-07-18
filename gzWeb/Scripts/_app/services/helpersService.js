@@ -50,9 +50,8 @@
         // #region array
         function chunk(array, n) {
             var i, j, newArray = [];
-            for (i = 0, j = array.length; i < j; i += n) {
-                newArray = array.slice(i, i + n);
-            }
+            for (i = 0, j = array.length; i < j; i += n)
+                newArray.push(array.slice(i, i + n));
             return newArray;
         }
         function any(array, predicate) {
@@ -102,9 +101,10 @@
             array[j] = temp;
         }
         function applyWithDelay(array, func, delay, callback) {
-            if (array.length === 0)
+            if (array.length === 0) {
                 if (angular.isFunction(callback))
                     callback();
+            }
             else {
                 func(array[0]);
                 $timeout(function () {
