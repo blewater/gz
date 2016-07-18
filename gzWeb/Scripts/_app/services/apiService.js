@@ -90,7 +90,7 @@
             return $http.get('/api/Account/GetDeploymentInfo');
         }
         factory.cacheUserData = function () {
-            return $http.get('/api/Account/CacheUserData');
+            return $http.post('/api/Account/CacheUserData');
         }
         // #endregion
 

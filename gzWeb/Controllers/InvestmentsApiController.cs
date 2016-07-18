@@ -15,6 +15,7 @@ using gzWeb.Contracts;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
 using RestSharp.Deserializers;
+using Z.EntityFramework.Plus;
 
 namespace gzWeb.Controllers {
     [Authorize]
@@ -48,11 +49,12 @@ namespace gzWeb.Controllers {
 
         #region Summary
         [HttpGet]
-        public IHttpActionResult GetSummaryData() {
+        public async Task<IHttpActionResult> GetSummaryData() {
 
             var userId = User.Identity.GetUserId<int>();
-            ApplicationUser user;
-            var summaryDto = _userRepo.GetSummaryData(userId, out user);
+            var summaryRes = await _userRepo.GetSummaryDataAsync(userId);
+            var user = summaryRes.Item2;
+            var summaryDto = summaryRes.Item1;
 
             if (user == null)
                 return OkMsg(new object(), "User not found!");
@@ -71,7 +73,7 @@ namespace gzWeb.Controllers {
         SummaryDataViewModel IInvestmentsApi.GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto)
         {
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var summaryDvm = new SummaryDataViewModel {
                 InvestmentsBalance =
@@ -108,12 +110,12 @@ namespace gzWeb.Controllers {
         /// 
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="userCurrency"></param>
         /// <returns></returns>
-        private decimal GetUserCurrencyRate(ApplicationUser user, out CurrencyInfo userCurrency) {
+        private decimal GetUserCurrencyRate(ApplicationUser user) {
 
-            userCurrency = CurrencyHelper.GetSymbol(user.Currency);
+            var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
             var usdToUserRate = _currencyRateRepo.GetLastCurrencyRateFromUSD(userCurrency.ISOSymbol);
+
             return usdToUserRate;
         }
 
@@ -124,33 +126,13 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IHttpActionResult GetVintagesWithSellingValues(IList<VintageViewModel> vintages) {
+        public async Task<IHttpActionResult> GetVintagesWithSellingValues(IList<VintageViewModel> vintages) {
 
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
             var userVintages = GetVintagesSellingValuesByUser(user, vintages);
-
-            return OkMsg(() => userVintages);
-        }
-
-        /************** Obsolete ***********/
-        /// <summary>
-        /// 
-        /// HttpGet the Vintages with their Selling Values calculated
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete]
-        [HttpGet]
-        public IHttpActionResult GetVintagesWithSellingValues()
-        {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
-            if (user == null)
-                return OkMsg(new object(), "User not found!");
-
-            var userVintages = GetVintagesSellingValuesByUser(user);
 
             return OkMsg(() => userVintages);
         }
@@ -166,7 +148,7 @@ namespace gzWeb.Controllers {
         public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user) {
 
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var customerVintages = _invBalanceRepo
                 .GetCustomerVintagesSellingValue(user.Id);
@@ -192,7 +174,7 @@ namespace gzWeb.Controllers {
         public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVM) {
 
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var vintageDtos = vintagesVM
                 .Select(t => _mapper.Map<VintageViewModel, VintageDto>(t)).ToList();
@@ -220,26 +202,23 @@ namespace gzWeb.Controllers {
         /// <param name="vintages"></param>
         /// <returns></returns>
         [HttpPost]
-        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages) {
+        public async Task<IHttpActionResult> WithdrawVintages(IList<VintageViewModel> vintages) {
 
             var vintagesDtos = vintages
-                .AsParallel()
                 .Select(v => _mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
 
             var userId = User.Identity.GetUserId<int>();
 
-            // Set market price on it
-            _invBalanceRepo.SetVintagesMarketPrices(userId, vintagesDtos);
             // Sell Vintages
             var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
 
             // Handle Response
-            var user = _userRepo.GetCachedUser(userId);
+            var user = await _userRepo.GetCachedUserAsync(userId);
 
             // Get user currency rate
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
 
             var inUserRateVintages =
             updatedVintages.AsParallel().Select(v => new VintageViewModel() {
@@ -268,11 +247,11 @@ namespace gzWeb.Controllers {
             bool bypassQueue = false) {
 
             if (!bypassQueue) {
+                // Compatible only with IIS hosting
                 HostingEnvironment.QueueBackgroundWorkItem(
                     ct =>
                         _invBalanceRepo.SaveDbSellVintages(customerId, vintages));
-            }
-            else {
+            } else {
                 _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
             }
 
@@ -288,34 +267,34 @@ namespace gzWeb.Controllers {
 
         #region Portfolio
         [HttpGet]
-        public IHttpActionResult GetPortfolioData()
-        {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+        public async Task<IHttpActionResult> GetPortfolioData() {
+
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
             CurrencyInfo userCurrency;
-            decimal usdToUserRate = GetUserCurrencyRate(user, out userCurrency);
+            decimal usdToUserRate = GetUserCurrencyRate(user);
             var investmentAmount = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*_gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth()));
 
-            var now = DateTime.Now;
             var model = new PortfolioDataViewModel
                         {
                             NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                             NextExpectedInvestment = investmentAmount,
-                            Plans = GetCustomerPlans(user.Id, investmentAmount)
+                            Plans = await GetCustomerPlansAsync(user.Id, investmentAmount)
                         };
             return OkMsg(model);
         }
 
         [HttpPost]
-        public IHttpActionResult SetPlanSelection(PlanViewModel plan)
+        public async Task<IHttpActionResult> SetPlanSelection(PlanViewModel plan)
         {
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+                return OkMsg(new object(), "User not found!");
+
             return OkMsg(() =>
             {
-                var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
-                if (user == null)
-                    return OkMsg(new object(), "User not found!");
                 return OkMsg(() => _custPortfolioRepo.SaveDbCustomerSelectNextMonthsPortfolio(user.Id, plan.Risk));
             });
         }
@@ -323,14 +302,13 @@ namespace gzWeb.Controllers {
 
         #region Performance
         [HttpGet]
-        public IHttpActionResult GetPerformanceData() {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+        public async Task<IHttpActionResult> GetPerformanceData() {
+
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
-            DateTime? latestBalanceUpdateDatetime;
-            var balance = _invBalanceRepo.GetCachedLatestBalanceTimestamp(
-                _invBalanceRepo.CacheLatestBalance(user.Id), out latestBalanceUpdateDatetime);
+            var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(_invBalanceRepo.CacheLatestBalanceAsync(user.Id));
 
 
             var userCurrency = CurrencyHelper.GetSymbol(user.Currency);
@@ -338,9 +316,9 @@ namespace gzWeb.Controllers {
 
             var model = new PerformanceDataViewModel
             {
-                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * balance),
+                InvestmentsBalance = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * invBalanceRes.Item1),
                 NextExpectedInvestment = DbExpressions.RoundCustomerBalanceAmount(usdToUserRate * _gzTransactionRepo.LastInvestmentAmount(user.Id, DateTime.UtcNow.ToStringYearMonth())),
-                Plans = GetCustomerPlans(user.Id)
+                Plans = await GetCustomerPlansAsync(user.Id)
             };
             return OkMsg(model);
         }
@@ -352,27 +330,26 @@ namespace gzWeb.Controllers {
         [HttpGet]
         public IHttpActionResult GetPortfolios()
         {
-            return OkMsg(() =>
-            {
+            return OkMsg(() => {
                 var portfolios =
                     _dbContext.Portfolios
-                              .Where(x => x.IsActive)
-                              .Select(x => new
-                                      {
-                                          x.Id,
-                                          x.RiskTolerance,
-                                          Funds = x.PortFunds.Select(f => new {f.Fund.HoldingName, f.Weight})
-                                      })
-                              .ToList();
+                        .Where(x => x.IsActive)
+                        .Select(x => new {
+                            x.Id,
+                            x.RiskTolerance,
+                            Funds = x.PortFunds.Select(f => new {f.Fund.HoldingName, f.Weight})
+                        })
+                        .FromCacheAsync(DateTime.UtcNow.AddDays(1))
+                        .Result;
                 return portfolios;
             });
         }
         #endregion
 
         #region Methods
-        public IEnumerable<PlanViewModel> GetCustomerPlans(int customerId, decimal nextInvestAmount = 0) {
+        public async Task<IEnumerable<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0) {
 
-            var portfolioDtos = _custPortfolioRepo.GetCustomerPlans(customerId);
+            var portfolioDtos = await _custPortfolioRepo.GetCustomerPlansAsync(customerId);
             var portfolios = portfolioDtos
                 .Select(p => new PlanViewModel() {
                     Id = p.Id,
@@ -384,7 +361,7 @@ namespace gzWeb.Controllers {
                     Risk = p.Risk,
                     Selected = p.Selected,
                     Holdings = p.Holdings
-                        .Select(h=> new HoldingViewModel() {
+                        .Select(h => new HoldingViewModel() {
                             Name = h.Name,
                             Weight = h.Weight
                         })
@@ -474,3 +451,4 @@ namespace gzWeb.Controllers {
         #endregion
     }
 }
+

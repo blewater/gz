@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
 using gzDAL.Conf;
@@ -68,9 +70,9 @@ namespace gzWeb.Tests.Controllers
             Assert.IsNotNull(result);
         }
 
-        private IHttpActionResult GetSummaryData() {
+        private async Task<IHttpActionResult> GetSummaryData() {
             // Act
-            IHttpActionResult result = investmentsApiController.GetSummaryData();
+            IHttpActionResult result = await investmentsApiController.GetSummaryData();
             return result;
         }
 
@@ -80,12 +82,12 @@ namespace gzWeb.Tests.Controllers
         /// 
         /// </summary>
         [Test]
-        public void InvestementApiController_GetCustomerPlans() {
+        public async Task InvestementApiController_GetCustomerPlans() {
 
-            var user = manager.FindByEmail("info@nessos.gr");
+            var user = await manager.FindByEmailAsync("info@nessos.gr");
 
             // Act
-            var result = investmentsApiController.GetCustomerPlans(user.Id);
+            var result = await investmentsApiController.GetCustomerPlansAsync(user.Id);
 
             // 3 Active Portfolios
             Assert.IsNotNull(result.Count() == 3);
@@ -144,13 +146,15 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public void GetSummaryDataWithUser() {
+        public async Task GetSummaryDataWithUser() {
 
+            var s = Stopwatch.StartNew();
             var userId = _db.Users
                 .Where(u => u.Email == "salem8@gmail.com")
                 .Select(u => u.Id).Single();
-            ApplicationUser user;
-            var summaryDto = _userRepo.GetSummaryData(userId, out user);
+            var tuple = await _userRepo.GetSummaryDataAsync(userId);
+            var user = tuple.Item2;
+            var summaryDto = tuple.Item1;
 
             // Act
             var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user, summaryDto);
@@ -159,6 +163,9 @@ namespace gzWeb.Tests.Controllers
             // Is this formula correct?
             // var gainLossDiff = result.TotalInvestmentsReturns - (result.InvestmentsBalance - result.TotalInvestments);
             // Assert.IsTrue(gainLossDiff == 0);
+
+            var elapsed = s.Elapsed;
+            Console.WriteLine($"Elapsed: {elapsed.Milliseconds.ToString("F")} milliseconds.");
         }
 
         [Test]

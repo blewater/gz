@@ -45,14 +45,15 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
+        /// <param name="db"></param>
         /// <returns></returns>
-        public Task<IEnumerable<InvBalance>> CacheLatestBalance(int customerId) {
+        public Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId) {
 
             var lastBalanceRowTask = _db.InvBalances
-                .Where(i => i.CustomerId == customerId 
-                    && i.YearMonth == _db.InvBalances.Where(b=>b.CustomerId == i.CustomerId)
-                        .Select(b=>b.YearMonth)
-                        .Max())
+                .Where(i => i.CustomerId == customerId
+                            && i.YearMonth == _db.InvBalances.Where(b => b.CustomerId == i.CustomerId)
+                                .Select(b => b.YearMonth)
+                                .Max())
                 // Cache 4 hours
                 .FromCacheAsync(DateTime.UtcNow.AddHours(4));
 
@@ -65,21 +66,21 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="lastBalanceRowTask"></param>
-        /// <param name="lastUpdatedBalanceOn">Out parameter of the last updated timestamp</param>
-        /// <returns>Balance Amount of last month.</returns>
-        public decimal GetCachedLatestBalanceTimestamp(
-            Task<IEnumerable<InvBalance>> lastBalanceRowTask, 
-            out DateTime? lastUpdatedBalanceOn) {
+        /// <returns>
+        /// 1. Balance Amount of last month
+        /// 2. Last updated timestamp of invBalance.
+        /// </returns>
+        public async Task<Tuple<decimal, DateTime?>> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask) {
 
-            var res = lastBalanceRowTask.Result;
+            var res = await lastBalanceRowTask;
 
             var lastMonthsBalanceRow = res
                 .Select(b => new { b.Balance, b.UpdatedOnUtc })
                 .SingleOrDefault();
 
-            lastUpdatedBalanceOn = lastMonthsBalanceRow?.UpdatedOnUtc;
+            var lastUpdatedBalanceOn = lastMonthsBalanceRow?.UpdatedOnUtc;
 
-            return lastMonthsBalanceRow?.Balance??0;
+            return Tuple.Create(lastMonthsBalanceRow?.Balance??0, lastUpdatedBalanceOn);
         }
 
         /// <summary>
@@ -91,11 +92,11 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public Task<Decimal> CacheInvestmentReturns(int customerId) {
+        public Task<Decimal> CacheInvestmentReturnsAsync(int customerId) {
 
             var invGainSumTask = _db.InvBalances
                 .Where(i => i.CustomerId == customerId)
-                .Select(i=>i.InvGainLoss)
+                .Select(i => i.InvGainLoss)
                 .DefaultIfEmpty(0)
                 .DeferredSum()
                 // Cache 4 Hours
@@ -111,9 +112,9 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="invGainSumTask"></param>
         /// <returns>Balance Amount of last month.</returns>
-        public decimal GetCachedInvestmentReturns(Task<decimal> invGainSumTask) {
+        public async Task<decimal> GetCachedInvestmentReturnsAsync(Task<decimal> invGainSumTask) {
 
-            var invGainSum = invGainSumTask.Result;
+            var invGainSum = await invGainSumTask;
 
             return invGainSum;
         }
@@ -189,6 +190,8 @@ namespace gzDAL.Repos {
         /// 
         /// Checks for selling preconditions before attempting to return the present selling value.
         /// 
+        /// De-selects a Vintage for selling if sold already or locked (slipped through error validation cracks).
+        /// 
         /// Throws an exception if vintage is already sold or not available for selling.
         /// 
         /// </summary>
@@ -215,6 +218,10 @@ namespace gzDAL.Repos {
 
                         vintageDto.CustomerVintageShares = monthsCustomerShares;
                         vintageDto.Fees = fees;
+                    }
+                    else {
+                        // Deselect it for selling it
+                        vintageDto.Selected = false;
                     }
                 }
             }
@@ -344,6 +351,10 @@ namespace gzDAL.Repos {
         /// <param name="vintages"></param>
         /// <returns></returns>
         public void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages) {
+
+            // Set latest market price on it.. they may have left the browser window open 
+            // for a long time (stock market-wise) before hitting withdraw
+            SetVintagesMarketPrices(customerId, vintages);
 
             ConnRetryConf.TransactWithRetryStrategy(_db,
 
