@@ -35,12 +35,14 @@ namespace gzWeb.Controllers
             ApplicationUserManager userManager, 
             ApplicationDbContext dbContext, 
             ICustPortfolioRepo custPortfolioRepo,
-            IUserRepo userRepo)
+            IUserRepo userRepo, 
+            ICacheUserData cacheUserData)
                 : base(userManager)
         {
             _dbContext = dbContext;
             _userRepo = userRepo;
             _custPortfolioRepo = custPortfolioRepo;
+            _cacheUserData = cacheUserData;
         }
 
         #region accessTokenFormat Constructor
@@ -435,7 +437,7 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return Ok("User not found!");
 
@@ -448,9 +450,9 @@ namespace gzWeb.Controllers
 
         [HttpPost]
         [Route("FinalizeRegistration")]
-        public IHttpActionResult FinalizeRegistration(int gmUserId)
-        {
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+        public async Task<IHttpActionResult> FinalizeRegistration(int gmUserId) {
+
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return OkMsg(new object(), "User not found!");
 
@@ -645,17 +647,16 @@ namespace gzWeb.Controllers
         // #endregion
 
         /// GET api/Account/CacheUserData
-        [Authorize] // Redundant for 
+        [Authorize] // Redundant by defaull all class methods are
         [Route("CacheUserData")]
-        [HttpGet]
-        public IHttpActionResult CacheUserData() {
+        [HttpPost]
+        public async Task<IHttpActionResult> CacheUserData() {
 
-            var user = _userRepo.GetCachedUser(User.Identity.GetUserId<int>());
+            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
             if (user == null)
                 return Ok("User not found!");
 
-            // Don't run till it's tested.
-            //Task.Run(() => _cacheUserData.Query(user.Id));
+            await _cacheUserData.Query(user.Id);
 
             return Ok();
         }

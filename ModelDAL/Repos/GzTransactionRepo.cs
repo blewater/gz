@@ -13,6 +13,7 @@ using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
 using Z.EntityFramework.Plus;
 using System.Runtime.Caching;
+using System.Threading.Tasks;
 using NLog;
 
 namespace gzDAL.Repos {
@@ -80,6 +81,72 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// Get month's playling loss
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<decimal> GetLastInvestmentAmountAsync(int userId) {
+
+            using (var db = new ApplicationDbContext()) {
+
+                var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
+
+                var lastInvestmentAmount = await db.Database
+                    .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@YearMonth", thisYearMonthStr),
+                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
+                    .SingleOrDefaultAsync();
+
+                return lastInvestmentAmount;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Get Total playing loss
+        ///   
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<decimal> GetTotalInvestmentsAmountAsync(int userId) {
+
+            using (var db = new ApplicationDbContext()) {
+
+                decimal totalInvestmentsAmount = await db.Database
+                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@CustomerId, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
+                    .SingleAsync();
+
+                return totalInvestmentsAmount;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Get Total Liquidation or investment sales.
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<decimal> GetTotalWithdrawalsAmountAsync(int userId) {
+
+            using (var db = new ApplicationDbContext()) {
+
+                decimal totalWithdrawalsAmount = await db.Database
+                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
+                        new SqlParameter("@CustomerId", userId),
+                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.TransferToGaming))
+                    .SingleAsync();
+
+                return totalWithdrawalsAmount;
+            }
+        }
+
+        /// <summary>
+        /// 
         /// Get the Customer ids whose transaction activity has been initiated already 
         /// within a range of months
         /// 
@@ -114,13 +181,15 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId) {
+        public async Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId) {
 
             string prompt = "First available withdrawal on: ";
 
-            DateTime eligibleWithdrawDate;
-            int lockInDays;
-            bool okToWithdraw = IsWithdrawalEligible(customerId, out eligibleWithdrawDate, out lockInDays);
+            var task = IsWithdrawalEligible(customerId);
+            var tuple = await task;
+            var eligibleWithdrawDate = tuple.Item2;
+            var lockInDays = tuple.Item3;
+            bool okToWithdraw = tuple.Item1;
 
             var retValues = new WithdrawEligibilityDTO() {
                 LockInDays = lockInDays,
@@ -141,30 +210,30 @@ namespace gzDAL.Repos {
         /// <param name="eligibleWithdrawDate"></param>
         /// <param name="lockInDays"></param>
         /// <returns></returns>
-        private bool IsWithdrawalEligible(int customerId, out DateTime eligibleWithdrawDate, out int lockInDays) {
+        private async Task<Tuple<bool, DateTime, int>> IsWithdrawalEligible(int customerId) {
 
             var task = _db.GzConfigurations
                 .FromCacheAsync(DateTime.UtcNow.AddDays(1));
             var confRow = task.Result;
 
-            lockInDays = confRow
+            var lockInDays = confRow
                 .Select(c => c.LOCK_IN_NUM_DAYS)
                 .Single();
 
-            DateTime earliestLoss = _db.Database
+            DateTime earliestLoss = await _db.Database
                 .SqlQuery<DateTime>("Select dbo.GetMinDateTrx(@CustomerId, @TrxType)",
                     new SqlParameter("@CustomerId", customerId),
                     new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
-                .SingleOrDefault<DateTime>();
+                .SingleOrDefaultAsync();
 
             if (earliestLoss.Year == 1900) {
                 earliestLoss = DateTime.UtcNow;
             }
 
-            eligibleWithdrawDate = earliestLoss.AddDays(lockInDays);
+            var eligibleWithdrawDate = earliestLoss.AddDays(lockInDays);
 
             bool okToWithdraw = eligibleWithdrawDate < DateTime.UtcNow;
-            return okToWithdraw;
+            return Tuple.Create(okToWithdraw, eligibleWithdrawDate, lockInDays);
         }
 
         /// <summary>
@@ -174,11 +243,15 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public bool GetEnabledWithdraw(int customerId) {
+        public async Task<bool> GetEnabledWithdraw(int customerId) {
 
-            DateTime eligibleWithdrawDate;
-            int lockInDays;
-            bool okToWithdraw = IsWithdrawalEligible(customerId, out eligibleWithdrawDate, out lockInDays);
+            var task = IsWithdrawalEligible(customerId);
+            var tuple = await task;
+            bool okToWithdraw = tuple.Item1;
+
+            // Not needed
+            //var eligibleWithdrawDate = tuple.Item2;
+            //var lockInDays = tuple.Item3;
 
             return okToWithdraw;
         }

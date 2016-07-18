@@ -18,6 +18,14 @@ namespace gzDAL.Repos
         private readonly IInvBalanceRepo _invBalanceRepo;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// 
+        /// Constructor
+        /// 
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="gzTransactionRepo"></param>
+        /// <param name="invBalanceRepo"></param>
         public UserRepo(ApplicationDbContext db, 
             IGzTransactionRepo gzTransactionRepo, 
             IInvBalanceRepo invBalanceRepo)
@@ -27,23 +35,40 @@ namespace gzDAL.Repos
             this._invBalanceRepo = invBalanceRepo;
         }
 
+        /// <summary>
+        ///  
+        /// Cache & query user asynchronously
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         private Task<ApplicationUser> CacheUser(int userId) {
 
-            var userQtask = _db.Users
-                .Where(u => u.Id == userId)
-                .DeferredSingleOrDefault()
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+                var userQtask = _db.Users
+                    .Where(u => u.Id == userId)
+                    .DeferredSingleOrDefault()
+                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
 
-            return userQtask;
+                return userQtask;
         }
-        private ApplicationUser GetCachedUser(Task<ApplicationUser> userTask) {
 
-            var userRow = userTask.Result;
+        /// <summary>
+        /// 
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="userTask"></param>
+        /// <returns></returns>
+        private async Task<ApplicationUser> GetCachedUserAsync(Task<ApplicationUser> userTask) {
+
+            var userRow = await userTask;
             return userRow;
         }
 
-        public ApplicationUser GetCachedUser(int userId) {
-            return GetCachedUser(CacheUser(userId));
+        public async Task<ApplicationUser> GetCachedUserAsync(int userId) {
+            var task = GetCachedUserAsync(CacheUser(userId));
+
+            return await task;
         }
 
         /// <summary>
@@ -52,65 +77,50 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <returns></returns>
-        public UserSummaryDTO GetSummaryData(int userId, out ApplicationUser userRet) {
+        public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId) {
 
-            userRet = null;
+            ApplicationUser userRet = null;
             UserSummaryDTO summaryDtoRet = null;
 
             try {
 
                 //--------------- Start async queries
                 var userQtask = CacheUser(userId);
-                var latestBalanceTask = _invBalanceRepo.CacheLatestBalance(userId);
-                var invGainLossTask = _invBalanceRepo.CacheInvestmentReturns(userId);
+                var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
+                var invGainLossTask = _invBalanceRepo.CacheInvestmentReturnsAsync(userId);
 
                 //---------------- Execute SQL Functions
-                decimal totalWithdrawalsAmount = _db.Database
-                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.TransferToGaming))
-                    .Single<decimal>();
+                var totalWithdrawalsAmount = await _gzTransactionRepo.GetTotalWithdrawalsAmountAsync(userId);
 
-                decimal totalInvestmentsAmount = _db.Database
-                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@CustomerId, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.CreditedPlayingLoss))
-                    .Single<decimal>();
+                var totalInvestmentsAmount = await _gzTransactionRepo.GetTotalInvestmentsAmountAsync(userId);
 
                 var vintages = _invBalanceRepo.GetCustomerVintages(userId);
 
-                var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
-                var lastInvestmentAmount = _db.Database
-                    .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@YearMonth", thisYearMonthStr),
-                        new SqlParameter("@TrxType", (int) GzTransactionTypeEnum.CreditedPlayingLoss))
-                    .SingleOrDefault();
+                var lastInvestmentAmount = await _gzTransactionRepo.GetLastInvestmentAmountAsync(userId);
 
-                var withdrawalEligibility = _gzTransactionRepo.GetWithdrawEligibilityData(userId);
+                var withdrawalEligibility = await _gzTransactionRepo.GetWithdrawEligibilityDataAsync(userId);
 
                 var totalDeposits = _gzTransactionRepo.GetTotalDeposit(userId);
 
                 //-------------- Retrieve previously executed async query results
 
                 // user
-                userRet = userQtask.Result;
+                userRet = await userQtask;
                 if (userRet == null) {
                     _logger.Error("User with id {0} is null in GetSummaryData()", userId);
                 }
 
                 // balance, last update
-                DateTime? latestBalanceUpdateDatetime;
-                var balance = _invBalanceRepo.GetCachedLatestBalanceTimestamp(latestBalanceTask,
-                    out latestBalanceUpdateDatetime);
+                var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
 
                 // investment gain or loss
-                var invGainLossSum = _invBalanceRepo.GetCachedInvestmentReturns(invGainLossTask);
+                decimal invGainLossSum = await _invBalanceRepo.GetCachedInvestmentReturnsAsync(invGainLossTask);
 
+                // Package all the results
                 summaryDtoRet = new UserSummaryDTO() {
 
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
-                    InvestmentsBalance = balance,
+                    InvestmentsBalance = invBalanceRes.Item1, // balance
                     TotalDeposits = totalDeposits,
                     TotalWithdrawals = totalWithdrawalsAmount,
 
@@ -121,7 +131,9 @@ namespace gzDAL.Repos
 
                     NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                     LastInvestmentAmount = lastInvestmentAmount,
-                    StatusAsOf = latestBalanceUpdateDatetime ?? DateTime.UtcNow.AddDays(-1),
+
+                    //latestBalanceUpdateDatetime
+                    StatusAsOf = invBalanceRes.Item2 ?? DateTime.UtcNow.AddDays(-1), 
                     Vintages = vintages,
 
                     // Withdrawal eligibility
@@ -130,12 +142,11 @@ namespace gzDAL.Repos
                     OkToWithdraw = withdrawalEligibility.OkToWithdraw,
                     Prompt = withdrawalEligibility.Prompt
                 };
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 _logger.Error(ex, "Exception in GetSummaryData()");
             }
 
-            return summaryDtoRet;
+            return Tuple.Create(summaryDtoRet, userRet);
         }
     }
 }
