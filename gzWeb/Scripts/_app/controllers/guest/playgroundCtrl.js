@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', 'constants', '$timeout', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp, chat, $location, auth, constants, $timeout) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'chat', '$location', 'auth', 'constants', '$timeout', 'accountManagement', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, chat, $location, auth, constants, $timeout, accountManagement) {
         // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -139,66 +139,16 @@
         // #endregion
 
         // #region Account Management
-        $scope.deposit = function () {
+        $scope.openAccountManagement = function () {
             message.open({
                 nsType: 'modal',
                 nsSize: '1000px',
-                nsTemplate: '/partials/messages/deposit.html',
-                nsCtrl: 'depositCtrl',
-                nsStatic: true,
+                nsTemplate: '_app/accountManagement/accountManagement.html',
+                nsCtrl: 'accountManagementCtrl',
+                nsStatic: true
             });
         };
-
-        $scope.withdraw = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '1000px',
-                nsTemplate: '/partials/messages/withdraw.html',
-                nsCtrl: 'withdrawCtrl',
-                nsStatic: true,
-            });
-        };
-        
-        $scope.pendingWithdrawals = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '1000px',
-                nsTemplate: '/partials/messages/pendingWithdrawals.html',
-                nsCtrl: 'pendingWithdrawalsCtrl',
-                nsStatic: true,
-            });
-        };
-
-        $scope.transactionHistory = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '1000px',
-                nsTemplate: '/partials/messages/transactionHistory.html',
-                nsCtrl: 'transactionHistoryCtrl',
-                nsStatic: true,
-            });
-        };
-
-        $scope.bonuses = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '1000px',
-                nsTemplate: '/partials/messages/bonuses.html',
-                nsCtrl: 'bonusesCtrl',
-                nsStatic: true,
-            });
-        };
-
-        $scope.myProfile = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '1000px',
-                nsTemplate: '/partials/messages/myProfile.html',
-                nsCtrl: 'myProfileCtrl',
-                nsStatic: true,
-            });
-        };
-        //$timeout($scope.transactionHistory, 5000);
+        $timeout($scope.openAccountManagement, 3000);
         // #endregion
     }
 })();

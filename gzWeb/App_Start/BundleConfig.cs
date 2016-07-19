@@ -36,6 +36,7 @@ namespace gzWeb
                 , "~/Content/Styles/_app/carousel.css"
                 , "~/Content/Styles/_app/games.css"
                 , "~/Content/Styles/_app/admin.css"
+                , "~/_app/accountManagement/accountManagement.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
             ));
             #endregion
@@ -141,12 +142,15 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
                                         //ACCOUNT MANAGEMENT
-                                        , "~/Scripts/_app/controllers/account/depositCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/withdrawCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/pendingWithdrawalsCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/transactionHistoryCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/bonusesCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/myProfileCtrl.js"
+                                        , "~/_app/accountManagement/accountManagementCtrl.js"
+                                        , "~/_app/accountManagement/accountManagementService.js"
+                                        , "~/_app/accountManagement/transactionHistoryCtrl.js"
+                                        , "~/_app/accountManagement/depositCtrl.js"
+                                        , "~/_app/accountManagement/withdrawCtrl.js"
+                                        , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
+                                        , "~/_app/accountManagement/bonusesCtrl.js"
+                                        , "~/_app/accountManagement/myProfileCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/transactionHistoryCtrl.js"
 
                                         , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
                                         , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"
