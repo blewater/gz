@@ -9,16 +9,17 @@
 
         <div class="filters">
             <div class="container-fluid">
-                <div class="col-xs-12 col-sm-6 col-lg-8">
+                <div class="col-xs-12 col-sm-6 col-lg-9">
                     <div class="filter-categories">
-                        <span ng-repeat="category in gameCategories">
+                        <span ng-repeat="category in gameCategories" class="filter-category">
+                            <span class="divider" ng-if="$index !== 0">|</span>
                             <a ng-class="{'selected':category.selected}" ng-click="onCategorySelected($index)">
                                 {{category.title}}
                             </a>
                         </span>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="col-xs-12 col-sm-6 col-lg-3">
                     <div class="live-search" cs-clickout="liveSearch.showResults = false;">
                         <input type="search" placeholder="SEARCH GAME (type and press enter)" class="form-control" ng-model="liveSearch.input"
                                ng-focus="onLiveSearchFocused()" ng-blur="onLiveSearchBlurred()" cs-enter="onLiveSearchChange()">
@@ -63,21 +64,16 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div ng-repeat-start="g in category.games" class="game text-center col-xs-6 col-sm-4 col-md-2">
-                                <img class="img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="@Url.Content("~/Content/Images/casino-default.jpg")" alt="{{g.name}}" ng-click="onGameSelected(g.slug)" />
                                 <a ng-href="{{getGameUrl(g.slug)}}">
-                                    <span class="play-btn">
-                                        <i class="fa fa-2x fa-play"></i>
-                                        @*<i class="fa fa-lg fa-circle"></i>
-                                        <i class="fa fa-2x fa-play-circle"></i>*@
-                                    </span>
-                                    <span class="name">{{g.name}}</span>
+                                    <img class="img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="@Url.Content("~/Content/Images/casino-default.jpg")" alt="{{g.name}}" ng-click="onGameSelected(g.slug)" />
+                                    <div>{{g.name}}</div>
                                 </a>
                             </div>
                             <div ng-repeat-end ng-class="{'clearfix':(xs && $index % 2 === 1) || (sm && $index % 3 === 2) || $index % 6 === 5}"></div>
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row hidden">
                         <div class="col-xs-12 text-center">
                             <button class="load-more btn-gz btn-gz-alt" ng-click="fetchNextPage(category)">
                                 LOAD MORE
