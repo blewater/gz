@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using gzDAL.Conf;
+using gzDAL.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
@@ -26,23 +27,22 @@ namespace gzWeb.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            _logger.Trace("/TOKEN");
-
-            //var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
-            //var userManager = context.OwinContext.Get<ApplicationUserManager>();
-            //var userManager = DependencyResolver.Current.GetService<ApplicationUserManager>();
+            _logger.Info("Authentication attempt for {0}", context.UserName);
 
             var userManager = _userManagerFactory();
             var user = await userManager.FindAsync(context.UserName, context.Password);
 
             if (user == null)
             {
+                _logger.Info("Authentication attempt for user '{0}' failed. Invalid username or password. Checking for email.", context.UserName);
+
                 const string ERROR_TYPE = "invalid_grant";
                 const string ERROR_MSG = "The username/email or password is incorrect.";
                 user = await userManager.FindByEmailAsync(context.UserName);
                 if (user == null)
                 {
                     context.SetError(ERROR_TYPE, ERROR_MSG);
+                    _logger.Info("Authentication attempt for user '{0}' failed. Invalid email.", context.UserName);
                     return;
                 }
 
@@ -50,6 +50,7 @@ namespace gzWeb.Providers
                 if (user == null)
                 {
                     context.SetError(ERROR_TYPE, ERROR_MSG);
+                    _logger.Info("Authentication attempt for user '{0}' failed. Invalid password.", context.UserName);
                     return;
                 }
             }
@@ -64,10 +65,7 @@ namespace gzWeb.Providers
             var oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType);
             var cookiesIdentity = await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
 
-            var properties = CreateProperties(user.UserName);
-            properties.Dictionary.Add("firstname", user.FirstName);
-            properties.Dictionary.Add("lastname", user.LastName);
-            properties.Dictionary.Add("currency", user.Currency);
+            var properties = CreateProperties(user);
             var ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
@@ -109,11 +107,14 @@ namespace gzWeb.Providers
             return Task.FromResult<object>(null);
         }
 
-        public static AuthenticationProperties CreateProperties(string userName)
+        public static AuthenticationProperties CreateProperties(ApplicationUser user)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
                                                {
-                                                       {"userName", userName}
+                                                       {"userName", user.UserName},
+                                                       {"firstname", user.FirstName},
+                                                       {"lastname", user.LastName},
+                                                       {"currency", user.Currency}
                                                };
             return new AuthenticationProperties(data);
         }
