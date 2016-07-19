@@ -3,32 +3,40 @@
 .games {
 }
 
-/* #region Games List */
+/* #region games list */
 .games-list {
 }
 
-/* #region search */
+/* #region filter categories */
 .games-list .filters {
     background-color: #dfdfdf;
-    padding: 50px 0;
+    padding: 20px 0;
     position: relative;
 }
 
 .games-list .filters .filter-categories {
-    line-height: 34px;
+    line-height: 48px;
+}
+.games-list .filters .filter-categories .divider {
+    font-size: 22px;
+    color: #aaa;
 }
 .games-list .filters .filter-categories a {
     color: #000;
     text-decoration: none;
     padding: 10px;
-    font-weight: 500;
+    margin: 5px 10px;
+    font-weight: 300;
+    font-size: 22px;
+    line-height: 48px;
+    position: relative;
 }
-/*.games-list .filters .filter-categories a:first-of-type {
+.games-list .filters .filter-categories .filter-category:first-of-type a {
     margin-left: 0;
 }
-.games-list .filters .filter-categories a:last-of-type {
+.games-list .filters .filter-categories .filter-category:last-of-type a {
     margin-right: 0;
-}*/
+}
 .games-list .filters .categories a:hover,
 .games-list .filters .categories a:focus,
 .games-list .filters .categories a:active {
@@ -36,21 +44,81 @@
 }
 
 .games-list .filters .filter-categories a.selected {
-    color: #fff;
-    background-color: #27A95C;
+    /*color: #fff;
+    background-color: #27A95C;*/
+    font-weight: 700;
 }
 
+.games-list .filters .filter-categories a.selected:before {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    left: 10px;
+    height: 2px;
+    background: #000;
+    box-shadow: 0 0 4px #000;
+}
 
+@media (min-width: 1495px) and (max-width: 1805px) {
+    .games-list .filters .filter-categories .divider {
+        font-size: 20px;
+    }
+    .games-list .filters .filter-categories a {
+        padding: 5px;
+        margin: 5px 5px;
+        font-size: 20px;
+    }
+}
+@media (min-width: 1200px) and (max-width: 1494px) {
+    .games-list .filters .filter-categories .divider {
+        font-size: 16px;
+    }
+    .games-list .filters .filter-categories a {
+        padding: 3px;
+        margin: 5px 3px;
+        font-size: 16px;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .games-list .filters .filter-categories .divider {
+        font-size: 16px;
+    }
+    .games-list .filters .filter-categories a {
+        padding: 3px;
+        margin: 5px 3px;
+        font-size: 16px;
+    }
+    /*.games-list .filters .filter-categories .filter-category:first-of-type a {
+        margin-left: inherit;
+    }
+    .games-list .filters .filter-categories .filter-category:last-of-type a {
+        margin-right: inherit;
+    }*/
+}
+/* #endregion */
+
+
+
+
+
+
+
+
+
+
+/* #region live search */
 .games-list .filters .live-search {
     /*position: relative;*/
 }
 .games-list .filters .live-search input {
-    height: 34px;
+    /*height: 34px;*/
     border-radius: 4px;
+    font-size: 18px;
 }
 .games-list .filters .live-search .form-control-feedback {
     margin-right: 18px;
-    line-height: 34px;
+    /*line-height: 34px;*/
 }
 
 .games-list .filters .live-search-results {
@@ -112,9 +180,13 @@
 /* #endregion */
 
 
+
+
+
+
 /* #region categories */
 .categories .category {
-    margin: 20px;
+    margin: 10px;
 }
 .categories .category .title {
     font-size: 18px;
@@ -123,27 +195,25 @@
 }
 .categories .category .game {
     padding: 0;
-    -webkit-transition: all 50ms ease;
+    /*-webkit-transition: all 50ms ease;
     -moz-transition: all 50ms ease;
     -ms-transition: all 50ms ease;
     -o-transition: all 50ms ease;
-    transition: all 50ms ease;
+    transition: all 50ms ease;*/
 }
-.categories .category .game.ng-enter {
+.categories .category .game a {
+    color: #000;
+    text-decoration: none;
+}
+
+
+
+/*.categories .category .game.ng-enter {
     opacity: 0;
 }
 .categories .category .game.ng-enter-active {
     opacity: 1;
 }
-/*@keyframes appear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}*/
-
 
 .categories .category .game a {
     position: absolute;
@@ -221,7 +291,7 @@
 .categories .category .game:hover a .play-btn {
     -ms-opacity: 1;
     opacity: 1;
-}
+}*/
 
 .categories .category .load-more {
     margin: 5px 0;
@@ -232,7 +302,7 @@
 
 
 
-/* #region Game Play */
+/* #region game play */
 .game-play .game-bg {
     z-index: -2;
     margin-top: 50px;
