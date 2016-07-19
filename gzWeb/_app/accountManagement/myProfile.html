@@ -1,0 +1,171 @@
+﻿<div class="row">
+    <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+        <h4>My Profile</h4>
+    </div>
+
+    <form class="form-horizontal update-prof-form" name="form" ng-submit="submit()" role="form" novalidate>
+        <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-10 col-md-5">
+                        <label for="userName">Username</label>
+                        <input type="text" placeholder="" name="username" id="userName" class="form-control" ng-model="model.username" required
+                               ng-class="{ 'empty': !model.username, 'danger' : form.username.$invalid && !form.username.$pristine }"
+                               ng-focus="usernameFocused = true" ng-blur="usernameFocused = false" autofocus>
+                        <div class="help-block" ng-class="{'show': usernameFocused && form.username.$error.required && !form.username.$pristine}">Username is required</div>
+                    </div>
+                    <div class="col-xs-10 col-md-5 col-md-offset-1">
+                        <label for="country">Country</label>
+                        <input type="text" placeholder="" name="country" id="country" class="form-control" ng-model="model.country" required
+                               ng-class="{ 'empty': !model.country, 'danger' : form.country.$invalid && !form.country.$pristine }"
+                               ng-focus="countryFocused = true" ng-blur="countryFocused = false" cs-capitalize-first autofocus>
+                        <div class="help-block" ng-class="{'show': countryFocused && form.country.$error.required && !form.country.$pristine}">Country is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-10 col-md-5">
+                        <label for="userID">User ID</label>
+                        <input type="text" placeholder="" name="userID" id="userID" class="form-control" ng-model="model.userID" required
+                               ng-class="{ 'empty': !model.userID, 'danger' : form.userID.$invalid && !form.userID.$pristine }"
+                               ng-focus="userIDFocused = true" ng-blur="userIDFocused = false">
+                        <div class="help-block" ng-class="{'show': userIDFocused && form.userID.$error.required && !form.userID.$pristine}">User ID is required</div>
+                    </div>
+                    <div class="col-xs-10 col-md-5 col-md-offset-1">
+                        <label for="region">Region</label>
+                        <input type="text" placeholder="" name="region" id="region" class="form-control" ng-model="model.region" required
+                               ng-class="{ 'empty': !model.region, 'danger' : form.region.$invalid && !form.region.$pristine }"
+                               ng-focus="regionFocused = true" ng-blur="regionFocused = false" cs-capitalize-first>
+                        <div class="help-block" ng-class="{'show': regionFocused && form.region.$error.required && !form.region.$pristine}">Region is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-10 col-md-5">
+                        <label for="gender">Gender</label>
+                        <!--<div class="dropdown filter-forms">
+                            <button class="form-control filter-forms filter-type-drop dropdown-toggle" type="button" id="gender" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="gender">
+                                <li><a href="">Male</a></li>
+                                <li><a href="">Female</a></li>
+                            </ul>
+                        </div>-->
+                        <gz-select gz-name="gender" gz-model="model.gender" gz-collection="gender"
+                                   gz-required gz-error="!form.gender.$pristine && form.gender.$error.required"></gz-select>
+                    </div>
+                    <div class="col-xs-10 col-md-5 col-md-offset-1">
+                        <label for="city">City</label>
+                        <input type="text" placeholder="" name="city" id="city" class="form-control" ng-model="model.city" required
+                               ng-class="{ 'empty': !model.city, 'danger' : form.city.$invalid && !form.city.$pristine }"
+                               ng-focus="cityFocused = true" ng-blur="cityFocused = false" cs-capitalize-first>
+                        <div class="help-block" ng-class="{'show': cityFocused && form.city.$error.required && !form.city.$pristine}">City is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-10 col-md-5">
+                        <label for="firstName">First Name</label>
+                        <input type="text" placeholder="" name="firstName" id="firstName" class="form-control" ng-model="model.firstName" required
+                               ng-class="{ 'empty': !model.firstName, 'danger' : form.firstName.$invalid && !form.firstName.$pristine }"
+                               ng-focus="firstNameFocused = true" ng-blur="firstNameFocused = false" cs-capitalize-first>
+                        <div class="help-block" ng-class="{'show': firstNameFocused && form.firstName.$error.required && !form.firstName.$pristine}">First name is required</div>
+                    </div>
+                    <div class="col-xs-10 col-md-3 col-md-offset-1">
+                        <label for="postcode">Postcode</label>
+                        <input type="text" placeholder="" name="postcode" id="postcode" class="form-control" ng-model="model.postcode" required
+                               ng-class="{ 'empty': !model.postcode, 'danger' : form.postcode.$invalid && !form.postcode.$pristine }"
+                               ng-focus="postcodeFocused = true" ng-blur="postcodeFocused = false">
+                        <div class="help-block" ng-class="{'show': postcodeFocused && form.postcode.$error.required && !form.postcode.$pristine}">Postcode is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-10 col-md-5">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" placeholder="" name="lastName" id="lastName" class="form-control" ng-model="model.lastName" required
+                               ng-class="{ 'empty': !model.lastName, 'danger' : form.lastName.$invalid && !form.lastName.$pristine }"
+                               ng-focus="lastNameFocused = true" ng-blur="lastNameFocused = false" cs-capitalize-first>
+                        <div class="help-block" ng-class="{'show': lastNameFocused && form.lastName.$error.required && !form.lastName.$pristine}">Last name is required</div>
+                    </div>
+                    <div class="col-xs-3 col-md-2 col-md-offset-1">
+                        <label for="phonePrefix">Mobile</label>
+                        <!--<div class="dropdown filter-forms">
+                            <button class="form-control filter-forms filter-type-drop dropdown-toggle" type="button" id="phonePrefix" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="phonePrefix">
+                                <li><a href="">+031</a></li>
+                                <li><a href="">+028</a></li>
+                            </ul>
+                        </div>-->
+                        <gz-select gz-name="mobilePrefix" gz-model="model.mobilePrefix" gz-collection="phonePrefixes" gz-loading="loadingPrefix"
+                                   gz-required gz-id="value" gz-error="!form.mobilePrefix.$pristine && form.mobilePrefix.$error.required"></gz-select>
+                    </div>
+                    <div class="col-xs-7 col-md-3">
+                        <label for="mobile"> </label>
+                        <input type="text" placeholder="" name="phoneNumber" id="phoneNumber" class="form-control" ng-model="model.phoneNumber" required
+                               ng-class="{ 'empty': !model.phoneNumber, 'danger': form.phoneNumber.$invalid && !form.phoneNumber.$pristine }"
+                               ng-focus="phoneNumberFocused = true" ng-blur="phoneNumberFocused = false"
+                               cs-pattern-restrict="^[0-9]*$">
+                        <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Mobile number is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-10 col-md-5">
+                        <label for="emailAddress">Email Address</label>
+                        <input type="email" placeholder="" name="email" id="email" class="form-control" ng-model="model.email" required
+                               ng-class="{ 'empty': !model.email, 'danger' : form.email.$invalid && !form.email.$pristine }"
+                               ng-focus="emailFocused = true" ng-blur="emailFocused = false">
+                        <div class="help-block" ng-class="{'show': emailFocused && form.email.$error.required && !form.email.$pristine}">Email is required</div>
+                        <div class="help-block" ng-class="{'show': emailFocused && !emailValidation.error && form.email.$error.email}">Please enter a valid Email address</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-xs-10 col-xs-offset-2 col-md-offset-1">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-10">
+                        <div class="checkboxes-group">
+                            <div class="form-group gz-checkbox">
+                                <gz-check-box gz-model="model" gz-value="agreed">Yes, please send me emails about news and offers.</gz-check-box>
+                            </div>
+                            <div class="form-group gz-checkbox">
+                                <gz-check-box gz-model="model" gz-value="agreed">Yes, please send me exclusive offers by SMS.</gz-check-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-10">
+                        <button type="submit" ng-disabled="form.$invalid" class="btn-gz modal-btn-gz update-prof-form up-prof-btn">Update Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
