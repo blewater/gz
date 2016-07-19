@@ -12,23 +12,40 @@
 
 .admin .admin-table .table-head { 
     background-color: #27A95C;
-    height: 130px; 
+    height: 160px; 
     bottom: -20px; 
     margin: 0 1px;
     color: #fff;
 }
 
-.admin .admin-table .table-head a { color: #fff; line-height: 5; padding-left: 5px; display: block; }
+.admin .admin-table .table-head .create-new a { 
+    color: #fff; 
+    padding-left: 5px; 
+    display: block; 
+    width: 80px; 
+    margin: 0 auto; 
+}
 
 .admin .admin-table .table-controls { height: 50px; bottom: -15px; }
 .admin .admin-table .table-head .table-controls .filters-form a { width: 90px; }
 
-.admin .admin-table .filters-form .form-group { left: -10px; bottom: -15px; display: block; }
-.admin .admin-table .filters-form .form-group .form-control { height: 30px; color: #27A95C; }
-.admin .admin-table .filters-form .form-group .btn-gz { width: 100%; margin-top: 0; height: 29px; line-height: 1; }
+.admin .admin-table .filters-form .form-group { 
+    left: 5px; 
+    margin-right: 10px; 
+    bottom: -20px; 
+    display: block; 
+}
+.admin .admin-table .filters-form .form-group .form-control { height: 25px; color: #27A95C; }
+.admin .admin-table .filters-form .form-group .btn-gz { 
+    width: 100%; 
+    margin-top: -1px; 
+    margin-left: -25px; 
+    height: 25px; 
+    line-height: 1; 
+}
 
-.admin .admin-table .admin-pagination .pagination { float: right; margin-right: 5px; }
-.admin .admin-table .admin-pagination .pagination a { color: #27A95C; height: 30px; line-height: 1; bottom: 10px }
+.admin .admin-table .admin-pagination .pagination { float: right; margin-right: 15px; }
+.admin .admin-table .admin-pagination .pagination a { color: #27A95C; height: 25px; line-height: 0.8; bottom: 0px }
 .admin .admin-table .admin-pagination .pagination .active a { background-color: #27A95C; border-color: #27A95C; color: #fff; }
 
 .admin .table-interface .table thead tr { background-color: #27A95C; color: #fff; }  
@@ -43,7 +60,12 @@
 .admin .admin-interface .heading a { line-height: 12; color: #27A95C; }
 .admin .admin-interface .view-holder { margin-top: 100px; border-top: 1px solid #fff; }
 .admin .admin-interface .view-holder .view-header { color: #fff;  }
-.admin .admin-interface .view-holder .template-preview { margin-top: 10px; margin-bottom: 100px; background-color: white; padding: 20px; }
+.admin .admin-interface .view-holder .template-preview { 
+    margin-top: 10px; 
+    margin-bottom: 100px; 
+    background-color: white; 
+    padding: 20px; 
+}
 
 .admin .content .form-group textarea { width: 100%; padding: 5px; }
 
@@ -64,12 +86,14 @@
 /*endregion*/
 
 /*region Users*/
+.admin.admin-users .admin-table .table-controls { bottom: -45px}
+
 .admin.admin-edit.user-edit .admin-interface .content .form-group input { margin-bottom: 10px; }
 .admin.admin-edit.user-edit .admin-interface .content .listboxes .form-group select { margin-bottom: 0; }
 .admin.admin-edit.user-edit .admin-interface .content .form-group input[value="Save"] { top: -80px; margin-bottom: 100px!important; }
 
 @media (max-width: 991px) {
-    .admin.admin-users .admin-table .table-head { height: 220px; }
+    .admin.admin-users .admin-table .table-head { height: 240px; }
     .admin.admin-users .admin-table .table-head .table-controls .admin-pagination .pagination { margin-right: 25px; }
 }
 /*endregion*/
@@ -81,28 +105,34 @@
 /*endregion*/
 
 /*region Emails*/
-.admin.admin-emails .admin-table .table-head .table-controls .filters-form .col-md-1 { padding-left: 0; display: block; }
+
 .admin.admin-emails .admin-table .table tbody tr td { max-height: 50px; }
 
 @media (max-width: 991px) {
-    .admin.admin-emails .admin-table .table-head { height: 300px; }
+    .admin.admin-emails .admin-table .table-head { height: 240px; }
     .admin.admin-emails .admin-table .table-head .table-controls .admin-pagination .pagination { margin-right: 25px; }
 }
 /*endregion*/
 
 /*region Logs*/
-.admin-logs .admin-table .table tbody .btn-gz { width: 150px; }
+.admin.admin-logs .admin-table .table tbody .btn-gz { width: 150px; }
 
-.admin-logs .admin-table .table tbody .Fatal { background-color: #ff0000; }
-.admin-logs .admin-table .table tbody .Error { background-color: #ff3300; }
-.admin-logs .admin-table .table tbody .Warn { background-color: #ff8000; }
-.admin-logs .admin-table .table tbody .Debug,
-.admin-logs .admin-table .table tbody .Info,
-.admin-logs .admin-table .table tbody .Trace { background-color: #c0c0c0; }
+.admin.admin-logs .admin-table .table-controls { bottom: -50px}
+.admin.admin-logs .admin-table .table-controls .filters-form .form-group { left: 0; margin-right: 0; }
+.admin.admin-logs .admin-table .table-controls .filters-form .form-group input,
+.admin.admin-logs .admin-table .table-controls .filters-form .form-group select { font-size: 12px; }
+.admin.admin-logs .admin-table .table-controls .filters-form .form-group .btn-gz { margin-left: 0; }
+
+.admin.admin-logs .admin-table .table tbody .Fatal { background-color: #ff0000; }
+.admin.admin-logs .admin-table .table tbody .Error { background-color: #ff3300; }
+.admin.admin-logs .admin-table .table tbody .Warn { background-color: #ff8000; }
+.admin.admin-logs .admin-table .table tbody .Debug,
+.admin.admin-logs .admin-table .table tbody .Info,
+.admin.admin-logs .admin-table .table tbody .Trace { background-color: #c0c0c0; }
 
 .log-entry-modal-content .modal-body ul li { list-style: none; padding: 10px 0; }
 .log-entry-modal-content .modal-body ul li:nth-of-type(2n+1) { background-color: #f2f2f2; }
-.admin-logs .modal .modal-dialog { max-height: 1000px; width: 800px; }
+.admin.admin-logs .modal .modal-dialog { max-height: 1000px; width: 800px; }
 
 @media (max-width: 991px){
     .admin-logs .admin-table .admin-pagination .pagination { float: none; margin-left: calc(50% - 140px); }
@@ -122,7 +152,12 @@
 .admin .content .form-group { position: relative; }
 .admin .content .form-group .checkbox { margin-left: 20px; color: white; }
 .admin .content .form-group .checkbox label { margin-left: -12px; }
-.admin .content .form-group .btn-gz { width: 150px; text-transform: uppercase; margin-bottom: 50px; margin-top: 30px; }
+.admin .content .form-group .btn-gz { 
+    width: 150px; 
+    text-transform: uppercase; 
+    margin-bottom: 50px; 
+    margin-top: 30px; 
+}
 /*endregion*/
 
 /*ACE Editor region*/
@@ -140,8 +175,12 @@
 .admin.dynamic-create .admin-interface .form-group label,
 .admin.dynamic-edit .admin-interface .form-group label { margin-top: 21px; }
 
-.admin.admin-details.dynamic-details .admin-interface .content h4:nth-of-type(2n+1) { text-decoration: underline; margin-top: 25px; color: #fff; }
-.admin.admin-details.dynamic-details .admin-interface .content h4 { text-align: left; color: #ccc; }
+.admin.admin-details.dynamic-details .admin-interface .content h4:nth-of-type(2n+1) { font-weight: 600; margin-top: 25px; color: #fff; }
+.admin.admin-details.dynamic-details .admin-interface .content h4 { text-align: left; color: #fff; }
+
+@media (max-width: 991px) {
+    .admin.admin-dynamic .admin-table .table-head { height: 240px; }
+}
 /*endregion*/
 
 /*region Manage Pages*/
@@ -179,8 +218,8 @@
 
 @media (max-width: 510px) {
     .admin.admin-main .bg-holder {
-    width: 250px;
-    top: 80px;
+        width: 250px;
+        top: 80px;
     }
 
     .admin.admin-main img { 
@@ -197,20 +236,39 @@
 /*region Admin Header*/
 .admin-header .navigation-menu { right: 80px; position: absolute; }
 .admin-header .navigation-menu ul li { display: inline-block; margin-right: 20px; }
-.admin-header .navigation-menu ul li a { display: block; color: #fff; text-transform: uppercase; text-decoration: none; top: 25px; }
+.admin-header .navigation-menu ul li a { 
+    display: block; 
+    color: #fff; 
+    text-transform: uppercase; 
+    text-decoration: none; 
+    top: 25px; 
+}
 
-.admin-header .user-info { margin-top: 25px; bottom: 10px; float: right; right: 0; }
+.admin-header .user-info { 
+    margin-top: 25px; 
+    bottom: 10px; 
+    float: right; 
+    right: 0; 
+}
 .admin-header .user-info .dropdown-menu { top: 52px; }
-    .admin-header .user-info .dropdown-menu li {
-        display: block;
-        margin-right: 0;
-    }
+.admin-header .user-info .dropdown-menu li {
+    display: block;
+    margin-right: 0;
+}
 .admin-header .user-info .dropdown-menu li a { padding-top: 7px; }
 
 .admin-header .mobile-menu { display: none; }
 .admin-header .navbar .navbar-header .navbar-brand .version.mobile { display: none; }
 
-.admin-header .mobile-menu .dropdown-menu { background-color: #27A95C; top: 67px; position: fixed; padding: 20px 10px; width: 100%; border: none; border-radius: 0; }
+.admin-header .mobile-menu .dropdown-menu {
+     background-color: #27A95C; 
+     top: 67px; 
+     position: fixed; 
+     padding: 20px 10px;
+     width: 100%; 
+     border: none; 
+     border-radius: 0; 
+}
 .admin-header .mobile-menu .dropdown-menu li a { padding-top: 10px; color: #fff; text-transform: uppercase; }
 .admin-header .mobile-menu .dropdown-menu > li > a:hover { background-color: #27A95C!important; background-image: none; }
 
@@ -219,5 +277,11 @@
     .admin-header .navbar .navbar-header .navbar-brand .version.mobile { display: block; left: 40px; }
 
     .admin-header .navigation-menu { display: none; }
-    .admin-header .mobile-menu { display: block; width: 100px; margin: 0 auto; right: 15px; }
+    .admin-header .mobile-menu { 
+        display: block; 
+        width: 100px; 
+        margin: 0 auto; 
+        right: 15px; 
+
+    }
 }
