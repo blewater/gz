@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('helpers', ['$window', '$timeout', '$compile', '$templateRequest', 'constants', 'localStorageService', serviceFactory]);
-    function serviceFactory($window, $timeout, $compile, $templateRequest, constants, localStorageService) {
+    APP.factory('helpers', ['$window', '$timeout', '$compile', '$templateRequest', '$controller', '$rootScope', 'constants', 'localStorageService', 'screenSize', serviceFactory]);
+    function serviceFactory($window, $timeout, $compile, $templateRequest, $controller, $rootScope, constants, localStorageService, screenSize) {
         var service = {
             reflection: {
                 hasValue: hasValue,
@@ -21,10 +21,11 @@
             },
             ui: {
                 getTemplate: getTemplate,
-                compileTemplate: compileTemplate,
+                compile: compile,
                 openInNewTab: openInNewTab,
                 isFocusable: isFocusable,
-                isMobile: isMobile
+                isMobile: isMobile,
+                watchScreenSize: watchScreenSize
             },
             utils: {
                 guid: guid,
@@ -134,14 +135,21 @@
             var suffix = 'v.' + version + '_' + randomSuffix;
             return templateUrl + '?' + suffix;
         }
-        function compileTemplate(templateUrl, scope, callback) {
-            $templateRequest(getTemplate(templateUrl)).then(function (tpl) {
-                var container = angular.element('<div></div>');
-                var compiled = $compile(tpl)(scope);
-                container.append(compiled);
-                $timeout(function () { callback(container.html()); }, 0);
+        function compile(selector, templateUrl, controllerId, scope) {
+            $templateRequest(getTemplate(templateUrl)).then(function (html) {
+                var $content = angular.element(selector);
+                $content.contents().remove();
+                $content.html(html);
+                if (angular.isDefined(controllerId)) {
+                    if (angular.isUndefined(scope))
+                        scope = $rootScope.$new();
+                    var ctrl = $controller(controllerId, { $scope: scope });
+                    $content.children().data('$ngControllerController', ctrl);
+                }
+                $compile($content.contents())(scope);
             });
         }
+
         function openInNewTab(url) {
             $window.open(url, '_blank');
         }
@@ -164,6 +172,16 @@
                 return check;
             }
             return mobileCheck();
+        }
+        function watchScreenSize(scope) {
+            scope.xs = screenSize.on('xs', function (match) { scope.xs = match; });
+            scope.sm = screenSize.on('sm', function (match) { scope.sm = match; });
+            scope.md = screenSize.on('md', function (match) { scope.md = match; });
+            scope.lg = screenSize.on('lg', function (match) { scope.lg = match; });
+            scope.size = screenSize.get();
+            screenSize.on('xs,sm,md,lg', function () {
+                scope.size = screenSize.get();
+            });
         }
         // #endregion
 

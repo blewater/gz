@@ -1,6 +1,6 @@
 ﻿@charset "utf-8";
 
-/* #region Account Management */
+/* #region General */
 .auth.mgmt-modal { height: 100vh;}
 
 .auth.mgmt-modal .form-control {
@@ -11,20 +11,155 @@
     color: #27a95c;
 }
 
-.auth.mgmt-modal .mgmt-content {
-    height: 100%;
+/* #region Menu */
+
+.auth.mgmt-modal .mgmt-menu {
+    color: #fff;
+    padding: 40px 20px;
     position: fixed;
-    padding: 40px 20px 20px;
-    right: 0;
-    overflow-x: hidden;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.auth.mgmt-modal .mgmt-content.left-content { 
+.auth.mgmt-modal nav .nav-menu { 
+    list-style-type: none; 
+}
+
+.auth.mgmt-modal nav .nav-menu li {
+    margin-bottom: 6px;
+}
+
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active {
+    border-left: 2px solid #27A95C;
+    padding-left: 3px;
+    margin-left: -5px;
+}
+
+/*.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu .btn-symbol {
+    height: 18px;
+    float: left;
+    margin: 3px 10px 0 20px;
+}
+.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active .btn-symbol {
+    margin-left: 60px;
+}*/
+
+.auth.mgmt-modal nav .nav-menu li:nth-of-type(3) {
+    margin-top: 30px;
+}
+
+.auth.mgmt-modal nav .nav-menu li a {
+    font-size: 16px;
+    color: #646464;
+    text-decoration: none;
+}
+.auth.mgmt-modal nav .nav-menu li a.active {
+    color: #42b471;
+    font-weight: 800;
+}
+.auth.mgmt-modal nav .nav-menu li a .fa {
+    margin-left: 2px;
+    display: block;
+    font-size: 24px;
+}
+.auth.mgmt-modal nav .nav-menu li a img {
+    height: 18px;
+    float: left;
+    margin: 3px 10px 0 20px;
+}
+.auth.mgmt-modal nav .nav-menu li a.active img {
+    margin-left: 60px;
+}
+
+.auth.mgmt-modal nav .nav-menu li a.btn-style { 
+    margin-bottom: 10px;
+    padding: 10px 0;
+    width: 150px;
+    border: none;
+    font-size: 18px;
+    text-align: left;
+    display: block;
+    color: #fff;
+}
+.auth.mgmt-modal nav .nav-menu li a.btn-style.active {
+    width: 190px;
+    margin-left: -40px;
+}
+
+
+@media (min-width: 768px) {
+    .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs { display: none; }
+}
+@media (max-width: 767px) {
+    .auth.mgmt-modal .mgmt-menu {
+        width: 40px;
+        padding: 40px 5px;
+    }
+    .auth.mgmt-modal nav .nav-menu li { 
+        width: 30px;
+        height: 30px;
+    }
+    .auth.mgmt-modal nav .nav-menu li a { 
+        margin: 0 0 5px;
+    }
+    .auth.mgmt-modal nav .nav-menu li a.btn-style { 
+        padding: 0;
+        width: 100%;
+    }
+    .auth.mgmt-modal nav .nav-menu li a.btn-style.active {
+        width: 100%;
+        margin-left: 0;
+    }
+    .auth.mgmt-modal nav .nav-menu li a img {
+        height: 28px;
+        margin: 0;
+    }
+    .auth.mgmt-modal nav .nav-menu li a.active img {
+        margin: 0 0 0 -6px;
+        padding-left: 4px;
+        border-left: 2px solid #27A95C;
+    }
+
+    .auth.mgmt-modal nav .nav-menu li a.active .fa {
+        margin: 0 0 0 -6px;
+        padding-left: 6px;
+        border-left: 2px solid #27A95C;
+    }
+}
+/* #endregion */
+
+
+/* #region Content */
+
+.auth.mgmt-modal .mgmt-content {
+    position: fixed;
+    padding: 40px 20px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    width: calc(100% - 200px);
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+/*.auth.mgmt-modal .mgmt-content.left-content { 
     top: 0;
     left: 14%;
 }
 
-/*.auth.mgmt-modal.deposit .mgmt-content.right-content { width: 35%; }*/
 .auth.mgmt-modal.withdraw .mgmt-content.left-content { left: 20%; }
 
 .auth.mgmt-modal .mgmt-content.right-content {  
@@ -47,7 +182,6 @@
     border-color: #f2f2f2;
 }
 
-/**************** XS - SM ********************/
 @media (max-width: 991px) {
     .auth.mgmt-modal .mgmt-content.left-content {
         position: static;
@@ -62,84 +196,50 @@
         position: static;
         width: 100%;       
     }
-}
-/* #endregion */
-
-/* #region Management Menu */
-.bg-grey-dark { background-color: #c5c5c5; }
-
-.auth.mgmt-modal .mgmt-menu { /*float: left; width: 25%;*/ color: #fff; height: 100%; position: fixed; left: 0; min-width: 40px; display: inline-block; }
-
-.auth.mgmt-modal nav .nav-menu { 
-    list-style-type: none; 
-    padding-top: 40px /*30px*/;
-}
-
-.auth.mgmt-modal nav .nav-menu li { margin-bottom: 6px; }
-
-.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu { 
-    margin-bottom: 10px; 
-    padding: 10px 0; 
-    width: 150px; 
-    border: none;
-    font-size: 18px;
-    text-align: left;
-}
-
-.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active { width: 190px; margin-left: -40px; }
-.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu.btn-mgmt-active .btn-symbol { margin-left: 60px; }
-
-.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active { border-left: 2px solid #27A95C; padding-left: 3px; margin-left: -5px; }
-
-.auth.mgmt-modal nav .nav-menu .btn-mgmt-menu .btn-symbol { height: 18px; float: left; margin: 3px 10px 0 20px; }
-
-.auth.mgmt-modal nav .nav-menu li a.active { color: #42b471; font-weight: 800; }
-
-.auth.mgmt-modal nav .nav-menu li .fa { margin-left: 2px; display: block; font-size: 24px; }
-
-/*.auth.mgmt-modal nav .nav-menu li:nth-of-type(3) { margin-top: 10px; }*/
-
-.auth.mgmt-modal nav .nav-menu li a {
-    font-size: 16px;
-    color: #7b7b7b;
-}
-
-.auth.mgmt-modal .mgmt-content .filter-type-drop .caret { float: right; margin-top: 8px; }
-.auth.mgmt-modal .mgmt-content .filter-forms .filter-type-drop[aria-expanded="true"] .caret { color: #27A95C }
-
-/**************** SM - LG ********************/
-@media (min-width: 768px) {
-    .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs { display: none; }
-}
-
-/**************** XS ********************/
+}*/
 @media (max-width: 767px) {
-    .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs { display: block; }
-    .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu { display: none; }
+    .auth.mgmt-modal .mgmt-content {
+        padding: 40px 5px;
+        width: calc(100% - 40px);
+    }
 }
 /* #endregion */
+
+/* #endregion */
+
+
+
+
+
+
 
 
 
 /* #region Transaction History */
-.auth.mgmt-modal.transaction-history .mgmt-content .form-group { margin: 0 -5px; }
-.auth.mgmt-modal.transaction-history .mgmt-content .filter-btn { margin: 0;width: 100%;border-color: #f2f2f2; }
-.auth.mgmt-modal.transaction-history .mgmt-content .table-container {margin-top: 10px; clear: both; /*overflow-x: auto;*/ }
-.auth.mgmt-modal.transaction-history .mgmt-content .table-container .table,
-.auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr,
-.auth.mgmt-modal.transaction-history .mgmt-content .table-container .table th,
-.auth.mgmt-modal.transaction-history .mgmt-content .table-container .table td { border: 1px solid white; }
-.auth.mgmt-modal.transaction-history .mgmt-content .table-container .table tr th { text-align: center; } 
-.auth.mgmt-modal.transaction-history .mgmt-content .pager-btn { margin: 0; padding: 0 5px; width: 150px; }
+.auth.mgmt-modal .transaction-history .form-group { margin: 0 -5px; }
+.auth.mgmt-modal .transaction-history .filter-btn { margin: 0;width: 100%;border-color: #f2f2f2; }
+.auth.mgmt-modal .transaction-history .table-container {margin-top: 10px; clear: both; /*overflow-x: auto;*/ }
+.auth.mgmt-modal .transaction-history .table-container .table,
+.auth.mgmt-modal .transaction-history .table-container .table tr,
+.auth.mgmt-modal .transaction-history .table-container .table th,
+.auth.mgmt-modal .transaction-history .table-container .table td { border: 1px solid white; }
+.auth.mgmt-modal .transaction-history .table-container .table tr th { text-align: center; } 
+.auth.mgmt-modal .transaction-history .pager-btn { margin: 0; padding: 0 5px; width: 150px; }
 @media (max-width: 767px){
-    .auth.mgmt-modal.transaction-history .mgmt-content .filter-form-group .modal-btn-gz { margin-top: 5px;}
+    .auth.mgmt-modal .transaction-history .filter-form-group .modal-btn-gz { margin-top: 5px;}
 }
 /* #endregion */
 
 
 
+
+
+
+
+
+
 /* #region Pending Withdrawals */
-.auth.mgmt-modal.pending-withdrawals .mgmt-content .text-holder {
+.auth.mgmt-modal .pending-withdrawals .text-holder {
     background-color: #42b471;
     padding: 40px 30px;
     font-size: 16px;
