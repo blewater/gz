@@ -1,58 +1,60 @@
-﻿<h4>Transaction History</h4>
+﻿<div class="transaction-history">
+    <h4>Transaction History</h4>
 
-<form class="form-horizontal" name="form" ng-submit="search(1)" role="form" novalidate>
-    <div class="form-group">
-        <div class="col-xs-12 col-sm-3">
-            <input type="text" class="form-control" placeholder="from" uib-datepicker-popup ng-model="startTime" is-open="startPickerOpened" datepicker-options="startTimeOptions" ng-required="true" close-text="Close" ng-focus="startPickerOpened = true;" />
-            <span class="form-control-feedback" aria-hidden="true">
-                <i class="fa fa-calendar"></i>
-            </span>
+    <form class="form-horizontal" name="form" ng-submit="search(1)" role="form" novalidate>
+        <div class="form-group">
+            <div class="col-xs-12 col-sm-3">
+                <input type="text" class="form-control" placeholder="from" uib-datepicker-popup ng-model="startTime" is-open="startPickerOpened" datepicker-options="startTimeOptions" ng-required="true" close-text="Close" ng-focus="startPickerOpened = true;" />
+                <span class="form-control-feedback" aria-hidden="true">
+                    <i class="fa fa-calendar"></i>
+                </span>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <input type="text" class="form-control" placeholder="to" uib-datepicker-popup ng-model="endTime" is-open="endPickerOpened" datepicker-options="endTimeOptions" ng-required="true" close-text="Close" ng-focus="endPickerOpened = true;" />
+                <span class="form-control-feedback" aria-hidden="true">
+                    <i class="fa fa-calendar"></i>
+                </span>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <gz-select gz-name="filter-type" gz-model="type" gz-collection="transactionTypes" gz-id="name" gz-display="display" gz-no-prompt gz-required></gz-select>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <button type="submit" class="col-xs-12 col-md-4 btn-gz filter-btn">filter</button>
+            </div>
         </div>
-        <div class="col-xs-12 col-sm-3">
-            <input type="text" class="form-control" placeholder="to" uib-datepicker-popup ng-model="endTime" is-open="endPickerOpened" datepicker-options="endTimeOptions" ng-required="true" close-text="Close" ng-focus="endPickerOpened = true;" />
-            <span class="form-control-feedback" aria-hidden="true">
-                <i class="fa fa-calendar"></i>
-            </span>
-        </div>
-        <div class="col-xs-12 col-sm-3">
-            <gz-select gz-name="filter-type" gz-model="type" gz-collection="transactionTypes" gz-id="name" gz-display="display" gz-no-prompt gz-required></gz-select>
-        </div>
-        <div class="col-xs-12 col-sm-3">
-            <button type="submit" class="col-xs-12 col-md-4 btn-gz filter-btn">filter</button>
-        </div>
-    </div>
-</form>
+    </form>
 
-<div class="table-container">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>DATE</th>
-                <th>AMOUNT</th>
-                <th>DESCRIPTION</th>
-                <th>STATUS</th>
-            </tr>
-        </thead>
-        <tbody class="bg-grey">
-            <tr class="text-gz" ng-repeat="trx in transactions track by trx.transactionID">
-                <td class="text-center">{{type.getId(trx)}}</td>
-                <td class="text-center">{{type.getDate(trx)}}</td>
-                <td class="text-right">{{type.getAmount(trx)}}</td>
-                <td class="text-center">{{type.getDescription(trx)}}</td>
-                <td class="text-center">{{type.getStatus(trx)}}</td>
-            </tr>
-        </tbody>
-    </table>
-    <div ng-if="transactions.length === 0">
-        <h5 class="text-center">No records to display</h5>
-    </div>
-    <div ng-if="transactions.length > 0">
-        <button type="button" class="btn-gz pager-btn pull-left" ng-click="search(pageIndex - 1)" ng-disabled="pageIndex <= 1">
-            <i class="fa fa-angle-double-left"></i>&nbsp;<span>Previous</span>
-        </button>
-        <button type="button" class="btn-gz pager-btn pull-right" ng-click="search(pageIndex + 1)" ng-disabled="pageIndex >= totalPageCount">
-            <span>Next</span>&nbsp;<i class="fa fa-angle-double-right"></i>
-        </button>
+    <div class="table-container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>DATE</th>
+                    <th>AMOUNT</th>
+                    <th>DESCRIPTION</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody class="bg-light-grey">
+                <tr class="text-gz" ng-repeat="trx in transactions track by trx.transactionID">
+                    <td class="text-center">{{type.getId(trx)}}</td>
+                    <td class="text-center">{{type.getDate(trx)}}</td>
+                    <td class="text-right">{{type.getAmount(trx)}}</td>
+                    <td class="text-center">{{type.getDescription(trx)}}</td>
+                    <td class="text-center">{{type.getStatus(trx)}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div ng-if="transactions.length === 0">
+            <h5 class="text-center">No records to display</h5>
+        </div>
+        <div ng-if="transactions.length > 0">
+            <button type="button" class="btn-gz pager-btn pull-left" ng-click="search(pageIndex - 1)" ng-disabled="pageIndex <= 1">
+                <i class="fa fa-angle-double-left"></i>&nbsp;<span>Previous</span>
+            </button>
+            <button type="button" class="btn-gz pager-btn pull-right" ng-click="search(pageIndex + 1)" ng-disabled="pageIndex >= totalPageCount">
+                <span>Next</span>&nbsp;<i class="fa fa-angle-double-right"></i>
+            </button>
+        </div>
     </div>
 </div>

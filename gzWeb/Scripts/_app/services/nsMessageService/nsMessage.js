@@ -86,7 +86,7 @@
                     var ctrlId = scope.nsOptions.nsCtrl;
 
                     if (angular.isDefined(ctrlId))
-                        templateCtrl = $controller(scope.nsOptions.nsCtrl, { $scope: templateScope });
+                        templateCtrl = $controller(ctrlId, { $scope: templateScope });
 
                     if (html.length > 0)
                         $msgBody.html(html);

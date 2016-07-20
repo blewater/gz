@@ -140,7 +140,8 @@ a { text-decoration:none; }
 .text-black { color: #000; }
 
 .bg-gz { background-color: #27A95C; }
-.bg-grey { background-color: #F2F2F2; }
+.bg-grey { background-color: #c5c5c5; }
+.bg-light-grey { background-color: #f2f2f2; }
 .bg-white { background-color: #fff; }
 
 

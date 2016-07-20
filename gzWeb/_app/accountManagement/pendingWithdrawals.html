@@ -1,9 +1,28 @@
-﻿<div class="row">
-    <div class="col-xs-10 col-xs-offset-1 text-holder">
-        <p>
-            You do not currently have any pending withdrawals. When you initiate a withdrawal it will automatically be left pending
-            here until we have processed it.<br /><br />
-            Until a withdrawal has been processed you have the opportunity to cancel it and return the money to your greenzorro account.
-        </p>
+﻿<div class="pending-withdrawals">
+    <p class="text-holder" ng-if="pendingWithdrawals !== undefined && pendingWithdrawals.length === 0">
+        You do not currently have any pending withdrawals. When you initiate a withdrawal it will automatically be left pending
+        here until we have processed it.<br /><br />
+        Until a withdrawal has been processed you have the opportunity to cancel it and return the money to your greenzorro account.
+    </p>
+
+    <div class="table-container" ng-if="pendingWithdrawals !== undefined && pendingWithdrawals.length > 0">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>DATE</th>
+                    <th>AMOUNT</th>
+                    <th>DESCRIPTION</th>
+                </tr>
+            </thead>
+            <tbody class="bg-light-grey">
+                <tr class="text-gz" ng-repeat="pw in pendingWithdrawals track by pw.transactionID">
+                    <td class="text-center">{{pw.transactionID}}</td>
+                    <td class="text-center">{{getDate(pw)}}</td>
+                    <td class="text-right">{{getAmount(pw)}}</td>
+                    <td class="text-center">{{getDescription(pw)}}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

@@ -1,26 +1,36 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("accountManagement", ['$compile', '$controller', '$templateRequest', 'helpers', 'auth', serviceFactory]);
+    APP.factory("accountManagement", ['$compile', '$controller', '$templateRequest', 'helpers', 'auth', '$animate', serviceFactory]);
 
-    function serviceFactory($compile, $controller, $templateRequest, helpers, auth) {
+    function serviceFactory($compile, $controller, $templateRequest, helpers, auth, $animate) {
 
         var _selectorId = '#state-content';
 
         // #region Account Management States
         var _states = { };
-        //_states.deposit = {
-        //    key: 'deposit',
-        //    ctrl: 'depositCtrl',
-        //    tpl: '_app/accountManagement/deposit.html',
-        //    title: 'Deposit'
-        //};
-        //_states.withdraw = {
-        //    key: 'withdraw',
-        //    ctrl: 'withdrawCtrl',
-        //    tpl: '_app/accountManagement/withdraw.html',
-        //    title: 'Withdraw'
-        //};
+        _states.deposit = {
+            key: 'deposit',
+            ctrl: 'depositCtrl',
+            tpl: '_app/accountManagement/deposit.html',
+            title: 'Deposit',
+            type: 'button',
+            btnType: 'plus',
+            img: '../../Content/Images/plus_icon.svg',
+            imgXs: '../../Content/Images/plus_icon_green.svg',
+            action: _attachContent
+        };
+        _states.withdraw = {
+            key: 'withdraw',
+            ctrl: 'withdrawCtrl',
+            tpl: '_app/accountManagement/withdraw.html',
+            title: 'Withdraw',
+            type: 'button',
+            btnType: 'minus',
+            img: '../../Content/Images/minus_icon.svg',
+            imgXs: '../../Content/Images/minus_icon_dgrey.svg',
+            action: _attachContent
+        };
         _states.pendingWithdrawals = {
             key: 'pendingWithdrawals',
             ctrl: 'pendingWithdrawalsCtrl',
@@ -69,17 +79,8 @@
         // #endregion
 
         // #region Attach Content
-        function _attachContent(state, scope) {
-            var templateUrl = state.tpl;
-            var ctrlId = state.ctrl;
-            $templateRequest(helpers.ui.getTemplate(templateUrl)).then(function (html) {
-                var $content = $(_selectorId);
-                $content.contents().remove();
-                $content.html(html);
-                var ctrl = $controller(ctrlId, { $scope: scope });
-                $content.children().data('$ngControllerController', ctrl);
-                $compile($content.contents())(scope);
-            });
+        function _attachContent(state) {
+            helpers.ui.compile(_selectorId, state.tpl, state.ctrl);
         }
         // #endregion
 

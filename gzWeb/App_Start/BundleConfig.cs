@@ -166,6 +166,7 @@ namespace gzWeb
                                         , "~/Scripts/_app/services/emWamp.js"
                                         , "~/Scripts/_app/services/emCasino.js"
                                         , "~/Scripts/_app/services/emBanking.js"
+                                        , "~/Scripts/_app/services/emBankingWithdraw.js"
                                         , "~/Scripts/_app/services/authInterceptor.js"
                                         , "~/Scripts/_app/services/authService.js"
                                         , "~/Scripts/_app/services/apiService.js"
