@@ -102,7 +102,6 @@ namespace gzDAL.Conf
 
     
     // Configure the application sign-in manager which is used in this application.
-    [Obsolete]
     public class ApplicationSignInManager : SignInManager<ApplicationUser, int>
     {
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
