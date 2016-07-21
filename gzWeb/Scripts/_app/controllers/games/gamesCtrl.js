@@ -1,10 +1,11 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gamesCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers) {
         $controller('authCtrl', { $scope: $scope });
 
+        // #region Variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.spinnerGreenXs = constants.spinners.xs_rel_green;
@@ -13,6 +14,8 @@
         var i = 0;
         var pageSize = 6;
         $scope.playForRealMoney = true;
+        // #endregion
+
 
         // #region Featured Games
         var featuredGameFields = emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.Popularity + emCasino.FIELDS.Logo + emCasino.FIELDS.BackgroundImage;
@@ -41,9 +44,7 @@
             function populateGame(game, i) {
                 game.title = "Title " + (i + 1);
                 game.subtitle = "Subtitle subtitle subtitle " + (i + 1);
-                game.action = function () {
-                    $scope.onGameSelected(game.slug);
-                };
+                game.url = $scope.getGameUrl(game.slug);
             }
         }
 
@@ -125,6 +126,7 @@
         };
         // #endregion
 
+
         // #region LiveSearch
         $scope.liveSearch = {
             input: "",
@@ -150,6 +152,7 @@
                     pageIndex: index,
                 }).then(function (liveSearchResult) {
                     $scope.liveSearch.searching = false;
+                    $scope.liveSearch.showResults = true;
                     $scope.liveSearch.currentPageIndex = liveSearchResult.currentPageIndex;
                     $scope.liveSearch.totalGameCount = liveSearchResult.totalGameCount;
                     $scope.liveSearch.totalPageCount = liveSearchResult.totalPageCount;
@@ -165,21 +168,30 @@
         }
         $scope.onLiveSearchFocused = function () {
             $scope.liveSearch.focused = true;
+            $scope.liveSearch.showResults = $scope.liveSearch.games.length > 0;
         };
         $scope.onLiveSearchBlurred = function () {
             $scope.liveSearch.focused = false;
         };
+        //$scope.onLiveSearchChange = function () {
+        //    if ($scope.liveSearch.input.length > 2) {
+        //        $scope.liveSearch.currentPageIndex = 1;
+        //        $scope.liveSearch.totalGameCount = 0;
+        //        $scope.liveSearch.totalPageCount = 0;
+        //        $scope.liveSearch.games = [];
+        //        $timeout(function () {
+        //            search(1);
+        //        }, 400);
+        //    }
+        //};
         $scope.onLiveSearchChange = function () {
-            if ($scope.liveSearch.input.length > 2) {
-                $scope.liveSearch.currentPageIndex = 1;
-                $scope.liveSearch.totalGameCount = 0;
-                $scope.liveSearch.totalPageCount = 0;
-                $scope.liveSearch.games = [];
-                $timeout(function () {
-                    search(1);
-                }, 400);
-            }
+            $scope.liveSearch.currentPageIndex = 1;
+            $scope.liveSearch.totalGameCount = 0;
+            $scope.liveSearch.totalPageCount = 0;
+            $scope.liveSearch.games = [];
+            search(1);
         };
+
         $scope.onLoadMore = function () {
             search($scope.liveSearch.currentPageIndex + 1);
         };
@@ -187,30 +199,21 @@
             for (i = 0; i < $scope.liveSearch.games.length; i++)
                 $scope.liveSearch.games[i].selected = i === index;
         };
-
-        //$scope.onSearchInputKeyPress = function (event) {
-        //    if (event.which === 40) {
-        //        $scope.selectResult(0);
-        //    }
-        //};
-        //$scope.onSearchResultKeyPress = function (event) {
-        //    if (event.which === 38) {
-        //        $scope.selectResult($scope.liveSearch.selectedIndex - 1);
-        //    }
-        //    else if (event.which === 40) {
-        //        $scope.selectResult($scope.liveSearch.selectedIndex + 1);
-        //    }
-        //};
+        $scope.showResults = function () {
+            liveSearch.input.length > 2;
+        };
         // #endregion
 
 
         // #region Filtered Games
         function loadCategories() {
             $scope.gameCategories = [];
+            $scope.customCategories = [];
             emCasino.getGameCategories().then(function (getCategoriesResult) {
                 for (i = 0; i < getCategoriesResult.categories.length; i++) {
                     $scope.gameCategories.push({
                         name: getCategoriesResult.categories[i],
+                        title: getCategoryTitle(getCategoriesResult.categories[i]),
                         selected: false,
                         searching: false,
                         currentPageIndex: 0,
@@ -219,6 +222,17 @@
                         games: []
                     });
                 }
+                for (i = 0; i < 3; i++) {
+                    var customCategory = {
+                        name: getCategoriesResult.categories[i],
+                        title: "Custom Category " + (i + 1),
+                        currentPageIndex: 0,
+                        games: []
+                    };
+                    $scope.customCategories.push(customCategory);
+                    fetchGamesByCategory(customCategory)
+                }
+                $scope.projectedCategories = $scope.customCategories;
             }, logError);
         };
 
@@ -238,7 +252,7 @@
             }
         }
 
-        $scope.getCategoryTitle = function (name) {
+        function getCategoryTitle (name) {
             return getFriendlyTitle(name).replace(/ /g, '\xa0');
         }
 
@@ -246,14 +260,24 @@
 
 
 
-        $scope.onCategorySelected = function (category) {
-            category.selected = !category.selected;
-            if (category.games.length === 0) {
+        $scope.onCategorySelected = function (index) {
+            for (i = 0; i < $scope.gameCategories.length; i++) {
+                if (i !== index)
+                    $scope.gameCategories[i].selected = false;
+            }
+            $scope.gameCategories[index].selected = !$scope.gameCategories[index].selected;
 
+            if ($scope.gameCategories[index].selected) {
+                $scope.projectedCategories = [$scope.gameCategories[index]];
+                if ($scope.gameCategories[index].games.length === 0)
+                    fetchGamesByCategory($scope.gameCategories[index], true);
+            }
+            else {
+                $scope.projectedCategories = $scope.customCategories;
             }
         };
 
-        function fetchGamesByCategory(category) {
+        function fetchGamesByCategory(category, recursive) {
             category.searching = true;
             emCasino.getGames({
                 filterByCategory: [category.name],
@@ -266,7 +290,17 @@
                 category.currentPageIndex = getCategoryGamesResult.currentPageIndex;
                 category.totalGameCount = getCategoryGamesResult.totalGameCount;
                 category.totalPageCount = getCategoryGamesResult.totalPageCount;
-                Array.prototype.push.apply(category.games, getCategoryGamesResult.games);
+                //Array.prototype.push.apply(category.games, getCategoryGamesResult.games);
+
+                helpers.array.applyWithDelay(getCategoryGamesResult.games, function (g) {
+                    Array.prototype.push.apply(category.games, [g]);
+                }, 50);
+
+                if (recursive && category.games.length < category.totalGameCount) {
+                    $timeout(function () {
+                        fetchGamesByCategory(category, recursive);
+                    }, 250);
+                }
             }, function() {
                 category.searching = false;
                 console.log(error);
@@ -278,7 +312,6 @@
         }
 
         $scope.searchGames = function () {
-            var names = getNameTags();
             for (i = 0; i < $scope.gameCategories.length; i++) {
                 var category = $scope.gameCategories[i];
                 category.games = [];
@@ -287,21 +320,25 @@
                 category.totalGameCount = 0;
                 category.totalPageCount = 0;
                 if (category.selected)
-                    fetchGamesByCategory(category, names);
+                    fetchGamesByCategory(category);
             }
         };
 
-        $scope.onCategorySelected = function (category) {
-            category.selected = !category.selected;
-        };
-        $scope.toggleCategoryCollapse = function(category) {
-            category.collapsed = !category.collapsed;
-        };        
-        $scope.onGameSelected = function (slug) {
-            $location.path(constants.routes.game.path.replace(":slug", slug));
-        };
+        //$scope.onGameSelected = function (slug) {
+        //    $location.path(constants.routes.game.path.replace(":slug", slug));
+        //};
+        $scope.getGameUrl = function (slug) {
+            return constants.routes.game.path.replace(":slug", slug);
+        }
+        //$scope.getGamesChunks = function (games) {
+        //    var chunkSize = $rootScope.xs ? 2 : ($rootScope.sm ? 3 : 6)
+        //    var chunks = helpers.array.chunk(games, chunkSize);
+        //    return chunks;
+        //}
         // #endregion
         
+
+        // #region Init
         $scope._init('games', function () {
             loadCategories();
             getFeaturedGames();
@@ -310,5 +347,6 @@
         function logError(error) {
             console.log(error);
         };
+        // #endregion
     }
 })();

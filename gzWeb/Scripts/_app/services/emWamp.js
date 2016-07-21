@@ -5,20 +5,25 @@
     function emWampFunction($wamp, $rootScope, $log, constants, localStorageService) {
 
         var _logError = function(error) {
-            console.log(error);
+            $log.error(error);
         };
 
-        var _call = function(uri, parameters) {
+        var _call = function (uri, parameters) {
+
+            $log.trace("emWamp: '" + uri + "' with parameters: '" + angular.toJson(parameters) + "'");
+
             var callReturn = $wamp.call(uri, [], parameters);
 
             var originalFunc = callReturn.then;
             callReturn.then = function(successCallback, failureCallback) {
                 function success(d) {
+                    $log.trace("Success.");
                     if (typeof (successCallback) === 'function')
                         successCallback(d && d.kwargs);
                 }
 
                 function error(e) {
+                    $log.error("emWamp: '" + uri + "' with parameters: '" + angular.toJson(parameters) + "'. Failed with error: '" + angular.toJson(e) + "'.");
                     if (typeof (failureCallback) === 'function')
                         failureCallback(e.kwargs);
                 }
@@ -359,8 +364,7 @@
                 kwargs.initialized = $rootScope.initialized;
                 $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
                 $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
-                $log.log("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
-                JL("emWamp").trace("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
+                $log.trace("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
             }).then(function (subscription) {
                 var groupId = localStorageService.get(constants.storageKeys.clientId);
                 _call("/user#setClientIdentity", { groupID: groupId || "" }).then(function (result) {

@@ -19,52 +19,48 @@
 
                     <div class="col-md-12 table-controls">
                         <div class="row">
-                            <div class="filters-form">
+                            <div class="col-md-12 create-new">
                                 <p>
-                                    @Html.ActionLink("Create New", "RoleCreate")
+                                    @Html.ActionLink("Create New", "Create")
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                    <div class="col-md-12 table-interface">
-                        <div class="row">
-                            <table class="table table-bordered">
-                                <thead>
+                <div class="col-md-12 table-interface">
+                    <div class="row">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1 text-center">
+                                        @Html.DisplayNameFor(model => model.Id)
+                                    </th>
+                                    <th class="col-md-10 text-center">
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th class="col-md-1"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
                                     <tr>
-                                        <th class="col-md-1 text-center">
-                                            @Html.DisplayNameFor(model => model.Id)
-                                        </th>
-                                        <th class="col-md-10 text-center">
-                                            @Html.DisplayNameFor(model => model.Name)
-                                        </th>
-                                        <th class="col-md-1"></th>
+                                        <td class="text-center">
+                                            @Html.DisplayFor(modelItem => item.Id)
+                                        </td>
+                                        <td class="text-center">
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td class="text-center">
+                                            @Html.ActionLink("Edit", "RoleEdit", new { id = item.Id })
+                                        </td>
                                     </tr>
-                                </thead>
-
-
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-                                            <td class="text-center">
-                                                @Html.DisplayFor(modelItem => item.Id)
-                                            </td>
-                                            <td class="text-center">
-                                                @Html.DisplayFor(modelItem => item.Name)
-                                            </td>
-                                            <td class="text-center">
-                                                @Html.ActionLink("Edit", "RoleEdit", new { id = item.Id })
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                }
+                            </tbody>
+                        </table>
                     </div>
-
-                
+                </div>
             </div>
         </div>
     </article>

@@ -30,6 +30,7 @@ namespace gzWeb.Controllers
         private readonly ICustPortfolioRepo _custPortfolioRepo;
         private readonly IUserRepo _userRepo;
         private readonly ICacheUserData _cacheUserData;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public AccountApiController(
             ApplicationUserManager userManager, 
@@ -45,20 +46,21 @@ namespace gzWeb.Controllers
             _cacheUserData = cacheUserData;
         }
 
-        #region accessTokenFormat Constructor
+        #region AccessTokenFormat Constructor
         //public AccountApiController(ApplicationUserManager userManager, ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
         //{
         //    UserManager = userManager;
         //    AccessTokenFormat = accessTokenFormat;
         //}
 
-        // TODO: public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
+        //public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
         #endregion
 
         // POST api/Account/Logout
         [Route("Logout")]
         public IHttpActionResult Logout()
         {
+            Logger.Info("Logout requested for [User#{0}]", User.Identity.GetUserId<int>());
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             return Ok();
         }
@@ -127,6 +129,8 @@ namespace gzWeb.Controllers
         [Route("ChangePassword")]
         public async Task<IHttpActionResult> ChangePassword(ChangePasswordBindingModel model)
         {
+            Logger.Info("ChangePassword requested for [User#{0}]", User.Identity.GetUserId<int>());
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -134,26 +138,31 @@ namespace gzWeb.Controllers
 
             if (!result.Succeeded)
             {
+                Logger.Error("UserManager.ChangePasswordAsync Failed: {0}",
+                             String.Join(Environment.NewLine, result.Errors));
+
                 return GetErrorResult(result);
             }
 
             return Ok();
         }
-
-        // TODO: ...
+        
         // POST api/Account/SetPassword
         [Route("SetPassword")]
         public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            Logger.Info("ChangePassword requested for [User#{0}]", User.Identity.GetUserId<int>());
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+        
             IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId<int>(), model.NewPassword);
 
             if (!result.Succeeded)
             {
+                Logger.Error("UserManager.AddPasswordAsync Failed: {0}",
+                             String.Join(Environment.NewLine, result.Errors));
+
                 return GetErrorResult(result);
             }
 
@@ -165,13 +174,18 @@ namespace gzWeb.Controllers
         [Route("ForgotPassword")]
         public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
+            Logger.Info("ForgotPassword requested for [User#{0}].", model.Email);
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var user = await UserManager.FindByEmailAsync(model.Email);
-            if (user == null || !await UserManager.IsEmailConfirmedAsync(user.Id))
+            if (user == null /*|| !await UserManager.IsEmailConfirmedAsync(user.Id)*/)
+            {
+                Logger.Error("User not found. [User#{0}]", model.Email);
                 return BadRequest();
-            
+            }
+
             return Ok(await UserManager.GeneratePasswordResetTokenAsync(user.Id));
         }
 
@@ -180,17 +194,26 @@ namespace gzWeb.Controllers
         [Route("ResetPassword")]
         public async Task<IHttpActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            Logger.Info("ResetPassword requested for [User#{0}].", model.Email);
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null)
+            {
+                Logger.Error("User not found. [User#{0}]", model.Email);
                 return BadRequest();
+            }
 
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (!result.Succeeded)
+            {
+                Logger.Error("UserManager.ResetPasswordAsync Failed: {0}",
+                             String.Join(Environment.NewLine, result.Errors));
                 return BadRequest();
-            
+            }
+
             return Ok();
         }
 
@@ -398,6 +421,8 @@ namespace gzWeb.Controllers
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
         {
+            Logger.Info("Register requested for [User - {0}/{1}].", model.Username, model.Email);
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -416,7 +441,11 @@ namespace gzWeb.Controllers
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
+            {
+                Logger.Error("UserManager.CreateAsync Faild. {0}",
+                             String.Join(Environment.NewLine, result.Errors));
                 return GetErrorResult(result);
+            }
 
             //var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
             //var callbackUrl = Url.Link("MvcRoute",
@@ -437,24 +466,40 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public async Task<IHttpActionResult> RevokeRegistration()
         {
-            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+            var userId = User.Identity.GetUserId<int>();
+            Logger.Info("RevokeRegistration requested for [User#{0}].", userId);
+
+            var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
+            {
+                Logger.Error("User not found [User#{0}]", userId);
                 return Ok("User not found!");
+            }
 
             var result = await UserManager.DeleteAsync(user);
             if (!result.Succeeded)
+            {
+                Logger.Error("UserManager.DeleteAsync failed. {0}",
+                             String.Join(Environment.NewLine, result.Errors));
                 return GetErrorResult(result);
+            }
 
             return Ok(result);
         }
 
         [HttpPost]
         [Route("FinalizeRegistration")]
-        public async Task<IHttpActionResult> FinalizeRegistration(int gmUserId) {
+        public async Task<IHttpActionResult> FinalizeRegistration(int gmUserId)
+        {
+            var userId = User.Identity.GetUserId<int>();
+            Logger.Info("FinalizeRegistration requested for [User#{0}].", userId);
 
-            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+            var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
+            {
+                Logger.Error("User not found. [User#{0}]", userId);
                 return OkMsg(new object(), "User not found!");
+            }
 
             return OkMsg(() =>
             {
@@ -475,13 +520,24 @@ namespace gzWeb.Controllers
         [Route("Activate")]
         public async Task<IHttpActionResult> Activate(ActivationBindingModel model)
         {
+            Logger.Info("Activate requested for [User#{0}] with code: {1}.", model.UserId, model.Code);
+
             if (!ModelState.IsValid)
+            {
+                Logger.Error("ModelState is invalid.");
                 return BadRequest(ModelState);
+            }
 
             if (model.UserId == default(int) || string.IsNullOrEmpty(model.Code))
+            {
+                Logger.Error("UserId is 0 and/or Code is null or empty");
                 return BadRequest();
+            }
 
             var result = await UserManager.ConfirmEmailAsync(model.UserId, model.Code);
+            if (!result.Succeeded)
+                Logger.Error("UserManager.ConfirmEmailAsync failed. {0}",
+                             String.Join(Environment.NewLine, result.Errors));
 
             return Ok(result.Succeeded ? "Ok" : "Error");
         }
@@ -533,6 +589,7 @@ namespace gzWeb.Controllers
             return null;
         }
 
+        #region ExternalLoginData
         private class ExternalLoginData
         {
             public string LoginProvider { get; set; }
@@ -599,21 +656,20 @@ namespace gzWeb.Controllers
                 return HttpServerUtility.UrlTokenEncode(data);
             }
         }
-
         #endregion
 
-
-        // #region GetDeploymentInfo
-        private bool IsInDebugMode()
+        #endregion
+        
+        #region GetDeploymentInfo
+        private static bool IsInDebugMode()
         {
-            var debug =
 #if DEBUG
-                true;
+                return true;
 #else
-                false;
+                return false;
 #endif
-            return debug;
         }
+
         private string GetVersion()
         {
             //return typeof(MvcApplication).Assembly.GetName().Version.ToString();
@@ -644,17 +700,20 @@ namespace gzWeb.Controllers
                 ReCaptchaSiteKey = GetReCaptchaSiteKey()
             });
         }
-        // #endregion
+        #endregion
 
-        /// GET api/Account/CacheUserData
-        [Authorize] // Redundant by defaull all class methods are
-        [Route("CacheUserData")]
+        // GET api/Account/CacheUserData
         [HttpPost]
-        public async Task<IHttpActionResult> CacheUserData() {
-
-            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+        [Route("CacheUserData")]
+        public async Task<IHttpActionResult> CacheUserData()
+        {
+            var userId = User.Identity.GetUserId<int>();
+            var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
+            {
+                Logger.Error("User not found [User#{0}", userId);
                 return Ok("User not found!");
+            }
 
             await _cacheUserData.Query(user.Id);
 
