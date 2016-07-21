@@ -4,23 +4,25 @@
     ng.module('logToServer', [])
         .service('$log', function() {
             this.log = function(msg) {
-                JL('Angular').trace(msg);
+                JL('gzWebClient').info(msg);
             }
-
+            this.trace = function (msg) {
+                JL('gzWebClient').trace(msg);
+            }
             this.debug = function(msg) {
-                JL('Angular').debug(msg);
+                JL('gzWebClient').debug(msg);
             }
 
             this.info = function(msg) {
-                JL('Angular').info(msg);
+                JL('gzWebClient').info(msg);
             }
 
             this.warn = function(msg) {
-                JL('Angular').warn(msg);
+                JL('gzWebClient').warn(msg);
             }
 
             this.error = function(msg) {
-                JL('Angular').error(msg);
+                JL('gzWebClient').error(msg);
             }
         })
         .factory('$exceptionHandler', function() {
@@ -41,7 +43,7 @@
                             var msAfterAjaxCall = new Date().getTime();
                             var timeTakenInMs = msAfterAjaxCall - response.config.msBeforeAjaxCall;
                             if (timeTakenInMs > response.config.warningAfter) {
-                                JL('Angular.Ajax').warn({ "timeTakenInMs": timeTakenInMs, config: response.config, data: response.data });
+                                JL('gzWebClient.Ajax').warn({ "timeTakenInMs": timeTakenInMs, config: response.config, data: response.data });
                             }
                         }
 
@@ -53,7 +55,7 @@
                             errorMessage = rejection.data.ExceptionMessage;
                         }
 
-                        JL('Angular.Ajax').fatalException({ errorMessage: errorMessage, status: rejection.status, config: rejection.config }, rejection.data);
+                        JL('gzWebClient.Ajax').fatalException({ errorMessage: errorMessage, status: rejection.status, config: rejection.config }, rejection.data);
                         return $q.reject(rejection);
                     }
                 };
