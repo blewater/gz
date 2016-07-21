@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -54,7 +53,7 @@ namespace gzWeb.Controllers
         //    AccessTokenFormat = accessTokenFormat;
         //}
 
-        // TODO: public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
+        //public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
         #endregion
 
         // POST api/Account/Logout
@@ -480,7 +479,7 @@ namespace gzWeb.Controllers
             var result = await UserManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                Logger.Error("UserManager.DeleteAsync faild. {0}",
+                Logger.Error("UserManager.DeleteAsync failed. {0}",
                              String.Join(Environment.NewLine, result.Errors));
                 return GetErrorResult(result);
             }
@@ -537,7 +536,7 @@ namespace gzWeb.Controllers
 
             var result = await UserManager.ConfirmEmailAsync(model.UserId, model.Code);
             if (!result.Succeeded)
-                Logger.Error("UserManager.ConfirmEmailAsync faild. {0}",
+                Logger.Error("UserManager.ConfirmEmailAsync failed. {0}",
                              String.Join(Environment.NewLine, result.Errors));
 
             return Ok(result.Succeeded ? "Ok" : "Error");
@@ -590,6 +589,7 @@ namespace gzWeb.Controllers
             return null;
         }
 
+        #region ExternalLoginData
         private class ExternalLoginData
         {
             public string LoginProvider { get; set; }
@@ -656,21 +656,20 @@ namespace gzWeb.Controllers
                 return HttpServerUtility.UrlTokenEncode(data);
             }
         }
-
         #endregion
 
-
-        // #region GetDeploymentInfo
-        private bool IsInDebugMode()
+        #endregion
+        
+        #region GetDeploymentInfo
+        private static bool IsInDebugMode()
         {
-            var debug =
 #if DEBUG
-                true;
+                return true;
 #else
-                false;
+                return false;
 #endif
-            return debug;
         }
+
         private string GetVersion()
         {
             //return typeof(MvcApplication).Assembly.GetName().Version.ToString();
@@ -701,17 +700,20 @@ namespace gzWeb.Controllers
                 ReCaptchaSiteKey = GetReCaptchaSiteKey()
             });
         }
-        // #endregion
+        #endregion
 
-        /// GET api/Account/CacheUserData
-        [Authorize] // Redundant by defaull all class methods are
-        [Route("CacheUserData")]
+        // GET api/Account/CacheUserData
         [HttpPost]
-        public async Task<IHttpActionResult> CacheUserData() {
-
-            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+        [Route("CacheUserData")]
+        public async Task<IHttpActionResult> CacheUserData()
+        {
+            var userId = User.Identity.GetUserId<int>();
+            var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
+            {
+                Logger.Error("User not found [User#{0}", userId);
                 return Ok("User not found!");
+            }
 
             await _cacheUserData.Query(user.Id);
 

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
-using System.Globalization;
-using System.Runtime.Caching;
-using System.Threading;
 using System.Threading.Tasks;
 using gzDAL.Conf;
 using gzDAL.DTO;
