@@ -86,6 +86,10 @@
                 return _call("/user/account#updateProfile", parameters);
             },
 
+            applyBonus: function (parameters) {
+                return _call("/user/bonus#apply", parameters);
+            },
+
             //
             // This is the first step for logged-in user to change email. Click (https://help.gammatrix-dev.net/help/Email.html) to view the flow explanation.
             //

@@ -137,23 +137,5 @@
                 $location.path(constants.routes.games.path);
         }
         // #endregion
-
-        // #region Account Management
-        //$scope.openAccountManagement = function () {
-        //    message.open({
-        //        nsType: 'modal',
-        //        nsSize: '1000px',
-        //        nsTemplate: '_app/accountManagement/accountManagement.html',
-        //        nsCtrl: 'accountManagementCtrl',
-        //        nsStatic: true,
-        //        nsParams: {
-        //            state: accountManagement.states.myProfile
-        //        }
-        //    });
-        //};
-        $timeout(function () {
-            accountManagement.open(accountManagement.states.myProfile);
-        }, 3000);
-        // #endregion
     }
 })();

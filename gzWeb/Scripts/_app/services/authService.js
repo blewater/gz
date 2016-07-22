@@ -484,6 +484,15 @@
         }
         // #endregion
 
+        // #region Bonus
+        factory.applyBonus = function (bonusCode) {
+            return emWamp.applyBonus({
+                bonusCode: bonusCode,
+                iovationBlackbox: iovation.getBlackbox()
+            })
+        }
+        // #endregion
+
         // #region Init
         factory.init = function () {
             factory.readAuthData();
