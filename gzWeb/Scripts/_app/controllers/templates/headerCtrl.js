@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -10,6 +10,11 @@
         $scope.gamesImgOn = imgDir + "games_white.svg";
         $scope.investmentsImgOff = imgDir + "diagram_green.svg";
         $scope.investmentsImgOn = imgDir + "diagram_white.svg";
+
+        $scope.accountManagementStates = accountManagement.states.menu;
+        $scope.gotoState = function (state) {
+            accountManagement.open(state);
+        };
 
         $scope.routes = {
             guest: [

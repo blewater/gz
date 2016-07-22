@@ -49,8 +49,11 @@
                 <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
                     <li><h5><b>{{fullname}}</b></h5></li>
                     <li role="separator" class="divider"></li>
-                    <li><a ng-click="changePassword()">Change Password</a></li>
-                    <li><a ng-click="logout()">Logout</a></li>
+                    <li ng-repeat="s in accountManagementStates">
+                        <a ng-click="gotoState(s)">{{s.title}}</a>
+                    </li>
+                    @*<li><a ng-click="changePassword()">Change Password</a></li>
+                    <li><a ng-click="logout()">Logout</a></li>*@
                 </ul>
             </span>
             <div gz-authorize="gamer,investor" gz-match="all" class="switch">
