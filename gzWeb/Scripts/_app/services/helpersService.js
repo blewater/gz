@@ -135,18 +135,20 @@
             var suffix = 'v.' + version + '_' + randomSuffix;
             return templateUrl + '?' + suffix;
         }
-        function compile(selector, templateUrl, controllerId, scope) {
-            $templateRequest(getTemplate(templateUrl)).then(function (html) {
-                var $content = angular.element(selector);
+        function compile(options) {
+            $templateRequest(getTemplate(options.templateUrl)).then(function (html) {
+                var $content = angular.element(options.selector);
                 $content.contents().remove();
                 $content.html(html);
-                if (angular.isDefined(controllerId)) {
-                    if (angular.isUndefined(scope))
-                        scope = $rootScope.$new();
-                    var ctrl = $controller(controllerId, { $scope: scope });
+                if (angular.isUndefined(options.scope))
+                    options.scope = $rootScope.$new();
+                if (angular.isDefined(options.controllerId)) {
+                    var ctrl = $controller(options.controllerId, { $scope: options.scope });
                     $content.children().data('$ngControllerController', ctrl);
                 }
-                $compile($content.contents())(scope);
+                $compile($content.contents())(options.scope);
+                if (angular.isDefined(options.callback))
+                    options.callback();
             });
         }
 

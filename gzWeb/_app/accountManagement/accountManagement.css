@@ -11,8 +11,18 @@
     color: #27a95c;
 }
 
-/* #region Menu */
+.auth.mgmt-modal .form-group {
+    position: relative;
+    margin-left: 0;
+    margin-right: 0;
+}
 
+.auth.mgmt-modal .field-ok {
+    /*right: 10px;*/
+    margin-top: 30px;
+}
+
+/* #region Menu */
 .auth.mgmt-modal .mgmt-menu {
     color: #fff;
     padding: 40px 20px;
@@ -37,11 +47,11 @@
     margin-bottom: 6px;
 }
 
-.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active {
+/*.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active {
     border-left: 2px solid #27A95C;
     padding-left: 3px;
     margin-left: -5px;
-}
+}*/
 
 /*.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu .btn-symbol {
     height: 18px;
@@ -82,12 +92,20 @@
 .auth.mgmt-modal nav .nav-menu li a.btn-style { 
     margin-bottom: 10px;
     padding: 10px 0;
-    width: 150px;
     border: none;
     font-size: 18px;
     text-align: left;
     display: block;
     color: #fff;
+
+    width: 150px;
+    margin-left: 0;
+
+    /*-webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;*/
 }
 .auth.mgmt-modal nav .nav-menu li a.btn-style.active {
     width: 190px;
@@ -95,9 +113,9 @@
 }
 
 
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {
     .auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs { display: none; }
-}
+}*/
 @media (max-width: 767px) {
     .auth.mgmt-modal .mgmt-menu {
         width: 40px;
@@ -154,6 +172,9 @@
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
+.auth.mgmt-modal .mgmt-content h4.title {
+    margin-bottom: 20px;
+}
 
 /*.auth.mgmt-modal .mgmt-content.left-content { 
     top: 0;
@@ -204,14 +225,7 @@
     }
 }
 /* #endregion */
-
 /* #endregion */
-
-
-
-
-
-
 
 
 
@@ -230,14 +244,6 @@
 }
 /* #endregion */
 
-
-
-
-
-
-
-
-
 /* #region Pending Withdrawals */
 .auth.mgmt-modal .pending-withdrawals .text-holder {
     background-color: #42b471;
@@ -246,46 +252,32 @@
 }
 /* #endregion */
 
-/* #region Withdraw */
-.auth.mgmt-modal.withdraw .mgmt-content.right-content { position: absolute; }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { height: 70px; width: 85%; padding: 10px; margin-top: 25px; }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer-inner { height: 50px; width: 80px; float: left; padding: 5px; }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer p {  font-size: 17px; }
-.auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer .text-holder { float: left; margin-left: 5%; display: block; margin-top: 2px; }
 
-.auth.mgmt-modal.withdraw .mgmt-content h4 { padding-bottom: 10px; }
 
-@media (max-width: 991px) {
-    .auth.mgmt-modal.withdraw .mgmt-content.right-content { position: static;}
-}
 
-/**************** XS ********************/
-@media (max-width: 767px) {
-    .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer { width: 100%; }
-    .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer p {  font-size: 12px; text-align: justify; }
-    .auth.mgmt-modal.withdraw .mgmt-content.left-content .bank-transfer-inner { width: 50px }
-}
-/* #endregion */
+
+
+
+
 
 /* #region Deposit */
-/*.auth.mgmt-modal.deposit .mgmt-content.right-content { width: 30%; }*/
-.auth.mgmt-modal.deposit .mgmt-content { overflow-x: hidden; }
-.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder { height: 40px; }
-.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder .selected-credit-card { 
+/*.auth.mgmt-modal .deposit .mgmt-content { overflow-x: hidden; }*/
+.auth.mgmt-modal .deposit .left-content .credit-card-holder { height: 40px; }
+.auth.mgmt-modal .deposit .left-content .credit-card-holder .selected-credit-card { 
     width: 50px; 
     height: 28px; 
     float: left; 
     border-radius: 4px; 
     padding: 4px 5px; 
 }
-.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder .selected-credit-card .selected-logo-holder { width: 40px; height: 20px; }
+.auth.mgmt-modal .deposit .left-content .credit-card-holder .selected-credit-card .selected-logo-holder { width: 40px; height: 20px; }
 
-.auth.mgmt-modal.deposit .mgmt-content.left-content .credit-card-holder p { float: left; text-indent: 12px; font-size: 20px; }
-.auth.mgmt-modal.deposit .mgmt-content.left-content p { display: block; font-size: 17px; }
+.auth.mgmt-modal .deposit .left-content .credit-card-holder p { float: left; text-indent: 12px; font-size: 20px; }
+.auth.mgmt-modal .deposit .left-content p { display: block; font-size: 17px; }
 
 
-.auth.mgmt-modal.deposit .mgmt-content.right-content .payment-methods { margin-top: 15px; margin-bottom: 20px; }
-.auth.mgmt-modal.deposit .mgmt-content.right-content .payment-methods .method { 
+.auth.mgmt-modal .deposit .right-content .payment-methods { margin-top: 15px; margin-bottom: 20px; }
+.auth.mgmt-modal .deposit .right-content .payment-methods .method { 
     display: inline-block; 
     width: 70px; 
     height: 40px;
@@ -294,27 +286,48 @@
     position: relative;
     padding: 10px;
 }
-.auth.mgmt-modal.deposit .mgmt-content.right-content .payment-methods .method .logo-holder { 
+.auth.mgmt-modal .deposit .right-content .payment-methods .method .logo-holder { 
     position: absolute;
     width: 50px; 
     height: 20px; 
 }
 
-.auth.mgmt-modal.deposit .mgmt-content.right-content p { font-size: 16px; margin-bottom: 0; }
+.auth.mgmt-modal .deposit .right-content p { font-size: 16px; margin-bottom: 0; }
 
 /* #endregion */
 
+/* #region Withdraw */
+.auth.mgmt-modal .withdraw .right-content { position: absolute; }
+.auth.mgmt-modal .withdraw .left-content .bank-transfer { height: 70px; width: 85%; padding: 10px; margin-top: 25px; }
+.auth.mgmt-modal .withdraw .left-content .bank-transfer-inner { height: 50px; width: 80px; float: left; padding: 5px; }
+.auth.mgmt-modal .withdraw .left-content .bank-transfer p {  font-size: 17px; }
+.auth.mgmt-modal .withdraw .left-content .bank-transfer .text-holder { float: left; margin-left: 5%; display: block; margin-top: 2px; }
+
+.auth.mgmt-modal .withdraw h4 { padding-bottom: 10px; }
+
+@media (max-width: 991px) {
+    .auth.mgmt-modal .withdraw .right-content { position: static;}
+}
+
+/**************** XS ********************/
+@media (max-width: 767px) {
+    .auth.mgmt-modal .withdraw .left-content .bank-transfer { width: 100%; }
+    .auth.mgmt-modal .withdraw .left-content .bank-transfer p {  font-size: 12px; text-align: justify; }
+    .auth.mgmt-modal .withdraw .left-content .bank-transfer-inner { width: 50px }
+}
+/* #endregion */
+
 /* #region Bonuses */
-.auth.mgmt-modal.bonuses .mgmt-content .text-holder {
+.auth.mgmt-modal .bonuses .text-holder {
     background-color: #42b471;
     padding: 10px 30px;
     margin-bottom: 80px;
 }
-.auth.mgmt-modal.bonuses .mgmt-content .text-holder p { font-size: 17px; margin: 0; }
+.auth.mgmt-modal .bonuses .text-holder p { font-size: 17px; margin: 0; }
 
-.auth.mgmt-modal.bonuses .mgmt-content p { font-size: 17px; margin-bottom: 20px; }
+.auth.mgmt-modal .bonuses p { font-size: 17px; margin-bottom: 20px; }
 
-.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form { 
+.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form { 
     width: 250px;
     height: 40px;
     color: white;
@@ -322,40 +335,36 @@
     border: 2px solid;
     padding: 0 30px;
 }
-.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-webkit-input-placeholder { color: white; font-size: 18px; } /*change placeholder color*/
-.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-moz-placeholder { color: white; font-size: 18px; }
-.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form::-moz-placeholder { color: white; font-size: 18px; }
-.auth.mgmt-modal.bonuses .mgmt-content .bonus-code .bonus-code-form:-ms-input-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form::-webkit-input-placeholder { color: white; font-size: 18px; } /*change placeholder color*/
+.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form:-moz-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form::-moz-placeholder { color: white; font-size: 18px; }
+.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form:-ms-input-placeholder { color: white; font-size: 18px; }
 
-.auth.mgmt-modal.bonuses .mgmt-content .modal-btn-gz { margin: 12px 0; }
+.auth.mgmt-modal .bonuses .modal-btn-gz { margin: 12px 0; }
 /* #endregion */
 
 /* #region My Profile */
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form { margin-top: 20px; margin-left: 15px; }
-.auth.mgmt-modal.my-profile .mgmt-content h4 { margin-left: -3px; margin-bottom: 25px; }
+/*.auth.mgmt-modal .my-profile .update-prof-form { margin-top: 20px; margin-left: 15px; }
+.auth.mgmt-modal .my-profile h4 { margin-left: -3px; margin-bottom: 25px; }
 
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .form-control { height: 40px; }
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .checkboxes-group { margin-top: 15px; }
+.auth.mgmt-modal .my-profile .update-prof-form .form-group .form-control { height: 40px; }
+.auth.mgmt-modal .my-profile .update-prof-form .form-group .checkboxes-group { margin-top: 15px; }
 
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { margin-left: 0 }
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox:first-of-type { margin-bottom: -1px; }
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 50%; margin-left: -1px; margin-bottom: 50px; }
+.auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox { margin-left: 0 }
+.auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox:first-of-type { margin-bottom: -1px; }
+.auth.mgmt-modal .my-profile .update-prof-form .form-group .up-prof-btn { width: 50%; margin-left: -1px; margin-bottom: 50px; }
 
-.auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group #phoneNumber { margin-top: 5px; }
+.auth.mgmt-modal .my-profile .update-prof-form .form-group #phoneNumber { margin-top: 5px; }
 
-/**************** XS - SM ********************/
 @media (max-width: 991px) {
-    /*.auth.mgmt-modal.my-profile .mgmt-content h4 { margin-left: -10px; }*/
-
-    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .form-group .up-prof-btn { width: 100%; }
+    .auth.mgmt-modal .my-profile .update-prof-form .form-group .up-prof-btn { width: 100%; }
 }
 
-/**************** XS ********************/
 @media (max-width: 767px) {
-    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { font-size: 12px; }
+    .auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox { font-size: 12px; }
 }
 
 @media (max-width: 509px) { 
-    .auth.mgmt-modal.my-profile .mgmt-content .update-prof-form .gz-checkbox { font-size: 8px; }
-}
+    .auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox { font-size: 8px; }
+}*/
 /* #endregion */

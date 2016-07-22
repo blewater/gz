@@ -590,7 +590,7 @@
     -o-transition: all 0.4s linear 0s;
     transition: all 0.4s linear 0s;
 }
-#ns-msgs .msg .msg-body input[type=text] {
+#ns-msgs .msg .msg-body input {
     color: #000;
 }
 /*#endregion*/

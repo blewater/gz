@@ -178,6 +178,8 @@
 .auth .gz-select select.selected { color: #7b7b7b; background-color: #fff; }*/
 .auth .gz-select select { background-color: #eaf6ef; }
 .auth .gz-select select.selected { background-color: #fff; }
+.auth .gz-select select.form-control[disabled] { background-color: #ccc; }
+
 @media (max-width: 767px) {
     .auth .form-control { margin-bottom: 5px; }
 }
@@ -357,24 +359,24 @@
     opacity: 1;
 }
 
-.auth.register #phonePrefix button {
+.auth #phonePrefix button {
     background: url('../../Images/select_arrow_down.png') no-repeat right;
     background-color: #ffffff;
     cursor: pointer;
 }
-.auth.register #phonePrefix button.empty {
+.auth #phonePrefix button.empty {
     background-color: #eaf6ef;
 }
-.auth.register #phonePrefix ul.dropdown-menu > li > a {
+.auth #phonePrefix ul.dropdown-menu > li > a {
     color: #000;
     text-decoration: none;
 }
-.auth.register #phonePrefix ul.dropdown-menu > li.active > a {
+.auth #phonePrefix ul.dropdown-menu > li.active > a {
     background-color: #27A95C;
     background-image: none;
     color: #fff;
 }
-.auth.register #phonePrefix.open > ul.dropdown-menu {
+.auth #phonePrefix.open > ul.dropdown-menu {
     max-height: 200px;
     overflow-y: auto;
 }

@@ -145,7 +145,10 @@
                 nsSize: '1000px',
                 nsTemplate: '_app/accountManagement/accountManagement.html',
                 nsCtrl: 'accountManagementCtrl',
-                nsStatic: true
+                nsStatic: true,
+                nsParams: {
+                    state: accountManagement.states.myProfile
+                }
             });
         };
         $timeout($scope.openAccountManagement, 3000);

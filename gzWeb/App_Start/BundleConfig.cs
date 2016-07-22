@@ -145,12 +145,12 @@ namespace gzWeb
                                         , "~/_app/accountManagement/accountManagementCtrl.js"
                                         , "~/_app/accountManagement/accountManagementService.js"
                                         , "~/_app/accountManagement/transactionHistoryCtrl.js"
+                                        , "~/_app/accountManagement/depositPaymentMethodsCtrl.js"
                                         , "~/_app/accountManagement/depositCtrl.js"
                                         , "~/_app/accountManagement/withdrawCtrl.js"
                                         , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
                                         , "~/_app/accountManagement/bonusesCtrl.js"
                                         , "~/_app/accountManagement/myProfileCtrl.js"
-                                        //, "~/Scripts/_app/controllers/account/transactionHistoryCtrl.js"
 
                                         , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
                                         , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"

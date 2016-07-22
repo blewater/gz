@@ -1,24 +1,21 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'accountManagementCtrl';
-    APP.controller(ctrlId, ['$scope', 'accountManagement', 'auth', 'helpers', ctrlFactory]);
-    function ctrlFactory($scope, accountManagement, auth, helpers) {
+    APP.controller(ctrlId, ['$scope', 'accountManagement', 'helpers', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, accountManagement, helpers, constants) {
         helpers.ui.watchScreenSize($scope);
-        //$scope.xs = screenSize.on('xs', function (match) { $scope.xs = match; });
-        //$scope.sm = screenSize.on('sm', function (match) { $scope.sm = match; });
-        //$scope.md = screenSize.on('md', function (match) { $scope.md = match; });
-        //$scope.lg = screenSize.on('lg', function (match) { $scope.lg = match; });
-        //$scope.size = screenSize.get();
-        //screenSize.on('xs,sm,md,lg', function () {
-        //    $scope.size = screenSize.get();
-        //});
 
+        $scope.spinnerWhite = constants.spinners.md_abs_white;
+
+        $scope.elementId = accountManagement.elementId;
         $scope.states = accountManagement.states.all;
-        $scope.selectorId = accountManagement.selectorId;
         $scope.currentState = undefined;
         $scope.setState = function (state) {
-            state.action(state);
+            $scope.changingState = true;
             $scope.currentState = state;
+            state.action(state, function () {
+                $scope.changingState = false;
+            });
         }
         $scope.setState($scope.state || $scope.states[0]);
     }

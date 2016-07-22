@@ -82,8 +82,8 @@
                 return _call("/user/account#getProfile");
             },
 
-            updateProfile: function () {
-                return _call("/user/account#updateProfile");
+            updateProfile: function (parameters) {
+                return _call("/user/account#updateProfile", parameters);
             },
 
             //
