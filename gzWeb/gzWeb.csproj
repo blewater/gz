@@ -701,6 +701,8 @@
     <Content Include="_app\accountManagement\accountManagementService.js" />
     <Content Include="_app\accountManagement\bonuses.html" />
     <Content Include="_app\accountManagement\bonusesCtrl.js" />
+    <Content Include="_app\accountManagement\changePassword.html" />
+    <Content Include="_app\accountManagement\changePasswordCtrl.js" />
     <Content Include="_app\accountManagement\depositPaymentMethods.html" />
     <Content Include="_app\accountManagement\deposit.html" />
     <Content Include="_app\accountManagement\depositPaymentMethodsCtrl.js" />
@@ -741,7 +743,6 @@
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="Partials\directives\gzPerformanceGraph.html" />
-    <Content Include="Partials\messages\changePassword.html" />
     <Content Include="_app\accountManagement\accountManagement.html" />
     <Content Include="Partials\messages\registerDeposit.html" />
     <Content Include="Partials\messages\registerPaymentMethods.html" />
@@ -815,7 +816,6 @@
     <Content Include="Scripts\_app\global.js" />
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
-    <Content Include="Scripts\_app\controllers\account\changePasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\authCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gameCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\contactCtrl.js" />

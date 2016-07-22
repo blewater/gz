@@ -88,7 +88,7 @@
             title: 'Change Password',
             icon: 'fa-lock',
             showInMenu: true,
-            action: angular.noop //_attachContent
+            action: _attachContent
         };
         _states.logout = {
             key: 'logout',
@@ -97,8 +97,7 @@
             showInMenu: true,
             action: auth.logout
         };
-
-
+        
         var _allStates = [];
         for (var key in _states) {
             _allStates.push(_states[key]);

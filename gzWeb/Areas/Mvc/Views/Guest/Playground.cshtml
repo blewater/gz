@@ -32,4 +32,12 @@
         <button type="button" class="btn-gz" ng-click="video()">Video</button>
         <button type="button" class="btn-gz" ng-click="currentRoute()">Check Current Path</button>
     </div>
+    <h6 style="margin-top: 20px;">Withdraw</h6>
+    <div>
+        <button type="button" class="btn-gz" ng-click="getPaymentMethods()">getPaymentMethods()</button>
+        <button type="button" class="btn-gz" ng-click="getPaymentMethodCfg()">getPaymentMethodCfg()</button>
+        <pre>
+            {{result | json}}
+        </pre>
+    </div>
 </div>
