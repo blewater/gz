@@ -70,7 +70,7 @@
             title: 'Bonuses',
             icon: 'fa-gift',
             showInMenu: true,
-            action: angular.noop //_attachContent
+            action: _attachContent
         };
         _states.myProfile = {
             key: 'myProfile',

@@ -22,6 +22,16 @@
     margin-top: 30px;
 }
 
+.auth.mgmt-modal .text-frame {
+    background-color: #42b471;
+}
+.auth.mgmt-modal .text-frame.text-frame-md {
+    padding: 40px 30px;
+}
+.auth.mgmt-modal .text-frame.text-frame-sm {
+    padding: 10px 30px;
+}
+
 /* #region Menu */
 .auth.mgmt-modal .mgmt-menu {
     color: #fff;
@@ -245,15 +255,47 @@
 /* #endregion */
 
 /* #region Pending Withdrawals */
-.auth.mgmt-modal .pending-withdrawals .text-holder {
-    background-color: #42b471;
-    padding: 40px 30px;
-    font-size: 16px;
+.auth.mgmt-modal .pending-withdrawals { }
+/* #endregion */
+
+/* #region My Profile */
+.auth.mgmt-modal .my-profile button[type=submit] {
+    width: 240px;
+    margin-left: 0;
+    margin-right: 0;
 }
 /* #endregion */
 
+/* #region Bonuses */
+.auth.mgmt-modal .bonuses form {
+    margin-top: 80px;
+}
+.auth.mgmt-modal .bonuses .bonus-code { 
+    width: 250px;
+    height: 40px;
+    color: white;
+    /*font-size: 18px;*/
+    border: 2px solid #fff;
+    padding: 0 30px;
+}
+.auth.mgmt-modal .bonuses .bonus-code::-webkit-input-placeholder { color: #fff; }
+.auth.mgmt-modal .bonuses .bonus-code:-moz-placeholder { color: #fff; }
+.auth.mgmt-modal .bonuses .bonus-code::-moz-placeholder { color: #fff; }
+.auth.mgmt-modal .bonuses .bonus-code:-ms-input-placeholder { color: #fff; }
+
+.auth.mgmt-modal .bonuses button[type=submit] {
+    width: 180px;
+    margin-left: 0;
+    margin-right: 0;
+}
+/*.auth.mgmt-modal .bonuses .text-holder p { font-size: 17px; margin: 0; }
+
+.auth.mgmt-modal .bonuses p { font-size: 17px; margin-bottom: 20px; }
 
 
+
+/*.auth.mgmt-modal .bonuses .modal-btn-gz { margin: 12px 0; }*/
+/* #endregion */
 
 
 
@@ -317,54 +359,4 @@
 }
 /* #endregion */
 
-/* #region Bonuses */
-.auth.mgmt-modal .bonuses .text-holder {
-    background-color: #42b471;
-    padding: 10px 30px;
-    margin-bottom: 80px;
-}
-.auth.mgmt-modal .bonuses .text-holder p { font-size: 17px; margin: 0; }
 
-.auth.mgmt-modal .bonuses p { font-size: 17px; margin-bottom: 20px; }
-
-.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form { 
-    width: 250px;
-    height: 40px;
-    color: white;
-    font-size: 18px;
-    border: 2px solid;
-    padding: 0 30px;
-}
-.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form::-webkit-input-placeholder { color: white; font-size: 18px; } /*change placeholder color*/
-.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form:-moz-placeholder { color: white; font-size: 18px; }
-.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form::-moz-placeholder { color: white; font-size: 18px; }
-.auth.mgmt-modal .bonuses .bonus-code .bonus-code-form:-ms-input-placeholder { color: white; font-size: 18px; }
-
-.auth.mgmt-modal .bonuses .modal-btn-gz { margin: 12px 0; }
-/* #endregion */
-
-/* #region My Profile */
-/*.auth.mgmt-modal .my-profile .update-prof-form { margin-top: 20px; margin-left: 15px; }
-.auth.mgmt-modal .my-profile h4 { margin-left: -3px; margin-bottom: 25px; }
-
-.auth.mgmt-modal .my-profile .update-prof-form .form-group .form-control { height: 40px; }
-.auth.mgmt-modal .my-profile .update-prof-form .form-group .checkboxes-group { margin-top: 15px; }
-
-.auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox { margin-left: 0 }
-.auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox:first-of-type { margin-bottom: -1px; }
-.auth.mgmt-modal .my-profile .update-prof-form .form-group .up-prof-btn { width: 50%; margin-left: -1px; margin-bottom: 50px; }
-
-.auth.mgmt-modal .my-profile .update-prof-form .form-group #phoneNumber { margin-top: 5px; }
-
-@media (max-width: 991px) {
-    .auth.mgmt-modal .my-profile .update-prof-form .form-group .up-prof-btn { width: 100%; }
-}
-
-@media (max-width: 767px) {
-    .auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox { font-size: 12px; }
-}
-
-@media (max-width: 509px) { 
-    .auth.mgmt-modal .my-profile .update-prof-form .gz-checkbox { font-size: 8px; }
-}*/
-/* #endregion */

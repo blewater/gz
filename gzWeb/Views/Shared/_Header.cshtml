@@ -47,7 +47,7 @@
                     </span>
                 </span>
                 <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
-                    <li><h5><b>{{fullname}}</b></h5></li>
+                    <li style="cursor: default;"><h5><b>{{fullname}}</b></h5></li>
                     <li role="separator" class="divider"></li>
                     <li ng-repeat="s in accountManagementStates">
                         <a ng-click="gotoState(s)">{{s.title}}</a>
