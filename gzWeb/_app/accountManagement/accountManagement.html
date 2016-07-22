@@ -1,23 +1,7 @@
-﻿<div class="auth mgmt-modal transaction-history">
+﻿<div class="auth mgmt-modal">
     <aside class="mgmt-menu bg-white">
         <nav>
             <ul class="nav-menu">
-                <!--<li>
-                <a class="btn-mgmt-menu bg-gz">
-                    <img class="btn-symbol plus-symbol" src="../../Content/Images/plus_icon.svg" />Deposit
-                </a>
-                <a href="" class="btn-mgmt-menu-xs">
-                    <img class="btn-symbol plus-symbol" src="../../Content/Images/plus_icon_green.svg" />
-                </a>
-            </li>
-            <li>
-                <a class="btn-mgmt-menu bg-grey-dark">
-                    <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon.svg" />Withdraw
-                </a>
-                <a href="" class="btn-mgmt-menu-xs btn-mgmt-active">
-                    <img class="btn-symbol minus-symbol" src="../../Content/Images/minus_icon_dgrey.svg" />
-                </a>
-            </li>-->
                 <li ng-repeat="s in states">
                     <div class="clearfix"></div>
                     <a ng-class="{
@@ -33,11 +17,13 @@
                     </a>
                 </li>
             </ul>
-            {{xs}}
         </nav>
     </aside>
 
     <section class="mgmt-content bg-gz">
-        <div id="state-content"></div>
+        <h4 class="title">{{currentState.title}}</h4>
+
+        <div ng-show="changingState" us-spinner="spinnerWhite"></div>
+        <div ng-hide="changingState" id="{{elementId}}"></div>
     </section>
 </div>

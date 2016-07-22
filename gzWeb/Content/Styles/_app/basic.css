@@ -294,6 +294,10 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     height: 48px;
     -ms-border-radius: 0;
     border-radius: 0;
+    color: #000;
+}
+.form-control[disabled], .form-control.disabled {
+    background-color: #ccc;
 }
 .form-control.empty {
     background-color: #eaf6ef;

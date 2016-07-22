@@ -5,7 +5,7 @@
 
     function serviceFactory($compile, $controller, $templateRequest, helpers, auth, $animate) {
 
-        var _selectorId = '#state-content';
+        var _elementId = 'state-content';
 
         // #region Account Management States
         var _states = { };
@@ -18,8 +18,20 @@
             btnType: 'plus',
             img: '../../Content/Images/plus_icon.svg',
             imgXs: '../../Content/Images/plus_icon_green.svg',
-            action: _attachContent
+            action: angular.noop //_attachContent
         };
+        //_states.depositPaymentMethods = {
+        //    key: 'depositPaymentMethods',
+        //    ctrl: 'depositPaymentMethodsCtrl',
+        //    tpl: '_app/accountManagement/depositPaymentMethods.html',
+        //    title: 'Deposit',
+        //    type: 'button',
+        //    btnType: 'plus',
+        //    img: '../../Content/Images/plus_icon.svg',
+        //    imgXs: '../../Content/Images/plus_icon_green.svg',
+        //    action: _attachContent,
+        //    showInMenu: true
+        //};
         _states.withdraw = {
             key: 'withdraw',
             ctrl: 'withdrawCtrl',
@@ -29,7 +41,7 @@
             btnType: 'minus',
             img: '../../Content/Images/minus_icon.svg',
             imgXs: '../../Content/Images/minus_icon_dgrey.svg',
-            action: _attachContent
+            action: angular.noop //_attachContent
         };
         _states.pendingWithdrawals = {
             key: 'pendingWithdrawals',
@@ -53,7 +65,7 @@
             tpl: '_app/accountManagement/bonuses.html',
             title: 'Bonuses',
             icon: 'fa-gift',
-            action: _attachContent
+            action: angular.noop //_attachContent
         };
         _states.myProfile = {
             key: 'myProfile',
@@ -63,11 +75,19 @@
             icon: 'fa-user',
             action: _attachContent
         };
+        _states.changePassword = {
+            key: 'changePassword',
+            ctrl: 'changePasswordCtrl',
+            tpl: '_app/accountManagement/changePassword.html',
+            title: 'Change Password',
+            icon: 'fa-lock',
+            action: angular.noop //_attachContent
+        };
         _states.logout = {
             key: 'logout',
             title: 'Logout',
             icon: 'fa-sign-out',
-            action: function () { auth.logout(); }
+            action: auth.logout
         };
 
 
@@ -79,14 +99,19 @@
         // #endregion
 
         // #region Attach Content
-        function _attachContent(state) {
-            helpers.ui.compile(_selectorId, state.tpl, state.ctrl);
+        function _attachContent(state, callback) {
+            helpers.ui.compile({
+                selector: '#' + _elementId,
+                templateUrl: state.tpl,
+                controllerId: state.ctrl,
+                callback: callback
+            });
         }
         // #endregion
 
         var _service = {
             states: _states,
-            selectorId: _selectorId
+            elementId: _elementId
         };
         return _service;
     };
