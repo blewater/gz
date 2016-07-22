@@ -8,7 +8,7 @@
         $scope.spinnerWhite = constants.spinners.md_abs_white;
 
         $scope.elementId = accountManagement.elementId;
-        $scope.states = accountManagement.states.all;
+        $scope.menuStates = accountManagement.states.menu;
         $scope.currentState = undefined;
         $scope.setState = function (state) {
             $scope.changingState = true;
