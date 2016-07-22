@@ -136,11 +136,11 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/account/loginCtrl.js"
                                         , "~/Scripts/_app/controllers/account/forgotPasswordCtrl.js"
                                         , "~/Scripts/_app/controllers/account/resetPasswordCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/changePasswordCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerAccountCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
+
                                         //ACCOUNT MANAGEMENT
                                         , "~/_app/accountManagement/accountManagementCtrl.js"
                                         , "~/_app/accountManagement/accountManagementService.js"
@@ -151,6 +151,7 @@ namespace gzWeb
                                         , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
                                         , "~/_app/accountManagement/bonusesCtrl.js"
                                         , "~/_app/accountManagement/myProfileCtrl.js"
+                                        , "~/_app/accountManagement/changePasswordCtrl.js"
 
                                         , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
                                         , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"

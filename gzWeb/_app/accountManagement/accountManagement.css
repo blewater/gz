@@ -166,7 +166,6 @@
 
 
 /* #region Content */
-
 .auth.mgmt-modal .mgmt-content {
     position: fixed;
     padding: 40px 20px;
@@ -182,8 +181,10 @@
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
-.auth.mgmt-modal .mgmt-content h4.title {
-    margin-bottom: 20px;
+.auth.mgmt-modal .mgmt-content .content-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 30px;
 }
 
 /*.auth.mgmt-modal .mgmt-content.left-content { 
@@ -236,8 +237,6 @@
 }
 /* #endregion */
 /* #endregion */
-
-
 
 /* #region Transaction History */
 .auth.mgmt-modal .transaction-history .form-group { margin: 0 -5px; }
@@ -295,6 +294,14 @@
 
 
 /*.auth.mgmt-modal .bonuses .modal-btn-gz { margin: 12px 0; }*/
+/* #endregion */
+
+/* #region Change Password */
+.auth.mgmt-modal .change-password button[type=submit] {
+    width: 180px;
+    margin-left: 0;
+    margin-right: 0;
+}
 /* #endregion */
 
 
