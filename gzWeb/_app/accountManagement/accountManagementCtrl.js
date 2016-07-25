@@ -10,13 +10,13 @@
         $scope.elementId = accountManagement.elementId;
         $scope.menuStates = accountManagement.states.menu;
         $scope.currentState = undefined;
-        $scope.setState = function (state) {
+        $scope.setState = function (state, params) {
             $scope.changingState = true;
             $scope.currentState = state;
-            state.action(state, function () {
+            state.action(state, $scope, params, function () {
                 $scope.changingState = false;
             });
         }
-        $scope.setState($scope.state || $scope.states[0]);
+        $scope.setState($scope.state || $scope.menuStates[0]);
     }
 })();

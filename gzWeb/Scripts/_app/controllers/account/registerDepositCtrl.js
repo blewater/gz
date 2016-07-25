@@ -42,8 +42,19 @@
             }
         }
 
+        var creditCardsFields = { templateUrl: '/partials/templates/registerDepositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
+        var trustlyFields = { templateUrl: '/partials/templates/registerDepositTrustly.html', ctrlId: 'depositTrustlyCtrl' }
+        var paymentMethodsFields = [];
+        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = _creditCardsFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = _creditCardsFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = _creditCardsFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.Trustly] = _trustlyFields;
+        function getPaymentMethodFields(paymentMethodCode) {
+            return paymentMethodsFields[paymentMethodCode];
+        };
+
         function attachDepositFields(paymentMethodCode) {
-            var depositFields = emBanking.getPaymentMethodFields(paymentMethodCode);
+            var depositFields = getPaymentMethodFields(paymentMethodCode);
             var depositTemplateUrl = depositFields.templateUrl;
             var depositCtrlId = depositFields.ctrlId;
             $templateRequest(helpers.ui.getTemplate(depositTemplateUrl)).then(function (depositHtml) {                

@@ -43,10 +43,10 @@
                 </tr>
             </tbody>
         </table>
-        <div ng-if="transactions.length === 0">
+        <div ng-if="transactions !== undefined && transactions.length === 0">
             <h5 class="text-center">No records to display</h5>
         </div>
-        <div ng-if="transactions.length > 0">
+        <div ng-if="transactions !== undefined && transactions.length > 0">
             <button type="button" class="btn-gz pager-btn pull-left" ng-click="search(pageIndex - 1)" ng-disabled="pageIndex <= 1">
                 <i class="fa fa-angle-double-left"></i>&nbsp;<span>Previous</span>
             </button>

@@ -1,14 +1,26 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("accountManagement", ['$compile', '$controller', '$templateRequest', '$filter', 'helpers', 'auth', 'message', serviceFactory]);
+    APP.factory("accountManagement", ['$compile', '$controller', '$templateRequest', '$filter', 'helpers', 'auth', 'message', 'emBanking', serviceFactory]);
 
-    function serviceFactory($compile, $controller, $templateRequest, $filter, helpers, auth, message) {
+    function serviceFactory($compile, $controller, $templateRequest, $filter, helpers, auth, message, emBanking) {
 
         var _elementId = 'state-content';
 
         // #region Account Management States
         var _states = { };
+        _states.depositPaymentMethods = {
+            key: 'deposit',
+            ctrl: 'depositPaymentMethodsCtrl',
+            tpl: '_app/accountManagement/depositPaymentMethods.html',
+            title: 'Deposit',
+            type: 'button',
+            btnType: 'plus',
+            img: '../../Content/Images/plus_icon.svg',
+            imgXs: '../../Content/Images/plus_icon_green.svg',
+            action: _attachContent,
+            showInMenu: true
+        };
         _states.deposit = {
             key: 'deposit',
             ctrl: 'depositCtrl',
@@ -18,21 +30,21 @@
             btnType: 'plus',
             img: '../../Content/Images/plus_icon.svg',
             imgXs: '../../Content/Images/plus_icon_green.svg',
-            showInMenu: true,
-            action: angular.noop, //_attachContent
+            showInMenu: false,
+            action: _attachContent
         };
-        //_states.depositPaymentMethods = {
-        //    key: 'depositPaymentMethods',
-        //    ctrl: 'depositPaymentMethodsCtrl',
-        //    tpl: '_app/accountManagement/depositPaymentMethods.html',
-        //    title: 'Deposit',
-        //    type: 'button',
-        //    btnType: 'plus',
-        //    img: '../../Content/Images/plus_icon.svg',
-        //    imgXs: '../../Content/Images/plus_icon_green.svg',
-        //    action: _attachContent,
-        //    showInMenu: true
-        //};
+        _states.withdrawPaymentMethods = {
+            key: 'withdraw',
+            ctrl: 'withdrawPaymentMethodsCtrl',
+            tpl: '_app/accountManagement/withdrawPaymentMethods.html',
+            title: 'Withdraw',
+            type: 'button',
+            btnType: 'minus',
+            img: '../../Content/Images/minus_icon.svg',
+            imgXs: '../../Content/Images/minus_icon_dgrey.svg',
+            showInMenu: true,
+            action: _attachContent
+        };
         _states.withdraw = {
             key: 'withdraw',
             ctrl: 'withdrawCtrl',
@@ -42,8 +54,8 @@
             btnType: 'minus',
             img: '../../Content/Images/minus_icon.svg',
             imgXs: '../../Content/Images/minus_icon_dgrey.svg',
-            showInMenu: true,
-            action: angular.noop //_attachContent
+            showInMenu: false,
+            action: _attachContent
         };
         _states.pendingWithdrawals = {
             key: 'pendingWithdrawals',
@@ -95,7 +107,7 @@
             title: 'Logout',
             icon: 'fa-sign-out',
             showInMenu: true,
-            action: auth.logout
+            action: function () { auth.logout() }
         };
         
         var _allStates = [];
@@ -108,11 +120,13 @@
         // #endregion
 
         // #region Attach Content
-        function _attachContent(state, callback) {
+        function _attachContent(state, scope, params, callback) {
             helpers.ui.compile({
                 selector: '#' + _elementId,
                 templateUrl: state.tpl,
                 controllerId: state.ctrl,
+                scope: scope,
+                params: params,
                 callback: callback
             });
         }

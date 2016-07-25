@@ -71,15 +71,17 @@
         };
 
         $scope.deposit = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '/partials/messages/registerPaymentMethods.html',
-                nsCtrl: 'registerPaymentMethodsCtrl',
-                nsStatic: true
-            });
+            accountManagement.open(accountManagement.states.depositPaymentMethods);
+            //message.open({
+            //    nsType: 'modal',
+            //    nsSize: '600px',
+            //    nsTemplate: '/partials/messages/registerPaymentMethods.html',
+            //    nsCtrl: 'registerPaymentMethodsCtrl',
+            //    nsStatic: true
+            //});
         };
         $scope.withdraw = function () {
+            accountManagement.open(accountManagement.states.withdrawPaymentMethods);
             //message.open({
             //    nsType: 'modal',
             //    nsSize: '600px',

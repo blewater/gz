@@ -68,7 +68,7 @@
         $scope.startTime = moment().subtract(1, 'months').toDate();
         $scope.endTime = moment().toDate();
         $scope.pageIndex = 1;
-        $scope.transactions = [];
+        $scope.transactions = undefined;
         $scope.totalRecordCount = 0;
         $scope.totalPageCount= 0;
 
