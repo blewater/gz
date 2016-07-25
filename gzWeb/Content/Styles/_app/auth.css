@@ -390,8 +390,27 @@
 
 
 
-
-.auth.register.register-payment-methods .payment-method .payment-method-icon {
+.auth .payment-methods .payment-method .payment-method-icon {
+    display: inline-block;
+    margin: 20px 15px;
+    cursor: pointer;
+}
+.auth .payment-methods .payment-method:nth-of-type(even) {
+    text-align: left;
+}
+.auth .payment-methods .payment-method:nth-of-type(odd) {
+    text-align: right;
+}
+.auth .payment-methods .payment-method img {
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+.auth .payment-methods .payment-method img:hover {
+    -webkit-box-shadow: 0 0 8px #fff;
+    -ms-box-shadow: 0 0 8px #fff;
+    box-shadow: 0 0 8px #fff;
+}
+/*.auth.register.register-payment-methods .payment-method .payment-method-icon {
     display: inline-block;
     margin: 20px 15px;
     cursor: pointer;
@@ -410,7 +429,7 @@
     -webkit-box-shadow: 0 0 8px #fff;
     -ms-box-shadow: 0 0 8px #fff;
     box-shadow: 0 0 8px #fff;
-}
+}*/
 
 /*
 .auth.register.register-payment-methods .payment-method .tooltip.payment-method-tooltip {
@@ -435,23 +454,23 @@
 }*/
 
 
-.auth.register.register-deposit .payment-method .method-icon img {
+.auth .payment-method .method-icon img {
     height: 26px;
     margin-bottom: 10px;
 }
-.auth.register.register-deposit .payment-method .method-name {
+.auth .payment-method .method-name {
     margin-left: 20px;
     font-size: 22px;
 }
-.auth.register.register-deposit .payment-method .method-info {
+.auth .payment-method .method-info {
     margin-left: 10px;
     font-size: 16px;
 }
 
-.auth.register.register-deposit .payment-method .tooltip.payment-method-tooltip {
+.auth .payment-method .tooltip.payment-method-tooltip {
     margin-left: 0;
 }
-.auth.register.register-deposit .payment-method .tooltip.payment-method-tooltip .tooltip-inner {
+.auth .payment-method .tooltip.payment-method-tooltip .tooltip-inner {
     color: #27A95C;
     background-color: #f2f2f2;
     -webkit-box-shadow: 0 6px 12px rgba(39,169,93,.2);
@@ -459,9 +478,12 @@
     box-shadow: 0 6px 12px rgba(39,169,93,.2);
 }
 
-.auth.register.register-deposit .payment-method .tooltip.payment-method-tooltip .tooltip-arrow {
+.auth .payment-method .tooltip.payment-method-tooltip .tooltip-arrow {
     border-top-color: #f2f2f2;
 }
+
+
+
 
 .auth.register.register-account {
 }

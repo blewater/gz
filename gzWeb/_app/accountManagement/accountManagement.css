@@ -311,7 +311,38 @@
 
 /* #region Deposit */
 /*.auth.mgmt-modal .deposit .mgmt-content { overflow-x: hidden; }*/
-.auth.mgmt-modal .deposit .left-content .credit-card-holder { height: 40px; }
+.auth.mgmt-modal .divider {
+    position: fixed;
+    top: 0;
+    right: 266.66666667px;
+    height: 100%;
+    border-right: 1px dashed #fff;
+}
+.auth.mgmt-modal .deposit .left-content {
+    position: relative;
+    /*border-right: 1px dashed #fff;*/
+    padding-right: 40px;
+}
+.auth.mgmt-modal .deposit .left-content .field-ok {
+    right: -35px;
+    margin-top: 5px;
+}
+.auth.mgmt-modal .deposit .right-content {
+}
+.auth.mgmt-modal .deposit .left-content .payment-method {
+    padding-left: 5px;
+}
+.auth.mgmt-modal .deposit .left-content .payment-method .payment-method-icon img {
+    height: 36px;
+}
+.auth.mgmt-modal .deposit .right-content .payment-method .payment-method-icon img {
+    height: 48px;
+}
+
+.auth.mgmt-modal .deposit button[type=submit] {
+    width: 180px;
+}
+/*.auth.mgmt-modal .deposit .left-content .credit-card-holder { height: 40px; }
 .auth.mgmt-modal .deposit .left-content .credit-card-holder .selected-credit-card { 
     width: 50px; 
     height: 28px; 
@@ -341,7 +372,7 @@
     height: 20px; 
 }
 
-.auth.mgmt-modal .deposit .right-content p { font-size: 16px; margin-bottom: 0; }
+.auth.mgmt-modal .deposit .right-content p { font-size: 16px; margin-bottom: 0; }*/
 
 /* #endregion */
 

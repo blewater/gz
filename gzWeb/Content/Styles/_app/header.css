@@ -128,7 +128,8 @@ header {
 
 .user-info .dropdown-menu {
     background-color: #27A95C;
-    color: #fff;    
+    color: #fff;
+    min-width: 250px;
 }
 .user-info .dropdown-menu > li > a {
     background-color: #27A95C;

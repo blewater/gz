@@ -142,6 +142,10 @@
                 $content.html(html);
                 if (angular.isUndefined(options.scope))
                     options.scope = $rootScope.$new();
+                if (angular.isDefined(options.params))
+                    angular.forEach(options.params, function (value, key) {
+                        options.scope[key] = value;
+                    });
                 if (angular.isDefined(options.controllerId)) {
                     var ctrl = $controller(options.controllerId, { $scope: options.scope });
                     $content.children().data('$ngControllerController', ctrl);
