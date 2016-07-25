@@ -155,7 +155,7 @@ module public Etl=
 
     /// <summary>
     ///
-    /// Get a database object
+    /// Get a database object by creating a new DataContext and opening a database connection
     ///
     /// </summary>
     /// <param name="dbConnectionString">The database connection string to use</param>
@@ -164,7 +164,38 @@ module public Etl=
         // Open db
         let db = dbSchema.GetDataContext(connectionString)
         //db.DataContext.Log <- System.Console.Out
+        db.Connection.Open()
         db
+
+    /// <summary>
+    ///
+    /// Upsert all excel files rows
+    ///
+    /// </summary>
+    /// <param name="db">The database context object</param>
+    /// <param name="excelSchema">The excel schema object to read all rows</param>
+    /// <param name="yyyyMmDd">the date string</param>
+    /// <returns>unit</returns>
+    let saveExcelRows db (openFile : excelSchema) (yyyyMmDd: string) =
+        // Loop through all excel rows
+        for excelRow in openFile.Data do
+            printfn "Processing email %s on %s/%s/%s" excelRow.``Email address`` <| yyyyMmDd.Substring(6,2) <| yyyyMmDd.Substring(4,2) <| yyyyMmDd.Substring(0,4)
+            SavePlayerRow db yyyyMmDd excelRow
+
+    /// <summary>
+    ///
+    /// Open an excel file and console out the filename
+    ///
+    /// </summary>
+    /// <param name="excelFilename">the dated excel filename</param>
+    /// <returns>the open file excel schema</returns>
+    let openExcelSchemaFile excelFilename=
+        let openFile = new excelSchema(excelFilename)
+        printfn ""
+        printfn "************ Processing %s excel file" excelFilename
+        printfn ""
+        openFile
+
 
     /// <summary>
     ///
@@ -177,17 +208,22 @@ module public Etl=
     let processExcelFiles dbConnectionString datedExcelFilesNames=
         let db = getOpenDb dbConnectionString
         // Open each excel file
-        for excelFileName in datedExcelFilesNames do
-            let openFile = new excelSchema(excelFileName)
-            let datePart = datePartofFilename excelFileName
-            printfn ""
-            printfn "************ Processing %s excel file" excelFileName
-            printfn ""
-            // Loop through all excel rows
-            for excelRow in openFile.Data do
-                printfn "Processing email %s on %s/%s/%s" excelRow.``Email address`` <| datePart.Substring(6,2) <| datePart.Substring(4,2) <| datePart.Substring(0,4)
-                SavePlayerRow db datePart excelRow
+        for excelFilename in datedExcelFilesNames do
 
+            let openFile = openExcelSchemaFile excelFilename
+            let yyyyMmDd = datePartofFilename excelFilename
+
+            let transaction = db.Connection.BeginTransaction()
+            db.DataContext.Transaction <- transaction
+
+            try
+                saveExcelRows db openFile yyyyMmDd
+                // ********* Commit once per excel File
+                transaction.Commit()
+            with
+                | _ -> 
+                    transaction.Rollback()
+                    reraise()
 
     /// <summary>
     ///
