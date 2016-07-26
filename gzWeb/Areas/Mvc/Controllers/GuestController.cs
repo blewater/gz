@@ -4,34 +4,34 @@ namespace gzWeb.Areas.Mvc.Controllers
 {
     public class GuestController : Controller
     {
-        public ActionResult Home()
+        public PartialViewResult Home()
         {
-            return View();
+            return PartialView();
         }
 
-        public ActionResult About()
+        public PartialViewResult About()
         {
-            return View();
+            return PartialView();
         }
 
-        public ActionResult Transparency()
+        public PartialViewResult Transparency()
         {
-            return View();
+            return PartialView();
         }
 
-        public ActionResult FAQ()
+        public PartialViewResult FAQ()
         {
-            return View();
+            return PartialView();
         }
 
-        public ActionResult Playground()
+        public PartialViewResult Playground()
         {
-            return View();
+            return PartialView();
         }
 
-        public ActionResult Contact()
+        public PartialViewResult Contact()
         {
-            return View();
+            return PartialView();
         }
     }
 }

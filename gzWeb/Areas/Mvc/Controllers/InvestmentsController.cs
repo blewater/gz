@@ -29,9 +29,9 @@ namespace gzWeb.Areas.Mvc.Controllers
                 return View(summaryDto);
             }
         }
-        public ActionResult Summary() { return View(); }
-        public ActionResult Portfolio() { return View(); }
-        public ActionResult Performance() { return View(); } 
-        public ActionResult Activity() { return View(); } 
+        public PartialViewResult Summary() { return PartialView(); }
+        public PartialViewResult Portfolio() { return PartialView(); }
+        public PartialViewResult Performance() { return PartialView(); } 
+        public PartialViewResult Activity() { return PartialView(); } 
     }
 }

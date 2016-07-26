@@ -6,9 +6,9 @@ namespace gzWeb.Areas.Mvc.Controllers
     public class HomeController : Controller
     {
         #region Actions
-        public ActionResult Index()
+        public PartialViewResult Index()
         {
-            return View();
+            return PartialView();
         }
         #endregion
 
