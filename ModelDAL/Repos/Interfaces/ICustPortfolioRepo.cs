@@ -19,5 +19,6 @@ namespace gzDAL.Repos.Interfaces
         Portfolio GetNextMonthsCustomerPortfolio(int customerId);
 
         Portfolio GetCustomerPortfolioForMonth(int customerId, string yearMonthStr);
+        void SaveDefaultPorfolio(int customerId, int gmUserId);
     }
 }
