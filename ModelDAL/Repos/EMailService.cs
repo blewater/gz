@@ -21,12 +21,17 @@ namespace gzDAL.Repos
 
         public async Task SendEmail(string templateCode, MailAddress fromAddress, string toAddress, Dictionary<string,object> data)
         {
+            if (String.IsNullOrEmpty(templateCode)) throw new ArgumentException("templateCode");
+            if (fromAddress==null) throw new ArgumentException("fromAddress");
+            if (String.IsNullOrEmpty(toAddress)) throw new ArgumentException("toAddress");
+
             var template = _dbContext.EmailTemplates.SingleOrDefault(x => x.Code == templateCode);
             if (template == null)
                 throw new KeyNotFoundException(String.Format("Template with code: '{0}' not found.", templateCode));
 
-            var compiledSubject = Engine.Razor.RunCompile(template.Subject, String.Format("{0}_Subject", template.Code), null, data);
-            var compiledBody = Engine.Razor.RunCompile(template.Body, String.Format("{0}_Body", template.Code), null, new DynamicViewBag(data));
+            var viewBag = data==null ? new DynamicViewBag(): new DynamicViewBag(data);
+            var compiledSubject = Engine.Razor.RunCompile(template.Subject, String.Format("{0}_Subject", template.Code), null, viewBag);
+            var compiledBody = Engine.Razor.RunCompile(template.Body, String.Format("{0}_Body", template.Code), null, viewBag);
 
             await SendEmail(fromAddress, toAddress, compiledSubject, compiledBody);
         }
