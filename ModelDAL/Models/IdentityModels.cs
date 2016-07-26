@@ -48,6 +48,8 @@ namespace gzDAL.Models
         [Required]
         public bool ClosedGzAccount { get; set; }
 
+        public DateTime? LastLogin { get; set; }
+
         /// <summary>
         /// Must get from Casino Operator
         /// </summary>
