@@ -29,7 +29,7 @@ namespace gzDAL.Repos
             if (template == null)
                 throw new KeyNotFoundException(String.Format("Template with code: '{0}' not found.", templateCode));
 
-            var viewBag = data==null ? new DynamicViewBag(): new DynamicViewBag(data);
+            var viewBag = data == null ? new DynamicViewBag() : new DynamicViewBag(data);
             var compiledSubject = Engine.Razor.RunCompile(template.Subject, String.Format("{0}_Subject", template.Code), null, viewBag);
             var compiledBody = Engine.Razor.RunCompile(template.Body, String.Format("{0}_Body", template.Code), null, viewBag);
 
