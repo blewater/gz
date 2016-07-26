@@ -7,24 +7,20 @@
 
         // #region init
         function loadPaymentMethods() {
-            if (!$scope.sessionInfo) {
-                $scope.initializing = true;
-                emWamp.getSessionInfo().then(function (sessionInfo) {
-                    $scope.sessionInfo = sessionInfo;
-                    if (!$scope.paymentMethods) {
-                        emBanking.getSupportedPaymentMethods(sessionInfo.userCountry, sessionInfo.currency).then(function (paymentMethods) {
-                            $scope.paymentMethods = paymentMethods;
-                            $scope.initializing = false;
-                        }, function (error) {
-                            message.error(error.desc);
-                            $scope.initializing = false;
-                        });
-                    }
+            $scope.initializing = true;
+            emWamp.getSessionInfo().then(function (sessionInfo) {
+                $scope.sessionInfo = sessionInfo;
+                emBanking.getSupportedPaymentMethods(sessionInfo.userCountry, sessionInfo.currency).then(function (paymentMethods) {
+                    $scope.paymentMethods = paymentMethods;
+                    $scope.initializing = false;
                 }, function (error) {
                     message.error(error.desc);
                     $scope.initializing = false;
                 });
-            }
+            }, function (error) {
+                message.error(error.desc);
+                $scope.initializing = false;
+            });
         }
 
         function init() {

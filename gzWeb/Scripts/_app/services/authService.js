@@ -376,22 +376,22 @@
                                 api.finalizeRegistration(sessionInfo.userID).then(function () {
                                     q.resolve(true);
                                 }, function (finalizeError) {
-                                    q.reject(finalizeError);
+                                    q.reject("Registration step 6 (finalizeRegistration): " + finalizeError);
                                 });
                             }, function (getSessionInfoError) {
-                                q.reject(getSessionInfoError);
+                                q.reject("Registration step 5 (getSessionInfo): " + getSessionInfoError);
                             });
                         }, function (emLoginError) {
-                            q.reject(emLoginError);
+                            q.reject("Registration step 4 (emLogin): " + emLoginError);
                         });
                     }, function (emRegisterError) {
-                        revoke(emRegisterError.desc);
+                        revoke("Registration step 3 (emRegister): " + emRegisterError.desc);
                     });
                 }, function (gzLoginError) {
-                    revoke(gzLoginError.desc);
+                    revoke("Registration step 2 (gzLogin): " + gzLoginError.desc);
                 });
             }, function(gzRegisterError) {
-                q.reject(gzRegisterError.data.Message);
+                q.reject("Registration step 1 (gzRegister): " + gzRegisterError.data.Message);
             });
 
             return q.promise;

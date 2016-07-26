@@ -697,6 +697,7 @@
     <Content Include="Areas\Admin\Views\CarouselEntries\Create.cshtml" />
     <Content Include="Areas\Admin\Views\CarouselEntries\Details.cshtml" />
     <Content Include="Areas\Admin\Views\CarouselEntries\Edit.cshtml" />
+    <Content Include="Partials\messages\confirmWithdraw.html" />
     <Content Include="Partials\templates\registerDepositTrustly.html" />
     <Content Include="Partials\templates\registerDepositCreditCard.html" />
     <Content Include="_app\accountManagement\accountManagement.css" />

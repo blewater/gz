@@ -135,15 +135,13 @@
 
         _service.getSupportedPaymentMethods = function(filterByCountry, currency) {
             var q = $q.defer();
-            emWamp.call("/user/deposit#getPaymentMethods", { filterByCountry: filterByCountry, currency: currency })
-                .then(function(result) {
-                    var paymentMethods = [];
-                    angular.forEach(_supportedPaymentMethodCodes,
-                        function(key, value) {
-                            paymentMethods.push(result.paymentMethods[key]);
-                        });
-                    q.resolve(paymentMethods);
+            emWamp.call("/user/deposit#getPaymentMethods", { filterByCountry: filterByCountry, currency: currency }).then(function(result) {
+                var paymentMethods = [];
+                angular.forEach(_supportedPaymentMethodCodes, function(key, value) {
+                    paymentMethods.push(result.paymentMethods[key]);
                 });
+                q.resolve(paymentMethods);
+            });
             return q.promise;
         };
 

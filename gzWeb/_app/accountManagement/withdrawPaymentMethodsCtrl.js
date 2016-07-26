@@ -7,15 +7,16 @@
 
         // #region init
         function loadPaymentMethods() {
-            if (!$scope.paymentMethods) {
-                emBankingWithdraw.getPaymentMethods().then(function (response) {
-                    $scope.paymentMethods = response.paymentMethods;
-                    $scope.initializing = false;
-                }, function (error) {
-                    message.error(error.desc);
-                    $scope.initializing = false;
-                });
-            }
+            $scope.initializing = true;
+            emBankingWithdraw.getSupportedPaymentMethods().then(function (paymentMethods) {
+                $scope.paymentMethods = paymentMethods;
+                for (var i = 0; i < $scope.paymentMethods.length; i++)
+                    $scope.paymentMethods[i].descr = getMethodDescr($scope.paymentMethods[i]);
+                $scope.initializing = false;
+            }, function (error) {
+                message.error(error.desc);
+                $scope.initializing = false;
+            });
         }
 
         function init() {
@@ -25,7 +26,31 @@
         init();
         // #endregion
 
-        // #region selectPaymentMethod
+        // #region methods
+        //function getMethodDescr(method) {
+        //    switch (method.code){
+        //        case emBankingWithdraw.PaymentMethodCode.VISA:
+        //        case emBankingWithdraw.PaymentMethodCode.Maestro:
+        //        case emBankingWithdraw.PaymentMethodCode.MasterCard:
+        //            return [method.withdrawDesc, method.payCard.name, method.payCard.cardExpiryDate, method.payCard.cardHolderName];
+        //        case emBankingWithdraw.PaymentMethodCode.Trustly:
+        //            return [method.withdrawDesc || method.code];
+        //        default:
+        //            return [method.code];
+        //    }
+        //};
+        function getMethodDescr(method) {
+            switch (method.code) {
+                case emBankingWithdraw.PaymentMethodCode.VISA:
+                case emBankingWithdraw.PaymentMethodCode.Maestro:
+                case emBankingWithdraw.PaymentMethodCode.MasterCard:
+                    return method.payCard.name;
+                case emBankingWithdraw.PaymentMethodCode.Trustly:
+                    return method.withdrawDesc || method.code;
+                default:
+                    return method.code;
+            }
+        };
         $scope.selectPaymentMethod = function (method) {
             $scope.setState(accountManagement.states.withdraw, {
                 paymentMethods: $scope.paymentMethods,
