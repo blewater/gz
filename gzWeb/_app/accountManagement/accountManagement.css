@@ -344,6 +344,10 @@
 .auth.mgmt-modal .withdraw button[type=submit] {
     width: 180px;
 }
+.auth.mgmt-modal .payment-methods .payment-method:nth-of-type(even),
+.auth.mgmt-modal .payment-methods .payment-method:nth-of-type(odd) {
+    text-align: center;
+}
 /*.auth.mgmt-modal .deposit .left-content .credit-card-holder { height: 40px; }
 .auth.mgmt-modal .deposit .left-content .credit-card-holder .selected-credit-card { 
     width: 50px; 

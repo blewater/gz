@@ -8,7 +8,7 @@
 
             <div class="form-group payment-method">
                 <span class="method-icon" ng-bind-html="selectedMethod.icon"></span>
-                <span class="method-name">{{selectedMethod.name}}</span>
+                <span class="method-name">{{selectedMethod.descr}}</span>
             </div>
 
             <div class="form-group">
@@ -34,8 +34,9 @@
         </div>
 
         <div class="payment-methods">
-            <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
+            <div class="payment-method col-xs-12" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
                 <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
+                <div>{{method.descr}}</div>
             </div>
         </div>
     </div>

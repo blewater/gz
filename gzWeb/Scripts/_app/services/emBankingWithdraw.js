@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emBankingWithdraw", ["$q", "emWamp", serviceFunc]);
-    function serviceFunc($q, emWamp) {
+    APP.factory("emBankingWithdraw", ['$q', 'emWamp', '$filter', 'helpers', serviceFunc]);
+    function serviceFunc($q, emWamp, $filter, helpers) {
 
         // ---------------------------------------------------------------------------------------------------
         //
@@ -12,12 +12,32 @@
 
         var _service = {};
 
+        var _supportedPaymentMethodCodes = {
+            VISA: "VISA",
+            Maestro: "Maestro",
+            MasterCard: "MasterCard",
+            Trustly: "MoneyMatrix_Trustly"
+        };
+
+        _service.PaymentMethodCode = _supportedPaymentMethodCodes;
+
         _service.getPaymentMethods = function(currency, includeAll) {
             return emWamp.call("/user/withdraw#getPaymentMethods",
             {
                 currency: currency,
                 includeAll: includeAll
             });
+        };
+        _service.getSupportedPaymentMethods = function (currency, includeAll) {
+            var q = $q.defer();
+            emWamp.call("/user/withdraw#getPaymentMethods", { currency: currency, includeAll: includeAll }).then(function (result) {
+                var supportedPaymentMethodCodesList = $filter('toArray')(_supportedPaymentMethodCodes);
+                var paymentMethods = $filter('filter')(result.paymentMethods, function (value, index, array) {
+                    return supportedPaymentMethodCodesList.indexOf(value.code) > -1;
+                });
+                q.resolve(paymentMethods);
+            });
+            return q.promise;
         };
 
         _service.getPaymentMethodCfg = function(paymentMethodCode, payCardId) {
