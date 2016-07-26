@@ -705,7 +705,11 @@
     <Content Include="_app\accountManagement\bonusesCtrl.js" />
     <Content Include="_app\accountManagement\changePassword.html" />
     <Content Include="_app\accountManagement\changePasswordCtrl.js" />
+    <Content Include="_app\accountManagement\withdrawCreditCard.html" />
+    <Content Include="_app\accountManagement\withdrawCreditCardCtrl.js" />
     <Content Include="_app\accountManagement\depositCreditCardCtrl.js" />
+    <Content Include="_app\accountManagement\withdrawTrustly.html" />
+    <Content Include="_app\accountManagement\withdrawTrustlyCtrl.js" />
     <Content Include="_app\accountManagement\depositTrustlyCtrl.js" />
     <Content Include="_app\accountManagement\withdrawPaymentMethods.html" />
     <Content Include="_app\accountManagement\depositPaymentMethods.html" />

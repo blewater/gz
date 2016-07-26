@@ -150,6 +150,8 @@ namespace gzWeb
                                         , "~/_app/accountManagement/depositTrustlyCtrl.js"
                                         , "~/_app/accountManagement/withdrawPaymentMethodsCtrl.js"
                                         , "~/_app/accountManagement/withdrawCtrl.js"
+                                        , "~/_app/accountManagement/withdrawCreditCardCtrl.js"
+                                        , "~/_app/accountManagement/withdrawTrustlyCtrl.js"
                                         , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
                                         , "~/_app/accountManagement/transactionHistoryCtrl.js"
                                         , "~/_app/accountManagement/bonusesCtrl.js"

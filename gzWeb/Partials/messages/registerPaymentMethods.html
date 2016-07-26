@@ -1,4 +1,4 @@
-﻿<div class="auth register register-payment-methods payment-methods">
+﻿<div class="auth register register-payment-methods">
     <div class="row heading">
         <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
             <div class="steps">
@@ -34,7 +34,7 @@
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <div class="initializing-spinner" us-spinner="spinnerWhite" ng-if="initializing"></div>
-                    <div class="row" ng-if="!initializing">
+                    <div class="row payment-methods" ng-if="!initializing">
                         <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods" ng-init="open=true">
                             <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)">
                             </div>

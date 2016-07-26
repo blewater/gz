@@ -6,11 +6,6 @@
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
-
-        $scope.accountModel = $scope.accountModel || undefined;
-        $scope.sessionInfo = $scope.sessionInfo || undefined;
-        $scope.paymentMethods = $scope.paymentMethods || undefined;
-        $scope.gamingAccounts = $scope.gamingAccounts || undefined;
         // #endregion
 
         // #region payment methods fields
@@ -35,12 +30,12 @@
             //if (!$scope.paymentMethodCfg) {
             //}
             //else {
-            //    attachDepositFields($scope.paymentMethodCfg.paymentMethodCode);
+            //    attachFields($scope.paymentMethodCfg.paymentMethodCode);
             //}
             $scope.initializing = true;
             emBanking.getPaymentMethodCfg($scope.selectedMethod.code).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
-                attachDepositFields($scope.paymentMethodCfg.paymentMethodCode);
+                attachFields($scope.paymentMethodCfg.paymentMethodCode);
                 $scope.initializing = false;
             }, function (error) {
                 message.error(error.desc);
@@ -49,13 +44,13 @@
 
         }
 
-        function attachDepositFields(paymentMethodCode) {
+        function attachFields(paymentMethodCode) {
             $timeout(function () {
-                var depositFields = getPaymentMethodFields(paymentMethodCode);
+                var paymentMethodFields = getPaymentMethodFields(paymentMethodCode);
                 helpers.ui.compile({
-                    selector: '#depositFields',
-                    templateUrl: depositFields.templateUrl,
-                    controllerId: depositFields.ctrlId,
+                    selector: '#paymentMethodFields',
+                    templateUrl: paymentMethodFields.templateUrl,
+                    controllerId: paymentMethodFields.ctrlId,
                     scope: $scope
                 });
             });

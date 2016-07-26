@@ -45,10 +45,10 @@
         var creditCardsFields = { templateUrl: '/partials/templates/registerDepositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
         var trustlyFields = { templateUrl: '/partials/templates/registerDepositTrustly.html', ctrlId: 'depositTrustlyCtrl' }
         var paymentMethodsFields = [];
-        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = _creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = _creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = _creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Trustly] = _trustlyFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardsFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardsFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardsFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.Trustly] = trustlyFields;
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };

@@ -146,7 +146,7 @@
             });
         }
         $scope.getPaymentMethodCfg = function () {
-            emBankingWithdraw.getPaymentMethodCfg("VISA", 2100713).then(function (response) {
+            emBankingWithdraw.getPaymentMethodCfg("VISA", 2100719).then(function (response) {
                 $scope.result = response;
             }, function (error) {
                 $scope.result = error;

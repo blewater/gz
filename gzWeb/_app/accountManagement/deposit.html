@@ -13,12 +13,12 @@
 
             <div class="form-group">
                 <span ng-if="initializing" us-spinner="spinnerWhite"></span>
-                <div id="depositFields"></div>
+                <div id="paymentMethodFields"></div>
             </div>
 
             <div class="form-group">
                 <div class="btns text-center">
-                    <button type="submit" class="btn-gz deposit" ng-disabled="form.$invalid"
+                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid"
                             ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                         <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
                         <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
@@ -38,13 +38,8 @@
                 <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
             </div>
         </div>
-        <!--<div class="payment-method text-center col-xs-12" ng-repeat="method in paymentMethods">
-            <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
-        </div>-->
     </div>
 </div>
-<!---16.66666667%-->
-
 
 <!--<div class="row">
     <section class="mgmt-content col-xs-12 col-sm-6 col-md-offset-1 left-content bg-gz">
