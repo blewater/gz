@@ -19,14 +19,14 @@ namespace gzDAL.Repos
             _dbContext = dbContext;
         }
 
-        public async Task SendEmail(string templateCode, MailAddress fromAddress, string toAddress, Dictionary<object,object> data)
+        public async Task SendEmail(string templateCode, MailAddress fromAddress, string toAddress, Dictionary<string,object> data)
         {
             var template = _dbContext.EmailTemplates.SingleOrDefault(x => x.Code == templateCode);
             if (template == null)
                 throw new KeyNotFoundException(String.Format("Template with code: '{0}' not found.", templateCode));
 
             var compiledSubject = Engine.Razor.RunCompile(template.Subject, String.Format("{0}_Subject", template.Code), null, data);
-            var compiledBody = Engine.Razor.RunCompile(template.Body, String.Format("{0}_Body", template.Code), null, data);
+            var compiledBody = Engine.Razor.RunCompile(template.Body, String.Format("{0}_Body", template.Code), null, new DynamicViewBag(data));
 
             await SendEmail(fromAddress, toAddress, compiledSubject, compiledBody);
         }
