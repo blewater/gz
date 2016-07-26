@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Threading.Tasks;
+using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
@@ -76,15 +77,20 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
-            if (weight < 0 || weight > 100) {
-
+            if (weight < 0 || weight > 100)
                 throw new Exception("Invalid percentage not within range 0..100: " + weight);
 
-            } else {
+            SaveDbCustMonthsPortfolioMixImpl(customerId, riskType, weight, portfYear, portfMonth, UpdatedOnUTC);
+            db.SaveChanges();
+        }
 
-                db.CustPortfolios.AddOrUpdate(
+        private void SaveDbCustMonthsPortfolioMixImpl(int customerId, RiskToleranceEnum riskType, float weight,
+                                                      int portfYear, int portfMonth, DateTime updatedOnUtc)
+        {
+            db.CustPortfolios.AddOrUpdate(
                     cp => new { cp.CustomerId, cp.YearMonth },
-                        new CustPortfolio {
+                        new CustPortfolio
+                        {
                             CustomerId = customerId,
                             // Get the most recent active portfolio for the risk type
                             PortfolioId = db.Portfolios
@@ -92,14 +98,12 @@ namespace gzDAL.Repos
                                 .Select(p => p.Id)
                                 .Single(),
                             YearMonth = DbExpressions.GetStrYearMonth(portfYear, portfMonth),
-                            UpdatedOnUTC = UpdatedOnUTC,
+                            UpdatedOnUTC = updatedOnUtc,
                             Weight = weight
                         }
                     );
-                db.SaveChanges();
-                
-            }
         }
+
         /// <summary>
         /// 
         /// Get the present in Utc customer selected portfolio.
@@ -141,6 +145,23 @@ namespace gzDAL.Repos
                     .Where(p => p.YearMonth == portfolioMonth && p.CustomerId == customerId)
                     .Select(cp => cp.Portfolio)
                     .SingleOrDefault();
+        }
+
+        public void SaveDefaultPorfolio(int customerId, int gmUserId)
+        {
+            var user = db.Users.SingleOrDefault(x => x.Id == customerId);
+            if (user==null)
+                throw new InvalidOperationException("User not found.");
+
+            ConnRetryConf.TransactWithRetryStrategy(
+                    db,
+                    () =>
+                    {
+                        if (!user.GmCustomerId.HasValue)
+                            user.GmCustomerId = gmUserId;
+                        var now = DateTime.UtcNow;
+                        SaveDbCustMonthsPortfolioMixImpl(customerId, RiskToleranceEnum.Medium, 100, now.Year, now.Month, now);
+                    });
         }
 
         /// <summary>

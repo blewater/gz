@@ -445,7 +445,25 @@ namespace gzWeb.Controllers
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                Logger.Error("Registration failed with error: {0}", String.Join(Environment.NewLine, result.Errors));
+                Logger.Error("Registration for User with username: '{0}' and email: '{1}' failed with error: {2}",
+                             model.Username,
+                             model.Email,
+                             String.Join(Environment.NewLine, result.Errors));
+                var deleteResult = await UserManager.DeleteAsync(user);
+                if (!deleteResult.Succeeded)
+                {
+                    Logger.Warn(
+                            "Failed to delete User of unsuccessful registration with username: '{0}' and email: '{1}', with error: {2}",
+                            model.Username,
+                            model.Email,
+                            String.Join(Environment.NewLine, result.Errors));
+                }
+                else
+                {
+                    Logger.Info(
+                            "Delete of unsuccessful user registration with username: '{0}' and email: '{1}', succeeded.",
+                            model.Username, model.Email);
+                }
                 return GetErrorResult(result);
             }
 
@@ -509,14 +527,7 @@ namespace gzWeb.Controllers
 
             try
             {
-                if (!user.GmCustomerId.HasValue)
-                {
-                    user.GmCustomerId = gmUserId;
-                    _dbContext.SaveChanges();
-                }
-
-                var now = DateTime.UtcNow;
-                _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(user.Id, RiskToleranceEnum.Medium, now.Year, now.Month, now);
+                _custPortfolioRepo.SaveDefaultPorfolio(user.Id, gmUserId);
             }
             catch (Exception exception)
             {
