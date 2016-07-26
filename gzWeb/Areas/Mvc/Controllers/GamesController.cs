@@ -4,13 +4,13 @@ namespace gzWeb.Areas.Mvc.Controllers
 {
     public class GamesController : Controller
     {
-        public ActionResult Games()
+        public PartialViewResult Games()
         {
-            return View();
+            return PartialView();
         }
-        public ActionResult Game()
+        public PartialViewResult Game()
         {
-            return View();
+            return PartialView();
         }
     }
 }
