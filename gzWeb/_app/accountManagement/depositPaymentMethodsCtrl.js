@@ -5,11 +5,6 @@
     function ctrlFactory($scope, constants, emWamp, emBanking, message, accountManagement) {
         $scope.spinnerWhite = constants.spinners.sm_abs_white;
 
-        $scope.accountModel = $scope.accountModel || undefined;
-        $scope.sessionInfo = $scope.sessionInfo || undefined;
-        $scope.paymentMethods = $scope.paymentMethods || undefined;
-        $scope.gamingAccounts = $scope.gamingAccounts || undefined;
-
         // #region init
         function loadPaymentMethods() {
             if (!$scope.sessionInfo) {
@@ -42,10 +37,7 @@
         // #region selectPaymentMethod
         $scope.selectPaymentMethod = function (method) {
             $scope.setState(accountManagement.states.deposit, {
-                accountModel: $scope.accountModel,
-                sessionInfo: $scope.sessionInfo,
                 paymentMethods: $scope.paymentMethods,
-                gamingAccounts: $scope.gamingAccounts,
                 selectedMethod: method
             });
         };
