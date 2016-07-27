@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emBankingWithdraw", ['$q', 'emWamp', '$filter', 'helpers', serviceFunc]);
-    function serviceFunc($q, emWamp, $filter, helpers) {
+    APP.factory("emBankingWithdraw", ['$q', 'emWamp', '$filter', 'helpers', 'iovation', serviceFunc]);
+    function serviceFunc($q, emWamp, $filter, helpers, iovation) {
 
         // ---------------------------------------------------------------------------------------------------
         //
@@ -49,10 +49,10 @@
         };
 
         _service.prepare = function (paymentMethodCode, fields) {
-            return emWamp.call("/user/withdraw#prepare",
-            {
+            return emWamp.call("/user/withdraw#prepare", {
                 paymentMethodCode: paymentMethodCode,
-                fields: fields
+                fields: fields,
+                iovationBlackbox: iovation.getBlackbox()
             });
         };
 
