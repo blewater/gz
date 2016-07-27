@@ -134,6 +134,7 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/games/gameCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerCtrl.js"
                                         , "~/Scripts/_app/controllers/account/loginCtrl.js"
+                                        , "~/Scripts/_app/controllers/account/investmentAccessErrorCtrl.js"
                                         , "~/Scripts/_app/controllers/account/forgotPasswordCtrl.js"
                                         , "~/Scripts/_app/controllers/account/resetPasswordCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerAccountCtrl.js"

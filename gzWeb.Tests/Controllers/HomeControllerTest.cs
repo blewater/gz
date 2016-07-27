@@ -16,7 +16,7 @@ namespace gzWeb.Tests.Controllers {
             HomeController controller = new HomeController();
 
             // Act
-            ViewResult result = controller.Index() as ViewResult;
+            PartialViewResult result = controller.Index() as PartialViewResult;
 
             // Assert
             Assert.IsNotNull(result);

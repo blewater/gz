@@ -3,12 +3,12 @@
         <h3 ng-hide="lg" gz-authorize="gamer,investor"><b>{{fullname}}</b></h3>
         <div class="links">
             <nav class="cl-effect">
-                <ul gz-authorize="guest" ng-show="routeData.wandering">
+                <ul gz-authorize="guest" gz-match="exact">
                     <li ng-repeat="route in routes.guest">
                         <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                     </li>
                 </ul>
-                <ul gz-authorize="gamer" ng-show="routeData.gaming" style="margin-top: 0;">
+                <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
                     <li ng-if="hasGamingBalance">{{currency}} {{gamingBalance}}</li>
                     <li>
                         <button type="button" class="btn-gz btn-gz-alt" ng-click="withdraw()">
@@ -47,7 +47,7 @@
                     </span>
                 </span>
                 <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
-                    <li style="cursor: default;"><h5><b>{{fullname}}</b></h5></li>
+                    <li class="fullname"><h5><b>{{fullname}}</b></h5></li>
                     <li role="separator" class="divider"></li>
                     <li ng-repeat="s in accountManagementStates">
                         <a ng-click="gotoState(s)">{{s.title}}</a>
@@ -56,7 +56,7 @@
                     <li><a ng-click="logout()">Logout</a></li>*@
                 </ul>
             </span>
-            <div gz-authorize="gamer,investor" gz-match="all" class="switch">
+            <div gz-authorize="gamer,investor" class="switch">
                 <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">
                     <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />
                 </a>

@@ -698,8 +698,10 @@
     <Content Include="Areas\Admin\Views\CarouselEntries\Details.cshtml" />
     <Content Include="Areas\Admin\Views\CarouselEntries\Edit.cshtml" />
     <Content Include="Partials\messages\confirmWithdraw.html" />
+    <Content Include="Partials\messages\investmentAccessError.html" />
     <Content Include="Partials\templates\registerDepositTrustly.html" />
     <Content Include="Partials\templates\registerDepositCreditCard.html" />
+    <Content Include="Scripts\_app\controllers\account\investmentAccessErrorCtrl.js" />
     <Content Include="_app\accountManagement\accountManagement.css" />
     <Content Include="_app\accountManagement\accountManagementService.js" />
     <Content Include="_app\accountManagement\bonuses.html" />
@@ -1168,6 +1170,8 @@
           <DevelopmentServerPort>63659</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>https://localhost:44300/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>https://localhost:44300/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
