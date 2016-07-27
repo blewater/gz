@@ -523,6 +523,10 @@
     <Compile Include="Migrations\201607130756384_alter functions.Designer.cs">
       <DependentUpon>201607130756384_alter functions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607261334395_Add-User-LastLogin-Field.cs" />
+    <Compile Include="Migrations\201607261334395_Add-User-LastLogin-Field.Designer.cs">
+      <DependentUpon>201607261334395_Add-User-LastLogin-Field.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1124,6 +1128,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607130756384_alter functions.resx">
       <DependentUpon>201607130756384_alter functions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607261334395_Add-User-LastLogin-Field.resx">
+      <DependentUpon>201607261334395_Add-User-LastLogin-Field.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

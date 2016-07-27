@@ -99,6 +99,7 @@ namespace gzWeb
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
+                , "~/Scripts/jsnlog/logToServer.js"
                 //, "~/Scripts/_modules/styleInjector.js"
             ));
 

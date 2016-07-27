@@ -18,7 +18,7 @@ namespace gzCpcLib.Options {
         private readonly ExchRatesUpdTask _exchRatesUpd;
         private readonly FundsUpdTask _fundsUpd;
         private readonly CustomerBalanceUpdTask _customerBalUpd;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public bool IsProcessing { get; private set; }
 
@@ -37,7 +37,7 @@ namespace gzCpcLib.Options {
 
             if (!_cpcOptions.ParsingSuccess) {
 
-                logger.Trace("Exiting ProcessOptions cpcOptions.ParsingSucces is false");
+                _logger.Trace("Exiting ProcessOptions cpcOptions.ParsingSucces is false");
 
                 // Did not process
                 return;
@@ -48,22 +48,25 @@ namespace gzCpcLib.Options {
 
             if (_cpcOptions.CurrenciesMarketUpdOnly) {
 
-                logger.Trace("In _cpcOptions.CurrenciesMarketUpdOnly");
+                _logger.Info("In _cpcOptions.CurrenciesMarketUpdOnly");
                 SubscribeToObs(_exchRatesUpd, "Currencies updated.", indicateWhenCompleteProcessing: true);
 
             }
             else if (_cpcOptions.StockMarketUpdOnly) {
 
+                _logger.Info("In _cpcOptions.StockMarketUpdOnly");
                 SubscribeToObs(_fundsUpd, "Funds stock values updated.", indicateWhenCompleteProcessing: true);
 
             }
             else if (_cpcOptions.FinancialValuesUpd) {
 
+                _logger.Info("In _cpcOptions.FinancialValuesUpd");
                 MergeObs(_exchRatesUpd, _fundsUpd, "Financial Values Updated.");
 
             }
             else if (_cpcOptions.ProcessEverything || _cpcOptions.CustomersToProc.Length > 0 || _cpcOptions.YearMonthsToProc.Length > 0) {
 
+                _logger.Info("In _cpcOptions.ProcessEverything");
                 _customerBalUpd.CustomerIds = _cpcOptions.CustomersToProc;
                 _customerBalUpd.YearMonthsToProc = _cpcOptions.YearMonthsToProc;
 
@@ -71,10 +74,10 @@ namespace gzCpcLib.Options {
                 MergeReduceObs(_exchRatesUpd, _fundsUpd, _customerBalUpd, "Customers Balances Processed");
 
             } else if (_cpcOptions.ConsoleOutOnly) {
-                
-            }
-            else {
-                logger.Trace("No action taken!");
+                _logger.Info("In _cpcOptions.ConsoleOutOnly");
+
+            } else {
+                _logger.Trace("No action taken!");
                 IsProcessing = false;
             }
 
@@ -92,7 +95,7 @@ namespace gzCpcLib.Options {
             cpcTask.TaskObservable.Subscribe(
                 _ => {
 
-                    logger.Info(logCompletionMsg);
+                    _logger.Info(logCompletionMsg);
                     if (indicateWhenCompleteProcessing) {
                         IsProcessing = false;
                     }
@@ -114,11 +117,11 @@ namespace gzCpcLib.Options {
                 .Subscribe(
                     // OnNext
                     w =>
-                        logger.Trace("OnNext"),
+                        _logger.Trace("OnNext"),
 
                     // OnCompleted
                     () => {
-                        logger.Info(logCompletionMsg);
+                        _logger.Info(logCompletionMsg);
                         IsProcessing = false;
                     }
                 );
@@ -144,11 +147,11 @@ namespace gzCpcLib.Options {
                 .Subscribe(
                     // OnNext
                     w =>
-                        logger.Trace("OnNext Final Task"),
+                        _logger.Trace("OnNext Final Task"),
 
                     // OnCompleted
                     () => {
-                        logger.Info(logCompletionMsg);
+                        _logger.Info(logCompletionMsg);
                         IsProcessing = false;
                     }
                 );

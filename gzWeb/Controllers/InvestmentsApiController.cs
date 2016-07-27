@@ -54,15 +54,17 @@ namespace gzWeb.Controllers {
         public async Task<IHttpActionResult> GetSummaryData()
         {
             var userId = User.Identity.GetUserId<int>();
-
-            Logger.Trace("GetSummaryData requested for userId:{0}", userId);
+            Logger.Trace("GetSummaryData requested for [User#{0}]", userId);
             
             var summaryRes = await _userRepo.GetSummaryDataAsync(userId);
             var user = summaryRes.Item2;
             var summaryDto = summaryRes.Item1;
 
             if (user == null)
+            {
+                Logger.Error("User not found [User#{0}]", userId);
                 return OkMsg(new object(), "User not found!");
+            }
 
             return OkMsg(((IInvestmentsApi) this).GetSummaryData(user, summaryDto));
         }

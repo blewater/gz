@@ -45,7 +45,7 @@ namespace gzWeb.Providers
                     _logger.Info("Authentication attempt for user '{0}' failed. Invalid email.", context.UserName);
                     return;
                 }
-
+                
                 user = await userManager.CheckPasswordAsync(user, context.Password) ? user : null;
                 if (user == null)
                 {
@@ -54,6 +54,9 @@ namespace gzWeb.Providers
                     return;
                 }
             }
+
+            user.LastLogin = DateTime.UtcNow;
+            await userManager.UpdateAsync(user);
 
             // TODO: in case of ...
             //if (!user.EmailConfirmed)
