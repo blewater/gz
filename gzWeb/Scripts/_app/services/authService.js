@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log) {
         var factory = {};
 
         // #region AuthData
@@ -248,7 +248,7 @@
         // #endregion
 
         // #region Login
-        function gzLogin(usernameOrEmail, password) {
+        factory.gzLogin = function(usernameOrEmail, password) {
             var q = $q.defer();
 
             api.login(usernameOrEmail, password).then(function (gzLoginResult) {
@@ -275,8 +275,10 @@
             }
 
             emWamp.login(params).then(function (emLoginResult) {
+                factory.data.username = usernameOrEmail;
                 q.resolve(emLoginResult);
             }, function (error) {
+                factory.data.username = '';
                 q.reject(error ? error.desc : false);
             });
             return q.promise;
@@ -288,20 +290,22 @@
                 if (emLoginResult.hasToEnterCaptcha)
                     q.resolve({ enterCaptcha: true });
                 else {
-                    gzLogin(usernameOrEmail, password).then(function () {
+                    factory.gzLogin(usernameOrEmail, password).then(function () {
                         api.cacheUserData();
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
+                        $log.error("Greenzorro login failed for user " + usernameOrEmail + ": " + gzLoginError);
                         q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
                     });
                 }
             }, function (emLoginError) {
-                gzLogin(usernameOrEmail, password).then(function () {
-                    api.cacheUserData();
-                    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
-                }, function (gzLoginError) {
-                    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
-                });
+                //gzLogin(usernameOrEmail, password).then(function () {
+                //    api.cacheUserData();
+                //    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
+                //}, function (gzLoginError) {
+                //    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
+                //});
+                q.resolve({ emLogin: false, emError: emLoginError });
             });
             return q.promise;
         }
@@ -376,22 +380,28 @@
                                 api.finalizeRegistration(sessionInfo.userID).then(function () {
                                     q.resolve(true);
                                 }, function (finalizeError) {
-                                    q.reject("Registration step 6 (finalizeRegistration): " + finalizeError);
+                                    $log.error("Registration step 6 (finalizeRegistration): " + finalizeError);
+                                    q.reject(finalizeError);
                                 });
                             }, function (getSessionInfoError) {
-                                q.reject("Registration step 5 (getSessionInfo): " + getSessionInfoError);
+                                $log.error("Registration step 5 (getSessionInfo): " + getSessionInfoError);
+                                q.reject(getSessionInfoError);
                             });
                         }, function (emLoginError) {
-                            q.reject("Registration step 4 (emLogin): " + emLoginError);
+                            $log.error("Registration step 4 (emLogin): " + emLoginError);
+                            q.reject(emLoginError);
                         });
                     }, function (emRegisterError) {
-                        revoke("Registration step 3 (emRegister): " + emRegisterError.desc);
+                        $log.error("Registration step 3 (emRegister): " + emRegisterError.desc);
+                        revoke(emRegisterError.desc);
                     });
                 }, function (gzLoginError) {
-                    revoke("Registration step 2 (gzLogin): " + gzLoginError.desc);
+                    $log.error("Registration step 2 (gzLogin): " + gzLoginError.desc);
+                    revoke(gzLoginError.desc);
                 });
             }, function(gzRegisterError) {
-                q.reject("Registration step 1 (gzRegister): " + gzRegisterError.data.Message);
+                $log.error("Registration step 1 (gzRegister): " + gzRegisterError.data.Message);
+                q.reject(gzRegisterError.data.Message);
             });
 
             return q.promise;

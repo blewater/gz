@@ -143,6 +143,9 @@ header {
 .user-info .dropdown-menu > li > a:focus {
     color: #27A95C;
 }
+.user-info .dropdown-menu > li.fullname {
+    cursor: default;
+}
 
 /*.navbar-collapse {
     background-color: #27A95C;

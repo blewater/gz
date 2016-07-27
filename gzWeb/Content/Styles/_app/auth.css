@@ -514,6 +514,26 @@
 /*.auth.change-password button.submit { width: 160px; }*/
 /* #endregion */
 
+
+/* #region Investment Access Error */
+.auth.investment-access-error .alert.alert-danger {
+    padding-right: 20px;
+    margin: 0;
+}
+.auth.investment-access-error .alert.alert-danger a {
+    opacity: .5;
+    position: absolute;
+    right: 0;
+    top: 10px;
+    font-size: 25px;
+    color: #000;
+    text-decoration: none;
+}
+.auth.investment-access-error .alert.alert-danger a:hover {
+    opacity: .8;
+}
+/* #endregion */
+
 .pac-container {
     z-index: 99999999;
 }

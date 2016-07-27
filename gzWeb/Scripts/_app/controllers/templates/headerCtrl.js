@@ -36,7 +36,22 @@
             $location.path(constants.routes.games.path);
         };
         $scope.toInvestments = function () {
-            $location.path(constants.routes.summary.path);
+            if ($scope._authData.isInvestor)
+                $location.path(constants.routes.summary.path);
+            else {
+                message.open({
+                    nsType: 'modal',
+                    nsSize: '600px',
+                    nsTemplate: '/partials/messages/investmentAccessError.html',
+                    nsCtrl: 'investmentAccessErrorCtrl',
+                    nsStatic: true,
+                    // TODO Pass username
+                    //nsParams: {
+                    //    username: $scope._authData.email
+                    //}
+                });
+                //message.error('Cannot connect to investment');
+            }
         };
 
         $scope.login = function () {
@@ -100,14 +115,6 @@
             $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
             if ($scope.hasGamingBalance)
                 $scope.gamingBalance = $scope._authData.gamingAccount.amount;
-            //if ($scope.hasGamingBalance) {
-            //    emBanking.getGamingAccounts(true, true)
-            //        .then(function(result) {
-            //            $scope.gamingBalance = result.accounts[0].amount;
-            //            },
-            //        function (error) { });
-            //    $scope.gamingBalance = $scope._authData.gamingAccount.amount;
-            //}
             $scope.currency = $scope._authData.currency;
         }
         
