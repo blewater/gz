@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -54,7 +53,7 @@ namespace gzWeb.Controllers
         //    AccessTokenFormat = accessTokenFormat;
         //}
 
-        // TODO: public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
+        //public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
         #endregion
 
         // POST api/Account/Logout
@@ -130,20 +129,21 @@ namespace gzWeb.Controllers
         [Route("ChangePassword")]
         public async Task<IHttpActionResult> ChangePassword(ChangePasswordBindingModel model)
         {
-            Logger.Info("ChangePassword requested for [User#{0}]", User.Identity.GetUserId<int>());
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId<int>(), model.OldPassword, model.NewPassword);
+            var userId = User.Identity.GetUserId<int>();
+            IdentityResult result = await UserManager.ChangePasswordAsync(userId, model.OldPassword, model.NewPassword);
 
             if (!result.Succeeded)
             {
-                Logger.Error("UserManager.ChangePasswordAsync Failed: {0}",
+                Logger.Error("ChangePassword for [User#{0}]. Failed with error: {1}", userId,
                              String.Join(Environment.NewLine, result.Errors));
 
                 return GetErrorResult(result);
             }
+
+            Logger.Info("ChangePassword for [User#{0}]. Succeeded.", userId);
 
             return Ok();
         }
@@ -152,20 +152,21 @@ namespace gzWeb.Controllers
         [Route("SetPassword")]
         public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)
         {
-            Logger.Info("ChangePassword requested for [User#{0}]", User.Identity.GetUserId<int>());
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-        
-            IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId<int>(), model.NewPassword);
+
+            var userId = User.Identity.GetUserId<int>();
+            IdentityResult result = await UserManager.AddPasswordAsync(userId, model.NewPassword);
 
             if (!result.Succeeded)
             {
-                Logger.Error("UserManager.AddPasswordAsync Failed: {0}",
-                             String.Join(Environment.NewLine, result.Errors));
+                Logger.Error("SetPassword for [User#{0}]. Failed with error: {1}", userId,
+                            String.Join(Environment.NewLine, result.Errors));
 
                 return GetErrorResult(result);
             }
+
+            Logger.Info("SetPassword for [User#{0}]. Succeeded.", userId);
 
             return Ok();
         }
@@ -175,19 +176,21 @@ namespace gzWeb.Controllers
         [Route("ForgotPassword")]
         public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            Logger.Info("ForgotPassword requested for [User#{0}].", model.Email);
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null /*|| !await UserManager.IsEmailConfirmedAsync(user.Id)*/)
             {
-                Logger.Error("User not found. [User#{0}]", model.Email);
+                Logger.Error("User with email '{0}' not found.", model.Email);
                 return BadRequest();
             }
 
-            return Ok(await UserManager.GeneratePasswordResetTokenAsync(user.Id));
+            var token = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+
+            Logger.Info("ForgotPassword for [User#{0}] with email:'{1}'. Succeeded.", user.Id, model.Email);
+
+            return Ok(token);
         }
 
         [HttpPost]
@@ -195,25 +198,25 @@ namespace gzWeb.Controllers
         [Route("ResetPassword")]
         public async Task<IHttpActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            Logger.Info("ResetPassword requested for [User#{0}].", model.Email);
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var user = await UserManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                Logger.Error("User not found. [User#{0}]", model.Email);
+                Logger.Error("User with email '{0}' not found.", model.Email);
                 return BadRequest();
             }
 
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (!result.Succeeded)
             {
-                Logger.Error("UserManager.ResetPasswordAsync Failed: {0}",
+                Logger.Error("ResetPassword for [User#{0}] failed with error: {1}", user.Id,
                              String.Join(Environment.NewLine, result.Errors));
                 return BadRequest();
             }
+
+            Logger.Info("ResetPassword for [User#{0}]. Succeeded.", user.Id);
 
             return Ok();
         }
@@ -440,14 +443,31 @@ namespace gzWeb.Controllers
                        };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-
             if (!result.Succeeded)
             {
-                Logger.Error("UserManager.CreateAsync Faild. {0}",
+                Logger.Error("Registration for User with username: '{0}' and email: '{1}' failed with error: {2}",
+                             model.Username,
+                             model.Email,
                              String.Join(Environment.NewLine, result.Errors));
+                var deleteResult = await UserManager.DeleteAsync(user);
+                if (!deleteResult.Succeeded)
+                {
+                    Logger.Warn(
+                            "Failed to delete User of unsuccessful registration with username: '{0}' and email: '{1}', with error: {2}",
+                            model.Username,
+                            model.Email,
+                            String.Join(Environment.NewLine, result.Errors));
+                }
+                else
+                {
+                    Logger.Info(
+                            "Delete of unsuccessful user registration with username: '{0}' and email: '{1}', succeeded.",
+                            model.Username, model.Email);
+                }
                 return GetErrorResult(result);
             }
 
+            #region In case of email confirmation ...
             //var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
             //var callbackUrl = Url.Link("MvcRoute",
             //                           new
@@ -458,8 +478,11 @@ namespace gzWeb.Controllers
             //                                   code = activationCode
             //                           });
             //callbackUrl += "&key=";
-            
             //return Ok(callbackUrl);
+            #endregion
+
+            Logger.Info("Registration for [User#{0} - {1}]. Succeeded.", user.Id, model.Username);
+
             return Ok(result);
         }
 
@@ -468,8 +491,7 @@ namespace gzWeb.Controllers
         public async Task<IHttpActionResult> RevokeRegistration()
         {
             var userId = User.Identity.GetUserId<int>();
-            Logger.Info("RevokeRegistration requested for [User#{0}].", userId);
-
+            
             var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
             {
@@ -480,10 +502,13 @@ namespace gzWeb.Controllers
             var result = await UserManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                Logger.Error("UserManager.DeleteAsync faild. {0}",
+                Logger.Error("RevokeRegistration for [User#{0}] failed with error: {1}", userId,
                              String.Join(Environment.NewLine, result.Errors));
                 return GetErrorResult(result);
             }
+
+            Logger.Info("RevokeRegistration for [User#{0}]. Succeeded.", userId);
+
 
             return Ok(result);
         }
@@ -493,29 +518,29 @@ namespace gzWeb.Controllers
         public async Task<IHttpActionResult> FinalizeRegistration(int gmUserId)
         {
             var userId = User.Identity.GetUserId<int>();
-            Logger.Info("FinalizeRegistration requested for [User#{0}].", userId);
-
             var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
             {
                 Logger.Error("User not found. [User#{0}]", userId);
-                return OkMsg(new object(), "User not found!");
+                return Ok("User not found!");
             }
 
-            return OkMsg(() =>
+            try
             {
-                if (!user.GmCustomerId.HasValue)
-                {
-                    user.GmCustomerId = gmUserId;
-                    _dbContext.SaveChanges();
-                }
+                _custPortfolioRepo.SaveDefaultPorfolio(user.Id, gmUserId);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "FinalizeRegistration for [User#{0}]. Failed.", userId);
+                throw;
+            }
 
-                var now = DateTime.UtcNow;
-                _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(user.Id, RiskToleranceEnum.Medium, now.Year, now.Month, now);
-                return true;
-            });
+            Logger.Info("FinalizeRegistration for [User#{0}]. Succeeded.", userId);
+
+            return Ok();
         }
 
+        #region In case of email confirmation ...
         [AllowAnonymous]
         [HttpPost]
         [Route("Activate")]
@@ -537,22 +562,12 @@ namespace gzWeb.Controllers
 
             var result = await UserManager.ConfirmEmailAsync(model.UserId, model.Code);
             if (!result.Succeeded)
-                Logger.Error("UserManager.ConfirmEmailAsync faild. {0}",
+                Logger.Error("UserManager.ConfirmEmailAsync failed. {0}",
                              String.Join(Environment.NewLine, result.Errors));
 
             return Ok(result.Succeeded ? "Ok" : "Error");
         }
-        
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && _userManager != null)
-            {
-                _userManager.Dispose();
-                _userManager = null;
-            }
-
-            base.Dispose(disposing);
-        }
+        #endregion
 
         #region Helpers
 
@@ -590,6 +605,7 @@ namespace gzWeb.Controllers
             return null;
         }
 
+        #region ExternalLoginData
         private class ExternalLoginData
         {
             public string LoginProvider { get; set; }
@@ -656,30 +672,29 @@ namespace gzWeb.Controllers
                 return HttpServerUtility.UrlTokenEncode(data);
             }
         }
-
         #endregion
 
-
-        // #region GetDeploymentInfo
-        private bool IsInDebugMode()
+        #endregion
+        
+        #region GetDeploymentInfo
+        private static bool IsInDebugMode()
         {
-            var debug =
 #if DEBUG
-                true;
+                return true;
 #else
-                false;
+                return false;
 #endif
-            return debug;
         }
+
         private string GetVersion()
         {
-            //return typeof(MvcApplication).Assembly.GetName().Version.ToString();
             var assembly = Assembly.GetAssembly(typeof(ApplicationOAuthProvider));
             var assemblyName = assembly.GetName().Name;
             var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
             var versionField = gitVersionInformationType.GetField("InformationalVersion");
             return versionField.GetValue(null).ToString();
         }
+
         private string GetReCaptchaSiteKey()
         {
             var host = Request.RequestUri.Host;
@@ -701,17 +716,20 @@ namespace gzWeb.Controllers
                 ReCaptchaSiteKey = GetReCaptchaSiteKey()
             });
         }
-        // #endregion
+        #endregion
 
-        /// GET api/Account/CacheUserData
-        [Authorize] // Redundant by defaull all class methods are
-        [Route("CacheUserData")]
+        // GET api/Account/CacheUserData
         [HttpPost]
-        public async Task<IHttpActionResult> CacheUserData() {
-
-            var user = await _userRepo.GetCachedUserAsync(User.Identity.GetUserId<int>());
+        [Route("CacheUserData")]
+        public async Task<IHttpActionResult> CacheUserData()
+        {
+            var userId = User.Identity.GetUserId<int>();
+            var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
+            {
+                Logger.Error("User not found [User#{0}", userId);
                 return Ok("User not found!");
+            }
 
             await _cacheUserData.Query(user.Id);
 

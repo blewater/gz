@@ -8,9 +8,9 @@ using Microsoft.AspNet.Identity;
 
 namespace gzWeb.Areas.Mvc.Controllers
 {
-    // [Authorize]
     public class InvestmentsController : Controller
     {
+        // TODO: Only for performance tests should be removed.
         public async Task<ActionResult> TestSummary() {
 
             using (var db = new ApplicationDbContext()) {

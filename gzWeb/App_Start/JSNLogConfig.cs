@@ -3,9 +3,9 @@ using System.Web.Routing;
 using System.Web.Mvc;
 
 [assembly: WebActivatorEx.PostApplicationStartMethod(
-    typeof(gzWeb.App_Start.JSNLogConfig), "PostStart")]
+    typeof(gzWeb.JSNLogConfig), "PostStart")]
 
-namespace gzWeb.App_Start
+namespace gzWeb
 {
     public static class JSNLogConfig
     {

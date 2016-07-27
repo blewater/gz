@@ -6,6 +6,6 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface IEmailService
     {
-        Task SendEmail(string templateCode, MailAddress fromAddress, string toAddress, Dictionary<object, object> data);
+        Task SendEmail(string templateCode, MailAddress fromAddress, string toAddress, Dictionary<string, object> data);
     }
 }

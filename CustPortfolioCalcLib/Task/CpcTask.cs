@@ -16,13 +16,9 @@ namespace gzCpcLib.Task {
         /// Return an observable for the declared task
         /// 
         /// </summary>
-        public IObservable<Unit> TaskObservable {
-            get {
-                return System.Threading.Tasks.Task.Factory
-                    .StartNew(DoTask)
-                    .ToObservable();
-            }
-        }
+        public IObservable<Unit> TaskObservable => System.Threading.Tasks.Task.Factory
+                                                    .StartNew(DoTask)
+                                                    .ToObservable();
 
         /// <summary>
         /// 

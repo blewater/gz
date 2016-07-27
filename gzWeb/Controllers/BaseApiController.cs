@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Net.Http;
 using System.Web.Http;
 using gzDAL.Conf;
 using gzWeb.Utilities;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace gzWeb.Controllers
 {
