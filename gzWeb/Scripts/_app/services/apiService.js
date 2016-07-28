@@ -71,7 +71,7 @@
         }
 
         factory.finalizeRegistration = function (userId) {
-            return $http.post('/api/Account/FinalizeRegistration?userId=' + userId);
+            return $http.post('/api/Account/FinalizeRegistration?gmUserId=' + userId);
         }
 
         factory.forgotPassword = function (email) {
