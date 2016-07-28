@@ -9,8 +9,11 @@
         };
 
         var _call = function (uri, parameters) {
-
-            $log.trace("emWamp: '" + uri + "' with parameters: '" + angular.toJson(parameters) + "'");
+            var traceMsg = "emWamp: '" + uri + "'";
+            if (angular.isDefined(parameters)) {
+                traceMsg = traceMsg + " with parameters: '" + angular.toJson(parameters) + "'";
+            }
+            $log.trace(traceMsg);
 
             var callReturn = $wamp.call(uri, [], parameters);
 
