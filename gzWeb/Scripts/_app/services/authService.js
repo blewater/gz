@@ -373,7 +373,7 @@
             }
 
             gzRegister(parameters).then(function (gzRegisterResult) {
-                gzLogin(parameters.username, parameters.password).then(function (gzLoginResult) {
+                factory.gzLogin(parameters.username, parameters.password).then(function (gzLoginResult) {
                     emRegister(parameters).then(function (emRegisterResult) {
                         emLogin(parameters.username, parameters.password).then(function (emLoginResult) {
                             emWamp.getSessionInfo().then(function (sessionInfo) {
