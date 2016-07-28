@@ -20,6 +20,15 @@
             return parameters;
         }
 
+        function getLogMessage(uri, parameters) {
+            var traceMsg = "emWamp: '" + uri + "'. ";
+            if (angular.isDefined(parameters)) {
+                traceMsg = traceMsg + " with parameters: '" + angular.toJson(stripSensitiveData(parameters)) + "'. ";
+            }
+
+            return traceMsg;
+        }
+
         var _call = function (uri, parameters) {
 
             var callReturn = $wamp.call(uri, [], parameters);
@@ -27,13 +36,13 @@
             var originalFunc = callReturn.then;
             callReturn.then = function(successCallback, failureCallback) {
                 function success(d) {
-                    $log.trace("emWamp: '" + uri + "' with parameters: '" + angular.toJson(stripSensitiveData(parameters)) + "'. Success.");
+                    $log.trace(getLogMessage(uri,parameters) + "Success.");
                     if (typeof (successCallback) === 'function')
                         successCallback(d && d.kwargs);
                 }
 
                 function error(e) {
-                    $log.error("emWamp: '" + uri + "' with parameters: '" + angular.toJson(stripSensitiveData(parameters)) + "'. Failed with error: '" + angular.toJson(e) + "'.");
+                    $log.error((uri,parameters) + "Failed with error: '" + angular.toJson(e) + "'.");
                     if (typeof (failureCallback) === 'function')
                         failureCallback(e.kwargs);
                 }
