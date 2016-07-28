@@ -8,22 +8,32 @@
             $log.error(error);
         };
 
-        var _call = function (uri, parameters) {
+        function stripSensitiveData(parameters) {
+            angular.forEach(parameters, function (value, key) {
+                if (key.indexOf("password") !== -1) {
+                    parameters[key] = "******";
+                }
+                //else if (key.indexOf("iovationBlackbox") !== -1) {
+                //    parameters[key] = value.substr(0, 8) + " ....";
+                //}
+            });
+            return parameters;
+        }
 
-            $log.trace("emWamp: '" + uri + "' with parameters: '" + angular.toJson(parameters) + "'");
+        var _call = function (uri, parameters) {
 
             var callReturn = $wamp.call(uri, [], parameters);
 
             var originalFunc = callReturn.then;
             callReturn.then = function(successCallback, failureCallback) {
                 function success(d) {
-                    $log.trace("Success.");
+                    $log.trace("emWamp: '" + uri + "' with parameters: '" + angular.toJson(stripSensitiveData(parameters)) + "'. Success.");
                     if (typeof (successCallback) === 'function')
                         successCallback(d && d.kwargs);
                 }
 
                 function error(e) {
-                    $log.error("emWamp: '" + uri + "' with parameters: '" + angular.toJson(parameters) + "'. Failed with error: '" + angular.toJson(e) + "'.");
+                    $log.error("emWamp: '" + uri + "' with parameters: '" + angular.toJson(stripSensitiveData(parameters)) + "'. Failed with error: '" + angular.toJson(e) + "'.");
                     if (typeof (failureCallback) === 'function')
                         failureCallback(e.kwargs);
                 }
@@ -33,6 +43,8 @@
 
             return callReturn;
         };
+
+        
 
         var service = {
             call: _call,
