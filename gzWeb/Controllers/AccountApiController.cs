@@ -445,7 +445,7 @@ namespace gzWeb.Controllers
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                Logger.Error("Registration for User with username: '{0}' and email: '{1}' failed with error: {2}",
+                Logger.Error("gzRegistration for User with username: '{0}' and email: '{1}' failed with error: {2}",
                              model.Username,
                              model.Email,
                              String.Join(Environment.NewLine, result.Errors));
@@ -453,7 +453,7 @@ namespace gzWeb.Controllers
                 if (!deleteResult.Succeeded)
                 {
                     Logger.Warn(
-                            "Failed to delete User of unsuccessful registration with username: '{0}' and email: '{1}', with error: {2}",
+                            "Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
                             model.Username,
                             model.Email,
                             String.Join(Environment.NewLine, result.Errors));
@@ -461,7 +461,7 @@ namespace gzWeb.Controllers
                 else
                 {
                     Logger.Info(
-                            "Delete of unsuccessful user registration with username: '{0}' and email: '{1}', succeeded.",
+                            "Delete of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
                             model.Username, model.Email);
                 }
                 return GetErrorResult(result);
@@ -481,7 +481,7 @@ namespace gzWeb.Controllers
             //return Ok(callbackUrl);
             #endregion
 
-            Logger.Info("Registration for [User#{0} - {1}]. Succeeded.", user.Id, model.Username);
+            Logger.Info("gzRegistration for [User#{0} - {1}]. Succeeded.", user.Id, model.Username);
 
             return Ok(result);
         }
