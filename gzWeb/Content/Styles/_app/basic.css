@@ -269,7 +269,7 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     -ms-appearance: none;
     -o-appearance: none;
     appearance: none;
-    background: url('../../Images/select_arrow_down.png') no-repeat right;
+    background: url('../../../Content/Images/select_arrow_down.png') no-repeat right;
     cursor: pointer;
     background-color: #fff;
     color: #a5a5a5;
