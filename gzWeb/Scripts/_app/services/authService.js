@@ -372,35 +372,54 @@
                 });
             }
 
+            var registrationSteps = ['gzRegister', 'gzLogin', 'emRegister', 'emLogin', 'getSessionInfo', 'finalizeRegistration'];
+            function logStepMsg(name) {
+                var step = registrationSteps.indexOf(name) + 1;
+                return "Registration step " + step + " (" + name + ")";
+            }
+            function logStepSucceeded(name, user) {
+                $log.info(logStepMsg(name) + " for user " + user + " succeeded!");
+            }
+            function logStepFailed(name, msg) {
+                $log.error(logStepMsg(name) + ": " + msg);
+            }
+
             gzRegister(parameters).then(function (gzRegisterResult) {
+                var user = parameters.email || parameters.username;
+                logStepSucceeded("gzRegister", user);
                 factory.gzLogin(parameters.username, parameters.password).then(function (gzLoginResult) {
+                    logStepSucceeded("gzLogin", user);
                     emRegister(parameters).then(function (emRegisterResult) {
+                        logStepSucceeded("emRegister", user);
                         emLogin(parameters.username, parameters.password).then(function (emLoginResult) {
+                            logStepSucceeded("emLogin", user);
                             emWamp.getSessionInfo().then(function (sessionInfo) {
+                                logStepSucceeded("getSessionInfo", user);
                                 api.finalizeRegistration(sessionInfo.userID).then(function () {
+                                    logStepSucceeded("finalizeRegistration", user);
                                     q.resolve(true);
                                 }, function (finalizeError) {
-                                    $log.error("Registration step 6 (finalizeRegistration): " + finalizeError);
+                                    logStepFailed("finalizeRegistration", finalizeError);
                                     q.reject(finalizeError);
                                 });
                             }, function (getSessionInfoError) {
-                                $log.error("Registration step 5 (getSessionInfo): " + getSessionInfoError);
+                                logStepFailed("getSessionInfo", getSessionInfoError);
                                 q.reject(getSessionInfoError);
                             });
                         }, function (emLoginError) {
-                            $log.error("Registration step 4 (emLogin): " + emLoginError);
+                            logStepFailed("emLogin", emLoginError);
                             q.reject(emLoginError);
                         });
                     }, function (emRegisterError) {
-                        $log.error("Registration step 3 (emRegister): " + emRegisterError.desc);
+                        logStepFailed("emRegister", emRegisterError.desc);
                         revoke(emRegisterError.desc);
                     });
                 }, function (gzLoginError) {
-                    $log.error("Registration step 2 (gzLogin): " + gzLoginError.desc);
+                    logStepFailed("gzLogin", gzLoginError.desc);
                     revoke(gzLoginError.desc);
                 });
             }, function(gzRegisterError) {
-                $log.error("Registration step 1 (gzRegister): " + gzRegisterError.data.Message);
+                logStepFailed("gzRegister", gzRegisterError.data.Message);
                 q.reject(gzRegisterError.data.Message);
             });
 
