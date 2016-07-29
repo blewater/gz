@@ -52,7 +52,7 @@
             $scope.years = $filter('getRange')([], maxYear, 1900, 1, true);
             if ($scope.years.indexOf(yearOfBirth) !== -1)
                 $scope.model.yearOfBirth = yearOfBirth;
-            loadMonths(country, $scope.yearOfBirth);
+            loadMonths(country, $scope.model.yearOfBirth);
 
             $scope.loadingYears = false;
         }
