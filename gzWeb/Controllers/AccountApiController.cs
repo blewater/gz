@@ -425,7 +425,7 @@ namespace gzWeb.Controllers
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
         {
-            Logger.Info("Register requested for [User - {0}/{1}].", model.Username, model.Email);
+            Logger.Info("Server Registration Step 1:Register requested for [User - {0}/{1}].", model.Username, model.Email);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -445,7 +445,7 @@ namespace gzWeb.Controllers
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                Logger.Error("gzRegistration for User with username: '{0}' and email: '{1}' failed with error: {2}",
+                Logger.Error("Server Registration Step 1:gzRegistration for User with username: '{0}' and email: '{1}' failed with error: {2}",
                              model.Username,
                              model.Email,
                              String.Join(Environment.NewLine, result.Errors));
@@ -453,7 +453,7 @@ namespace gzWeb.Controllers
                 if (!deleteResult.Succeeded)
                 {
                     Logger.Warn(
-                            "Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
+                            "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
                             model.Username,
                             model.Email,
                             String.Join(Environment.NewLine, result.Errors));
@@ -461,7 +461,7 @@ namespace gzWeb.Controllers
                 else
                 {
                     Logger.Info(
-                            "Delete of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
+                            "Server Registration Step 1:Delete of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
                             model.Username, model.Email);
                 }
                 return GetErrorResult(result);
@@ -481,7 +481,7 @@ namespace gzWeb.Controllers
             //return Ok(callbackUrl);
             #endregion
 
-            Logger.Info("gzRegistration for [User#{0} - {1}]. Succeeded.", user.Id, model.Username);
+            Logger.Info("Server Registration Step 1:gzRegistration for [User#{0} - {1}]. Succeeded.", user.Id, model.Username);
 
             return Ok(result);
         }
@@ -531,11 +531,11 @@ namespace gzWeb.Controllers
             }
             catch (Exception exception)
             {
-                Logger.Error(exception, "FinalizeRegistration for [User#{0}]. Failed.", userId);
+                Logger.Error(exception, "Server Registration Step 6: FinalizeRegistration for [User#{0}]. Failed.", userId);
                 throw;
             }
 
-            Logger.Info("FinalizeRegistration for [User#{0}]. Succeeded.", userId);
+            Logger.Info("Server Registration Step 6: GzFinalizeRegistration for [User#{0}]. Succeeded.", userId);
 
             return Ok();
         }
