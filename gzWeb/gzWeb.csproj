@@ -537,9 +537,6 @@
     <Compile Include="Controllers\AccountApiController.cs" />
     <Compile Include="Controllers\InvestmentsApiController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Areas\Mvc\Models\AccountViewModels.cs" />
     <Compile Include="Areas\Mvc\Models\ManageViewModels.cs" />
@@ -629,7 +626,6 @@
     <Content Include="EMTestApi.html" />
     <Content Include="favicon.ico" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Global.asax" />
     <Content Include="Content\Styles\Site.css" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.woff" />

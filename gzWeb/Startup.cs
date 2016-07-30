@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -22,6 +23,7 @@ using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Integration.WebApi;
 using FluentScheduler;
 using gzWeb.Utilities;
+using NLog;
 
 [assembly: OwinStartupAttribute(typeof(gzWeb.Startup))]
 namespace gzWeb {
@@ -42,6 +44,19 @@ namespace gzWeb {
     {
         public void Configuration(IAppBuilder app)
         {
+            AreaRegistration.RegisterAllAreas();
+
+#if DEBUG
+            // Check from web.config or Azure settings if db needs to be init
+            bool dbMigrateToLatest = bool.Parse(ConfigurationManager.AppSettings["MigrateDatabaseToLatestVersion"]);
+
+            if (dbMigrateToLatest) {
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
+                // Initialize to latest version only if not run before
+                new ApplicationDbContext().Database.Initialize(false);
+            }
+#endif
+            // Method body should be kept empty; please put any initializations in Startup.cs
             NLog.GlobalDiagnosticsContext.Set("gzConnectionString", ConfigurationManager.ConnectionStrings[ApplicationDbContext.GetCompileModeConnString(null)].ConnectionString);
 
             //AreaRegistration.RegisterAllAreas();
