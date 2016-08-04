@@ -24,7 +24,8 @@
 
 
 
+
+
 GO
-CREATE UNIQUE CLUSTERED INDEX [IDX_PlayerRevRpt_ID_YMD]
-    ON [dbo].[PlayerRevRpt]([User ID] ASC, [YearMonthDay] DESC);
+
 

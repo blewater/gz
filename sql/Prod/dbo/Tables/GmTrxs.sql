@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[GmTrxs] (
     [Id]            INT              IDENTITY (1, 1) NOT NULL,
     [CustomerId]    INT              NULL,
-    [YearMonthCtd]  NVARCHAR (6)     NULL,
+    [YearMonthCtd]  CHAR (6)         NULL,
     [TypeId]        INT              NOT NULL,
     [CreatedOnUtc]  DATETIME         NOT NULL,
     [Amount]        DECIMAL (29, 16) NOT NULL,
@@ -11,6 +11,8 @@
     CONSTRAINT [FK_dbo.GmTrxs_dbo.AspNetUsers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[AspNetUsers] ([Id]),
     CONSTRAINT [FK_dbo.GmTrxs_dbo.GmTrxTypes_TypeId] FOREIGN KEY ([TypeId]) REFERENCES [dbo].[GmTrxTypes] ([Id]) ON DELETE CASCADE
 );
+
+
 
 
 GO
