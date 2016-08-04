@@ -1,11 +1,11 @@
 ﻿CREATE TABLE [dbo].[GzTrxs] (
     [Id]                INT              IDENTITY (1, 1) NOT NULL,
     [CustomerId]        INT              NOT NULL,
-    [YearMonthCtd]      NVARCHAR (6)     NOT NULL,
+    [YearMonthCtd]      CHAR (6)         NOT NULL,
     [TypeId]            INT              NOT NULL,
+    [CreditPcntApplied] REAL             NULL,
     [CreatedOnUTC]      DATETIME         NOT NULL,
     [Amount]            DECIMAL (29, 16) NOT NULL,
-    [CreditPcntApplied] REAL             NULL,
     [ParentTrxId]       INT              NULL,
     [GmTrxId]           INT              NULL,
     CONSTRAINT [PK_dbo.GzTrxs] PRIMARY KEY CLUSTERED ([Id] ASC),
@@ -16,13 +16,14 @@
 );
 
 
-GO
-ALTER TABLE [dbo].[GzTrxs] NOCHECK CONSTRAINT [FK_dbo.GzTransactions_dbo.GzTransactionTypes_TypeId];
 
 
 GO
-CREATE NONCLUSTERED INDEX [CustomerId_Mon_idx_gztransaction]
-    ON [dbo].[GzTrxs]([CustomerId] ASC, [YearMonthCtd] ASC, [TypeId] ASC);
+
+
+
+GO
+
 
 
 GO
@@ -33,4 +34,19 @@ CREATE NONCLUSTERED INDEX [IX_ParentTrxId]
 GO
 CREATE NONCLUSTERED INDEX [IX_GmTrxId]
     ON [dbo].[GzTrxs]([GmTrxId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_CustomerId_YM_TId_Amnt]
+    ON [dbo].[GzTrxs]([CustomerId] ASC, [YearMonthCtd] ASC, [TypeId] ASC, [Amount] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_CustomerId_TId_Amnt]
+    ON [dbo].[GzTrxs]([CustomerId] ASC, [TypeId] ASC, [Amount] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_GzTrxs_Cust_TypeId_Amount]
+    ON [dbo].[GzTrxs]([CustomerId] ASC, [TypeId] ASC, [Amount] ASC);
 

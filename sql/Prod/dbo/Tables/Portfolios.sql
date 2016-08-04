@@ -8,7 +8,11 @@
 );
 
 
+
+
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_RiskTolerance]
+CREATE NONCLUSTERED INDEX [IX_RiskTolerance]
     ON [dbo].[Portfolios]([RiskTolerance] ASC);
+
+
 

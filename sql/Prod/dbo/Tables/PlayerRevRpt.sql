@@ -21,9 +21,3 @@
     CONSTRAINT [PK_PlayerRevRpt_ID] PRIMARY KEY NONCLUSTERED ([ID] ASC)
 );
 
-
-
-
-GO
-
-
