@@ -746,6 +746,7 @@
     <Content Include="Content\Images\games_green.svg" />
     <Content Include="Areas\Mvc\Views\Guest\Contact.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\TestSummary.cshtml" />
+    <None Include="Properties\PublishProfiles\greenzorrodev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
