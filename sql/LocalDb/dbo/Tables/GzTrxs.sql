@@ -16,9 +16,10 @@
 );
 
 
+
+
 GO
-CREATE NONCLUSTERED INDEX [IDX_GzTrxs_Cust_TypeId_Amount]
-    ON [dbo].[GzTrxs]([CustomerId] ASC, [TypeId] ASC, [Amount] ASC);
+
 
 
 GO
