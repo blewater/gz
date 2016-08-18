@@ -33,35 +33,29 @@ namespace gzDAL.Models {
         [Required]
         public int LOCK_IN_NUM_DAYS { get; set; } = 90;
 
-        private float commissionPcnt = 1.5f;
         /// <summary>
         /// greenzorro percentage fee % i.e. 1.5 -> Amount * 0.015
         /// </summary>
         [Required]
-        public float COMMISSION_PCNT {
-            get { return commissionPcnt; }
-            set { commissionPcnt = value; }
-        }
+        public float COMMISSION_PCNT { get; set; } = 1.5f;
 
-        private float fundFeePcnt = 2.5f;
         /// <summary>
         /// Fund fee % i.e 2.5 -> Amount * 0.025
         /// </summary>
         [Required]
-        public float FUND_FEE_PCNT {
-            get { return fundFeePcnt; }
-            set { fundFeePcnt = value; }
-        }
+        public float FUND_FEE_PCNT { get; set; } = 2.5f;
 
-        private float creditLossPcnt = 50;
         /// <summary>
         /// Percentage to credit on loss.
         /// </summary>
         [Required]
-        public float CREDIT_LOSS_PCNT {
-            get { return creditLossPcnt; }
-            set { creditLossPcnt = value; }
-        }
+        public float CREDIT_LOSS_PCNT { get; set; } = 50;
+
+        /// <summary>
+        /// Default Portfolio for new Customers
+        /// </summary>
+        public RiskToleranceEnum FIRST_PORTFOLIO_RISK_VAL { get; set; } = RiskToleranceEnum.Medium;
+
 
     }
 }
