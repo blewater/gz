@@ -180,6 +180,11 @@ namespace gzDAL.Repos
             if (user==null)
                 throw new InvalidOperationException("User not found.");
 
+            var defaultPortfolioRisk = 
+                db.GzConfigurations
+                .Select(c => c.FIRST_PORTFOLIO_RISK_VAL)
+                .Single();
+
             ConnRetryConf.TransactWithRetryStrategy(
                     db,
                     () =>
@@ -187,7 +192,7 @@ namespace gzDAL.Repos
                         if (!user.GmCustomerId.HasValue)
                             user.GmCustomerId = gmUserId;
                         var now = DateTime.UtcNow;
-                        SaveDbCustMonthsPortfolioMixImpl(customerId, RiskToleranceEnum.Medium, 100, now.Year, now.Month, now);
+                        SaveDbCustMonthsPortfolioMixImpl(customerId, defaultPortfolioRisk, 100, now.Year, now.Month, now);
                     });
         }
 
