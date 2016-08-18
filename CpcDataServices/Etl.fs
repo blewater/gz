@@ -125,7 +125,7 @@ module public Etl =
                     exactlyOneOrDefault
             }
             |> (fun playerRow -> 
-            if playerRow = null then 
+            if isNull <| playerRow then 
                 let newPlayerRow = insertDbRowValues datePart excelRow
                 db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
             else updateDbRowValues datePart excelRow playerRow |> ignore)
