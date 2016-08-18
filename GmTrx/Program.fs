@@ -2,28 +2,26 @@
 open FSharp.Configuration
 open CpcDataServices
 
-type Settings = AppSettings<"app.config">
-
+type Settings = AppSettings< "app.config" >
 #if DEBUG
+
 let connString = Settings.ConnectionStrings.GzDevDb
+
 printfn "Development db: %s" connString
 #else
 let connString = Settings.ConnectionStrings.GzProdDb
 printfn "PRODUCTION db: %s" connString
 #endif
 
+
 let inRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelInFolder)
 
 [<EntryPoint>]
 let main argv = 
-
     Etl.Phase1Processing connString inRptFolder
-
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore
     0
-
-
 (*****
 * Notes
 * http://stackoverflow.com/questions/22608584/how-to-project-transform-an-array-of-fileinfo-to-a-list-of-strings-with-fsharp/22608949#22608949
