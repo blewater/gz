@@ -34,7 +34,7 @@ namespace gzWeb.Providers
 
             if (user == null)
             {
-                _logger.Info("Authentication attempt for user '{0}' failed. Invalid username or password. Checking for email.", context.UserName);
+                _logger.Info("Authentication by username attempt for user '{0}' failed. Invalid username or password. Checking for email.", context.UserName);
 
                 const string ERROR_TYPE = "invalid_grant";
                 const string ERROR_MSG = "The username/email or password is incorrect.";
@@ -42,7 +42,7 @@ namespace gzWeb.Providers
                 if (user == null)
                 {
                     context.SetError(ERROR_TYPE, ERROR_MSG);
-                    _logger.Info("Authentication attempt for user '{0}' failed. Invalid email.", context.UserName);
+                    _logger.Info("Authentication by email attempt for user '{0}' failed. Invalid email.", context.UserName);
                     return;
                 }
                 
@@ -50,7 +50,7 @@ namespace gzWeb.Providers
                 if (user == null)
                 {
                     context.SetError(ERROR_TYPE, ERROR_MSG);
-                    _logger.Info("Authentication attempt for user '{0}' failed. Invalid password.", context.UserName);
+                    _logger.Info("Authentication password attempt for user '{0}' check failed. Invalid password.", context.UserName);
                     return;
                 }
             }
