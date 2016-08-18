@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
@@ -46,20 +47,23 @@ namespace gzWeb {
         {
             AreaRegistration.RegisterAllAreas();
 
+            var gzConnStringTupleNameValue = GetDbConnStringValue();
+            var gzDbConnStringName = gzConnStringTupleNameValue.Item1.ToLower();
+            var gzDbConnStringValue = gzConnStringTupleNameValue.Item2;
 #if DEBUG
             // Check from web.config or Azure settings if db needs to be init
             bool dbMigrateToLatest = bool.Parse(ConfigurationManager.AppSettings["MigrateDatabaseToLatestVersion"]);
 
-            if (dbMigrateToLatest) {
+            // Add 1 more check against prod database in case debug mode is on
+            if (dbMigrateToLatest && !gzDbConnStringName.Contains("prod")) {
                 Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Migrations.Configuration>());
                 // Initialize to latest version only if not run before
                 new ApplicationDbContext().Database.Initialize(false);
             }
 #endif
             // Method body should be kept empty; please put any initializations in Startup.cs
-            NLog.GlobalDiagnosticsContext.Set("gzConnectionString", ConfigurationManager.ConnectionStrings[ApplicationDbContext.GetCompileModeConnString(null)].ConnectionString);
+            NLog.GlobalDiagnosticsContext.Set("gzConnectionString", gzDbConnStringValue);
 
-            //AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -129,5 +133,19 @@ namespace gzWeb {
 
             return container;
         }
+
+        /// <summary>
+        /// 
+        /// Return the RunTime Configured Db Connection String Name & Value
+        /// 
+        /// </summary>
+        /// <returns>Tuple of DbConn Name & Value</returns>
+        private Tuple<string, string> GetDbConnStringValue() {
+
+            var gzDbConnStringName = ApplicationDbContext.GetCompileModeConnString(null);
+            var gzDbConnStringValue = ConfigurationManager.ConnectionStrings[gzDbConnStringName].ConnectionString;
+            return Tuple.Create(gzDbConnStringName, gzDbConnStringValue);
+        }
+
     }
 }

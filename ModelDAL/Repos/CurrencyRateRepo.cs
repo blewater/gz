@@ -39,7 +39,7 @@ namespace gzDAL.Repos
                                 .Select(r => r.TradeDateTime).Max())
                 .Select(r => r.rate)
                 .DeferredSingle()
-                .FromCacheAsync()
+                .FromCacheAsync(DateTime.UtcNow.AddHours(2))
                 .Result;
 
             return rate;
