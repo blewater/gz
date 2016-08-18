@@ -151,6 +151,12 @@ namespace gzDAL.Repos
                     .FromCacheAsync(DateTime.UtcNow.AddHours(2))
                     .Result;
             }
+            /**
+             * Edge Case for leaky user registrations: 
+             * Use default portfolio for new registered users without
+             * portfolio in their account. Cpc adds a portfolio next time 
+             * it runs.
+             */
             else {
 
                 // Cached already
@@ -158,7 +164,7 @@ namespace gzDAL.Repos
                     .Select(c => c.FIRST_PORTFOLIO_RISK_VAL)
                     .Single();
 
-                return customerMonthPortfolioReturn = db
+                customerMonthPortfolioReturn = db
                     .Portfolios
                     .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
                     .FromCacheAsync(DateTime.UtcNow.AddHours(2))
