@@ -15,9 +15,14 @@ printfn "PRODUCTION db: %s" connString
 
 
 let inRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelInFolder)
+let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
 [<EntryPoint>]
 let main argv = 
+
+    let rates = CurrencyRates.getCurrencyRates currencyRatesUrl
+    let json = CurrencyRates.setDbRates rates
+
     Etl.Phase1Processing connString inRptFolder
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore

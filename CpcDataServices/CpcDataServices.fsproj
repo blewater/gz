@@ -58,6 +58,9 @@
     <Content Include="packages.config" />
     <None Include="GM Trx 20160719.xlsx" />
     <Compile Include="Currency.fs" />
+    <None Include="openexchangerates.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
