@@ -115,7 +115,8 @@ namespace gzDAL.Conf
                     COMMISSION_PCNT = dbConf.COMMISSION_PCNT,
                     CREDIT_LOSS_PCNT = dbConf.CREDIT_LOSS_PCNT,
                     FUND_FEE_PCNT = dbConf.FUND_FEE_PCNT,
-                    LOCK_IN_NUM_DAYS = dbConf.LOCK_IN_NUM_DAYS
+                    LOCK_IN_NUM_DAYS = dbConf.LOCK_IN_NUM_DAYS,
+                    FIRST_PORTFOLIO_RISK_VAL = RiskToleranceEnum.Medium
                 }
             );
 

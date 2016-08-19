@@ -138,13 +138,40 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public Portfolio GetCustomerPortfolioForMonth(int customerId, string yearMonthStr) {
 
+            Portfolio customerMonthPortfolioReturn;
+
             var portfolioMonth = GetCustPortfYearMonth(customerId, yearMonthStr);
 
-            return
-                db.CustPortfolios
+            if (portfolioMonth != null) {
+
+                customerMonthPortfolioReturn = db.CustPortfolios
                     .Where(p => p.YearMonth == portfolioMonth && p.CustomerId == customerId)
                     .Select(cp => cp.Portfolio)
-                    .SingleOrDefault();
+                    .DeferredSingleOrDefault()
+                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
+                    .Result;
+            }
+            /**
+             * Edge Case for leaky user registrations: 
+             * Use default portfolio for new registered users without
+             * portfolio in their account. Cpc adds a portfolio next time 
+             * it runs.
+             */
+            else {
+
+                // Cached already
+                var defaultRisk = db.GzConfigurations
+                    .Select(c => c.FIRST_PORTFOLIO_RISK_VAL)
+                    .Single();
+
+                customerMonthPortfolioReturn = db
+                    .Portfolios
+                    .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
+                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
+                    .Result;
+            }
+
+            return customerMonthPortfolioReturn;
         }
 
         public void SaveDefaultPorfolio(int customerId, int gmUserId)
@@ -153,6 +180,11 @@ namespace gzDAL.Repos
             if (user==null)
                 throw new InvalidOperationException("User not found.");
 
+            var defaultPortfolioRisk = 
+                db.GzConfigurations
+                .Select(c => c.FIRST_PORTFOLIO_RISK_VAL)
+                .Single();
+
             ConnRetryConf.TransactWithRetryStrategy(
                     db,
                     () =>
@@ -160,7 +192,7 @@ namespace gzDAL.Repos
                         if (!user.GmCustomerId.HasValue)
                             user.GmCustomerId = gmUserId;
                         var now = DateTime.UtcNow;
-                        SaveDbCustMonthsPortfolioMixImpl(customerId, RiskToleranceEnum.Medium, 100, now.Year, now.Month, now);
+                        SaveDbCustMonthsPortfolioMixImpl(customerId, defaultPortfolioRisk, 100, now.Year, now.Month, now);
                     });
         }
 
@@ -248,8 +280,11 @@ namespace gzDAL.Repos
         private string GetCustPortfYearMonth(int customerId, string yearMonthStr) {
 
             return db.CustPortfolios
-                .Where(p => p.CustomerId == customerId && string.Compare(p.YearMonth, yearMonthStr, StringComparison.Ordinal) <= 0)
-                .Max(p=>p.YearMonth);
+                .Where(
+                    p =>
+                        p.CustomerId == customerId &&
+                        string.Compare(p.YearMonth, yearMonthStr, StringComparison.Ordinal) <= 0)
+                .Max(p => p.YearMonth);
         }
     }
     /// <summary>
