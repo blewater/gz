@@ -273,8 +273,8 @@
                 // #region scope Methods
                 scope.getMsgZIndex = function () {
                     var baseZIndex = 1000000;
-                    var modalZIndex = 2* baseZIndex;
-                    var notificationZIndex = baseZIndex;
+                    var modalZIndex = baseZIndex;
+                    var notificationZIndex = 2 * baseZIndex;
                     var msgZIndex = scope.isModal ? modalZIndex : notificationZIndex;
                     return scope.isModal ? (msgZIndex + scope.nsIndex) : (msgZIndex - (scope.nsCount - scope.nsIndex));
                 };
