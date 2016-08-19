@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'emBankingWithdraw', 'chat', '$location', 'auth', 'constants', '$timeout', 'accountManagement', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp, emBankingWithdraw, chat, $location, auth, constants, $timeout, accountManagement) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'emBanking', 'emBankingWithdraw', 'chat', '$location', 'auth', 'constants', '$timeout', 'accountManagement', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, emBanking, emBankingWithdraw, chat, $location, auth, constants, $timeout, accountManagement) {
         // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
@@ -139,14 +139,14 @@
         // #endregion
 
         $scope.getPaymentMethods = function () {
-            emBankingWithdraw.getPaymentMethods().then(function (response) {
+            emBanking.getPaymentMethods().then(function (response) {
                 $scope.result = response;
             }, function (error) {
                 $scope.result = error;
             });
         }
         $scope.getPaymentMethodCfg = function () {
-            emBankingWithdraw.getPaymentMethodCfg("VISA", 2100719).then(function (response) {
+            emBanking.getPaymentMethodCfg("MoneyMatrix_Trustly").then(function (response) {
                 $scope.result = response;
             }, function (error) {
                 $scope.result = error;
