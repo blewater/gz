@@ -703,9 +703,11 @@
     <Content Include="Areas\Admin\Views\CarouselEntries\Edit.cshtml" />
     <Content Include="Partials\messages\confirmWithdraw.html" />
     <Content Include="Partials\messages\investmentAccessError.html" />
-    <Content Include="Partials\templates\registerDepositTrustly.html" />
+    <Content Include="Partials\templates\registerDepositMoneyMatrixCreditCard.html" />
+    <Content Include="Partials\templates\registerDepositMoneyMatrixTrustly.html" />
     <Content Include="Partials\templates\registerDepositCreditCard.html" />
     <Content Include="Scripts\_app\controllers\account\investmentAccessErrorCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixCreditCardCtrl.js" />
     <Content Include="_app\accountManagement\accountManagement.css" />
     <Content Include="_app\accountManagement\accountManagementService.js" />
     <Content Include="_app\accountManagement\bonuses.html" />
@@ -872,7 +874,7 @@
     <Content Include="Scripts\_app\controllers\account\registerCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
     <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\registerDepositTrustlyCtrl.js" />
+    <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixTrustlyCtrl.js" />
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
     <Content Include="Scripts\_app\directives\gzPerformanceGraph.js" />

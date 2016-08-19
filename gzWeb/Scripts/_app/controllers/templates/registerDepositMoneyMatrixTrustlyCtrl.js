@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'registerDepositTrustlyCtrl';
+    var ctrlId = 'registerDepositMoneyMatrixTrustlyCtrl';
     APP.controller(ctrlId, ['$scope', '$q', ctrlFactory]);
 
     function ctrlFactory($scope, $q) {
