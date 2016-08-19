@@ -32,6 +32,12 @@
             return $location.path() === path ? 'focus' : '';
         }
 
+        $scope.gotoHome = function () {
+            if ($scope._authData.isGamer)
+                $scope.backToGames();
+            else
+                $location.path(constants.routes.guest.home);
+        }
         $scope.backToGames = function () {
             $location.path(constants.routes.games.path);
         };
