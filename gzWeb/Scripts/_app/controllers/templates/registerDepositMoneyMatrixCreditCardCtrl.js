@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'depositMoneyMatrixCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', '$timeout', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, $timeout, constants) {
+    var ctrlId = 'registerDepositMoneyMatrixCreditCardCtrl';
+    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', 'constants', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, constants, $timeout) {
         $scope.spinnerWhiteAbs = constants.spinners.sm_abs_white;
         var thisYear = moment().year();
         var maxYear = thisYear + 30;
@@ -101,7 +101,7 @@
         // Demo implementation https://plnkr.co/edit/7WZI4KZosjSmGmlGihJW?p=preview
         function initializePaymentForm() {
             var css = {
-                'height': '22px',
+                'height': '34px',
                 'width': '100%',
                 'font-size': '14px',
                 'display': 'block',
@@ -130,12 +130,6 @@
                 message.error('Cannot load PaymentForm: ' + errorData.ResponseMessage);
             });
             $scope.paymentForm.fields['card-number'].on('status', function (evt, data) {
-                //var cssLink = document.createElement("link")
-                //cssLink.href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
-                //cssLink.rel = "stylesheet";
-                //cssLink.type = "text/css";
-                //$('iframe#Pan').context.head.appendChild(cssLink);
-
                 $timeout(function () {
                     $scope.cardNumberLoading = false;
                     $scope.cardNumberValidity = data.valid;
@@ -160,6 +154,7 @@
             });
         }
 
+
         function init() {
             loadYears();
             loadMonths();
@@ -172,7 +167,7 @@
                 gamingAccountID: $scope.gamingAccount.id,
                 currency: $scope.currency,
                 amount: $scope.model.amount,
-                payCardID: id
+                payCardID: id,
             };
         }
 
