@@ -9,13 +9,15 @@
         // #endregion
 
         // #region payment methods fields
-        var creditCardsFields = { templateUrl: '/_app/accountManagement/withdrawCreditCard.html', ctrlId: 'withdrawCreditCardCtrl' }
+        var creditCardFields = { templateUrl: '/_app/accountManagement/withdrawCreditCard.html', ctrlId: 'withdrawCreditCardCtrl' }
+        //var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
         var trustlyFields = { templateUrl: '/_app/accountManagement/withdrawTrustly.html', ctrlId: 'withdrawTrustlyCtrl' }
         var paymentMethodsFields = [];
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardsFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardsFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardsFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Trustly] = trustlyFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = creditCardFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = trustlyFields;
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };

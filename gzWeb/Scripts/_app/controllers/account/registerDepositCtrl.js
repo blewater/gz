@@ -42,13 +42,15 @@
             }
         }
 
-        var creditCardsFields = { templateUrl: '/partials/templates/registerDepositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
-        var trustlyFields = { templateUrl: '/partials/templates/registerDepositTrustly.html', ctrlId: 'depositTrustlyCtrl' }
+        var creditCardFields = { templateUrl: '/partials/templates/registerDepositCreditCard.html', ctrlId: 'registerDepositCreditCardCtrl' }
+        //var moneyMatrixCreditCardFields = { templateUrl: '/partials/templates/registerDepositMoneyMatrixCreditCard.html', ctrlId: 'registerDepositMoneyMatrixCreditCardCtrl' }
+        var trustlyFields = { templateUrl: '/partials/templates/registerDepositTrustly.html', ctrlId: 'registerDepositTrustlyCtrl' }
         var paymentMethodsFields = [];
-        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Trustly] = trustlyFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixCreditCard] = creditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixTrustly] = trustlyFields;
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };

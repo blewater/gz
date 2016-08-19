@@ -18,7 +18,7 @@
 
             <div class="form-group">
                 <div class="btns text-center">
-                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid"
+                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid || extraValidityCheck === false"
                             ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                         <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
                         <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
@@ -34,7 +34,7 @@
         </div>
 
         <div class="payment-methods">
-            <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
+            <div class="payment-method col-xs-12" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
                 <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
             </div>
         </div>
