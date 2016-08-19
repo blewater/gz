@@ -2,23 +2,13 @@
 
 open System
 open System.IO
-open System.Data
-open System.Data.Linq
 open FSharp.Data.TypeProviders
-open FSharp.Linq
 open FSharp.ExcelProvider
 open System.Text.RegularExpressions
 
-module public Etl = 
+module Etl = 
     // Compile type
     type ExcelSchema = ExcelFile< "GM Trx 20160719.xlsx" >
-    
-    // Use for compile time memory schema representation
-    [<Literal>]
-    let CompileTimeDbString = 
-        @"Data Source=.\SQLEXPRESS;Initial Catalog=gzDevDb;Persist Security Info=True;Integrated Security=SSPI;"
-    
-    type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
     
     /// <summary>
     ///
@@ -68,7 +58,7 @@ module public Etl =
     /// <param name="playerRow">The db row matching the id of the excel row</param>
     /// <returns>Updated row of type DbSchema.ServiceTypes.PlayerRevRpt</returns>
     let updateDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) 
-        (playerRow : DbSchema.ServiceTypes.PlayerRevRpt) = 
+        (playerRow : DbUtil.DbSchema.ServiceTypes.PlayerRevRpt) = 
         if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
         playerRow.Currency <- excelRow.Currency
         playerRow.EmailAddress <- excelRow.``Email address``
@@ -99,7 +89,7 @@ module public Etl =
     /// <returns>Updated row ready for insertion of type DbSchema.ServiceTypes.PlayerRevRpt</returns>
     let insertDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) = 
         let newPlayerRow = 
-            new DbSchema.ServiceTypes.PlayerRevRpt(UserID = Convert.ToInt32(excelRow.``User ID``), 
+            new DbUtil.DbSchema.ServiceTypes.PlayerRevRpt(UserID = Convert.ToInt32(excelRow.``User ID``), 
                                                    CreatedOnUtc = DateTime.UtcNow)
         updateDbRowValues yearMonthDay excelRow newPlayerRow
     
@@ -112,7 +102,10 @@ module public Etl =
     /// <param name="yearMonthDay">The yyyyMMdd mask of the filename</param>
     /// <param name="excelRow">The excel row as the source input</param>
     /// <returns>Unit</returns>
-    let SavePlayerRow (db : DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) datePart (excelRow : ExcelSchema.Row) = 
+    let SavePlayerRow (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) 
+                        (datePart :string) 
+                        (excelRow : ExcelSchema.Row) = 
+
         let gmUserId = 
             try 
                 Convert.ToInt32(excelRow.``User ID``)
@@ -133,20 +126,6 @@ module public Etl =
     
     /// <summary>
     ///
-    /// Get a database object by creating a new DataContext and opening a database connection
-    ///
-    /// </summary>
-    /// <param name="dbConnectionString">The database connection string to use</param>
-    /// <returns>A newly created database object</returns>
-    let getOpenDb connectionString = 
-        // Open db
-        let db = DbSchema.GetDataContext(connectionString)
-        //db.DataContext.Log <- System.Console.Out
-        db.Connection.Open()
-        db
-    
-    /// <summary>
-    ///
     /// Upsert all excel files rows
     ///
     /// </summary>
@@ -154,7 +133,7 @@ module public Etl =
     /// <param name="ExcelSchema">The excel schema object to read all rows</param>
     /// <param name="yyyyMmDd">the date string</param>
     /// <returns>unit</returns>
-    let saveExcelRows db (openFile : ExcelSchema) (yyyyMmDd : string) = 
+    let saveExcelRows (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) (openFile : ExcelSchema) (yyyyMmDd : string) = 
         // Loop through all excel rows
         for excelRow in openFile.Data do
             printfn "Processing email %s on %s/%s/%s" excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) 
@@ -183,8 +162,7 @@ module public Etl =
     /// <param name="dbConnectionString">The database connection string to use to update the database</param>
     /// <param name="datedExcelFilesNames">The list of dated (filename containing YYYYMMDD in their filename)</param>
     /// <returns>Unit</returns>
-    let processExcelFiles dbConnectionString datedExcelFilesNames = 
-        let db = getOpenDb dbConnectionString
+    let processExcelFiles (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) (datedExcelFilesNames: string seq) = 
         // Open each excel file
         for excelFilename in datedExcelFilesNames do
             let openFile = openExcelSchemaFile excelFilename
@@ -210,7 +188,7 @@ module public Etl =
     /// <param name="dbConnectionString">The database connection string to use to update the database</param>
     /// <param name="inFolder">The input file folder parameter</param>
     /// <returns>Unit</returns>
-    let Phase1Processing dbConnectionString inFolder = 
+    let Phase1Processing (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) (inFolder:string) = 
         //------------ Read filenames
         printfn "Reading the %s folder" inFolder
         let dirExcelFileList = getDirExcelList inFolder
@@ -218,4 +196,4 @@ module public Etl =
         else printfn "No excel files were found!"
         let datedExcelFilenames = getDatedExcelfiles dirExcelFileList
         //------------ Save excel files
-        processExcelFiles dbConnectionString datedExcelFilenames
+        processExcelFiles db datedExcelFilenames

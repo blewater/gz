@@ -5,9 +5,9 @@ open CpcDataServices
 type Settings = AppSettings< "app.config" >
 #if DEBUG
 
-let connString = Settings.ConnectionStrings.GzDevDb
+let dbConnectionString = Settings.ConnectionStrings.GzDevDb
 
-printfn "Development db: %s" connString
+printfn "Development db: %s" dbConnectionString
 #else
 let connString = Settings.ConnectionStrings.GzProdDb
 printfn "PRODUCTION db: %s" connString
@@ -20,10 +20,12 @@ let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 [<EntryPoint>]
 let main argv = 
 
-    let rates = CurrencyRates.getCurrencyRates currencyRatesUrl
-    let json = CurrencyRates.setDbRates rates
+    let db = DbUtil.getOpenDb dbConnectionString 
 
-    Etl.Phase1Processing connString inRptFolder
+    let rates = CurrencyRates.getCurrencyRates currencyRatesUrl
+    CurrencyRates.setDbRates db rates
+
+    Etl.Phase1Processing db inRptFolder
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore
     0
