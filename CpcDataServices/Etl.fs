@@ -52,12 +52,13 @@ module Etl =
     ///
     /// Update all values of db Row but not the id or insert time stamp.
     ///
+    /// -> unit
+    ///
     /// </summary>
     /// <param name="yearMonthDay">The yyyyMMdd mask of the filename</param>
     /// <param name="excelRow">The excel row as the source input</param>
     /// <param name="playerRow">The db row matching the id of the excel row</param>
-    /// <returns>Updated row of type DbSchema.ServiceTypes.PlayerRevRpt</returns>
-    let updateDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) 
+    let setPlayerDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) 
         (playerRow : DbUtil.DbSchema.ServiceTypes.PlayerRevRpt) = 
         if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
         playerRow.Currency <- excelRow.Currency
@@ -76,32 +77,38 @@ module Etl =
         playerRow.YearMonth <- yearMonthDay.Substring(0, 6)
         playerRow.YearMonthDay <- yearMonthDay
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
-        playerRow
     
     /// <summary>
     ///
     /// Insert excel row values in db Row but don't touch the id and set the insert time stamp.
     ///
+    /// -> unit
+    ///
     /// </summary>
     /// <param name="yearMonthDay">The yyyyMMdd mask of the filename</param>
     /// <param name="excelRow">The excel row as the source input</param>
     /// <param name="playerRow">The db row matching the id of the excel row</param>
-    /// <returns>Updated row ready for insertion of type DbSchema.ServiceTypes.PlayerRevRpt</returns>
-    let insertDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) = 
+    let setPlayerNewDbRowValues
+            (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) 
+            (yearMonthDay : string) 
+            (excelRow : ExcelSchema.Row) = 
+
         let newPlayerRow = 
             new DbUtil.DbSchema.ServiceTypes.PlayerRevRpt(UserID = Convert.ToInt32(excelRow.``User ID``), 
                                                    CreatedOnUtc = DateTime.UtcNow)
-        updateDbRowValues yearMonthDay excelRow newPlayerRow
+        setPlayerDbRowValues yearMonthDay excelRow newPlayerRow
+        db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
     
     /// <summary>
     ///
     /// Save excel row values in db Row by updating or inserting a row.
     ///
+    /// -> unit
+    ///
     /// </summary>
     /// <param name="db">The database db context object to update</param>
     /// <param name="yearMonthDay">The yyyyMMdd mask of the filename</param>
     /// <param name="excelRow">The excel row as the source input</param>
-    /// <returns>Unit</returns>
     let SavePlayerRow (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) 
                         (datePart :string) 
                         (excelRow : ExcelSchema.Row) = 
@@ -118,10 +125,11 @@ module Etl =
                     exactlyOneOrDefault
             }
             |> (fun playerRow -> 
-            if isNull <| playerRow then 
-                let newPlayerRow = insertDbRowValues datePart excelRow
-                db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
-            else updateDbRowValues datePart excelRow playerRow |> ignore)
+                if isNull playerRow then 
+                    setPlayerNewDbRowValues db datePart excelRow
+                else 
+                    setPlayerDbRowValues datePart excelRow playerRow
+            )
             db.DataContext.SubmitChanges()
     
     /// <summary>
