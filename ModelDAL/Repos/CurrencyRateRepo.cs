@@ -71,12 +71,15 @@ namespace gzDAL.Repos
                 
             foreach (var q in retVal) {
 
+                // Round trade times in utc hour
+                var tradeDt = q.TradeDateTime ?? DateTime.UtcNow;
+                var roundedTradedTime = new DateTime(tradeDt.Year, tradeDt.Month, tradeDt.Day, tradeDt.Hour, 0, 0);
                 db.CurrencyRates.AddOrUpdate(
                     c => new { c.FromTo, c.TradeDateTime },
                     new CurrencyRate {
                         rate = q.Rate,
                         FromTo = q.CurrFromTo,
-                        TradeDateTime = q.TradeDateTime.Value,
+                        TradeDateTime = roundedTradedTime,
                         UpdatedOnUTC = DateTime.UtcNow,
                     });
             }
