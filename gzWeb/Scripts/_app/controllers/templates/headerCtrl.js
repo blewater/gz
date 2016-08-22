@@ -33,10 +33,10 @@
         }
 
         $scope.gotoHome = function () {
-            if ($scope._authData.isGamer)
-                $scope.backToGames();
-            else
-                $location.path(constants.routes.guest.home);
+            //if ($scope._authData.isGamer)
+            //    $scope.backToGames();
+            //else
+                $location.path(constants.routes.home.path);
         }
         $scope.backToGames = function () {
             $location.path(constants.routes.games.path);
@@ -128,7 +128,7 @@
 
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
-        $scope._init('header', loadAuthData);
+        $scope._init(loadAuthData);
 
         $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
 
