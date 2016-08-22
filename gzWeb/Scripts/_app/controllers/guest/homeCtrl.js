@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'homeCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, message) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, message, constants) {
         $controller('authCtrl', { $scope: $scope });
 
         function readResetPwdKeys() {
@@ -53,9 +53,14 @@
             });
         };
 
-        $scope._init('summary', function() {
-            readResetPwdKeys();
-            readLogoutReason();
+        $scope._init(function () {
+            if ($scope._authData.isGamer){
+                $location.path(constants.routes.games.path);
+            }
+            else {
+                readResetPwdKeys();
+                readLogoutReason();
+            }
         });
     }
 })();

@@ -339,7 +339,7 @@
         
 
         // #region Init
-        $scope._init('games', function () {
+        $scope._init(function () {
             loadCategories();
             getFeaturedGames();
         });

@@ -68,7 +68,7 @@
             return $scope.isFullscreen ? '100%' : $scope.gameHeight;
         };
 
-        $scope._init('game', function () {
+        $scope._init(function () {
             loadGame();
             setClock();
         });
