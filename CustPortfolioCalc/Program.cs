@@ -33,7 +33,6 @@ namespace CustPortfoliosCalc {
 
             var db = new ApplicationDbContext();
 
-            var custPortfolioRepo = new CustPortfolioRepo(db);
             var optionsActions = new OptionsActions(
                 options,
                 new ExchRatesUpdTask(),
