@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'withdrawCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', 'message', '$rootScope', 'accountManagement', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout, message, $rootScope, accountManagement) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -10,14 +10,14 @@
 
         // #region payment methods fields
         var creditCardFields = { templateUrl: '/_app/accountManagement/withdrawCreditCard.html', ctrlId: 'withdrawCreditCardCtrl' }
-        //var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
-        var trustlyFields = { templateUrl: '/_app/accountManagement/withdrawTrustly.html', ctrlId: 'withdrawTrustlyCtrl' }
+        var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
+        var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' }
         var paymentMethodsFields = [];
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = creditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = trustlyFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };
@@ -65,10 +65,7 @@
         function withdraw() {
             $scope.waiting = true;
             $scope.readFields().then(function (fields) {
-                emBankingWithdraw.prepare({
-                    paymentMethodCode: $scope.selectedMethod.code,
-                    fields: fields
-                }).then(function (prepareResult) {
+                emBankingWithdraw.prepare($scope.selectedMethod.code, fields).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
                     if (prepareResult.status === "setup") {
                         // TODO: show confirmation page
@@ -81,34 +78,29 @@
                         });
                         confirmPromise.then(function () {
                             emBankingWithdraw.confirm($scope.pid).then(function (confirmResult) {
-                                if (confirmResult.status === "success") {
+                                if (confirmResult.status === "setup") {
                                     emBankingWithdraw.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
                                         if (transactionResult.status === "success") {
                                             // TODO: show receipt page ...
-                                            var msg = "You have made the withdrawal successfully!";
+                                            var msg = "Withdrawal completed successfully at " + transactionResult.time + "!";
                                             message.success(msg, { nsType: 'toastr' });
                                             $scope.waiting = false;
                                             $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                             $scope.nsOk(true);
-                                            if ($location.path() === constants.routes.home.path)
-                                                $location.path(constants.routes.games.path);
                                         } else if (transactionResult.status === "incomplete") {
-                                            console.log("show transaction is not completed");
-                                            // TODO: show transaction is not completed
+                                            message.error("Transaction is not completed!");
                                         } else if (transactionResult.status === "pending") {
-                                            console.log("show transaction is pending");
-                                            // TODO: show transaction is pending
+                                            $scope.waiting = false;
+                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                                            $scope.setState(accountManagement.states.pendingWithdrawals);
                                         } else if (transactionResult.status === "error") {
-                                            console.log("show error");
-                                            // TODO: show error
+                                            message.error(transactionResult.error);
                                         }
                                     }, function (error) {
                                         message.error(error.desc);
                                     });
                                 } else if (confirmResult.status === "redirection") {
                                     // TODO: redirection ...
-                                } else if (confirmResult.status === "instructions") {
-                                    // TODO: instructions ...
                                 } else {
                                     // TODO: log error ???
                                 }
@@ -118,8 +110,8 @@
                             });
                         }, function () {
                             $scope.waiting = false;
-                            $scope.paymentMethodCfg = undefined;
-                            init();
+                            //$scope.paymentMethodCfg = undefined;
+                            //init();
                         });
                     } else if (prepareResult.status === "redirection") {
                         // TODO: redirection ...

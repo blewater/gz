@@ -29,12 +29,7 @@
         };
 
         function getPaymentMethodCfg() {
-            //if (!$scope.paymentMethodCfg) {
-            //}
-            //else {
-            //    attachFields($scope.paymentMethodCfg.paymentMethodCode);
-            //}
-            $scope.initializing = true;
+             $scope.initializing = true;
             emBanking.getPaymentMethodCfg($scope.selectedMethod.code).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);

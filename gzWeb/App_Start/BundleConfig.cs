@@ -114,6 +114,7 @@ namespace gzWeb
                                                   ? "~/Scripts/_app/constants/emConCfg-stage.js"
                                                   : "~/Scripts/_app/constants/emConCfg.js"
 
+                                        #region Controllers
                                         , "~/Scripts/_app/controllers/authCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/headerCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/headerNewCtrl.js"
@@ -143,25 +144,32 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
+                                        #endregion
 
-                                        //ACCOUNT MANAGEMENT
+                                        #region Account Management
                                         , "~/_app/accountManagement/accountManagementCtrl.js"
                                         , "~/_app/accountManagement/accountManagementService.js"
+
                                         , "~/_app/accountManagement/depositPaymentMethodsCtrl.js"
                                         , "~/_app/accountManagement/depositCtrl.js"
                                         , "~/_app/accountManagement/depositCreditCardCtrl.js"
                                         , "~/_app/accountManagement/depositMoneyMatrixCreditCardCtrl.js"
                                         , "~/_app/accountManagement/depositMoneyMatrixTrustlyCtrl.js"
+
                                         , "~/_app/accountManagement/withdrawPaymentMethodsCtrl.js"
                                         , "~/_app/accountManagement/withdrawCtrl.js"
                                         , "~/_app/accountManagement/withdrawCreditCardCtrl.js"
-                                        , "~/_app/accountManagement/withdrawTrustlyCtrl.js"
+                                        , "~/_app/accountManagement/withdrawMoneyMatrixCreditCardCtrl.js"
+                                        , "~/_app/accountManagement/withdrawMoneyMatrixTrustlyCtrl.js"
+
                                         , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
                                         , "~/_app/accountManagement/transactionHistoryCtrl.js"
                                         , "~/_app/accountManagement/bonusesCtrl.js"
                                         , "~/_app/accountManagement/myProfileCtrl.js"
                                         , "~/_app/accountManagement/changePasswordCtrl.js"
+                                        #endregion
 
+                                        #region Directives
                                         , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
                                         , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"
                                         , "~/Scripts/_app/directives/gzPerformanceGraph.js"
@@ -172,7 +180,9 @@ namespace gzWeb
                                         , "~/Scripts/_app/directives/gzFeaturedGame.js"
                                         , "~/Scripts/_app/directives/gzFeaturedGames.js"
                                         , "~/Scripts/_app/directives/gzCarousel.js"
+                                        #endregion
 
+                                        #region Services
                                         , "~/Scripts/_app/services/emWamp.js"
                                         , "~/Scripts/_app/services/emCasino.js"
                                         , "~/Scripts/_app/services/emBanking.js"
@@ -183,12 +193,15 @@ namespace gzWeb
                                         , "~/Scripts/_app/services/helpersService.js"
                                         , "~/Scripts/_app/services/chatService.js"
                                         , "~/Scripts/_app/services/iovationService.js"
+                                        #endregion
 
+                                        #region nsMessageService
                                         , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
                                         , "~/Scripts/_app/services/nsMessageService/nsMessages.js"
                                         , "~/Scripts/_app/services/nsMessageService/nsPromptCtrl.js"
                                         , "~/Scripts/_app/services/nsMessageService/nsConfirmCtrl.js"
                                         , "~/Scripts/_app/services/nsMessageService/nsMessageService.js"
+                                        #endregion
                                 ));
 
             #endregion
