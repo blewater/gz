@@ -2,9 +2,10 @@
 
 open System
 open System.IO
-open FSharp.Data.TypeProviders
 open FSharp.ExcelProvider
 open System.Text.RegularExpressions
+open DbUtil
+open CurrencyRates
 
 module Etl = 
     // Compile type
@@ -89,7 +90,7 @@ module Etl =
     /// <param name="excelRow">The excel row as the source input</param>
     /// <param name="playerRow">The db row matching the id of the excel row</param>
     let setPlayerNewDbRowValues
-            (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) 
+            (db : DbContext) 
             (yearMonthDay : string) 
             (excelRow : ExcelSchema.Row) = 
 
@@ -101,16 +102,16 @@ module Etl =
     
     /// <summary>
     ///
-    /// Save excel row values in db Row by updating or inserting a row.
+    /// Save excel row values in a db PlayerRevRpt Row by updating or inserting a row.
     ///
     /// -> unit
     ///
     /// </summary>
     /// <param name="db">The database db context object to update</param>
-    /// <param name="yearMonthDay">The yyyyMMdd mask of the filename</param>
+    /// <param name="yyyyMmDd">The year month day mask of the filename</param>
     /// <param name="excelRow">The excel row as the source input</param>
-    let SavePlayerRow (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) 
-                        (datePart :string) 
+    let setDbPlayerRow (db : DbContext) 
+                        (yyyyMmDd :string) 
                         (excelRow : ExcelSchema.Row) = 
 
         let gmUserId = 
@@ -120,15 +121,148 @@ module Etl =
         if gmUserId > 0 then 
             query { 
                 for playerRow in db.PlayerRevRpt do
-                    where (playerRow.YearMonthDay = datePart && playerRow.UserID = gmUserId)
+                    where (playerRow.YearMonthDay = yyyyMmDd && playerRow.UserID = gmUserId)
                     select playerRow
                     exactlyOneOrDefault
             }
             |> (fun playerRow -> 
                 if isNull playerRow then 
-                    setPlayerNewDbRowValues db datePart excelRow
+                    setPlayerNewDbRowValues db yyyyMmDd excelRow
                 else 
-                    setPlayerDbRowValues datePart excelRow playerRow
+                    setPlayerDbRowValues yyyyMmDd excelRow playerRow
+            )
+            db.DataContext.SubmitChanges()
+
+    let setGzTrxDbRowValues 
+            (amount : decimal)
+            (creditPcntApplied : float32)
+            (trxRow : DbUtil.DbSchema.ServiceTypes.GzTrxs)=
+
+        trxRow.Amount <- amount
+        trxRow.CreditPcntApplied <- Nullable creditPcntApplied
+        
+
+    /// <summary>
+    /// 
+    /// Create & Insert a GzTrxs row
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="yearMonth"></param>
+    /// <param name="amount"></param>
+    /// <param name="creditPcntApplied"></param>
+    /// <param name="gzUserId"></param>
+    let setGzTrxNewDbRowValues
+            (db : DbContext) 
+            (yearMonth : string)
+            (amount : decimal)
+            (creditPcntApplied : float32)
+            (gzUserId : int) = 
+
+        let newGzTrxRow = 
+            new DbUtil.DbSchema.ServiceTypes.GzTrxs(
+                CustomerId=gzUserId,
+                YearMonthCtd = yearMonth,
+                CreatedOnUTC = DateTime.UtcNow,
+                TypeId = int DbUtil.GzTransactionType.CreditedPlayingLoss)
+
+        setGzTrxDbRowValues amount creditPcntApplied newGzTrxRow
+        db.GzTrxs.InsertOnSubmit(newGzTrxRow)
+
+    /// <summary>
+    /// 
+    /// Get the greenzorro used id by email
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="gmUserEmail"></param>
+    let getGzUserId (db : DbContext) (gmUserEmail : string) : int =
+        query {
+            for user in db.AspNetUsers do
+            where (user.Email = gmUserEmail)
+            select user.Id
+            exactlyOneOrDefault 
+        }
+        |> (fun userId ->
+            if userId = 0 then
+                failwithf "Everymatrix email %s not found in db: %s. Cannot continue..." gmUserEmail db.DataContext.Connection.DataSource
+            else
+                userId
+        )
+
+    /// <summary>
+    /// 
+    /// Get the credited loss Percentage in human form % i.e. 50 from gzConfiguration
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    let getCreditLossPcnt (db : DbContext) : float32 =
+        query {
+            for c in db.GzConfigurations do
+            exactlyOne
+        }
+        |> (fun conf -> conf.CREDIT_LOSS_PCNT)
+
+    /// <summary>
+    /// 
+    /// Main formula calculating the amount that will be credited to the users account
+    /// 
+    /// </summary>
+    /// <param name="excelRow"></param>
+    /// <param name="creditLossPcnt"></param>
+    /// <param name="rates"></param>
+    /// <param name="playerRawGrossRevenue"></param>
+    let getCreditedPlayerAmount (excelRow : ExcelSchema.Row)
+                                (creditLossPcnt : float32)
+                                (rates : CurrencyRatesValues)
+                                (playerRawGrossRevenue : float) : decimal=
+
+        if playerRawGrossRevenue > 0.0 then
+
+            let convRate = rates.Item (excelRow.Currency + "USD") |> fst
+
+            (****  50% of Positive Gross Revenue ***)
+            let usdAmount = (decimal creditLossPcnt / 100m) * decimal playerRawGrossRevenue * convRate
+            usdAmount
+        else
+            0m
+    
+    /// <summary>
+    /// 
+    /// Upsert a GzTrxs transaction row with the credited amount
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="yyyyMm"></param>
+    /// <param name="excelRow"></param>
+    /// <param name="rates"></param>
+    let setDbGzTrxRow   (db : DbContext) 
+                        (yyyyMm :string) 
+                        (excelRow : ExcelSchema.Row)
+                        (rates : CurrencyRatesValues) = 
+
+        let playerRawGrossRevenue = excelRow.``Gross revenue``
+        if playerRawGrossRevenue > 0.0 then
+            let gmEmail = excelRow.``Email address``
+            let gzUserId = getGzUserId db gmEmail
+            query { 
+                for trxRow in db.GzTrxs do
+                    where (
+                        trxRow.YearMonthCtd = yyyyMm 
+                        && trxRow.CustomerId = gzUserId
+                        && trxRow.GzTrxTypes.Code = int DbUtil.GzTransactionType.CreditedPlayingLoss
+                    )
+                    select trxRow
+                    exactlyOneOrDefault
+            }
+            |> (fun trxRow ->
+                let creditLossPcnt = getCreditLossPcnt db 
+                let usdAmount = getCreditedPlayerAmount excelRow creditLossPcnt rates playerRawGrossRevenue
+
+                if isNull trxRow then 
+                    setGzTrxNewDbRowValues db yyyyMm usdAmount creditLossPcnt gzUserId 
+                else 
+                    setGzTrxDbRowValues usdAmount creditLossPcnt trxRow
             )
             db.DataContext.SubmitChanges()
     
@@ -141,12 +275,20 @@ module Etl =
     /// <param name="ExcelSchema">The excel schema object to read all rows</param>
     /// <param name="yyyyMmDd">the date string</param>
     /// <returns>unit</returns>
-    let saveExcelRows (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) (openFile : ExcelSchema) (yyyyMmDd : string) = 
+    let setDbExcelRows 
+                (db : DbContext) (openFile : ExcelSchema) 
+                (yyyyMmDd : string)
+                (rates : CurrencyRatesValues) = 
+
         // Loop through all excel rows
         for excelRow in openFile.Data do
-            printfn "Processing email %s on %s/%s/%s" excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) 
-            <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4)
-            SavePlayerRow db yyyyMmDd excelRow
+            printfn 
+                "Processing email %s on %s/%s/%s" 
+                excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4)
+
+            setDbPlayerRow db yyyyMmDd excelRow
+            // Send string date wout day
+            setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow rates
     
     /// <summary>
     ///
@@ -164,13 +306,17 @@ module Etl =
     
     /// <summary>
     ///
-    /// Process excel files
+    /// Process excel files: Extract each row and update database customer amounts
     ///
     /// </summary>
     /// <param name="dbConnectionString">The database connection string to use to update the database</param>
     /// <param name="datedExcelFilesNames">The list of dated (filename containing YYYYMMDD in their filename)</param>
     /// <returns>Unit</returns>
-    let processExcelFiles (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) (datedExcelFilesNames: string seq) = 
+    let processExcelFiles 
+            (db : DbContext) 
+            (datedExcelFilesNames: string seq) 
+            (rates : CurrencyRatesValues) = 
+
         // Open each excel file
         for excelFilename in datedExcelFilesNames do
             let openFile = openExcelSchemaFile excelFilename
@@ -178,7 +324,7 @@ module Etl =
             let transaction = db.Connection.BeginTransaction()
             db.DataContext.Transaction <- transaction
             try 
-                saveExcelRows db openFile yyyyMmDd
+                setDbExcelRows db openFile yyyyMmDd rates
                 // ********* Commit once per excel File
                 transaction.Commit()
             with _ -> 
@@ -188,20 +334,28 @@ module Etl =
     /// <summary>
     ///
     /// Phase 1 Processing:
-    ///     Read all excel files
+    ///     Read all excel files from input folder
     ///     Check if they have date YYYYMMDD in their names
     ///     Save files into the database
     ///
     /// </summary>
-    /// <param name="dbConnectionString">The database connection string to use to update the database</param>
+    /// <param name="db">The database context</param>
     /// <param name="inFolder">The input file folder parameter</param>
+    /// <param name="rates">The currency rate values for converting Everymatrix amounts to $</param>
     /// <returns>Unit</returns>
-    let Phase1Processing (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) (inFolder:string) = 
+    let ProcessExcelFolder 
+            (db : DbContext) 
+            (inFolder : string)
+            (rates : CurrencyRatesValues) = 
+        
         //------------ Read filenames
         printfn "Reading the %s folder" inFolder
         let dirExcelFileList = getDirExcelList inFolder
-        if dirExcelFileList.Length > 0 then printfn "Checking read files for date in their name"
-        else printfn "No excel files were found!"
+        if dirExcelFileList.Length > 0 then 
+            printfn "Checking read files for date in their name"
+        else 
+            printfn "No excel files were found!"
         let datedExcelFilenames = getDatedExcelfiles dirExcelFileList
-        //------------ Save excel files
-        processExcelFiles db datedExcelFilenames
+
+        //------------ Save excel value to database
+        processExcelFiles db datedExcelFilenames rates

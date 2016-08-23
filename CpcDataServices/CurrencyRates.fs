@@ -3,9 +3,16 @@
 open System
 open FSharp.Data
 open System.Collections.Generic
+open DbUtil
 
 module public CurrencyRates = 
     type UsdRates = JsonProvider<"../CpcDataServices/openexchangerates.json">
+
+    /// <summary>
+    /// A map (immutable dict) ->
+    ///     "From" (Currency Name) "To" (Currency), conversion rate*epoch time-stamp
+    /// </summary>
+    type CurrencyRatesValues = Map<string, (decimal*int64)>
 
     /// <summary>
     ///
@@ -14,7 +21,7 @@ module public CurrencyRates =
     /// 
     /// </summary>
     /// <param name="currencyApiUrl"></param>
-    let getCurrencyRates (currencyApiUrl : string) : Map<string, (decimal * int64)> = 
+    let getCurrencyRates (currencyApiUrl : string) : CurrencyRatesValues = 
         let usdRateTo = UsdRates.Load(currencyApiUrl)
         let usdRates = [
                         "USDAUD", (usdRateTo.Rates.Aud, int64 usdRateTo.Timestamp) ;
@@ -30,7 +37,9 @@ module public CurrencyRates =
                         "EURUSD", (1m/usdRateTo.Rates.Eur, int64 usdRateTo.Timestamp) ;
                         "GBPUSD", (1m/usdRateTo.Rates.Gbp, int64 usdRateTo.Timestamp) ;
                         "NOKUSD", (1m/usdRateTo.Rates.Nok, int64 usdRateTo.Timestamp) ;
-                        "SEKUSD", (1m/usdRateTo.Rates.Sek, int64 usdRateTo.Timestamp)] |> Map.ofList
+                        "SEKUSD", (1m/usdRateTo.Rates.Sek, int64 usdRateTo.Timestamp) ;
+                        "USDUSD", (1m,int64 usdRateTo.Timestamp)
+                        ] |> Map.ofList
         usdRates
 
     /// <summary>
@@ -59,16 +68,29 @@ module public CurrencyRates =
     /// <param name="tradeDateTime"></param>
     /// <param name="marketRate"></param>
     let setRateNewDbRowValues 
-            (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb)
+            (db : DbContext)
             (tradeDateTime:DateTime) 
             (marketRate:KeyValuePair<string, (decimal*int64)>) =
         let newRateRow = new  DbUtil.DbSchema.ServiceTypes.CurrencyRates(TradeDateTime=tradeDateTime, FromTo=marketRate.Key)
         setRateDbRowValues newRateRow <| fst marketRate.Value
         db.CurrencyRates.InsertOnSubmit(newRateRow)
 
-    let setDbRates (db : DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb) (usdRates : Map<string, (decimal*int64)>) = 
+    /// <summary>
+    /// 
+    /// Insert to database CurrencyRates table
+    /// 
+    /// </summary>
+    /// <param name="db">db context</param>
+    /// <param name="usdRates">Map of rates to update</param>
+    let setDbRates 
+            (db : DbContext) 
+            (usdRates : CurrencyRatesValues) 
+            : CurrencyRatesValues = 
 
-        for marketRate in usdRates do
+        for marketRate in 
+            usdRates // Ignore $ to $
+            |> Map.filter (fun key _ -> key <> "USDUSD") do
+
             let tradeTm = DateTimeOffset.FromUnixTimeSeconds(snd marketRate.Value).UtcDateTime
             let roundedTradeTm = new DateTime(tradeTm.Year, tradeTm.Month, tradeTm.Day, tradeTm.Hour, 0, 0)
             let rateFromTo = marketRate.Key
@@ -81,8 +103,25 @@ module public CurrencyRates =
             |> (fun rateRow ->
                 if isNull rateRow then
                     setRateNewDbRowValues db roundedTradeTm marketRate
-                else 
-                    setRateDbRowValues rateRow <| fst marketRate.Value
+//                else 
+//                    setRateDbRowValues rateRow <| fst marketRate.Value
             )
         // Commit for all rates once!
         db.DataContext.SubmitChanges()
+        usdRates
+
+    /// <summary>
+    /// 
+    /// Get the latest exchange rates and update the database rates table with them
+    /// -> latest rates
+    ///
+    /// </summary>
+    /// <param name="currencyApiUrl"></param>
+    /// <param name="db"></param>
+    let updCurrencyRates 
+            (currencyApiUrl : string)
+            (db : DbContext)
+            : CurrencyRatesValues =
+
+        let setDbCurrencyRates = setDbRates db
+        getCurrencyRates currencyApiUrl |> setDbCurrencyRates
