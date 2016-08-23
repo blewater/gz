@@ -8,10 +8,11 @@
         var _service = {};
 
         var _supportedPaymentMethodCodes = {
-            VISA: "VISA",
-            Maestro: "Maestro",
-            MasterCard: "MasterCard",
-            Trustly: "MoneyMatrix_Trustly"
+            //VISA: "VISA",
+            //Maestro: "Maestro",
+            //MasterCard: "MasterCard",
+            MoneyMatrixCreditCard: "MoneyMatrix_CreditCard",
+            MoneyMatrixTrustly: "MoneyMatrix_Trustly"
         };
 
         //// #region Payment Methods Fields

@@ -32,6 +32,9 @@
             return $location.path() === path ? 'focus' : '';
         }
 
+        $scope.gotoHome = function () {
+            $location.path(constants.routes.home.path);
+        }
         $scope.backToGames = function () {
             $location.path(constants.routes.games.path);
         };
@@ -50,7 +53,6 @@
                     //    username: $scope._authData.email
                     //}
                 });
-                //message.error('Cannot connect to investment');
             }
         };
 
@@ -87,23 +89,9 @@
 
         $scope.deposit = function () {
             accountManagement.open(accountManagement.states.depositPaymentMethods);
-            //message.open({
-            //    nsType: 'modal',
-            //    nsSize: '600px',
-            //    nsTemplate: '/partials/messages/registerPaymentMethods.html',
-            //    nsCtrl: 'registerPaymentMethodsCtrl',
-            //    nsStatic: true
-            //});
         };
         $scope.withdraw = function () {
             accountManagement.open(accountManagement.states.withdrawPaymentMethods);
-            //message.open({
-            //    nsType: 'modal',
-            //    nsSize: '600px',
-            //    nsTemplate: '/partials/messages/registerPaymentMethods.html',
-            //    nsCtrl: 'registerPaymentMethodsCtrl',
-            //    nsStatic: true
-            //});
         };
 
         function loadAuthData() {
@@ -122,7 +110,7 @@
 
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
-        $scope._init('header', loadAuthData);
+        $scope._init(loadAuthData);
 
         $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
 

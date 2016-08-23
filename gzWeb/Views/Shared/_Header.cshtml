@@ -73,7 +73,7 @@
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a id="logo" class="navbar-brand" href="/">
+                <a id="logo" class="navbar-brand" ng-click="gotoHome()">
                     <img src="../../Content/images/logo.svg" alt="Logo" />
                     <h2 class="relative">
                         greenzorro
@@ -97,7 +97,7 @@
         <div ng-include src="'navbar-menu.html'"></div>
     </div>
     <div ng-if="inDebugMode"
-         style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;"
+         style="position: absolute;z-index: 1;background-color: #fff;border-radius: 5px;padding: 10px; margin: 10px 0 0 10px; box-shadow: 1px 1px 10px #707070;top: 70px;"
          ng-style="{'height': collapsed ? '35px' : auto, 'width': collapsed ? '30px' : '300px'}" ng-init="collapsed = true;">
         <i ng-show="!collapsed" class="fa fa-angle-up pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>
         <i ng-show="collapsed" class="fa fa-angle-down pull-right" ng-click="collapsed = !collapsed;" style="cursor: pointer;"></i>

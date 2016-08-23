@@ -98,7 +98,7 @@
 
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
-        $scope._init('summary', function() {
+        $scope._init(function() {
             loadSummaryData();
             loadAuthData();
         });

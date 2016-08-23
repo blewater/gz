@@ -1,10 +1,11 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'depositTrustlyCtrl';
+    var ctrlId = 'registerDepositMoneyMatrixTrustlyCtrl';
     APP.controller(ctrlId, ['$scope', '$q', ctrlFactory]);
+
     function ctrlFactory($scope, $q) {
 
-        $scope.readFields = function () {
+        $scope.readFields = function() {
             var q = $q.defer();
             q.resolve();
             return q.promise;
