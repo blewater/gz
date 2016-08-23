@@ -601,20 +601,16 @@ namespace gzDAL.Repos {
                 .Select(tt => tt.Id)
                 .Single();
 
-            var investmentCashTrxs = _db.GzTrxs
-                .Where(t => t.CustomerId == customerId
+            var investmentCashTrx = _db.GzTrxs
+                .Single(t => t.CustomerId == customerId
                             && t.YearMonthCtd == currentYearMonthStr
-                            && t.TypeId == cplayingLossId
-                            );
+                            && t.TypeId == cplayingLossId);
 
-            var transferToGamingId = _db.GzTrxTypes
-                .Where(tt => tt.Code == GzTransactionTypeEnum.TransferToGaming)
-                .Select(tt => tt.Id)
-                .Single();
-
-            foreach (var investmentCashTrx in investmentCashTrxs) {
-                investmentCashTrx.TypeId = transferToGamingId;
-            }
+            SaveDbGzTransaction(
+                customerId, 
+                GzTransactionTypeEnum.TransferToGaming, 
+                investmentCashTrx.Amount,
+                createdOnUtc);
         }
 
         /// <summary>

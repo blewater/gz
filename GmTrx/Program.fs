@@ -1,29 +1,48 @@
 ﻿open System
 open FSharp.Configuration
 open CpcDataServices
+open gzCpcLib.Task
 
-type Settings = AppSettings<"app.config">
-
+type Settings = AppSettings< "app.config" >
 #if DEBUG
-let connString = Settings.ConnectionStrings.GzDevDb
-printfn "Development db: %s" connString
+
+let dbConnectionString = Settings.ConnectionStrings.GzDevDb
+
+printfn "Development db: %s" dbConnectionString
 #else
 let connString = Settings.ConnectionStrings.GzProdDb
 printfn "PRODUCTION db: %s" connString
 #endif
 
+
 let inRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelInFolder)
+let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
 [<EntryPoint>]
 let main argv = 
 
-    Etl.Phase1Processing connString inRptFolder
+    try
+        // Create a database context
+        use db = DbUtil.getOpenDb dbConnectionString
+
+        // Update Funds from Yahoo Api
+        (new FundsUpdTask()).DoTask()
+
+        // Update Currency Rates from open exchange api
+        let rates = CurrencyRates.updCurrencyRates currencyRatesUrl db
+
+        // Extract & Load Daily Everymatrix Report
+        Etl.ProcessExcelFolder db inRptFolder rates
+
+        (new CustomerBalanceUpdTask()).DoTask()
+
+    with ex ->
+        let nl = System.Environment.NewLine
+        printfn "Runtime Exception--------------->%s%s%s" nl nl <| ex.ToString()
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore
     0
-
-
 (*****
 * Notes
 * http://stackoverflow.com/questions/22608584/how-to-project-transform-an-array-of-fileinfo-to-a-list-of-strings-with-fsharp/22608949#22608949
