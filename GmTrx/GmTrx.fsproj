@@ -113,6 +113,11 @@
       <Project>{bd103410-e702-454c-ae68-17f50a0a4742}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\CustPortfolioCalcLib\CustPortfolioCalcLib.csproj">
+      <Name>CustPortfolioCalcLib</Name>
+      <Project>{ba006926-ca0a-4f9c-b4f6-675c28621359}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
