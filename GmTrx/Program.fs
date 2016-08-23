@@ -1,6 +1,7 @@
 ﻿open System
 open FSharp.Configuration
 open CpcDataServices
+open gzCpcLib.Task
 
 type Settings = AppSettings< "app.config" >
 #if DEBUG
@@ -20,12 +21,25 @@ let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 [<EntryPoint>]
 let main argv = 
 
-    let db = DbUtil.getOpenDb dbConnectionString 
+    try
+        // Create a database context
+        use db = DbUtil.getOpenDb dbConnectionString
 
-    let rates = CurrencyRates.getCurrencyRates currencyRatesUrl
-    CurrencyRates.setDbRates db rates
+        // Update Funds from Yahoo Api
+        (new FundsUpdTask()).DoTask()
 
-    Etl.Phase1Processing db inRptFolder
+        // Update Currency Rates from open exchange api
+        let rates = CurrencyRates.updCurrencyRates currencyRatesUrl db
+
+        // Extract & Load Daily Everymatrix Report
+        Etl.ProcessExcelFolder db inRptFolder rates
+
+        (new CustomerBalanceUpdTask()).DoTask()
+
+    with ex ->
+        let nl = System.Environment.NewLine
+        printfn "Runtime Exception--------------->%s%s%s" nl nl <| ex.ToString()
+
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore
     0

@@ -38,13 +38,7 @@ namespace CustPortfoliosCalc {
                 options,
                 new ExchRatesUpdTask(),
                 new FundsUpdTask(),
-                new CustomerBalanceUpdTask(
-                    db,
-                    new InvBalanceRepo(
-                        db,
-                        new CustFundShareRepo(db, custPortfolioRepo),
-                        new GzTransactionRepo(db), 
-                        custPortfolioRepo)));
+                new CustomerBalanceUpdTask());
 
             optionsActions.ProcessOptions();
 
