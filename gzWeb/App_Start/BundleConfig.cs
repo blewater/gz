@@ -35,7 +35,6 @@ namespace gzWeb
                 , "~/Content/Styles/_app/investments.css"
                 , "~/Content/Styles/_app/carousel.css"
                 , "~/Content/Styles/_app/games.css"
-                , "~/Content/Styles/_app/admin.css"
                 , "~/_app/accountManagement/accountManagement.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
             ));
