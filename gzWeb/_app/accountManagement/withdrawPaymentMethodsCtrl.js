@@ -27,23 +27,12 @@
         // #endregion
 
         // #region methods
-        //function getMethodDescr(method) {
-        //    switch (method.code){
-        //        case emBankingWithdraw.PaymentMethodCode.VISA:
-        //        case emBankingWithdraw.PaymentMethodCode.Maestro:
-        //        case emBankingWithdraw.PaymentMethodCode.MasterCard:
-        //            return [method.withdrawDesc, method.payCard.name, method.payCard.cardExpiryDate, method.payCard.cardHolderName];
-        //        case emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly:
-        //            return [method.withdrawDesc || method.code];
-        //        default:
-        //            return [method.code];
-        //    }
-        //};
         function getMethodDescr(method) {
             switch (method.code) {
                 case emBankingWithdraw.PaymentMethodCode.VISA:
                 case emBankingWithdraw.PaymentMethodCode.Maestro:
                 case emBankingWithdraw.PaymentMethodCode.MasterCard:
+                case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
                     return method.payCard.name;
                 case emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly:
                     return method.withdrawDesc || method.code;

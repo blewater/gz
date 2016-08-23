@@ -33,10 +33,7 @@
         }
 
         $scope.gotoHome = function () {
-            //if ($scope._authData.isGamer)
-            //    $scope.backToGames();
-            //else
-                $location.path(constants.routes.home.path);
+            $location.path(constants.routes.home.path);
         }
         $scope.backToGames = function () {
             $location.path(constants.routes.games.path);
@@ -56,7 +53,6 @@
                     //    username: $scope._authData.email
                     //}
                 });
-                //message.error('Cannot connect to investment');
             }
         };
 
@@ -93,23 +89,9 @@
 
         $scope.deposit = function () {
             accountManagement.open(accountManagement.states.depositPaymentMethods);
-            //message.open({
-            //    nsType: 'modal',
-            //    nsSize: '600px',
-            //    nsTemplate: '/partials/messages/registerPaymentMethods.html',
-            //    nsCtrl: 'registerPaymentMethodsCtrl',
-            //    nsStatic: true
-            //});
         };
         $scope.withdraw = function () {
             accountManagement.open(accountManagement.states.withdrawPaymentMethods);
-            //message.open({
-            //    nsType: 'modal',
-            //    nsSize: '600px',
-            //    nsTemplate: '/partials/messages/registerPaymentMethods.html',
-            //    nsCtrl: 'registerPaymentMethodsCtrl',
-            //    nsStatic: true
-            //});
         };
 
         function loadAuthData() {

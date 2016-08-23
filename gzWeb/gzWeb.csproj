@@ -716,11 +716,13 @@
     <Content Include="_app\accountManagement\changePasswordCtrl.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixCreditCard.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixCreditCardCtrl.js" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCard.html" />
     <Content Include="_app\accountManagement\withdrawCreditCard.html" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCardCtrl.js" />
     <Content Include="_app\accountManagement\withdrawCreditCardCtrl.js" />
     <Content Include="_app\accountManagement\depositCreditCardCtrl.js" />
-    <Content Include="_app\accountManagement\withdrawTrustly.html" />
-    <Content Include="_app\accountManagement\withdrawTrustlyCtrl.js" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustly.html" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustlyCtrl.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixTrustlyCtrl.js" />
     <Content Include="_app\accountManagement\withdrawPaymentMethods.html" />
     <Content Include="_app\accountManagement\depositPaymentMethods.html" />
