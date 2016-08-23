@@ -15,31 +15,22 @@ namespace gzCpcLib.Task {
     public class CustomerBalanceUpdTask : CpcTask {
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly ApplicationDbContext _Db;
         private readonly IInvBalanceRepo _invBalanceRepo;
 
-        private int[] _customerIds = new int[0];
-        public int[] CustomerIds
-        {
-            get { return _customerIds; }
-            set { _customerIds = value; }
-        }
+        public int[] CustomerIds { private get; set; } = new int[0];
 
-        public CustomerBalanceUpdTask(ApplicationDbContext db, InvBalanceRepo invBalanceRepo) {
+        public CustomerBalanceUpdTask() {
 
-            this._Db = db;
-            this._invBalanceRepo = invBalanceRepo;
+            var db = new ApplicationDbContext();
+            var custPortfolio = new CustPortfolioRepo(db);
+            this._invBalanceRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, custPortfolio), new GzTransactionRepo(db), custPortfolio);
 
         }
 
         /// <summary>
         /// YYYYMM format i.e. 201603 (March of 2016)
         /// </summary>
-        private string[] _yearMonthsToProc = new string[0];
-        public string[] YearMonthsToProc {
-            get { return _yearMonthsToProc; }
-            set { _yearMonthsToProc = value; }
-        }
+        public string[] YearMonthsToProc { get; set; } = new string[0];
 
         public override void DoTask() {
 

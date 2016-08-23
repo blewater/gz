@@ -33,18 +33,11 @@ namespace CustPortfoliosCalc {
 
             var db = new ApplicationDbContext();
 
-            var custPortfolioRepo = new CustPortfolioRepo(db);
             var optionsActions = new OptionsActions(
                 options,
                 new ExchRatesUpdTask(),
                 new FundsUpdTask(),
-                new CustomerBalanceUpdTask(
-                    db,
-                    new InvBalanceRepo(
-                        db,
-                        new CustFundShareRepo(db, custPortfolioRepo),
-                        new GzTransactionRepo(db), 
-                        custPortfolioRepo)));
+                new CustomerBalanceUpdTask());
 
             optionsActions.ProcessOptions();
 
