@@ -26,7 +26,7 @@
 
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
-        $scope._init('performance', function () {
+        $scope._init(function () {
             loadPerformanceData();
             loadAuthData();
         });

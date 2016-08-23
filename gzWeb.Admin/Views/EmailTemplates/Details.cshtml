@@ -1,0 +1,98 @@
+﻿@model gzDAL.Models.EmailTemplate
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="admin admin-details admin-actions">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 admin-interface">
+
+                <div class="col-md-6">
+                    <div class="row heading">
+                        <h2 class="text-gz">Details</h2>
+                        <h4>EmailTemplate</h4>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row heading text-right">
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+                        @Html.ActionLink("Back to List", "Index")
+                    </div>
+                </div>
+
+                <div class="col-md-12 bg-gz">
+                    <div class="row content">
+                        <div class="col-xs-8 col-xs-offset-2">
+                            <dl class="dl-horizontal">
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Code)
+                                </dt>
+
+                                <dd>
+                                    @Html.DisplayFor(model => model.Code)
+                                </dd>
+
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Subject)
+                                </dt>
+
+                                <dd>
+                                    @Html.DisplayFor(model => model.Subject)
+                                </dd>
+
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Body)
+                                </dt>
+
+                                <dd>
+                                    <textarea class="form-control" rows=20 data-editor="html" name="Html">@Html.DisplayFor(model => model.Body)</textarea>
+                                </dd>
+
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+    <script>
+        // Hook up ACE editor to all textareas with data-editor attribute
+        $(function () {
+            $('textarea[data-editor]').each(function () {
+                var textarea = $(this);
+
+                var mode = textarea.data('editor');
+
+                var editDiv = $('<div>', {
+                    position: 'absolute',
+                    width: textarea.width(),
+                    height: textarea.height(),
+                    'class': textarea.attr('class')
+                }).insertBefore(textarea);
+
+                textarea.css('display', 'none');
+
+                var editor = ace.edit(editDiv[0]);
+                editor.renderer.setShowGutter(false);
+                editor.getSession().setValue(textarea.val());
+                editor.getSession().setMode("ace/mode/" + mode);
+                // editor.setTheme("ace/theme/idle_fingers");
+
+                // copy back to textarea on form submit...
+                textarea.closest('form').submit(function () {
+                    textarea.val(editor.getSession().getValue());
+                })
+                editor.textInput.getElement().disabled = true
+            });
+        });
+    </script>
+}

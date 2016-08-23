@@ -1,21 +1,23 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         // #endregion
 
         // #region payment methods fields
-        var creditCardsFields = { templateUrl: '/_app/accountManagement/depositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
-        var trustlyFields = { templateUrl: '/_app/accountManagement/depositTrustly.html', ctrlId: 'depositTrustlyCtrl' }
+        var creditCardFields = { templateUrl: '/_app/accountManagement/depositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
+        var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixCreditCard.html', ctrlId: 'depositMoneyMatrixCreditCardCtrl' }
+        var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixTrustly.html', ctrlId: 'depositMoneyMatrixTrustlyCtrl' }
         var paymentMethodsFields = [];
-        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardsFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Trustly] = trustlyFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };
@@ -27,12 +29,7 @@
         };
 
         function getPaymentMethodCfg() {
-            //if (!$scope.paymentMethodCfg) {
-            //}
-            //else {
-            //    attachFields($scope.paymentMethodCfg.paymentMethodCode);
-            //}
-            $scope.initializing = true;
+             $scope.initializing = true;
             emBanking.getPaymentMethodCfg($scope.selectedMethod.code).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
@@ -61,8 +58,9 @@
 
         // #region deposit
         $scope.submit = function () {
-            if ($scope.form.$valid)
+            if ($scope.form.$valid) {
                 deposit();
+            }
         };
 
         function deposit() {
@@ -138,7 +136,7 @@
                 });
             }, function (error) {
                 $scope.waiting = false;
-                message.error(error.desc);
+                message.error(error);
             });
         };
         // #endregion

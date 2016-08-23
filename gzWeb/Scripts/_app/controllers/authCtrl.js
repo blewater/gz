@@ -7,7 +7,7 @@
             $scope._authData = auth.data;
         }
 
-        $scope._init = function (ctrl, initCallback) {
+        $scope._init = function (initCallback) {
             function callback() {
                 loadAuthData();
                 if (angular.isFunction(initCallback))

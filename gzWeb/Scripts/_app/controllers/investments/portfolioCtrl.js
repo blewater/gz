@@ -44,7 +44,7 @@
 
         $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
-        $scope._init('portfolio', function () {
+        $scope._init(function () {
             loadPortfolioData();
             loadAuthData();
         });
