@@ -38,7 +38,7 @@ namespace gzWeb.Admin.Controllers
 
         public ActionResult Create()
         {
-            return View(new CarouselEntry());
+            return View(new CarouselEntry {LiveFrom = DateTime.Now, LiveTo = DateTime.Now.AddDays(30)});
         }
 
         [HttpPost]
