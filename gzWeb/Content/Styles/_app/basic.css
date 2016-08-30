@@ -358,6 +358,18 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
 
 /* #endregion */
 
+/* #region text-frame */
+.text-frame {
+    background-color: #42b471;
+}
+.text-frame.text-frame-md {
+    padding: 40px 30px;
+}
+.text-frame.text-frame-sm {
+    padding: 10px 30px;
+}
+/* #endregion */
+
 
 /* #region ribbon */
 .ribbon .ribbon-text {
