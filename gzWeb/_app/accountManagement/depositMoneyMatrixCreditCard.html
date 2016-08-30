@@ -49,6 +49,9 @@
                 <gz-field-ok gz-when="cardNumberValidity === true"></gz-field-ok>
             </div>
         </div>
+        <div ng-if="!canAddNewCreditCard || model.existingCard">
+            <div class="hidden" id="cardNumberContainer"></div>
+        </div>
 
         <div class="col-xs-12">
             <div class="form-group">

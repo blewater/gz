@@ -66,10 +66,7 @@
         function deposit() {
             $scope.waiting = true;
             $scope.readFields().then(function (fields) {
-                emBanking.prepare({
-                    paymentMethodCode: $scope.selectedMethod.code,
-                    fields: fields
-                }).then(function (prepareResult) {
+                emBanking.prepare({paymentMethodCode: $scope.selectedMethod.code, fields: fields}).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
                     if (prepareResult.status === "setup") {
                         // TODO: show confirmation page
@@ -108,7 +105,30 @@
                                         message.error(error.desc);
                                     });
                                 } else if (confirmResult.status === "redirection") {
-                                    // TODO: redirection ...
+                                    var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
+                                    var thirdPartyPromise = message.open({
+                                        nsType: 'modal',
+                                        nsSize: 'xl',
+                                        nsBody: html,
+                                        nsStatic: true,
+                                        nsParams: {
+                                            redirectionForm: confirmResult.redirectionForm
+                                        },
+                                        nsShowClose: false
+                                    });
+                                    thirdPartyPromise.then(function (thirdPartyPromiseResult) {
+                                        var msg = "You have made the deposit successfully!";
+                                        message.success(msg, { nsType: 'toastr' });
+                                        emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
+                                        $scope.waiting = false;
+                                        $timeout(function () {
+                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                                        }, 1000);
+                                        $scope.nsOk(true);
+                                    }, function (thirdPartyPromiseError) {
+                                        $scope.waiting = false;
+                                        message.error(thirdPartyPromiseError);
+                                    });
                                 } else if (confirmResult.status === "instructions") {
                                     // TODO: instructions ...
                                 } else {

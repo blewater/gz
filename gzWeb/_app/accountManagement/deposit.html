@@ -37,6 +37,7 @@
             <div class="payment-method col-xs-12" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
                 <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
             </div>
+            <div class="col-xs-12 text-center" ng-if="paymentMethods.length === 1">-</div>
         </div>
     </div>
 </div>
