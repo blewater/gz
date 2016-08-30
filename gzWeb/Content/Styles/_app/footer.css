@@ -2,18 +2,18 @@
 
 
 .non-footer {
-    min-height: calc(100% - 150px);
-    margin-bottom: -150px;
+    /*min-height: calc(100% - 210px);
+    margin-bottom: -210px;*/
 }
 .footer {
     clear: both;
-    height: 150px;
+    /*height: 210px;*/
 }
 
 footer {
     width: 100%;
-    height: 150px;
-    margin-top: 150px;    
+    /*height: 210px;
+    margin-top: 210px;*/    
     font-size: 12px;
     color: #fff;
 }
@@ -108,8 +108,29 @@ footer .company-registration {
     /*margin-bottom: 10px;*/
 }
 
-footer .company-registration span.company-registration-separator { display: inline-block; }
-footer .company-registration br.company-registration-separator { display: none; }
+footer .company-registration span.company-registration-separator {
+    display: inline-block;
+}
+footer .company-registration br.company-registration-separator {
+    display: none;
+}
+
+footer .footer-license {
+    margin-bottom: 15px;
+}
+footer .footer-license .mga {
+    border-radius: 4px;
+    padding: 5px;
+}
+footer .footer-license .mga img {
+    width: 100px;
+    height: 57px;
+}
+
+footer .footer-advice {
+    font-size: 10px;
+    margin-bottom: 15px;
+}
 
 @media (max-width: 420px) {
     footer {

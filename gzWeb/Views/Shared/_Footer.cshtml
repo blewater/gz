@@ -14,7 +14,7 @@
             <a ng-href="/about">ABOUT</a>
             <a ng-href="/faq">FAQ</a>
             @*<a ng-href="/terms">TERMS & CONDITIONS</a>
-            <a ng-href="/responsibleGaming">RESPONSIBLE GAMING</a>*@
+                <a ng-href="/responsibleGaming">RESPONSIBLE GAMING</a>*@
         </div>
         <div class="footer-social text-center">
             <a href="https://www.facebook.com/greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook" ng-class="{'fa-lg': !xs}"></i></a>
@@ -25,13 +25,24 @@
             <a href="http://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker" ng-class="{'fa-lg': !xs}"></i></a>
         </div>
 
+        <div class="footer-license text-center">
+            <a class="mga" href="https://www.authorisation.mga.org.mt/verification.aspx?lang=en&company=6d9bcc8f-2ec5-49d3-90c6-58f0dde5d820" target="_blank">
+                <img class="img-thumbnail" src="../../Content/Images/mga.png" alt="EveryMatrix Limited - Licensed">
+            </a>
+        </div>
+        <div class="footer-advice text-center">
+            <span class="text-frame text-frame-sm">
+                Gambling can be addictive, please play responsibly.
+            </span>
+        </div>
+
         <div class="copyright text-center">
             &copy; {{copyrightYears}} | greenzorro ltd | All rights reserved
         </div>
         <div class="company-registration text-center">
             <span>Company registration number: 9320285</span>
             <span class="company-registration-separator"> | </span>
-            <br class="company-registration-separator"/>
+            @*<br class="company-registration-separator"/>*@
             <span>Registered in England & Wales</span>
         </div>
         <div class="text-center">@versionField.GetValue(null)</div>
