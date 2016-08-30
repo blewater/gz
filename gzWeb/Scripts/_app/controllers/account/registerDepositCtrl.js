@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDepositCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', '$location', '$rootScope', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers, $location, $rootScope) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', '$location', '$rootScope', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers, $location, $rootScope, $timeout) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -121,7 +121,30 @@
                                         message.error(error.desc);
                                     });
                                 } else if (confirmResult.status === "redirection") {
-                                    // TODO: redirection ...
+                                    var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
+                                    var thirdPartyPromise = message.open({
+                                        nsType: 'modal',
+                                        nsSize: 'xl',
+                                        nsBody: html,
+                                        nsStatic: true,
+                                        nsParams: {
+                                            redirectionForm: confirmResult.redirectionForm
+                                        },
+                                        nsShowClose: false
+                                    });
+                                    thirdPartyPromise.then(function (thirdPartyPromiseResult) {
+                                        var msg = "You have made the deposit successfully!";
+                                        message.success(msg, { nsType: 'toastr' });
+                                        emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
+                                        $scope.waiting = false;
+                                        $timeout(function () {
+                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                                        }, 1000);
+                                        $scope.nsOk(true);
+                                    }, function (thirdPartyPromiseError) {
+                                        $scope.waiting = false;
+                                        message.error(thirdPartyPromiseError);
+                                    });
                                 } else if (confirmResult.status === "instructions") {
                                     // TODO: instructions ...
                                 } else {

@@ -68,7 +68,6 @@
                 emBankingWithdraw.prepare($scope.selectedMethod.code, fields).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
                     if (prepareResult.status === "setup") {
-                        // TODO: show confirmation page
                         var confirmPromise = message.modal("Please confirm you want to continue with the withdrawal", {
                             nsSize: 'md',
                             nsTemplate: '/partials/messages/confirmWithdraw.html',
@@ -91,7 +90,6 @@
                                             message.error("Transaction is not completed!");
                                         } else if (transactionResult.status === "pending") {
                                             $scope.waiting = false;
-                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                             $scope.setState(accountManagement.states.pendingWithdrawals);
                                         } else if (transactionResult.status === "error") {
                                             message.error(transactionResult.error);
@@ -100,7 +98,30 @@
                                         message.error(error.desc);
                                     });
                                 } else if (confirmResult.status === "redirection") {
-                                    // TODO: redirection ...
+                                    var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
+                                    var thirdPartyPromise = message.open({
+                                        nsType: 'modal',
+                                        nsSize: 'xl',
+                                        nsBody: html,
+                                        nsStatic: true,
+                                        nsParams: {
+                                            redirectionForm: confirmResult.redirectionForm
+                                        },
+                                        nsShowClose: false
+                                    });
+                                    thirdPartyPromise.then(function (thirdPartyPromiseResult) {
+                                        var msg = "You have made the withdrawal successfully!";
+                                        message.success(msg, { nsType: 'toastr' });
+                                        emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
+                                        $scope.waiting = false;
+                                        $timeout(function () {
+                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                                        }, 1000);
+                                        $scope.nsOk(true);
+                                    }, function (thirdPartyPromiseError) {
+                                        $scope.waiting = false;
+                                        message.error(thirdPartyPromiseError);
+                                    });
                                 } else {
                                     // TODO: log error ???
                                 }

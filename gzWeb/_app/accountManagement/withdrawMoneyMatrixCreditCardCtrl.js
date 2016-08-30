@@ -1,10 +1,9 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'withdrawMoneyMatrixCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, $q, iso4217) {
+    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', ctrlFactory]);
+    function ctrlFactory($scope, $q, iso4217) {
         $scope.model = {
-            existingCard: $scope.selectedMethod.payCard,
             amount: undefined,
         };
 
@@ -20,7 +19,7 @@
             loadCreditCardInfo();
         };
 
-        function getFields(id) {
+        function getFields() {
             return {
                 gamingAccountID: $scope.gamingAccount.id,
                 currency: $scope.currency,
@@ -31,23 +30,7 @@
 
         $scope.readFields = function () {
             var q = $q.defer();
-            //if ($scope.model.existingCard){
-                q.resolve(getFields($scope.model.existingCard.id));
-            //}
-            //else {
-            //    emBanking.registerPayCard({
-            //        paymentMethodCode: $scope.selectedMethod.code,
-            //        fields: {
-            //            cardNumber: $scope.model.cardNumber,
-            //            cardHolderName: $scope.model.cardHolderName,
-            //            cardExpiryDate: $scope.model.cardExpiryMonth.display + "/" + $scope.model.cardExpiryYear.value
-            //        }
-            //    }).then(function(result) {
-            //        q.resolve(getFields(result.registeredPayCard.id));
-            //    }, function (error) {
-            //        q.reject(error);
-            //    });
-            //}
+            q.resolve(getFields());
             return q.promise;
         }
 

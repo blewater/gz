@@ -38,6 +38,7 @@
                 <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
                 <div>{{method.descr}}</div>
             </div>
+            <div class="col-xs-12 text-center" ng-if="paymentMethods.length === 1">-</div>
         </div>
     </div>
 </div>
