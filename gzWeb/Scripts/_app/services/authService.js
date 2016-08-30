@@ -165,17 +165,8 @@
                     }
                 });
             }
-            //else if (args.code === 2) {
-            //}
-            else if (args.code === 3) {
-                //message.info(args.desc);
-                factory.logout(args.desc);
-            }
             else {
-                // TODO Check other codes
-                factory.logout();
-                //$location.path(constants.routes.home.path);
-                //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                factory.logout(args.desc);
             }
         });
 
