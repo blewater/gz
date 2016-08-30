@@ -135,25 +135,31 @@
             var suffix = 'v.' + version + '_' + randomSuffix;
             return templateUrl + '?' + suffix;
         }
+        function attachHtml(options, html) {
+            var $content = angular.element(options.selector);
+            $content.contents().remove();
+            $content.html(html);
+            if (angular.isUndefined(options.scope))
+                options.scope = $rootScope.$new();
+            if (angular.isDefined(options.params))
+                angular.forEach(options.params, function (value, key) {
+                    options.scope[key] = value;
+                });
+            if (angular.isDefined(options.controllerId)) {
+                var ctrl = $controller(options.controllerId, { $scope: options.scope });
+                $content.children().data('$ngControllerController', ctrl);
+            }
+            $compile($content.contents())(options.scope);
+            if (angular.isDefined(options.callback))
+                options.callback();
+        }
         function compile(options) {
-            $templateRequest(getTemplate(options.templateUrl)).then(function (html) {
-                var $content = angular.element(options.selector);
-                $content.contents().remove();
-                $content.html(html);
-                if (angular.isUndefined(options.scope))
-                    options.scope = $rootScope.$new();
-                if (angular.isDefined(options.params))
-                    angular.forEach(options.params, function (value, key) {
-                        options.scope[key] = value;
-                    });
-                if (angular.isDefined(options.controllerId)) {
-                    var ctrl = $controller(options.controllerId, { $scope: options.scope });
-                    $content.children().data('$ngControllerController', ctrl);
-                }
-                $compile($content.contents())(options.scope);
-                if (angular.isDefined(options.callback))
-                    options.callback();
-            });
+            if (options.templateUrl)
+                $templateRequest(getTemplate(options.templateUrl)).then(function (html) {
+                    attachHtml(options, html);
+                });
+            else
+                attachHtml(options, options.html);
         }
 
         function openInNewTab(url) {
