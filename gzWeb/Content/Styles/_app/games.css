@@ -185,6 +185,9 @@
 
 
 /* #region categories */
+.categories {
+    margin-bottom: 50px;
+}
 .categories .category {
     margin: 10px;
 }
