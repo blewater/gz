@@ -112,7 +112,6 @@
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
                                         var msg = "You have made the withdrawal successfully!";
                                         message.success(msg, { nsType: 'toastr' });
-                                        emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                         $scope.waiting = false;
                                         $timeout(function () {
                                             $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);

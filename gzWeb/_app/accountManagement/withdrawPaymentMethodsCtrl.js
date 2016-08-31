@@ -8,6 +8,21 @@
         // #region init
         function loadPaymentMethods() {
             $scope.initializing = true;
+            //emWamp.getSessionInfo().then(function (sessionInfo) {
+            //    $scope.sessionInfo = sessionInfo;
+            //    emBankingWithdraw.getSupportedPaymentMethods(sessionInfo.currency, true).then(function (paymentMethods) {
+            //        $scope.paymentMethods = paymentMethods;
+            //        for (var i = 0; i < $scope.paymentMethods.length; i++)
+            //            $scope.paymentMethods[i].descr = getMethodDescr($scope.paymentMethods[i]);
+            //        $scope.initializing = false;
+            //    }, function (error) {
+            //        message.error(error.desc);
+            //        $scope.initializing = false;
+            //    });
+            //}, function (error) {
+            //    message.error(error.desc);
+            //    $scope.initializing = false;
+            //});
             emBankingWithdraw.getSupportedPaymentMethods().then(function (paymentMethods) {
                 $scope.paymentMethods = paymentMethods;
                 for (var i = 0; i < $scope.paymentMethods.length; i++)
