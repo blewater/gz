@@ -803,29 +803,6 @@ namespace gzDAL.Repos {
        
         /// <summary>
         /// 
-        /// Check if the portfolio was previously sold and "resell it" otherwise that information will be lost.
-        /// Relies on the existence of the GzTransactionJournalTypeEnum.PortfolioLiquidation transaction type 
-        /// to trigger reselling.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// 
-        private void SaveDbResellCustomerPortfolioIfSoldBefore(int customerId, int yearCurrent, int monthCurrent) {
-
-            if (_gzTransactionRepo.GetLiquidationTrxCount(customerId, yearCurrent, monthCurrent)) {
-
-                // -- Or in the rare of a portfolio liquidation support idempotency by reselling the portfolio
-                var soldPortfolioTimestamp = _gzTransactionRepo.GetSoldPortfolioTimestamp(customerId, yearCurrent,
-                    monthCurrent);
-                RiskToleranceEnum monthsPortfolioRisk;
-                SaveDbSellAllCustomerFundsShares(customerId, soldPortfolioTimestamp, out monthsPortfolioRisk, yearCurrent, monthCurrent);
-            }
-        }
-
-        /// <summary>
-        /// 
         /// Calculate monthly aggregated cash amount to invest by examining all the 
         /// customer monthly transactions.
         /// 
@@ -858,7 +835,10 @@ namespace gzDAL.Repos {
                         .Single();
 
                 monthlyCashToInvest =
-                    monthlyTrxGrouping.Sum(t => t.TypeId == creditedPlayingLossTypeId ? t.Amount : 0);
+                    monthlyTrxGrouping
+                        .Where(t => t.TypeId == creditedPlayingLossTypeId)
+                        .Select(t => t.Amount)
+                        .SingleOrDefault();
 
             }
 

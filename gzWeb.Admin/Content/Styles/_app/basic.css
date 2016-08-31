@@ -1,0 +1,466 @@
+﻿@charset "utf-8";
+
+/**************** UI-Bootstrap ********************/
+.nav, .pagination, .carousel, .panel-title a, a:hover {
+    cursor: pointer;
+}
+
+* {
+  margin: 0;
+    padding: 0;
+}
+
+html {
+    position: relative;
+    height: 100%;
+}
+html.mobile {
+    overflow-x: hidden;
+}
+body {
+    position: relative;
+    height: 100%;
+    font-family: 'Fira Sans', sans-serif !important;
+    font-weight: 300;
+    background: #F2F2F2;
+    overflow-x: hidden;
+    z-index: 0;
+}
+body.mobile-menu {
+    overflow-y: hidden;
+}
+
+.content-wrap {
+    position: relative;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.view-container {
+    /*margin-top: 70px;*/
+    /*position: fixed;
+    width: 100%;
+    height: 100%;
+    display: block;*/
+}
+
+
+
+a { text-decoration:none; }
+
+.no-padded { padding: 0; }
+.padded-xs { padding: 5px; }
+.padded-sm { padding: 10px; }
+.padded-md { padding: 20px; }
+.padded-lg { padding: 50px; }
+
+.strike {
+    text-decoration: line-through;
+    -ms-opacity: 0.3;
+    opacity: 0.3;
+}
+.fade-out {
+    -ms-opacity: 0.5;
+    opacity: 0.5;
+}
+.full-width { width: 100%; }
+.auto-width { width: auto; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.text-shadow-dark {
+    -ms-text-shadow: 1px 1px 1px #000000, 2px 2px 2px #999;
+    -ms-text-shadow: 1px 1px 1px rgba(0, 0, 0, .8), 2px 2px 2px #999;
+    text-shadow: 1px 1px 1px #000000, 2px 2px 2px #999;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .8), 2px 2px 2px #999;
+}
+
+.text-shadow-light {
+    -ms-text-shadow: 1px 1px 1px #ffffff, 2px 2px 4px #999;
+    -ms-text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
+    text-shadow: 1px 1px 1px #ffffff, 2px 2px 4px #999;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, .8), 2px 2px 4px #999;
+}
+
+.bg {
+    position: fixed;
+    z-index: -1;
+    min-height: 100%;
+    -moz-min-width: 1024px;
+    -ms-min-width: 1024px;
+    -o-min-width: 1024px;
+    -webkit-min-width: 1024px;
+    min-width: 1024px;
+    width: 100%;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.center-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.responsive-size {
+    min-height: 100%;
+    -webkit-min-width: 1024px;
+    -moz-min-width: 1024px;
+    -ms-min-width: 1024px;
+    -o-min-width: 1024px;
+    min-width: 1024px;
+    width: 100%;
+    height: auto;
+}
+
+.loading {
+    position: fixed;
+    min-height: 100%;
+    width: 100%;
+    height: auto;
+    top: 0;
+    left: 0;
+    z-index: 1005;
+    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+
+.text-gz { color: #27A95C; }
+.text-grey { color: #646464; }
+.text-black { color: #000; }
+
+.bg-gz { background-color: #27A95C; }
+.bg-grey { background-color: #c5c5c5; }
+.bg-light-grey { background-color: #f2f2f2; }
+.bg-white { background-color: #fff; }
+
+
+
+.fullscreen-hud {
+    color: #27A95C;
+    position: absolute;
+    z-index: 10000000000000;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+}
+.fullscreen-hud i.fa {
+    margin-right: 10px;
+}
+.fullscreen-hud .exit {
+    /*margin-right: 40px;*/
+    cursor: pointer;
+}
+.fullscreen-hud .clock {
+    margin-right: 20px;
+}
+
+
+button.btn-gz {
+    height: 36px;
+    line-height: 36px;
+    margin: 7px 5px;
+    padding: 0 10px;
+    -webkit-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
+    outline: none;
+    font-weight: 300;
+    font-size: 16px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    -webkit-transition: background 0.3s ease;
+    -moz-transition: background 0.3s ease;
+    -ms-transition: background 0.3s ease;
+    -o-transition: background 0.3s ease;
+    transition: background 0.3s ease;
+
+    background: #f2f2f2;
+    color: #27A95C;
+    border: 1px solid #27A95C;
+}
+button.btn-gz:hover{
+	background:#27A95C;
+	color:#fff;
+    border: 1px solid #f2f2f2;
+    /*text-decoration: underline;*/
+}
+button.btn-gz:disabled {
+    background: #f2f2f2;
+    color: #27A95C;
+    border: 1px solid #27A95C;
+    cursor: not-allowed;
+    -ms-opacity: 0.5;
+    opacity: 0.5;
+}
+
+button.btn-gz.btn-gz-alt {
+    height: 36px;
+    line-height: 36px;
+    margin: 7px 5px;
+    padding: 0 10px;
+    -webkit-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
+    outline: none;
+    font-weight: 300;
+    font-size: 16px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    -webkit-transition: background 0.3s ease;
+    -moz-transition: background 0.3s ease;
+    -ms-transition: background 0.3s ease;
+    -o-transition: background 0.3s ease;
+    transition: background 0.3s ease;
+
+    background: #27A95C;
+    color: #f2f2f2;
+    border: 1px solid #f2f2f2;
+}
+button.btn-gz.btn-gz-alt:hover{
+    background: #fff;
+    color: #27A95C;
+    border: 1px solid #27A95C;
+}
+
+
+
+
+button.btn-gz.btn-gz-toggle:hover {
+    background: #d2d2d2;
+    color: #27A95C;
+    border: 1px solid #27A95C;
+}
+button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
+	background: #47C97C;
+	color:#fff;
+    border: 1px solid #f2f2f2;
+    /*text-decoration: underline;*/
+}
+
+
+
+
+/* #region checkbox */
+.gz-checkbox { }
+.gz-checkbox i.fa { width: 20px; cursor: pointer; color: #fff; text-align: left; }
+.gz-checkbox label.control-label { cursor: pointer;font-weight: normal; }
+.gz-checkbox.disabled { color: #ddd; }
+.gz-checkbox.disabled  i.fa { cursor: not-allowed; }
+.gz-checkbox.disabled label.control-label { cursor: not-allowed; }
+/* #endregion */
+
+
+
+/* #region select */
+.gz-select select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    background: url('../../../Content/Images/select_arrow_down.png') no-repeat right;
+    cursor: pointer;
+    background-color: #fff;
+    color: #a5a5a5;
+}
+
+
+.gz-select select.form-control[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+.gz-select select option { color: #000; }
+.gz-select select option.prompt { color: #a5a5a5; }
+.gz-select select.selected { color: #000; }
+.gz-select .loading-spinner {
+    z-index: 1000;
+}
+/* #endregion */
+
+
+/* #region forms */
+.form-control {
+    height: 48px;
+    -ms-border-radius: 0;
+    border-radius: 0;
+    color: #000;
+}
+.form-control[disabled], .form-control.disabled {
+    background-color: #ccc;
+}
+.form-control.empty {
+    background-color: #eaf6ef;
+}
+.form-control.danger {
+    border-color: #dc272d;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(220, 39, 45, .6);
+    -ms-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(220, 39, 45, .6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(220, 39, 45, .6);
+}
+
+
+.form-control-feedback {
+    color: #c2ccc6;
+    font-size: 18px;
+    line-height: 48px;
+    margin-right: 10px;
+    
+    -webkit-transition: color 0.5s ease;
+    -moz-transition: color 0.5s ease;
+    -ms-transition: color 0.5s ease;
+    -o-transition: color 0.5s ease;
+    transition: color 0.5s ease;
+}
+.form-control-feedback.focused {
+    color: #27A95C;
+}
+
+.help-block {
+    color: #232323;
+    font-size: 13px;
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 0;
+    -ms-opacity: 0;
+    opacity: 0;
+    
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.help-block.show {
+    height: 18px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    -ms-opacity: 1;
+    opacity: 1;
+}
+.help-block.help-block-2x.show {
+    height: 36px;
+}
+.help-block.help-block-3x.show {
+    height: 54px;
+}
+
+/* #endregion */
+
+
+/* #region ribbon */
+.ribbon .ribbon-text {
+    background:#27A95C;
+    color:#fff;
+    text-decoration:none;
+    text-align:center;
+    font-weight:bold;
+    padding:5px 40px;
+    font-size:1rem;
+    line-height:2rem;
+    position:relative;
+    -webkit-transition:0.5s;
+    -moz-transition:0.5s;
+    -ms-transition:0.5s;
+    -o-transition:0.5s;
+    transition:0.5s;
+}
+/*.ribbon .ribbon-text:hover {
+    background:#47c97c;
+    color:#fff;
+}*/
+
+.ribbon::before,
+.ribbon .ribbon-text::after {
+    content:"";
+    width:100%;
+    display:block;
+    position:absolute;
+    top:1px;
+    left:0;
+    height:1px;
+}
+.ribbon .ribbon-text::after {
+    bottom:1px;
+    top:auto;
+}
+@media screen and (min-width:800px) {
+    .ribbon {
+        position:fixed;
+        display:block;
+        top:0;
+        right:0;
+        width:200px;
+        overflow:hidden;
+        height:200px;
+        z-index:9999;
+    }
+    .ribbon .ribbon-text {
+        width:200px;
+        position:absolute;
+        top:30px;
+        right:-40px;
+        -webkit-transform:rotate(45deg);
+        -moz-transform:rotate(45deg);
+        -ms-transform:rotate(45deg);
+        -o-transform:rotate(45deg);
+        transform:rotate(45deg);
+        -webkit-box-shadow:1px 1px 5px rgba(255,255,255,0.6);
+        -ms-box-shadow:1px 1px 5px rgba(255,255,255,0.6);
+        box-shadow:1px 1px 5px rgba(255,255,255,0.6);
+    }
+}
+/* #endregion */
+
+
+/* #region Conditional Styling */
+
+
+/**************** XS ********************/
+@media (max-width: 767px) {
+}
+
+/**************** SM ********************/
+@media (min-width: 768px) and (max-width: 991px) {
+}
+
+/**************** MD ********************/
+@media (min-width: 992px) and (max-width: 1199px) {
+}
+
+/**************** LG ********************/
+@media (min-width: 1200px) {
+}
+
+/**************** XS - SM ********************/
+@media (max-width: 991px) {
+}
+
+/**************** SM - MD ********************/
+@media (min-width: 768px) and (max-width: 1199px) {
+}
+
+/**************** MD - LG ********************/
+@media (min-width: 992px) {
+}
+
+/**************** XS - MD ********************/
+@media (max-width: 1199px) {
+}
+
+/**************** SM - LG ********************/
+@media (min-width: 768px) {
+}
+
+/* #endregion */
