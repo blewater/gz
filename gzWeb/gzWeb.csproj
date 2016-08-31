@@ -579,6 +579,7 @@
     <Content Include="Content\Images\losses_returned.svg" />
     <Content Include="Content\Images\mac.png" />
     <Content Include="Content\Images\mastercard-logo-200x106.gif" />
+    <Content Include="Content\Images\mga.png" />
     <Content Include="Content\Images\minus_icon_dgrey.svg" />
     <Content Include="Content\Images\minus_icon.svg" />
     <Content Include="Content\Images\neteller-logo-219x80.gif" />
@@ -701,6 +702,7 @@
     <Content Include="Areas\Admin\Views\CarouselEntries\Create.cshtml" />
     <Content Include="Areas\Admin\Views\CarouselEntries\Details.cshtml" />
     <Content Include="Areas\Admin\Views\CarouselEntries\Edit.cshtml" />
+    <Content Include="Partials\directives\gzThirdPartyIframe.html" />
     <Content Include="Partials\messages\confirmWithdraw.html" />
     <Content Include="Partials\messages\investmentAccessError.html" />
     <Content Include="Partials\templates\registerDepositMoneyMatrixCreditCard.html" />
@@ -708,6 +710,7 @@
     <Content Include="Partials\templates\registerDepositCreditCard.html" />
     <Content Include="Scripts\_app\controllers\account\investmentAccessErrorCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixCreditCardCtrl.js" />
+    <Content Include="Scripts\_app\directives\gzThirdPartyIframe.js" />
     <Content Include="_app\accountManagement\accountManagement.css" />
     <Content Include="_app\accountManagement\accountManagementService.js" />
     <Content Include="_app\accountManagement\bonuses.html" />
@@ -716,6 +719,8 @@
     <Content Include="_app\accountManagement\changePasswordCtrl.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixCreditCard.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixCreditCardCtrl.js" />
+    <Content Include="_app\accountManagement\responsibleGaming.html" />
+    <Content Include="_app\accountManagement\responsibleGamingCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCard.html" />
     <Content Include="_app\accountManagement\withdrawCreditCard.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCardCtrl.js" />

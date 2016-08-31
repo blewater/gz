@@ -165,6 +165,7 @@ namespace gzWeb
                                         , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
                                         , "~/_app/accountManagement/transactionHistoryCtrl.js"
                                         , "~/_app/accountManagement/bonusesCtrl.js"
+                                        , "~/_app/accountManagement/responsibleGamingCtrl.js"
                                         , "~/_app/accountManagement/myProfileCtrl.js"
                                         , "~/_app/accountManagement/changePasswordCtrl.js"
                                         #endregion
@@ -180,6 +181,7 @@ namespace gzWeb
                                         , "~/Scripts/_app/directives/gzFeaturedGame.js"
                                         , "~/Scripts/_app/directives/gzFeaturedGames.js"
                                         , "~/Scripts/_app/directives/gzCarousel.js"
+                                        , "~/Scripts/_app/directives/gzThirdPartyIframe.js"
                                         #endregion
 
                                         #region Services
@@ -187,6 +189,7 @@ namespace gzWeb
                                         , "~/Scripts/_app/services/emCasino.js"
                                         , "~/Scripts/_app/services/emBanking.js"
                                         , "~/Scripts/_app/services/emBankingWithdraw.js"
+                                        , "~/Scripts/_app/services/emResponsibleGaming.js"
                                         , "~/Scripts/_app/services/authInterceptor.js"
                                         , "~/Scripts/_app/services/authService.js"
                                         , "~/Scripts/_app/services/apiService.js"
