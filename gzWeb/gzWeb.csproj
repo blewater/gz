@@ -305,18 +305,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
-    <Compile Include="Areas\Admin\Controllers\CarouselEntriesController.cs" />
-    <Compile Include="Areas\Admin\Controllers\DynamicPagesController.cs" />
-    <Compile Include="Areas\Admin\Controllers\EmailTemplatesController.cs" />
-    <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
-    <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
-    <Compile Include="Areas\Admin\Controllers\ManageController.cs" />
-    <Compile Include="Areas\Admin\Models\CarouselEntriesViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\DynamicViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\EmailsViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\UsersViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\LogViewModel.cs" />
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
@@ -531,6 +519,10 @@
     <Compile Include="Migrations\201608172056008_Conf_Default_Portfolio.Designer.cs">
       <DependentUpon>201608172056008_Conf_Default_Portfolio.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608261313509_EmailTemplate_Code_length_changed.cs" />
+    <Compile Include="Migrations\201608261313509_EmailTemplate_Code_length_changed.Designer.cs">
+      <DependentUpon>201608261313509_EmailTemplate_Code_length_changed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -616,7 +608,6 @@
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.bootstrap.min.css" />
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.css" />
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.min.css" />
-    <Content Include="Content\Styles\_app\admin.css" />
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
@@ -1146,6 +1137,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608172056008_Conf_Default_Portfolio.resx">
       <DependentUpon>201608172056008_Conf_Default_Portfolio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608261313509_EmailTemplate_Code_length_changed.resx">
+      <DependentUpon>201608261313509_EmailTemplate_Code_length_changed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
