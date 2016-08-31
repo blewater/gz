@@ -84,6 +84,15 @@
             showInMenu: true,
             action: _attachContent
         };
+        _states.responsibleGaming = {
+            key: 'responsibleGaming',
+            ctrl: 'responsibleGamingCtrl',
+            tpl: '_app/accountManagement/responsibleGaming.html',
+            title: 'Responsible Gaming',
+            icon: 'fa-ban',
+            showInMenu: true,
+            action: _attachContent
+        };
         _states.myProfile = {
             key: 'myProfile',
             ctrl: 'myProfileCtrl',

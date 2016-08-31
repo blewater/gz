@@ -1,7 +1,7 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emBanking", ["$q", "emWamp", serviceFunc]);
+    APP.factory("emResponsibleGaming", ["$q", "emWamp", serviceFunc]);
 
     function serviceFunc($q, emWamp) {
 
@@ -206,8 +206,12 @@
         //
         // https://help.gammatrix-dev.net/help/setDepositLimit.html
         //
-        _service.setDepositLimit = function () {
-            return emWamp.call("/user/limit#setDepositLimit");
+        _service.setDepositLimit = function (period, amount, currency) {
+            return emWamp.call("/user/limit#setDepositLimit", {
+                period: period,
+                amount: amount,
+                currency: currency
+            });
         };
 
         //
@@ -225,8 +229,7 @@
         // https://help.gammatrix-dev.net/help/setWageringLimit.html
         //
         _service.setWageringLimit = function (period, amount, currency) {
-            return emWamp.call("/user/limit#setWageringLimit",
-            {
+            return emWamp.call("/user/limit#setWageringLimit", {
                 period: period,
                 amount: amount,
                 currency: currency
