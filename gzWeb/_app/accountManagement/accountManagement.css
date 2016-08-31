@@ -22,7 +22,7 @@
     margin-top: 30px;
 }
 
-.auth.mgmt-modal .text-frame {
+/*.auth.mgmt-modal .text-frame {
     background-color: #42b471;
 }
 .auth.mgmt-modal .text-frame.text-frame-md {
@@ -30,7 +30,7 @@
 }
 .auth.mgmt-modal .text-frame.text-frame-sm {
     padding: 10px 30px;
-}
+}*/
 
 /* #region Menu */
 .auth.mgmt-modal .mgmt-menu {
@@ -256,6 +256,13 @@
 /* #region Pending Withdrawals */
 .auth.mgmt-modal .pending-withdrawals { }
 /* #endregion */
+
+/* #region Responsible Gaming */
+.auth.mgmt-modal .responsible-gaming { line-height: 36px; }
+.auth.mgmt-modal .responsible-gaming .limit-type { font-size: 16px; font-weight: bold; }
+.auth.mgmt-modal .responsible-gaming .limit-btn { margin: 0; padding: 0 5px; width: 80px; float: right; }
+/* #endregion */
+
 
 /* #region My Profile */
 .auth.mgmt-modal .my-profile button[type=submit] {
