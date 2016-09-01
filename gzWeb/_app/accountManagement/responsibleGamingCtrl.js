@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'responsibleGamingCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emResponsibleGaming', '$filter', 'iso4217', 'message', '$rootScope', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emResponsibleGaming, $filter, iso4217, message, $rootScope) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emResponsibleGaming', '$filter', 'iso4217', 'message', '$rootScope', '$location', 'constants', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emResponsibleGaming, $filter, iso4217, message, $rootScope, $location, constants) {
         //var limitTypes = {
         //    deposit: 'deposit',
         //    depositPerDay: 'depositPerDay',
@@ -30,7 +30,7 @@
 
         $scope.getAmount = function (limit) {
             return limit
-                ? iso4217.getCurrencyByCode(limit.currency).symbol + " " + limit.amount + " / " + getAmountPeriod(limit.period)
+                ? (iso4217.getCurrencyByCode(limit.currency) ? iso4217.getCurrencyByCode(limit.currency).symbol : limit.currency) + " " + limit.amount + " / " + getAmountPeriod(limit.period)
                 : "";
         }
         function getAmountPeriod(period) {
@@ -49,10 +49,6 @@
                 : "";
         };
 
-        $scope.getSymbol = function () {
-            return iso4217.getCurrencyByCode($scope.currency).symbol;
-        }
-
         function init() {
             getCurrency();
             getLimits();
@@ -60,8 +56,12 @@
         function getCurrency() {
             $scope.currency = "EUR";
             emWamp.getSessionInfo().then(function (sessionInfo) {
-                $scope.currency = sessionInfo.currency;
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
+                if (sessionInfo.currency) {
+                    $scope.currency = sessionInfo.currency;
+                    $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
+                }
+                else
+                    $location.path(constants.routes.home.path);
             });
         };
         function getLimits() {
