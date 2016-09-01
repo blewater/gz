@@ -8,7 +8,7 @@
         $scope.waiting = false;
 
         $scope.model = {
-            usernameOrEmail: null,
+            usernameOrEmail: auth.data.username,
             password: null
         };
 
@@ -23,12 +23,11 @@
 
             auth.gzLogin($scope.model.usernameOrEmail, $scope.model.password).then(function (response) {
                 $scope.waiting = false;
-                if (response.emLogin === false) {
-                    message.error("We are still experiencing technical difficulties. Please try later again to login.")
-                }
-                else {
-                    $location.path(constants.routes.summary.path);
-                }
+                $location.path(constants.routes.summary.path);
+            }, function () {
+                $scope.waiting = false;
+                $scope.nsCancel();
+                message.error("We are still experiencing technical difficulties. Please try again later to login.")
             });
         }
     }

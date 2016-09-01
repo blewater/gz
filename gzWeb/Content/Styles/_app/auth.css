@@ -499,7 +499,8 @@
 /* #endregion */
 
 /* #region Login */
-.auth.login button.login { width: 147px; }
+.auth.login button.login,
+.auth.investment-access-error button.login { width: 147px; }
 /* #endregion */
 
 /* #region Forgot Password */
