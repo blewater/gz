@@ -13,7 +13,10 @@
 
         $scope.accountManagementStates = accountManagement.states.menu;
         $scope.gotoState = function (state) {
-            accountManagement.open(state);
+            if (state.key === accountManagement.states.logout.key)
+                auth.logout()
+            else
+                accountManagement.open(state);
         };
 
         $scope.routes = {
