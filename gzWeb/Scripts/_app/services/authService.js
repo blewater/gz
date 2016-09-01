@@ -286,7 +286,7 @@
                         q.resolve({ emLogin: true, gzLogin: true });
                     }, function (gzLoginError) {
                         $log.error("Greenzorro login failed for user " + usernameOrEmail + ": " + gzLoginError);
-                        q.resolve({ emLogin: true, gzLogin: false, gzError: gzLoginError });
+                        q.resolve({ emLogin: true, gzLogin: false });
                     });
                 }
             }, function (emLoginError) {
