@@ -28,7 +28,9 @@
         .factory('$exceptionHandler', function() {
             return function(exception, cause) {
                 JL('Angular').fatalException(cause, exception);
-                throw exception;
+                setTimeout(function () {
+                    throw exception;
+                }, 0);
             };
         })
         .factory('logToServerInterceptor', [
