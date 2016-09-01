@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'responsibleGamingCtrl';
-    APP.controller(ctrlId, ['$scope', 'emResponsibleGaming', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, emResponsibleGaming, $filter) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emResponsibleGaming', '$filter', 'iso4217', 'message', '$rootScope', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emResponsibleGaming, $filter, iso4217, message, $rootScope) {
         //var limitTypes = {
         //    deposit: 'deposit',
         //    depositPerDay: 'depositPerDay',
@@ -13,46 +13,102 @@
         //    session: 'session'
         //}
 
-        //$scope.getAmount = function (limit) {
-        //    return limit.current
-        //        ? {
-        //            current: getAmountText(limit.current),
-        //            queued: limit.queued ? getAmountText(limit.queued) : null
-        //        }
-        //        : "No limit";
+        $scope.periods = {
+            daily: 'daily',
+            weekly: 'weekly',
+            monthly: 'monthly'
+        }
+        $scope.model = {
+            depositPeriod: $scope.periods.daily,
+            depositAmount: 0,
+            wageringPeriod: $scope.periods.daily,
+            wageringAmount: 0,
+            lossPeriod: $scope.periods.daily,
+            lossAmount: 0,
+            sessionAmount: 0
+        };
+
+        $scope.getAmount = function (limit) {
+            return limit
+                ? iso4217.getCurrencyByCode(limit.currency).symbol + " " + limit.amount + " / " + getAmountPeriod(limit.period)
+                : "";
+        }
+        function getAmountPeriod(period) {
+            switch (period) {
+                case "daily": return "day";
+                case "weekly": return "week";
+                case "monthly": return "month";
+                default: return "day";
+            }
+        }
+        $scope.getExpiration = function (limit, queued) {
+            return limit
+                ? limit.expiryDate
+                    ? (queued ? "from " : "until ") + $filter('date')(limit.expiryDate, $rootScope.xs ? 'short' : 'medium')
+                    : angular.isUndefined(limit.expiryDate) ? "" : "No expiration"
+                : "";
+        };
+
+        $scope.getSymbol = function () {
+            return iso4217.getCurrencyByCode($scope.currency).symbol;
+        }
+
+        function init() {
+            getCurrency();
+            getLimits();
+        };
+        function getCurrency() {
+            $scope.currency = "EUR";
+            emWamp.getSessionInfo().then(function (sessionInfo) {
+                $scope.currency = sessionInfo.currency;
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
+            });
+        };
+        function getLimits() {
+            emResponsibleGaming.getLimits().then(function (response) {
+                $scope.limits = response;
+                initializeModel();
+            });
+        };
+        function initializeModel() {
+            if ($scope.limits.deposit && $scope.limits.deposit.current) {
+                $scope.model.depositPeriod = $scope.limits.deposit.current.period;
+                $scope.model.depositAmount = $scope.limits.deposit.current.amount;
+            }
+            if ($scope.limits.wagering && $scope.limits.wagering.current) {
+                $scope.model.wageringPeriod = $scope.limits.wagering.current.period;
+                $scope.model.wageringAmount = $scope.limits.wagering.current.amount;
+            }
+            if ($scope.limits.loss && $scope.limits.loss.current) {
+                $scope.model.lossPeriod = $scope.limits.loss.current.period;
+                $scope.model.lossAmount = $scope.limits.loss.current.amount;
+            }
+            if ($scope.limits.session && $scope.limits.session.current) {
+                $scope.model.sessionAmount = $scope.limits.session.current.amount;
+            }
+        };
+        init();
+
+        $scope.setDepositLimit = function () {
+            emResponsibleGaming.setDepositLimit($scope.model.depositPeriod, $scope.model.depositAmount, $scope.currency).then(function () {
+                getLimits();
+            }, function (error) {
+                message.error(error);
+            });
+        };
+        $scope.removeDepositLimit = function () {
+            message.confirm("You are about to remove " + $scope.limits.deposit.current.period + " deposit limit. Click OK to continue.", function () {
+                emResponsibleGaming.removeDepositLimit($scope.limits.deposit.current.period).then(function () {
+                    getLimits();
+                }, function (error) {
+                    message.error(error);
+                });
+            });
+        };
+        //function setMoneyLimit(period, amount, currency, func) {
         //};
-        //function getAmountText(currency, amount, period) {
-        //    return currency + " " + amount + " / " + getAmountPeriod(period);
-        //}
-        //function getAmountPeriod(period) {
-        //    switch (period) {
-        //        case "daily": return "day";
-        //        case "weekly": return "week";
-        //        case "monthly": return "month";
-        //        default: return "day";
-        //    }
-        //}
-
-        //$scope.getStatus = function (limit) {
-        //    return limit.queued ? "Queued" : "Active";
-        //};
-
-        //$scope.getExpiration = function (limit) {
-        //    return limit.current
-        //        ? $filter('date')(limit.current.expiryDate)
-        //        : "No expiration";
-        //};
 
 
-        //emResponsibleGaming.getLimits().then(function (response) {
-        //    var limits = response;
-        //    $scope.limits = {
-        //        deposit: {},
-        //        wagering: {},
-        //        loss: {},
-        //        session: {}
-        //    }
-        //});
 
         //function removeLimit (type, func) {
         //    message.confirm("You are about to remove " + type + " limit. Click OK to continue.", func);
@@ -82,10 +138,6 @@
         //    removeLimit("session", emResponsibleGaming.removeSessionLimit);
         //};
 
-        //function setMoneyLimit(period, amount, currency, func) {
-        //};
-
-        //emResponsibleGaming.setDepositLimit();
     }
 
 })();

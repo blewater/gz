@@ -258,11 +258,39 @@
 /* #endregion */
 
 /* #region Responsible Gaming */
-.auth.mgmt-modal .responsible-gaming { line-height: 36px; }
-.auth.mgmt-modal .responsible-gaming .limit-type { font-size: 16px; font-weight: bold; }
-.auth.mgmt-modal .responsible-gaming .limit-btn { margin: 0; padding: 0 5px; width: 80px; float: right; }
-/* #endregion */
+.auth.mgmt-modal .responsible-gaming { }
 
+.auth.mgmt-modal .responsible-gaming p.text-frame:not(:first-of-type) { margin-top: 30px; }
+.auth.mgmt-modal .responsible-gaming .limit-title { margin-bottom: 5px; }
+.auth.mgmt-modal .responsible-gaming .limit-type { font-size: 16px; font-weight: bold; }
+.auth.mgmt-modal .responsible-gaming .limit-description { font-size: 12px; }
+.auth.mgmt-modal .responsible-gaming .limit-info { margin-top: 15px; }
+.auth.mgmt-modal .responsible-gaming .limit-fields { margin: 10px 0; line-height: 36px; }
+.auth.mgmt-modal .responsible-gaming .limit-fields label.radio-inline input[type="radio"] { height: 36px; margin-top: 0; }
+.auth.mgmt-modal .responsible-gaming .limit-fields .input-group .input-group-addon { border-radius: 0; }
+
+.auth.mgmt-modal .responsible-gaming .limit-btn {
+    margin: 0 0 0 10px;
+    padding: 0 5px;
+    width: 80px;
+    float: right;
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.auth.mgmt-modal .responsible-gaming a,
+.auth.mgmt-modal .responsible-gaming a:focus,
+.auth.mgmt-modal .responsible-gaming a:active,
+.auth.mgmt-modal .responsible-gaming a:visited,
+.auth.mgmt-modal .responsible-gaming a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+/* #endregion */
 
 /* #region My Profile */
 .auth.mgmt-modal .my-profile button[type=submit] {

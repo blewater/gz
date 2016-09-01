@@ -219,8 +219,8 @@
         //
         // https://help.gammatrix-dev.net/help/removeDepositLimit.html
         //
-        _service.removeDepositLimit = function () {
-            return emWamp.call("/user/limit#removeDepositLimit");
+        _service.removeDepositLimit = function (period) {
+            return emWamp.call("/user/limit#removeDepositLimit", { period: period });
         };
 
         //

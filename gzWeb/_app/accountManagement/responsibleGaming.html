@@ -1,38 +1,79 @@
 ﻿<div class="responsible-gaming">
     <p class="text-frame text-frame-sm text-center">Limits</p>
 
-    <!--<div class="row">
-        <div class="col-xs-12">
-            <div class="limit-title">
-                <div class="limit-type">Deposit</div>
-                <div class="limit-at-a-glance">({{atAGlance(limits.deposit)}})</div>
+    <div class="row">
+        <div class="col-xs-12 limit-title">
+            <span class="limit-type">Deposit</span>
+            <!--<span class="limit-short-info">({{atAGlance(limits.deposit)}})</span>-->
+        </div>
+        <div class="col-xs-12 limit-description">
+            A deposit limit restricts the amount of money you can deposit into your <b>greenzorro</b> account on a daily, weekly or monthly basis.
+        </div>
+        <div class="col-xs-12 limit-info">
+            <div ng-show="!limits.deposit.current">No current limit is set.</div>
+            <div ng-show="limits.deposit.current">
+                <div class="row">
+                    <div class="limit-status col-xs-2"><b>Status</b></div>
+                    <div class="limit-amount col-xs-4"><b>Amount</b></div>
+                    <div class="limit-expiration col-xs-6"><b>Valid</b></div>
+                </div>
+                <div class="row">
+                    <div class="limit-status col-xs-2">Active</div>
+                    <div class="limit-amount col-xs-4">{{getAmount(limits.deposit.current)}}</div>
+                    <div class="limit-expiration col-xs-6">{{getExpiration(limits.deposit.current)}}</div>
+                </div>
+                <div class="row" ng-show="limits.deposit.queued">
+                    <div class="limit-status col-xs-2">Queued</div>
+                    <div class="limit-amount col-xs-4">{{getAmount(limits.deposit.queued)}}</div>
+                    <div class="limit-expiration col-xs-6">{{getExpiration(limits.deposit.queued)}}</div>
+                </div>
             </div>
         </div>
-        <div class="col-xs-12">
-            <div class="limit-description">A deposit limit ...</div>
+        <div class="col-xs-12 limit-fields" ng-show="editDeposit">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <div>Duration</div>
+                    <div>
+                        <label class="radio-inline"><input type="radio" name="depositPeriod" ng-model="model.depositPeriod" value="{{periods.daily}}">Daily</label>
+                        <label class="radio-inline"><input type="radio" name="depositPeriod" ng-model="model.depositPeriod" value="{{periods.weekly}}">Weekly</label>
+                        <label class="radio-inline"><input type="radio" name="depositPeriod" ng-model="model.depositPeriod" value="{{periods.monthly}}">Monthly</label>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div>Amount</div>
+                    <input type="number" class="form-control" placeholder="{{amountPlaceholder}}" aria-describedby="depositCurrency" ng-model="model.depositAmount">
+                    <!--<div class="input-group">
+                        <span class="input-group-addon" id="depositCurrency">{{getSymbol()}}</span>
+                        <input type="text" class="form-control" placeholder="Amount" aria-describedby="depositCurrency">
+                    </div>-->
+                </div>
+            </div>
         </div>
-        <div class="col-xs-12">
-            <div class="limit-label">Current</div>
+        <div class="col-xs-12 limit-actions">
+            <button type="button" ng-show="limits.deposit.updatable && !editDeposit" class="btn-gz limit-btn" ng-click="editDeposit = !editDeposit;">Change</button>
+            <button type="button" ng-show="editDeposit" class="btn-gz limit-btn" ng-click="editDeposit = !editDeposit;">Cancel</button>
+            <button type="button" ng-show="editDeposit && limits.deposit.current" class="btn-gz limit-btn" ng-click="removeDepositLimit()">Remove</button>
+            <button type="button" ng-show="editDeposit" class="btn-gz limit-btn" ng-click="setDepositLimit()">Update</button>
         </div>
-        <div class="col-xs-12">
-            <div class="limit-label">Duration</div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-xs-12 limit-title">
+            <span class="limit-type">Session</span>
         </div>
-        <div class="col-xs-12">
-            <div class="limit-label">Amount</div>
+        <div class="col-xs-12 limit-description">
+            A session limit restricts the amount of time you can play in a daily basis.
         </div>
-    </div>-->
-    <!--<div class="col-xs-12 col-sm-3">{{getAmount(limits.deposit)}}</div>
-    <div class="col-xs-12 col-sm-1">{{getStatus(limits.deposit)}}</div>
-    <div class="col-xs-12 col-sm-4"></div>
-    <div class="col-xs-12 col-sm-2">
-        <button type="button" class="btn-gz limit-btn" ng-click="changeDepositLimit" ng-disabled="!limits.deposit.updatable">Change</button>
-    </div>-->
+        <div class="col-xs-12 limit-info">
+            To activate a session limit, please <a href="mailto:contact@greenzorro.com" target="_blank">contact us</a>.
+        </div>
+    </div>
 
     <p class="text-frame text-frame-sm text-center">Self Exclusion</p>
 
     <div class="row">
         <div class="col-xs-12">
-            To self exclude yourself, please contact us.
+            To self exclude yourself, please <a href="mailto:contact@greenzorro.com" target="_blank">contact us</a>.
         </div>
     </div>
 </div>
