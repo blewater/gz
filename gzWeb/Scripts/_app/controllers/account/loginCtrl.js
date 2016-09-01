@@ -32,7 +32,7 @@
                 else {
                     $scope.waiting = false;
                     if (response.emLogin === false)// && response.gzLogin === false)
-                        $scope.errorMsg = "The login failed. Please check your username/email and password.";
+                        $scope.errorMsg = response.emError;// "The login failed. Please check your username/email and password.";
                     else {
                         //if (response.emLogin === false)
                         //    message.error("We have experienced technical difficulty in accessing our online games. Please try again shortly by pressing the ​<i>\'Retry to connect\'</i>​​ button.");
