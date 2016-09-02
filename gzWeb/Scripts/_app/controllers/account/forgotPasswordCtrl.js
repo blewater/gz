@@ -35,16 +35,25 @@
             if ($scope.form.$valid)
                 sendInstructions();
         };
-        function sendInstructions(){
+        //function sendInstructions(){
+        //    $scope.waiting = true;
+        //    auth.forgotPassword($scope.model.email).then(function (result) {
+        //        $scope.waiting = false;
+        //        message.success("You will receive an email at '" + $scope.model.email + "' that will guide you through the reset password process.");
+        //        $scope.nsOk(true);
+        //    }, function(error) {
+        //        $scope.waiting = false;
+        //        $scope.sendResetPasswordEmailError = error;
+        //    });
+        //}
+        function sendInstructions() {
             $scope.waiting = true;
-            auth.forgotPassword($scope.model.email).then(function (result) {
-                $scope.waiting = false;
-                message.success("You will receive an email at '" + $scope.model.email + "' that will guide you through the reset password process.");
-                $scope.nsOk(true);
-            }, function(error) {
-                $scope.waiting = false;
-                $scope.sendResetPasswordEmailError = error;
-            });
+            auth.forgotPassword($scope.model.email).then(sendCallback, sendCallback);
+        }
+        function sendCallback() {
+            $scope.waiting = false;
+            message.success("If a matching account was found, an email was sent to '" + $scope.model.email + "' to guide you through the reset password process.");
+            $scope.nsOk(true);
         }
     }
 })();
