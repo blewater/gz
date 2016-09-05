@@ -11,7 +11,7 @@
             },
             replace: true,
             templateUrl: function () {
-                return helpers.ui.getTemplate('partials/directives/gzFeaturedGames.html');
+                return helpers.ui.getTemplate('_app/games/gzFeaturedGames.html');
             },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
             }]

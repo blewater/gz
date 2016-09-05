@@ -1,0 +1,86 @@
+﻿<div class="clearfix games">
+    <div class="games-list">
+        <div class="full-width">
+            <gz-carousel gz-slides="carouselGames"></gz-carousel>
+        </div>
+
+        <div class="filters">
+            <div class="container-fluid">
+                <div class="col-xs-12 col-sm-6 col-lg-9">
+                    <div class="filter-categories">
+                        <span ng-repeat="category in gameCategories" class="filter-category">
+                            <span class="divider" ng-if="$index !== 0">|</span>
+                            <a ng-class="{'selected':category.selected}" ng-click="onCategorySelected($index)">
+                                {{category.title}}
+                            </a>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-3">
+                    <div class="live-search" cs-clickout="liveSearch.showResults = false;">
+                        <input type="search" placeholder="SEARCH GAME (type and press enter)" class="form-control" ng-model="liveSearch.input"
+                               ng-focus="onLiveSearchFocused()" ng-blur="onLiveSearchBlurred()" cs-enter="onLiveSearchChange()">
+                        <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused': liveSearch.focused || liveSearch.input}">
+                            <i ng-show="!liveSearch.searching" class="fa fa-search"></i>
+                            <span ng-show="liveSearch.searching" us-spinner="spinnerGreenXsAbs"></span>
+                        </span>
+                        <ul class="media-list live-search-results" ng-show="liveSearch.showResults">
+                            <li ng-show="liveSearch.games.length === 0 && !liveSearch.searching" class="no-results">No games to display</li>
+                            <li ng-hide="liveSearch.games.length === 0" class="media" ng-class="{'selected': g.selected}" ng-repeat="g in liveSearch.games" ng-click="selectResult($index)">
+                                <div class="media-left">
+                                    <a ng-click="onGameSelected(g.slug)">
+                                        <img class="media-object" ng-src="{{g.logo}}">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">{{g.name}}</h4>
+                                    <div>{{g.description}}</div>
+                                </div>
+                            </li>
+                            <li ng-show="liveSearch.games.length < liveSearch.totalGameCount" class="more-results">
+                                <button type="button" ng-click="onLoadMore()">
+                                    <span>Load more</span>
+                                    <span class="badge">{{liveSearch.totalGameCount - liveSearch.games.length}}</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="categories">
+            <div class="container-fluid">
+                <div class="category" ng-repeat="category in projectedCategories">
+                    <div class="row">
+                        <div class="title col-xs-12" ng-class="{'text-center': xs}">
+                            <span>{{category.title}}</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div ng-repeat-start="g in category.games" class="game text-center col-xs-6 col-sm-4 col-md-2">
+                                <a ng-href="{{getGameUrl(g.slug)}}">
+                                    <img class="img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" ng-click="onGameSelected(g.slug)" />
+                                    <div>{{g.name}}</div>
+                                </a>
+                            </div>
+                            <div ng-repeat-end ng-class="{'clearfix':(xs && $index % 2 === 1) || (sm && $index % 3 === 2) || $index % 6 === 5}"></div>
+                        </div>
+                    </div>
+
+                    <div class="row hidden">
+                        <div class="col-xs-12 text-center">
+                            <button class="load-more btn-gz btn-gz-alt" ng-click="fetchNextPage(category)">
+                                LOAD MORE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

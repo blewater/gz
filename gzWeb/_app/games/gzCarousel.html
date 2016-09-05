@@ -8,9 +8,7 @@
             <div class="gz-slide-title text-shadow-dark">{{slide.title}}</div>
             <div class="gz-slide-subtitle text-shadow-dark">{{slide.subtitle}}</div>
             <div class="gz-slide-action">
-                <button type="button" class="gz-slide-action-btn" ng-click="slide.action()">
-                    Play now
-                </button>
+                <a class="gz-slide-action-btn" ng-href="{{slide.url}}">Play now</a>
             </div>
         </div>
     </div>
