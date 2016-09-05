@@ -92,7 +92,7 @@
     routes.games = {
         path: '/games',
         ctrl: 'gamesCtrl',
-        tpl: '/Mvc/Games/Games',
+        tpl: '_app/games/games.html',
         title: 'Games',
         roles: [roles.gamer],
         category: categories.gaming
@@ -100,7 +100,7 @@
     routes.game = {
         path: '/game/:slug',
         ctrl: 'gameCtrl',
-        tpl: '/Mvc/Games/Game',
+        tpl: '_app/games/game.html',
         title: 'Games',
         roles: [roles.gamer],
         category: categories.gaming

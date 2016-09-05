@@ -32,8 +32,9 @@ namespace gzWeb
                 , "~/Content/Styles/_app/footer.css"
                 , "~/Content/Styles/_app/auth.css"
                 , "~/Content/Styles/_app/investments.css"
-                , "~/Content/Styles/_app/carousel.css"
-                , "~/Content/Styles/_app/games.css"
+                
+                , "~/_app/games/games.css"
+                , "~/_app/games/carousel.css"
                 , "~/_app/guest/guest.css"
                 , "~/_app/accountManagement/accountManagement.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
@@ -135,8 +136,8 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
                                         , "~/Scripts/_app/controllers/investments/activityCtrl.js"
                                         , "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
-                                        , "~/Scripts/_app/controllers/games/gamesCtrl.js"
-                                        , "~/Scripts/_app/controllers/games/gameCtrl.js"
+                                        //, "~/Scripts/_app/controllers/games/gamesCtrl.js"
+                                        //, "~/Scripts/_app/controllers/games/gameCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerCtrl.js"
                                         , "~/Scripts/_app/controllers/account/loginCtrl.js"
                                         , "~/Scripts/_app/controllers/account/investmentAccessErrorCtrl.js"
@@ -158,6 +159,14 @@ namespace gzWeb
                                         , "~/_app/guest/privacyCtrl.js"
                                         , "~/_app/guest/termsCtrl.js"
                                         , "~/_app/guest/playgroundCtrl.js"
+                                        #endregion
+
+                                        #region Games
+                                        , "~/_app/games/gamesCtrl.js"
+                                        , "~/_app/games/gameCtrl.js"
+                                        , "~/_app/games/gzFeaturedGame.js"
+                                        , "~/_app/games/gzFeaturedGames.js"
+                                        , "~/_app/games/gzCarousel.js"
                                         #endregion
 
                                         #region Account Management
@@ -192,9 +201,6 @@ namespace gzWeb
                                         , "~/Scripts/_app/directives/gzSelect.js"
                                         , "~/Scripts/_app/directives/gzFieldOk.js"
                                         , "~/Scripts/_app/directives/gzAuthAccess.js"
-                                        , "~/Scripts/_app/directives/gzFeaturedGame.js"
-                                        , "~/Scripts/_app/directives/gzFeaturedGames.js"
-                                        , "~/Scripts/_app/directives/gzCarousel.js"
                                         , "~/Scripts/_app/directives/gzThirdPartyIframe.js"
                                         #endregion
 

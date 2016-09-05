@@ -553,9 +553,6 @@
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
     <Content Include="apple-touch-icon.png" />
-    <Content Include="Areas\Mvc\Views\Guest\Home.cshtml">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="Content\Images\casino-default.jpg" />
     <Content Include="Content\Images\costs.svg" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
@@ -611,7 +608,9 @@
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
-    <Content Include="Content\Styles\_app\carousel.css" />
+    <Content Include="_app\games\carousel.css" />
+    <Content Include="_app\games\game.html" />
+    <Content Include="_app\games\games.html" />
     <Content Include="_app\guest\help.html" />
     <Content Include="_app\guest\home.html" />
     <Content Include="_app\guest\termsContent.html" />
@@ -624,7 +623,7 @@
     <Content Include="_app\guest\contact.html" />
     <Content Include="_app\guest\about.html" />
     <Content Include="_app\guest\guest.css" />
-    <Content Include="Content\Styles\_app\games.css" />
+    <Content Include="_app\games\games.css" />
     <Content Include="Content\Styles\_app\headerNew.css" />
     <Content Include="Content\Styles\_app\investments.css" />
     <Content Include="Content\Styles\_app\header.css" />
@@ -666,11 +665,7 @@
     <Content Include="Content\Images\test.svg" />
     <Content Include="Content\Images\test2.svg" />
     <Content Include="Areas\Mvc\Views\web.config" />
-    <Content Include="Areas\Mvc\Views\Guest\Transparency.cshtml" />
-    <Content Include="Areas\Mvc\Views\Guest\About.cshtml" />
-    <Content Include="Areas\Mvc\Views\Shared\_GamesLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
-    <Content Include="Areas\Mvc\Views\Shared\_GuestLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Register.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Login.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_AuthLayout.cshtml" />
@@ -724,8 +719,6 @@
     <Content Include="_app\accountManagement\withdrawCtrl.js" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
-    <Content Include="Areas\Mvc\Views\Guest\Playground.cshtml" />
-    <Content Include="Areas\Mvc\Views\Guest\FAQ.cshtml" />
     <Content Include="connectionStrings.config">
       <SubType>Designer</SubType>
     </Content>
@@ -734,18 +727,16 @@
     <Content Include="Content\Images\cube.svg" />
     <Content Include="Content\Images\cube_white.svg" />
     <Content Include="Content\Images\logo_no_bg.svg" />
-    <Content Include="Areas\Mvc\Views\Games\Game.cshtml" />
     <Content Include="Content\Images\diagram_green.svg" />
     <Content Include="Content\Images\games_green.svg" />
-    <Content Include="Areas\Mvc\Views\Guest\Contact.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\TestSummary.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
     <None Include="Properties\PublishProfiles\zorro.pubxml" />
-    <Content Include="Partials\directives\gzCarousel.html" />
-    <Content Include="Partials\directives\gzFeaturedGames.html" />
-    <Content Include="Partials\directives\gzFeaturedGame.html" />
+    <Content Include="_app\games\gzCarousel.html" />
+    <Content Include="_app\games\gzFeaturedGames.html" />
+    <Content Include="_app\games\gzFeaturedGame.html" />
     <Content Include="Partials\directives\gzFieldOk.html" />
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
@@ -824,15 +815,15 @@
     <Content Include="Scripts\_app\configuration\config.js" />
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\authCtrl.js" />
-    <Content Include="Scripts\_app\controllers\games\gameCtrl.js" />
+    <Content Include="_app\games\gameCtrl.js" />
     <Content Include="_app\guest\contactCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\footerCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
-    <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />
+    <Content Include="_app\games\gamesCtrl.js" />
     <Content Include="Scripts\_app\directives\gzAuthAccess.js" />
-    <Content Include="Scripts\_app\directives\gzCarousel.js" />
-    <Content Include="Scripts\_app\directives\gzFeaturedGames.js" />
-    <Content Include="Scripts\_app\directives\gzFeaturedGame.js" />
+    <Content Include="_app\games\gzCarousel.js" />
+    <Content Include="_app\games\gzFeaturedGames.js" />
+    <Content Include="_app\games\gzFeaturedGame.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="Scripts\_app\directives\gzPlanHoldingsChart.js" />
     <Content Include="Scripts\_app\services\authService.js" />
@@ -952,7 +943,6 @@
     <Content Include="Views\Shared\_Footer.cshtml" />
     <Content Include="Areas\Mvc\Views\Investments\Performance.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Areas\Mvc\Views\Games\Games.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Scripts\jsnlog\jsnlog.js.map" />
   </ItemGroup>
@@ -960,6 +950,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Scripts\_app\controllers\guest\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
+    <Folder Include="_app\investments\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

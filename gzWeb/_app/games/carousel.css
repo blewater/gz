@@ -110,7 +110,9 @@
     border-radius: 4px;
     color: #fff;
     background-color: #27A95C;
-    border: 2px solid #27A95C;    
+    border: 2px solid #27A95C;   
+    text-decoration: none;
+    display: inline-block;
 }
 .gz-carousel .gz-slide .gz-slide-action .gz-slide-action-btn:hover {
     color: #27A95C;

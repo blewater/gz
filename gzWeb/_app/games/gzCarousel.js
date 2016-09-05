@@ -11,7 +11,7 @@
             },
             replace: true,
             templateUrl: function () {
-                return helpers.ui.getTemplate('partials/directives/gzCarousel.html');
+                return helpers.ui.getTemplate('_app/games/gzCarousel.html');
             },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 //var IMG_WIDTH = 1920;
