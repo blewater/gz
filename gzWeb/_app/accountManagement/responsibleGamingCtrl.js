@@ -60,8 +60,10 @@
                     $scope.currency = sessionInfo.currency;
                     $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
                 }
-                else
+                else {
                     $location.path(constants.routes.home.path);
+                    $scope.nsCancel("User not logged in.");
+                }
             });
         };
         function getLimits() {
