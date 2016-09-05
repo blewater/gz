@@ -612,7 +612,18 @@
     <Content Include="Content\Styles\_app\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
     <Content Include="Content\Styles\_app\carousel.css" />
-    <Content Include="Content\Styles\_app\guest.css" />
+    <Content Include="_app\guest\help.html" />
+    <Content Include="_app\guest\home.html" />
+    <Content Include="_app\guest\termsContent.html" />
+    <Content Include="_app\guest\termsConfirm.html" />
+    <Content Include="_app\guest\transparency.html" />
+    <Content Include="_app\guest\terms.html" />
+    <Content Include="_app\guest\privacy.html" />
+    <Content Include="_app\guest\playground.html" />
+    <Content Include="_app\guest\faq.html" />
+    <Content Include="_app\guest\contact.html" />
+    <Content Include="_app\guest\about.html" />
+    <Content Include="_app\guest\guest.css" />
     <Content Include="Content\Styles\_app\games.css" />
     <Content Include="Content\Styles\_app\headerNew.css" />
     <Content Include="Content\Styles\_app\investments.css" />
@@ -673,6 +684,9 @@
     <Content Include="Partials\templates\registerDepositMoneyMatrixTrustly.html" />
     <Content Include="Partials\templates\registerDepositCreditCard.html" />
     <Content Include="Scripts\_app\controllers\account\investmentAccessErrorCtrl.js" />
+    <Content Include="_app\guest\termsCtrl.js" />
+    <Content Include="_app\guest\privacyCtrl.js" />
+    <Content Include="_app\guest\helpCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixCreditCardCtrl.js" />
     <Content Include="Scripts\_app\directives\gzThirdPartyIframe.js" />
     <Content Include="_app\accountManagement\accountManagement.css" />
@@ -811,7 +825,7 @@
     <Content Include="Scripts\_app\constants\constants.js" />
     <Content Include="Scripts\_app\controllers\authCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gameCtrl.js" />
-    <Content Include="Scripts\_app\controllers\guest\contactCtrl.js" />
+    <Content Include="_app\guest\contactCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\footerCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\gamesCtrl.js" />
@@ -832,9 +846,9 @@
     <Content Include="Scripts\_app\controllers\templates\registerDepositCreditCardCtrl.js" />
     <Content Include="Scripts\_app\controllers\games\depositCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\forgotPasswordCtrl.js" />
-    <Content Include="Scripts\_app\controllers\guest\faqCtrl.js" />
-    <Content Include="Scripts\_app\controllers\guest\homeCtrl.js" />
-    <Content Include="Scripts\_app\controllers\guest\playgroundCtrl.js" />
+    <Content Include="_app\guest\faqCtrl.js" />
+    <Content Include="_app\guest\homeCtrl.js" />
+    <Content Include="_app\guest\playgroundCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\summaryVintagesCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
@@ -843,8 +857,8 @@
     <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\loginCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerCtrl.js" />
-    <Content Include="Scripts\_app\controllers\guest\transparencyCtrl.js" />
-    <Content Include="Scripts\_app\controllers\guest\aboutCtrl.js" />
+    <Content Include="_app\guest\transparencyCtrl.js" />
+    <Content Include="_app\guest\aboutCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixTrustlyCtrl.js" />
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
@@ -944,6 +958,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Scripts\_app\controllers\guest\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>

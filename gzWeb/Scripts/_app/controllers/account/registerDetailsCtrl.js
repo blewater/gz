@@ -251,7 +251,7 @@
         $scope.readTerms = function(){
             var promise = message.modal("Terms and conditions", {
                 nsSize: 'xl',
-                nsTemplate: '/partials/messages/terms.html'
+                nsTemplate: '_app/guest/termsConfirm.html'
             });
             promise.then(function() {
                 $scope.model.agreed = true;

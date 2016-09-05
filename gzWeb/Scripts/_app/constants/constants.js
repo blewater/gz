@@ -25,7 +25,7 @@
     routes.home = {
         path: '/',
         ctrl: 'homeCtrl',
-        tpl: '/Mvc/Guest/Home',
+        tpl: '_app/guest/home.html',
         title: 'Home',
         reloadOnSearch: false,
         category: categories.wandering
@@ -33,35 +33,56 @@
     routes.transparency = {
         path: '/transparency',
         ctrl: 'transparencyCtrl',
-        tpl: '/Mvc/Guest/Transparency',
+        tpl: '_app/guest/transparency.html',
         title: 'Transparency',
         category: categories.wandering
     };
     routes.about = {
         path: '/about',
         ctrl: 'aboutCtrl',
-        tpl: '/Mvc/Guest/About',
+        tpl: '_app/guest/about.html',
         title: 'About',
         category: categories.wandering
     };
-    routes.contact = {
-        path: '/contact',
-        ctrl: 'contactCtrl',
-        tpl: '/Mvc/Guest/Contact',
-        title: 'Contact',
-        category: categories.wandering
-    };
+    //routes.contact = {
+    //    path: '/contact',
+    //    ctrl: 'contactCtrl',
+    //    tpl: '/Mvc/Guest/Contact',
+    //    title: 'Contact',
+    //    category: categories.wandering
+    //};
     routes.faq = {
         path: '/faq',
         ctrl: 'faqCtrl',
-        tpl: '/Mvc/Guest/FAQ',
+        tpl: '_app/guest/faq.html',
         title: 'FAQ',
+        category: categories.wandering
+    };
+    routes.help = {
+        path: '/help',
+        ctrl: 'helpCtrl',
+        tpl: '_app/guest/help.html',
+        title: 'Help',
+        category: categories.wandering
+    };
+    routes.privacy = {
+        path: '/privacy',
+        ctrl: 'privacyCtrl',
+        tpl: '_app/guest/privacy.html',
+        title: 'Privacy Policy',
+        category: categories.wandering
+    };
+    routes.terms = {
+        path: '/terms',
+        ctrl: 'termsCtrl',
+        tpl: '_app/guest/terms.html',
+        title: 'Terms & Conditions',
         category: categories.wandering
     };
     routes.playground = {
         path: '/playground',
         ctrl: 'playgroundCtrl',
-        tpl: '/Mvc/Guest/Playground',
+        tpl: '_app/guest/playground.html',
         title: 'Playground',
         category: categories.wandering
     };

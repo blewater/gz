@@ -30,11 +30,11 @@ namespace gzWeb
                 , "~/Content/Styles/_app/header.css"
                 , "~/Content/Styles/_app/headerNew.css"
                 , "~/Content/Styles/_app/footer.css"
-                , "~/Content/Styles/_app/guest.css"
                 , "~/Content/Styles/_app/auth.css"
                 , "~/Content/Styles/_app/investments.css"
                 , "~/Content/Styles/_app/carousel.css"
                 , "~/Content/Styles/_app/games.css"
+                , "~/_app/guest/guest.css"
                 , "~/_app/accountManagement/accountManagement.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
             ));
@@ -121,12 +121,15 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/templates/registerDepositCreditCardCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixCreditCardCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixTrustlyCtrl.js"
-                                        , "~/Scripts/_app/controllers/guest/homeCtrl.js"
-                                        , "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
-                                        , "~/Scripts/_app/controllers/guest/aboutCtrl.js"
-                                        , "~/Scripts/_app/controllers/guest/contactCtrl.js"
-                                        , "~/Scripts/_app/controllers/guest/faqCtrl.js"
-                                        , "~/Scripts/_app/controllers/guest/playgroundCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/homeCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/aboutCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/contactCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/faqCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/helpCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/privacyCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/termsCtrl.js"
+                                        //, "~/Scripts/_app/controllers/guest/playgroundCtrl.js"
                                         , "~/Scripts/_app/controllers/investments/summaryCtrl.js"
                                         , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
                                         , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
@@ -143,6 +146,18 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
+                                        #endregion
+
+                                        #region Guest
+                                        , "~/_app/guest/homeCtrl.js"
+                                        , "~/_app/guest/transparencyCtrl.js"
+                                        , "~/_app/guest/aboutCtrl.js"
+                                        , "~/_app/guest/contactCtrl.js"
+                                        , "~/_app/guest/faqCtrl.js"
+                                        , "~/_app/guest/helpCtrl.js"
+                                        , "~/_app/guest/privacyCtrl.js"
+                                        , "~/_app/guest/termsCtrl.js"
+                                        , "~/_app/guest/playgroundCtrl.js"
                                         #endregion
 
                                         #region Account Management

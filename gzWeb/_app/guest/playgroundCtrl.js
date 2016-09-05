@@ -112,9 +112,6 @@
         $scope.responsibleGaming = function () {
             accountManagement.open(accountManagement.states.responsibleGaming);
         };
-        $timeout(function () {
-            $scope.responsibleGaming();
-        }, 5000);
         // #endregion
 
         // #region Various

@@ -1,0 +1,21 @@
+﻿<div class="clearfix guest">
+    <div class="help sections">
+        <div class="container">
+            <h4>Help</h4>
+
+            <div class="clearfix" ng-repeat="section in sections">
+                <h5>{{section.name}}</h5>
+                <div class="section-group">
+                    <div class="section-item" ng-repeat="qa in section.items" ng-init="qa.expanded = false;" ng-class="{'expanded':qa.expanded}">
+                        <div class="section-head" ng-click="expand($parent.$index, $index)">
+                            <span>{{$index + 1}}.&nbsp;</span>
+                            <span ng-bind-html="getHtml(qa.Q)"></span>
+                            <i class="pull-right fa fa-chevron-right"></i>
+                        </div>
+                        <div class="section-body" ng-bind-html="getHtml(qa.A)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
