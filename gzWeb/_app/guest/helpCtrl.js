@@ -11,9 +11,9 @@
             {
                 name: 'My Account Section',
                 items: [
-			        { Q: "I have forgotten my username and password, what do I do?", A: "If you have forgotten your password, please use the 'Forgot Password?' option, follow the instructions and a new password will be issued to the e-mail address registered with your account. If you have forgotten your username, please contact contact@greenzorro.com." },
-			        { Q: "Who do I contact if I have questions about my account?", A: "Please contact Customer Support by mail at contact@greenzorro.com or directly via Live Chat." },
-			        { Q: "What do I do if I no longer want to use my account?", A: "For closing your account please email Customer Support at contact@greenzorro.com" },
+			        { Q: "I have forgotten my username and password, what do I do?", A: "If you have forgotten your password, please use the 'Forgot Password?' option, follow the instructions and a new password will be issued to the e-mail address registered with your account. If you have forgotten your username, please contact help@greenzorro.com." },
+			        { Q: "Who do I contact if I have questions about my account?", A: "Please contact Customer Support by mail at help@greenzorro.com or directly via Live Chat." },
+			        { Q: "What do I do if I no longer want to use my account?", A: "For closing your account please email Customer Support at help@greenzorro.com" },
 			        { Q: "How do I change my password?", A: "You can change your password by accessing 'Change Password', under 'My Account' section, when logged in, and following the instructions on that page." },
 			        { Q: "How do I change my registered email address?", A: "You can change your registered email address by accessing 'Change Email', under 'My Account' section, when logged in, and following the instructions on that page." },
 			        { Q: "Is there any way I can check my account activity?", A: "You can check your account activity by accessing 'My Account' once you have logged in, or you can contact Customer Support for any information." },
@@ -30,7 +30,7 @@
                 name: 'Registration Section',
                 items: [
 			        { Q: "How do I open an account?", A: "Simply click the 'Join Now' button, available in the header of any www.greenzorro.com page to register. You will then be directed to the registration page. Please note that your username and your account currency cannot be changed at a later stage. Before submitting your details please make sure you declare that you are over 18 and agree to our 'Terms and Conditions'. You can immediately log into your account on any page using your username and password." },
-			        { Q: "I'm having problems on the registration page. Now what?", A: "Please contact Customer Support Service at contact@greenzorro.com to assist you with the registration." },
+			        { Q: "I'm having problems on the registration page. Now what?", A: "Please contact Customer Support Service at help@greenzorro.com to assist you with the registration." },
 			        { Q: "Why do I need to open an account to play your games?", A: "We need you to open an account with us because by doing so you are agreeing to abide by our rules and regulations which include you are over the age of 18. By registering at www.greenzorro.com you are opening an account free of charge that enables you to use our products in fun mode and real money mode." },
 			        { Q: "Why is my personal information required? Are my personal details safe with you?", A: "We need your personal details to confirm your identity, age, and address to be able to offer real money transactions and games to you. <span class=\"text-gz\"><b>greenzorro</b></span> uses the newest and most advanced data encryption techniques to safeguard your personal detail." },
 			        { Q: "Do I need to make a deposit to be able to open an account at <span class=\"text-gz\"><b>greenzorro</b></span>?", A: "No, not at all. You can play for fun on our website and as much and as often as you like. In order to be able to use our products in real money mode, you need to make a deposit." },
@@ -121,7 +121,7 @@
 			        { Q: "Can I surrender/forfeit a bonus?", A: "Yes, you can surrender a bonus before you start to play or even after you have placed bets with the bonus funds. However, if you surrender a bonus after betting with it, any won amount will be deducted from your real funds. To surrender a bonus, go to 'My account', then select Active Bonuses and Casino from left menu. Click Forfeit button found under your active bonus to surrender it." },
 			        { Q: "Can I play any casino games with my bonus?", A: "Most casino bonuses are available for all games, while some bonuses might be limited to a specific brand, or game type. For instance only Net Entertainment games or only Video Slots. The same applies to sports bonuses - some bonuses might only be available for a specific sport or betting type. However, if any such restrictions, this is always clearly specified in the terms & conditions of the bonus. If in doubt, please contact Customer Support." },
 			        { Q: "How do I check that I have met the wagering requirement for a bonus?", A: "You can check your progress in 'My account' - 'Active Bonuses'." },
-			        { Q: "For what reasons can I be excluded from a promotion?", A: "Some of the promotions will be eligible only for customers from certain countries or that are using specific payment methods. There may also be restrictions based on previous misuse of our promotions. For any assistance, please contact Customer Support Team by mail at contact@greenzorro.com or via Live Chat." },
+			        { Q: "For what reasons can I be excluded from a promotion?", A: "Some of the promotions will be eligible only for customers from certain countries or that are using specific payment methods. There may also be restrictions based on previous misuse of our promotions. For any assistance, please contact Customer Support Team by mail at help@greenzorro.com or via Live Chat." },
                 ]
             },
             {
