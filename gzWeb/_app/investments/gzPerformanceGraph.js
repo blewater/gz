@@ -12,7 +12,7 @@
                 gzCurrency: '@'
             },
             templateUrl: function() {
-                return helpers.ui.getTemplate('partials/directives/gzPerformanceGraph.html');
+                return helpers.ui.getTemplate('_app/investments/gzPerformanceGraph.html');
             },
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 // #region Variables
