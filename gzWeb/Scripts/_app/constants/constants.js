@@ -111,7 +111,7 @@
     routes.summary = {
         path: '/summary',
         ctrl: 'summaryCtrl',
-        tpl: '/Mvc/Investments/Summary',
+        tpl: '_app/investments/summary.html',
         title: 'Summary',
         roles: [roles.investor],
         category: categories.investing
@@ -119,7 +119,7 @@
     routes.portfolio = {
         path: '/portfolio',
         ctrl: 'portfolioCtrl',
-        tpl: '/Mvc/Investments/Portfolio',
+        tpl: '_app/investments/portfolio.html',
         title: 'Portfolio',
         roles: [roles.investor],
         category: categories.investing
@@ -127,16 +127,8 @@
     routes.performance = {
         path: '/performance',
         ctrl: 'performanceCtrl',
-        tpl: '/Mvc/Investments/Performance',
+        tpl: '_app/investments/performance.html',
         title: 'Performance',
-        roles: [roles.investor],
-        category: categories.investing
-    };
-    routes.activity = {
-        path: '/activity',
-        ctrl: 'activityCtrl',
-        tpl: '/Mvc/Investments/Activity',
-        title: 'Activity',
         roles: [roles.investor],
         category: categories.investing
     };
