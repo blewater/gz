@@ -548,12 +548,14 @@ namespace gzDAL.Repos {
         /// <param name="liquidationAmount"></param>
         /// <param name="sellingJournalTypeReason"></param>
         /// <param name="createdOnUtc"></param>
+        /// <param name="lastInvestmentCredit">This months casino credit from player losses that will be used for buying funds becuase of liquidation</param>
         /// <returns></returns>
         public decimal SaveDbLiquidatedPortfolioWithFees(
             int customerId, 
             decimal liquidationAmount, 
             GzTransactionTypeEnum sellingJournalTypeReason, 
-            DateTime createdOnUtc) 
+            DateTime createdOnUtc,
+            out decimal lastInvestmentCredit)
         {
 
             if (liquidationAmount <= 0) {
@@ -578,7 +580,7 @@ namespace gzDAL.Repos {
                 createdOnUtc, null);
 
             // Update any credited player losses back to transfer to Everymatrix amounts without any fees deductions.
-            UpdateCashInvestmentsToTrnsfToEverymatrix(customerId, createdOnUtc);
+            lastInvestmentCredit = SaveDbCashInvestmentsToTrnsfToEverymatrix(customerId, createdOnUtc);
 
             _db.SaveChanges();
 
@@ -592,7 +594,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="createdOnUtc"></param>
-        private void UpdateCashInvestmentsToTrnsfToEverymatrix(int customerId, DateTime createdOnUtc) {
+        private decimal SaveDbCashInvestmentsToTrnsfToEverymatrix(int customerId, DateTime createdOnUtc) {
 
             var currentYearMonthStr = createdOnUtc.ToStringYearMonth();
 
@@ -601,16 +603,20 @@ namespace gzDAL.Repos {
                 .Select(tt => tt.Id)
                 .Single();
 
-            var investmentCashTrx = _db.GzTrxs
-                .Single(t => t.CustomerId == customerId
+            var lastInvestmentCredit = _db.GzTrxs
+                .Where(t => t.CustomerId == customerId
                             && t.YearMonthCtd == currentYearMonthStr
-                            && t.TypeId == cplayingLossId);
+                            && t.TypeId == cplayingLossId)
+                .Select(t => t.Amount)
+                .SingleOrDefault();
 
             SaveDbGzTransaction(
                 customerId, 
                 GzTransactionTypeEnum.TransferToGaming, 
-                investmentCashTrx.Amount,
+                lastInvestmentCredit,
                 createdOnUtc);
+
+            return lastInvestmentCredit;
         }
 
         /// <summary>
