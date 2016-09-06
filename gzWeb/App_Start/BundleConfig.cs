@@ -31,11 +31,11 @@ namespace gzWeb
                 , "~/Content/Styles/_app/headerNew.css"
                 , "~/Content/Styles/_app/footer.css"
                 , "~/Content/Styles/_app/auth.css"
-                , "~/Content/Styles/_app/investments.css"
-                
+
+                , "~/_app/guest/guest.css"
+                , "~/_app/investments/investments.css"
                 , "~/_app/games/games.css"
                 , "~/_app/games/carousel.css"
-                , "~/_app/guest/guest.css"
                 , "~/_app/accountManagement/accountManagement.css"
                 , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
             ));
@@ -131,11 +131,11 @@ namespace gzWeb
                                         //, "~/Scripts/_app/controllers/guest/privacyCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/termsCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/playgroundCtrl.js"
-                                        , "~/Scripts/_app/controllers/investments/summaryCtrl.js"
-                                        , "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
-                                        , "~/Scripts/_app/controllers/investments/performanceCtrl.js"
-                                        , "~/Scripts/_app/controllers/investments/activityCtrl.js"
-                                        , "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
+                                        //, "~/Scripts/_app/controllers/investments/summaryCtrl.js"
+                                        //, "~/Scripts/_app/controllers/investments/portfolioCtrl.js"
+                                        //, "~/Scripts/_app/controllers/investments/performanceCtrl.js"
+                                        //, "~/Scripts/_app/controllers/investments/activityCtrl.js"
+                                        //, "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
                                         //, "~/Scripts/_app/controllers/games/gamesCtrl.js"
                                         //, "~/Scripts/_app/controllers/games/gameCtrl.js"
                                         , "~/Scripts/_app/controllers/account/registerCtrl.js"
@@ -159,6 +159,17 @@ namespace gzWeb
                                         , "~/_app/guest/privacyCtrl.js"
                                         , "~/_app/guest/termsCtrl.js"
                                         , "~/_app/guest/playgroundCtrl.js"
+                                        #endregion
+
+                                        #region Investments
+                                        , "~/_app/investments/summaryCtrl.js"
+                                        , "~/_app/investments/portfolioCtrl.js"
+                                        , "~/_app/investments/performanceCtrl.js"
+                                        , "~/_app/investments/activityCtrl.js"
+                                        , "~/_app/investments/summaryVintagesCtrl.js"
+                                        , "~/_app/investments/gzPlansAllocationChart.js"
+                                        , "~/_app/investments/gzPlanHoldingsChart.js"
+                                        , "~/_app/investments/gzPerformanceGraph.js"
                                         #endregion
 
                                         #region Games
@@ -194,9 +205,6 @@ namespace gzWeb
                                         #endregion
 
                                         #region Directives
-                                        , "~/Scripts/_app/directives/gzPlansAllocationChart.js"
-                                        , "~/Scripts/_app/directives/gzPlanHoldingsChart.js"
-                                        , "~/Scripts/_app/directives/gzPerformanceGraph.js"
                                         , "~/Scripts/_app/directives/gzCheckBox.js"
                                         , "~/Scripts/_app/directives/gzSelect.js"
                                         , "~/Scripts/_app/directives/gzFieldOk.js"
