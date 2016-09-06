@@ -10,7 +10,7 @@
         $scope.openVintages = function (title, vintages, withdrawMode) {
             return message.modal(title, {
                 nsSize: '700px',
-                nsTemplate: '/partials/messages/summaryVintages.html',
+                nsTemplate: '_app/investments/summaryVintages.html',
                 nsCtrl: 'summaryVintagesCtrl',
                 nsStatic: withdrawMode,
                 nsParams: {

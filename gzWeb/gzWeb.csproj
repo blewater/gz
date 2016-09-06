@@ -625,7 +625,7 @@
     <Content Include="_app\guest\guest.css" />
     <Content Include="_app\games\games.css" />
     <Content Include="Content\Styles\_app\headerNew.css" />
-    <Content Include="Content\Styles\_app\investments.css" />
+    <Content Include="_app\investments\investments.css" />
     <Content Include="Content\Styles\_app\header.css" />
     <Content Include="Content\Styles\_app\preloader.css" />
     <Content Include="Content\Styles\ui-bootstrap\ui-bootstrap-csp.css" />
@@ -665,7 +665,6 @@
     <Content Include="Content\Images\test.svg" />
     <Content Include="Content\Images\test2.svg" />
     <Content Include="Areas\Mvc\Views\web.config" />
-    <Content Include="Areas\Mvc\Views\Shared\_InvestmentsLayout.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Register.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\Login.cshtml" />
     <Content Include="Areas\Mvc\Views\Shared\_AuthLayout.cshtml" />
@@ -717,6 +716,9 @@
     <Content Include="_app\accountManagement\transactionHistoryCtrl.js" />
     <Content Include="_app\accountManagement\withdraw.html" />
     <Content Include="_app\accountManagement\withdrawCtrl.js" />
+    <Content Include="_app\investments\performance.html" />
+    <Content Include="_app\investments\portfolio.html" />
+    <Content Include="_app\investments\summary.html" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
     <Content Include="connectionStrings.config">
@@ -729,7 +731,6 @@
     <Content Include="Content\Images\logo_no_bg.svg" />
     <Content Include="Content\Images\diagram_green.svg" />
     <Content Include="Content\Images\games_green.svg" />
-    <Content Include="Areas\Mvc\Views\Investments\TestSummary.cshtml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
@@ -740,7 +741,7 @@
     <Content Include="Partials\directives\gzFieldOk.html" />
     <Content Include="Partials\directives\gzCheckBox.html" />
     <Content Include="Partials\directives\gzSelect.html" />
-    <Content Include="Partials\directives\gzPerformanceGraph.html" />
+    <Content Include="_app\investments\gzPerformanceGraph.html" />
     <Content Include="_app\accountManagement\accountManagement.html" />
     <Content Include="Partials\messages\registerDeposit.html" />
     <Content Include="Partials\messages\registerPaymentMethods.html" />
@@ -752,7 +753,7 @@
     <Content Include="Partials\messages\terms.html" />
     <Content Include="Partials\messages\login.html" />
     <Content Include="Partials\messages\registerAccount.html" />
-    <Content Include="Partials\messages\summaryVintages.html" />
+    <Content Include="_app\investments\summaryVintages.html" />
     <Content Include="_app\accountManagement\depositCreditCard.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixTrustly.html" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
@@ -825,7 +826,7 @@
     <Content Include="_app\games\gzFeaturedGames.js" />
     <Content Include="_app\games\gzFeaturedGame.js" />
     <Content Include="Scripts\_app\directives\gzFieldOk.js" />
-    <Content Include="Scripts\_app\directives\gzPlanHoldingsChart.js" />
+    <Content Include="_app\investments\gzPlanHoldingsChart.js" />
     <Content Include="Scripts\_app\services\authService.js" />
     <Content Include="Scripts\_app\services\iovationService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
@@ -840,10 +841,10 @@
     <Content Include="_app\guest\faqCtrl.js" />
     <Content Include="_app\guest\homeCtrl.js" />
     <Content Include="_app\guest\playgroundCtrl.js" />
-    <Content Include="Scripts\_app\controllers\investments\summaryVintagesCtrl.js" />
-    <Content Include="Scripts\_app\controllers\investments\summaryCtrl.js" />
-    <Content Include="Scripts\_app\controllers\investments\portfolioCtrl.js" />
-    <Content Include="Scripts\_app\controllers\investments\performanceCtrl.js" />
+    <Content Include="_app\investments\summaryVintagesCtrl.js" />
+    <Content Include="_app\investments\summaryCtrl.js" />
+    <Content Include="_app\investments\portfolioCtrl.js" />
+    <Content Include="_app\investments\performanceCtrl.js" />
     <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\loginCtrl.js" />
@@ -853,8 +854,8 @@
     <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixTrustlyCtrl.js" />
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
-    <Content Include="Scripts\_app\directives\gzPerformanceGraph.js" />
-    <Content Include="Scripts\_app\directives\gzPlansAllocationChart.js" />
+    <Content Include="_app\investments\gzPerformanceGraph.js" />
+    <Content Include="_app\investments\gzPlansAllocationChart.js" />
     <Content Include="Scripts\_app\services\authInterceptor.js" />
     <Content Include="Scripts\_app\services\apiService.js" />
     <Content Include="Scripts\_app\services\emBanking.js" />
@@ -916,8 +917,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Mvc\Views\Investments\Activity.cshtml" />
-    <Content Include="Areas\Mvc\Views\Investments\Portfolio.cshtml" />
     <Content Include="Areas\Mvc\Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Areas\Mvc\Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Areas\Mvc\Views\Account\ExternalLoginConfirmation.cshtml" />
@@ -938,10 +937,8 @@
     <Content Include="Areas\Mvc\Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Areas\Mvc\Views\Investments\Summary.cshtml" />
     <Content Include="Views\Shared\_HeaderNew.cshtml" />
     <Content Include="Views\Shared\_Footer.cshtml" />
-    <Content Include="Areas\Mvc\Views\Investments\Performance.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Scripts\jsnlog\jsnlog.js.map" />
@@ -950,7 +947,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Scripts\_app\controllers\guest\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
-    <Folder Include="_app\investments\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
