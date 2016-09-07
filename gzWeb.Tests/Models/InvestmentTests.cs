@@ -64,7 +64,6 @@ namespace gzWeb.Tests.Models {
                     23, 00, 00);
 
                 var custPortfolioRepo = new CustPortfolioRepo(db);
-                RiskToleranceEnum monthsPortfolioRisk;
                 var soldShares = new InvBalanceRepo(
                     db, 
                     new CustFundShareRepo(db, custPortfolioRepo),
@@ -72,8 +71,7 @@ namespace gzWeb.Tests.Models {
                     custPortfolioRepo)
                     .SaveDbSellAllCustomerFundsShares(
                         custId, 
-                        lastMonthDay, 
-                        out monthsPortfolioRisk);
+                        lastMonthDay);
 
                 Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
 
