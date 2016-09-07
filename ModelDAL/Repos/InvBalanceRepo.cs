@@ -368,18 +368,16 @@ namespace gzDAL.Repos {
         /// 
         /// Sell completely a customer's owned funds shares.
         /// 
-        /// Supports selling shares in previous months respective the fund prices of those months.
+        /// Supports selling shares from a previous month in present fund stock value.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="updatedDateTimeUtc">The database creation time-stamp.</param>
-        /// <param name="monthsPortfolioRisk"></param>
         /// <param name="yearCurrent">Optional year value for selling in the past</param>
         /// <param name="monthCurrent">Optional month value for selling in the past</param>
         public bool SaveDbSellAllCustomerFundsShares(
             int customerId, 
             DateTime updatedDateTimeUtc,
-            out RiskToleranceEnum monthsPortfolioRisk,
             int yearCurrent = 0, 
             int monthCurrent = 0) {
 
@@ -398,31 +396,43 @@ namespace gzDAL.Repos {
                 throw new Exception("Cannot sell the customer's (id: " + customerId + ") portfolio in the future.");
             }
 
-            // Calculate the value of the fund shares
-            var portfolioFundsValuesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(
-                customerId, 
-                0, 
-                yearCurrent, 
-                monthCurrent, 
-                out monthsPortfolioRisk);
+            var yyyyMm = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
+            var liquidatedMonth = _db.InvBalances
+                .Any(b => b.YearMonth == yyyyMm
+                          && b.CustomerId == customerId
+                          && b.CashBalance > 0
+                          && b.CashInvestment < 0);
 
-            // Make sure we have shares to sell
-            if (portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesNum) > 0) {
+            if (!liquidatedMonth) {
 
-                decimal invGainLoss, monthlyBalance;
-                GetSharesBalanceThisMonth(customerId, portfolioFundsValuesThisMonth, yearCurrent, monthCurrent, out monthlyBalance, out invGainLoss);
+                // Calculate the value of the fund shares
+                RiskToleranceEnum monthsPortfolioRisk;
+                var portfolioFundsValuesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(
+                    customerId,
+                    0,
+                    yearCurrent,
+                    monthCurrent,
+                    out monthsPortfolioRisk);
 
-                SaveDbLiquidateCustomerPortfolio(
-                    portfolioFundsValuesThisMonth, 
-                    customerId, 
-                    yearCurrent, 
-                    monthCurrent, 
-                    monthlyBalance, 
-                    invGainLoss,
-                    monthsPortfolioRisk,
-                    updatedDateTimeUtc);
+                // Make sure we have shares to sell
+                if (portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesNum) > 0) {
 
-                soldShares = true;
+                    decimal invGainLoss, monthlyBalance;
+                    GetSharesBalanceThisMonth(customerId, portfolioFundsValuesThisMonth, yearCurrent, monthCurrent,
+                        out monthlyBalance, out invGainLoss);
+
+                    SaveDbLiquidateCustomerPortfolio(
+                        portfolioFundsValuesThisMonth,
+                        customerId,
+                        yearCurrent,
+                        monthCurrent,
+                        monthlyBalance,
+                        invGainLoss,
+                        monthsPortfolioRisk,
+                        updatedDateTimeUtc);
+
+                    soldShares = true;
+                }
             }
 
             return soldShares;
@@ -469,12 +479,14 @@ namespace gzDAL.Repos {
                     updatedDateTimeUtc);
 
                 // Save fees transactions first and continue with reduced cash amount
+                decimal lastInvestmentCredit;
                 var remainingCashAmount =
                         _gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
                             customerId,
                             newMonthlyBalance,
                             GzTransactionTypeEnum.FullCustomerFundsLiquidation,
-                            updatedDateTimeUtc);
+                            updatedDateTimeUtc, 
+                            out lastInvestmentCredit);
 
                     _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
                         new InvBalance {
@@ -483,7 +495,8 @@ namespace gzDAL.Repos {
                             Balance = 0,
                             CashBalance = remainingCashAmount,
                             InvGainLoss = invGainLoss,
-                            CashInvestment = -remainingCashAmount,
+                            // Save cash from sale trx and last month's credit
+                            CashInvestment = -(remainingCashAmount + lastInvestmentCredit),
                             UpdatedOnUtc = updatedDateTimeUtc
                         });
 

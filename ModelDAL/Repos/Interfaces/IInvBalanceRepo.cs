@@ -30,7 +30,6 @@ namespace gzDAL.Repos.Interfaces {
         bool SaveDbSellAllCustomerFundsShares(
             int customerId, 
             DateTime updatedDateTimeUtc, 
-            out RiskToleranceEnum monthsPortfolioRisk, 
             int yearCurrent = 0,
             int monthCurrent = 0);
 

@@ -40,7 +40,7 @@ namespace gzDAL.Repos.Interfaces
 
         void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, DateTime createdOnUtc);
 
-        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, DateTime createdOnUtc);
+        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, DateTime createdOnUtcout, out decimal lastInvestmentCredit);
 
         void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
     }
