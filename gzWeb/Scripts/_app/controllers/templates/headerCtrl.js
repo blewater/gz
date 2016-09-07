@@ -39,7 +39,7 @@
             $location.path(constants.routes.home.path);
         }
         $scope.backToGames = function () {
-            $location.path(constants.routes.games.path);
+            $location.path(constants.routes.games.path).search({});
         };
         $scope.toInvestments = function () {
             if ($scope._authData.isInvestor)

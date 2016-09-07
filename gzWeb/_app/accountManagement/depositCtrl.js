@@ -90,7 +90,7 @@
                                             $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                             $scope.nsOk(true);
                                             if ($location.path() === constants.routes.home.path)
-                                                $location.path(constants.routes.games.path);
+                                                $location.path(constants.routes.games.path).search({});
                                         } else if (transactionResult.status === "incomplete") {
                                             console.log("show transaction is not completed");
                                             // TODO: show transaction is not completed

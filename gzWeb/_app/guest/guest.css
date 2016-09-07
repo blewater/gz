@@ -1,8 +1,13 @@
 ﻿@charset "utf-8";
 
-
 /* #region Common */
 .guest {
+}
+.guest ol, ul {
+    margin-left: 30px;
+}
+.guest  section:not(:first-of-type) {
+    margin-top: 30px;
 }
 /* #endregion */
 
@@ -596,13 +601,6 @@
 /* #region Privacy Policy*/
 .guest .privacy {
     padding: 60px 0;
-}
-.guest .privacy section:not(:first-of-type) {
-    margin-top: 30px;
-}
-
-.guest .privacy ol {
-    margin-left: 30px;
 }
 /* #endregion */
 

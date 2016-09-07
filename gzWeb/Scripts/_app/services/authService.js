@@ -154,7 +154,7 @@
 
                         if (args.initialized === true && $rootScope.routeData.category === constants.categories.wandering) {
                             if (factory.data.isGamer)
-                                $location.path(constants.routes.games.path);
+                                $location.path(constants.routes.games.path).search({});
                             else if (factory.data.isInvestor)
                                 $location.path(constants.routes.summary.path);
                         }
@@ -181,7 +181,7 @@
         //    if (angular.isDefined(requestPath))
         //        $location.path(requestPath);
         //    else if (factory.data.isGamer)
-        //        $location.path(constants.routes.games.path);
+        //        $location.path(constants.routes.games.path).search({});
         //    else if (factory.data.isInvestor)
         //        $location.path(constants.routes.summary.path);
         //};

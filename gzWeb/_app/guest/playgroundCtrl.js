@@ -137,7 +137,7 @@
 
         $scope.currentRoute = function() {
             if ($location.path() === constants.routes.home.path)
-                $location.path(constants.routes.games.path);
+                $location.path(constants.routes.games.path).search({});
         }
         // #endregion
 
