@@ -17,7 +17,15 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-lg-3">
-                    <div class="live-search" cs-clickout="liveSearch.showResults = false;">
+                    <div class="search-by-name" ng-class="{'focused': searchByNameFocused}">
+                        <input type="search" placeholder="SEARCH GAME" class="form-control" ng-model="searchByNameTerm"
+                               ng-focus="searchByNameFocused = true;" ng-blur="searchByNameFocused = false;" cs-enter="onSearchByName()">
+                        <a class="search-btn" ng-click="searchingByName || onSearchByName()">
+                            <i class="fa fa-search" ng-show="!searchingByName"></i>
+                            <span us-spinner="spinnerGreenXsAbs" ng-show="searchingByName"></span>
+                        </a>
+                    </div>
+                    <!--<div class="live-search" cs-clickout="liveSearch.showResults = false;">
                         <input type="search" placeholder="SEARCH GAME (type and press enter)" class="form-control" ng-model="liveSearch.input"
                                ng-focus="onLiveSearchFocused()" ng-blur="onLiveSearchBlurred()" cs-enter="onLiveSearchChange()">
                         <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused': liveSearch.focused || liveSearch.input}">
@@ -44,14 +52,17 @@
                                 </button>
                             </li>
                         </ul>
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div>
 
         <div class="categories">
             <div class="container-fluid">
-                <div class="category" ng-repeat="category in projectedCategories">
+                <div class="text-center" ng-show="thereAreNoResults()">
+                    <h5>No games found</h5>
+                </div>
+                <div class="category" ng-repeat="category in projectedCategories" ng-show="category.games.length > 0">
                     <div class="row">
                         <div class="title col-xs-12" ng-class="{'text-center': xs}">
                             <span>{{category.title}}</span>
@@ -70,13 +81,13 @@
                         </div>
                     </div>
 
-                    <div class="row hidden">
+                    <!--<div class="row hidden">
                         <div class="col-xs-12 text-center">
                             <button class="load-more btn-gz btn-gz-alt" ng-click="fetchNextPage(category)">
                                 LOAD MORE
                             </button>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div>

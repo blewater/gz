@@ -86,7 +86,7 @@
         }
 
         $scope.backToGames = function () {
-            $location.path(constants.routes.games.path);
+            $location.path(constants.routes.games.path).search({});
         }
 
         $scope.$on('$locationChangeStart', function (event, next, current) {

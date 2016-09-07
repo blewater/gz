@@ -94,6 +94,7 @@
         ctrl: 'gamesCtrl',
         tpl: '_app/games/games.html',
         title: 'Games',
+        reloadOnSearch: false,
         roles: [roles.gamer],
         category: categories.gaming
     };

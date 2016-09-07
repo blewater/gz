@@ -55,7 +55,7 @@
 
         $scope._init(function () {
             if ($scope._authData.isGamer){
-                $location.path(constants.routes.games.path);
+                $location.path(constants.routes.games.path).search({});
             }
             else {
                 readResetPwdKeys();

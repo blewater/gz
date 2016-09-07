@@ -94,7 +94,7 @@
 
         //$scope.backToGames = function () {
         //    $scope.gamesMode = true;
-        //    $location.path(constants.routes.games.path);
+        //    $location.path(constants.routes.games.path).search({});
         //};
         //$scope.toInvestments = function () {
         //    $scope.gamesMode = false;

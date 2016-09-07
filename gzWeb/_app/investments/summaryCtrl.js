@@ -65,7 +65,7 @@
         }
 
         $scope.backToGames = function() {
-            $location.path(constants.routes.games.path);
+            $location.path(constants.routes.games.path).search({});
         };
 
         function processVintages(vintages) {
