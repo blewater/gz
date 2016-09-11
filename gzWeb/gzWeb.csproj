@@ -731,6 +731,10 @@
     <Content Include="Content\Images\logo_no_bg.svg" />
     <Content Include="Content\Images\diagram_green.svg" />
     <Content Include="Content\Images\games_green.svg" />
+    <Content Include="Content\Images\payment methods\maestro.svg" />
+    <Content Include="Content\Images\payment methods\mastercard.svg" />
+    <Content Include="Content\Images\payment methods\trustly.svg" />
+    <Content Include="Content\Images\payment methods\visa.svg" />
     <None Include="Properties\PublishProfiles\greenzorrodev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\Remote Site.pubxml" />
