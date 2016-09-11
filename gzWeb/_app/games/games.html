@@ -72,9 +72,14 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div ng-repeat-start="g in category.games" class="game text-center col-xs-6 col-sm-4 col-md-2">
-                                <a ng-href="{{getGameUrl(g.slug)}}">
-                                    <img class="img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" ng-click="onGameSelected(g.slug)" />
-                                    <div>{{g.name}}</div>
+                                <a class="game-link" ng-href="{{getGameUrl(g.slug)}}">
+                                    <img class="game-img img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" ng-click="onGameSelected(g.slug)" />
+                                    <div class="game-info">
+                                        <div class="game-play">
+                                            <i class="fa fa-3x fa-play-circle"></i>
+                                        </div>
+                                        <div class="game-name">{{g.name}}</div>
+                                    </div>
                                 </a>
                             </div>
                             <div ng-repeat-end ng-class="{'clearfix':(xs && $index % 2 === 1) || (sm && $index % 3 === 2) || $index % 6 === 5}"></div>

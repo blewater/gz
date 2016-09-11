@@ -18,6 +18,7 @@
         $scope.selectedCategory = undefined;
         $scope.searchByNameTerm = "";
         $scope.searchByVendorTerm = "";
+        $scope.projectedCategories = [];
         // #endregion
 
 
@@ -425,9 +426,9 @@
         // #region Init
         $scope._init(function () {
             var params = $location.search();
-            selectedCategoryName = params.category;
-            $scope.searchByNameTerm = params.name;
-            $scope.searchByVendorTerm = params.vendor;
+            selectedCategoryName = params.category || "";
+            $scope.searchByNameTerm = params.name || "";
+            $scope.searchByVendorTerm = params.vendor || "";
 
             loadCategories();
             getFeaturedGames();
