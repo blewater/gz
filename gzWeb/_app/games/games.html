@@ -5,15 +5,17 @@
         </div>
 
         <div class="filters">
-            <div class="container-fluid">
-                <div class="col-xs-12 text-center">
+            <div class="container">
+                <div class="col-xs-12">
                     <div class="filter-categories">
-                        <span ng-repeat="category in gameCategories" class="filter-category">
-                            <span class="divider" ng-if="$index !== 0">|</span>
+                        <span ng-repeat-start="category in gameCategories" class="filter-category">
+                            <!--<span class="divider" ng-if="$index !== 0">|</span>-->
                             <a ng-class="{'selected':category.selected}" ng-click="onCategorySelected($index)">
                                 {{category.title}}
                             </a>
+                            <span class="divider" ng-hide="$index === gameCategories.length - 1 || (xs && $index % 3 === 2) || (sm && $index % 6 === 5)">|</span>
                         </span>
+                        <span ng-repeat-end ng-class="{'clearfix':(xs && $index % 3 === 2) || (sm && $index % 6 === 5)}"></span>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
