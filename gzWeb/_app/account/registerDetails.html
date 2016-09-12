@@ -1,0 +1,177 @@
+﻿<div class="auth register register-details">
+    <div class="row heading">
+        <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
+            <div class="steps">
+                <div class="col-xs-12 progress-wrap">
+                    <uib-progressbar value="50"></uib-progressbar>
+                </div>
+                <div ng-repeat="step in steps" class="col-xs-4 centered">
+                     <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
+                        <i class="fa step-icon" ng-class="{
+                            'fa-check-circle-o': $index < currentStep,
+                            'fa-dot-circle-o': $index === currentStep,
+                            'fa-circle-thin': $index > currentStep
+                        }"></i>
+                        <i class="fa fa-circle step-icon-bg"></i>
+                        <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row content bg-gz">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+            <div class="logo-icon text-center">
+                <img src="/Content/Images/logo.svg">
+            </div>
+        </div>
+        <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <input type="text" placeholder="First Name" id="firstname" name="firstname" class="form-control" autocomplete="off" ng-model="model.firstname" required
+                                   ng-class="{ 'empty': !model.firstname, 'danger' : form.firstname.$invalid && !form.firstname.$pristine }"
+                                   ng-focus="firstnameFocused = true" ng-blur="firstnameFocused = false" cs-capitalize-first autofocus>
+                            <div class="help-block" ng-class="{'show': firstnameFocused && form.firstname.$error.required && !form.firstname.$pristine}">First name is required</div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <input type="text" placeholder="Last Name" id="lastname" name="lastname" class="form-control" autocomplete="off" ng-model="model.lastname" required
+                                   ng-class="{ 'empty': !model.lastname, 'danger' : form.lastname.$invalid && !form.lastname.$pristine }"
+                                   ng-focus="lastnameFocused = true" ng-blur="lastnameFocused = false" cs-capitalize-first>
+                            <div class="help-block" ng-class="{'show': lastnameFocused && form.lastname.$error.required && !form.lastname.$pristine}">Last name is required</div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="form.firstname.$valid && form.lastname.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-3">
+                            <gz-select gz-name="year" gz-model="model.yearOfBirth" gz-collection="years" gz-change="onYearSelected(id)" gz-prompt="YYYY" gz-loading="loadingYears"
+                                       gz-required gz-error="!form.year.$pristine && form.year.$error.required"></gz-select>
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            <gz-select gz-name="month" gz-model="model.monthOfBirth" gz-collection="months" gz-change="onMonthSelected(id)" gz-prompt="MM" gz-loading="loadingMonths"
+                                       gz-required gz-id="value" gz-display="display" gz-error="!form.month.$pristine && form.month.$error.required" gz-disabled="!model.yearOfBirth"></gz-select>
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            <gz-select gz-name="day" gz-model="model.dayOfBirth" gz-collection="daysOfMonth" gz-prompt="DD" gz-loading="loadingDays"
+                                       gz-required gz-id="value" gz-display="display" gz-error="!form.day.$pristine && form.day.$error.required" gz-disabled="!model.yearOfBirth || !model.monthOfBirth"></gz-select>
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            <gz-select gz-name="title" gz-model="model.title" gz-collection="titles" gz-no-prompt gz-loading="loadingTitles"
+                                       gz-required gz-error="!form.title.$pristine && form.title.$error.required"></gz-select>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="help-block" ng-class="{'show': !form.year.$pristine && form.year.$error.required}">Year of birth is required</div>
+                            <div class="help-block" ng-class="{'show': !form.month.$pristine && form.month.$error.required}">Month of birth is required</div>
+                            <div class="help-block" ng-class="{'show': !form.day.$pristine && form.day.$error.required}">Day of birth is required</div>
+                            <div class="help-block" ng-class="{'show': !form.title.$pristine && form.title.$error.required}">Title is required</div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="form.year.$valid && form.month.$valid && form.day.$valid && form.title.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <input type="text" placeholder="Address" id="address" name="address" class="form-control" autocomplete="off" ng-model="model.address" required
+                           ng-class="{ 'empty': !model.address, 'danger': form.address.$invalid && !form.address.$pristine }"
+                           ng-focus="addressFocused = true" ng-blur="addressFocused = false"
+                           ng-autocomplete options="{types: 'address', country: model.country.code, watchEnter: true}" cs-capitalize-first>
+                    <div class="help-block" ng-class="{'show': addressFocused && form.address.$error.required && !form.address.$pristine}">Address is required</div>
+                    <gz-field-ok gz-when="form.address.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4">
+                            <gz-select gz-name="currency" gz-model="model.currency" gz-collection="currencies" gz-change="onCurrencySelected(id)" gz-prompt="Currency" gz-loading="loadingCurrencies"
+                                       gz-required gz-id="code" gz-display="name" gz-error="!form.currency.$pristine && form.currency.$error.required"></gz-select>
+                            <div class="help-block" ng-class="{'show': !form.currency.$pristine && form.currency.$error.required}">Currency is required</div>
+                        </div>
+                        <div class="col-xs-12 col-sm-8">
+                            <gz-select gz-name="country" gz-model="model.country" gz-collection="countries" gz-change="onCountrySelected(id)" gz-prompt="Country" gz-loading="loadingCountries"
+                                       gz-required gz-id="code" gz-display="name" gz-error="!form.country.$pristine && form.country.$error.required"></gz-select>
+                            <div class="help-block" ng-class="{'show': !form.country.$pristine && form.country.$error.required}">Country is required</div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="form.currency.$valid && form.country.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4">
+                            <input type="text" placeholder="Postal Code" id="postalCode" name="postalCode" class="form-control" autocomplete="off" ng-model="model.postalCode" required
+                                   ng-class="{ 'empty': !model.postalCode, 'danger': form.postalCode.$invalid && !form.postalCode.$pristine }"
+                                   ng-focus="postalCodeFocused = true" ng-blur="postalCodeFocused = false">
+                            <div class="help-block" ng-class="{'show': postalCodeFocused && form.postalCode.$error.required && !form.postalCode.$pristine}">Postal code is required</div>
+                        </div>
+                        <div class="col-xs-12 col-sm-8">
+                            <input type="text" placeholder="City" id="city" name="city" class="form-control" autocomplete="off" ng-model="model.city" required
+                                   ng-class="{ 'empty': !model.city, 'danger': form.city.$invalid && !form.city.$pristine }"
+                                   ng-focus="cityFocused = true" ng-blur="cityFocused = false"
+                                   ng-autocomplete options="{types: '(cities)', country: model.country.code, watchEnter: true}" cs-capitalize-first>
+                            <div class="help-block" ng-class="{'show': cityFocused && form.city.$error.required && !form.city.$pristine}">City is required</div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="form.postalCode.$valid && form.city.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4">
+                            <div id="phonePrefix" class="btn-group dropup full-width" uib-dropdown on-toggle="setDropdownOffset(open)">
+                                <button type="button" class="form-control" uib-dropdown-toggle ng-class="{'empty': !model.phonePrefix}">
+                                    <div class="full-width text-left">{{model.phonePrefix}}</div>
+                                </button>
+                                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="phonePrefix">
+                                    <li role="menuitem" ng-repeat="prefix in phonePrefixes" ng-class="{'active': prefix.active}">
+                                        <a ng-click="onPhonePrefixSelected($index)">{{prefix.name}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-8">
+                            <input type="text" placeholder="Mobile Number" id="phoneNumber" name="phoneNumber" class="form-control" autocomplete="off" ng-model="model.phoneNumber" required
+                                   ng-class="{ 'empty': !model.phoneNumber, 'danger': form.phoneNumber.$invalid && !form.phoneNumber.$pristine }"
+                                   ng-focus="phoneNumberFocused = true" ng-blur="phoneNumberFocused = false"
+                                   cs-pattern-restrict="^[0-9]*$">
+                            <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Mobile number is required</div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="model.phonePrefix && form.phoneNumber.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group text-center">
+                    <gz-check-box gz-model="model" gz-value="agreed">I have read and agreed the <a class="terms" ng-click="readTerms()">terms & conditions</a></gz-check-box>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="btns text-center">
+                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !model.agreed"
+                                ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
+                            <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
+                            <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
+                            <span ng-show="!waiting">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

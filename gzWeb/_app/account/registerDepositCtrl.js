@@ -42,9 +42,9 @@
             }
         }
 
-        var creditCardFields = { templateUrl: '/partials/templates/registerDepositCreditCard.html', ctrlId: 'registerDepositCreditCardCtrl' }
-        var moneyMatrixCreditCardFields = { templateUrl: '/partials/templates/registerDepositMoneyMatrixCreditCard.html', ctrlId: 'registerDepositMoneyMatrixCreditCardCtrl' }
-        var moneyMatrixTrustlyFields = { templateUrl: '/partials/templates/registerDepositMoneyMatrixTrustly.html', ctrlId: 'registerDepositMoneyMatrixTrustlyCtrl' }
+        var creditCardFields = { templateUrl: '_app/account/registerDepositCreditCard.html', ctrlId: 'registerDepositCreditCardCtrl' }
+        var moneyMatrixCreditCardFields = { templateUrl: '_app/account/registerDepositMoneyMatrixCreditCard.html', ctrlId: 'registerDepositMoneyMatrixCreditCardCtrl' }
+        var moneyMatrixTrustlyFields = { templateUrl: '_app/account/registerDepositMoneyMatrixTrustly.html', ctrlId: 'registerDepositMoneyMatrixTrustlyCtrl' }
         var paymentMethodsFields = [];
         paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
@@ -182,7 +182,7 @@
             $scope.nsBack({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerPaymentMethods.html',
+                nsTemplate: '_app/account/registerPaymentMethods.html',
                 nsCtrl: 'registerPaymentMethodsCtrl',
                 nsStatic: true,
                 nsParams: {

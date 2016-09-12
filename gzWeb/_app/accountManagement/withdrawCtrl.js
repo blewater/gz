@@ -70,7 +70,7 @@
                     if (prepareResult.status === "setup") {
                         var confirmPromise = message.modal("Please confirm you want to continue with the withdrawal", {
                             nsSize: 'md',
-                            nsTemplate: '/partials/messages/confirmWithdraw.html',
+                            nsTemplate: '_app/account/confirmWithdraw.html',
                             //nsCtrl: 'confirmWithdrawCtrl',
                             nsParams: { fields: fields },
                             nsStatic: true

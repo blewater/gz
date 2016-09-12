@@ -30,9 +30,9 @@ namespace gzWeb
                 , "~/Content/Styles/_app/header.css"
                 , "~/Content/Styles/_app/headerNew.css"
                 , "~/Content/Styles/_app/footer.css"
-                , "~/Content/Styles/_app/auth.css"
 
                 , "~/_app/guest/guest.css"
+                , "~/_app/account/auth.css"
                 , "~/_app/investments/investments.css"
                 , "~/_app/games/games.css"
                 , "~/_app/games/carousel.css"
@@ -119,9 +119,6 @@ namespace gzWeb
                                         , "~/Scripts/_app/controllers/templates/headerCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/headerNewCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/footerCtrl.js"
-                                        , "~/Scripts/_app/controllers/templates/registerDepositCreditCardCtrl.js"
-                                        , "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixCreditCardCtrl.js"
-                                        , "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixTrustlyCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/homeCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/aboutCtrl.js"
@@ -138,15 +135,18 @@ namespace gzWeb
                                         //, "~/Scripts/_app/controllers/investments/summaryVintagesCtrl.js"
                                         //, "~/Scripts/_app/controllers/games/gamesCtrl.js"
                                         //, "~/Scripts/_app/controllers/games/gameCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/registerCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/loginCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/investmentAccessErrorCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/forgotPasswordCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/resetPasswordCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/registerAccountCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
-                                        , "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/registerCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/loginCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/investmentAccessErrorCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/forgotPasswordCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/resetPasswordCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/registerAccountCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/registerDetailsCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/registerPaymentMethodsCtrl.js"
+                                        //, "~/Scripts/_app/controllers/account/registerDepositCtrl.js"
+                                        //, "~/Scripts/_app/controllers/templates/registerDepositCreditCardCtrl.js"
+                                        //, "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixCreditCardCtrl.js"
+                                        //, "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixTrustlyCtrl.js"
                                         #endregion
 
                                         #region Guest
@@ -161,23 +161,18 @@ namespace gzWeb
                                         , "~/_app/guest/playgroundCtrl.js"
                                         #endregion
 
-                                        #region Investments
-                                        , "~/_app/investments/summaryCtrl.js"
-                                        , "~/_app/investments/portfolioCtrl.js"
-                                        , "~/_app/investments/performanceCtrl.js"
-                                        , "~/_app/investments/activityCtrl.js"
-                                        , "~/_app/investments/summaryVintagesCtrl.js"
-                                        , "~/_app/investments/gzPlansAllocationChart.js"
-                                        , "~/_app/investments/gzPlanHoldingsChart.js"
-                                        , "~/_app/investments/gzPerformanceGraph.js"
-                                        #endregion
-
-                                        #region Games
-                                        , "~/_app/games/gamesCtrl.js"
-                                        , "~/_app/games/gameCtrl.js"
-                                        , "~/_app/games/gzFeaturedGame.js"
-                                        , "~/_app/games/gzFeaturedGames.js"
-                                        , "~/_app/games/gzCarousel.js"
+                                        #region Account
+                                        , "~/_app/account/loginCtrl.js"
+                                        , "~/_app/account/investmentAccessErrorCtrl.js"
+                                        , "~/_app/account/forgotPasswordCtrl.js"
+                                        , "~/_app/account/resetPasswordCtrl.js"
+                                        , "~/_app/account/registerAccountCtrl.js"
+                                        , "~/_app/account/registerDetailsCtrl.js"
+                                        , "~/_app/account/registerPaymentMethodsCtrl.js"
+                                        , "~/_app/account/registerDepositCtrl.js"
+                                        , "~/_app/account/registerDepositCreditCardCtrl.js"
+                                        , "~/_app/account/registerDepositMoneyMatrixCreditCardCtrl.js"
+                                        , "~/_app/account/registerDepositMoneyMatrixTrustlyCtrl.js"
                                         #endregion
 
                                         #region Account Management
@@ -202,6 +197,25 @@ namespace gzWeb
                                         , "~/_app/accountManagement/responsibleGamingCtrl.js"
                                         , "~/_app/accountManagement/myProfileCtrl.js"
                                         , "~/_app/accountManagement/changePasswordCtrl.js"
+                                        #endregion
+
+                                        #region Investments
+                                        , "~/_app/investments/summaryCtrl.js"
+                                        , "~/_app/investments/portfolioCtrl.js"
+                                        , "~/_app/investments/performanceCtrl.js"
+                                        , "~/_app/investments/activityCtrl.js"
+                                        , "~/_app/investments/summaryVintagesCtrl.js"
+                                        , "~/_app/investments/gzPlansAllocationChart.js"
+                                        , "~/_app/investments/gzPlanHoldingsChart.js"
+                                        , "~/_app/investments/gzPerformanceGraph.js"
+                                        #endregion
+
+                                        #region Games
+                                        , "~/_app/games/gamesCtrl.js"
+                                        , "~/_app/games/gameCtrl.js"
+                                        , "~/_app/games/gzFeaturedGame.js"
+                                        , "~/_app/games/gzFeaturedGames.js"
+                                        , "~/_app/games/gzCarousel.js"
                                         #endregion
 
                                         #region Directives
