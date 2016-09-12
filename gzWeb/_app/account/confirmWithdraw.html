@@ -1,7 +1,23 @@
 ﻿<div class="confirm-deposit">
-    <h4>TODO: Withdraw confirmation screen</h4>
-    <div class="pull-right">
-        <button type="button" class="btn-gz btn-gz-alt" ng-click="nsCancel(false)">Cancel</button>
-        <button type="button" class="btn-gz" ng-click="nsOk(true)">OK</button>
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 text-left">
+            Amount credit to {{creditTo}}
+        </div>
+        <div class="col-xs-12 col-sm-4 text-right">
+            {{creditAmount}}
+        </div>
+        <div class="col-xs-12 col-sm-8 text-left">
+            Amount debit from {{debitFrom}}
+        </div>
+        <div class="col-xs-12 col-sm-4 text-right">
+            {{debitAmount}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="pull-right">
+            <button type="button" class="btn-gz btn-gz-alt" ng-click="nsCancel(false)">Cancel</button>
+            <button type="button" class="btn-gz" ng-click="nsOk(true)">OK</button>
+        </div>
     </div>
 </div>

@@ -69,12 +69,14 @@
                 emBanking.prepare({paymentMethodCode: $scope.selectedMethod.code, fields: fields}).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
                     if (prepareResult.status === "setup") {
-                        // TODO: show confirmation page
                         var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
                             nsSize: 'md',
                             nsTemplate: '_app/account/confirmDeposit.html',
                             nsCtrl: 'confirmDepositCtrl',
-                            nsParams: { fields: fields },
+                            nsParams: {
+                                fields: fields,
+                                prepareResult: prepareResult
+                            },
                             nsStatic: true
                         });
                         confirmPromise.then(function () {
@@ -82,7 +84,6 @@
                                 if (confirmResult.status === "success") {
                                     emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
                                         if (transactionResult.status === "success") {
-                                            // TODO: show receipt page ...
                                             var msg = "You have made the deposit successfully!";
                                             message.success(msg, { nsType: 'toastr' });
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
