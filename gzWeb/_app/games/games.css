@@ -16,21 +16,35 @@
 
 .games-list .filters .filter-categories {
     line-height: 48px;
+    text-align: center;
+    /*text-align-last: justify;*/
 }
+/*.games-list .filters .filter-categories::after {
+    content: '';
+    width: 100%;
+}*/
 .games-list .filters .filter-categories .divider {
-    font-size: 22px;
+    /*font-size: 22px;*/
+    font-size: 16px;
     color: #aaa;
 }
 .games-list .filters .filter-categories a {
     color: #000;
     text-decoration: none;
-    padding: 10px;
-    margin: 5px 10px;
     font-weight: 300;
-    font-size: 22px;
     line-height: 48px;
     position: relative;
+
+    /*padding: 10px;
+    margin: 5px 10px;
+    font-size: 22px;*/
+
+    padding: 3px;
+    margin: 5px 3px;
+    font-size: 16px;
 }
+
+
 .games-list .filters .filter-categories .filter-category:first-of-type a {
     margin-left: 0;
 }
@@ -60,7 +74,7 @@
     box-shadow: 0 0 2px #000;
 }
 
-@media (min-width: 1495px) and (max-width: 1805px) {
+/*@media (min-width: 1495px) and (max-width: 1805px) {
     .games-list .filters .filter-categories .divider {
         font-size: 20px;
     }
@@ -89,13 +103,7 @@
         margin: 5px 3px;
         font-size: 16px;
     }
-    /*.games-list .filters .filter-categories .filter-category:first-of-type a {
-        margin-left: inherit;
-    }
-    .games-list .filters .filter-categories .filter-category:last-of-type a {
-        margin-right: inherit;
-    }*/
-}
+}*/
 /* #endregion */
 
 /* #region search-by-name */
