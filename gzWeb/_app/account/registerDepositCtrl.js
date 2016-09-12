@@ -90,7 +90,10 @@
                             nsSize: 'md',
                             nsTemplate: '_app/account/confirmDeposit.html',
                             nsCtrl: 'confirmDepositCtrl',
-                            nsParams: { fields: fields },
+                            nsParams: {
+                                fields: fields,
+                                prepareResult: prepareResult
+                            },
                             nsStatic: true
                         });
                         confirmPromise.then(function () {
