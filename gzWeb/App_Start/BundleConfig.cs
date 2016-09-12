@@ -221,11 +221,11 @@ namespace gzWeb
                                         #endregion
 
                                         #region Directives
-                                        , "~/Scripts/_app/directives/gzCheckBox.js"
-                                        , "~/Scripts/_app/directives/gzSelect.js"
-                                        , "~/Scripts/_app/directives/gzFieldOk.js"
-                                        , "~/Scripts/_app/directives/gzAuthAccess.js"
-                                        , "~/Scripts/_app/directives/gzThirdPartyIframe.js"
+                                        , "~/_app/directives/gzCheckBox.js"
+                                        , "~/_app/directives/gzSelect.js"
+                                        , "~/_app/directives/gzFieldOk.js"
+                                        , "~/_app/directives/gzAuthAccess.js"
+                                        , "~/_app/directives/gzThirdPartyIframe.js"
                                         #endregion
 
                                         #region Services

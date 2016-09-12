@@ -596,9 +596,6 @@
     <Content Include="Content\Styles\bootstrap\bootstrap.min.css" />
     <Content Include="Content\Images\gz_logo.png" />
     <Content Include="Content\Images\gz_logo_sm.png" />
-    <Content Include="Content\Styles\exceptionaire-media.css" />
-    <Content Include="Content\Styles\exceptionaire-meterialize.css" />
-    <Content Include="Content\Styles\exceptionaire-style.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.bootstrap.css" />
@@ -612,6 +609,15 @@
     <Content Include="_app\account\confirmDepositCtrl.js" />
     <Content Include="_app\account\confirmDeposit.html" />
     <Content Include="_app\account\confirmWithdraw.html" />
+    <Content Include="_app\directives\gzAuthAccess.js" />
+    <Content Include="_app\directives\gzCheckBox.html" />
+    <Content Include="_app\directives\gzCheckBox.js" />
+    <Content Include="_app\directives\gzFieldOk.html" />
+    <Content Include="_app\directives\gzFieldOk.js" />
+    <Content Include="_app\directives\gzSelect.html" />
+    <Content Include="_app\directives\gzSelect.js" />
+    <Content Include="_app\directives\gzThirdPartyIFrame.html" />
+    <Content Include="_app\directives\gzThirdPartyIframe.js" />
     <Content Include="_app\guest\explainerVideo.html" />
     <Content Include="_app\account\forgotPassword.html" />
     <Content Include="_app\account\forgotPasswordCtrl.js" />
@@ -661,7 +667,6 @@
     <Content Include="EMTestApi.html" />
     <Content Include="favicon.ico" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Content\Styles\Site.css" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\Styles\fonts\glyphicons-halflings-regular.ttf" />
@@ -700,12 +705,9 @@
     <Content Include="Areas\Mvc\Views\Auth\RegisterProfile.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterForm.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
-    <Content Include="Partials\directives\gzThirdPartyIframe.html" />
-    <Content Include="Scripts\_app\controllers\account\investmentAccessErrorCtrl.js" />
     <Content Include="_app\guest\termsCtrl.js" />
     <Content Include="_app\guest\privacyCtrl.js" />
     <Content Include="_app\guest\helpCtrl.js" />
-    <Content Include="Scripts\_app\directives\gzThirdPartyIframe.js" />
     <Content Include="_app\accountManagement\accountManagement.css" />
     <Content Include="_app\accountManagement\accountManagementService.js" />
     <Content Include="_app\accountManagement\bonuses.html" />
@@ -765,9 +767,6 @@
     <Content Include="_app\games\gzCarousel.html" />
     <Content Include="_app\games\gzFeaturedGames.html" />
     <Content Include="_app\games\gzFeaturedGame.html" />
-    <Content Include="Partials\directives\gzFieldOk.html" />
-    <Content Include="Partials\directives\gzCheckBox.html" />
-    <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="_app\investments\gzPerformanceGraph.html" />
     <Content Include="_app\accountManagement\accountManagement.html" />
     <Content Include="_app\investments\summaryVintages.html" />
@@ -838,21 +837,13 @@
     <Content Include="Scripts\_app\controllers\templates\footerCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerCtrl.js" />
     <Content Include="_app\games\gamesCtrl.js" />
-    <Content Include="Scripts\_app\directives\gzAuthAccess.js" />
     <Content Include="_app\games\gzCarousel.js" />
     <Content Include="_app\games\gzFeaturedGames.js" />
     <Content Include="_app\games\gzFeaturedGame.js" />
-    <Content Include="Scripts\_app\directives\gzFieldOk.js" />
     <Content Include="_app\investments\gzPlanHoldingsChart.js" />
     <Content Include="Scripts\_app\services\authService.js" />
     <Content Include="Scripts\_app\services\iovationService.js" />
     <Content Include="Scripts\_app\services\loginCtrl.Test.js" />
-    <Content Include="Scripts\_app\controllers\account\registerDepositCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\registerPaymentMethodsCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\resetPasswordCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\registerAccountCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\registerDetailsCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\forgotPasswordCtrl.js" />
     <Content Include="_app\guest\faqCtrl.js" />
     <Content Include="_app\guest\homeCtrl.js" />
     <Content Include="_app\guest\playgroundCtrl.js" />
@@ -860,13 +851,8 @@
     <Content Include="_app\investments\summaryCtrl.js" />
     <Content Include="_app\investments\portfolioCtrl.js" />
     <Content Include="_app\investments\performanceCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\loginCtrl.js" />
-    <Content Include="Scripts\_app\controllers\account\registerCtrl.js" />
     <Content Include="_app\guest\transparencyCtrl.js" />
     <Content Include="_app\guest\aboutCtrl.js" />
-    <Content Include="Scripts\_app\directives\gzCheckBox.js" />
-    <Content Include="Scripts\_app\directives\gzSelect.js" />
     <Content Include="_app\investments\gzPerformanceGraph.js" />
     <Content Include="_app\investments\gzPlansAllocationChart.js" />
     <Content Include="Scripts\_app\services\authInterceptor.js" />
@@ -950,7 +936,6 @@
     <Content Include="Areas\Mvc\Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Shared\_HeaderNew.cshtml" />
     <Content Include="Views\Shared\_Footer.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
@@ -958,6 +943,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Partials\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>

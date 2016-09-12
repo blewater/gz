@@ -1,0 +1,4 @@
+﻿<div class="field-ok" ng-class="{'show': gzWhen() || gzLoading()}">
+    <img ng-show="gzWhen() && !gzLoading()" src="../../Content/Images/check.svg" alt="Field is OK" />
+    <span ng-show="gzLoading()" us-spinner="spinnerOptions"></span>
+</div>
