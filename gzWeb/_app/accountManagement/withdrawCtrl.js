@@ -71,7 +71,7 @@
                         var confirmPromise = message.modal("Please confirm you want to continue with the withdrawal", {
                             nsSize: 'md',
                             nsTemplate: '_app/account/confirmWithdraw.html',
-                            //nsCtrl: 'confirmWithdrawCtrl',
+                            nsCtrl: 'confirmWithdrawCtrl',
                             nsParams: { fields: fields },
                             nsStatic: true
                         });
