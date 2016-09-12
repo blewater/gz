@@ -30,7 +30,7 @@
 
         $scope.getAmount = function (limit) {
             return limit
-                ? (iso4217.getCurrencyByCode(limit.currency) ? iso4217.getCurrencyByCode(limit.currency).symbol : limit.currency) + " " + limit.amount + " / " + getAmountPeriod(limit.period)
+                ? getAmountText(limit.currency, limit.amount, limit.period)
                 : "";
         }
         function getAmountPeriod(period) {
@@ -41,11 +41,14 @@
                 default: return "day";
             }
         }
+        function getAmountText(currency, amount, period) {
+            return (iso4217.getCurrencyByCode(currency) ? iso4217.getCurrencyByCode(currency).symbol : currency) + " " + amount + " / " + getAmountPeriod(period)
+        }
         $scope.getExpiration = function (limit, queued) {
-            return limit
-                ? limit.expiryDate
-                    ? (queued ? "from " : "until ") + $filter('date')(limit.expiryDate, $rootScope.xs ? 'short' : 'medium')
-                    : angular.isUndefined(limit.expiryDate) ? "" : "No expiration"
+            return limit && limit.current
+                ? limit.current.expiryDate
+                    ? (queued ? "from " : "until ") + $filter('date')(limit.current.expiryDate, $rootScope.xs ? 'short' : 'medium')
+                    : angular.isUndefined(limit.current.expiryDate) ? "" : "No expiration"
                 : "";
         };
 
@@ -66,10 +69,13 @@
                 }
             });
         };
-        function getLimits() {
+        function getLimits(callback) {
             emResponsibleGaming.getLimits().then(function (response) {
                 $scope.limits = response;
                 initializeModel();
+
+                if (callback)
+                    callback();
             });
         };
         function initializeModel() {
@@ -91,20 +97,39 @@
         };
         init();
 
+        $scope.toggleEditDepsotiLimit = function () {
+            $scope.editDeposit = !$scope.editDeposit;
+        };
         $scope.setDepositLimit = function () {
+            $rootScope.loading = true;
             emResponsibleGaming.setDepositLimit($scope.model.depositPeriod, $scope.model.depositAmount, $scope.currency).then(function () {
-                getLimits();
+                getLimits(function () {
+                    $rootScope.loading = false;
+                    message.success("Your new deposit limit has been set to " + getAmountText($scope.currency, $scope.model.depositAmount, $scope.model.depositPeriod));
+                    $scope.toggleEditDepsotiLimit();
+                });
             }, function (error) {
-                message.error(error);
+                $rootScope.loading = false;
+                message.error(error.desc);
             });
         };
         $scope.removeDepositLimit = function () {
-            message.confirm("You are about to remove " + $scope.limits.deposit.current.period + " deposit limit. Click OK to continue.", function () {
+            message.confirm("You are about to remove your " + $scope.limits.deposit.current.period + " deposit limit. Click OK to continue.", function () {
+                $rootScope.loading = true;
                 emResponsibleGaming.removeDepositLimit($scope.limits.deposit.current.period).then(function () {
-                    getLimits();
+                    getLimits(function () {
+                        $rootScope.loading = false;
+                        message.success("Your " + $scope.limits.deposit.current.period + " deposit limit has been scheduled to remove.");
+                        $scope.toggleEditDepsotiLimit();
+                    });
                 }, function (error) {
-                    message.error(error);
+                    $rootScope.loading = false;
+                    message.error(error.desc);
                 });
+            }, angular.noop, {
+                nsClass: "warning",
+                nsIconClass: 'fa-exclamation-triangle',
+                nsIconClassInversed: true
             });
         };
         //function setMoneyLimit(period, amount, currency, func) {

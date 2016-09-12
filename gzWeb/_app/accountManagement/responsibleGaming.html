@@ -20,12 +20,12 @@
                 <div class="row">
                     <div class="limit-status col-xs-2">Active</div>
                     <div class="limit-amount col-xs-4">{{getAmount(limits.deposit.current)}}</div>
-                    <div class="limit-expiration col-xs-6">{{getExpiration(limits.deposit.current)}}</div>
+                    <div class="limit-expiration col-xs-6">{{getExpiration(limits.deposit)}}</div>
                 </div>
                 <div class="row" ng-show="limits.deposit.queued">
                     <div class="limit-status col-xs-2">Queued</div>
                     <div class="limit-amount col-xs-4">{{getAmount(limits.deposit.queued)}}</div>
-                    <div class="limit-expiration col-xs-6">{{getExpiration(limits.deposit.queued)}}</div>
+                    <div class="limit-expiration col-xs-6">{{getExpiration(limits.deposit, true)}}</div>
                 </div>
             </div>
         </div>
@@ -46,6 +46,7 @@
             </div>
         </div>
         <div class="col-xs-12 limit-actions">
+            {{editDeposit}}
             <button type="button" ng-show="limits.deposit.updatable && !editDeposit" class="btn-gz limit-btn" ng-click="editDeposit = !editDeposit;">Change</button>
             <button type="button" ng-show="editDeposit" class="btn-gz limit-btn" ng-click="editDeposit = !editDeposit;">Cancel</button>
             <button type="button" ng-show="editDeposit && limits.deposit.current" class="btn-gz limit-btn" ng-click="removeDepositLimit()">Remove</button>
