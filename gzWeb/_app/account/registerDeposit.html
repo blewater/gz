@@ -1,0 +1,72 @@
+﻿<div class="auth register register-deposit">
+    <div class="row heading">
+        <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
+            <div class="steps">
+                <div class="col-xs-12 progress-wrap">
+                    <uib-progressbar value="100"></uib-progressbar>
+                </div>
+                <div ng-repeat="step in steps" class="col-xs-4 centered">
+                     <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
+                        <i class="fa step-icon" ng-class="{
+                            'fa-check-circle-o': $index < currentStep,
+                            'fa-dot-circle-o': $index === currentStep,
+                            'fa-circle-thin': $index > currentStep
+                        }"></i>
+                        <i class="fa fa-circle step-icon-bg"></i>
+                        <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row content bg-gz">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+            <div class="logo-icon text-center">
+                <img src="/Content/Images/logo.svg">
+            </div>
+        </div>
+        <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="payment-method">
+                        <div>
+                            <span class="method-icon" ng-bind-html="selectedMethod.icon"></span>
+                            <span class="method-name">{{selectedMethod.name}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="initializing">
+                <div class="form-group">
+                    <span us-spinner="spinnerWhite"></span>
+                </div>
+            </div>
+
+            <div id="depositFields"></div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="btns text-center">
+                        <button type="submit" class="btn-gz deposit" ng-disabled="form.$invalid || extraValidityCheck === false"
+                                ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
+                            <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
+                            <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
+                            <span ng-show="!waiting">Deposit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 splitter"></div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="btns text-center">
+                        <button type="button" class="btn-gz" ng-click="backToPaymentMethods()">Back to payment methods</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

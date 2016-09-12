@@ -40,7 +40,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerAccount.html',
+                nsTemplate: '_app/account/registerAccount.html',
                 nsCtrl: 'registerAccountCtrl',
                 nsStatic: true,
             });
@@ -49,7 +49,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerDetails.html',
+                nsTemplate: '_app/account/registerDetails.html',
                 nsCtrl: 'registerDetailsCtrl',
                 nsStatic: true,
                 nsParams: {
@@ -65,7 +65,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerPaymentMethods.html',
+                nsTemplate: '_app/account/registerPaymentMethods.html',
                 nsCtrl: 'registerPaymentMethodsCtrl',
                 nsStatic: true
             });
@@ -74,7 +74,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/login.html',
+                nsTemplate: '_app/account/login.html',
                 nsCtrl: 'loginCtrl',
                 nsStatic: true,
             });
@@ -83,7 +83,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/forgotPassword.html',
+                nsTemplate: '_app/account/forgotPassword.html',
                 nsCtrl: 'forgotPasswordCtrl',
                 nsStatic: true,
             });
@@ -92,7 +92,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/resetPassword.html',
+                nsTemplate: '_app/account/resetPassword.html',
                 nsCtrl: 'resetPasswordCtrl',
                 nsStatic: true,
             });
@@ -101,7 +101,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/changePassword.html',
+                nsTemplate: '_app/account/changePassword.html',
                 nsCtrl: 'changePasswordCtrl',
                 nsStatic: true,
             });
@@ -131,7 +131,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '640px',
-                nsTemplate: '/partials/messages/explainerVideo.html'
+                nsTemplate: '_app/account/explainerVideo.html'
             });
         }
 

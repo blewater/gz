@@ -606,8 +606,33 @@
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.css" />
     <Content Include="Content\Styles\ng-tags-input\ng-tags-input.min.css" />
     <Content Include="Content\Styles\_app\footer.css" />
-    <Content Include="Content\Styles\_app\auth.css" />
+    <Content Include="_app\account\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
+    <Content Include="_app\account\confirmDeposit.html" />
+    <Content Include="_app\account\confirmWithdraw.html" />
+    <Content Include="_app\guest\explainerVideo.html" />
+    <Content Include="_app\account\forgotPassword.html" />
+    <Content Include="_app\account\forgotPasswordCtrl.js" />
+    <Content Include="_app\account\investmentAccessError.html" />
+    <Content Include="_app\account\investmentAccessErrorCtrl.js" />
+    <Content Include="_app\account\login.html" />
+    <Content Include="_app\account\loginCtrl.js" />
+    <Content Include="_app\account\registerAccount.html" />
+    <Content Include="_app\account\registerAccountCtrl.js" />
+    <Content Include="_app\account\registerDeposit.html" />
+    <Content Include="_app\account\registerDepositCreditCard.html" />
+    <Content Include="_app\account\registerDepositCreditCardCtrl.js" />
+    <Content Include="_app\account\registerDepositCtrl.js" />
+    <Content Include="_app\account\registerDepositMoneyMatrixCreditCard.html" />
+    <Content Include="_app\account\registerDepositMoneyMatrixCreditCardCtrl.js" />
+    <Content Include="_app\account\registerDepositMoneyMatrixTrustly.html" />
+    <Content Include="_app\account\registerDepositMoneyMatrixTrustlyCtrl.js" />
+    <Content Include="_app\account\registerDetails.html" />
+    <Content Include="_app\account\registerDetailsCtrl.js" />
+    <Content Include="_app\account\registerPaymentMethods.html" />
+    <Content Include="_app\account\registerPaymentMethodsCtrl.js" />
+    <Content Include="_app\account\resetPassword.html" />
+    <Content Include="_app\account\resetPasswordCtrl.js" />
     <Content Include="_app\games\carousel.css" />
     <Content Include="_app\games\game.html" />
     <Content Include="_app\games\games.html" />
@@ -674,16 +699,10 @@
     <Content Include="Areas\Mvc\Views\Auth\RegisterForm.cshtml" />
     <Content Include="Areas\Mvc\Views\Auth\RegisterDetails.cshtml" />
     <Content Include="Partials\directives\gzThirdPartyIframe.html" />
-    <Content Include="Partials\messages\confirmWithdraw.html" />
-    <Content Include="Partials\messages\investmentAccessError.html" />
-    <Content Include="Partials\templates\registerDepositMoneyMatrixCreditCard.html" />
-    <Content Include="Partials\templates\registerDepositMoneyMatrixTrustly.html" />
-    <Content Include="Partials\templates\registerDepositCreditCard.html" />
     <Content Include="Scripts\_app\controllers\account\investmentAccessErrorCtrl.js" />
     <Content Include="_app\guest\termsCtrl.js" />
     <Content Include="_app\guest\privacyCtrl.js" />
     <Content Include="_app\guest\helpCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixCreditCardCtrl.js" />
     <Content Include="Scripts\_app\directives\gzThirdPartyIframe.js" />
     <Content Include="_app\accountManagement\accountManagement.css" />
     <Content Include="_app\accountManagement\accountManagementService.js" />
@@ -749,16 +768,6 @@
     <Content Include="Partials\directives\gzSelect.html" />
     <Content Include="_app\investments\gzPerformanceGraph.html" />
     <Content Include="_app\accountManagement\accountManagement.html" />
-    <Content Include="Partials\messages\registerDeposit.html" />
-    <Content Include="Partials\messages\registerPaymentMethods.html" />
-    <Content Include="Partials\messages\resetPassword.html" />
-    <Content Include="Partials\messages\forgotPassword.html" />
-    <Content Include="Partials\messages\registerDetails.html" />
-    <Content Include="Partials\messages\confirmDeposit.html" />
-    <Content Include="Partials\messages\explainerVideo.html" />
-    <Content Include="Partials\messages\terms.html" />
-    <Content Include="Partials\messages\login.html" />
-    <Content Include="Partials\messages\registerAccount.html" />
     <Content Include="_app\investments\summaryVintages.html" />
     <Content Include="_app\accountManagement\depositCreditCard.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixTrustly.html" />
@@ -841,8 +850,6 @@
     <Content Include="Scripts\_app\controllers\account\resetPasswordCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerAccountCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerDetailsCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\registerDepositCreditCardCtrl.js" />
-    <Content Include="Scripts\_app\controllers\games\depositCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\forgotPasswordCtrl.js" />
     <Content Include="_app\guest\faqCtrl.js" />
     <Content Include="_app\guest\homeCtrl.js" />
@@ -851,13 +858,11 @@
     <Content Include="_app\investments\summaryCtrl.js" />
     <Content Include="_app\investments\portfolioCtrl.js" />
     <Content Include="_app\investments\performanceCtrl.js" />
-    <Content Include="Scripts\_app\controllers\investments\activityCtrl.js" />
     <Content Include="Scripts\_app\controllers\templates\headerNewCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\loginCtrl.js" />
     <Content Include="Scripts\_app\controllers\account\registerCtrl.js" />
     <Content Include="_app\guest\transparencyCtrl.js" />
     <Content Include="_app\guest\aboutCtrl.js" />
-    <Content Include="Scripts\_app\controllers\templates\registerDepositMoneyMatrixTrustlyCtrl.js" />
     <Content Include="Scripts\_app\directives\gzCheckBox.js" />
     <Content Include="Scripts\_app\directives\gzSelect.js" />
     <Content Include="_app\investments\gzPerformanceGraph.js" />
@@ -951,7 +956,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\_app\controllers\guest\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>

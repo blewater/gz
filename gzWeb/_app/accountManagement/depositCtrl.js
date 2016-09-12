@@ -72,7 +72,7 @@
                         // TODO: show confirmation page
                         var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
                             nsSize: 'md',
-                            nsTemplate: '/partials/messages/confirmDeposit.html',
+                            nsTemplate: '_app/account/confirmDeposit.html',
                             //nsCtrl: 'confirmDepositCtrl',
                             nsParams: { fields: fields },
                             nsStatic: true
