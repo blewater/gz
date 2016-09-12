@@ -611,6 +611,8 @@
     <Content Include="_app\games\carousel.css" />
     <Content Include="_app\games\game.html" />
     <Content Include="_app\games\games.html" />
+    <Content Include="_app\games\liveSearch.html" />
+    <Content Include="_app\games\liveSearch.js" />
     <Content Include="_app\guest\help.html" />
     <Content Include="_app\guest\home.html" />
     <Content Include="_app\guest\termsContent.html" />
