@@ -100,11 +100,11 @@
 
 /* #region search-by-name */
 .games-list .filters .search-by-name {
-    /*position: relative;*/
+    /*margin-bottom: 10px;*/
 }
 .games-list .filters .search-by-name input {
     border-radius: 4px;
-    font-size: 18px;
+    /*font-size: 18px;*/
 }
 .games-list .filters .search-by-name .search-btn i.fa.fa-search {
     position: absolute;
@@ -127,19 +127,32 @@
     -o-transition: color 0.5s ease;
     transition: color 0.5s ease;
 
-    color: #c2ccc6;
-}
-.games-list .filters .search-by-name.focused .search-btn i.fa.fa-search,
-.games-list .filters .search-by-name .search-btn:hover i.fa.fa-search {
+    /*color: #c2ccc6;*/
     color: #27A95C;
 }
+/*.games-list .filters .search-by-name.focused .search-btn i.fa.fa-search,
+.games-list .filters .search-by-name .search-btn:hover i.fa.fa-search {
+    color: #27A95C;
+}*/
 
 @media (max-width: 767px) {
-    .games-list .filters .search-by-name input {
-        margin-top: 10px;
+    .games-list .filters .search-by-name {
+        margin-bottom: 10px;
     }
 }
 /* #endregion */
+
+/* #region search-by-vendor */
+.games-list .filters .search-by-vendor .gz-select select.form-control {
+    background-position-x: calc(100% - 10px);
+}
+@media (max-width: 767px) {
+    .games-list .filters .search-by-vendor {
+        margin-bottom: 10px;
+    }
+}
+/* #endregion */
+
 
 /* #region live search */
 .games-list .filters .live-search {

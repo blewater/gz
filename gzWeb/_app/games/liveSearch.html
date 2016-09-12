@@ -1,0 +1,28 @@
+﻿<div class="live-search" cs-clickout="liveSearch.showResults = false;">
+    <input type="search" placeholder="SEARCH GAME (type and press enter)" class="form-control" ng-model="liveSearch.input"
+           ng-focus="onLiveSearchFocused()" ng-blur="onLiveSearchBlurred()" cs-enter="onLiveSearchChange()">
+    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused': liveSearch.focused || liveSearch.input}">
+        <i ng-show="!liveSearch.searching" class="fa fa-search"></i>
+        <span ng-show="liveSearch.searching" us-spinner="spinnerGreenXsAbs"></span>
+    </span>
+    <ul class="media-list live-search-results" ng-show="liveSearch.showResults">
+        <li ng-show="liveSearch.games.length === 0 && !liveSearch.searching" class="no-results">No games to display</li>
+        <li ng-hide="liveSearch.games.length === 0" class="media" ng-class="{'selected': g.selected}" ng-repeat="g in liveSearch.games" ng-click="selectResult($index)">
+            <div class="media-left">
+                <a ng-click="onGameSelected(g.slug)">
+                    <img class="media-object" ng-src="{{g.logo}}">
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{g.name}}</h4>
+                <div>{{g.description}}</div>
+            </div>
+        </li>
+        <li ng-show="liveSearch.games.length < liveSearch.totalGameCount" class="more-results">
+            <button type="button" ng-click="onLoadMore()">
+                <span>Load more</span>
+                <span class="badge">{{liveSearch.totalGameCount - liveSearch.games.length}}</span>
+            </button>
+        </li>
+    </ul>
+</div>
