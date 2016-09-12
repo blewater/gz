@@ -638,4 +638,13 @@
 .guest .terms {
     padding: 60px 0;
 }
+.terms ol, .terms ul {
+    margin-left: 30px;
+}
+.terms .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: transparent;
+}
+.guest .terms .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
 /* #endregion */
