@@ -89,7 +89,7 @@
                         var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
                             nsSize: 'md',
                             nsTemplate: '_app/account/confirmDeposit.html',
-                            //nsCtrl: 'confirmDepositCtrl',
+                            nsCtrl: 'confirmDepositCtrl',
                             nsParams: { fields: fields },
                             nsStatic: true
                         });

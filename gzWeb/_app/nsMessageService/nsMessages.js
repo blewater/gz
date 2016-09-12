@@ -13,7 +13,7 @@
                 nsToastrs: '='
             },
             templateUrl: function () {
-                return helpers.ui.getTemplate('scripts/_app/services/nsMessageService/nsMessages.html');
+                return helpers.ui.getTemplate('_app/nsMessageService/nsMessages.html');
             },
             link: function (scope, element, attrs) {
                 scope.getToastrsBottom = function() {

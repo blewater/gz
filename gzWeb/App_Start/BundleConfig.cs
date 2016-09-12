@@ -37,7 +37,7 @@ namespace gzWeb
                 , "~/_app/games/games.css"
                 , "~/_app/games/carousel.css"
                 , "~/_app/accountManagement/accountManagement.css"
-                , "~/Scripts/_app/services/nsMessageService/nsMessages.css"
+                , "~/_app/nsMessageService/nsMessages.css"
             ));
             #endregion
 
@@ -173,6 +173,8 @@ namespace gzWeb
                                         , "~/_app/account/registerDepositCreditCardCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixCreditCardCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixTrustlyCtrl.js"
+                                        , "~/_app/account/confirmDepositCtrl.js"
+                                        , "~/_app/account/confirmWithdrawCtrl.js"
                                         #endregion
 
                                         #region Account Management
@@ -241,11 +243,11 @@ namespace gzWeb
                                         #endregion
 
                                         #region nsMessageService
-                                        , "~/Scripts/_app/services/nsMessageService/nsMessage.js"
-                                        , "~/Scripts/_app/services/nsMessageService/nsMessages.js"
-                                        , "~/Scripts/_app/services/nsMessageService/nsPromptCtrl.js"
-                                        , "~/Scripts/_app/services/nsMessageService/nsConfirmCtrl.js"
-                                        , "~/Scripts/_app/services/nsMessageService/nsMessageService.js"
+                                        , "~/_app/nsMessageService/nsMessage.js"
+                                        , "~/_app/nsMessageService/nsMessages.js"
+                                        , "~/_app/nsMessageService/nsPromptCtrl.js"
+                                        , "~/_app/nsMessageService/nsConfirmCtrl.js"
+                                        , "~/_app/nsMessageService/nsMessageService.js"
                                         #endregion
                                 ));
 
