@@ -616,7 +616,7 @@
     <Content Include="_app\directives\gzFieldOk.js" />
     <Content Include="_app\directives\gzSelect.html" />
     <Content Include="_app\directives\gzSelect.js" />
-    <Content Include="_app\directives\gzThirdPartyIFrame.html" />
+    <Content Include="_app\directives\gzThirdPartyIframe.html" />
     <Content Include="_app\directives\gzThirdPartyIframe.js" />
     <Content Include="_app\guest\explainerVideo.html" />
     <Content Include="_app\account\forgotPassword.html" />

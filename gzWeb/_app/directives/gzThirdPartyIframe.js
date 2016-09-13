@@ -30,7 +30,7 @@
                     if (args.status === "success")
                         $scope.$parent.nsOk({ $pid: args.pid });
                     else if (args.status === "cancel")
-                        $scope.$parent.nsCancel("The transaction is canceled.");
+                        $scope.$parent.nsCancel("Your bank has declined your transaction. Please contact your issuing bank to resolve this issue or try with another payment method or card.");
                     else
                         $scope.$parent.nsCancel("The transaction failed. (" + args.desc + ")");
                 }
