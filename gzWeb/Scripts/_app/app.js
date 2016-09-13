@@ -36,6 +36,14 @@ var APP = (function () {
     app.run([
         '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers',
         function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers) {
+
+            var defaultBeforeSend = function(xhr, json) {
+                var authData = localStorageService.get(constants.storageKeys.authData);
+                if (authData)
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + authData.token);
+            };
+            JL.setOptions({ "defaultBeforeSend": defaultBeforeSend });
+
             $rootScope.loading = true;
             $rootScope.initialized = false;
             localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
