@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'myProfileCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', '$filter', 'message', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, $filter, message, constants) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', '$filter', 'message', 'constants', '$q', '$log', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, $filter, message, constants, $q, $log, $timeout) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -37,7 +37,7 @@
             miss: { display: 'Miss', gender: 'F' }
         };
 
-        function loadYears(country) {
+        function loadYears(country, defer) {
             $scope.loadingYears = true;
 
             var yearOfBirth = $scope.model.yearOfBirth;
@@ -49,12 +49,15 @@
             loadMonths(country, $scope.yearOfBirth);
 
             $scope.loadingYears = false;
+
+            if (defer)
+                defer.resolve(true);
         }
         $scope.onYearSelected = function (year) {
             loadMonths($scope.model.country, year);
         };
 
-        function loadMonths(country, year) {
+        function loadMonths(country, year, defer) {
             $scope.loadingMonths = true;
 
             var monthOfBirth = $scope.model.monthOfBirth;
@@ -75,6 +78,9 @@
                 loadDays(country, year, $scope.model.monthOfBirth.value);
 
             $scope.loadingMonths = false;
+
+            if (defer)
+                defer.resolve(true);
         }
         $scope.onMonthSelected = function (month) {
             loadDays($scope.model.country, $scope.model.yearOfBirth, month);
@@ -88,7 +94,7 @@
             var thisYear = moment().year();
             var maxYear = country ? thisYear - country.legalAge : thisYear;
             var maxMonth = year === maxYear ? moment().month() : 12;
-            var daysInMonth = moment.utc([year, month - 1]).daysInMonth();
+            var daysInMonth = moment.utc([year, month.value - 1]).daysInMonth();
             var maxDay = month === maxMonth ? moment().date() : daysInMonth;
 
             $scope.daysOfMonth.length = 0;
@@ -104,16 +110,17 @@
             $scope.loadingDays = false;
         }
 
-        function loadTitles() {
+        function loadTitles(defer) {
             $scope.loadingTitles = true;
             $scope.titles = $filter('map')($filter('toArray')(titles), function (t) { return t.display; });
             $scope.loadingTitles = false;
+            defer.resolve(true);
         }
 
         $scope.currentIpCountry = '';
         $scope.countries = [];
         $scope.phonePrefixes = [];
-        function loadCountries() {
+        function loadCountries(defer) {
             $scope.loadingCountries = true;
             emWamp.getCountries(false /*true*/, '', false /*true*/).then(function (result) {
                 $scope.currentIpCountry = result.currentIPCountry;
@@ -131,17 +138,19 @@
                 });
                 $scope.onCountrySelected($scope.currentIpCountry);
                 $scope.loadingCountries = false;
+                defer.resolve(true);
             }, function (error) {
-                console.log(error.desc);
+                $log.error(error.desc);
+                defer.resolve(false);
             });
         };
         $scope.onCountrySelected = function (countryCode) {
             var country = $filter('filter')($scope.countries, { code: countryCode })[0];
 
             loadYears(country);
-            $scope.onPhonePrefixSelected($filter('map')($scope.phonePrefixes, function (x) { return x.country; }).indexOf(country.code));
+            $scope.onPhonePrefixSelected($filter('map')($scope.phonePrefixes, function (x) { return x.country; }).indexOf(countryCode));
             if ($scope.currencies.length > 0)
-                selectCurrency($scope.currencies, country);
+                selectCurrencyByCountry($scope.currencies, country);
         };
         $scope.onPhonePrefixSelected = function (prefixIndex) {
             for (var i = 0; i < $scope.phonePrefixes.length; i++)
@@ -160,20 +169,28 @@
         }
 
         $scope.currencies = [];
-        function loadCurrencies() {
+        function loadCurrencies(defer) {
             $scope.loadingCurrencies = true;
             emWamp.getCurrencies().then(function (result) {
                 $scope.currencies = result;
                 if ($scope.model.country !== null)
-                    selectCurrency($scope.currencies, $scope.model.country);
+                    selectCurrencyByCountry($scope.currencies, $scope.model.country);
                 $scope.loadingCurrencies = false;
+                defer.resolve(true);
             }, function (error) {
-                console.log(error.desc);
+                defer.resolve(false);
+                $log.error(error.desc);
             });
         };
 
-        function selectCurrency(currencies, country) {
+        function selectCurrencyByCountry(currencies, country) {
             var foundCurrencies = $filter('filter')(currencies, { code: country.currency });
+            $scope.model.currency = foundCurrencies.length > 0
+                ? foundCurrencies[0]
+                : $filter('filter')(currencies, { code: 'USD' })[0];
+        }
+        function selectCurrencyByCode(currencies, currencyCode) {
+            var foundCurrencies = $filter('filter')(currencies, { code: currencyCode });
             $scope.model.currency = foundCurrencies.length > 0
                 ? foundCurrencies[0]
                 : $filter('filter')(currencies, { code: 'USD' })[0];
@@ -183,37 +200,58 @@
             emWamp.getProfile().then(function (response) {
                 $scope.profile = response;
 
-                $scope.model.email = $scope.profile.fields.email;
-                $scope.model.username = $scope.profile.fields.username;
-                $scope.model.userId = $scope.profile.fields.userID;
-                $scope.model.yearOfBirth = $scope.profile.fields.birthYear;
-                $scope.model.monthOfBirth = { value: $scope.profile.fields.birthMonth, display: $filter('pad')($scope.profile.fields.birthMonth, 2) };
-                $scope.model.dayOfBirth = { value: $scope.profile.fields.birthDay, display: $filter('pad')($scope.profile.fields.birthDay, 2) };
-                $scope.onYearSelected($scope.model.yearOfBirth);
-                $scope.onMonthSelected($scope.model.monthOfBirth);
-                $scope.model.gender = $scope.profile.fields.gender;
-                $scope.model.title = $scope.profile.fields.title;
-                $scope.model.firstname = $scope.profile.fields.firstname;
-                $scope.model.surname = $scope.profile.fields.surname;
-                $scope.model.phonePrefix = $scope.profile.fields.mobilePrefix;
-                $scope.model.phoneNumber = $scope.profile.fields.mobile;
-                $scope.model.country = $scope.profile.fields.country;
-                $scope.model.address = $scope.profile.fields.address1;
-                $scope.model.city = $scope.profile.fields.city;
-                $scope.model.postalCode = $scope.profile.fields.postalCode;
-                $scope.model.currency = $scope.profile.fields.currency;
-                $scope.model.acceptNewsEmail = $scope.profile.fields.acceptNewsEmail;
-                $scope.model.acceptSMSOffer = $scope.profile.fields.acceptSMSOffer;
+                $timeout(function () {
+                    $scope.model.email = $scope.profile.fields.email;
+                    $scope.model.username = $scope.profile.fields.username;
+                    $scope.model.userId = $scope.profile.fields.userID;
+                    $scope.model.yearOfBirth = $scope.profile.fields.birthYear;
+                    //$scope.onYearSelected($scope.model.yearOfBirth);
+                    $scope.model.monthOfBirth = { value: $scope.profile.fields.birthMonth, display: $filter('pad')($scope.profile.fields.birthMonth, 2) };
+                    $scope.model.dayOfBirth = { value: $scope.profile.fields.birthDay, display: $filter('pad')($scope.profile.fields.birthDay, 2) };
+                    $scope.model.gender = $scope.profile.fields.gender;
+                    $scope.model.title = $scope.profile.fields.title;
+                    $scope.model.firstname = $scope.profile.fields.firstname;
+                    $scope.model.surname = $scope.profile.fields.surname;
+                    $scope.model.phonePrefix = $scope.profile.fields.mobilePrefix;
+                    $scope.model.phoneNumber = $scope.profile.fields.mobile;
+                    $scope.model.country = $filter('filter')($scope.countries, { code: $scope.profile.fields.country })[0];
+                    $scope.model.address = $scope.profile.fields.address1;
+                    $scope.model.city = $scope.profile.fields.city;
+                    $scope.model.postalCode = $scope.profile.fields.postalCode;
+                    $scope.model.currency = $filter('filter')($scope.currencies, { code: $scope.profile.fields.currency })[0];
+                    $scope.model.acceptNewsEmail = $scope.profile.fields.acceptNewsEmail;
+                    $scope.model.acceptSMSOffer = $scope.profile.fields.acceptSMSOffer;
+
+                    $scope.onCountrySelected($scope.model.country.code);
+                    $scope.onYearSelected($scope.model.yearOfBirth);
+                    $scope.onMonthSelected($scope.model.monthOfBirth);
+                }, 0);
             });
         }
 
         function init() {
-            loadYears();
-            loadMonths();
-            loadTitles();
-            loadCountries();
-            loadCurrencies();
-            getProfile();
+            var loadYearsDefer = $q.defer();
+            var loadMonthsDefer = $q.defer();
+            var loadTitlesDefer = $q.defer();
+            var loadCountriesDefer = $q.defer();
+            var loadCurrenciesDefer = $q.defer();
+
+            loadYears(null, loadYearsDefer);
+            loadMonths(null, null, loadMonthsDefer);
+            loadTitles(loadTitlesDefer);
+            loadCountries(loadCountriesDefer);
+            loadCurrencies(loadCurrenciesDefer);
+
+            $q.all([loadYearsDefer.promise, loadMonthsDefer.promise, loadTitlesDefer.promise, loadCountriesDefer.promise, loadCurrenciesDefer.promise]).then(function () {
+                getProfile();
+            });
+
+            //loadYears();
+            //loadMonths();
+            //loadTitles();
+            //loadCountries();
+            //loadCurrencies();
+            //getProfile();
         };
 
         init();
