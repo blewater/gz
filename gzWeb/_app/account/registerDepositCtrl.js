@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDepositCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', '$location', '$rootScope', '$timeout', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers, $location, $rootScope, $timeout) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emBanking', '$filter', 'message', 'constants', '$compile', '$controller', '$templateRequest', 'helpers', '$location', '$rootScope', '$timeout', '$log', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emBanking, $filter, message, constants, $compile, $controller, $templateRequest, helpers, $location, $rootScope, $timeout, $log) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -111,13 +111,13 @@
                                             if ($location.path() === constants.routes.home.path)
                                                 $location.path(constants.routes.games.path).search({});
                                         } else if (transactionResult.status === "incomplete") {
-                                            console.log("show transaction is not completed");
+                                            $log.error("show transaction is not completed");
                                             // TODO: show transaction is not completed
                                         } else if (transactionResult.status === "pending") {
-                                            console.log("show transaction is pending");
+                                            $log.error("show transaction is pending");
                                             // TODO: show transaction is pending
                                         } else if (transactionResult.status === "error") {
-                                            console.log("show error");
+                                            $log.error("show error");
                                             // TODO: show error
                                         }
                                     }, function (error) {

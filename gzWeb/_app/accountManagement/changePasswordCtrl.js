@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "changePasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', 'vcRecaptchaService', 'localStorageService', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, auth, message, vcRecaptchaService, localStorageService) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', 'vcRecaptchaService', 'localStorageService', '$log', ctrlFactory]);
+    function ctrlFactory($scope, constants, emWamp, auth, message, vcRecaptchaService, localStorageService, $log) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
@@ -22,7 +22,7 @@
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
             }, function(error) {
-                console.log(error.desc);
+                $log.error(error.desc);
             });
         };
 

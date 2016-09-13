@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gameCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', '$log', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log) {
         $controller('authCtrl', { $scope: $scope });
 
         $scope.game = null;
@@ -95,7 +95,7 @@
         });
 
         function logError(error) {
-            console.log(error);
+            $log.error(error);
         };
 
         $scope.getGameTop = function () {

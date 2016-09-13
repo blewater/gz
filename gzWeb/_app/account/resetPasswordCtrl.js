@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "resetPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', '$location', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, auth, message, $location) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', '$location', '$log', ctrlFactory]);
+    function ctrlFactory($scope, constants, emWamp, auth, message, $location, $log) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -24,7 +24,7 @@
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
             }, function(error) {
-                console.log(error.desc);
+                $log.error(error.desc);
             });
         };
 
@@ -85,7 +85,7 @@
             }, function(error) {
                 $scope.model.isKeyAvailable = false;
                 $scope.waiting = false;
-                console.log(error);
+                $log.error(error);
             });
         }
 
@@ -95,7 +95,7 @@
                 getPasswordPolicy();
             }, function (error) {
                 $scope.model.isKeyAvailable = false;
-                console.log(error.desc);
+                $log.error(error.desc);
             });
         }
 

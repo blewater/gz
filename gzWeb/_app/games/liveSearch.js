@@ -33,6 +33,7 @@ function search(index) {
         }, function () {
             $scope.liveSearch.searching = false;
             console.log(error);
+            // TODO: (xdinos-log) $log.error(error);
         });
     }
 }
