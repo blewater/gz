@@ -1,9 +1,9 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emBanking", ["$q", "emWamp", "iovation", emBankingFunc]);
+    APP.factory("emBanking", ["$q", "emWamp", "iovation", "$filter", emBankingFunc]);
 
-    function emBankingFunc($q, emWamp, iovation) {
+    function emBankingFunc($q, emWamp, iovation, $filter) {
 
         var _service = {};
 
@@ -138,8 +138,11 @@
             var q = $q.defer();
             emWamp.call("/user/deposit#getPaymentMethods", { filterByCountry: filterByCountry, currency: currency }).then(function(result) {
                 var paymentMethods = [];
-                angular.forEach(_supportedPaymentMethodCodes, function(key, value) {
-                    paymentMethods.push(result.paymentMethods[key]);
+                //angular.forEach(_supportedPaymentMethodCodes, function(key, value) {
+                //    paymentMethods.push($filter('filter')($filter('toArray')(result.paymentMethods), { code: key })[0]);
+                //});
+                var paymentMethods = $filter('filter')($filter('toArray')(result.paymentMethods), function (value, index, array) {
+                    return supportedPaymentMethodCodesList.indexOf(value.code) > -1;
                 });
                 q.resolve(paymentMethods);
             });
