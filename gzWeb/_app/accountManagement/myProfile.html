@@ -89,7 +89,7 @@
         <div class="form-group">
             <div class="col-xs-11 col-sm-5">
                 <label for="currency">Currency</label>
-                <gz-select gz-name="currency" gz-model="model.currency" gz-collection="currencies" gz-change="onCurrencySelected(id)" gz-prompt="Currency" gz-loading="loadingCurrencies"
+                <gz-select gz-name="currency" gz-model="model.currency" gz-collection="currencies" gz-prompt="Currency" gz-loading="loadingCurrencies"
                            gz-required gz-id="code" gz-display="name" gz-error="!form.currency.$pristine && form.currency.$error.required" dg-disabled="!profile.isCurrencyUpdateable"></gz-select>
                 <div class="help-block" ng-class="{'show': !form.currency.$pristine && form.currency.$error.required}">Currency is required</div>
                 <gz-field-ok gz-when="xs && form.currency.$valid"></gz-field-ok>
@@ -164,7 +164,7 @@
 
         <div class="form-group">
             <div class="col-xs-11">
-                <div class="btns">
+                <div class="btns text-center">
                     <button type="submit" class="btn-gz" ng-disabled="form.$invalid"
                             ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                         <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>

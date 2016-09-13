@@ -295,6 +295,7 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     -ms-border-radius: 0;
     border-radius: 0;
     color: #000;
+    border-bottom-color: transparent;
 }
 .form-control[disabled], .form-control.disabled {
     background-color: #ccc;
