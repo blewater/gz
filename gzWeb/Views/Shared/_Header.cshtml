@@ -11,11 +11,11 @@
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
                     <li ng-if="hasGamingBalance">{{currency}} {{gamingBalance}}</li>
                     <li>
-                        <button type="button" class="btn-gz btn-gz-alt" ng-click="withdraw()">
-                            WITHDRAW
-                        </button>
-                        <button type="button" class="btn-gz btn-gz-alt" ng-click="deposit()">
+                        <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="deposit()">
                             DEPOSIT
+                        </button>
+                        <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="withdraw()">
+                            WITHDRAW
                         </button>
                     </li>
                 </ul>
