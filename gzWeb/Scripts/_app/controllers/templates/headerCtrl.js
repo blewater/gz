@@ -48,7 +48,7 @@
                 message.open({
                     nsType: 'modal',
                     nsSize: '600px',
-                    nsTemplate: '/partials/messages/investmentAccessError.html',
+                    nsTemplate: '_app/account/investmentAccessError.html',
                     nsCtrl: 'investmentAccessErrorCtrl',
                     nsStatic: true,
                     // TODO Pass username
@@ -63,7 +63,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/login.html',
+                nsTemplate: '_app/account/login.html',
                 nsCtrl: 'loginCtrl',
                 nsStatic: true
             });
@@ -72,7 +72,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerAccount.html',
+                nsTemplate: '_app/account/registerAccount.html',
                 nsCtrl: 'registerAccountCtrl',
                 nsStatic: true
             });
@@ -84,7 +84,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/changePassword.html',
+                nsTemplate: '_app/account/changePassword.html',
                 nsCtrl: 'changePasswordCtrl',
                 nsStatic: true,
             });
