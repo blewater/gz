@@ -14,7 +14,7 @@
                 message.open({
                     nsType: 'modal',
                     nsSize: '600px',
-                    nsTemplate: '/partials/messages/resetPassword.html',
+                    nsTemplate: '_app/account/resetPassword.html',
                     nsCtrl: 'resetPasswordCtrl',
                     nsStatic: true,
                     nsParams: {
@@ -39,7 +39,7 @@
         //    message.open({
         //        nsType: 'modal',
         //        nsSize: '640px',
-        //        nsTemplate: '/partials/messages/explainerVideo.html'
+        //        nsTemplate: '_app/guest/explainerVideo.html'
         //    });
         //}
 
@@ -47,7 +47,7 @@
             message.open({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerAccount.html',
+                nsTemplate: '_app/account/registerAccount.html',
                 nsCtrl: 'registerAccountCtrl',
                 nsStatic: true
             });
