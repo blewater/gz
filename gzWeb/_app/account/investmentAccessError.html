@@ -1,0 +1,63 @@
+﻿<div class="auth investment-access-error">
+    <div class="row heading">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 text-center">
+            <h2 class="text-gz">Feeling lucky on your investments?</h2>
+            <h4>enter your credentials</h4>
+        </div>
+    </div>
+    <div class="row content bg-gz">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+            <div class="logo-icon text-center">
+                <img src="/Content/Images/logo.svg">
+            </div>
+        </div>
+        <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="alert alert-danger">
+                        <span>
+                            We have experienced technical difficulties to log you in your investment pages.
+                            Please try to login again.
+                        </span>
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <input type="text" placeholder="username / email" id="usernameOrEmail" name="usernameOrEmail" class="form-control" ng-model="model.usernameOrEmail" autocomplete="off" required
+                           ng-class="{ 'empty': !model.usernameOrEmail, 'danger' : !form.usernameOrEmail.$pristine && errorMsg }" disabled>
+                           <!--ng-focus="usernameOrEmailFocused = true" ng-blur="usernameOrEmailFocused = false" autofocus>-->
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused || form.usernameOrEmail.$valid}">
+                        <i class="fa fa-lg fa-user"></i>
+                    </span>
+                    <gz-field-ok gz-when="form.usernameOrEmail.$valid"></gz-field-ok>
+                </div>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" required
+                           ng-class="{ 'empty': !model.password, 'danger' : !form.password.$pristine && errorMsg }"
+                           ng-focus="passwordFocused = true" ng-blur="passwordFocused = false">
+                    <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
+                        <i class="fa fa-lg fa-key"></i>
+                    </span>
+                    <gz-field-ok gz-when="form.password.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group">
+                    <div class="btns text-center">
+                        <button type="submit" class="btn-gz login" ng-disabled="form.$invalid"
+                                ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
+                            <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
+                            <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
+                            <span ng-show="!waiting">Login</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

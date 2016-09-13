@@ -14,10 +14,11 @@
         var i = 0;
         var pageSize = 6;
         $scope.playForRealMoney = true;
-        var selectedCategoryName = "";
+        var selectedCategoryName = "", selectedVendorName = "";
         $scope.selectedCategory = undefined;
         $scope.searchByNameTerm = "";
         $scope.searchByVendorTerm = "";
+        $scope.projectedCategories = [];
         // #endregion
 
 
@@ -131,90 +132,13 @@
         // #endregion
 
 
-        // #region LiveSearch
-        //$scope.liveSearch = {
-        //    input: "",
-        //    focused: false,
-        //    searching: false,
-        //    selectedIndex: -1,
-        //    pageSize: 10,
-        //    currentPageIndex: 1,
-        //    totalGameCount: 0,
-        //    totalPageCount: 0,
-        //    games: [],
-        //    noResults: ""
-        //};
-        //function search(index) {
-        //    $scope.liveSearch.searching = true;
-        //    if ($scope.liveSearch.totalPageCount === 0 || index <= $scope.liveSearch.totalPageCount) {
-        //        emCasino.getGames({
-        //            filterByPlatform: null,
-        //            filterByName: [$scope.liveSearch.input],
-        //            //filterBySlug: [$scope.liveSearch.input],
-        //            expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Description + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.Logo,
-        //            pageSize: 10,
-        //            pageIndex: index,
-        //        }).then(function (liveSearchResult) {
-        //            $scope.liveSearch.searching = false;
-        //            $scope.liveSearch.showResults = true;
-        //            $scope.liveSearch.currentPageIndex = liveSearchResult.currentPageIndex;
-        //            $scope.liveSearch.totalGameCount = liveSearchResult.totalGameCount;
-        //            $scope.liveSearch.totalPageCount = liveSearchResult.totalPageCount;
-        //            if (index > 1)
-        //                Array.prototype.push.apply($scope.liveSearch.games, liveSearchResult.games);
-        //            else
-        //                $scope.liveSearch.games = liveSearchResult.games;
-        //        }, function () {
-        //            $scope.liveSearch.searching = false;
-        //            console.log(error);
-        //        });
-        //    }
-        //}
-        //$scope.onLiveSearchFocused = function () {
-        //    $scope.liveSearch.focused = true;
-        //    $scope.liveSearch.showResults = $scope.liveSearch.games.length > 0;
-        //};
-        //$scope.onLiveSearchBlurred = function () {
-        //    $scope.liveSearch.focused = false;
-        //};
-        ////$scope.onLiveSearchChange = function () {
-        ////    if ($scope.liveSearch.input.length > 2) {
-        ////        $scope.liveSearch.currentPageIndex = 1;
-        ////        $scope.liveSearch.totalGameCount = 0;
-        ////        $scope.liveSearch.totalPageCount = 0;
-        ////        $scope.liveSearch.games = [];
-        ////        $timeout(function () {
-        ////            search(1);
-        ////        }, 400);
-        ////    }
-        ////};
-        //$scope.onLiveSearchChange = function () {
-        //    $scope.liveSearch.currentPageIndex = 1;
-        //    $scope.liveSearch.totalGameCount = 0;
-        //    $scope.liveSearch.totalPageCount = 0;
-        //    $scope.liveSearch.games = [];
-        //    search(1);
-        //};
-
-        //$scope.onLoadMore = function () {
-        //    search($scope.liveSearch.currentPageIndex + 1);
-        //};
-        //$scope.selectResult = function (index) {
-        //    for (i = 0; i < $scope.liveSearch.games.length; i++)
-        //        $scope.liveSearch.games[i].selected = i === index;
-        //};
-        //$scope.showResults = function () {
-        //    liveSearch.input.length > 2;
-        //};
-        // #endregion
-
-
         // #region Filtered Games
         $scope.getGameUrl = function (slug) {
             return constants.routes.game.path.replace(":slug", slug);
         }
 
         function fetchGames(category, name, vendor, recursive) {
+            $scope.fetching = true;
             emCasino.getGames({
                 filterByCategory: [category.name],
                 filterByName: name ? [name] : [],
@@ -224,6 +148,7 @@
                 pageSize: pageSize,
                 pageIndex: category.currentPageIndex + 1,
             }).then(function (getCategoryGamesResult) {
+                $scope.fetching = false;
                 category.currentPageIndex = getCategoryGamesResult.currentPageIndex;
                 category.totalGameCount = getCategoryGamesResult.totalGameCount;
                 category.totalPageCount = getCategoryGamesResult.totalPageCount;
@@ -233,12 +158,13 @@
                     Array.prototype.push.apply(category.games, [g]);
                 }, 50);
 
-                if (recursive && category.games.length < category.totalGameCount) {
-                    $timeout(function () {
-                        fetchGames(category, name, vendor, recursive);
-                    }, 250);
-                }
+                //if (recursive && category.games.length < category.totalGameCount) {
+                //    $timeout(function () {
+                //        fetchGames(category, name, vendor, recursive);
+                //    }, 250);
+                //}
             }, function (error) {
+                $scope.fetching = false;
                 console.log(error);
             });
         }
@@ -255,6 +181,7 @@
                 fetchGames(customCategory);
             }
         }
+
         function loadCategories() {
             $scope.gameCategories = [];
             $scope.customCategories = [];
@@ -283,7 +210,7 @@
                     $scope.selectedCategory.games = [];
                     fetchGames($scope.selectedCategory, $scope.searchByNameTerm, $scope.searchByVendorTerm, true);
                 }
-                else if ($scope.searchByNameTerm.length > 0) {
+                else if ($scope.searchByNameTerm.length > 0 || $scope.searchByVendorTerm) {
                     $scope.projectedCategories = $scope.gameCategories;
                     for (i = 0; i < $scope.gameCategories.length; i++) {
                         $scope.gameCategories[i].currentPageIndex = 0;
@@ -294,6 +221,22 @@
                 else {
                     $scope.projectedCategories = $scope.customCategories;
                 }
+            }, logError);
+        };
+
+        function loadGameVendors() {
+            $scope.loadingVendors = true;
+            emCasino.getGameVendors().then(function (getGameVendorsResult) {
+                $scope.loadingVendors = false;
+                if (selectedVendorName.length > 0) {
+                    for (i = 0; i < getGameVendorsResult.vendors.length; i++) {
+                        if (selectedVendorName === getGameVendorsResult.vendors[i].toLowerCase()) {
+                            $scope.searchByVendorTerm = getGameVendorsResult.vendors[i];
+                            break;
+                        }
+                    }
+                }
+                $scope.vendors = getGameVendorsResult.vendors;
             }, logError);
         };
 
@@ -333,7 +276,7 @@
                     fetchGames($scope.gameCategories[index], $scope.searchByNameTerm, $scope.searchByVendorTerm, true);
                 }
             }
-            else if ($scope.searchByNameTerm.length > 0) {
+            else if ($scope.searchByNameTerm.length > 0 || $scope.searchByVendorTerm) {
                 $scope.selectedCategory = undefined;
                 $scope.projectedCategories = $scope.gameCategories;
                 for (i = 0; i < $scope.gameCategories.length; i++) {
@@ -357,7 +300,7 @@
                 fetchGames($scope.selectedCategory, $scope.searchByNameTerm, $scope.searchByVendorTerm, true);
             }
             else {
-                if ($scope.searchByNameTerm.length > 0) {
+                if ($scope.searchByNameTerm.length > 0 || $scope.searchByVendorTerm) {
                     $scope.projectedCategories = $scope.gameCategories;
                     for (i = 0; i < $scope.gameCategories.length; i++) {
                         $scope.gameCategories[i].currentPageIndex = 0;
@@ -371,64 +314,52 @@
             }
         };
 
-        $scope.thereAreNoResults = function () {
-            return $scope.projectedCategories.length === 0 || helpers.array.all($scope.projectedCategories, function (c) {
-                return c.games.length === 0;
-            });
+        $scope.onSearchByVendor = function (selectedVendor) {
+            $location.search('vendor', selectedVendor ? selectedVendor.toLowerCase() : null);
+            if ($scope.selectedCategory) {
+                $scope.selectedCategory.currentPageIndex = 0;
+                $scope.selectedCategory.games = [];
+                $scope.projectedCategories = [$scope.selectedCategory];
+                fetchGames($scope.selectedCategory, $scope.searchByNameTerm, selectedVendor, true);
+            }
+            else {
+                if ($scope.searchByNameTerm.length > 0 || selectedVendor) {
+                    $scope.projectedCategories = $scope.gameCategories;
+                    for (i = 0; i < $scope.gameCategories.length; i++) {
+                        $scope.gameCategories[i].currentPageIndex = 0;
+                        $scope.gameCategories[i].games = [];
+                        fetchGames($scope.gameCategories[i], $scope.searchByNameTerm, selectedVendor, true);
+                    }
+                }
+                else {
+                    $scope.projectedCategories = $scope.customCategories;
+                }
+            }
         };
 
-        //function getSelectedCategory() {
-        //    for (i = 0; i < $scope.gameCategories.length; i++)
-        //        if ($scope.gameCategories[i].selected === true)
-        //            return $scope.gameCategories[i];
-        //    return undefined;
-        //};
+        $scope.thereAreNoResults = function () {
+            return !$scope.fetching && ($scope.projectedCategories.length === 0 || helpers.array.all($scope.projectedCategories, function (c) {
+                return c.games.length === 0;
+            }));
+        };
 
-        //function search () {
-        //    var selectedCategory = getSelectedCategory();
-        //    if (selectedCategory) {
-        //        $scope.projectedCategories = [selectedCategory];
-        //        if (selectedCategory.games.length === 0 || criteria.termChanged) {
-        //            criteria.termChanged = false;
-        //            fetchGames({
-        //                category: selectedCategory,
-        //                name: $scope.searchByNameTerm,
-        //                vendor: $scope.searchByVendorTerm,
-        //                recursive: true
-        //            });
-        //        }
-        //    }
-        //    else {
-        //        $scope.projectedCategories = $scope.customCategories;
-        //    }
-        //};
-
-        //$scope.fetchNextPage = function (category) {
-        //    fetchGamesByCategory(category);
-        //}
-
-        //$scope.searchGames = function () {
-        //    for (i = 0; i < $scope.gameCategories.length; i++) {
-        //        var category = $scope.gameCategories[i];
-        //        category.games = [];
-        //        category.collapsed = false;
-        //        category.currentPageIndex = 0;
-        //        category.totalGameCount = 0;
-        //        category.totalPageCount = 0;
-        //        if (category.selected)
-        //            fetchGamesByCategory(category);
-        //    }
-        //};
+        function getSelectedCategory() {
+            for (i = 0; i < $scope.gameCategories.length; i++)
+                if ($scope.gameCategories[i].selected === true)
+                    return $scope.gameCategories[i];
+            return undefined;
+        };
         // #endregion
         
 
         // #region Init
         $scope._init(function () {
             var params = $location.search();
-            selectedCategoryName = params.category;
-            $scope.searchByNameTerm = params.name;
-            $scope.searchByVendorTerm = params.vendor;
+            selectedCategoryName = params.category || "";
+            selectedVendorName = params.vendor || "";
+            $scope.searchByNameTerm = params.name || "";
 
+            loadGameVendors();
             loadCategories();
             getFeaturedGames();
         });

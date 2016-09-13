@@ -152,8 +152,6 @@
 
     APP.constant("constants", {
         title: 'greenzorro',
-        //version: 0.7,
-        //debugMode: true,
         html5Mode: true,
         
         emailVerificationUrl: 'localhost:63659/activate?key=',
@@ -191,14 +189,5 @@
             DEPOSIT_STATUS_CHANGED: 'depositStatusChanged',
             WITHDRAW_STATUS_CHANGED: 'withdrawStatusChanged'
         }
-
-        //reCaptchaPublicKey: '6Ld2ZB8TAAAAAFPviZAHanWXdifnC88VuM0DdsWO'
-        //reCaptchaPublicKey: '6Ld5ZB8TAAAAAI1QlCbPCo-OnYi6EyR-lL2GrFyH'
-        //reCaptchaPublicKey: '6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML'
-
-        //msgs: {
-        //    required: 'The field is required!',
-        //    invalidEmail: 'Invalid e-mail format!'
-        //},
     });
 })();

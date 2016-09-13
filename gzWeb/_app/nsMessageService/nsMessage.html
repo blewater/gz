@@ -30,7 +30,7 @@
             </div>
             <div class="msg-body"></div>
             <div ng-show="nsOptions.nsPromptButtons.length > 0" class="msg-prompt-btns pull-right">
-                <button type="button" class="btn-gz" ng-repeat="btn in nsOptions.nsPromptButtons" ng-click="onBtnClick(btn.eventKey)">{{btn.text}}</button>
+                <button type="button" class="btn-gz" ng-class="{'btn-gz-alt':btn.eventKey === 'cancel'}" ng-repeat="btn in nsOptions.nsPromptButtons" ng-click="onBtnClick(btn.eventKey)">{{btn.text}}</button>
             </div>
         </div>
         <div ng-show="nsOptions.nsAutoClose" class="msg-life" ng-style="{'width': percentage + '%'}"></div>

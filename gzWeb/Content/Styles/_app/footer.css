@@ -115,6 +115,36 @@ footer .company-registration br.company-registration-separator {
     display: none;
 }
 
+
+footer .footer-payment-methods {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+footer .footer-payment-methods .footer-payment-method {
+    margin: 0 6px;
+    height: 40px;
+    display: inline-block;
+}
+footer .footer-payment-methods .footer-payment-method img {
+    height: 100%;
+}
+footer .footer-payment-methods .footer-payment-method.footer-visa img,
+footer .footer-payment-methods .footer-payment-method.footer-trustly img {
+    padding: 10px 10px;
+}
+footer .footer-payment-methods .footer-payment-method.footer-mastercard img,
+footer .footer-payment-methods .footer-payment-method.footer-maestro img{
+    padding: 8px 10px;
+}
+
+/*footer .footer-payment-methods img {
+    border-radius: 4px;
+    padding: 5px;
+}*/
+
+
+
+
 footer .footer-license {
     margin-bottom: 15px;
 }
@@ -123,13 +153,13 @@ footer .footer-license .mga {
     padding: 5px;
 }
 footer .footer-license .mga img {
-    width: 100px;
-    height: 57px;
+    width: 80px;
+    height: 47px;
 }
 
 footer .footer-advice {
     font-size: 10px;
-    margin-bottom: 15px;
+    margin: 20px;
 }
 
 @media (max-width: 420px) {
