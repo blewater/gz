@@ -70,9 +70,12 @@
                     if (prepareResult.status === "setup") {
                         var confirmPromise = message.modal("Please confirm you want to continue with the withdrawal", {
                             nsSize: 'md',
-                            nsTemplate: '/partials/messages/confirmWithdraw.html',
-                            //nsCtrl: 'confirmWithdrawCtrl',
-                            nsParams: { fields: fields },
+                            nsTemplate: '_app/account/confirmWithdraw.html',
+                            nsCtrl: 'confirmWithdrawCtrl',
+                            nsParams: {
+                                fields: fields,
+                                prepareResult: prepareResult
+                            },
                             nsStatic: true
                         });
                         confirmPromise.then(function () {
@@ -80,7 +83,6 @@
                                 if (confirmResult.status === "setup") {
                                     emBankingWithdraw.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
                                         if (transactionResult.status === "success") {
-                                            // TODO: show receipt page ...
                                             var msg = "Withdrawal completed successfully at " + transactionResult.time + "!";
                                             message.success(msg, { nsType: 'toastr' });
                                             $scope.waiting = false;

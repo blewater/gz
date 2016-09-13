@@ -419,6 +419,14 @@
     color: #f2f2f2;    
     background-color: #27A95C;
 }
+#ns-msgs .msg.msg-modal .msg-frame .msg-close {
+    color: #27A95C !important;
+    background-color: #f2f2f2  !important;
+}
+#ns-msgs .msg.msg-modal .msg-frame .msg-close:hover {
+    color: #f2f2f2 !important;    
+    background-color: #27A95C !important;
+}
 
 #ns-msgs .msg .msg-frame .msg-down,
 #ns-msgs .msg .msg-frame .msg-up {

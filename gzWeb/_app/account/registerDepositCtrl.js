@@ -42,9 +42,9 @@
             }
         }
 
-        var creditCardFields = { templateUrl: '/partials/templates/registerDepositCreditCard.html', ctrlId: 'registerDepositCreditCardCtrl' }
-        var moneyMatrixCreditCardFields = { templateUrl: '/partials/templates/registerDepositMoneyMatrixCreditCard.html', ctrlId: 'registerDepositMoneyMatrixCreditCardCtrl' }
-        var moneyMatrixTrustlyFields = { templateUrl: '/partials/templates/registerDepositMoneyMatrixTrustly.html', ctrlId: 'registerDepositMoneyMatrixTrustlyCtrl' }
+        var creditCardFields = { templateUrl: '_app/account/registerDepositCreditCard.html', ctrlId: 'registerDepositCreditCardCtrl' }
+        var moneyMatrixCreditCardFields = { templateUrl: '_app/account/registerDepositMoneyMatrixCreditCard.html', ctrlId: 'registerDepositMoneyMatrixCreditCardCtrl' }
+        var moneyMatrixTrustlyFields = { templateUrl: '_app/account/registerDepositMoneyMatrixTrustly.html', ctrlId: 'registerDepositMoneyMatrixTrustlyCtrl' }
         var paymentMethodsFields = [];
         paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
@@ -89,8 +89,11 @@
                         var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
                             nsSize: 'md',
                             nsTemplate: '_app/account/confirmDeposit.html',
-                            //nsCtrl: 'confirmDepositCtrl',
-                            nsParams: { fields: fields },
+                            nsCtrl: 'confirmDepositCtrl',
+                            nsParams: {
+                                fields: fields,
+                                prepareResult: prepareResult
+                            },
                             nsStatic: true
                         });
                         confirmPromise.then(function () {
@@ -182,7 +185,7 @@
             $scope.nsBack({
                 nsType: 'modal',
                 nsSize: '600px',
-                nsTemplate: '/partials/messages/registerPaymentMethods.html',
+                nsTemplate: '_app/account/registerPaymentMethods.html',
                 nsCtrl: 'registerPaymentMethodsCtrl',
                 nsStatic: true,
                 nsParams: {

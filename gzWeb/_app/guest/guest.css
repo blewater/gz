@@ -3,9 +3,38 @@
 /* #region Common */
 .guest {
 }
-.guest ol, ul {
+.guest ol, .guest ul {
     margin-left: 30px;
 }
+.guest ol {
+    list-style-type: none;
+    counter-reset: item;
+    margin: 0;
+    padding: 0;
+}
+
+.guest ol > li {
+    display: table;
+    counter-increment: item;
+    margin-bottom: 0.6em;
+}
+
+.guest ol > li:before {
+    content: counters(item, ".") ". ";
+    display: table-cell;
+    padding-right: 0.6em;    
+}
+
+.guest li ol > li {
+    margin: 0;
+}
+
+.guest li ol > li:before {
+    content: counters(item, ".") " ";
+}
+
+
+
 .guest  section:not(:first-of-type) {
     margin-top: 30px;
 }
@@ -13,6 +42,7 @@
 
 /* #region Home */
 .guest .home { }
+.guest .home section { margin: 0; }
 
 .guest .home .top {
 	background-color: #27A95C;
@@ -607,5 +637,14 @@
 /* #region Terms & Conditions*/
 .guest .terms {
     padding: 60px 0;
+}
+.terms ol, .terms ul {
+    margin-left: 30px;
+}
+.terms .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: transparent;
+}
+.guest .terms .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
 }
 /* #endregion */

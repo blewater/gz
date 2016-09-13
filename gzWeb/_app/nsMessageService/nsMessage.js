@@ -13,7 +13,7 @@
                 nsCount: '='
             },
             templateUrl: function () {
-                return helpers.ui.getTemplate('scripts/_app/services/nsMessageService/nsMessage.html');
+                return helpers.ui.getTemplate('_app/nsMessageService/nsMessage.html');
             },
             link: function (scope, element, attrs) {
                 // #region Variables
