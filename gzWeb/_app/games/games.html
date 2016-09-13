@@ -18,7 +18,7 @@
                         <span ng-repeat-end ng-class="{'clearfix':(xs && $index % 3 === 2) || (sm && $index % 6 === 5)}"></span>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-6">
+                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-1 col-sm-5">
                     <div class="search-by-name" ng-class="{'focused': searchByNameFocused}">
                         <input type="search" placeholder="SEARCH GAME" class="form-control" ng-model="searchByNameTerm"
                                ng-focus="searchByNameFocused = true;" ng-blur="searchByNameFocused = false;" cs-enter="onSearchByName()">
@@ -28,7 +28,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-6">
+                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-5">
                     <div class="search-by-vendor">
                         <gz-select gz-name="filter-vendor" gz-model="searchByVendorTerm" gz-collection="vendors" gz-change="onSearchByVendor(id)" gz-prompt="SELECT VENDOR" gz-loading="loadingVendors"></gz-select>
                     </div>
@@ -54,8 +54,11 @@
                                 <a class="game-link" ng-href="{{getGameUrl(g.slug)}}">
                                     <img class="game-img img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" ng-click="onGameSelected(g.slug)" />
                                     <div class="game-info">
-                                        <div class="game-play">
+                                        <!--<div class="game-play">
                                             <i class="fa fa-3x fa-play-circle"></i>
+                                        </div>-->
+                                        <div class="game-play">
+                                            <i class="fa fa-play"></i>
                                         </div>
                                         <div class="game-name">{{g.name}}</div>
                                     </div>
