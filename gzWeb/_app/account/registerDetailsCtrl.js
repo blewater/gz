@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDetailsCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emWamp', 'auth', 'message', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emWamp, auth, message, constants) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emWamp', 'auth', 'message', 'constants', '$log', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emWamp, auth, message, constants, $log) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -138,7 +138,7 @@
                 $scope.onCountrySelected($scope.currentIpCountry);
                 $scope.loadingCountries = false;
             }, function(error) {
-                console.log(error.desc);
+                $log.error(error.desc);
             });
         };
         $scope.onCountrySelected = function (countryCode) {
@@ -174,7 +174,7 @@
                     selectCurrency($scope.currencies, $scope.model.country);
                 $scope.loadingCurrencies = false;
             }, function(error) {
-                console.log(error.desc);
+                $log.error(error.desc);
             });
         };
 
