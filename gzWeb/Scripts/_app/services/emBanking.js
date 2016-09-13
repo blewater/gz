@@ -141,6 +141,7 @@
                 //angular.forEach(_supportedPaymentMethodCodes, function(key, value) {
                 //    paymentMethods.push($filter('filter')($filter('toArray')(result.paymentMethods), { code: key })[0]);
                 //});
+                var supportedPaymentMethodCodesList = $filter('toArray')(_supportedPaymentMethodCodes);
                 var paymentMethods = $filter('filter')($filter('toArray')(result.paymentMethods), function (value, index, array) {
                     return supportedPaymentMethodCodesList.indexOf(value.code) > -1;
                 });
