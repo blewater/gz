@@ -368,9 +368,11 @@
                 var step = registrationSteps.indexOf(name) + 1;
                 return "Registration step " + step + " (" + name + ")";
             }
+
             function logStepSucceeded(name, user) {
                 $log.info(logStepMsg(name) + " for user " + user + " succeeded!");
             }
+
             function logStepFailed(name, msg) {
                 $log.error(logStepMsg(name) + ": " + msg);
             }
