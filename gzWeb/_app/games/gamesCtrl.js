@@ -158,11 +158,11 @@
                     Array.prototype.push.apply(category.games, [g]);
                 }, 50);
 
-                //if (recursive && category.games.length < category.totalGameCount) {
-                //    $timeout(function () {
-                //        fetchGames(category, name, vendor, recursive);
-                //    }, 250);
-                //}
+                if (recursive && category.games.length < category.totalGameCount) {
+                    $timeout(function () {
+                        fetchGames(category, name, vendor, recursive);
+                    }, 250);
+                }
             }, function (error) {
                 $scope.fetching = false;
                 console.log(error);
