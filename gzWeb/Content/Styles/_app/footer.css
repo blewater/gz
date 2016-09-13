@@ -96,6 +96,9 @@ footer .copyright {
     line-height: 15px;
     margin-top: 5px;
 }
+footer .copyright-hr {
+    margin: 5px 45%;
+}
 footer .copyright img {
     width: 28px;
     height: 28px;
@@ -105,7 +108,7 @@ footer .company-registration {
     font-size: 11px;
     height: 15px;
     line-height: 15px;
-    /*margin-bottom: 10px;*/
+    margin-bottom: 10px;
 }
 
 footer .company-registration span.company-registration-separator {
@@ -113,6 +116,10 @@ footer .company-registration span.company-registration-separator {
 }
 footer .company-registration br.company-registration-separator {
     display: none;
+}
+
+.footer .license-disclaimer {
+
 }
 
 
