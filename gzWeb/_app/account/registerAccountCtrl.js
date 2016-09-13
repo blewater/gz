@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerAccountCtrl';
-    APP.controller(ctrlId, ["$scope", "$filter", "emWamp", "$timeout", ctrlFactory]);
-    function ctrlFactory($scope, $filter, emWamp, $timeout) {
+    APP.controller(ctrlId, ["$scope", "$filter", "emWamp", "$timeout", "$log", ctrlFactory]);
+    function ctrlFactory($scope, $filter, emWamp, $timeout, $log) {
         $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#fff', position: 'absolute', top: '50%', right: 0 };
         $scope.model = {
             email: null,
@@ -31,7 +31,7 @@
                     $scope.emailValidation.error = result.error;
                 }, function (error) {
                     $scope.emailValidation.isValidating = false;
-                    console.log(error.desc);
+                    $log.error(error.desc);
                 });
             }
         };
@@ -67,7 +67,7 @@
                     }, 0);
                 }, function (error) {
                     $scope.usernameValidation.isValidating = false;
-                    console.log(error.desc);
+                    $log.error(error.desc);
                 });
             }
         };
@@ -90,7 +90,7 @@
                 _passwordPolicyRegEx = new RegExp(result.regularExpression);
                 _passwordPolicyError = result.message;
             }, function(error) {
-                console.log(error.desc);
+                $log.error(error.desc);
             });
         };
 

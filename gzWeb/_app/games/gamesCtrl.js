@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gamesCtrl';
-    APP.controller(ctrlId, ['$scope', '$rootScope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', ctrlFactory]);
-    function ctrlFactory($scope, $rootScope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', '$log', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers, $log) {
         $controller('authCtrl', { $scope: $scope });
 
         // #region Variables
@@ -165,7 +165,7 @@
                 //}
             }, function (error) {
                 $scope.fetching = false;
-                console.log(error);
+                $log.error(error);
             });
         }
 
@@ -365,7 +365,7 @@
         });
 
         function logError(error) {
-            console.log(error);
+            $log.error(error);
         };
         // #endregion
     }

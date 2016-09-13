@@ -133,7 +133,7 @@
                 if (angular.isFunction(callback))
                     callback();
             }, function (error) {
-                console.log(error.desc);
+                $log.error(error.desc);
             });
         };
 
