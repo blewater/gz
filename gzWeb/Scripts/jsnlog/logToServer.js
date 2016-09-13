@@ -1,30 +1,30 @@
 ﻿(function(ng) {
     'use strict';
 
-    ng.module('logToServer', [])
-        .service('$log', function() {
-            this.log = function(msg) {
-                JL('gzWebClient').info(msg);
-            }
-            this.trace = function (msg) {
-                JL('gzWebClient').trace(msg);
-            }
-            this.debug = function(msg) {
-                JL('gzWebClient').debug(msg);
-            }
+        ng.module('logToServer', [])
+            .service('$log', function() {
+                this.log = function(msg) {
+                    JL('gzWebClient').info(msg);
+                }
+                this.trace = function(msg) {
+                    JL('gzWebClient').trace(msg);
+                }
+                this.debug = function(msg) {
+                    JL('gzWebClient').debug(msg);
+                }
 
-            this.info = function(msg) {
-                JL('gzWebClient').info(msg);
-            }
+                this.info = function(msg) {
+                    JL('gzWebClient').info(msg);
+                }
 
-            this.warn = function(msg) {
-                JL('gzWebClient').warn(msg);
-            }
+                this.warn = function(msg) {
+                    JL('gzWebClient').warn(msg);
+                }
 
-            this.error = function(msg) {
-                JL('gzWebClient').error(msg);
-            }
-        })
+                this.error = function(msg) {
+                    JL('gzWebClient').error(msg);
+                }
+            })
         .factory('$exceptionHandler', function() {
             return function(exception, cause) {
                 JL('Angular').fatalException(cause, exception);
