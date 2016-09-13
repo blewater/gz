@@ -467,7 +467,7 @@
             $wamp.subscribe("/deposit/statusChanged", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.DEPOSIT_STATUS_CHANGED, kwargs);
 
-                console.log(
+                $log.debug(
                     "DEPOSIT_STATUS_CHANGED => args: " + angular.toJson(args) +
                     ", kwargs: " + angular.toJson(kwargs) +
                     ", details: " + angular.toJson(details));
@@ -479,7 +479,7 @@
             $wamp.subscribe("/withdraw/statusChanged", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.WITHDRAW_STATUS_CHANGED, kwargs);
 
-                console.log(
+                $log.debug(
                     "WITHDRAW_STATUS_CHANGED => args: " + angular.toJson(args) +
                     ", kwargs: " + angular.toJson(kwargs) +
                     ", details: " + angular.toJson(details));
