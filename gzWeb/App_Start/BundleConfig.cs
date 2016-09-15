@@ -36,6 +36,7 @@ namespace gzWeb
                 , "~/_app/investments/investments.css"
                 , "~/_app/games/games.css"
                 , "~/_app/games/carousel.css"
+                , "~/_app/promotions/promotions.css"
                 , "~/_app/accountManagement/accountManagement.css"
                 , "~/_app/nsMessageService/nsMessages.css"
             ));
@@ -218,6 +219,10 @@ namespace gzWeb
                                         , "~/_app/games/gzFeaturedGame.js"
                                         , "~/_app/games/gzFeaturedGames.js"
                                         , "~/_app/games/gzCarousel.js"
+                                        #endregion
+
+                                        #region Promotions
+                                        , "~/_app/promotions/promotionsCtrl.js"
                                         #endregion
 
                                         #region Directives

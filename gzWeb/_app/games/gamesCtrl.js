@@ -113,7 +113,7 @@
         }
 
         function getFeaturedGames() {
-            getMostPopularGames();
+            //getMostPopularGames();
             //getRecommendedGames();
             //getBiggestWinGames();
             //getLastPlayedGames();
@@ -128,7 +128,7 @@
             return constants.routes.game.path.replace(":slug", slug);
         }
 
-        function search(categories, name, vendor, pages) {
+        function search(categories, name, vendor, sort, pages) {
             // TODO
         }
 
@@ -142,6 +142,9 @@
                 expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail,
                 pageSize: pageSize,
                 pageIndex: category.currentPageIndex + 1,
+                //sortFields: [
+                //    { field : sortField, order : sortOrder }
+                //]
             }).then(function (getCategoryGamesResult) {
                 $scope.fetching = false;
                 category.currentPageIndex = getCategoryGamesResult.currentPageIndex;
@@ -375,7 +378,7 @@
             loadCarouselSlides();
             loadGameVendors();
             loadCategories();
-            getFeaturedGames();
+            //getFeaturedGames();
         });
 
         function logError(error) {
