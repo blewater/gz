@@ -79,7 +79,7 @@
                 <input type="text" placeholder="Address" id="address" name="address" class="form-control" autocomplete="off" ng-model="model.address" required
                        ng-class="{ 'empty': !model.address, 'danger': form.address.$invalid && !form.address.$pristine }"
                        ng-focus="addressFocused = true" ng-blur="addressFocused = false"
-                        cs-capitalize-first>
+                       ng-autocomplete options="{types: 'address', country: model.country.code, watchEnter: true}" cs-capitalize-first>
                 <!-- ng-autocomplete options="{types: 'address', country: model.country.code, watchEnter: true}" -->
                 <div class="help-block" ng-class="{'show': addressFocused && form.address.$error.required && !form.address.$pristine}">Address is required</div>
                 <gz-field-ok gz-when="form.address.$valid"></gz-field-ok>
@@ -117,7 +117,7 @@
                 <input type="text" placeholder="City" id="city" name="city" class="form-control" autocomplete="off" ng-model="model.city" required
                        ng-class="{ 'empty': !model.city, 'danger': form.city.$invalid && !form.city.$pristine }"
                        ng-focus="cityFocused = true" ng-blur="cityFocused = false"
-                        cs-capitalize-first>
+                       ng-autocomplete options="{types: '(cities)', country: model.country.code, watchEnter: true}" cs-capitalize-first>
                 <!-- ng-autocomplete options="{types: '(cities)', country: model.country.code, watchEnter: true}" -->
                 <div class="help-block" ng-class="{'show': cityFocused && form.city.$error.required && !form.city.$pristine}">City is required</div>
                 <gz-field-ok gz-when="(!xs && form.postalCode.$valid && form.city.$valid) || (xs && form.city.$valid)"></gz-field-ok>
