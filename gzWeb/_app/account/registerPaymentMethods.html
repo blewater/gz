@@ -35,7 +35,7 @@
                 <div class="form-group">
                     <div class="initializing-spinner" us-spinner="spinnerWhite" ng-if="initializing"></div>
                     <div class="row payment-methods" ng-if="!initializing">
-                        <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by method.code" ng-init="open=true">
+                        <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by $index" ng-init="open=true">
                             <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)">
                             </div>
                         </div>
