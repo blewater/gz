@@ -523,6 +523,10 @@
     <Compile Include="Migrations\201608261313509_EmailTemplate_Code_length_changed.Designer.cs">
       <DependentUpon>201608261313509_EmailTemplate_Code_length_changed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609151011375_renames_at_carousel_entry.cs" />
+    <Compile Include="Migrations\201609151011375_renames_at_carousel_entry.Designer.cs">
+      <DependentUpon>201609151011375_renames_at_carousel_entry.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1113,6 +1117,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608261313509_EmailTemplate_Code_length_changed.resx">
       <DependentUpon>201608261313509_EmailTemplate_Code_length_changed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609151011375_renames_at_carousel_entry.resx">
+      <DependentUpon>201609151011375_renames_at_carousel_entry.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
