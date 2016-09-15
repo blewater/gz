@@ -6,7 +6,7 @@ using gzDAL.Models;
 
 namespace gzWeb.Controllers
 {
-    [RoutePrefix("api/Pages")]
+    //[RoutePrefix("api/Pages")]
     public class PagesController : BaseApiController
     {
         public PagesController(ApplicationUserManager userManager, ApplicationDbContext dbContext)
@@ -15,15 +15,15 @@ namespace gzWeb.Controllers
             _dbContext = dbContext;
         }
 
-        [Route("Carousel")]
+        //[Route("Carousel")]
         [HttpGet]
         public IHttpActionResult Carousel()
         {
             var now = DateTime.UtcNow;
-            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now>=x.LiveFrom && now<=x.LiveTo));
+            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo));
         }
 
-        [Route("Page")]
+        //[Route("Page")]
         [HttpGet]
         public IHttpActionResult Page(string code)
         {

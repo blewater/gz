@@ -29,8 +29,8 @@
                 var DELAY = 10000;
                 var timeoutPromise = undefined;
                 $scope.currentIndex = 0;
-                $scope.showControls = !('gzNoControls' in $attrs);
-                $scope.showIndicators = !('gzNoIndicators' in $attrs);
+                $scope.showControls = !('gzNoControls' in $attrs) && $scope.gzSlides && $scope.gzSlides.length > 1;
+                $scope.showIndicators = !('gzNoIndicators' in $attrs) && $scope.gzSlides && $scope.gzSlides.length > 1;
                 
                 function normalizeIndex(index) {
                     return (index + $scope.gzSlides.length) % $scope.gzSlides.length;
