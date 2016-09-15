@@ -352,7 +352,9 @@
                             title: x.Title,
                             subtitle: x.SubTitle,
                             action: x.ActionText,
-                            url: x.ActionUrl,
+                            url: x.ActionUrl.substring(0, 4) === 'http'
+                                 ? x.ActionUrl
+                                 : $location.protocol() + "://" + $location.host() + ":" + $location.port() + x.ActionUrl,
                             bg: x.BackgroundImageUrl
                         };
                     });
