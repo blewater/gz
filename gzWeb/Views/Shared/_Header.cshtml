@@ -9,7 +9,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
-                    <li ng-if="hasGamingBalance">{{currency}} {{gamingBalance}}</li>
+                    <li ng-if="hasGamingBalance">{{currency}} {{gamingBalance | number : 2}}</li>
                     <li>
                         <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="deposit()">
                             DEPOSIT
