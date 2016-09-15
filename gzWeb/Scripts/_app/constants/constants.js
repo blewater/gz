@@ -86,11 +86,26 @@
         title: 'Playground',
         category: categories.wandering
     };
+    routes.terms = {
+        path: '/terms',
+        ctrl: 'termsCtrl',
+        tpl: '_app/guest/terms.html',
+        title: 'Terms & Conditions',
+        category: categories.wandering
+    };
+    routes.promotions = {
+        path: '/promotions/:code',
+        ctrl: 'promotionsCtrl',
+        tpl: '_app/promotions/promotions.html',
+        title: 'Promotions',
+        roles: [roles.guest],
+        category: categories.wandering
+    };
     // #endregion
 
     // #region Games
     routes.games = {
-        path: '/games',
+        path: '/casino',
         ctrl: 'gamesCtrl',
         tpl: '_app/games/games.html',
         title: 'Games',
@@ -99,7 +114,7 @@
         category: categories.gaming
     };
     routes.game = {
-        path: '/game/:slug',
+        path: '/casino/:slug',
         ctrl: 'gameCtrl',
         tpl: '_app/games/game.html',
         title: 'Games',
