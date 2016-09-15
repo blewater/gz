@@ -23,6 +23,8 @@
             //    message.error(error.desc);
             //    $scope.initializing = false;
             //});
+
+            // TODO include all
             emBankingWithdraw.getSupportedPaymentMethods().then(function (paymentMethods) {
                 $scope.paymentMethods = paymentMethods;
                 for (var i = 0; i < $scope.paymentMethods.length; i++)
@@ -50,7 +52,7 @@
                 case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
                     return method.payCard.name;
                 case emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly:
-                    return method.withdrawDesc || method.code;
+                    return method.withdrawDesc || "Trustly";
                 default:
                     return method.code;
             }
