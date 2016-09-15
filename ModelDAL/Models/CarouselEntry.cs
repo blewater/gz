@@ -17,9 +17,11 @@ namespace gzDAL.Models
         [Required]
         public string SubTitle { get; set; }
         [Required]
+        public string ActionText { get; set; }
+        [Required]
         public string ActionUrl { get; set; }
         [Required]
-        public string BackroudImageUrl { get; set; }
+        public string BackgroundImageUrl { get; set; }
 
         [Required]
         public bool Live { get; set; }
