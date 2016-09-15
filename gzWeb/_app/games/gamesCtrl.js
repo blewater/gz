@@ -351,9 +351,9 @@
                         return {
                             title: x.Title,
                             subtitle: x.SubTitle,
-                            action: c.ActionText,
+                            action: x.ActionText,
                             url: x.ActionUrl,
-                            bg: x.BackroudImageUrl
+                            bg: x.BackgroundImageUrl
                         };
                     });
             });
