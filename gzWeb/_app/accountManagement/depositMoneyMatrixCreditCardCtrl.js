@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositMoneyMatrixCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', '$timeout', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, $timeout, constants) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', '$timeout', 'constants', 'message', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, $timeout, constants, message) {
         $scope.spinnerWhiteAbs = constants.spinners.sm_abs_white;
         var thisYear = moment().year();
         var maxYear = thisYear + 30;
