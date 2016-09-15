@@ -8,7 +8,7 @@
 
             <div class="form-group payment-method">
                 <span class="method-icon" ng-bind-html="selectedMethod.icon"></span>
-                <span class="method-name">{{selectedMethod.name}}</span>
+                <span class="method-name">{{getMethodName(selectedMethod)}}</span>
             </div>
 
             <div class="form-group">
@@ -18,7 +18,7 @@
 
             <div class="form-group">
                 <div class="btns text-center">
-                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid || extraValidityCheck === false"
+                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid || extraValidityCheck === false || waiting"
                             ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                         <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
                         <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>

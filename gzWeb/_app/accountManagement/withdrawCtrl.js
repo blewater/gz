@@ -152,5 +152,19 @@
             });
         };
         // #endregion
+
+        //$scope.getMethodName = function (method) {
+        //    switch (method.code) {
+        //        case emBankingWithdraw.PaymentMethodCode.VISA:
+        //        case emBankingWithdraw.PaymentMethodCode.Maestro:
+        //        case emBankingWithdraw.PaymentMethodCode.MasterCard:
+        //        case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
+        //            return method.name;
+        //        case emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly:
+        //            return "Trustly";
+        //        default:
+        //            return method.name;
+        //    }
+        //};
     }
 })();

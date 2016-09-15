@@ -180,6 +180,20 @@
         };
         // #endregion
 
+        $scope.getMethodName = function (method) {
+            switch (method.code) {
+                case emBanking.PaymentMethodCode.VISA:
+                case emBanking.PaymentMethodCode.Maestro:
+                case emBanking.PaymentMethodCode.MasterCard:
+                case emBanking.PaymentMethodCode.MoneyMatrixCreditCard:
+                    return method.name;
+                case emBanking.PaymentMethodCode.MoneyMatrixTrustly:
+                    return "Trustly";
+                default:
+                    return method.name;
+            }
+        };
+
         // #region backToPaymentMethods
         $scope.backToPaymentMethods = function () {
             $scope.nsBack({
