@@ -4,7 +4,7 @@
              class="gz-slide" ng-class="{'current': $index === currentIndex}"
              ng-style="{ 'margin-left': calcMarginLeft($index), 'z-index': calcZIndex($index) }"
              ng-mouseover="onHover()" ng-mouseleave="onLeave()">
-            <img class="gz-slide-bg" ng-src="{{slide.backgroundImage}}" />
+            <img class="gz-slide-bg" ng-src="{{slide.bg}}" />
             <div class="gz-slide-title text-shadow-dark">{{slide.title}}</div>
             <div class="gz-slide-subtitle text-shadow-dark">{{slide.subtitle}}</div>
             <div class="gz-slide-action">

@@ -337,6 +337,7 @@
 .categories .category .game a .game-info .game-play:hover {
     box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
     color: #fff;
+    background-color: #07893C;
 
     -webkit-transition: box-shadow 0.2s;
     -moz-transition: box-shadow 0.2s;
@@ -349,7 +350,8 @@
 }
 
 .categories .category .game a .game-info .game-play i {
-    margin-left: 3px;
+    margin-left: 5px;
+    margin-top: 2px;
 }
 .categories .category .game a .game-info .game-play:hover i {
     color: #fff;
@@ -367,6 +369,46 @@
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+
+.play-arrow {
+	/*position: relative;
+	background-color: #fff;
+	text-align: left;*/
+
+    position: absolute;
+    background-color: #fff;
+    text-align: left;
+    top: calc(50% - 7px);
+    left: calc(50% - 7px);
+}
+.play-arrow:before,
+.play-arrow:after {
+	content: '';
+	position: absolute;
+	background-color: inherit;
+}
+.play-arrow,
+.play-arrow:before,
+.play-arrow:after {
+	/*width:  1em;
+	height: 1em;
+	border-top-right-radius: 30%;*/
+    width: 10px;
+    height: 10px;
+    border-top-right-radius: 40%;
+}
+
+.play-arrow {
+	transform: rotate(-90deg) skewX(-30deg) scale(1,.866);
+}
+.play-arrow:before {
+	transform: rotate(-135deg) skewX(-45deg) scale(1.414,.707) translate(0,-50%);
+}
+.play-arrow:after {
+	transform: rotate(135deg) skewY(-45deg) scale(.707,1.414) translate(50%);
+}
+
 
 
 

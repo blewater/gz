@@ -14,6 +14,7 @@
             guest: apiBaseUrl('guest'),
             games: apiBaseUrl('games'),
             investments: apiBaseUrl('investments'),
+            pages: apiBaseUrl('pages'),
             //account: apiBaseUrl('account')
         };
         factory.urls = urls;
@@ -118,6 +119,9 @@
         // #endregion
 
         // #region Games
+        factory.getCarousel = function () {
+            return $http.get('/api/pages/carousel');
+        };
         // #endregion
 
         // #region Guest

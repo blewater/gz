@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gamesCtrl';
-    APP.controller(ctrlId, ['$scope', '$rootScope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', '$log', ctrlFactory]);
-    function ctrlFactory($scope, $rootScope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers, $log) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', '$log', 'api', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers, $log, api) {
         $controller('authCtrl', { $scope: $scope });
 
         // #region Variables
@@ -41,16 +41,7 @@
                     game.info = "#" + (j + 1);
                     $scope.mostPopularGames.push(game);
                 }
-                $scope.carouselGames = $scope.mostPopularGames.slice(0, 5);
-                for (i = 0; i < $scope.carouselGames.length; i++) {
-                    populateGame($scope.carouselGames[i], i);
-                }
             }, logError);
-            function populateGame(game, i) {
-                game.title = "Title " + (i + 1);
-                game.subtitle = "Subtitle subtitle subtitle " + (i + 1);
-                game.url = $scope.getGameUrl(game.slug);
-            }
         }
 
         function getRecommendedGames() {
@@ -137,6 +128,10 @@
             return constants.routes.game.path.replace(":slug", slug);
         }
 
+        function search(categories, name, vendor, pages) {
+            // TODO
+        }
+
         function fetchGames(category, name, vendor, recursive) {
             $scope.fetching = true;
             emCasino.getGames({
@@ -221,22 +216,6 @@
                 else {
                     $scope.projectedCategories = $scope.customCategories;
                 }
-            }, logError);
-        };
-
-        function loadGameVendors() {
-            $scope.loadingVendors = true;
-            emCasino.getGameVendors().then(function (getGameVendorsResult) {
-                $scope.loadingVendors = false;
-                if (selectedVendorName.length > 0) {
-                    for (i = 0; i < getGameVendorsResult.vendors.length; i++) {
-                        if (selectedVendorName === getGameVendorsResult.vendors[i].toLowerCase()) {
-                            $scope.searchByVendorTerm = getGameVendorsResult.vendors[i];
-                            break;
-                        }
-                    }
-                }
-                $scope.vendors = getGameVendorsResult.vendors;
             }, logError);
         };
 
@@ -353,12 +332,47 @@
         
 
         // #region Init
-        $scope._init(function () {
+        function readParams() {
             var params = $location.search();
             selectedCategoryName = params.category || "";
             selectedVendorName = params.vendor || "";
             $scope.searchByNameTerm = params.name || "";
-
+        };
+        function loadCarouselSlides() {
+            api.call(function () {
+                return api.getCarousel();
+            }, function (response) {
+                $scope.carouselSlides = $filter('map')(
+                    response.Result,
+                    function (x) {
+                        return {
+                            title: x.Title,
+                            subtitle: x.SubTitle,
+                            action: c.ActionText,
+                            url: x.ActionUrl,
+                            bg: x.BackroudImageUrl
+                        };
+                    });
+            });
+        };
+        function loadGameVendors() {
+            $scope.loadingVendors = true;
+            emCasino.getGameVendors().then(function (getGameVendorsResult) {
+                $scope.loadingVendors = false;
+                if (selectedVendorName.length > 0) {
+                    for (i = 0; i < getGameVendorsResult.vendors.length; i++) {
+                        if (selectedVendorName === getGameVendorsResult.vendors[i].toLowerCase()) {
+                            $scope.searchByVendorTerm = getGameVendorsResult.vendors[i];
+                            break;
+                        }
+                    }
+                }
+                $scope.vendors = getGameVendorsResult.vendors;
+            }, logError);
+        };
+        $scope._init(function () {
+            readParams();
+            loadCarouselSlides();
             loadGameVendors();
             loadCategories();
             getFeaturedGames();
