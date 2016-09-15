@@ -3,7 +3,7 @@
 
     <div ng-if="initializing" class="initializing-spinner" us-spinner="spinnerWhite"></div>
     <div ng-if="!initializing">
-        <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by method.code">
+        <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by $index">
             <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
             <div>{{method.descr}}</div>
             <!--<div ng-repeat="d in method.descr">{{d}}</div>-->
