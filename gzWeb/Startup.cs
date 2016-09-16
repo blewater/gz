@@ -45,6 +45,9 @@ namespace gzWeb {
     {
         public void Configuration(IAppBuilder app)
         {
+            // Remove X-AspNetMvc-Version header
+            MvcHandler.DisableMvcResponseHeader = true;
+
             AreaRegistration.RegisterAllAreas();
 
             var gzConnStringTupleNameValue = GetDbConnStringValue();
