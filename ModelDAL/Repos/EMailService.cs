@@ -50,7 +50,7 @@ namespace gzDAL.Repos
 
                 await SendMessage(message);
             }
-            catch (Exception exception)
+            catch (Exception )
             {
                 throw;
             }
