@@ -121,7 +121,7 @@
         $scope.phonePrefixes = [];
         function loadCountries() {
             $scope.loadingCountries = true;
-            emWamp.getCountries(false /*true*/, '', false /*true*/).then(function(result) {
+            emWamp.getCountries(false /*true*/, '', true).then(function(result) {
                 $scope.currentIpCountry = result.currentIPCountry;
                 $scope.countries = result.countries;
                 if ($scope.currentIpCountry == null || $scope.currentIpCountry == '' || $scope.currentIpCountry == undefined)
