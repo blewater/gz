@@ -25,7 +25,6 @@ namespace gzWeb.Controllers
     public class AccountApiController : BaseApiController
     {
         private const string LocalLoginProvider = "Local";
-        private ApplicationUserManager _userManager;
         private readonly ApplicationDbContext _dbContext;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
         private readonly IUserRepo _userRepo;
