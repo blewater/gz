@@ -173,6 +173,7 @@ namespace gzDAL.Models
         public DbSet<LogEntry> LogEntries { get; set; }
         public DbSet<DynamicPage> DynamicPages { get; set; }
         public DbSet<CarouselEntry> CarouselEntries { get; set; }
+        public DbSet<GameCategory> GameCategories { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
