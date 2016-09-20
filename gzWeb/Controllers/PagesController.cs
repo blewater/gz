@@ -30,6 +30,19 @@ namespace gzWeb.Controllers
             return OkMsg(() => _dbContext.DynamicPages.SingleOrDefault(x => x.Code == code));
         }
 
+        [HttpGet]
+        public IHttpActionResult Categoires()
+        {
+            return OkMsg(() => _dbContext.GameCategories
+                                         .Select(x => new
+                                                      {
+                                                              x.Code,
+                                                              x.Title,
+                                                              GameSlugs = x.GameSlugs.Split(';')
+                                                      })
+                                         .ToList());
+        }
+
         private readonly ApplicationDbContext _dbContext;
     }
 }

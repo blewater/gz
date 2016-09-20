@@ -148,6 +148,7 @@
     <Compile Include="Models\DbSetExtensions.cs" />
     <Compile Include="Models\DynamicPage.cs" />
     <Compile Include="Models\EmailTemplate.cs" />
+    <Compile Include="Models\GameCategory.cs" />
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />
     <Compile Include="Models\CurrencyRate.cs" />
@@ -207,5 +208,3 @@
   </Target>
   -->
 </Project>
-
-

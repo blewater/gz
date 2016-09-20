@@ -527,6 +527,14 @@
     <Compile Include="Migrations\201609151011375_renames_at_carousel_entry.Designer.cs">
       <DependentUpon>201609151011375_renames_at_carousel_entry.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609201415218_Add_GameCategory.cs" />
+    <Compile Include="Migrations\201609201415218_Add_GameCategory.Designer.cs">
+      <DependentUpon>201609201415218_Add_GameCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609201427165_Add_ActionType_To_CarouselEntry.cs" />
+    <Compile Include="Migrations\201609201427165_Add_ActionType_To_CarouselEntry.Designer.cs">
+      <DependentUpon>201609201427165_Add_ActionType_To_CarouselEntry.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1123,6 +1131,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609151011375_renames_at_carousel_entry.resx">
       <DependentUpon>201609151011375_renames_at_carousel_entry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609201415218_Add_GameCategory.resx">
+      <DependentUpon>201609201415218_Add_GameCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609201427165_Add_ActionType_To_CarouselEntry.resx">
+      <DependentUpon>201609201427165_Add_ActionType_To_CarouselEntry.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
