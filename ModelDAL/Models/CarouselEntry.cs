@@ -7,6 +7,7 @@ namespace gzDAL.Models
     public enum CarouselActionType
     {
         Url,
+        Page,
         Game
     }
 
