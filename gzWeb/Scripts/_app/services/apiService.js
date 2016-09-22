@@ -122,6 +122,9 @@
         factory.getCarousel = function () {
             return $http.get('/api/pages/carousel');
         };
+        factory.getCustomCategories = function () {
+            return $http.get('/api/pages/categories');
+        };
         // #endregion
 
         // #region Guest
