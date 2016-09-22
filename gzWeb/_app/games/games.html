@@ -9,7 +9,6 @@
                 <div class="col-xs-12">
                     <div class="filter-categories">
                         <span ng-repeat-start="category in gameCategories" class="filter-category">
-                            <!--<span class="divider" ng-if="$index !== 0">|</span>-->
                             <a ng-class="{'selected':category.selected}" ng-click="onCategorySelected($index)">
                                 {{category.title}}
                             </a>
@@ -19,18 +18,24 @@
                     </div>
                 </div>
                 <div class="col-xs-offset-1 col-xs-10 col-sm-offset-1 col-sm-5">
+                    <div class="search-by-vendor">
+                        <gz-select gz-name="filter-vendor" gz-model="searchByVendorTerm" gz-collection="vendors" gz-change="onSearchByVendor(id)" gz-prompt="SELECT VENDOR" gz-loading="loadingVendors"></gz-select>
+                    </div>
+                </div>
+                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-5">
                     <div class="search-by-name" ng-class="{'focused': searchByNameFocused}">
-                        <input type="search" placeholder="SEARCH GAME" class="form-control" ng-model="searchByNameTerm"
+                        <!--<input type="search" placeholder="SEARCH GAME" class="form-control" ng-model="searchByNameTerm"
                                ng-focus="searchByNameFocused = true;" ng-blur="searchByNameFocused = false;" cs-enter="onSearchByName()">
                         <a class="search-btn" ng-click="searchingByName || onSearchByName()">
                             <i class="fa fa-search" ng-show="!searchingByName"></i>
                             <span us-spinner="spinnerGreenXsAbs" ng-show="searchingByName"></span>
+                        </a>-->
+                        <input type="search" placeholder="SEARCH GAME" class="form-control" ng-model="searchByNameTerm"
+                               ng-focus="searchByNameFocused = true;" ng-blur="searchByNameFocused = false;" ng-change="onSearchByName()">
+                        <a class="search-btn" ng-click="searchingByName || onSearchByName()">
+                            <i class="fa fa-search" ng-show="!searchingByName"></i>
+                            <span us-spinner="spinnerGreenXsAbs" ng-show="searchingByName"></span>
                         </a>
-                    </div>
-                </div>
-                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-5">
-                    <div class="search-by-vendor">
-                        <gz-select gz-name="filter-vendor" gz-model="searchByVendorTerm" gz-collection="vendors" gz-change="onSearchByVendor(id)" gz-prompt="SELECT VENDOR" gz-loading="loadingVendors"></gz-select>
                     </div>
                 </div>
             </div>
@@ -45,14 +50,38 @@
                     <div class="row">
                         <div class="title col-xs-12" ng-class="{'text-center': xs}">
                             <span>{{category.title}}</span>
+
+                            <span class="sorting pull-right">
+                                Sort by
+                                <!--<span>
+                                    <button class="btn-gz" ng-class="{'btn-gz-alt': category.sorting.by === 'alpha' && category.sorting.order === 'asc'}" uib-tooltip="Alphabetically - Ascending" tooltip-class="sorting-tooltip">
+                                        <i class="fa fa-sort-alpha-asc"></i>
+                                    </button>
+                                    <button class="btn-gz" ng-class="{'btn-gz-alt': category.sorting.by === 'alpha' && category.sorting.order === 'desc'}" uib-tooltip="Alphabetically - Decending" tooltip-class="sorting-tooltip">
+                                        <i class="fa fa-sort-alpha-desc"></i>
+                                    </button>
+                                </span>
+                                <span>
+                                    <button class="btn-gz" ng-class="{'btn-gz-alt': category.sorting.by === 'popularity' && category.sorting.order === 'asc'}" uib-tooltip="Popularity - Ascending" tooltip-class="sorting-tooltip">
+                                        <i class="fa fa-sort-amount-asc"></i>
+                                    </button>
+                                    <button class="btn-gz" ng-class="{'btn-gz-alt': category.sorting.by === 'popularity' && category.sorting.order === 'desc'}" uib-tooltip="Popularity - Decending" tooltip-class="sorting-tooltip" tooltip-is-open="true">
+                                        <i class="fa fa-sort-amount-desc"></i>
+                                    </button>
+                                </span>-->
+                                <!--<gz-select gz-name="sort-by" gz-model="category.sorting.by" gz-collection="sortingByTypes" gz-change="onSortByChanged(id)" gz-no-prompt></gz-select>
+                                <gz-select gz-name="sort-order" gz-model="category.sorting.order" gz-collection="sortingOrderTypes" gz-change="onSortOrderChanged(id)" gz-no-prompt></gz-select>-->
+                                <gz-select gz-name="sort" gz-model="category.sorting" gz-collection="sortingTypes" gz-id="key" gz-display="display" gz-no-prompt></gz-select>
+
+                            </span>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-xs-12">
-                            <div ng-repeat-start="g in category.games" class="game text-center col-xs-6 col-sm-4 col-md-2">
+                            <div ng-repeat-start="g in category.games| orderBy : category.sorting.by : category.sorting.order" class="game text-center col-xs-6 col-sm-4 col-md-2">
                                 <a class="game-link" ng-href="{{getGameUrl(g.slug)}}">
-                                    <img class="game-img img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" ng-click="onGameSelected(g.slug)" />
+                                    <img class="game-img img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" />
                                     <div class="game-info">
                                         <!--<div class="game-play">
                                             <i class="fa fa-3x fa-play-circle"></i>
@@ -68,16 +97,20 @@
                                 </a>
                             </div>
                             <div ng-repeat-end ng-class="{'clearfix':(xs && $index % 2 === 1) || (sm && $index % 3 === 2) || $index % 6 === 5}"></div>
+
+                            <div ng-if="category.paging === pagingTypes.less && category.games.length < category.totalGameCount" class="game text-center col-xs-6 col-sm-4 col-md-2 clearfix">
+                                <a class="game-link" ng-click="showAll(category)">
+                                    <img class="game-img img-responsive full-width" src="../../Content/Images/casino-default.jpg" />
+                                    <div class="game-info">
+                                        <div class="game-play">
+                                            <i class="fa fa-ellipsis-h"></i>
+                                        </div>
+                                        <div class="game-name">SHOW ALL</div>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
-
-                    <!--<div class="row hidden">
-                        <div class="col-xs-12 text-center">
-                            <button class="load-more btn-gz btn-gz-alt" ng-click="fetchNextPage(category)">
-                                LOAD MORE
-                            </button>
-                        </div>
-                    </div>-->
                 </div>
             </div>
         </div>

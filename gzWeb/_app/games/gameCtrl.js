@@ -5,6 +5,7 @@
     function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log) {
         $controller('authCtrl', { $scope: $scope });
 
+        var searchParams = null;
         $scope.game = null;
         $scope.gameLaunchData = null;
         $scope.gameUrl = null;
@@ -69,6 +70,9 @@
         };
 
         $scope._init(function () {
+            var params = $location.search();
+            searchParams = Object.keys(params).length === 0 ? {} : params;
+            $location.search({});
             loadGame();
             setClock();
         });
@@ -86,7 +90,7 @@
         }
 
         $scope.backToGames = function () {
-            $location.path(constants.routes.games.path).search({});
+            $location.path(constants.routes.games.path).search(searchParams);
         }
 
         $scope.$on('$locationChangeStart', function (event, next, current) {

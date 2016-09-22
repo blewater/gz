@@ -93,8 +93,16 @@
         title: 'Terms & Conditions',
         category: categories.wandering
     };
+    //routes.promotions = {
+    //    path: '/promotions/:code',
+    //    ctrl: 'promotionsCtrl',
+    //    tpl: '_app/promotions/promotions.html',
+    //    title: 'Promotions',
+    //    roles: [roles.guest],
+    //    category: categories.wandering
+    //};
     routes.promotions = {
-        path: '/promotions/:code',
+        path: '/promotions',
         ctrl: 'promotionsCtrl',
         tpl: '_app/promotions/promotions.html',
         title: 'Promotions',
@@ -108,7 +116,7 @@
         path: '/casino',
         ctrl: 'gamesCtrl',
         tpl: '_app/games/games.html',
-        title: 'Games',
+        title: 'Casino',
         reloadOnSearch: false,
         roles: [roles.gamer],
         category: categories.gaming
@@ -117,7 +125,8 @@
         path: '/casino/:slug',
         ctrl: 'gameCtrl',
         tpl: '_app/games/game.html',
-        title: 'Games',
+        title: 'Casino',
+        reloadOnSearch: false,
         roles: [roles.gamer],
         category: categories.gaming
     };
