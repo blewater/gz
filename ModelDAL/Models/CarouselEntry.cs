@@ -4,6 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzDAL.Models
 {
+    public enum CarouselActionType
+    {
+        Url,
+        Page,
+        Game
+    }
+
+
     public class CarouselEntry
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,11 +24,16 @@ namespace gzDAL.Models
         public string Title { get; set; }
         [Required]
         public string SubTitle { get; set; }
+        
         [Required]
         public string ActionText { get; set; }
+
         [Required]
         public string ActionUrl { get; set; }
+
         [Required]
+        public CarouselActionType ActionType { get; set; }
+        
         public string BackgroundImageUrl { get; set; }
 
         [Required]
