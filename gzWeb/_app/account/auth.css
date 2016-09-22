@@ -364,6 +364,10 @@
     background-color: #ffffff;
     cursor: pointer;
 }
+.auth #phonePrefix button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 .auth #phonePrefix button.empty {
     background-color: #eaf6ef;
 }
