@@ -10,7 +10,7 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-12">
-                        <gz-select gz-model="model.selectedCreditCard" gz-collection="existingCreditCards" gz-prompt="--Select Credit Card--" gz-loading="loadingCreditCards"
+                        <gz-select gz-model="model.selectedCreditCard" gz-collection="existingCreditCards" gz-prompt="--select credit card--" gz-loading="loadingCreditCards"
                                    gz-id="id" gz-display="name" gz-change="onCreditCardSelected(id)">
                         </gz-select>
                     </div>
@@ -117,6 +117,7 @@
                                ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
                                min="{{accountLimits.min}}" max="{{accountLimits.max}}"
                                ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
+                        <!--uib-tooltip-html="{{accountLimits.min}} + '&le;' + ' x ' + '&le;' + {{accountLimits.max}}"-->
                     </div>
                     <div class="col-xs-12">
                         <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
