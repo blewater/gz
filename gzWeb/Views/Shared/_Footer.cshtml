@@ -10,13 +10,14 @@
 <footer class="bg-gz" ng-controller="footerCtrl" ng-hide="playing">
     <div class="container">
         <div class="footer-menu cl-effect text-center">
-            <a ng-href="/transparency">TRANSPARENCY</a>
+            @*<a ng-href="/transparency">TRANSPARENCY</a>
             <a ng-href="/about">ABOUT</a>
             <a ng-href="/faq">FAQ</a>
             <a ng-href="/help">HELP</a>
             <a ng-href="/privacy">PRIVACY POLICY</a>
             <a ng-href="/terms">TERMS & CONDITIONS</a>
-            <a ng-href="/promotions">PROMOTIONS</a>
+            <a ng-href="/promotions">PROMOTIONS</a>*@
+            <a ng-repeat="route in routes" ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
         </div>
         <div class="footer-social text-center">
             <a href="https://www.facebook.com/greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook" ng-class="{'fa-lg': !xs}"></i></a>
