@@ -31,16 +31,17 @@ namespace gzWeb.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult Categoires()
+        public IHttpActionResult Categories()
         {
-            return OkMsg(() => _dbContext.GameCategories
-                                         .Select(x => new
-                                                      {
-                                                              x.Code,
-                                                              x.Title,
-                                                              GameSlugs = x.GameSlugs.Split(';')
-                                                      })
-                                         .ToList());
+            var dbCategories = _dbContext.GameCategories.ToList();
+            var customCategories = dbCategories.Select(x => new
+            {
+                x.Code,
+                x.Title,
+                GameSlugs = x.GameSlugs.Split(';')
+            }).ToList();
+
+            return OkMsg(() => customCategories);
         }
 
         private readonly ApplicationDbContext _dbContext;

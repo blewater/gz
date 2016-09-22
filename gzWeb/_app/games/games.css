@@ -244,7 +244,34 @@
     font-size: 18px;
     font-weight: 700;
     margin: 30px 0 15px;
+    line-height: 36px;
 }
+
+.categories .category .title .sorting {
+    font-size: 12px;
+}
+.categories .category .title .sorting button.btn-gz {
+    margin: 0;
+    font-size: 12px;
+}
+
+.categories .category .title .sorting .gz-select select {
+    display: inline;
+    width: auto;
+    height: 36px;
+}
+
+.tooltip.sorting-tooltip .tooltip-inner {
+    color: #fff;
+    background-color: #27A95C;
+    box-shadow: 0 6px 12px rgba(255,255,255,.175);
+}
+.tooltip.sorting-tooltip .tooltip-arrow {
+    border-top-color: #27A95C !important;
+}
+
+
+
 .categories .category .game {
     padding: 0;
 }
@@ -291,7 +318,7 @@
 
 .categories .category .game a .game-info .game-play {
     display: inline-block;
-    font-size: 28px;
+    font-size: 24px;
     line-height: 60px;
     cursor: pointer;
     width: 60px;
@@ -304,7 +331,7 @@
     text-decoration: none;
     z-index: 1;
     color: #fff;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 1);
 }
 .categories .category .game a .game-info .game-play:after {
     pointer-events: none;
@@ -349,7 +376,7 @@
     animation: spinAround 9s linear infinite;
 }
 
-.categories .category .game a .game-info .game-play i {
+.categories .category .game a .game-info .game-play i.fa-play {
     margin-left: 5px;
     margin-top: 2px;
 }
@@ -369,6 +396,7 @@
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
 
 
 .play-arrow {
@@ -416,7 +444,7 @@
     position: absolute;
     top: 10%;
     width: 100%;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 
