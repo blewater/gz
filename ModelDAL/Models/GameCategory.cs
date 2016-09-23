@@ -14,6 +14,10 @@ namespace gzDAL.Models
         [Required]
         public string Title { get; set; }
 
+        [Required]
         public string GameSlugs { get; set; }
+
+        [Required]
+        public DataType Updated { get; set; }
     }
 }
