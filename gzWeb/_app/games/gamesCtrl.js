@@ -225,6 +225,7 @@
                 case "SCRATCHCARDS": return "Scratch cards";
                 case "3DSLOTS": return "3D slots";
                 case "LIVEDEALER": return "Live dealer";
+                case "OTHERGAMES": return "Other games";
                 default: return name;
             }
         }
@@ -303,7 +304,6 @@
             api.call(function () {
                 return api.getCarousel();
             }, function (response) {
-                $scope.carouselSlides = [];
                 //for (i = 0; i < response.Result.length; i++) {
                 //    if (response.Result[i].BackgroundImageUrl) {
                 //        $scope.carouselSlides.
