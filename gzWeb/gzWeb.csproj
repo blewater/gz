@@ -535,6 +535,10 @@
     <Compile Include="Migrations\201609201427165_Add_ActionType_To_CarouselEntry.Designer.cs">
       <DependentUpon>201609201427165_Add_ActionType_To_CarouselEntry.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs" />
+    <Compile Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.Designer.cs">
+      <DependentUpon>201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1135,6 +1139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609201427165_Add_ActionType_To_CarouselEntry.resx">
       <DependentUpon>201609201427165_Add_ActionType_To_CarouselEntry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.resx">
+      <DependentUpon>201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
