@@ -79,7 +79,7 @@
 
                     <div class="row">
                         <div class="col-xs-12">
-                            <div ng-repeat-start="g in category.games | orderBy : category.sorting.by : category.sorting.order" class="game text-center col-xs-6 col-sm-4 col-md-2">
+                            <div ng-repeat-start="g in category.games | orderBy : category.sorting.by : category.sorting.order | unique: 'slug'" class="game text-center col-xs-6 col-sm-4 col-md-2">
                                 <a class="game-link" ng-href="{{getGameUrl(g.slug)}}">
                                     <img class="game-img img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" />
                                     <div class="game-info">
