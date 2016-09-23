@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
 
@@ -18,5 +19,8 @@ namespace gzDAL.Models
         [Required]
         [AllowHtml]
         public string Body { get; set; }
+
+        [Required]
+        public DateTime Updated { get; set; }
     }
 }

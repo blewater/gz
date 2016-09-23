@@ -539,6 +539,10 @@
     <Compile Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.Designer.cs">
       <DependentUpon>201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609231419565_Add-Updated-Field.cs" />
+    <Compile Include="Migrations\201609231419565_Add-Updated-Field.Designer.cs">
+      <DependentUpon>201609231419565_Add-Updated-Field.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1142,6 +1146,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.resx">
       <DependentUpon>201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609231419565_Add-Updated-Field.resx">
+      <DependentUpon>201609231419565_Add-Updated-Field.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
