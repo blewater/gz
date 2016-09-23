@@ -2,15 +2,11 @@
 using System.Configuration;
 using System.Web.Optimization;
 
-namespace gzWeb
-{
-    public class BundleConfig
-    {
+namespace gzWeb {
+    public class BundleConfig {
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles) {
 
-            //-- Configuration
-            BundleTable.EnableOptimizations = true;
             // Prefer cdn from local files
             bundles.UseCdn = true;
 
@@ -23,9 +19,13 @@ namespace gzWeb
                     "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
                 ).Include(
                     "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
-                ).Include(
-                    "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()
                 ));
+
+            var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
+
+            bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
+                "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
+            ));
 
             bundles.Add(new StyleBundle("~/css/app").Include(
                 //"~/Content/Site.css"
@@ -105,7 +105,7 @@ namespace gzWeb
                 , "~/Scripts/_modules/customDirectives.js"
                 , "~/Scripts/_modules/customFilters.js"
                 , "~/Scripts/jsnlog/logToServer.js"
-                //, "~/Scripts/_modules/styleInjector.js"
+            //, "~/Scripts/_modules/styleInjector.js"
             ));
 
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
@@ -119,7 +119,7 @@ namespace gzWeb
                                                   ? "~/Scripts/_app/constants/emConCfg-stage.js"
                                                   : "~/Scripts/_app/constants/emConCfg.js"
 
-                                        #region Controllers
+            #region Controllers
                                         , "~/Scripts/_app/controllers/authCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/headerCtrl.js"
                                         , "~/Scripts/_app/controllers/templates/headerNewCtrl.js"
@@ -152,9 +152,9 @@ namespace gzWeb
                                         //, "~/Scripts/_app/controllers/templates/registerDepositCreditCardCtrl.js"
                                         //, "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixCreditCardCtrl.js"
                                         //, "~/Scripts/_app/controllers/templates/registerDepositMoneyMatrixTrustlyCtrl.js"
-                                        #endregion
+            #endregion
 
-                                        #region Guest
+            #region Guest
                                         , "~/_app/guest/homeCtrl.js"
                                         , "~/_app/guest/transparencyCtrl.js"
                                         , "~/_app/guest/aboutCtrl.js"
@@ -164,9 +164,9 @@ namespace gzWeb
                                         , "~/_app/guest/privacyCtrl.js"
                                         , "~/_app/guest/termsCtrl.js"
                                         , "~/_app/guest/playgroundCtrl.js"
-                                        #endregion
+            #endregion
 
-                                        #region Account
+            #region Account
                                         , "~/_app/account/loginCtrl.js"
                                         , "~/_app/account/investmentAccessErrorCtrl.js"
                                         , "~/_app/account/forgotPasswordCtrl.js"
@@ -180,9 +180,9 @@ namespace gzWeb
                                         , "~/_app/account/registerDepositMoneyMatrixTrustlyCtrl.js"
                                         , "~/_app/account/confirmDepositCtrl.js"
                                         , "~/_app/account/confirmWithdrawCtrl.js"
-                                        #endregion
+            #endregion
 
-                                        #region Account Management
+            #region Account Management
                                         , "~/_app/accountManagement/accountManagementCtrl.js"
                                         , "~/_app/accountManagement/accountManagementService.js"
 
@@ -204,9 +204,9 @@ namespace gzWeb
                                         , "~/_app/accountManagement/responsibleGamingCtrl.js"
                                         , "~/_app/accountManagement/myProfileCtrl.js"
                                         , "~/_app/accountManagement/changePasswordCtrl.js"
-                                        #endregion
+            #endregion
 
-                                        #region Investments
+            #region Investments
                                         , "~/_app/investments/summaryCtrl.js"
                                         , "~/_app/investments/portfolioCtrl.js"
                                         , "~/_app/investments/performanceCtrl.js"
@@ -215,29 +215,29 @@ namespace gzWeb
                                         , "~/_app/investments/gzPlansAllocationChart.js"
                                         , "~/_app/investments/gzPlanHoldingsChart.js"
                                         , "~/_app/investments/gzPerformanceGraph.js"
-                                        #endregion
+            #endregion
 
-                                        #region Games
+            #region Games
                                         , "~/_app/games/gamesCtrl.js"
                                         , "~/_app/games/gameCtrl.js"
                                         , "~/_app/games/gzFeaturedGame.js"
                                         , "~/_app/games/gzFeaturedGames.js"
                                         , "~/_app/games/gzCarousel.js"
-                                        #endregion
+            #endregion
 
-                                        #region Promotions
+            #region Promotions
                                         , "~/_app/promotions/promotionsCtrl.js"
-                                        #endregion
+            #endregion
 
-                                        #region Directives
+            #region Directives
                                         , "~/_app/directives/gzCheckBox.js"
                                         , "~/_app/directives/gzSelect.js"
                                         , "~/_app/directives/gzFieldOk.js"
                                         , "~/_app/directives/gzAuthAccess.js"
                                         , "~/_app/directives/gzThirdPartyIframe.js"
-                                        #endregion
+            #endregion
 
-                                        #region Services
+            #region Services
                                         , "~/Scripts/_app/services/emWamp.js"
                                         , "~/Scripts/_app/services/emCasino.js"
                                         , "~/Scripts/_app/services/emBanking.js"
@@ -249,15 +249,15 @@ namespace gzWeb
                                         , "~/Scripts/_app/services/helpersService.js"
                                         , "~/Scripts/_app/services/chatService.js"
                                         , "~/Scripts/_app/services/iovationService.js"
-                                        #endregion
+            #endregion
 
-                                        #region nsMessageService
+            #region nsMessageService
                                         , "~/_app/nsMessageService/nsMessage.js"
                                         , "~/_app/nsMessageService/nsMessages.js"
                                         , "~/_app/nsMessageService/nsPromptCtrl.js"
                                         , "~/_app/nsMessageService/nsConfirmCtrl.js"
                                         , "~/_app/nsMessageService/nsMessageService.js"
-                                        #endregion
+            #endregion
                                 ));
 
             #endregion
