@@ -220,7 +220,7 @@
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Register Deposit MoneyMatrixCreditCard";
+            return "Do you want to deposit the amount of " + prepareData.creditAmount + " from " + prepareData.debitFrom + "?";
         };
 
         init();

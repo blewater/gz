@@ -35,7 +35,7 @@
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Withdraw MoneyMatrixCreditCard";
+            return "Do you want to withdraw the amount of " + prepareData.debitAmount + " to " + prepareData.creditTo + "?";
         };
 
         init();
