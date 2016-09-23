@@ -33,7 +33,7 @@
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Deposit MoneyMatrixTrustly";
+            return "Do you want to deposit the amount of " + prepareData.creditAmount + " using Trustly?";
         };
 
         init();

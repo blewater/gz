@@ -35,7 +35,7 @@
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Withdraw MoneyMatrixTrustly";
+            return "Do you want to withdraw the amount of " + prepareData.debitAmount + " using Trustly?";
         };
 
         init();
