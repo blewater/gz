@@ -2,14 +2,12 @@
     <div class="container">
         <div class="row">
             <h4>Promotions</h4>
-            <div class="col-xs-12 col-sm-4" ng-repeat="thumb in thumbnails">
+            <h5 ng-if="thumbnails.length === 0" class="text-center">There are no promotions right now.</h5>
+            <div ng-if="thumbnails.length > 0" class="col-xs-12 col-sm-4" ng-repeat="thumb in thumbnails">
                 <a ng-href="{{getPageUrl(thumb.Code)}}">
-                    <img class="img-responsive" src="../../Content/Images/casino-default.jpg" />
-                    <h5>Promotion title {{$index + 1}}</h5>
-                    <p>
-                        Tincidunt integer eu augue augue nunc elit dolor, luctus placerat scelerisque euismod, iaculis eu lacus nunc mi elit, vehicula ut laoreet ac, aliquam sit amet justo nunc tempor, metus vel.
-                    </p>
-                    <!--<div ng-bind-html="thumb.Html"></div>-->
+                    <img class="img-responsive" ng-src="{{thumb.Img}}" />
+                    <h5>{{thumb.Title}}</h5>
+                    <p>{{thumb.Description}}</p>
                 </a>
             </div>
         </div>

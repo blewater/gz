@@ -225,6 +225,7 @@ namespace gzWeb {
 
             #region Promotions
                                         , "~/_app/promotions/promotionsCtrl.js"
+                                        , "~/_app/promotions/promotionCtrl.js"
             #endregion
 
             #region Directives
