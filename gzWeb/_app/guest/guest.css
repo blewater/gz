@@ -648,3 +648,20 @@
     background-color: #f9f9f9;
 }
 /* #endregion */
+
+
+/* #region Promotions */
+.guest .promotions {
+    padding: 60px 0;
+}
+.guest .promotions a {
+    text-decoration: none;
+    color: #000;
+}
+
+.guest .promotion {
+    padding: 60px 0;
+}
+/* #endregion */
+
+

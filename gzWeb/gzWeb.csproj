@@ -752,8 +752,10 @@
     <Content Include="_app\investments\performance.html" />
     <Content Include="_app\investments\portfolio.html" />
     <Content Include="_app\investments\summary.html" />
+    <Content Include="_app\promotions\promotion.html" />
     <Content Include="_app\promotions\promotions.css" />
     <Content Include="_app\promotions\promotions.html" />
+    <Content Include="_app\promotions\promotionCtrl.js" />
     <Content Include="_app\promotions\promotionsCtrl.js" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
