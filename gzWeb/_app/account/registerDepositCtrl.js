@@ -79,24 +79,18 @@
         function deposit() {
             $scope.waiting = true;
             $scope.readFields().then(function(fields) {
-                emBanking.prepare({
-                    paymentMethodCode: $scope.selectedMethod.code,
-                    fields: fields
-                }).then(function(prepareResult) {
+                emBanking.prepare({ paymentMethodCode: $scope.selectedMethod.code, fields: fields }).then(function(prepareResult) {
                     $scope.pid = prepareResult.pid;
+
+                    var prepareData = {
+                        creditTo: prepareResult.credit.name,
+                        creditAmount: iso4217.getCurrencyByCode(prepareResult.credit.currency).symbol + " " + prepareResult.credit.amount,
+                        debitFrom: prepareResult.debit.name,
+                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount
+                    };
+
                     if (prepareResult.status === "setup") {
-                        // TODO: show confirmation page
-                        var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
-                            nsSize: 'md',
-                            nsTemplate: '_app/account/confirmDeposit.html',
-                            nsCtrl: 'confirmDepositCtrl',
-                            nsParams: {
-                                fields: fields,
-                                prepareResult: prepareResult
-                            },
-                            nsStatic: true
-                        });
-                        confirmPromise.then(function () {
+                        message.confirm("Please confirm you want to continue with the deposit", function () {
                             emBanking.confirm($scope.pid).then(function (confirmResult) {
                                 if (confirmResult.status === "success") {
                                     emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
@@ -157,10 +151,14 @@
                                 $scope.waiting = false;
                                 message.error(error.desc);
                             });
-                        }, function() {
+                        }, function () {
                             $scope.waiting = false;
                             $scope.paymentMethodCfg = undefined;
                             init();
+                        }, {
+                            nsBody: $scope.readConfirmMessage(prepareData),
+                            nsStatic: true,
+                            nsSize: 'md'
                         });
                     } else if (prepareResult.status === "redirection") {
                         // TODO: redirection ...

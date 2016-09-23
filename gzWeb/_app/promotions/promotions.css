@@ -1,3 +1,13 @@
 ﻿@charset "utf-8";
 
-.promotions { }
+.promotions {
+    padding: 60px 0;
+}
+.promotions a {
+    text-decoration: none;
+    color: #000;
+}
+
+.promotion {
+    padding: 60px 0;
+}

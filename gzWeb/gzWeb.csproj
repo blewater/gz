@@ -535,6 +535,10 @@
     <Compile Include="Migrations\201609201427165_Add_ActionType_To_CarouselEntry.Designer.cs">
       <DependentUpon>201609201427165_Add_ActionType_To_CarouselEntry.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs" />
+    <Compile Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.Designer.cs">
+      <DependentUpon>201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -617,10 +621,6 @@
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="_app\account\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
-    <Content Include="_app\account\confirmWithdrawCtrl.js" />
-    <Content Include="_app\account\confirmDepositCtrl.js" />
-    <Content Include="_app\account\confirmDeposit.html" />
-    <Content Include="_app\account\confirmWithdraw.html" />
     <Content Include="_app\directives\gzAuthAccess.js" />
     <Content Include="_app\directives\gzCheckBox.html" />
     <Content Include="_app\directives\gzCheckBox.js" />
@@ -756,8 +756,10 @@
     <Content Include="_app\investments\performance.html" />
     <Content Include="_app\investments\portfolio.html" />
     <Content Include="_app\investments\summary.html" />
+    <Content Include="_app\promotions\promotion.html" />
     <Content Include="_app\promotions\promotions.css" />
     <Content Include="_app\promotions\promotions.html" />
+    <Content Include="_app\promotions\promotionCtrl.js" />
     <Content Include="_app\promotions\promotionsCtrl.js" />
     <None Include="Areas\Mvc\Views\Auth\Activate.cshtml" />
     <Content Include="Content\Images\check.svg" />
@@ -1137,6 +1139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609201427165_Add_ActionType_To_CarouselEntry.resx">
       <DependentUpon>201609201427165_Add_ActionType_To_CarouselEntry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609231349027_Add_Thumbs_Functionality_To_DynamicPages.resx">
+      <DependentUpon>201609231349027_Add_Thumbs_Functionality_To_DynamicPages.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
