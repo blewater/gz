@@ -44,5 +44,8 @@ namespace gzDAL.Models
 
         [Required]
         public DateTime LiveTo { get; set; }
+
+        [Required]
+        public DateTime Updated { get; set; }
     }
 }

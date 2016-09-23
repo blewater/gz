@@ -37,5 +37,8 @@ namespace gzDAL.Models
         [Required]
         [AllowHtml]
         public string Html { get; set; }
+
+        [Required]
+        public DateTime Updated { get; set; }
     }
 }
