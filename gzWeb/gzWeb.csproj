@@ -617,10 +617,6 @@
     <Content Include="Content\Styles\_app\footer.css" />
     <Content Include="_app\account\auth.css" />
     <Content Include="Content\Styles\_app\basic.css" />
-    <Content Include="_app\account\confirmWithdrawCtrl.js" />
-    <Content Include="_app\account\confirmDepositCtrl.js" />
-    <Content Include="_app\account\confirmDeposit.html" />
-    <Content Include="_app\account\confirmWithdraw.html" />
     <Content Include="_app\directives\gzAuthAccess.js" />
     <Content Include="_app\directives\gzCheckBox.html" />
     <Content Include="_app\directives\gzCheckBox.js" />

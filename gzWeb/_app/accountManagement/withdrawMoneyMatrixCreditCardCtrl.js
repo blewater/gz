@@ -34,6 +34,10 @@
             return q.promise;
         }
 
+        $scope.readConfirmMessage = function (prepareData) {
+            return "Withdraw MoneyMatrixCreditCard";
+        };
+
         init();
     }
 })();

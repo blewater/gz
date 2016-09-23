@@ -126,6 +126,10 @@
             return q.promise;
         }
 
+        $scope.readConfirmMessage = function (prepareData) {
+            return "Deposit CreditCard";
+        };
+
         init();
     }
 })();

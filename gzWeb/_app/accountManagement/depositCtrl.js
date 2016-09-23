@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'iso4217', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, iso4217) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -68,18 +68,16 @@
             $scope.readFields().then(function (fields) {
                 emBanking.prepare({paymentMethodCode: $scope.selectedMethod.code, fields: fields}).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
+
+                    var prepareData = {
+                        creditTo: prepareResult.credit.name,
+                        creditAmount: iso4217.getCurrencyByCode(prepareResult.credit.currency).symbol + " " + prepareResult.credit.amount,
+                        debitFrom: prepareResult.debit.name,
+                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount
+                    };
+
                     if (prepareResult.status === "setup") {
-                        var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
-                            nsSize: 'md',
-                            nsTemplate: '_app/account/confirmDeposit.html',
-                            nsCtrl: 'confirmDepositCtrl',
-                            nsParams: {
-                                fields: fields,
-                                prepareResult: prepareResult
-                            },
-                            nsStatic: true
-                        });
-                        confirmPromise.then(function () {
+                        message.confirm("Please confirm you want to continue with the deposit", function () {
                             emBanking.confirm($scope.pid).then(function (confirmResult) {
                                 if (confirmResult.status === "success") {
                                     emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
@@ -143,7 +141,86 @@
                             $scope.waiting = false;
                             $scope.paymentMethodCfg = undefined;
                             init();
+                        }, {
+                            nsBody: $scope.readConfirmMessage(prepareData),
+                            nsStatic: true,
+                            nsSize: 'md'
                         });
+
+
+                        //var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
+                        //    nsSize: 'md',
+                        //    nsTemplate: '_app/account/confirmTransaction.html',
+                        //    nsParams: {
+                        //        message: $scope.readConfirmMessage(prepareData)
+                        //    },
+                        //    nsStatic: true
+                        //});
+                        //confirmPromise.then(function () {
+                        //    emBanking.confirm($scope.pid).then(function (confirmResult) {
+                        //        if (confirmResult.status === "success") {
+                        //            emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
+                        //                if (transactionResult.status === "success") {
+                        //                    var msg = "You have made the deposit successfully!";
+                        //                    message.success(msg, { nsType: 'toastr' });
+                        //                    emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
+                        //                    $scope.waiting = false;
+                        //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                        //                    $scope.nsOk(true);
+                        //                    if ($location.path() === constants.routes.home.path)
+                        //                        $location.path(constants.routes.games.path).search({});
+                        //                } else if (transactionResult.status === "incomplete") {
+                        //                    $log.error("show transaction is not completed");
+                        //                    // TODO: show transaction is not completed
+                        //                } else if (transactionResult.status === "pending") {
+                        //                    $log.error("show transaction is pending");
+                        //                    // TODO: show transaction is pending
+                        //                } else if (transactionResult.status === "error") {
+                        //                    $log.error("show error");
+                        //                    // TODO: show error
+                        //                }
+                        //            }, function (error) {
+                        //                message.error(error.desc);
+                        //            });
+                        //        } else if (confirmResult.status === "redirection") {
+                        //            var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
+                        //            var thirdPartyPromise = message.open({
+                        //                nsType: 'modal',
+                        //                nsSize: 'xl',
+                        //                nsBody: html,
+                        //                nsStatic: true,
+                        //                nsParams: {
+                        //                    redirectionForm: confirmResult.redirectionForm
+                        //                },
+                        //                nsShowClose: false
+                        //            });
+                        //            thirdPartyPromise.then(function (thirdPartyPromiseResult) {
+                        //                var msg = "You have made the deposit successfully!";
+                        //                message.success(msg, { nsType: 'toastr' });
+                        //                emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
+                        //                $scope.waiting = false;
+                        //                $timeout(function () {
+                        //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                        //                }, 1000);
+                        //                $scope.nsOk(true);
+                        //            }, function (thirdPartyPromiseError) {
+                        //                $scope.waiting = false;
+                        //                message.error(thirdPartyPromiseError);
+                        //            });
+                        //        } else if (confirmResult.status === "instructions") {
+                        //            // TODO: instructions ...
+                        //        } else {
+                        //            // TODO: log error ???
+                        //        }
+                        //    }, function (error) {
+                        //        $scope.waiting = false;
+                        //        message.error(error.desc);
+                        //    });
+                        //}, function () {
+                        //    $scope.waiting = false;
+                        //    $scope.paymentMethodCfg = undefined;
+                        //    init();
+                        //});
                     } else if (prepareResult.status === "redirection") {
                         // TODO: redirection ...
                     } else {

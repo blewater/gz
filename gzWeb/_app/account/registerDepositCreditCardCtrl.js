@@ -126,6 +126,10 @@
             return q.promise;
         }
 
+        $scope.readConfirmMessage = function (prepareData) {
+            return "Register Deposit CreditCard";
+        };
+
         init();
     }
 })();

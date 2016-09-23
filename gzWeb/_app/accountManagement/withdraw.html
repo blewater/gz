@@ -18,10 +18,8 @@
 
             <div class="form-group">
                 <div class="btns text-center">
-                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid || waiting"
-                            ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
-                        <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
-                        <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
+                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid || waiting">
+                        <span ng-show="waiting" us-spinner="spinnerGreen"></span>
                         <span ng-show="!waiting">Withdraw</span>
                     </button>
                 </div>
