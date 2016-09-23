@@ -13,7 +13,7 @@ namespace gzWeb.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201609231535005_Add-Updated-Field-To-GameCategory"; }
+            get { return "201609231543308_Add-Updated-Field-To-GameCategory"; }
         }
         
         string IMigrationMetadata.Source

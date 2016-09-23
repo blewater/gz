@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gzDAL.Models
@@ -18,6 +19,6 @@ namespace gzDAL.Models
         public string GameSlugs { get; set; }
 
         [Required]
-        public DataType Updated { get; set; }
+        public DateTime Updated { get; set; }
     }
 }
