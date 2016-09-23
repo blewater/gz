@@ -1,6 +1,14 @@
 ﻿(function () {
     'use strict';
 
+    // #region ActionTypes
+    var actionTypes = {
+        url: 0,
+        page: 1,
+        game: 2
+    }
+    // #endregion
+
     // #region Roles
     var roles = {
         guest: 'guest',
@@ -93,14 +101,15 @@
         title: 'Terms & Conditions',
         category: categories.wandering
     };
-    //routes.promotions = {
-    //    path: '/promotions/:code',
-    //    ctrl: 'promotionsCtrl',
-    //    tpl: '_app/promotions/promotions.html',
-    //    title: 'Promotions',
-    //    roles: [roles.guest],
-    //    category: categories.wandering
-    //};
+
+    routes.promotion = {
+        path: '/promotions/:code',
+        ctrl: 'promotionCtrl',
+        tpl: '_app/promotions/promotion.html',
+        title: 'Promotions',
+        roles: [roles.guest],
+        category: categories.wandering
+    };
     routes.promotions = {
         path: '/promotions',
         ctrl: 'promotionsCtrl',
@@ -184,6 +193,7 @@
         routes: routes,
         categories: categories,
         roles: roles,
+        carouselActionTypes: actionTypes,
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },

@@ -127,7 +127,13 @@
         };
         // #endregion
 
-        // #region Guest
+        // #region Promotions
+        factory.getThumbnails = function () {
+            return $http.get('/api/pages/thumbnails');
+        };
+        factory.getPage = function (code) {
+            return $http.get('/api/pages/page', { params: { code: code} });
+        };
         // #endregion
 
         return factory;

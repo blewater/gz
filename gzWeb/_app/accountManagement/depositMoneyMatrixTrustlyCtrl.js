@@ -32,6 +32,10 @@
             return q.promise;
         }
 
+        $scope.readConfirmMessage = function (prepareData) {
+            return "Deposit MoneyMatrixTrustly";
+        };
+
         init();
     }
 })();

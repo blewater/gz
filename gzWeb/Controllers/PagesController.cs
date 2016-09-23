@@ -25,6 +25,21 @@ namespace gzWeb.Controllers
 
         //[Route("Page")]
         [HttpGet]
+        public IHttpActionResult Thumbnails()
+        {
+            var now = DateTime.UtcNow;
+            return OkMsg(() =>
+                _dbContext.DynamicPages
+                          .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo)
+                          //.Select(x => new {
+                          //    Code = x.Code,
+                          //    Img = x.ThumbnailImg,
+                          //    Title = x.ThumbnailTitle,
+                          //    Description = x.ThumbnailDescription,
+                          //})
+                          .ToList());
+        }
+        [HttpGet]
         public IHttpActionResult Page(string code)
         {
             return OkMsg(() => _dbContext.DynamicPages.SingleOrDefault(x => x.Code == code));

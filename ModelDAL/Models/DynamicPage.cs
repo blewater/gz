@@ -17,9 +17,13 @@ namespace gzDAL.Models
 
         [Required, MaxLength(100), Index("DynamicPage_Code", IsUnique = true)]
         public string Code { get; set; }
-
+        
         [Required]
-        public string Category { get; set; }
+        public string ThumbImageUrl { get; set; }
+        [Required]
+        public string ThumbTitle { get; set; }
+        [Required]
+        public string ThumbText { get; set; }
 
         [Required]
         public bool Live { get; set; }

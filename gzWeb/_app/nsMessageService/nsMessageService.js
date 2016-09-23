@@ -93,7 +93,7 @@
             var defaults = {
                 nsType: 'notification',
                 nsClass: 'default',
-                nsTitle: msg.Message ? msg.Message : msg
+                nsTitle: msg && msg.Message ? msg.Message : msg
             };
             return open(angular.extend(defaults, options));
         }
@@ -101,7 +101,7 @@
             var defaults = {
                 nsType: 'toastr',
                 nsClass: 'default',
-                nsTitle: msg.Message ? msg.Message : msg
+                nsTitle: msg && msg.Message ? msg.Message : msg
             };
             return open(angular.extend(defaults, options));
         }
