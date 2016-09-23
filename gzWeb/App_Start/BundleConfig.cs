@@ -7,21 +7,25 @@ namespace gzWeb
     public class BundleConfig
     {
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
-        public static void RegisterBundles(BundleCollection bundles)
-        {
+        public static void RegisterBundles(BundleCollection bundles) {
+
+            //-- Configuration
+            BundleTable.EnableOptimizations = true;
+            // Prefer cdn from local files
+            bundles.UseCdn = true;
+
             #region Styles
-            bundles.Add(new StyleBundle("~/css/bootstrap").Include(
-                "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
-            ).Include(
-                "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
-            ));
 
-            bundles.Add(new StyleBundle("~/css/fa").Include(
-                "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()
-            ));
+            var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
 
-            bundles.Add(new StyleBundle("~/css/modules").Include(
-            ));
+            bundles.Add(new StyleBundle("~/css/bootstrap", bootstrapCdnPath)
+                .Include(
+                    "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
+                ).Include(
+                    "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
+                ).Include(
+                    "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()
+                ));
 
             bundles.Add(new StyleBundle("~/css/app").Include(
                 //"~/Content/Site.css"
