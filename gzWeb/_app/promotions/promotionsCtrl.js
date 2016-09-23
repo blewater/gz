@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'promotionsCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', ctrlFactory]);
-    function ctrlFactory($scope, api) {
+    APP.controller(ctrlId, ['$scope', 'api', 'constants', '$location', ctrlFactory]);
+    function ctrlFactory($scope, api, constants, $location) {
         function loadThumbnails() {
             api.call(function () {
                 return api.getThumbnails();

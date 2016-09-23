@@ -31,18 +31,19 @@ namespace gzWeb.Controllers
             return OkMsg(() =>
                 _dbContext.DynamicPages
                           .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo)
-                          //.Select(x => new {
-                          //    Code = x.Code,
-                          //    Img = x.ThumbnailImg,
-                          //    Title = x.ThumbnailTitle,
-                          //    Description = x.ThumbnailDescription,
-                          //})
+                          .Select(x => new
+                          {
+                              Code = x.Code,
+                              Img = x.ThumbImageUrl,
+                              Title = x.ThumbTitle,
+                              Description = x.ThumbText,
+                          })
                           .ToList());
         }
         [HttpGet]
         public IHttpActionResult Page(string code)
         {
-            return OkMsg(() => _dbContext.DynamicPages.SingleOrDefault(x => x.Code == code));
+            return OkMsg(() => _dbContext.DynamicPages.SingleOrDefault(x => x.Code == code).Html);
         }
 
         [HttpGet]
