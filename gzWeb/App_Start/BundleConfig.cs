@@ -174,8 +174,8 @@ namespace gzWeb
                                         , "~/_app/account/registerDepositCreditCardCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixCreditCardCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixTrustlyCtrl.js"
-                                        , "~/_app/account/confirmDepositCtrl.js"
-                                        , "~/_app/account/confirmWithdrawCtrl.js"
+                                        //, "~/_app/account/confirmDepositCtrl.js"
+                                        //, "~/_app/account/confirmWithdrawCtrl.js"
                                         #endregion
 
                                         #region Account Management
