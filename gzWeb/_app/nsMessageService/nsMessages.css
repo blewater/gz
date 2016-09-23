@@ -512,6 +512,7 @@
     height: 100%;
     /*height: calc(100% - 150px);*/
     overflow-x: hidden;
+    background-color: #27A95C;
 }
 #ns-msgs .msg .msg-content.msg-with-lifespan {
     margin-bottom: 4px;

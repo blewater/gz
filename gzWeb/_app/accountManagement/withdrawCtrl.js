@@ -67,18 +67,16 @@
             $scope.readFields().then(function (fields) {
                 emBankingWithdraw.prepare($scope.selectedMethod.code, fields).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
+
+                    var prepareData = {
+                        creditTo: prepareResult.credit.name,
+                        creditAmount: iso4217.getCurrencyByCode(prepareResult.credit.currency).symbol + " " + prepareResult.credit.amount,
+                        debitFrom: prepareResult.debit.name,
+                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount
+                    };
+
                     if (prepareResult.status === "setup") {
-                        var confirmPromise = message.modal("Please confirm you want to continue with the withdrawal", {
-                            nsSize: 'md',
-                            nsTemplate: '_app/account/confirmWithdraw.html',
-                            nsCtrl: 'confirmWithdrawCtrl',
-                            nsParams: {
-                                fields: fields,
-                                prepareResult: prepareResult
-                            },
-                            nsStatic: true
-                        });
-                        confirmPromise.then(function () {
+                        message.confirm("Please confirm you want to continue with the withdrawal", function () {
                             emBankingWithdraw.confirm($scope.pid).then(function (confirmResult) {
                                 if (confirmResult.status === "setup") {
                                     emBankingWithdraw.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
@@ -134,6 +132,10 @@
                             $scope.waiting = false;
                             //$scope.paymentMethodCfg = undefined;
                             //init();
+                        }, {
+                            nsBody: $scope.readConfirmMessage(prepareData),
+                            nsStatic: true,
+                            nsSize: 'md'
                         });
                     } else if (prepareResult.status === "redirection") {
                         // TODO: redirection ...
