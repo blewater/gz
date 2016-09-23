@@ -543,9 +543,9 @@
     <Compile Include="Migrations\201609231419565_Add-Updated-Field.Designer.cs">
       <DependentUpon>201609231419565_Add-Updated-Field.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201609231535005_Add-Updated-Field-To-GameCategory.cs" />
-    <Compile Include="Migrations\201609231535005_Add-Updated-Field-To-GameCategory.Designer.cs">
-      <DependentUpon>201609231535005_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
+    <Compile Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.cs" />
+    <Compile Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.Designer.cs">
+      <DependentUpon>201609231543308_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1154,8 +1154,8 @@
     <EmbeddedResource Include="Migrations\201609231419565_Add-Updated-Field.resx">
       <DependentUpon>201609231419565_Add-Updated-Field.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201609231535005_Add-Updated-Field-To-GameCategory.resx">
-      <DependentUpon>201609231535005_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.resx">
+      <DependentUpon>201609231543308_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
