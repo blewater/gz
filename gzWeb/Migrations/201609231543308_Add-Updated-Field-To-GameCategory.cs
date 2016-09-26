@@ -7,7 +7,7 @@ namespace gzWeb.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.GameCategories", "Updated", c => c.Int(nullable: false));
+            AddColumn("dbo.GameCategories", "Updated", c => c.DateTime(nullable: false));
             AlterColumn("dbo.GameCategories", "GameSlugs", c => c.String(nullable: false));
         }
 
