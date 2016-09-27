@@ -414,49 +414,51 @@
             }, logError);
             return deferred.promise;
         };
+
+        function loadCustomCategory(categoriesEntry) {
+            var deferred = $q.defer();
+            var customCategory = {
+                name: categoriesEntry.Code,
+                title: categoriesEntry.Title,
+                currentPageIndex: 0,
+                games: [],
+                paging: $scope.pagingTypes.row,
+                sorting: alphaAsc
+            };
+
+            emCasino.getGames({
+                filterBySlug: categoriesEntry.GameSlugs,
+                filterByPlatform: null,
+                expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.Popularity,
+                pageSize: customCategory.paging.size,
+                pageIndex: customCategory.currentPageIndex + 1
+            }).then(function (getCategoryGamesResult) {
+                customCategory.currentPageIndex = getCategoryGamesResult.currentPageIndex;
+                customCategory.totalGameCount = getCategoryGamesResult.totalGameCount;
+                customCategory.totalPageCount = getCategoryGamesResult.totalPageCount;
+                //Array.prototype.push.apply(category.games, getCategoryGamesResult.games);
+
+                helpers.array.applyWithDelay(getCategoryGamesResult.games, function (g) {
+                    Array.prototype.push.apply(customCategory.games, [g]);
+                }, 50, function () {
+                    deferred.resolve(customCategory);
+                });
+            }, function (error) {
+                $log.error(error);
+            });
+            return deferred.promise;
+        }
         function loadCustomCategories() {
             var deferred = $q.defer();
             api.call(function () {
                 return api.getCustomCategories();
             }, function (response) {
-                var categoriesEntries = response.Result;
-                $scope.customCategories = [];
-                for (var j = 0; j < categoriesEntries.length; j++) {
-                    var customCategory = {
-                        name: categoriesEntries[j].Code,
-                        title: categoriesEntries[j].Title,
-                        currentPageIndex: 0,
-                        games: [],
-                        paging: $scope.pagingTypes.row,
-                        sorting: alphaAsc
-                    };
-                    $scope.customCategories.push(customCategory);
-
-                    $scope.fetching = true;
-                    emCasino.getGames({
-                        filterBySlug: categoriesEntries[j].GameSlugs,
-                        filterByPlatform: null,
-                        expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.Popularity,
-                        pageSize: customCategory.paging.size,
-                        pageIndex: customCategory.currentPageIndex + 1
-                    }).then(function (getCategoryGamesResult) {
-                        $scope.fetching = false;
-
-                        customCategory.currentPageIndex = getCategoryGamesResult.currentPageIndex;
-                        customCategory.totalGameCount = getCategoryGamesResult.totalGameCount;
-                        customCategory.totalPageCount = getCategoryGamesResult.totalPageCount;
-                        //Array.prototype.push.apply(category.games, getCategoryGamesResult.games);
-
-                        helpers.array.applyWithDelay(getCategoryGamesResult.games, function (g) {
-                            Array.prototype.push.apply(customCategory.games, [g]);
-                        }, 50, function () {
-                            deferred.resolve(true);
-                        });
-                    }, function (error) {
-                        $scope.fetching = false;
-                        $log.error(error);
-                    });
-                }
+                $scope.fetching = true;
+                $q.all($filter('map')(response.Result, loadCustomCategory)).then(function (customCategories) {
+                    $scope.fetching = false;
+                    $scope.customCategories = customCategories;
+                    deferred.resolve(true);
+                });
             });
             return deferred.promise;
         }
