@@ -118,8 +118,8 @@
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -546,6 +546,10 @@
     <Compile Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.cs" />
     <Compile Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.Designer.cs">
       <DependentUpon>201609231543308_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.cs" />
+    <Compile Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.Designer.cs">
+      <DependentUpon>201609271056413_Add_DynPageTemplates_And_DynPageData.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1156,6 +1160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.resx">
       <DependentUpon>201609231543308_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.resx">
+      <DependentUpon>201609271056413_Add_DynPageTemplates_And_DynPageData.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
