@@ -289,40 +289,89 @@
             selectedVendorName = params.vendor || "";
             $scope.searchByNameTerm = params.name || "";
         };
-        //function populateCarouselSlide(carouselEntry) {
-        //    return {
-        //        title: carouselEntry.Title,
-        //        subtitle: carouselEntry.SubTitle,
-        //        action: carouselEntry.ActionText,
-        //        url: carouselEntry.ActionUrl.substring(0, 4) === 'http'
-        //             ? carouselEntry.ActionUrl
-        //             : $location.protocol() + "://" + $location.host() + ":" + $location.port() + carouselEntry.ActionUrl,
-        //        bg: carouselEntry.BackgroundImageUrl
-        //    };
-        //}
+        function getCarouselUrl(carouselEntry) {
+            switch (carouselEntry.ActionType) {
+                case constants.carouselActionTypes.page:
+                    return '/promotions/' + carouselEntry.ActionUrl;
+                case constants.carouselActionTypes.game:
+                    return '/casino/' + carouselEntry.ActionUrl;
+                case constants.carouselActionTypes.url:
+                default:
+                    return carouselEntry.ActionUrl.substring(0, 4) === 'http'
+                           ? carouselEntry.ActionUrl
+                           : $location.protocol() + "://" + $location.host() + ":" + $location.port() + carouselEntry.ActionUrl;
+            }
+        }
+        function constructCarouselSlide(carouselEntry) {
+            if (carouselEntry.BackgroundImageUrl) {
+                return {
+                    title: carouselEntry.Title,
+                    subtitle: carouselEntry.SubTitle,
+                    action: carouselEntry.ActionText,
+                    url: getCarouselUrl(carouselEntry),
+                    bg: carouselEntry.BackgroundImageUrl
+                };
+            }
+            else if (carouselEntry.ActionType === constants.carouselActionTypes.game) {
+                var deferred = $q.defer();
+                emCasino.getGames({
+                    filterBySlug: [carouselEntry.ActionUrl],
+                    filterByPlatform: null,
+                    expectedFields: emCasino.FIELDS.BackgroundImage,
+                    pageSize: 1,
+                    pageIndex: 1
+                }).then(function (gameResult) {
+                    deferred.resolve({
+                        title: carouselEntry.Title,
+                        subtitle: carouselEntry.SubTitle,
+                        action: carouselEntry.ActionText,
+                        url: getCarouselUrl(carouselEntry),
+                        bg: gameResult.games[0].backgroundImage
+                    });
+                }, function (error) {
+                    $log.error(error);
+                });
+                return deferred.promise;
+            }
+        }
         function loadCarouselSlides() {
             api.call(function () {
                 return api.getCarousel();
             }, function (response) {
+                //$scope.carouselSlides = $filter('map')(
+                //    response.Result,
+                //    function (x) {
+                //        return {
+                //            title: x.Title,
+                //            subtitle: x.SubTitle,
+                //            action: x.ActionText,
+                //            url: x.ActionUrl.substring(0, 4) === 'http'
+                //                 ? x.ActionUrl
+                //                 : $location.protocol() + "://" + $location.host() + ":" + $location.port() + x.ActionUrl,
+                //            bg: x.BackgroundImageUrl
+                //        };
+                //    });
+
+
                 //for (i = 0; i < response.Result.length; i++) {
                 //    if (response.Result[i].BackgroundImageUrl) {
                 //        $scope.carouselSlides.
                 //    }
                 //    x.ActionType === constants.carouselActionTypes.game)
                 //}
-                $scope.carouselSlides = $filter('map')(
+
+
+                var mapPromises = $filter('map')(
                     response.Result,
                     function (x) {
-                        return {
-                            title: x.Title,
-                            subtitle: x.SubTitle,
-                            action: x.ActionText,
-                            url: x.ActionUrl.substring(0, 4) === 'http'
-                                 ? x.ActionUrl
-                                 : $location.protocol() + "://" + $location.host() + ":" + $location.port() + x.ActionUrl,
-                            bg: x.BackgroundImageUrl
-                        };
+                        var deferred = $q.defer();
+                        deferred.resolve(constructCarouselSlide(x));
+                        return deferred.promise;
                     });
+
+                $q.all(mapPromises).then(function (x) {
+                    $scope.carouselSlides = x;
+                });
             });
         };
         function loadGameVendors() {
