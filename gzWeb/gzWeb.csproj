@@ -547,6 +547,10 @@
     <Compile Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.Designer.cs">
       <DependentUpon>201609231543308_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.cs" />
+    <Compile Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.Designer.cs">
+      <DependentUpon>201609271056413_Add_DynPageTemplates_And_DynPageData.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1156,6 +1160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609231543308_Add-Updated-Field-To-GameCategory.resx">
       <DependentUpon>201609231543308_Add-Updated-Field-To-GameCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.resx">
+      <DependentUpon>201609271056413_Add_DynPageTemplates_And_DynPageData.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
