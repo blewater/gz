@@ -108,11 +108,14 @@ var APP = (function () {
                     $rootScope.$apply();
                 });
 
-                $timeout(function () {
-                    var $preloader = angular.element(document.querySelector('#preloader'));
-                    $preloader.addClass('die');
-                    $timeout(function () { $preloader.remove(); }, 2000);
-                }, 1000);
+                //$timeout(function () {
+                //    var $preloader = angular.element(document.querySelector('#preloader'));
+                //    $preloader.addClass('die');
+                //    $timeout(function () { $preloader.remove(); }, 2000);
+                //}, 1000);
+                var $preloader = angular.element(document.querySelector('#preloader'));
+                $preloader.addClass('die');
+                $timeout(function () { $preloader.remove(); }, 1000);
 
                 $rootScope.loading = false;
                 $rootScope.initialized = true;
