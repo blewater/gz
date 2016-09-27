@@ -3,9 +3,11 @@
     [Code]      NVARCHAR (100) NOT NULL,
     [Title]     NVARCHAR (MAX) NOT NULL,
     [GameSlugs] NVARCHAR (MAX) NOT NULL,
-    [Updated]   INT            DEFAULT ((0)) NOT NULL,
+    [Updated]   DATETIME       DEFAULT ('1900-01-01T00:00:00.000') NOT NULL,
     CONSTRAINT [PK_dbo.GameCategories] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO
