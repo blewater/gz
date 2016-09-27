@@ -7,6 +7,7 @@ namespace gzWeb.Migrations
     {
         public override void Up()
         {
+            Sql("DELETE FROM dbo.DynamicPages");
             CreateTable(
                 "dbo.DynamicPageTemplates",
                 c => new
