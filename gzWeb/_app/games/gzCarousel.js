@@ -29,9 +29,8 @@
                 var DELAY = 10000;
                 var timeoutPromise = undefined;
                 $scope.currentIndex = 0;
-                $scope.showControls = !('gzNoControls' in $attrs) && $scope.gzSlides && $scope.gzSlides.length > 1;
-                $scope.showIndicators = !('gzNoIndicators' in $attrs) && $scope.gzSlides && $scope.gzSlides.length > 1;
-                
+                checkShowControlsAndIndicators();
+
                 function normalizeIndex(index) {
                     return (index + $scope.gzSlides.length) % $scope.gzSlides.length;
                 }
@@ -85,6 +84,7 @@
                 var unregisterCollectionWatch = $scope.$watchCollection('gzSlides', function (newCollection, oldCollection) {
                     if (newCollection && newCollection.length > 0) {
                         setSlide(0);
+                        checkShowControlsAndIndicators();
                         unregisterCollectionWatch();
                     }
                 });
@@ -93,6 +93,11 @@
                     if (angular.isDefined(timeoutPromise))
                         $timeout.cancel(timeoutPromise);
                 });
+
+                function checkShowControlsAndIndicators() {
+                    $scope.showControls = !('gzNoControls' in $attrs) && $scope.gzSlides && $scope.gzSlides.length > 1;
+                    $scope.showIndicators = !('gzNoIndicators' in $attrs) && $scope.gzSlides && $scope.gzSlides.length > 1;
+                }
             }]
         };
     }
