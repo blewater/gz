@@ -26,11 +26,11 @@
     -ms-transition: all linear 1s;
     -o-transition: all linear 1s;
     transition: all linear 1s;
-    -webkit-transition-delay: 1s;
+    /*-webkit-transition-delay: 1s;
     -moz-transition-delay: 1s;
     -ms-transition-delay: 1s;
     -o-transition-delay: 1s;
-    transition-delay: 1s;
+    transition-delay: 1s;*/
 }
 
 #preloader .spinner-container {
