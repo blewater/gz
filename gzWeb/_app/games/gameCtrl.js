@@ -10,7 +10,6 @@
         $scope.gameLaunchData = null;
         $scope.gameUrl = null;
         $scope.playForRealMoney = true;
-        $rootScope.playing = true;
 
         function loadGame() {
             //if (typeof navigator.mimeTypes['application/x-shockwave-flash'] != 'undefined') {
@@ -31,6 +30,7 @@
                     pageSize: 1,
                 }).then(function (gamesResult) {
                     $scope.game = gamesResult.games[0];
+                    $rootScope.playing = true;
 
                     function setGameDimensions() {
                         var percent = 0.8;
@@ -115,5 +115,6 @@
         $scope.getActionsRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';
         };
+        $rootScope.playing = true;
     }
 })();
