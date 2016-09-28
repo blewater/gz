@@ -142,6 +142,7 @@ header {
 .user-info .dropdown-menu > li > a:hover,
 .user-info .dropdown-menu > li > a:focus {
     color: #27A95C;
+    background-color: #fff;
 }
 .user-info .dropdown-menu > li.fullname {
     cursor: default;
