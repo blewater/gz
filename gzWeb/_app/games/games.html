@@ -92,12 +92,12 @@
                             </div>
                             <div ng-repeat-end ng-class="{'clearfix':(xs && $index % 2 === 1) || (sm && $index % 3 === 2) || $index % 6 === 5}"></div>
 
-                            <div ng-if="category.paging === pagingTypes.less && category.games.length < category.totalGameCount" class="game text-center col-xs-6 col-sm-4 col-md-2 clearfix">
+                            <div ng-if="category.paging === pagingTypes.less && category.games.length < category.totalGameCount" class="game show-all text-center col-xs-6 col-sm-4 col-md-2 clearfix">
                                 <a class="game-link" ng-click="showAll(category)">
                                     <img class="game-img img-responsive full-width" src="../../Content/Images/casino-default.jpg" />
                                     <div class="game-info">
                                         <div class="game-play">
-                                            <i class="fa fa-ellipsis-h"></i>
+                                            <i class="fa fa-arrow-down"></i>
                                         </div>
                                         <div class="game-name">SHOW ALL</div>
                                     </div>
