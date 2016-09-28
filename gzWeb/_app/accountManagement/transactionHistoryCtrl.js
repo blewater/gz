@@ -18,7 +18,7 @@
             display: 'Deposit',
             getId: getId,
             getDate: getDate,
-            getAmount: function(trx) { return getAmount(trx.credit.amount, trx.credit.currency); },
+            getAmount: function (trx) { return getAmount(trx.debit.amount, trx.debit.currency); },
             getDescription: function (trx) { return trx.debit.name; },
             getStatus: getStatus
         };
@@ -31,7 +31,7 @@
             getId: getId,
             getDate: getDate,
             getAmount: function (trx) { return getAmount(trx.credit.amount, trx.credit.currency); },
-            getDescription: function (trx) { return trx.debit.name; },
+            getDescription: function (trx) { return trx.credit.name; },
             getStatus: getStatus
         };
         // #endregion
@@ -84,7 +84,16 @@
             emBanking.getTransactionHistory($scope.type.name, $scope.startTime.toISOString(), $scope.endTime.toISOString(), page, pageSize).then(function (response) {
                 $timeout(function () {
                     $scope.pageIndex = response.currentPageIndex;
-                    $scope.transactions = response.transactions;
+                    $scope.transactions = [];//response.transactions;
+                    for (var i = 0; i < response.transactions.length; i++) {
+                        $scope.transactions.push({
+                            id: $scope.type.getId(response.transactions[i]),
+                            date: $scope.type.getDate(response.transactions[i]),
+                            amount: $scope.type.getAmount(response.transactions[i]),
+                            description: $scope.type.getDescription(response.transactions[i]),
+                            status: $scope.type.getStatus(response.transactions[i])
+                        });
+                    }
                     $scope.totalRecordCount = response.totalRecordCount;
                     $scope.totalPageCount = response.totalPageCount;
                 }, 0);
