@@ -71,7 +71,7 @@
                                 </span>-->
                                 <!--<gz-select gz-name="sort-by" gz-model="category.sorting.by" gz-collection="sortingByTypes" gz-change="onSortByChanged(id)" gz-no-prompt></gz-select>
                                 <gz-select gz-name="sort-order" gz-model="category.sorting.order" gz-collection="sortingOrderTypes" gz-change="onSortOrderChanged(id)" gz-no-prompt></gz-select>-->
-                                <gz-select gz-name="sort" gz-model="category.sorting" gz-collection="sortingTypes" gz-id="key" gz-display="display" gz-no-prompt></gz-select>
+                                <gz-select gz-name="sort" gz-model="category.sorting" gz-collection="sortingTypes" gz-id="key" gz-display="display" gz-no-prompt gz-change="onSortingChanged(id, category)"></gz-select>
 
                             </span>
                         </div>
@@ -79,7 +79,8 @@
 
                     <div class="row">
                         <div class="col-xs-12">
-                            <div ng-repeat-start="g in category.games | orderBy : category.sorting.by : category.sorting.order | unique: 'slug'" class="game text-center col-xs-6 col-sm-4 col-md-2">
+                            <!--| orderBy : category.sorting.by : category.sorting.order-->
+                            <div ng-repeat-start="g in category.games | unique: 'slug'" class="game text-center col-xs-6 col-sm-4 col-md-2">
                                 <a class="game-link" ng-href="{{getGameUrl(g.slug)}}">
                                     <img class="game-img img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" />
                                     <div class="game-info">
@@ -91,8 +92,7 @@
                                 </a>
                             </div>
                             <div ng-repeat-end ng-class="{'clearfix':(xs && $index % 2 === 1) || (sm && $index % 3 === 2) || $index % 6 === 5}"></div>
-
-                            <div ng-if="category.paging === pagingTypes.less && category.games.length < category.totalGameCount" class="game show-all text-center col-xs-6 col-sm-4 col-md-2 clearfix">
+                            <div ng-if="category.paging === pagingTypes.less && category.games.length === category.paging.size && category.games.length < category.totalGameCount" class="game show-all text-center col-xs-6 col-sm-4 col-md-2 clearfix">
                                 <a class="game-link" ng-click="showAll(category)">
                                     <img class="game-img img-responsive full-width" src="../../Content/Images/casino-default.jpg" />
                                     <div class="game-info">
