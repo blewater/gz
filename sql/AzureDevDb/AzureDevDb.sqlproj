@@ -94,5 +94,8 @@
     <Build Include="dbo\Functions\GetMonthsTrxAmount.sql" />
     <Build Include="dbo\Functions\GetTotalDeposits.sql" />
     <Build Include="dbo\Tables\CarouselEntries.sql" />
+    <Build Include="dbo\Tables\GameCategories_1.sql" />
+    <Build Include="dbo\Tables\DynamicPageTemplates.sql" />
+    <Build Include="dbo\Tables\DynamicPageDatas.sql" />
   </ItemGroup>
 </Project>
