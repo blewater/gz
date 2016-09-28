@@ -51,13 +51,6 @@
                     });
                 }
 
-                $scope.$watch('fieldcontainer', function () {
-                    if (initializing) {
-                        $timeout(function () { initializing = false; });
-                    } else {
-                        // do whatever you were going to do
-                    }
-                });
                 var initializing = true;
                 var unregisterModelWatch = $scope.$watch('gzModel', function (newValue, oldValue) {
                     if (initializing)
