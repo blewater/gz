@@ -297,16 +297,27 @@
     background-color: rgba(39, 169, 92, 0.9);
     color: #fff;
     position: absolute;
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    bottom: 5px;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
     opacity: 0;
     border-radius: 2px;
 }
 .categories .category .game a:hover .game-info {
-    transform: scale(1.1);
+    /*transform: scale(1.1);*/
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     opacity: 1;
+}
+
+.categories .category .game.show-all a .game-info {
+    opacity: 1;
+}
+.categories .category .game.show-all a .game-img {
+    opacity: 0;
 }
 
 /*.categories .category .game a .game-info .game-play {
