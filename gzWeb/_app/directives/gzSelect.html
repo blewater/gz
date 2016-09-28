@@ -7,10 +7,10 @@
             class="form-control"
             ng-model="gzModel"
             ng-options="item as getDisplay(item) for item in gzCollection track by getId(item)"
-            ng-change="onSelectionChange()"
             ng-disabled="isDisabled()"
             ng-required="isRequired && !isDisabled()"
             ng-class="{ 'danger' : gzError(), 'selected': gzModel }">
         <option ng-show="hasPrompt" value="" class="prompt">{{gzPrompt}}</option>
     </select>
+    <!--ng-change="onSelectionChange()"-->
 </span>
