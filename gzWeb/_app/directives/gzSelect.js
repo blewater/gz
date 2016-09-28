@@ -50,6 +50,28 @@
                         }
                     });
                 }
+
+                $scope.$watch('fieldcontainer', function () {
+                    if (initializing) {
+                        $timeout(function () { initializing = false; });
+                    } else {
+                        // do whatever you were going to do
+                    }
+                });
+                var initializing = true;
+                var unregisterModelWatch = $scope.$watch('gzModel', function (newValue, oldValue) {
+                    if (initializing)
+                        $timeout(function () { initializing = false; }, 0);
+                    else {
+                        if (angular.isDefined($scope.onSelectionChange)) {
+                            $scope.onSelectionChange();
+                        }
+                    }
+                });
+                $scope.$on("$destroy", function () {
+                    unregisterModelWatch();
+                });
+
             }]
         };
     }
