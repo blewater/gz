@@ -5,8 +5,24 @@
     function ctrlFactory($scope, $controller, $location, message, constants) {
         $controller('authCtrl', { $scope: $scope });
 
-        function readResetPwdKeys() {
-            var urlParams = $location.search();
+        function readForgotPwdEmail(urlParams) {
+            var forgot = urlParams.forgot;
+            var email = urlParams.email;
+            if (forgot === 'true' && email) {
+                message.open({
+                    nsType: 'modal',
+                    nsSize: '600px',
+                    nsTemplate: '_app/account/forgotPassword.html',
+                    nsCtrl: 'forgotPasswordCtrl',
+                    nsStatic: true,
+                    nsParams: {
+                        email: email
+                    }
+                });
+            }
+        }
+
+        function readResetPwdKeys(urlParams) {
             var email = urlParams.email;
             var gzResetKey = decodeURIComponent(urlParams.gzKey);
             var emResetKey = urlParams.emKey;
@@ -26,8 +42,7 @@
             }
         }
 
-        function readLogoutReason() {
-            var urlParams = $location.search();
+        function readLogoutReason(urlParams) {
             var logoutReason = urlParams.logoutReason;
             if (logoutReason) {
                 message.info(logoutReason);
@@ -54,13 +69,16 @@
         };
 
         $scope._init(function () {
-            if ($scope._authData.isGamer){
+            var urlParams = $location.search();
+            if (Object.keys(urlParams).length > 0) {
+                readResetPwdKeys(urlParams);
+                readLogoutReason(urlParams);
+                readForgotPwdEmail(urlParams);
+            }
+            else if ($scope._authData.isGamer)
                 $location.path(constants.routes.games.path).search({});
-            }
-            else {
-                readResetPwdKeys();
-                readLogoutReason();
-            }
+            //else
+            //    readParams();
         });
     }
 })();

@@ -55,5 +55,13 @@
             message.success("If a matching account was found, an email was sent to '" + $scope.model.email + "' to guide you through the reset password process.");
             $scope.nsOk(true);
         }
+
+        function init() {
+            if ($scope.email) {
+                $scope.model.email = $scope.email;
+                $scope.emailValidOnce = true;
+            }
+        }
+        init();
     }
 })();
