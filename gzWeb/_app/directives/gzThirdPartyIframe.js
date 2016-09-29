@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzThirdPartyIframe', ['helpers', 'constants', '$rootScope', directiveFactory]);
+    APP.directive('gzThirdPartyIframe', ['helpers', 'constants', '$rootScope', 'message', directiveFactory]);
 
-    function directiveFactory(helpers, constants, $rootScope) {
+    function directiveFactory(helpers, constants, $rootScope, message) {
         return {
             restrict: 'E',
             scope: {
@@ -37,6 +37,12 @@
 
                 $scope.$on(constants.events.DEPOSIT_STATUS_CHANGED, transactionStatusChanged);
                 $scope.$on(constants.events.WITHDRAW_STATUS_CHANGED, transactionStatusChanged);
+
+                $scope.close = function () {
+                    message.confirm("Are you sure you want to cancel?", function () {
+                        $scope.$parent.nsCancel("The transaction was canceled.");
+                    });
+                };
             }]
         };
     }
