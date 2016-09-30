@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'promotionCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', '$routeParams', ctrlFactory]);
-    function ctrlFactory($scope, api, $routeParams) {
+    APP.controller(ctrlId, ['$scope', 'api', '$routeParams', '$location', ctrlFactory]);
+    function ctrlFactory($scope, api, $routeParams, $location) {
         function loadPage() {
             var code = $routeParams.code;
             api.call(function () {
@@ -17,5 +17,9 @@
         };
 
         init();
+
+        $scope.go = function (path) {
+            $location.url(path);
+        };
     }
 })();
