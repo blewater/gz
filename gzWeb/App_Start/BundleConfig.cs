@@ -11,9 +11,7 @@ namespace gzWeb {
             bundles.UseCdn = true;
 
             #region Styles
-
             var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
-
             bundles.Add(new StyleBundle("~/css/bootstrap", bootstrapCdnPath)
                 .Include(
                     "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
@@ -22,19 +20,15 @@ namespace gzWeb {
                 ));
 
             var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
-
             bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
                 "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
             ));
 
             bundles.Add(new StyleBundle("~/css/app").Include(
-                //"~/Content/Site.css"
-                "~/Content/Styles/_app/basic.css"
-                , "~/Content/Styles/_app/preloader.css"
-                , "~/Content/Styles/_app/header.css"
-                , "~/Content/Styles/_app/headerNew.css"
-                , "~/Content/Styles/_app/footer.css"
-
+                "~/_app/common/basic.css"
+                , "~/_app/common/preloader.css"
+                , "~/_app/common/header.css"
+                , "~/_app/common/footer.css"
                 , "~/_app/guest/guest.css"
                 , "~/_app/account/auth.css"
                 , "~/_app/investments/investments.css"
@@ -47,27 +41,23 @@ namespace gzWeb {
             #endregion
 
             #region Scripts
-            bundles.Add(new ScriptBundle("~/js/global").Include(
-                "~/Scripts/_app/global.js"
-            ));
-
             bundles.Add(new ScriptBundle("~/js/jquery").Include(
                 "~/Scripts/jquery/jquery-{version}.js"
             ));
 
-            bundles.Add(new ScriptBundle("~/js/jqueryval").Include(
-                "~/Scripts/jquery.validate/jquery.validate*"
-            ));
+            //bundles.Add(new ScriptBundle("~/js/jqueryval").Include(
+            //    "~/Scripts/jquery.validate/jquery.validate*"
+            //));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
-            bundles.Add(new ScriptBundle("~/js/modernizr").Include(
-                "~/Scripts/modernizr-*"
-            ));
+            //bundles.Add(new ScriptBundle("~/js/modernizr").Include(
+            //    "~/Scripts/modernizr-*"
+            //));
 
             bundles.Add(new ScriptBundle("~/js/bootstrap").Include(
                 "~/Scripts/bootstrap/bootstrap.js"
-                , "~/Scripts/respond/respond.js"
+                //, "~/Scripts/respond/respond.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/d3").Include(
@@ -98,32 +88,43 @@ namespace gzWeb {
                 , "~/Scripts/angular-match-media/match-media.js"
                 , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
                 , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
-                , "~/Scripts/angular-wamp/angular-wamp.js" // TODO: "~/Scripts/angular-wamp/angular-wamp.min.js"
+                , "~/Scripts/angular-wamp/angular-wamp.min.js"
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
-                , "~/Scripts/_modules/customDirectives.js"
-                , "~/Scripts/_modules/customFilters.js"
                 , "~/Scripts/jsnlog/logToServer.js"
-            //, "~/Scripts/_modules/styleInjector.js"
             ));
 
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
             var everyMatrixStage = !string.IsNullOrEmpty(everyMatrixStageSetting) && Convert.ToBoolean(everyMatrixStageSetting);
 
             bundles.Add(new ScriptBundle("~/js/app")
-                                .Include("~/Scripts/_app/app.js")
-                                .Include("~/Scripts/_app/configuration/config.js"
-                                        , "~/Scripts/_app/constants/constants.js"
+                                .Include("~/_app/common/app.js")
+                                .Include(
+            #region Common
+                                        "~/_app/common/global.js"
+                                        , "~/_app/common/config.js"
+                                        , "~/_app/common/constants.js"
+                                        , "~/_app/common/authCtrl.js"
+                                        , "~/_app/common/headerCtrl.js"
+                                        , "~/_app/common/footerCtrl.js"
+            #endregion
+
+            #region EveryMatrix
                                         , everyMatrixStage
-                                                  ? "~/Scripts/_app/constants/emConCfg-stage.js"
-                                                  : "~/Scripts/_app/constants/emConCfg.js"
+                                            ? "~/_app/everymatrix/emConCfg-stage.js"
+                                            : "~/_app/everymatrix/emConCfg.js"
+                                        , "~/_app/everymatrix/emWamp.js"
+                                        , "~/_app/everymatrix/emCasino.js"
+                                        , "~/_app/everymatrix/emBanking.js"
+                                        , "~/_app/everymatrix/emBankingWithdraw.js"
+                                        , "~/_app/everymatrix/emResponsibleGaming.js"
+            #endregion
 
             #region Controllers
-                                        , "~/Scripts/_app/controllers/authCtrl.js"
-                                        , "~/Scripts/_app/controllers/templates/headerCtrl.js"
-                                        , "~/Scripts/_app/controllers/templates/headerNewCtrl.js"
-                                        , "~/Scripts/_app/controllers/templates/footerCtrl.js"
+                                        //, "~/Scripts/_app/controllers/authCtrl.js"
+                                        //, "~/Scripts/_app/controllers/templates/headerCtrl.js"
+                                        //, "~/Scripts/_app/controllers/templates/footerCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/homeCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/transparencyCtrl.js"
                                         //, "~/Scripts/_app/controllers/guest/aboutCtrl.js"
@@ -237,17 +238,12 @@ namespace gzWeb {
             #endregion
 
             #region Services
-                                        , "~/Scripts/_app/services/emWamp.js"
-                                        , "~/Scripts/_app/services/emCasino.js"
-                                        , "~/Scripts/_app/services/emBanking.js"
-                                        , "~/Scripts/_app/services/emBankingWithdraw.js"
-                                        , "~/Scripts/_app/services/emResponsibleGaming.js"
-                                        , "~/Scripts/_app/services/authInterceptor.js"
-                                        , "~/Scripts/_app/services/authService.js"
-                                        , "~/Scripts/_app/services/apiService.js"
-                                        , "~/Scripts/_app/services/helpersService.js"
-                                        , "~/Scripts/_app/services/chatService.js"
-                                        , "~/Scripts/_app/services/iovationService.js"
+                                        , "~/_app/services/authInterceptor.js"
+                                        , "~/_app/services/authService.js"
+                                        , "~/_app/services/apiService.js"
+                                        , "~/_app/services/helpersService.js"
+                                        , "~/_app/services/chatService.js"
+                                        , "~/_app/services/iovationService.js"
             #endregion
 
             #region nsMessageService
@@ -256,6 +252,12 @@ namespace gzWeb {
                                         , "~/_app/nsMessageService/nsPromptCtrl.js"
                                         , "~/_app/nsMessageService/nsConfirmCtrl.js"
                                         , "~/_app/nsMessageService/nsMessageService.js"
+            #endregion
+
+            #region Modules
+                , "~/_app/modules/customDirectives.js"
+                , "~/_app/modules/customFilters.js"
+                //, "~/_app/modules/styleInjector.js"
             #endregion
                                 ));
 
