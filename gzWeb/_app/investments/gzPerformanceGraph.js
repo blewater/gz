@@ -474,7 +474,8 @@
                             trianglesHorizontal.classed('inactive', false);
                             projections.classed("active", false);
                             graphRect.on("mousemove", null).on("mouseup", null);
-                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; })).on("mouseup", null);
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; }));
+                            triangles.on("mouseup", null);
                             projections.on("mouseup", null);
                         }
                     });
