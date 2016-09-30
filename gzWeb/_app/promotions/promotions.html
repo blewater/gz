@@ -1,15 +1,26 @@
 ﻿<div class="clearfix promotions">
     <div class="container">
         <div class="row">
-            <h4>Promotions</h4>
-            <h5 ng-if="thumbnails.length === 0" class="text-center">There are no promotions right now.</h5>
-            <div ng-if="thumbnails.length > 0" class="col-xs-12 col-sm-4" ng-repeat="thumb in thumbnails">
-                <a ng-href="{{getPageUrl(thumb.Code)}}">
-                    <img class="img-responsive" ng-src="{{thumb.Img}}" />
-                    <h5>{{thumb.Title}}</h5>
-                    <p>{{thumb.Description}}</p>
-                </a>
+            <div class="col-xs-12">
+                <h4>Promotions</h4>
+                <h5 ng-if="thumbnails.length === 0" class="text-center">There are no promotions right now.</h5>
             </div>
+
+                <div ng-if="thumbnails.length > 0" class="promo col-xs-12 col-sm-4" ng-repeat="thumb in thumbnails">
+                    <a ng-href="{{getPageUrl(thumb.Code)}}">
+                        <div class="promo-thumb">
+                            <img class="img-responsive" ng-src="{{thumb.Img}}" />
+                            <div class="promo-go-wrapper">
+                                <div class="promo-go">
+                                    <i class="fa fa-long-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5>{{thumb.Title}}</h5>
+                        <p>{{thumb.Description}}</p>
+                    </a>
+                </div>
         </div>
     </div>
 </div>
