@@ -132,6 +132,14 @@
                 $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
                 if (angular.isFunction(callback))
                     callback();
+
+                //if (factory.data.gamingAccount.amount === currentBalance) {
+                //    $timeout(function () {
+                //        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                //    }, 1000);
+                //}
+                //else {
+                //}
             }, function (error) {
                 $log.error(error.desc);
             });
