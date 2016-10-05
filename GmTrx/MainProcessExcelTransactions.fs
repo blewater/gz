@@ -4,14 +4,19 @@ open CpcDataServices
 open gzCpcLib.Task
 
 type Settings = AppSettings< "app.config" >
-#if DEBUG
+#if DEBUG && !PRODUCTION
 
+let isProd = false
 let dbConnectionString = Settings.ConnectionStrings.GzDevDb
 
 printfn "Development db: %s" dbConnectionString
-#else
-let connString = Settings.ConnectionStrings.GzProdDb
-printfn "PRODUCTION db: %s" connString
+#endif
+#if PRODUCTION
+
+let isProd = true
+let dbConnectionString = Settings.ConnectionStrings.GzProdDb
+printfn "PRODUCTION db: %s" dbConnectionString
+
 #endif
 
 
@@ -26,15 +31,15 @@ let main argv =
         use db = DbUtil.getOpenDb dbConnectionString
 
         // Update Funds from Yahoo Api
-        (new FundsUpdTask()).DoTask()
+        (new FundsUpdTask(isProd)).DoTask()
 
         // Update Currency Rates from open exchange api
         let rates = CurrencyRates.updCurrencyRates currencyRatesUrl db
 
         // Extract & Load Daily Everymatrix Report
-        Etl.ProcessExcelFolder db inRptFolder rates
+        Etl.ProcessExcelFolder isProd db inRptFolder rates
 
-        (new CustomerBalanceUpdTask()).DoTask()
+        (new CustomerBalanceUpdTask(isProd)).DoTask()
 
     with ex ->
         let nl = System.Environment.NewLine

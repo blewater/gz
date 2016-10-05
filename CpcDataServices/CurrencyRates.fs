@@ -25,6 +25,7 @@ module public CurrencyRates =
         let usdRateTo = UsdRates.Load(currencyApiUrl)
         let usdRates = [
                         "USDAUD", (usdRateTo.Rates.Aud, int64 usdRateTo.Timestamp) ;
+                        "USDCAD", (usdRateTo.Rates.Cad, int64 usdRateTo.Timestamp) ;
                         "USDCHF", (usdRateTo.Rates.Chf, int64 usdRateTo.Timestamp) ;
                         "USDDKK", (usdRateTo.Rates.Dkk, int64 usdRateTo.Timestamp) ;
                         "USDEUR", (usdRateTo.Rates.Eur, int64 usdRateTo.Timestamp) ;
@@ -32,6 +33,7 @@ module public CurrencyRates =
                         "USDNOK", (usdRateTo.Rates.Nok, int64 usdRateTo.Timestamp) ;
                         "USDSEK", (usdRateTo.Rates.Sek, int64 usdRateTo.Timestamp) ;
                         "AUDUSD", (1m/usdRateTo.Rates.Aud, int64 usdRateTo.Timestamp) ;
+                        "CADUSD", (1m/usdRateTo.Rates.Cad, int64 usdRateTo.Timestamp) ;
                         "CHFUSD", (1m/usdRateTo.Rates.Chf, int64 usdRateTo.Timestamp) ;
                         "DKKUSD", (1m/usdRateTo.Rates.Dkk, int64 usdRateTo.Timestamp) ;
                         "EURUSD", (1m/usdRateTo.Rates.Eur, int64 usdRateTo.Timestamp) ;
@@ -77,7 +79,7 @@ module public CurrencyRates =
 
     /// <summary>
     /// 
-    /// Insert to database CurrencyRates table
+    /// Insert to database CurrencyRates table only if no rates exist within the same hour.
     /// 
     /// </summary>
     /// <param name="db">db context</param>
@@ -87,25 +89,29 @@ module public CurrencyRates =
             (usdRates : CurrencyRatesValues) 
             : CurrencyRatesValues = 
 
-        for marketRate in 
-            usdRates // Ignore $ to $
-            |> Map.filter (fun key _ -> key <> "USDUSD") do
+        for marketRate in usdRates do
 
-            let tradeTm = DateTimeOffset.FromUnixTimeSeconds(snd marketRate.Value).UtcDateTime
-            let roundedTradeTm = new DateTime(tradeTm.Year, tradeTm.Month, tradeTm.Day, tradeTm.Hour, 0, 0)
-            let rateFromTo = marketRate.Key
-            query { 
-            for rate in db.CurrencyRates do
-                where (rate.TradeDateTime = roundedTradeTm && rate.FromTo = rateFromTo)
-                select rate
-                exactlyOneOrDefault
-            } 
-            |> (fun rateRow ->
-                if isNull rateRow then
-                    setRateNewDbRowValues db roundedTradeTm marketRate
-//                else 
-//                    setRateDbRowValues rateRow <| fst marketRate.Value
-            )
+            if marketRate.Key <> "USDUSD" then
+
+                let tradeTm = DateTimeOffset.FromUnixTimeSeconds(snd marketRate.Value).UtcDateTime
+
+                // Round within an hour
+                let roundedTradeTm = new DateTime(tradeTm.Year, tradeTm.Month, tradeTm.Day, tradeTm.Hour, 0, 0)
+                let rateFromTo = marketRate.Key
+                query { 
+                for rate in db.CurrencyRates do
+                    where (rate.TradeDateTime = roundedTradeTm && rate.FromTo = rateFromTo)
+                    select rate
+                    exactlyOneOrDefault
+                } 
+                |> (fun rateRow ->
+                    if isNull rateRow then
+                        setRateNewDbRowValues db roundedTradeTm marketRate
+    // No point in updating currency rates
+    //                else 
+    //                    setRateDbRowValues rateRow <| fst marketRate.Value
+                )
+
         // Commit for all rates once!
         db.DataContext.SubmitChanges()
         usdRates

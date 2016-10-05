@@ -18,7 +18,9 @@ module Etl =
     /// </summary>
     /// <param name="folderName">The input excel folder name.</param>
     /// <returns>list of excel filenames with extension .xlsx</returns>
-    let getDirExcelList folderName = Directory.GetFiles(folderName, "*.xlsx") |> Array.toList
+    let getDirExcelList (isProd : bool) (folderName : string) : string list= 
+        let fileMask = if isProd then "Gm*Prod*.xlsx" else "Gm*Stage*.xlsx"
+        Directory.GetFiles(folderName, fileMask) |> Array.toList
     
     /// <summary>
     ///
@@ -62,7 +64,8 @@ module Etl =
     let setPlayerDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) 
         (playerRow : DbUtil.DbSchema.ServiceTypes.PlayerRevRpt) = 
         if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
-        playerRow.Currency <- excelRow.Currency
+        let excelCurrency = excelRow.Currency.ToString()
+        playerRow.Currency <- excelCurrency
         playerRow.EmailAddress <- excelRow.``Email address``
         playerRow.GrossRevenue <- Convert.ToDecimal(excelRow.``Gross revenue``)
         let excelLastLogin = excelRow.``Last login``
@@ -219,7 +222,8 @@ module Etl =
 
         if playerRawGrossRevenue > 0.0 then
 
-            let convRate = rates.Item (excelRow.Currency + "USD") |> fst
+            let curKey = excelRow.Currency + "USD"
+            let convRate = rates.Item (curKey) |> fst
 
             (****  50% of Positive Gross Revenue ***)
             let usdAmount = (decimal creditLossPcnt / 100m) * decimal playerRawGrossRevenue * convRate
@@ -282,13 +286,14 @@ module Etl =
 
         // Loop through all excel rows
         for excelRow in openFile.Data do
-            printfn 
-                "Processing email %s on %s/%s/%s" 
-                excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4)
+            if not <| isNull excelRow.``Email address`` then
+                printfn 
+                    "Processing email %s on %s/%s/%s" 
+                    excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4)
 
-            setDbPlayerRow db yyyyMmDd excelRow
-            // Send string date wout day
-            setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow rates
+                setDbPlayerRow db yyyyMmDd excelRow
+                // Send string date wout day
+                setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow rates
     
     /// <summary>
     ///
@@ -343,14 +348,15 @@ module Etl =
     /// <param name="inFolder">The input file folder parameter</param>
     /// <param name="rates">The currency rate values for converting Everymatrix amounts to $</param>
     /// <returns>Unit</returns>
-    let ProcessExcelFolder 
+    let ProcessExcelFolder
+            (isProd : bool) 
             (db : DbContext) 
             (inFolder : string)
             (rates : CurrencyRatesValues) = 
         
         //------------ Read filenames
         printfn "Reading the %s folder" inFolder
-        let dirExcelFileList = getDirExcelList inFolder
+        let dirExcelFileList = getDirExcelList isProd inFolder
         if dirExcelFileList.Length > 0 then 
             printfn "Checking read files for date in their name"
         else 
