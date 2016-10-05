@@ -28,6 +28,9 @@ bld/
 # Mario to allow dlls in sc
 #[Bb]in/
 [Oo]bj/
+GmTrx/[Bb]in/
+CustPortfolioCalcLib/[Bb]in/
+CpcDataServices/[Bb]in/
 
 # Visual Studio 2015 cache/options directory
 .vs/

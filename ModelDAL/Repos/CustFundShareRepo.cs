@@ -337,8 +337,8 @@ namespace gzDAL.Repos {
 
             FundPrice fundPriceToRet = null;
 
-            //Find last trade day
-            var lastMonthDay = new DateTime(year, month, 1).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
+            //Find last trade day and include +1 month when the awarding occurs
+            var lastMonthDay = new DateTime(year, month, 1).AddMonths(2).AddDays(-1).ToString("yyyyMMdd");
             var lastTradeDay = _db.FundPrices
                 .Where(fp => fp.FundId == fundId
                              && string.Compare(fp.YearMonthDay, lastMonthDay, StringComparison.Ordinal) <= 0)

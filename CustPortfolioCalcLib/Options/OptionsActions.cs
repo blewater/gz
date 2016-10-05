@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -67,8 +68,8 @@ namespace gzCpcLib.Options {
             else if (_cpcOptions.ProcessEverything || _cpcOptions.CustomersToProc.Length > 0 || _cpcOptions.YearMonthsToProc.Length > 0) {
 
                 _logger.Info("In _cpcOptions.ProcessEverything");
-                _customerBalUpd.CustomerIds = _cpcOptions.CustomersToProc;
-                _customerBalUpd.YearMonthsToProc = _cpcOptions.YearMonthsToProc;
+                _customerBalUpd.CustomerIds = _cpcOptions.CustomersToProc.ToList();
+                _customerBalUpd.YearMonthsToProc = _cpcOptions.YearMonthsToProc.ToList();
 
                 // Wait for both to complete before moving on: merge
                 MergeReduceObs(_exchRatesUpd, _fundsUpd, _customerBalUpd, "Customers Balances Processed");
