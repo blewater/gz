@@ -452,6 +452,7 @@ namespace gzWeb.Controllers {
                                                                           Weight = h.Weight
                                                                   })
                                  })
+                    .OrderBy(x => x.Risk)
                     .ToList();
 
             return portfolios;
