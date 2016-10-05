@@ -115,7 +115,10 @@ namespace gzDAL.Conf {
                     CREDIT_LOSS_PCNT = dbConf.CREDIT_LOSS_PCNT,
                     FUND_FEE_PCNT = dbConf.FUND_FEE_PCNT,
                     LOCK_IN_NUM_DAYS = dbConf.LOCK_IN_NUM_DAYS,
-                    FIRST_PORTFOLIO_RISK_VAL = RiskToleranceEnum.Medium
+                    FIRST_PORTFOLIO_RISK_VAL = RiskToleranceEnum.Medium,
+                    CONSERVATIVE_RISK_ROI = 3.5f,
+                    MEDIUM_RISK_ROI = 5f,
+                    AGGRESSIVE_RISK_ROI = 7.5f
                 }
             );
 

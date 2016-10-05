@@ -208,6 +208,11 @@ namespace gzDAL.Repos
 
             var selCustomerPortfolioId = GetNextMonthsCustomerPortfolio(customerId).Id;
 
+            // Get gz Database Configuration
+            var gzDbConf = db.GzConfigurations
+                    .Select(c=>c)
+                    .Single();
+
             var portfolioDtos = (await (from p in db.Portfolios
                 join c in db.CustPortfolios on p.Id equals c.PortfolioId
                 join b in db.InvBalances on
@@ -221,8 +226,12 @@ namespace gzDAL.Repos
                     Id = g.Key.Id,
                     Title = g.Key.Title,
                     Color = g.Key.Color,
-                    ROI = g.Key.PortFunds.Select(f => f.Weight*f.Fund.YearToDate/100).Sum(),
-                    Risk = (RiskToleranceEnum) g.Key.RiskTolerance,
+                    ROI = ((RiskToleranceEnum)g.Key.RiskTolerance) == RiskToleranceEnum.Low
+                                ? gzDbConf.CONSERVATIVE_RISK_ROI 
+                                : (RiskToleranceEnum)g.Key.RiskTolerance == RiskToleranceEnum.Medium 
+                                    ? gzDbConf.MEDIUM_RISK_ROI 
+                                    : gzDbConf.AGGRESSIVE_RISK_ROI,
+                    Risk = ((RiskToleranceEnum)g.Key.RiskTolerance),
                     AllocatedAmount = g.Sum(b => b.CashInvestment),
                     Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
                         Name = f.Fund.HoldingName,
