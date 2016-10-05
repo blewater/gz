@@ -551,6 +551,14 @@
     <Compile Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.Designer.cs">
       <DependentUpon>201609271056413_Add_DynPageTemplates_And_DynPageData.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610051338220_Portfolio_Risk_RoR.cs" />
+    <Compile Include="Migrations\201610051338220_Portfolio_Risk_RoR.Designer.cs">
+      <DependentUpon>201610051338220_Portfolio_Risk_RoR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610051524574_Filler.cs" />
+    <Compile Include="Migrations\201610051524574_Filler.Designer.cs">
+      <DependentUpon>201610051524574_Filler.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1158,6 +1166,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609271056413_Add_DynPageTemplates_And_DynPageData.resx">
       <DependentUpon>201609271056413_Add_DynPageTemplates_And_DynPageData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610051338220_Portfolio_Risk_RoR.resx">
+      <DependentUpon>201610051338220_Portfolio_Risk_RoR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610051524574_Filler.resx">
+      <DependentUpon>201610051524574_Filler.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
