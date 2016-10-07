@@ -75,10 +75,9 @@
                 readLogoutReason(urlParams);
                 readForgotPwdEmail(urlParams);
             }
-            else if ($scope._authData.isGamer)
+
+            if ($scope._authData.isGamer)
                 $location.path(constants.routes.games.path).search({});
-            //else
-            //    readParams();
         });
     }
 })();
