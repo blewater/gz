@@ -60,7 +60,7 @@
         };
         // #endregion
 
-        $scope.transactionTypes = [deposit, withdraw, transfer, buddyTransfer];
+        $scope.transactionTypes = [deposit, withdraw];//, transfer, buddyTransfer];
         // #endregion
 
         var pageSize = 10;
