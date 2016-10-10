@@ -14,6 +14,12 @@
                 <span class="back-to-games" ng-click="backToGames()" title="Go back to games list"><i class="fa fa-share fa-flip-horizontal"></i></span>
                 <span class="fullscreen" ng-click="toggleFullScreen()" title="Play in fullscreen mode"><i class="fa fa-expand"></i></span>
             </div>
+            <div class="game-close" ng-style="{
+                'top': getCloseTop(),
+                'right': getCloseRight()
+             }">
+                <span class="close-game" ng-click="backToGames()" title="Close"><i class="fa fa-times"></i></span>
+            </div>
             <div class="fullscreen-hud" ng-show="isFullscreen">
                 <span class="clock"><i class="fa fa-clock-o"></i>{{ clock | date:'HH:mm:ss'}}</span>
                 <span class="exit" ng-click="toggleFullScreen()"><i class="fa fa-times"></i>Exit</span>
