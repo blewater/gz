@@ -115,6 +115,14 @@
         $scope.getActionsRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';
         };
+
+        $scope.getCloseTop = function () {
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameHeight / 2) + 18) + 'px)';
+        };
+        $scope.getCloseRight = function () {
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameWidth / 2) + 18) + 'px)';
+        };
+
         $rootScope.playing = true;
     }
 })();

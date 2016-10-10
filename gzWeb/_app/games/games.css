@@ -576,7 +576,7 @@
 /* #region game play */
 .game-play .game-bg {
     z-index: -2;
-    margin-top: 50px;
+    margin-top: 70px;
 }
 .game-play .game-frame {
     z-index: 1;
@@ -619,6 +619,36 @@
     margin: 2px 8px;
     cursor: pointer;
 }
+
+
+.game-play .game-frame .game-close {
+    position: fixed;
+    z-index: 2;
+    color: #fff;
+    padding: 5px;
+    background-color: #27a95c;
+    /*border: 1px solid #fff;*/
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    line-height: 28px;
+    text-align: center;
+    cursor: pointer;
+
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    -ms-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+/*.game-play .game-frame .game-close:hover {
+    color: #27a95c;
+    background-color: #fff;
+}*/
+
 
 .game-play .game-frame .game-licence {
     position: fixed;
