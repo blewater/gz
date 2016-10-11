@@ -156,13 +156,18 @@ footer .footer-payment-methods .footer-payment-method.footer-maestro img{
 footer .footer-license {
     margin-bottom: 15px;
 }
-footer .footer-license .mga {
+footer .footer-license .mga,
+footer .footer-license .play-responsibly {
     border-radius: 4px;
     padding: 5px;
 }
+footer .footer-license .mga img,
+footer .footer-license .play-responsibly img {
+    height: 47px;
+}
+
 footer .footer-license .mga img {
     width: 80px;
-    height: 47px;
 }
 
 footer .footer-advice {

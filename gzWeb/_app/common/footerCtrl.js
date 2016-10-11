@@ -1,8 +1,10 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'footerCtrl';
-    APP.controller(ctrlId, ['$scope', 'localStorageService', 'constants', '$location', ctrlFactory]);
-    function ctrlFactory($scope, localStorageService, constants, $location) {
+    APP.controller(ctrlId, ['$scope', 'localStorageService', 'constants', '$location', 'accountManagement', '$controller', ctrlFactory]);
+    function ctrlFactory($scope, localStorageService, constants, $location, accountManagement, $controller) {
+        $controller('authCtrl', { $scope: $scope });
+
         $scope.routes = [
             constants.routes.transparency,
             constants.routes.about,
@@ -22,5 +24,15 @@
             return currentYear === startingYear ? startingYear : startingYear + " - " + currentYear;
         })();
         $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
+
+        $scope.gotoResponsibleGaming = function () {
+            accountManagement.open(accountManagement.states.responsibleGaming);
+        };
+
+        $scope._init(loadAuthData);
+
+        function loadAuthData() {
+            $scope.isGamer = $scope._authData.isGamer;
+        }
     }
 })();

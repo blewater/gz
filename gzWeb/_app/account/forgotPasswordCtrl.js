@@ -7,15 +7,15 @@
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
 
-        $scope.emailValidOnce = false;
-        var unregisterIsEmailValidWatch = $scope.$watch(function(){
-            return $scope.form.email.$dirty && $scope.form.email.$valid; 
-        }, function (newValue, oldValue) {
-            if (newValue === true) {
-                $scope.emailValidOnce = true;
-                unregisterIsEmailValidWatch();
-            }
-        });
+        //$scope.emailValidOnce = false;
+        //var unregisterIsEmailValidWatch = $scope.$watch(function(){
+        //    return $scope.form.email.$dirty && $scope.form.email.$valid; 
+        //}, function (newValue, oldValue) {
+        //    if (newValue === true) {
+        //        $scope.emailValidOnce = true;
+        //        unregisterIsEmailValidWatch();
+        //    }
+        //});
 
         $scope.model = {
             email: null
@@ -35,17 +35,7 @@
             if ($scope.form.$valid)
                 sendInstructions();
         };
-        //function sendInstructions(){
-        //    $scope.waiting = true;
-        //    auth.forgotPassword($scope.model.email).then(function (result) {
-        //        $scope.waiting = false;
-        //        message.success("You will receive an email at '" + $scope.model.email + "' that will guide you through the reset password process.");
-        //        $scope.nsOk(true);
-        //    }, function(error) {
-        //        $scope.waiting = false;
-        //        $scope.sendResetPasswordEmailError = error;
-        //    });
-        //}
+
         function sendInstructions() {
             $scope.waiting = true;
             auth.forgotPassword($scope.model.email).then(sendCallback, sendCallback);
@@ -59,7 +49,7 @@
         function init() {
             if ($scope.email) {
                 $scope.model.email = $scope.email;
-                $scope.emailValidOnce = true;
+                //$scope.emailValidOnce = true;
             }
         }
         init();
