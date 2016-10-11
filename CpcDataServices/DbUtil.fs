@@ -1,5 +1,6 @@
 ﻿namespace CpcDataServices
 
+open NLog
 open FSharp.Data.TypeProviders
 
 module DbUtil =
@@ -9,6 +10,8 @@ module DbUtil =
     let CompileTimeDbString = 
         @"Data Source=.\SQLEXPRESS;Initial Catalog=gzDevDb;Persist Security Info=True;Integrated Security=SSPI;"
     
+    let logger = LogManager.GetCurrentClassLogger()
+
     type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
 
@@ -83,6 +86,8 @@ module DbUtil =
     /// <param name="dbConnectionString">The database connection string to use</param>
     /// <returns>A newly created database object</returns>
     let getOpenDb (dbConnectionString : string) : DbContext= 
+
+        logger.Debug("Attempting to open the database connection...")
         // Open db
         let db = DbSchema.GetDataContext(dbConnectionString)
         //db.DataContext.Log <- System.Console.Out

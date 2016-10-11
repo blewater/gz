@@ -2,11 +2,14 @@
 
 open System
 open FSharp.Data
+open NLog
 open System.Collections.Generic
 open DbUtil
 
 module public CurrencyRates = 
     type UsdRates = JsonProvider<"../CpcDataServices/openexchangerates.json">
+
+    let logger = LogManager.GetCurrentClassLogger()
 
     /// <summary>
     /// A map (immutable dict) ->
@@ -107,9 +110,9 @@ module public CurrencyRates =
                 |> (fun rateRow ->
                     if isNull rateRow then
                         setRateNewDbRowValues db roundedTradeTm marketRate
-    // No point in updating currency rates
-    //                else 
-    //                    setRateDbRowValues rateRow <| fst marketRate.Value
+    (* No point in updating currency rates
+                    else 
+                        setRateDbRowValues rateRow <| fst marketRate.Value *)
                 )
 
         // Commit for all rates once!
@@ -128,6 +131,8 @@ module public CurrencyRates =
             (currencyApiUrl : string)
             (db : DbContext)
             : CurrencyRatesValues =
+
+        logger.Info("Retrieving last hour's currency values...")
 
         let setDbCurrencyRates = setDbRates db
         getCurrencyRates currencyApiUrl |> setDbCurrencyRates

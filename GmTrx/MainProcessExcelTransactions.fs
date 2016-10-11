@@ -1,32 +1,38 @@
-﻿open System
+﻿open NLog
+open System
 open FSharp.Configuration
 open CpcDataServices
 open gzCpcLib.Task
 
 type Settings = AppSettings< "app.config" >
+let logger = LogManager.GetCurrentClassLogger()
+
 #if DEBUG && !PRODUCTION
 
 let isProd = false
 let dbConnectionString = Settings.ConnectionStrings.GzDevDb
 
-printfn "Development db: %s" dbConnectionString
+logger.Warn(sprintf "Development db: %s" dbConnectionString)
+
 #endif
 #if PRODUCTION
 
 let isProd = true
 let dbConnectionString = Settings.ConnectionStrings.GzProdDb
-printfn "PRODUCTION db: %s" dbConnectionString
-
+logger.Warn(sprintf "PRODUCTION db: %s" dbConnectionString)
 #endif
 
-
 let inRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelInFolder)
+let outRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelOutFolder)
 let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
 [<EntryPoint>]
 let main argv = 
 
     try
+        logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
+        logger.Info("----------------------------")
+
         // Create a database context
         use db = DbUtil.getOpenDb dbConnectionString
 
@@ -37,13 +43,15 @@ let main argv =
         let rates = CurrencyRates.updCurrencyRates currencyRatesUrl db
 
         // Extract & Load Daily Everymatrix Report
-        Etl.ProcessExcelFolder isProd db inRptFolder rates
+        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder rates
 
         (new CustomerBalanceUpdTask(isProd)).DoTask()
 
+        logger.Info("----------------------------")
+        logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
+
     with ex ->
-        let nl = System.Environment.NewLine
-        printfn "Runtime Exception--------------->%s%s%s" nl nl <| ex.ToString()
+        logger.Fatal(ex, "Runtime Exception at main")
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore
