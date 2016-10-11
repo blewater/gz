@@ -6,10 +6,12 @@ open FSharp.ExcelProvider
 open System.Text.RegularExpressions
 open DbUtil
 open CurrencyRates
+open NLog
 
 module Etl = 
     // Compile type
     type ExcelSchema = ExcelFile< "GM Trx 20160719.xlsx" >
+    let logger = LogManager.GetCurrentClassLogger()
     
     /// <summary>
     ///
@@ -287,9 +289,9 @@ module Etl =
         // Loop through all excel rows
         for excelRow in openFile.Data do
             if not <| isNull excelRow.``Email address`` then
-                printfn 
-                    "Processing email %s on %s/%s/%s" 
-                    excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4)
+                logger.Info(
+                    sprintf "Processing email %s on %s/%s/%s" 
+                        excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
 
                 setDbPlayerRow db yyyyMmDd excelRow
                 // Send string date wout day
@@ -304,9 +306,9 @@ module Etl =
     /// <returns>the open file excel schema</returns>
     let openExcelSchemaFile excelFilename = 
         let openFile = new ExcelSchema(excelFilename)
-        printfn ""
-        printfn "************ Processing %s excel file" excelFilename
-        printfn ""
+        logger.Info ""
+        logger.Info (sprintf "************ Processing %s excel file" excelFilename)
+        logger.Info ""
         openFile
     
     /// <summary>
@@ -314,11 +316,14 @@ module Etl =
     /// Process excel files: Extract each row and update database customer amounts
     ///
     /// </summary>
+    /// <param name="db">The database context</param>
+    /// <param name="outFolder">The processed file folder value</param>
     /// <param name="dbConnectionString">The database connection string to use to update the database</param>
     /// <param name="datedExcelFilesNames">The list of dated (filename containing YYYYMMDD in their filename)</param>
     /// <returns>Unit</returns>
     let processExcelFiles 
             (db : DbContext) 
+            (outFolder : string)
             (datedExcelFilesNames: string seq) 
             (rates : CurrencyRatesValues) = 
 
@@ -332,6 +337,8 @@ module Etl =
                 setDbExcelRows db openFile yyyyMmDd rates
                 // ********* Commit once per excel File
                 transaction.Commit()
+                (* Move processed file to out folder*)
+                File.Move(excelFilename, outFolder)
             with _ -> 
                 transaction.Rollback()
                 reraise()
@@ -345,23 +352,25 @@ module Etl =
     ///
     /// </summary>
     /// <param name="db">The database context</param>
-    /// <param name="inFolder">The input file folder parameter</param>
+    /// <param name="inFolder">The input file folder value</param>
+    /// <param name="outFolder">The processed file folder value</param>
     /// <param name="rates">The currency rate values for converting Everymatrix amounts to $</param>
     /// <returns>Unit</returns>
     let ProcessExcelFolder
             (isProd : bool) 
             (db : DbContext) 
             (inFolder : string)
+            (outFolder : string)
             (rates : CurrencyRatesValues) = 
         
         //------------ Read filenames
-        printfn "Reading the %s folder" inFolder
+        logger.Info (sprintf "Reading the %s folder" inFolder)
         let dirExcelFileList = getDirExcelList isProd inFolder
         if dirExcelFileList.Length > 0 then 
-            printfn "Checking read files for date in their name"
+            logger.Debug "Checking read files for date in their name"
         else 
-            printfn "No excel files were found!"
+            logger.Trace "No excel files were found!"
         let datedExcelFilenames = getDatedExcelfiles dirExcelFileList
 
         //------------ Save excel value to database
-        processExcelFiles db datedExcelFilenames rates
+        processExcelFiles db outFolder datedExcelFilenames rates

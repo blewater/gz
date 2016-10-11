@@ -18,10 +18,14 @@ namespace gzCpcLib.Task {
         private ApplicationDbContext _db;
 
         public FundsUpdTask() {
+            _logger.Trace("Entered FundsUpdTask()");
+
             this._db = new ApplicationDbContext();
         }
 
         public FundsUpdTask(bool isProd) {
+            _logger.Trace("Entered FundsUpdTask(isProd:{0}) ", isProd);
+
             if (isProd) {
                 this._db = new ApplicationDbContext("gzProdDb");
             }
@@ -35,7 +39,7 @@ namespace gzCpcLib.Task {
 
         public override void DoTask() {
 
-            _logger.Info("Entered FundsUpdTask.DoTask()");
+            _logger.Info("Retrieving last day's stock prices...");
 
             new FundRepo(_db).SaveDbDailyFundClosingPrices();
         }
