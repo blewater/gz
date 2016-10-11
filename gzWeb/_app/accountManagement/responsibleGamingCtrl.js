@@ -1,18 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'responsibleGamingCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', 'emResponsibleGaming', '$filter', 'iso4217', 'message', '$rootScope', '$location', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, emResponsibleGaming, $filter, iso4217, message, $rootScope, $location, constants) {
-        //var limitTypes = {
-        //    deposit: 'deposit',
-        //    depositPerDay: 'depositPerDay',
-        //    depositPerWeek: 'depositPerWeek',
-        //    depositPerMonth: 'depositPerMonth',
-        //    wagering: 'wagering',
-        //    loss: 'loss',
-        //    session: 'session'
-        //}
-
+    APP.controller(ctrlId, ['$scope', 'emWamp', 'emResponsibleGaming', '$filter', 'iso4217', 'message', '$rootScope', '$location', 'constants', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, emResponsibleGaming, $filter, iso4217, message, $rootScope, $location, constants, $timeout) {
         $scope.periods = {
             daily: 'daily',
             weekly: 'weekly',
@@ -71,33 +61,32 @@
         };
         function getLimits(callback) {
             emResponsibleGaming.getLimits().then(function (response) {
-                $scope.limits = response;
-                initializeModel();
+                $timeout(function () {
+                    $scope.limits = response;
+                    if ($scope.limits.deposit && $scope.limits.deposit.current) {
+                        $scope.model.depositPeriod = $scope.limits.deposit.current.period;
+                        $scope.model.depositAmount = $scope.limits.deposit.current.amount;
+                    }
+                    if ($scope.limits.wagering && $scope.limits.wagering.current) {
+                        $scope.model.wageringPeriod = $scope.limits.wagering.current.period;
+                        $scope.model.wageringAmount = $scope.limits.wagering.current.amount;
+                    }
+                    if ($scope.limits.loss && $scope.limits.loss.current) {
+                        $scope.model.lossPeriod = $scope.limits.loss.current.period;
+                        $scope.model.lossAmount = $scope.limits.loss.current.amount;
+                    }
+                    if ($scope.limits.session && $scope.limits.session.current) {
+                        $scope.model.sessionAmount = $scope.limits.session.current.amount;
+                    }
 
-                if (callback)
-                    callback();
+                    if (callback)
+                        callback();
+                }, 0);
             });
-        };
-        function initializeModel() {
-            if ($scope.limits.deposit && $scope.limits.deposit.current) {
-                $scope.model.depositPeriod = $scope.limits.deposit.current.period;
-                $scope.model.depositAmount = $scope.limits.deposit.current.amount;
-            }
-            if ($scope.limits.wagering && $scope.limits.wagering.current) {
-                $scope.model.wageringPeriod = $scope.limits.wagering.current.period;
-                $scope.model.wageringAmount = $scope.limits.wagering.current.amount;
-            }
-            if ($scope.limits.loss && $scope.limits.loss.current) {
-                $scope.model.lossPeriod = $scope.limits.loss.current.period;
-                $scope.model.lossAmount = $scope.limits.loss.current.amount;
-            }
-            if ($scope.limits.session && $scope.limits.session.current) {
-                $scope.model.sessionAmount = $scope.limits.session.current.amount;
-            }
         };
         init();
 
-        $scope.toggleEditDepsotiLimit = function () {
+        $scope.toggleEditDepositLimit = function () {
             $scope.editDeposit = !$scope.editDeposit;
         };
         $scope.setDepositLimit = function () {
@@ -106,7 +95,7 @@
                 getLimits(function () {
                     $rootScope.loading = false;
                     message.success("Your new deposit limit has been set to " + getAmountText($scope.currency, $scope.model.depositAmount, $scope.model.depositPeriod));
-                    $scope.toggleEditDepsotiLimit();
+                    $scope.toggleEditDepositLimit();
                 });
             }, function (error) {
                 $rootScope.loading = false;
@@ -120,7 +109,7 @@
                     getLimits(function () {
                         $rootScope.loading = false;
                         message.success("Your " + $scope.limits.deposit.current.period + " deposit limit has been scheduled to remove.");
-                        $scope.toggleEditDepsotiLimit();
+                        $scope.toggleEditDepositLimit();
                     });
                 }, function (error) {
                     $rootScope.loading = false;
@@ -132,6 +121,10 @@
                 nsIconClassInversed: true
             });
         };
+
+
+
+
         //function setMoneyLimit(period, amount, currency, func) {
         //};
 

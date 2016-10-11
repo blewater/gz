@@ -46,7 +46,6 @@
             </div>
         </div>
         <div class="col-xs-12 limit-actions">
-            {{editDeposit}}
             <button type="button" ng-show="limits.deposit.updatable && !editDeposit" class="btn-gz limit-btn" ng-click="editDeposit = !editDeposit;">Change</button>
             <button type="button" ng-show="editDeposit" class="btn-gz limit-btn" ng-click="editDeposit = !editDeposit;">Cancel</button>
             <button type="button" ng-show="editDeposit && limits.deposit.current" class="btn-gz limit-btn" ng-click="removeDepositLimit()">Remove</button>
