@@ -589,6 +589,7 @@
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
     <Content Include="apple-touch-icon.png" />
+    <Content Include="Content\Images\18plus.png" />
     <Content Include="Content\Images\casino-default.jpg" />
     <Content Include="Content\Images\costs.svg" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
