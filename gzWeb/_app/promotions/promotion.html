@@ -1,15 +1,68 @@
 ﻿<div class="clearfix promotion">
-    <!--<img class="img-responsive" style="width: 100%; max-height:400px;" src="{banner:image}" />
-    <div class="container">
-        <br />
-        <h4 class="text-uppercase">{title:text}</h4>
-        <br />
-        <p>{description:text}</p>
-        <div class="text-center">
-            <button class="btn-gz btn-gz-alt" ng-click="go('{actionUrl:url}')">{actionText:text}</button>
+    <!-- Template 1: No call to action -->
+    <!--
+        <img class="img-responsive promo-banner" src="{banner:image}" />
+        <div class="container">
+            <h4 class="promo-title">{title:text}</h4>
+            <div>{body:html}</div>
         </div>
-        <div>{body:html}</div>
+    -->
+    <!-- Template 2: Call to action -->
+    <!--
+        <img class="img-responsive promo-banner" src="{banner:image}" />
+        <div class="container">
+            <h4 class="promo-title">{title:text}</h4>
+            <p>{description:html}</p>
+            <div class="promo-action">
+                <a class="btn-gz btn-gz-alt" ng-click="go({actionUrl:text}">
+                    <span ng-if="isLoggedIn">{loggedInActionText:text}</span>
+                    <span ng-if="!isLoggedIn">{notLoggedInActionText:text}</span>
+                </a>
+            </div>
+            <div>{body:html}</div>
+        </div>
+    -->
+
+    <!--<img class="img-responsive promo-banner" src="http://kingofwallpapers.com/casino/casino-023.jpg" />
+    <div class="container">
+        <h4 class="promo-title">Title here</h4>
+        <p>Join greenzorro today and we will double your first deposit with our 100% Casino Welcome Bonus! You'll have up to €150 (or your account currency equivalent of €150 ) more to play with and get instant access to over 800 casino games. So take advantage of our exciting bonuses and earn points towards cash rewards, every time you play!</p>
+        <div class="promo-action">
+            <a class="btn-gz btn-gz-alt" ng-click="go('bonus')">
+                <span ng-if="isLoggedIn">Bonus</span>
+                <span ng-if="!isLoggedIn">Click to join now and get up to €150 added to your account!</span>
+            </a>
+        </div>
+        <div>
+            Terms and Conditions:
+            <br />
+            1. By selecting this bonus and making a qualifying deposit (see 2.) you will receive a 100% deposit bonus up to €150 (or the equivalent amount in your account currency, for example €150 = c.£110).
+            <br />
+            2. This bonus will only be awarded on your first deposit. To qualify for this bonus your first deposit must be equal to, or greater than, €10, or your account currency equivalent of €10.
+            <br />
+            3. The 100% Casino Welcome Bonus will be shown on the deposit page when you click the 'Select a bonus' tab. If your deposit qualifies for more than one bonus, all available bonuses will be displayed. Please ensure you select the correct bonus.
+            <br />
+            4. In the rare event that the deposit bonus is not automatically granted after making a qualifying deposit, please contact us before any bets are made, and the Jetbull support staff will manually grant you the bonus.
+            <br />
+            Please note that our systems will not allow us to grant you the bonus if you place bets with your qualifying deposit before the bonus is manually granted.
+            <br />
+            5. Bonus funds can be wagered on all casino games except; all Video Poker Games; non-live Table Games and the following slots games: Scrooge, Devil’s Delight, The Wish Master, Pearls of India, Tower Quest, Loaded, Thunderstruck, Egyptian Heroes™, Wild Turkey, Lights, South Park™, Jack and the Beanstalk, Flowers.
+            <br />
+            6. The bonus and qualifying deposit amount must be wagered 30 times before any part of the deposit, bonus funds or associated winnings can be withdrawn or transferred.
+            <br />
+            7. Your qualifying deposit and the granted bonus amount will be held in your Casino Bonus balance and will remain there until the wagering requirement is met.
+            <br />
+            8. In the interest of fair gaming, the maximum stake allowed per game round when you are betting with bonus funds, is €10 or currency equivalent of €10.
+            <br />
+            <br />
+            Should you bet more than this maximum stake per game round, you agree that your bonus and any associated winnings may be void.
+            <br />
+            9. General Terms for Casino Bonuses apply for this bonus.
+            <br />
+            These terms and conditions were last updated at 12:00 GMT 29 of July 2016.
+        </div>
     </div>-->
+
     <div ng-bind-html="html"></div>
 </div>
 
