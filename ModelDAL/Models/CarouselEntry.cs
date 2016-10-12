@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -47,5 +48,8 @@ namespace gzDAL.Models
 
         [Required]
         public DateTime Updated { get; set; }
+
+        [Required, DefaultValue(false)]
+        public bool Deleted { get; set; }
     }
 }
