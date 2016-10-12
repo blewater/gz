@@ -9,7 +9,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
-                    <li ng-if="hasGamingBalance">{{currency}} {{gamingBalance | number : 2}}</li>
+                    <li ng-if="hasGamingBalance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip">{{currency}} {{gamingBalance | number : 2}}</li>
                     <li>
                         <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="deposit()">
                             DEPOSIT
@@ -116,7 +116,7 @@
             <div>wandering: {{routeData.wandering}}</div>
             <div>gaming: {{routeData.gaming}}</div>
             <div>investing: {{routeData.investing}}</div>
-            <div>balance: {{_authData.gamingAccount.amount}}</div>
+            <div>balance: {{_authData.gamingBalance}}</div>
         </div>
     </div>
 </header>

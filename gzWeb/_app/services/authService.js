@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter) {
         var factory = {};
 
         // #region AuthData
@@ -60,6 +60,7 @@
                 factory.data.roles.splice(gamerIndex, 1);
             factory.data.isGamer = false;
             factory.data.gamingAccount = undefined;
+            factory.data.gamingBalance = undefined;
             if (!factory.data.isInvestor) {
                 factory.data.firstname = "";
                 factory.data.lastname = "";
@@ -127,7 +128,8 @@
 
         factory.getGamingAccounts = function (expectBalance, expectBonus, callback) {
             emBanking.getGamingAccounts(expectBalance, expectBonus).then(function (result) {
-                factory.data.gamingAccount = result.accounts[0];
+                factory.data.gamingAccounts = result.accounts;
+                factory.data.gamingBalance = $filter('sum')($filter('map')(factory.data.gamingAccounts, function (acc) { return acc.amount; }));
                 storeAuthData();
                 $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
                 if (angular.isFunction(callback))
@@ -519,7 +521,10 @@
             return emWamp.applyBonus({
                 bonusCode: bonusCode,
                 iovationBlackbox: iovation.getBlackbox()
-            })
+            });
+        }
+        factory.getGrantedBonuses = function () {
+            return emWamp.getGrantedBonuses();
         }
         // #endregion
 

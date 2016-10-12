@@ -97,7 +97,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-8 text-left">Gaming Balance</div>
-                                        <div ng-if="hasGamingBalance" class="col-xs-4 text-right">{{gamingBalance | isoCurrency : currency : 0}}</div>
+                                        <div ng-if="hasGamingBalance" class="col-xs-4 text-right" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="summary-balance-tooltip">{{gamingBalance | isoCurrency : currency : 0}}</div>
                                         <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><i>offline</i></div>
                                     </div>
                                 </div>

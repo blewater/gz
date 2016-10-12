@@ -20,5 +20,14 @@
                 });
             }
         };
+
+        //function init() {
+        //    auth.getGrantedBonuses().then(function (result) {
+        //        $scope.bonuses = result.bonuses;
+        //    }, function (error) {
+        //        message.error(error.desc);
+        //    });
+        //}
+        //init();
     }
 })();
