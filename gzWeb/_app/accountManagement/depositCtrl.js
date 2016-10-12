@@ -91,12 +91,16 @@
                                             if ($location.path() === constants.routes.home.path)
                                                 $location.path(constants.routes.games.path).search({});
                                         } else if (transactionResult.status === "incomplete") {
+                                            $scope.waiting = false;
                                             $log.error("show transaction is not completed");
                                             // TODO: show transaction is not completed
                                         } else if (transactionResult.status === "pending") {
-                                            $log.error("show transaction is pending");
-                                            // TODO: show transaction is pending
+                                            $scope.waiting = false;
+                                            $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
+                                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                                            });
                                         } else if (transactionResult.status === "error") {
+                                            $scope.waiting = false;
                                             $log.error("show error");
                                             // TODO: show error
                                         }
@@ -120,9 +124,6 @@
                                         message.success(msg, { nsType: 'toastr' });
                                         emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                         $scope.waiting = false;
-                                        $timeout(function () {
-                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                                        }, 1000);
                                         $scope.nsOk(true);
                                     }, function (thirdPartyPromiseError) {
                                         $scope.waiting = false;
