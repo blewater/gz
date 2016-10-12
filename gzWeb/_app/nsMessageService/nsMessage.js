@@ -65,14 +65,16 @@
                     options.nsOut = scope.nsOptions.nsOut;
                     scope.nsOptions.nsOut = 'slide-left-off';
                     scope.close();
-                    message.open(options);
+                    var promise = message.open(options);
+                    promise.then(scope.nsOptions.nsResolve, scope.nsOptions.nsReject);
                 };
                 scope.nsBack = function (options) {
                     options.nsIn = 'slide-right-on';
                     options.nsOut = scope.nsOptions.nsOut;
                     scope.nsOptions.nsOut = 'slide-right-off';
                     scope.close();
-                    message.open(options);
+                    var promise = message.open(options);
+                    promise.then(scope.nsOptions.nsResolve, scope.nsOptions.nsReject);
                 };
 
                 function attachBodyHtml(html) {
