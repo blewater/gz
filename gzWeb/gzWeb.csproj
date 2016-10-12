@@ -563,6 +563,10 @@
     <Compile Include="Migrations\201610121350448_ChangeDynamicPageModel_SoftDelete_And_UseInPromoList.Designer.cs">
       <DependentUpon>201610121350448_ChangeDynamicPageModel_SoftDelete_And_UseInPromoList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610121356178_CarouselEntry_SoftDelete.cs" />
+    <Compile Include="Migrations\201610121356178_CarouselEntry_SoftDelete.Designer.cs">
+      <DependentUpon>201610121356178_CarouselEntry_SoftDelete.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1180,6 +1184,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610121350448_ChangeDynamicPageModel_SoftDelete_And_UseInPromoList.resx">
       <DependentUpon>201610121350448_ChangeDynamicPageModel_SoftDelete_And_UseInPromoList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610121356178_CarouselEntry_SoftDelete.resx">
+      <DependentUpon>201610121356178_CarouselEntry_SoftDelete.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
