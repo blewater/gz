@@ -230,19 +230,20 @@
         }
 
         function init() {
-            var loadYearsDefer = $q.defer();
-            var loadMonthsDefer = $q.defer();
-            var loadTitlesDefer = $q.defer();
+            //var loadYearsDefer = $q.defer();
+            //var loadMonthsDefer = $q.defer();
+            //var loadTitlesDefer = $q.defer();
             var loadCountriesDefer = $q.defer();
             var loadCurrenciesDefer = $q.defer();
 
-            loadYears(null, loadYearsDefer);
-            loadMonths(null, null, loadMonthsDefer);
-            loadTitles(loadTitlesDefer);
+            //loadYears(null, loadYearsDefer);
+            //loadMonths(null, null, loadMonthsDefer);
+            //loadTitles(loadTitlesDefer);
             loadCountries(loadCountriesDefer);
             loadCurrencies(loadCurrenciesDefer);
 
-            $q.all([loadYearsDefer.promise, loadMonthsDefer.promise, loadTitlesDefer.promise, loadCountriesDefer.promise, loadCurrenciesDefer.promise]).then(function () {
+            //loadYearsDefer.promise, loadMonthsDefer.promise, loadTitlesDefer.promise,
+            $q.all([loadCountriesDefer.promise, loadCurrenciesDefer.promise]).then(function () {
                 getProfile();
             });
 
