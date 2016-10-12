@@ -115,6 +115,9 @@
             applyBonus: function (parameters) {
                 return _call("/user/bonus#apply", parameters);
             },
+            getGrantedBonuses: function () {
+                return _call("/user/bonus#getGrantedBonuses");
+            },
 
             //
             // This is the first step for logged-in user to change email. Click (https://help.gammatrix-dev.net/help/Email.html) to view the flow explanation.

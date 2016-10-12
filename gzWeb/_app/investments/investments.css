@@ -254,6 +254,29 @@
 }
 
 
+.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner {
+    width: 240px;
+    max-width: 240px;
+    padding: 3px 8px;
+    background-color: #27A95C;
+}
+.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner .text-left,
+.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner .text-right {
+    font-size: 12px;
+    color: #fff;
+    opacity: 1;
+}
+.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner .row {
+     padding-top: 0; 
+     line-height: 1em; 
+}
+
+
+.investments .summary  .tooltip.summary-balance-tooltip .tooltip-arrow {
+    border-bottom-color: #27A95C;
+}
+
+
 
 .summary-vintages {
     overflow: hidden;

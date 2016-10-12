@@ -225,6 +225,17 @@ header {
     width: 100px;
 }
 
+.links .tooltip.header-balance-tooltip .tooltip-inner{
+    width: 240px;
+    max-width: 240px;
+    padding: 3px 8px;
+    background-color: #fff;
+    color: #27A95C;
+}
+.links .tooltip.header-balance-tooltip .tooltip-arrow {
+    border-bottom-color: #fff;
+}
+
 .cl-effect a {
     position: relative;
 }

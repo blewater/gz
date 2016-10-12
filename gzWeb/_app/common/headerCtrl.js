@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -103,9 +103,20 @@
             if ($scope._authData.isGamer || $scope._authData.isInvestor)
                 $scope.initials = $scope._authData.firstname.slice(0, 1) + $scope._authData.lastname.slice(0, 1);
 
-            $scope.hasGamingBalance = $scope._authData.gamingAccount !== undefined;
-            if ($scope.hasGamingBalance)
-                $scope.gamingBalance = $scope._authData.gamingAccount.amount;
+            $scope.hasGamingBalance = $scope._authData.gamingBalance !== undefined;
+            if ($scope.hasGamingBalance) {
+                $scope.gamingBalance = $scope._authData.gamingBalance;
+                $scope.gamingBalanceDetails = $sce.trustAsHtml(
+                    '<div class="row">' +
+                        '<div class="col-xs-8 text-left">Casino Wallet:</div>' +
+                        '<div class="col-xs-4 text-right">' + $filter('number')($scope._authData.gamingAccounts[0].amount, 2) + '</div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-xs-8 text-left">Casino Wallet Bonus:</div>' +
+                        '<div class="col-xs-4 text-right">' + $filter('number')($filter('sum')($filter('map')($scope._authData.gamingAccounts.slice(1), function (acc) { return acc.amount; })), 2) + '</div>' +
+                    '</div>'
+                );
+            }
             $scope.currency = $scope._authData.currency;
         }
         
