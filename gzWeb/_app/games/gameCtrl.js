@@ -35,7 +35,7 @@
                     function setGameDimensions() {
                         var percent = 0.8;
                         var windowWidth = $window.innerWidth;
-                        var windowHeight = $window.innerHeight;// - 50;
+                        var windowHeight = $window.innerHeight - 70;
                         var windowAspect = windowWidth / windowHeight;
                         var gameAspect = $scope.game.width / $scope.game.height;
                         if (windowAspect >= 1) {
