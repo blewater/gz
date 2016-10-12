@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -29,12 +30,12 @@ namespace gzDAL.Models
 
         [Required, MaxLength(100), Index("DynamicPage_Code", IsUnique = true)]
         public string Code { get; set; }
-        
+
         [Required]
+        public bool UseInPromoList { get; set; }
+
         public string ThumbImageUrl { get; set; }
-        [Required]
         public string ThumbTitle { get; set; }
-        [Required]
         public string ThumbText { get; set; }
 
         [Required]
@@ -51,12 +52,16 @@ namespace gzDAL.Models
 
         [Required, ForeignKey("DynamicPageTemplate")]
         public int DynamicPageTemplateId { get; set; }
+
         public DynamicPageTemplate DynamicPageTemplate { get; set; }
 
         [Required]
         public DateTime Updated { get; set; }
+
+        [Required, DefaultValue(false)]
+        public bool Deleted { get; set; }
     }
-    
+
 
     public class DynamicPageData
     {
