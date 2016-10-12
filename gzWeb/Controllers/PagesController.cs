@@ -20,7 +20,7 @@ namespace gzWeb.Controllers
         public IHttpActionResult Carousel()
         {
             var now = DateTime.UtcNow;
-            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo));
+            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted));
         }
 
         //[Route("Page")]
@@ -30,7 +30,7 @@ namespace gzWeb.Controllers
             var now = DateTime.UtcNow;
             return OkMsg(() =>
                 _dbContext.DynamicPages
-                          .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo)
+                          .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.UseInPromoList)
                           .Select(x => new
                           {
                               Code = x.Code,
