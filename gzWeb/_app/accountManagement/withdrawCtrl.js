@@ -87,11 +87,16 @@
                                             $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                             $scope.nsOk(true);
                                         } else if (transactionResult.status === "incomplete") {
+                                            $scope.waiting = false;
                                             message.error("Transaction is not completed!");
                                         } else if (transactionResult.status === "pending") {
                                             $scope.waiting = false;
+                                            $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+                                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                                            });
                                             $scope.setState(accountManagement.states.pendingWithdrawals);
                                         } else if (transactionResult.status === "error") {
+                                            $scope.waiting = false;
                                             message.error(transactionResult.error);
                                         }
                                     }, function (error) {
@@ -113,9 +118,6 @@
                                         var msg = "You have made the withdrawal successfully!";
                                         message.success(msg, { nsType: 'toastr' });
                                         $scope.waiting = false;
-                                        $timeout(function () {
-                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                                        }, 1000);
                                         $scope.nsOk(true);
                                     }, function (thirdPartyPromiseError) {
                                         $scope.waiting = false;

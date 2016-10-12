@@ -27,8 +27,10 @@
                 });
 
                 function transactionStatusChanged(event, args) {
-                    if (args.status === "success")
+                    if (args.status === "success") {
+                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                         $scope.$parent.nsOk({ $pid: args.pid });
+                    }
                     else if (args.status === "cancel")
                         $scope.$parent.nsCancel("Your bank has declined your transaction. Please contact your issuing bank to resolve this issue or try with another payment method or card.");
                     else
