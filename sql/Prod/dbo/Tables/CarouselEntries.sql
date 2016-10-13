@@ -11,8 +11,11 @@
     [BackgroundImageUrl] NVARCHAR (MAX) DEFAULT ('') NULL,
     [ActionType]         INT            DEFAULT ((0)) NOT NULL,
     [Updated]            DATETIME       DEFAULT ('1900-01-01T00:00:00.000') NOT NULL,
+    [Deleted]            BIT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_dbo.CarouselEntries] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

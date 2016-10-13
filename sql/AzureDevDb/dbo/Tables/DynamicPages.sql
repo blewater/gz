@@ -5,14 +5,18 @@
     [LiveFrom]              DATETIME       NOT NULL,
     [LiveTo]                DATETIME       NOT NULL,
     [Html]                  NVARCHAR (MAX) NOT NULL,
-    [ThumbImageUrl]         NVARCHAR (MAX) DEFAULT ('') NOT NULL,
-    [ThumbTitle]            NVARCHAR (MAX) DEFAULT ('') NOT NULL,
-    [ThumbText]             NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [ThumbImageUrl]         NVARCHAR (MAX) DEFAULT ('') NULL,
+    [ThumbTitle]            NVARCHAR (MAX) DEFAULT ('') NULL,
+    [ThumbText]             NVARCHAR (MAX) DEFAULT ('') NULL,
     [Updated]               DATETIME       DEFAULT ('1900-01-01T00:00:00.000') NOT NULL,
     [DynamicPageTemplateId] INT            DEFAULT ((0)) NOT NULL,
+    [UseInPromoList]        BIT            DEFAULT ((0)) NOT NULL,
+    [Deleted]               BIT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_dbo.DynamicPages] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.DynamicPages_dbo.DynamicPageTemplates_DynamicPageTemplateId] FOREIGN KEY ([DynamicPageTemplateId]) REFERENCES [dbo].[DynamicPageTemplates] ([Id]) ON DELETE CASCADE
 );
+
+
 
 
 
