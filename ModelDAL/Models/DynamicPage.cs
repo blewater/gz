@@ -34,8 +34,12 @@ namespace gzDAL.Models
         [Required]
         public bool UseInPromoList { get; set; }
 
+        [Required, MaxLength(255)]
         public string ThumbImageUrl { get; set; }
+        [Required, MaxLength(255)]
         public string ThumbTitle { get; set; }
+
+        [Required, MaxLength(2048)]
         public string ThumbText { get; set; }
 
         [Required]
@@ -72,10 +76,12 @@ namespace gzDAL.Models
         public int DynamicPageId { get; set; }
         public DynamicPage DynamicPage { get; set; }
 
-        [Required]
+        [Required, MaxLength(255)]
         public string DataName { get; set; }
-        [Required]
+
+        [Required, MaxLength(255)]
         public string DataType { get; set; }
+
         [Required]
         public string DataValue { get; set; }
     }

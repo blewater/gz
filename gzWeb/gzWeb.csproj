@@ -567,6 +567,10 @@
     <Compile Include="Migrations\201610121356178_CarouselEntry_SoftDelete.Designer.cs">
       <DependentUpon>201610121356178_CarouselEntry_SoftDelete.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610140752408_fix-field-lengths.cs" />
+    <Compile Include="Migrations\201610140752408_fix-field-lengths.Designer.cs">
+      <DependentUpon>201610140752408_fix-field-lengths.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1187,6 +1191,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610121356178_CarouselEntry_SoftDelete.resx">
       <DependentUpon>201610121356178_CarouselEntry_SoftDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610140752408_fix-field-lengths.resx">
+      <DependentUpon>201610140752408_fix-field-lengths.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

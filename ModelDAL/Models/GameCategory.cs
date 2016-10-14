@@ -12,10 +12,10 @@ namespace gzDAL.Models
         [Required, MaxLength(100), Index("GameCategory_Code", IsUnique = true)]
         public string Code { get; set; }
 
-        [Required]
+        [Required, MaxLength(255)]
         public string Title { get; set; }
 
-        [Required]
+        [Required, MaxLength(2048)]
         public string GameSlugs { get; set; }
 
         [Required]
