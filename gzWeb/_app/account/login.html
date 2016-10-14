@@ -15,23 +15,27 @@
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <input type="text" placeholder="username / email" id="usernameOrEmail" name="usernameOrEmail" class="form-control" ng-model="model.usernameOrEmail" autocomplete="off" required
-                           ng-class="{ 'empty': !model.usernameOrEmail, 'danger' : !form.usernameOrEmail.$pristine && errorMsg }"
-                           ng-focus="usernameOrEmailFocused = true" ng-blur="usernameOrEmailFocused = false" autofocus>
+                           ng-class="{ 'empty': !model.usernameOrEmail, 'danger': !form.usernameOrEmail.$pristine && (errorMsg || form.usernameOrEmail.$invalid) }"
+                           ng-focus="usernameOrEmailFocused = true" ng-blur="usernameOrEmailFocused = false" autofocus ng-pattern="/^[a-zA-Z0-9]+[a-zA-Z0-9-._]*(?!@)$|^.*@\w+\.[\w.]+$/i">
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':usernameOrEmailFocused || form.usernameOrEmail.$valid}">
                         <i class="fa fa-lg fa-user"></i>
                     </span>
                     <gz-field-ok gz-when="form.usernameOrEmail.$valid"></gz-field-ok>
+                    <div class="help-block" ng-class="{'show': usernameOrEmailFocused && !form.usernameOrEmail.$pristine && form.usernameOrEmail.$error.required}">Username or Email is required</div>
+                    <div class="help-block" ng-class="{'show': usernameOrEmailFocused && !form.usernameOrEmail.$pristine && !form.usernameOrEmail.$error.required && form.usernameOrEmail.$invalid && usernameOrEmailContainsAt()}">Email is invalid</div>
+                    <div class="help-block" ng-class="{'show': usernameOrEmailFocused && !form.usernameOrEmail.$pristine && !form.usernameOrEmail.$error.required && form.usernameOrEmail.$invalid && !usernameOrEmailContainsAt()}">Username is invalid</div>
                 </div>
             </div>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <input type="password" placeholder="********" id="password" name="password" class="form-control" ng-model="model.password" required
-                           ng-class="{ 'empty': !model.password, 'danger' : !form.password.$pristine && errorMsg }"
+                           ng-class="{ 'empty': !model.password, 'danger' : !form.password.$pristine && (errorMsg || form.password.$invalid) }"
                            ng-focus="passwordFocused = true" ng-blur="passwordFocused = false">
                     <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':passwordFocused || form.password.$valid}">
                         <i class="fa fa-lg fa-key"></i>
                     </span>
                     <gz-field-ok gz-when="form.password.$valid"></gz-field-ok>
+                    <div class="help-block" ng-class="{'show': passwordFocused && !form.password.$pristine && form.password.$error.required}">Password is required</div>
                 </div>
             </div>
 

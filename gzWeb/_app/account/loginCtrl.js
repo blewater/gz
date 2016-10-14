@@ -9,6 +9,10 @@
         $scope.waiting = false;
         $scope.responseMsg = null;
 
+        $scope.usernameOrEmailContainsAt = function () {
+            $scope.model.usernameOrEmail && $scope.model.usernameOrEmail.indexOf('@') !== -1;
+        };
+
         $scope.model = {
             usernameOrEmail: null,
             password: null,
