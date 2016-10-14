@@ -144,6 +144,7 @@
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
     <Compile Include="DTO\CustFundShareDto.cs" />
+    <Compile Include="Migrations\MigrationExtensions.cs" />
     <Compile Include="Models\CarouselEntry.cs" />
     <Compile Include="Models\DbSetExtensions.cs" />
     <Compile Include="Models\DynamicPage.cs" />
@@ -196,9 +197,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
