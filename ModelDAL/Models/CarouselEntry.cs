@@ -21,20 +21,21 @@ namespace gzDAL.Models
         [Required, MaxLength(100), Index("CarouselEntry_Code", IsUnique = true)]
         public string Code { get; set; }
 
-        [Required]
+        [Required, MaxLength(255)]
         public string Title { get; set; }
-        [Required]
+        [Required, MaxLength(255)]
         public string SubTitle { get; set; }
         
-        [Required]
+        [Required, MaxLength(255)]
         public string ActionText { get; set; }
 
-        [Required]
+        [Required, MaxLength(255)]
         public string ActionUrl { get; set; }
 
         [Required]
         public CarouselActionType ActionType { get; set; }
         
+        [ MaxLength(255)]
         public string BackgroundImageUrl { get; set; }
 
         [Required]

@@ -13,7 +13,7 @@ namespace gzDAL.Models
         [Required, MaxLength(100), Index("EmailTemplate_Code", IsUnique = true)]
         public string Code { get; set; }
 
-        [Required]
+        [Required, MaxLength(1024)]
         public string Subject { get; set; }
 
         [Required]
