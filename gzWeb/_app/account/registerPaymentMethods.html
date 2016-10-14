@@ -7,11 +7,7 @@
                 </div>
                 <div ng-repeat="step in steps" class="col-xs-4 centered">
                     <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
-                        <i class="fa step-icon" ng-class="{
-                            'fa-check-circle-o': $index < currentStep,
-                            'fa-dot-circle-o': $index === currentStep,
-                            'fa-circle-thin': $index > currentStep
-                        }"></i>
+                        <i class="fa step-icon" ng-class="{ 'fa-check-circle-o': $index < currentStep, 'fa-dot-circle-o': $index === currentStep, 'fa-circle-thin': $index > currentStep }"></i>
                         <i class="fa fa-circle step-icon-bg"></i>
                         <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
                     </div>

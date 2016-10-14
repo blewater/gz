@@ -194,6 +194,10 @@
         };
         // #endregion
 
+        $scope.checkAddressValidity = function () {
+            $scope.addresIsInvalid = $scope.model.address.split(" ").length < 2;
+        };
+
         // #region register
         $scope.submit = function () {
             if ($scope.form.$valid)
