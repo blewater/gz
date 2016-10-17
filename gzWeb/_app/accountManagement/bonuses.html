@@ -1,7 +1,66 @@
 ﻿<div class="bonuses">
-    <p class="text-frame text-frame-sm">
+    <p ng-if="grantedBonuses.length === 0" class="text-frame text-frame-sm">
         You have no active bonus at the moment. If you have received a bonus code for a free money bonus, please enter it below.
     </p>
+
+    <span class="fetching-spinner" ng-show="fetchingBonuses" us-spinner="spinnerWhite"></span>
+
+    <div ng-if="grantedBonuses.length > 0">
+        <h4>Granted bonuses</h4>
+        <div ng-repeat="bonus in grantedBonuses" class="bonus" ng-init="bonus.expanded = false;">
+            <div class="bonus-title" ng-click="bonus.expanded = !bonus.expanded;">
+                <span class="bonus-name">{{$index + 1}}. {{bonus.name}}</span>
+                <i class="bonus-icon pull-right fa fa-chevron-down" ng-class="{'fa-rotate-180': bonus.expanded}"></i>
+            </div>
+            <div class="bonus-details" ng-class="{'expanded': bonus.expanded}">
+                <hr />
+                <div>
+                    <span class="bonus-detail-label">Type</span>
+                    <span class="bonus-detail-value">{{bonus.type}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Status</span>
+                    <span class="bonus-detail-value">{{bonus.status}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Vendor</span>
+                    <span class="bonus-detail-value">{{bonus.vendor}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Amount</span>
+                    <span class="bonus-detail-value">{{bonus.amount | isoCurrency : bonus.currency : 2}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Remaining amount</span>
+                    <span class="bonus-detail-value">{{bonus.remainingAmount | isoCurrency : bonus.currency : 2}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Initial wager requirement amount</span>
+                    <span class="bonus-detail-value">{{bonus.initialWagerRequirementAmount | isoCurrency : bonus.initialWagerRequirementCurrency : 2}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Remaining wager requirement amount</span>
+                    <span class="bonus-detail-value">{{bonus.remainingWagerRequirementAmount | isoCurrency : bonus.remainingWagerRequirementCurrency : 2}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Points to collect</span>
+                    <span class="bonus-detail-value">{{bonus.pointsToCollect}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Points left to collect</span>
+                    <span class="bonus-detail-value">{{bonus.pointsLeftToCollect}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Granted date</span>
+                    <span class="bonus-detail-value">{{bonus.grantedDate | date : 'dd/MM/yy HH:mm'}}</span>
+                </div>
+                <div>
+                    <span class="bonus-detail-label">Expiry date</span>
+                    <span class="bonus-detail-value">{{bonus.expiry | date : 'dd/MM/yy HH:mm'}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
         <p>
