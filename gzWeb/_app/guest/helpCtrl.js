@@ -11,7 +11,7 @@
             {
                 name: 'My Account Section',
                 items: [
-			        { Q: "I have forgotten my username and password, what do I do?", A: "If you have forgotten your password, please use the 'Forgot Password?' option, follow the instructions and a new password will be issued to the e-mail address registered with your account. If you have forgotten your username, please contact help@greenzorro.com." },
+			        { Q: "I have forgotten my username and password, what do I do?", A: "If you have forgotten your password, please use the 'Forgot Password?' option, follow the instructions and a new password will be issued to the e-mail address registered with your account. If you have forgotten your username, please contact help-at-greenzorro-dot-com." },
 			        { Q: "Who do I contact if I have questions about my account?", A: "Please contact Customer Support by mail at help@greenzorro.com or directly via Live Chat." },
 			        { Q: "What do I do if I no longer want to use my account?", A: "For closing your account please email Customer Support at help@greenzorro.com" },
 			        { Q: "How do I change my password?", A: "You can change your password by accessing 'Change Password', under 'My Account' section, when logged in, and following the instructions on that page." },
