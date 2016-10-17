@@ -9,7 +9,7 @@
         $scope.game = null;
         $scope.gameLaunchData = null;
         $scope.gameUrl = null;
-        $scope.playForRealMoney = true;
+        var playForRealMoney = true;
 
         function loadGame() {
             //if (typeof navigator.mimeTypes['application/x-shockwave-flash'] != 'undefined') {
@@ -53,7 +53,7 @@
                         setGameDimensions();
                     });
                 
-                    emCasino.getLaunchUrl($scope.game.slug, null, $scope.playForRealMoney).then(function (launchDataResult) {
+                    emCasino.getLaunchUrl($scope.game.slug, null, playForRealMoney).then(function (launchDataResult) {
                         $scope.gameLaunchData = launchDataResult;
                         $scope.gameUrl = $sce.trustAsResourceUrl(launchDataResult.url);
                     }, logError);
