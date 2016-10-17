@@ -30,7 +30,6 @@
         $scope.sortingTypes = [alphaAsc, alphaDesc, popularityDesc, popularityAsc];
         $scope.sorting = alphaAsc;
 
-        $scope.playForRealMoney = true;
         var selectedCategoryName = "", selectedVendorName = "";
         $scope.selectedCategory = undefined;
         $scope.searchByNameTerm = "";
