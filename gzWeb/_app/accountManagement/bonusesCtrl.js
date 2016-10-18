@@ -21,13 +21,19 @@
             }
         };
 
-        //function init() {
-        //    auth.getGrantedBonuses().then(function (result) {
-        //        $scope.bonuses = result.bonuses;
-        //    }, function (error) {
-        //        message.error(error.desc);
-        //    });
-        //}
-        //init();
+        function init() {
+            fetchBonuses();
+        }
+        function fetchBonuses() {
+            $scope.fetchingBonuses = true;
+            auth.getGrantedBonuses().then(function (result) {
+                $scope.fetchingBonuses = false;
+                $scope.grantedBonuses = result.bonuses;
+            }, function (error) {
+                $scope.fetchingBonuses = false;
+                message.error(error.desc);
+            });
+        }
+        init();
     }
 })();

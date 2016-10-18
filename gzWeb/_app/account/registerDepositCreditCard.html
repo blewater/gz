@@ -1,8 +1,11 @@
 ﻿<div class="deposit-credit-card">
     <div ng-if="thereAreExistingCreditCards">
-        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="thereAreExistingCreditCards && canAddNewCreditCard">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="thereAreExistingCreditCards">
             <div class="form-group">
                 <div>Select a card</div>
+                <div ng-if="!canAddNewCreditCard" class="max-number-of-cards">
+                    Note: You have exceeded the maximum number of cards you are allowed to register. If you want to register a new one, please <a href="mailto:help@greenzorro.com">contact us</a>.
+                </div>
             </div>
         </div>
 

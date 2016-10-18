@@ -116,7 +116,7 @@
                 return _call("/user/bonus#apply", parameters);
             },
             getGrantedBonuses: function () {
-                return _call("/user/bonus#getGrantedBonuses");
+                return _call("/user/bonus#getGrantedBonuses", {});
             },
 
             //
