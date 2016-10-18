@@ -19,7 +19,7 @@
                 scope.getToastrsBottom = function() {
                     var margin = 10;
                     var $notifications = $('#ns-notifications').find('.msg').last();
-                    var i, bottom = margin;
+                    var i, bottom = 35;
                     for (i = 0; i < $notifications.length; i++)
                         bottom += (margin + $notifications[i].offsetHeight);
                     return bottom;

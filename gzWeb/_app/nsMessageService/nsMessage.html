@@ -6,7 +6,7 @@
          ng-style="{ 'z-index': getOverlayZIndex() }">
     </div>
     <div class="msg"
-         ng-class="{ 'msg-active': nsOptions.nsActive }"
+         ng-class="{ 'msg-active': nsOptions.nsActive, 'msg-minimized': isMinimized() }"
          ng-style="{ 'z-index': getMsgZIndex() }"
          ng-mouseenter="onMouseEnter()"
          ng-mouseleave="onMouseLeave()">
