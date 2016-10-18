@@ -306,6 +306,54 @@
 /* #endregion */
 
 /* #region Bonuses */
+.auth.mgmt-modal .bonuses .fetching-spinner {
+    display: flex;
+}
+
+.auth.mgmt-modal .bonuses .bonus {
+    border: 1px solid #fff;
+    padding: 10px;
+}
+.auth.mgmt-modal .bonuses .bonus .bonus-title {
+    cursor: pointer;
+}
+/*.auth.mgmt-modal .bonuses .bonus .bonus-title:hover {
+    text-decoration: underline;
+}*/
+.auth.mgmt-modal .bonuses .bonus .bonus-title .bonus-name {
+    font-weight: bold;
+}
+.auth.mgmt-modal .bonuses .bonus .bonus-title .bonus-icon {
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.auth.mgmt-modal .bonuses .bonus .bonus-details {
+    height: 0;
+    opacity: 0;
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.auth.mgmt-modal .bonuses .bonus .bonus-details.expanded {
+    height: 220px;
+    opacity: 1;
+}
+.auth.mgmt-modal .bonuses .bonus .bonus-details hr {
+    margin: 0;
+}
+.auth.mgmt-modal .bonuses .bonus .bonus-details .bonus-detail-value {
+    float: right;
+}
+
+
+
+
 .auth.mgmt-modal .bonuses form {
     margin-top: 80px;
 }

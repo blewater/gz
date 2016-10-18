@@ -1,8 +1,11 @@
 ﻿<div class="deposit-credit-card">
     <div ng-if="thereAreExistingCreditCards">
-        <div class="col-xs-12" ng-if="thereAreExistingCreditCards && canAddNewCreditCard">
+        <div class="col-xs-12" ng-if="thereAreExistingCreditCards">
             <div class="form-group">
                 <div>Select a card</div>
+                <div ng-if="!canAddNewCreditCard" class="max-number-of-cards">
+                    Note: You have exceeded the maximum number of cards you are allowed to register. If you want to register a new one, please <a href="mailto:help@greenzorro.com">contact us</a>.
+                </div>
             </div>
         </div>
 
@@ -117,7 +120,8 @@
                                ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
                                min="{{accountLimits.min}}" max="{{accountLimits.max}}"
                                ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
-                        <!--uib-tooltip-html="{{accountLimits.min}} + '&le;' + ' x ' + '&le;' + {{accountLimits.max}}"-->
+                                <!--uib-tooltip-html="{{accountLimits.min}} + '&le;' + ' x ' + '&le;' + {{accountLimits.max}}"-->
+                        </div>
                     </div>
                     <div class="col-xs-12">
                         <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>

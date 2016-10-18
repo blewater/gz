@@ -601,6 +601,14 @@
     margin-bottom: -5px;
 }
 
+.auth .max-number-of-cards {
+    font-size: 10px;
+}
+.auth .max-number-of-cards a {
+    color: #fff;
+    text-decoration: underline;
+}
+
 
 
 
