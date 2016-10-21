@@ -79,18 +79,22 @@ var APP = (function () {
                         $location.path(constants.routes.home.path);
                 });
 
-                $rootScope.$on('$routeChangeSuccess', function () {
-                    $rootScope.loading = false;
-                    $rootScope.documentTitle = constants.title;
-                    if ($route.current.$$route) {
-                        if ($route.current.$$route.title) {
-                            $rootScope.title = $route.current.$$route.title;
-                            $rootScope.documentTitle += " - " + $rootScope.title;
+                function onRouteChangeSuccess() {
+                    $timeout(function () {
+                        $rootScope.loading = false;
+                        $rootScope.documentTitle = constants.title;
+                        if ($route.current.$$route) {
+                            if ($route.current.$$route.title) {
+                                $rootScope.title = $route.current.$$route.title;
+                                $rootScope.documentTitle += " - " + $rootScope.title;
+                            }
+                            setRouteData($route.current.$$route);
                         }
-                        setRouteData($route.current.$$route);
-                    }
-                });
-
+                    });
+                };
+                onRouteChangeSuccess();
+                $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
+                
                 $rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
                 $rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
                 $rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
