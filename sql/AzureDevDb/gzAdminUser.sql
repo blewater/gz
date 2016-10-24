@@ -2,7 +2,7 @@
 CREATE LOGIN gzAdminUser WITH PASSWORD = 'xxxx'; -- saved elsewhere
 go
 
---in gzDbProd
+--in gzDevDb
 CREATE USER [gzAdminUser] FOR LOGIN [gzAdminUser]
 go
 
