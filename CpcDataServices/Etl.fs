@@ -7,6 +7,7 @@ open System.Text.RegularExpressions
 open DbUtil
 open CurrencyRates
 open NLog
+open gzCpcLib.Task
 
 module Etl = 
     // Compile type
@@ -371,6 +372,8 @@ module Etl =
         else 
             logger.Trace "No excel files were found!"
         let datedExcelFilenames = getDatedExcelfiles dirExcelFileList
+
+        (new CustomerBalanceUpdTask(isProd)).DoTask()
 
         //------------ Save excel value to database
         processExcelFiles db outFolder datedExcelFilenames rates
