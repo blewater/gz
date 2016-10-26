@@ -13,6 +13,7 @@
 .gz-carousel .gz-carousel-slides {
     overflow: hidden;
     max-width: 100%;
+    width: 100%;
 }
 
 .gz-carousel .gz-slide {
@@ -214,6 +215,7 @@
     top: calc(50% - 35px);
     margin-left: -12px;
     font-size: 5em;
+    width: 80px;
 }
 .gz-carousel .gz-carousel-control.gz-carousel-control-previous {
     left: -80px;
