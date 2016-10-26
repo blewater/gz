@@ -31,6 +31,9 @@ namespace gzDAL.Models
         [Required, MaxLength(100), Index("DynamicPage_Code", IsUnique = true)]
         public string Code { get; set; }
 
+        [Required, DefaultValue(false)]
+        public bool IsMobile { get; set; }
+
         [Required]
         public bool UseInPromoList { get; set; }
 
