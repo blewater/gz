@@ -118,6 +118,12 @@
             getGrantedBonuses: function () {
                 return _call("/user/bonus#getGrantedBonuses", {});
             },
+            forfeit: function (bonusID) {
+                return _call("/user/bonus#forfeit", { bonusID: bonusID });
+            },
+            moveToTop: function (bonusID) {
+                return _call("/user/bonus#moveToTop", { bonusID: bonusID });
+            },
 
             //
             // This is the first step for logged-in user to change email. Click (https://help.gammatrix-dev.net/help/Email.html) to view the flow explanation.
