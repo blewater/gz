@@ -45,8 +45,6 @@ let main argv =
         // Extract & Load Daily Everymatrix Report
         Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder rates
 
-        (new CustomerBalanceUpdTask(isProd)).DoTask()
-
         logger.Info("----------------------------")
         logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
 

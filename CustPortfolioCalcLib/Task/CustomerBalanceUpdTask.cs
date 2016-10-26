@@ -27,9 +27,19 @@ namespace gzCpcLib.Task {
         /// </summary>
         public CustomerBalanceUpdTask() {
 
+            InitDefaultMonthToProcess();
+
             var db = new ApplicationDbContext();
             InitializeHelperRepos(db);
 
+        }
+
+        private void InitDefaultMonthToProcess() {
+
+            string defaultMonthToProcess =
+                DateTime.UtcNow.Day == 1
+                    ? DateTime.UtcNow.AddMonths(-1).ToStringYearMonth()
+                    : DateTime.UtcNow.ToStringYearMonth();
         }
 
         /// <summary>
@@ -52,6 +62,8 @@ namespace gzCpcLib.Task {
         }
 
         /// <summary>
+        /// List of months to process.
+        /// Defaulting to previous month.
         /// YYYYMM format i.e. 201603 (March of 2016)
         /// </summary>
         public List<string> YearMonthsToProc { get; set; } = new List<string>();
@@ -63,8 +75,7 @@ namespace gzCpcLib.Task {
         /// </summary>
         public override void DoTask() {
 
-            var lastMonth = DateTime.UtcNow.AddMonths(-1).ToStringYearMonth();
-            YearMonthsToProc.Add(lastMonth);
+
             ProcessSelectively();
 
         }
@@ -86,12 +97,13 @@ namespace gzCpcLib.Task {
         /// </summary>
         public void ProcessSelectively() {
 
-// Process the world
+            // Process the world
             if (CustomerIds.Count == 0 && YearMonthsToProc.Count == 0) {
 
                 _invBalanceRepo.SaveDbAllCustomersMonthlyBalances();
             }
 
+            //--- Only Practical Production Case
             // Process all customers single month
             else if (CustomerIds.Count == 0) {
 
