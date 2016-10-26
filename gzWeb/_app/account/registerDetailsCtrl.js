@@ -195,7 +195,8 @@
         // #endregion
 
         $scope.checkAddressValidity = function () {
-            $scope.addresIsInvalid = $scope.model.address.split(" ").length < 2;
+            //$scope.addresIsInvalid = $scope.model.address.split(" ").length < 2;
+            $scope.addresIsInvalid = false;
         };
 
         // #region register
