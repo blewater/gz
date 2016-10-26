@@ -55,7 +55,10 @@
                 
                     emCasino.getLaunchUrl($scope.game.slug, null, playForRealMoney).then(function (launchDataResult) {
                         $scope.gameLaunchData = launchDataResult;
-                        $scope.gameUrl = $sce.trustAsResourceUrl(launchDataResult.url);
+                        var launchUrl = launchDataResult.url.indexOf('http://') !== -1
+                            ? launchDataResult.url.replace(/^http:\/\//i, 'https://')
+                            : launchDataResult.url;
+                        $scope.gameUrl = $sce.trustAsResourceUrl(launchUrl);
                     }, logError);
                 }, logError);
             //}
