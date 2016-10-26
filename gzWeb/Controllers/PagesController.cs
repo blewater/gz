@@ -17,20 +17,20 @@ namespace gzWeb.Controllers
 
         //[Route("Carousel")]
         [HttpGet]
-        public IHttpActionResult Carousel()
+        public IHttpActionResult Carousel(bool isMobile = false)
         {
             var now = DateTime.UtcNow;
-            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted));
+            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.IsMobile == isMobile));
         }
 
         //[Route("Page")]
         [HttpGet]
-        public IHttpActionResult Thumbnails()
+        public IHttpActionResult Thumbnails(bool isMobile = false)
         {
             var now = DateTime.UtcNow;
             return OkMsg(() =>
                 _dbContext.DynamicPages
-                          .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.UseInPromoList)
+                          .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.UseInPromoList && x.IsMobile==isMobile)
                           .Select(x => new
                           {
                               Code = x.Code,
@@ -43,13 +43,13 @@ namespace gzWeb.Controllers
         [HttpGet]
         public IHttpActionResult Page(string code)
         {
-            return OkMsg(() => _dbContext.DynamicPages.SingleOrDefault(x => x.Code == code).Html);
+            return OkMsg(() => _dbContext.DynamicPages.Single(x => x.Code == code).Html);
         }
 
         [HttpGet]
-        public IHttpActionResult Categories()
+        public IHttpActionResult Categories(bool isMobile = false)
         {
-            var dbCategories = _dbContext.GameCategories.ToList();
+            var dbCategories = _dbContext.GameCategories.Where(x=>x.IsMobile == isMobile).ToList();
             var customCategories = dbCategories.Select(x => new
             {
                 x.Code,
