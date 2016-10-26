@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'withdrawCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, $q, iso4217) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, auth) {
         $scope.model = {
             selectedCreditCard: undefined,
             amount: undefined,
@@ -13,7 +13,8 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            $scope.accountLimitMax = Math.min($scope.accountLimits.max, auth.data.gamingAccounts[0].amount);
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $filter('number')($scope.accountLimits.min, 2) + " and " + $filter('number')($scope.accountLimitMax, 2) + ")";
         }
 
         function init() {

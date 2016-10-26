@@ -58,6 +58,14 @@
                     <span class="bonus-detail-label">Expiry date</span>
                     <span class="bonus-detail-value">{{bonus.expiry | date : 'dd/MM/yy HH:mm'}}</span>
                 </div>
+                <div class="text-right">
+                    <button ng-if="$index > 0" type="button" class="btn-gz" ng-click="moveToTop($index)">
+                        <i class="fa fa-arrow-up"></i>&nbsp;<span>Move to top</span>
+                    </button>
+                    <button type="button" class="btn-gz" ng-click="forfeit($index)">
+                        <i class="fa fa-close"></i>&nbsp;<span>Forfeit</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -174,7 +174,7 @@
                 });
             }, function(error) {
                 $scope.waiting = false;
-                message.error(error.desc);
+                message.error(error);
             });
         };
         // #endregion
