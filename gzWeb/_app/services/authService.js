@@ -526,6 +526,12 @@
         factory.getGrantedBonuses = function () {
             return emWamp.getGrantedBonuses();
         }
+        factory.forfeit = function (bonusID) {
+            return emWamp.forfeit(bonusID);
+        }
+        factory.moveToTop = function (bonusID) {
+            return emWamp.moveToTop(bonusID);
+        }
         // #endregion
 
         // #region Init

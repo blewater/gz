@@ -34,7 +34,7 @@
     transition: all 0.4s linear 0s;
 }
 #ns-msgs .msg-overlay.msg-active.msg-backdrop {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(42, 42, 42, 0.6);
 }
 /*#endregion*/
 
