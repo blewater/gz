@@ -14,7 +14,7 @@
                 <span class="back-to-games" ng-click="backToGames()" title="Go back to games list"><i class="fa fa-share fa-flip-horizontal"></i></span>
                 <span class="fullscreen" ng-click="toggleFullScreen()" title="Play in fullscreen mode"><i class="fa fa-expand"></i></span>
             </div>
-            <div class="game-close" ng-style="{
+            <div class="game-close"  ng-hide="isFullscreen" ng-style="{
                 'top': getCloseTop(),
                 'right': getCloseRight()
              }">
