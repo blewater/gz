@@ -87,7 +87,7 @@
                         <!--ng-minlength="3" ng-maxlength="3"-->
                         <input type="password" placeholder="CVC" id="cardSecurityNumber" name="cardSecurityNumber" class="form-control" autocomplete="off" ng-model="model.cardSecurityNumber" required
                                ng-class="{ 'empty': !model.cardSecurityNumber, 'danger' : form.cardSecurityNumber.$invalid && !form.cardSecurityNumber.$pristine }"
-                               ng-pattern="/^[0-9]{3}$/" required
+                               ng-pattern="/^[0-9]{3}$/"
                                ng-focus="cardSecurityNumberFocused = true;" ng-blur="cardSecurityNumberFocused = false;">
                         <span class="form-control-feedback" aria-hidden="true" ng-class="{'focused':cardSecurityNumberFocused || form.cardSecurityNumber.$valid}">
                             <i class="fa fa-lg fa-credit-card"></i>

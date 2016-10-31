@@ -102,10 +102,13 @@
                                         } else if (transactionResult.status === "error") {
                                             $scope.waiting = false;
                                             $log.error("show error");
+                                            init();
                                             // TODO: show error
                                         }
                                     }, function (error) {
+                                        $scope.waiting = false;
                                         message.error(error.desc);
+                                        init();
                                     });
                                 } else if (confirmResult.status === "redirection") {
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
@@ -128,6 +131,7 @@
                                     }, function (thirdPartyPromiseError) {
                                         $scope.waiting = false;
                                         message.error(thirdPartyPromiseError);
+                                        init();
                                     });
                                 } else if (confirmResult.status === "instructions") {
                                     // TODO: instructions ...
@@ -137,6 +141,7 @@
                             }, function (error) {
                                 $scope.waiting = false;
                                 message.error(error.desc);
+                                init();
                             });
                         }, function () {
                             $scope.waiting = false;
@@ -147,95 +152,23 @@
                             nsStatic: true,
                             nsSize: 'md'
                         });
-
-
-                        //var confirmPromise = message.modal("Please confirm you want to continue with the deposit", {
-                        //    nsSize: 'md',
-                        //    nsTemplate: '_app/account/confirmTransaction.html',
-                        //    nsParams: {
-                        //        message: $scope.readConfirmMessage(prepareData)
-                        //    },
-                        //    nsStatic: true
-                        //});
-                        //confirmPromise.then(function () {
-                        //    emBanking.confirm($scope.pid).then(function (confirmResult) {
-                        //        if (confirmResult.status === "success") {
-                        //            emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
-                        //                if (transactionResult.status === "success") {
-                        //                    var msg = "You have made the deposit successfully!";
-                        //                    message.success(msg, { nsType: 'toastr' });
-                        //                    emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
-                        //                    $scope.waiting = false;
-                        //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                        //                    $scope.nsOk(true);
-                        //                    if ($location.path() === constants.routes.home.path)
-                        //                        $location.path(constants.routes.games.path).search({});
-                        //                } else if (transactionResult.status === "incomplete") {
-                        //                    $log.error("show transaction is not completed");
-                        //                    // TODO: show transaction is not completed
-                        //                } else if (transactionResult.status === "pending") {
-                        //                    $log.error("show transaction is pending");
-                        //                    // TODO: show transaction is pending
-                        //                } else if (transactionResult.status === "error") {
-                        //                    $log.error("show error");
-                        //                    // TODO: show error
-                        //                }
-                        //            }, function (error) {
-                        //                message.error(error.desc);
-                        //            });
-                        //        } else if (confirmResult.status === "redirection") {
-                        //            var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
-                        //            var thirdPartyPromise = message.open({
-                        //                nsType: 'modal',
-                        //                nsSize: 'xl',
-                        //                nsBody: html,
-                        //                nsStatic: true,
-                        //                nsParams: {
-                        //                    redirectionForm: confirmResult.redirectionForm
-                        //                },
-                        //                nsShowClose: false
-                        //            });
-                        //            thirdPartyPromise.then(function (thirdPartyPromiseResult) {
-                        //                var msg = "You have made the deposit successfully!";
-                        //                message.success(msg, { nsType: 'toastr' });
-                        //                emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
-                        //                $scope.waiting = false;
-                        //                $timeout(function () {
-                        //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                        //                }, 1000);
-                        //                $scope.nsOk(true);
-                        //            }, function (thirdPartyPromiseError) {
-                        //                $scope.waiting = false;
-                        //                message.error(thirdPartyPromiseError);
-                        //            });
-                        //        } else if (confirmResult.status === "instructions") {
-                        //            // TODO: instructions ...
-                        //        } else {
-                        //            // TODO: log error ???
-                        //        }
-                        //    }, function (error) {
-                        //        $scope.waiting = false;
-                        //        message.error(error.desc);
-                        //    });
-                        //}, function () {
-                        //    $scope.waiting = false;
-                        //    $scope.paymentMethodCfg = undefined;
-                        //    init();
-                        //});
                     } else if (prepareResult.status === "redirection") {
                         // TODO: redirection ...
                     } else {
                         // TODO: log error ???
                         $scope.waiting = false;
                         message.error("Unexpected payment method prepare status");
+                        init();
                     }
                 }, function (error) {
                     $scope.waiting = false;
                     message.error(error.desc);
+                    init();
                 });
             }, function (error) {
                 $scope.waiting = false;
                 message.error(error);
+                init();
             });
         };
         // #endregion
