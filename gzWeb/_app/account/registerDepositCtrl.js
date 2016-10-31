@@ -116,10 +116,13 @@
                                         } else if (transactionResult.status === "error") {
                                             $scope.waiting = false;
                                             $log.error("show error");
+                                            init();
                                             // TODO: show error
                                         }
                                     }, function (error) {
+                                        $scope.waiting = false;
                                         message.error(error.desc);
+                                        init();
                                     });
                                 } else if (confirmResult.status === "redirection") {
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
@@ -142,6 +145,7 @@
                                     }, function (thirdPartyPromiseError) {
                                         $scope.waiting = false;
                                         message.error(thirdPartyPromiseError);
+                                        init();
                                     });
                                 } else if (confirmResult.status === "instructions") {
                                     // TODO: instructions ...
@@ -151,6 +155,7 @@
                             }, function (error) {
                                 $scope.waiting = false;
                                 message.error(error.desc);
+                                init();
                             });
                         }, function () {
                             $scope.waiting = false;
@@ -167,14 +172,17 @@
                         // TODO: log error ???
                         $scope.waiting = false;
                         message.error("Unexpected payment method prepare status");
+                        init();
                     }
                 }, function(error) {
                     $scope.waiting = false;
                     message.error(error.desc);
+                    init();
                 });
             }, function(error) {
                 $scope.waiting = false;
                 message.error(error);
+                init();
             });
         };
         // #endregion
