@@ -9,6 +9,8 @@
 
         $scope.cardNumberLoading = true;
         $scope.cardSecurityNumberLoading = true;
+        $scope.cardNumberFocused = false;
+        $scope.cardSecurityNumberFocused = false;
 
         $scope.model = {
             selectedCreditCard: undefined,

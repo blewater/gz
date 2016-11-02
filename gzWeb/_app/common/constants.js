@@ -217,6 +217,7 @@
             ON_INIT: 'onInit',
             CONNECTION_INITIATED: 'connectionInitiated',
             AUTH_CHANGED: 'authChanged',
+            CHAT_LOADED: 'chatLoaded',
             SESSION_STATE_CHANGE: 'sessionStageChange',
             ACCOUNT_BALANCE_CHANGED: 'accountBalanceChanged',
             REQUEST_ACCOUNT_BALANCE: 'requestAccountBalance',
