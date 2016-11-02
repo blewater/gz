@@ -11,7 +11,7 @@ open gzCpcLib.Task
 
 module Etl = 
     // Compile type
-    type ExcelSchema = ExcelFile< "GM Trx 20160719.xlsx" >
+    type ExcelSchema = ExcelFile< "Losses Prod 201610 (daily31Oct2016).xlsx" >
     let logger = LogManager.GetCurrentClassLogger()
     
     /// <summary>
@@ -22,7 +22,7 @@ module Etl =
     /// <param name="folderName">The input excel folder name.</param>
     /// <returns>list of excel filenames with extension .xlsx</returns>
     let getDirExcelList (isProd : bool) (folderName : string) : string list= 
-        let fileMask = if isProd then "Gm*Prod*.xlsx" else "Gm*Stage*.xlsx"
+        let fileMask = if isProd then "Losses Prod*.xlsx" else "Losses Stage*.xlsx"
         Directory.GetFiles(folderName, fileMask) |> Array.toList
     
     /// <summary>
@@ -80,6 +80,7 @@ module Etl =
         playerRow.RealMoneyBalance <- Convert.ToDecimal(excelRow.``Real money balance``)
         if not <| isNull excelRow.Role then playerRow.Role <- excelRow.Role.ToString()
         playerRow.TotalDepositsAmount <- Convert.ToDecimal(excelRow.``Total deposits amount``)
+        //------------- TODO Last played date
         playerRow.Username <- excelRow.Username
         playerRow.YearMonth <- yearMonthDay.Substring(0, 6)
         playerRow.YearMonthDay <- yearMonthDay
