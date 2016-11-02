@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gamesCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', '$log', 'api', '$q', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers, $log, api, $q) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', '$log', 'api', '$q', '$rootScope', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers, $log, api, $q, $rootScope) {
         $controller('authCtrl', { $scope: $scope });
 
 
@@ -356,7 +356,7 @@
                         subtitle: carouselEntry.SubTitle,
                         action: carouselEntry.ActionText,
                         url: getCarouselUrl(carouselEntry),
-                        bg: gameResult.games[0].backgroundImage
+                        bg: gameResult.games[0] ? gameResult.games[0].backgroundImage : '../../Content/Images/casino-default.jpg'
                     });
                 }, function (error) {
                     $log.error(error);
@@ -366,7 +366,7 @@
         }
         function loadCarouselSlides() {
             api.call(function () {
-                return api.getCarousel();
+                return api.getCarousel($rootScope.mobile);
             }, function (response) {
                 var mapPromises = $filter('map')(
                     response.Result,
@@ -464,7 +464,7 @@
         function loadCustomCategories() {
             var deferred = $q.defer();
             api.call(function () {
-                return api.getCustomCategories();
+                return api.getCustomCategories($rootScope.mobile);
             }, function (response) {
                 $q.all($filter('map')(response.Result, loadCustomCategory)).then(function (customCategories) {
                     $scope.customCategories = customCategories;

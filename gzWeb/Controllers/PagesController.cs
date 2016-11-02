@@ -17,7 +17,7 @@ namespace gzWeb.Controllers
 
         //[Route("Carousel")]
         [HttpGet]
-        public IHttpActionResult Carousel(bool isMobile = false)
+        public IHttpActionResult Carousel(bool isMobile)
         {
             var now = DateTime.UtcNow;
             return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.IsMobile == isMobile));
@@ -25,7 +25,7 @@ namespace gzWeb.Controllers
 
         //[Route("Page")]
         [HttpGet]
-        public IHttpActionResult Thumbnails(bool isMobile = false)
+        public IHttpActionResult Thumbnails(bool isMobile)
         {
             var now = DateTime.UtcNow;
             return OkMsg(() =>
@@ -47,7 +47,7 @@ namespace gzWeb.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult Categories(bool isMobile = false)
+        public IHttpActionResult Categories(bool isMobile)
         {
             var dbCategories = _dbContext.GameCategories.Where(x=>x.IsMobile == isMobile).ToList();
             var customCategories = dbCategories.Select(x => new
