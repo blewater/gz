@@ -1,6 +1,5 @@
 ﻿<div class="row withdraw">
-    <div class="divider"></div>
-    <div class="col-xs-8 left-content">
+    <div class="col-sm-8 left-content">
         <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
             <div class="form-group text-center">
                 <h5>Make a withdrawal</h5>
@@ -26,13 +25,14 @@
             </div>
         </form>
     </div>
-    <div class="col-xs-4 right-content">
+    <div class="divider"></div>
+    <div class="col-sm-4 right-content">
         <div class="text-center">
             <h5>Other methods</h5>
         </div>
 
         <div class="payment-methods">
-            <div class="payment-method col-xs-12" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
+            <div class="payment-method col-sm-12 col-xs-6" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
                 <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
                 <div>{{method.descr}}</div>
             </div>
