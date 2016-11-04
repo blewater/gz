@@ -443,16 +443,11 @@
 }
 /* #endregion */
 
-
-
-
-
-
 /* #region Deposit/Withdraw */
 .auth.mgmt-modal .divider {
     position: fixed;
     top: 0;
-    right: 266.66666667px;
+    right: 270px;
     height: 100%;
     border-right: 1px dashed #fff;
 }
@@ -487,57 +482,24 @@
 .auth.mgmt-modal .payment-methods .payment-method:nth-of-type(odd) {
     text-align: center;
 }
-/*.auth.mgmt-modal .deposit .left-content .credit-card-holder { height: 40px; }
-.auth.mgmt-modal .deposit .left-content .credit-card-holder .selected-credit-card { 
-    width: 50px; 
-    height: 28px; 
-    float: left; 
-    border-radius: 4px; 
-    padding: 4px 5px; 
+.auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type,
+.auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type {
+    width: 100%;
 }
-.auth.mgmt-modal .deposit .left-content .credit-card-holder .selected-credit-card .selected-logo-holder { width: 40px; height: 20px; }
-
-.auth.mgmt-modal .deposit .left-content .credit-card-holder p { float: left; text-indent: 12px; font-size: 20px; }
-.auth.mgmt-modal .deposit .left-content p { display: block; font-size: 17px; }
-
-
-.auth.mgmt-modal .deposit .right-content .payment-methods { margin-top: 15px; margin-bottom: 20px; }
-.auth.mgmt-modal .deposit .right-content .payment-methods .method { 
-    display: inline-block; 
-    width: 70px; 
-    height: 40px;
-    margin-right: 10px;
-    border-radius: 4px;
-    position: relative;
-    padding: 10px;
-}
-.auth.mgmt-modal .deposit .right-content .payment-methods .method .logo-holder { 
-    position: absolute;
-    width: 50px; 
-    height: 20px; 
-}
-
-.auth.mgmt-modal .deposit .right-content p { font-size: 16px; margin-bottom: 0; }*/
-
-/* #endregion */
-
-/* #region Withdraw */
-/*.auth.mgmt-modal .withdraw .right-content { position: absolute; }
-.auth.mgmt-modal .withdraw .left-content .bank-transfer { height: 70px; width: 85%; padding: 10px; margin-top: 25px; }
-.auth.mgmt-modal .withdraw .left-content .bank-transfer-inner { height: 50px; width: 80px; float: left; padding: 5px; }
-.auth.mgmt-modal .withdraw .left-content .bank-transfer p {  font-size: 17px; }
-.auth.mgmt-modal .withdraw .left-content .bank-transfer .text-holder { float: left; margin-left: 5%; display: block; margin-top: 2px; }
-
-.auth.mgmt-modal .withdraw h4 { padding-bottom: 10px; }
-
-@media (max-width: 991px) {
-    .auth.mgmt-modal .withdraw .right-content { position: static;}
+@media (min-width: 768px) and (max-width: 991px) {
+    .auth.mgmt-modal .divider {
+        right: 220px;
+    }
 }
 @media (max-width: 767px) {
-    .auth.mgmt-modal .withdraw .left-content .bank-transfer { width: 100%; }
-    .auth.mgmt-modal .withdraw .left-content .bank-transfer p {  font-size: 12px; text-align: justify; }
-    .auth.mgmt-modal .withdraw .left-content .bank-transfer-inner { width: 50px }
-}*/
+    .auth.mgmt-modal .divider {
+        position: relative;
+        width: 100%;
+        border-top: 1px dashed #fff;
+        right: 0;
+        border-right: none;
+    }
+}
 /* #endregion */
 
 
