@@ -358,8 +358,15 @@
 .auth.mgmt-modal .bonuses .bonus .bonus-details hr {
     margin: 0;
 }
+.auth.mgmt-modal .bonuses .bonus .bonus-details .bonus-detail-label {
+    /*display: block;
+    width: 75%;*/
+}
 .auth.mgmt-modal .bonuses .bonus .bonus-details .bonus-detail-value {
     float: right;
+    /*display: block;
+    width: 25%;
+    text-align: right;*/
 }
 
 .auth.mgmt-modal .bonuses .bonus .bonus-details button.btn-gz {
@@ -400,9 +407,24 @@
 .auth.mgmt-modal .bonuses .bonus-code:-ms-input-placeholder { color: #fff; }
 
 .auth.mgmt-modal .bonuses button[type=submit] {
-    width: 180px;
+    /*width: 180px;*/
+    width: 250px;
     margin-left: 0;
     margin-right: 0;
+}
+
+@media (max-width: 767px) {
+    .auth.mgmt-modal .bonuses .bonus-code { width: 100%; }
+    .auth.mgmt-modal .bonuses button[type=submit] { width: 100%; }
+}
+@media (max-width: 450px) {
+    .auth.mgmt-modal .bonuses .bonus .bonus-details { font-size: 11px; }
+    .auth.mgmt-modal .bonuses .bonus .bonus-details.expanded { height: 350px; }
+    .auth.mgmt-modal .bonuses .bonus .bonus-details .bonus-detail-label { display: block; width: 100%; }
+    .auth.mgmt-modal .bonuses .bonus .bonus-details .bonus-detail-value { display: block; width: 100%; text-align: right; float: none; }
+}
+@media (max-width: 340px) {
+    .auth.mgmt-modal .bonuses .bonus .bonus-details { font-size: 10px; }
 }
 /*.auth.mgmt-modal .bonuses .text-holder p { font-size: 17px; margin: 0; }
 
