@@ -282,6 +282,11 @@
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
+@media (max-width: 767px) {
+    .auth.mgmt-modal .responsible-gaming .limit-btn {
+        width: 100%;
+    }
+}
 
 .auth.mgmt-modal .responsible-gaming a,
 .auth.mgmt-modal .responsible-gaming a:focus,
