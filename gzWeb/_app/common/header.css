@@ -77,8 +77,13 @@ header {
     text-shadow: 1px 1px 1px rgba(255, 255, 255, .75);
 }
 
+.user-fullname {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 40px;
+}
 .user-info {
-    margin-right: 20px;
+    /*margin-right: 20px;*/
     margin-top: 17px;
     float: left;
     position: relative;
@@ -204,6 +209,9 @@ header {
 	margin-right: 20px;
     position: relative;
 }
+/*.links ul li:last-of-type {
+	margin-right: 5px;
+}*/
 
 .links a {
     text-decoration:none;
@@ -227,10 +235,6 @@ header {
 .links a:active,
 .links a.focus {
     color:#fff;
-}
-
-.links .header-btn {
-    width: 100px;
 }
 
 .links .tooltip.header-balance-tooltip .tooltip-inner{
@@ -376,6 +380,11 @@ header {
     transform: rotate(0);
 }
 
+@media (min-width: 1200px) {
+    .links .header-btn {
+        width: 100px;
+    }
+}
 
 @media (max-width: 767px) {
     .navbar-brand {
@@ -475,13 +484,15 @@ header button.btn-gz.btn-gz-alt:hover {
 
 header .switch {
     float: right;
+    margin-left: 20px;
 }
 
 header .switch .on,
 header .switch .off {
     display: inline-block;
     padding: 5px 10px;
-    margin-top: 18px;
+    /*margin-top: 18px;*/
+    margin-top: 3px;
     border: 1px solid #fff;
     float: right;
 }
@@ -520,7 +531,7 @@ header .switch .divider {
     position: fixed;
     top: 70px;
     height: 100%;
-    width: 100%;
+    min-width: 100%;
     padding: 15px;
     color:#fff;
     /*z-index: 999999;*/
@@ -534,6 +545,7 @@ header .switch .divider {
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
     z-index: -10;
+    overflow: auto;
 }
 
 .navbar-mobile-menu.expanded {
@@ -544,7 +556,9 @@ header .switch .divider {
     background-color: #27A95C;
 }
 
-
+.navbar-menu-container {
+    min-height: 400px;
+}
     /*.navbar-nav>li {
         float: none;
     }

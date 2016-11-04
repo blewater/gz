@@ -1,70 +1,78 @@
 ﻿<script type="text/ng-template" id="navbar-menu.html">
-    <div ng-class="{'pull-right':lg}">
-        <h3 ng-hide="lg" gz-authorize="gamer,investor"><b>{{fullname}}</b></h3>
-        <div class="links">
+    <div class="navbar-menu-container" ng-class="{'pull-right':lg}">
+        <div class="absolute" style="right: 0;top: 0;">{{size}}</div>
+        <div class="col-lg-pull-12" ng-class="{'pull-right':lg}">
+            <div gz-authorize="guest" gz-match="exact" ng-class="{'text-center': sm || md}">
+                <span ng-class="{'col-xs-12':xs, 'col-sm-offset-3':sm, 'col-sm-3':sm, 'col-sm-offset-4':md, 'col-md-2':md}">
+                    <button type="button" class="btn-gz btn-gz-alt" ng-click="login()" ng-class="{'full-width':!lg}">
+                        LOGIN
+                    </button>
+                </span>
+                <span ng-class="{'col-xs-12':xs, 'col-sm-3':sm, 'col-md-2':md}">
+                    <button type="button" class="btn-gz" ng-click="signup()" ng-class="{'full-width':!lg}">
+                        SIGNUP
+                    </button>
+                </span>
+            </div>
+            <div gz-authorize="gamer,investor" class="user-info">
+                <span class="user-fullname" ng-hide="lg" gz-authorize="gamer,investor">{{fullname}}</span>
+                <div ng-class="{'pull-right':!lg}">
+                    @*<span ng-if="hasGamingBalance && !lg" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip">{{currency}} {{gamingBalance | number : 2}}</span>*@
+                    <span class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                          ng-mouseover="avatarHovered = true;" ng-mouseleave="avatarHovered = false;">
+                        <span class="user-initials img-circle">
+                            <span class="user-initials-text">{{initials}}</span>
+                        </span>
+                    </span>
+                    <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
+                        <li class="fullname"><h5><b>{{fullname}}</b></h5></li>
+                        <li role="separator" class="divider"></li>
+                        <li ng-repeat="s in accountManagementStates">
+                            <a ng-click="gotoState(s)">{{s.title}}</a>
+                        </li>
+                    </ul>
+                    <div class="switch">
+                        <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">
+                            <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />
+                        </a>
+                        <div ng-hide="routeData.investing || routeData.gaming" class="divider"></div>
+                        <a ng-class="{'on':!routeData.gaming, 'off':routeData.gaming}" ng-click="routeData.gaming || backToGames()" ng-mouseover="gamingOver = true;" ng-mouseleave="gamingOver = false;">
+                            <img ng-src="{{routeData.gaming ? gamesImgOff : gamesImgOn}}" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="links col-lg-push-12">
             <nav class="cl-effect">
-                <ul gz-authorize="guest" gz-match="exact">
+                <ul gz-authorize="guest" gz-match="exact" ng-class="{'text-center':!lg}">
                     <li ng-repeat="route in routes.guest">
                         <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                     </li>
                 </ul>
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
-                    <li ng-if="hasGamingBalance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip">{{currency}} {{gamingBalance | number : 2}}</li>
-                    <li>
-                        <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="deposit()">
-                            DEPOSIT
-                        </button>
-                        <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="withdraw()">
-                            WITHDRAW
-                        </button>
+                    <li ng-if="hasGamingBalance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip" ng-class="{'text-center':!lg}">
+                        {{currency}} {{gamingBalance | number : 2}}
+                    </li>
+                    <li ng-class="{'text-center': sm || md}">
+                        <span ng-class="{'col-xs-12':xs, 'col-sm-offset-3':sm, 'col-sm-3':sm, 'col-sm-offset-4':md, 'col-md-2':md}">
+                            <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="deposit()" ng-class="{'full-width':!lg}">
+                                DEPOSIT
+                            </button>
+                        </span>
+                        <span ng-class="{'col-xs-12':xs, 'col-sm-3':sm, 'col-md-2':md}">
+                            <button type="button" class="btn-gz btn-gz-alt header-btn" ng-click="withdraw()" ng-class="{'full-width':!lg}">
+                                WITHDRAW
+                            </button>
+                        </span>
                     </li>
                 </ul>
-                <ul gz-authorize="investor" ng-show="routeData.investing">
+                <ul gz-authorize="investor" ng-show="routeData.investing" ng-class="{'text-center':!lg}">
                     <li ng-repeat="route in routes.investment">
                         <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                     </li>
                 </ul>
             </nav>
-        </div>
-        <div ng-class="{'pull-right':lg,'pull-left':!lg}">
-            @*<button type="button" gz-authorize="gamer" gz-not-authorize="investor" gz-match="exact" class="btn-gz" ng-click="connectToInvestment()">
-                    RETRY TO CONNECT
-                </button>
-                <button type="button" gz-authorize="investor" gz-not-autorize="gamer" gz-match="exact" class="btn-gz" ng-click="connectToGames()">
-                    RETRY TO CONNECT
-                </button>*@
-            <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz btn-gz-alt" ng-click="login()">
-                LOGIN
-            </button>
-            <button type="button" gz-authorize="guest" gz-match="exact" class="btn-gz" ng-click="signup()">
-                SIGNUP
-            </button>
-            <span gz-authorize="gamer,investor" class="user-info">
-                <span class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                      ng-mouseover="avatarHovered = true;" ng-mouseleave="avatarHovered = false;">
-                    <span class="user-initials img-circle">
-                        <span class="user-initials-text">{{initials}}</span>
-                    </span>
-                </span>
-                <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
-                    <li class="fullname"><h5><b>{{fullname}}</b></h5></li>
-                    <li role="separator" class="divider"></li>
-                    <li ng-repeat="s in accountManagementStates">
-                        <a ng-click="gotoState(s)">{{s.title}}</a>
-                    </li>
-                    @*<li><a ng-click="changePassword()">Change Password</a></li>
-                    <li><a ng-click="logout()">Logout</a></li>*@
-                </ul>
-            </span>
-            <div gz-authorize="gamer,investor" class="switch">
-                <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">
-                    <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />
-                </a>
-                <div ng-hide="routeData.investing || routeData.gaming" class="divider"></div>
-                <a ng-class="{'on':!routeData.gaming, 'off':routeData.gaming}" ng-click="routeData.gaming || backToGames()" ng-mouseover="gamingOver = true;" ng-mouseleave="gamingOver = false;">
-                    <img ng-src="{{routeData.gaming ? gamesImgOff : gamesImgOn}}" />
-                </a>
-            </div>
         </div>
     </div>
 </script>
