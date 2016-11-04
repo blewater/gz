@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'bonusesCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'auth', 'message', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, constants, auth, message, $filter) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'auth', 'message', '$filter', '$rootScope', ctrlFactory]);
+    function ctrlFactory($scope, constants, auth, message, $filter, $rootScope) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -11,6 +11,7 @@
             if ($scope.form.$valid) {
                 $scope.applyingBonus = true;
                 auth.applyBonus($scope.bonusCode).then(function () {
+                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                     $scope.applyingBonus = false;
                     $scope.bonusCode = '';
                     init();
@@ -40,6 +41,7 @@
         $scope.forfeit = function (index) {
             message.confirm("Are you sure you want to continue?", function () {
                 auth.forfeit($scope.grantedBonuses[index].id).then(function () {
+                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                     $scope.grantedBonuses.splice(index, 1);
                 });
             }, angular.noop, {
