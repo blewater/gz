@@ -34,7 +34,7 @@
                 </tr>
             </thead>
             <tbody class="bg-light-grey">
-                <tr class="text-gz" ng-repeat="trx in transactions track by trx.id">
+                <tr class="text-gz" ng-repeat="trx in transactions track by $index">
                     <td class="text-center">{{trx.id}}</td>
                     <td class="text-center">{{trx.date}}</td>
                     <td class="text-right">{{trx.amount}}</td>
