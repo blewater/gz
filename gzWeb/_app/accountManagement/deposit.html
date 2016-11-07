@@ -32,7 +32,7 @@
         </div>
 
         <div class="payment-methods">
-            <div class="payment-method col-sm-12 col-xs-6" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod">
+            <div class="payment-method col-sm-12 col-xs-6" ng-repeat="method in paymentMethods" ng-if="method !== selectedMethod" ng-class="{'single':paymentMethods.length === 2}">
                 <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
             </div>
             <div class="col-xs-12 text-center" ng-if="paymentMethods.length === 1">-</div>

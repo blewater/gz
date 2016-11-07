@@ -482,8 +482,12 @@
 .auth.mgmt-modal .payment-methods .payment-method:nth-of-type(odd) {
     text-align: center;
 }
-.auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type,
+/*.auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type,
 .auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type {
+    width: 100%;
+}*/
+.auth.mgmt-modal .payment-methods .payment-method.col-xs-6.single,
+.auth.mgmt-modal .payment-methods .payment-method.col-xs-6.single {
     width: 100%;
 }
 @media (min-width: 768px) and (max-width: 991px) {
