@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('chat', [serviceFactory]);
-    function serviceFactory() {
+    APP.factory('chat', ['$rootScope', 'constants', serviceFactory]);
+    function serviceFactory($rootScope, constants) {
         var _duration = 400;
 
         var service = {
@@ -22,7 +22,8 @@
         }
 
         function _onLoad() {
-            show();
+            //show();
+            $rootScope.$broadcast(constants.events.CHAT_LOADED);
         }
 
         function init() {

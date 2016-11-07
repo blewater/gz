@@ -88,10 +88,10 @@
                             .delay(duration / 4)
                             .duration(duration / 2)
                             .ease(d3.easeLinear)
-                            .attrTween("d", function (_d) {
-                                var i = d3.interpolate(_d.outerRadius, outerRadius);
+                            .attrTween("d", function (d) {
+                                var i = d3.interpolate(d.outerRadius, outerRadius);
                                 return function (t) {
-                                    return arc.outerRadius(i(t))(_d);
+                                    return arc.outerRadius(i(t))(d);
                                 };
                             });
                         el.select("text")

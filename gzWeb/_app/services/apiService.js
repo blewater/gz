@@ -119,17 +119,17 @@
         // #endregion
 
         // #region Games
-        factory.getCarousel = function () {
-            return $http.get('/api/pages/carousel');
+        factory.getCarousel = function (mobile) {
+            return $http.get('/api/pages/carousel', { params: { isMobile: mobile } });
         };
-        factory.getCustomCategories = function () {
-            return $http.get('/api/pages/categories');
+        factory.getCustomCategories = function (mobile) {
+            return $http.get('/api/pages/categories', { params: { isMobile: mobile } });
         };
         // #endregion
 
         // #region Promotions
-        factory.getThumbnails = function () {
-            return $http.get('/api/pages/thumbnails');
+        factory.getThumbnails = function (mobile) {
+            return $http.get('/api/pages/thumbnails', { params: { isMobile: mobile } });
         };
         factory.getPage = function (code) {
             return $http.get('/api/pages/page', { params: { code: code} });
