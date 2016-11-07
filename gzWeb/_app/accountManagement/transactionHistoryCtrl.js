@@ -6,10 +6,18 @@
         // #region Transaction Types
 
         // #region Common Functions
-        function getId(trx) { return trx.transactionID; }
-        function getDate(trx) { return $filter('date')(trx.time, 'dd/MM/yy HH:mm'); }
-        function getAmount(amount, currency) { return $filter('isoCurrency')(amount, currency, 2); }
-        function getStatus(trx) { return trx.status || 'Success'; }
+        function getId(trx) {
+            return trx.transactionID;
+        }
+        function getDate(trx) {
+            return $filter('date')(moment.utc(trx.time).toDate(), 'dd/MM/yy HH:mm');
+        }
+        function getAmount(amount, currency) {
+            return $filter('isoCurrency')(amount, currency, 2);
+        }
+        function getStatus(trx) {
+            return trx.status || 'Success';
+        }
         // #endregion
 
         // #region Deposit
