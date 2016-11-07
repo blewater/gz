@@ -408,6 +408,21 @@
     to { transform: rotate(360deg); }
 }
 
+@media (max-width: 767px) {
+    .categories .category .game a .game-info .game-play {
+        line-height: 30px;
+        width: 30px;
+        height: 30px;
+        top: calc(50% - 5px);
+        left: calc(50% - 15px);
+        font-size: 16px;
+    }
+    .categories .category .game a .game-info .game-play:before {
+        font-size: 16px;
+        line-height: 30px;
+    }
+}
+
 
 
 .play-arrow {
@@ -658,6 +673,27 @@
     width: 100%;
     text-align: center;
     z-index: -1;
+}
+
+
+.fullscreen-hud {
+    color: #27A95C;
+    position: fixed;
+    z-index: 10000000000000;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+}
+.fullscreen-hud i.fa {
+    margin-right: 10px;
+}
+.fullscreen-hud .exit {
+    /*margin-right: 40px;*/
+    cursor: pointer;
+}
+.fullscreen-hud .clock {
+    width: 75px;
+    margin-right: 20px;
 }
 /* #endregion */
 
