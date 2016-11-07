@@ -37,10 +37,11 @@
         $scope.getExpiration = function (limit, queued) {
             return limit && limit.current
                 ? limit.current.expiryDate
-                    ? (queued ? "from " : "until ") + $filter('date')(limit.current.expiryDate, $rootScope.xs ? 'short' : 'medium')
+                    ? (queued ? "from " : "until ") + $filter('date')(moment.utc(limit.current.expiryDate).toDate(), $rootScope.xs ? 'short' : 'medium')
                     : angular.isUndefined(limit.current.expiryDate) ? "" : "No expiration"
                 : "";
         };
+
 
         function init() {
             getCurrency();

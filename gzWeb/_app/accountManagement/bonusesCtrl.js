@@ -31,6 +31,16 @@
             auth.getGrantedBonuses().then(function (result) {
                 $scope.fetchingBonuses = false;
                 $scope.grantedBonuses = result.bonuses;
+                for (var i = 0; i < $scope.grantedBonuses.length; i++) {
+                    $scope.grantedBonuses[i].localGrantedDate =
+                        $scope.grantedBonuses[i].grantedDate
+                        ? $filter('date')(moment.utc($scope.grantedBonuses[i].grantedDate).toDate(), 'dd/MM/yy HH:mm')
+                        : undefined;
+                    $scope.grantedBonuses[i].localExpiry =
+                        $scope.grantedBonuses[i].expiry
+                        ? $filter('date')(moment.utc($scope.grantedBonuses[i].expiry).toDate(), 'dd/MM/yy HH:mm')
+                        : 'No expiration';
+                }
             }, function (error) {
                 $scope.fetchingBonuses = false;
                 message.error(error.desc);

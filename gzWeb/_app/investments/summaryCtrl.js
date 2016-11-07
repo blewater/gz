@@ -84,6 +84,7 @@
                 return api.getSummaryData();
             }, function (response) {
                 $scope.model = response.Result;
+                $scope.model.StatusAsOfLocal = $filter('date')(moment.utc($scope.model.StatusAsOf).toDate(), 'MMM d, h:mm a');
                 $scope.model.OkToWithdraw = false;
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            

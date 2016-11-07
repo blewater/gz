@@ -52,11 +52,11 @@
                 </div>
                 <div>
                     <span class="bonus-detail-label">Granted date</span>
-                    <span class="bonus-detail-value">{{bonus.grantedDate | date : 'dd/MM/yy HH:mm'}}</span>
+                    <span class="bonus-detail-value">{{bonus.localGrantedDate}}</span>
                 </div>
                 <div>
                     <span class="bonus-detail-label">Expiry date</span>
-                    <span class="bonus-detail-value">{{bonus.expiry | date : 'dd/MM/yy HH:mm'}}</span>
+                    <span class="bonus-detail-value">{{bonus.localExpiry}}</span>
                 </div>
                 <div class="text-right">
                     <button ng-if="$index > 0" type="button" class="btn-gz" ng-click="moveToTop($index)">
