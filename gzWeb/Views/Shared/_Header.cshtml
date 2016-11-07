@@ -18,31 +18,28 @@
         <div class="col-lg-push-12" ng-class="{'pull-right':lg}">
             <div ng-if="lg" ng-include src="'login-signup.html'"></div>
             <div gz-authorize="gamer,investor" class="user-info">
-                <span class="user-fullname" ng-hide="lg" gz-authorize="gamer,investor">{{fullname}}</span>
-                <div ng-class="{'pull-right':!lg}">
-                    @*<span ng-if="hasGamingBalance && !lg" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip">{{currency}} {{gamingBalance | number : 2}}</span>*@
-                    <span class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                          ng-mouseover="avatarHovered = true;" ng-mouseleave="avatarHovered = false;">
-                        <span class="user-initials img-circle">
-                            <span class="user-initials-text">{{initials}}</span>
-                        </span>
+                @*<span class="user-fullname" ng-hide="lg" gz-authorize="gamer,investor">{{fullname}}</span>*@
+                <span class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                      ng-mouseover="avatarHovered = true;" ng-mouseleave="avatarHovered = false;">
+                    <span class="user-initials img-circle">
+                        <span class="user-initials-text">{{initials}}</span>
                     </span>
-                    <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
-                        <li class="fullname"><h5><b>{{fullname}}</b></h5></li>
-                        <li role="separator" class="divider"></li>
-                        <li ng-repeat="s in accountManagementStates">
-                            <a ng-click="gotoState(s)">{{s.title}}</a>
-                        </li>
-                    </ul>
-                    <div class="switch">
-                        <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">
-                            <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />
-                        </a>
-                        <div ng-hide="routeData.investing || routeData.gaming" class="divider"></div>
-                        <a ng-class="{'on':!routeData.gaming, 'off':routeData.gaming}" ng-click="routeData.gaming || backToGames()" ng-mouseover="gamingOver = true;" ng-mouseleave="gamingOver = false;">
-                            <img ng-src="{{routeData.gaming ? gamesImgOff : gamesImgOn}}" />
-                        </a>
-                    </div>
+                </span>
+                <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
+                    <li class="fullname"><h5><b>{{fullname}}</b></h5></li>
+                    <li role="separator" class="divider"></li>
+                    <li ng-repeat="s in accountManagementStates">
+                        <a ng-click="gotoState(s)">{{s.title}}</a>
+                    </li>
+                </ul>
+                <div class="switch" ng-class="{'pull-right':!lg}">
+                    <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">
+                        <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />
+                    </a>
+                    <div ng-hide="routeData.investing || routeData.gaming" class="divider"></div>
+                    <a ng-class="{'on':!routeData.gaming, 'off':routeData.gaming}" ng-click="routeData.gaming || backToGames()" ng-mouseover="gamingOver = true;" ng-mouseleave="gamingOver = false;">
+                        <img ng-src="{{routeData.gaming ? gamesImgOff : gamesImgOn}}" />
+                    </a>
                 </div>
             </div>
         </div>
