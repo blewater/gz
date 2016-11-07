@@ -1,11 +1,11 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'promotionsCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', 'constants', '$location', ctrlFactory]);
-    function ctrlFactory($scope, api, constants, $location) {
+    APP.controller(ctrlId, ['$scope', 'api', 'constants', '$location', '$rootScope', ctrlFactory]);
+    function ctrlFactory($scope, api, constants, $location, $rootScope) {
         function loadThumbnails() {
             api.call(function () {
-                return api.getThumbnails();
+                return api.getThumbnails($rootScope.mobile);
             }, function (response) {
                 $scope.thumbnails = response.Result;
             });

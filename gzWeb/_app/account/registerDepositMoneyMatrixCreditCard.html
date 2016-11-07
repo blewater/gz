@@ -46,7 +46,7 @@
                         </div>
                     </div>
                     <div class="col-xs-12">
-                        <div class="help-block" ng-class="{'show': cardNumberFocused !== undefined && cardNumberValidity === false}">Card Number is invalid</div>
+                        <div class="help-block" ng-class="{'show': cardNumberFocused === true && cardNumberValidity === false}">Card Number is invalid</div>
                     </div>
                 </div>
                 <gz-field-ok gz-when="cardNumberValidity === true"></gz-field-ok>
@@ -97,7 +97,7 @@
                     </div>
                     <div class="col-xs-12">
                         <div class="help-block" ng-class="{'show': (!form.cardExpiryMonth.$pristine && form.cardExpiryMonth.$error.required) || (!form.cardExpiryYear.$pristine && form.cardExpiryYear.$error.required)}">Card Expiry Date is required</div>
-                        <div class="help-block" ng-class="{'show': cardSecurityNumberFocused !== undefined && cardSecurityNumberValidity === false}">Card Security Number is invalid</div>
+                        <div class="help-block" ng-class="{'show': cardSecurityNumberFocused === true && cardSecurityNumberValidity === false}">Card Security Number is invalid</div>
                     </div>
                 </div>
                 <gz-field-ok gz-when="form.cardExpiryMonth.$valid && form.cardExpiryYear.$valid && cardSecurityNumberValidity"></gz-field-ok>

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gameCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', '$log', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', '$log', 'chat', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log, chat) {
         $controller('authCtrl', { $scope: $scope });
 
         var searchParams = null;
@@ -36,15 +36,21 @@
                         var percent = 0.8;
                         var windowWidth = $window.innerWidth;
                         var windowHeight = $window.innerHeight - 70;
-                        var windowAspect = windowWidth / windowHeight;
-                        var gameAspect = $scope.game.width / $scope.game.height;
-                        if (windowAspect >= 1) {
-                            $scope.gameHeight = Math.round(windowHeight * percent);
-                            $scope.gameWidth= Math.round($scope.gameHeight * gameAspect);
+                        if ($rootScope.mobile) {
+                            $scope.gameWidth = windowWidth;
+                            $scope.gameHeight = windowHeight;
                         }
                         else {
-                            $scope.gameWidth = Math.round(windowWidth * percent);
-                            $scope.gameHeight = Math.round($scope.gameWidth / gameAspect);
+                            var windowAspect = windowWidth / windowHeight;
+                            var gameAspect = $scope.game.width / $scope.game.height;
+                            if (windowAspect >= 1) {
+                                $scope.gameHeight = Math.round(windowHeight * percent);
+                                $scope.gameWidth = Math.round($scope.gameHeight * gameAspect);
+                            }
+                            else {
+                                $scope.gameWidth = Math.round(windowWidth * percent);
+                                $scope.gameHeight = Math.round($scope.gameWidth / gameAspect);
+                            }
                         }
                     }
 
@@ -59,17 +65,22 @@
                             ? launchDataResult.url.replace(/^http:\/\//i, 'https://')
                             : launchDataResult.url;
                         $scope.gameUrl = $sce.trustAsResourceUrl(launchUrl);
+
+                        if ($rootScope.mobile)
+                            $scope.openFullscreen();
+                        else
+                            $scope.isFullscreen = false;
                     }, logError);
                 }, logError);
             //}
         }
 
         $scope.getGameWidth = function () {
-            return $scope.isFullscreen ? '100%' : $scope.gameWidth;
+            return $scope.isFullscreen && !$rootScope.mobile ? '100%' : $scope.gameWidth;
         };
 
         $scope.getGameHeight = function () {
-            return $scope.isFullscreen ? '100%' : $scope.gameHeight;
+            return $scope.isFullscreen && !$rootScope.mobile ? '100%' : $scope.gameHeight;
         };
 
         $scope._init(function () {
@@ -80,6 +91,13 @@
             setClock();
         });
 
+        $rootScope.$on(constants.events.CHAT_LOADED, function () {
+            if ($rootScope.mobile)
+                chat.hide();
+            else
+                chat.show();
+        });
+
         function setClock() {
             var tickInterval = 1000;
             var tick = function () { $scope.clock = Date.now(); }
@@ -87,9 +105,16 @@
             tick();
         }
 
-        $scope.isFullscreen = false;
-        $scope.toggleFullScreen = function () {
-            $scope.isFullscreen = !$scope.isFullscreen;
+        $scope.openFullscreen = function () {
+            chat.hide();
+            $scope.isFullscreen = true;
+        }
+        $scope.exitFullscreen = function () {
+            chat.show();
+            if ($rootScope.mobile)
+                $scope.backToGames();
+            else
+                $scope.isFullscreen = false;
         }
 
         $scope.backToGames = function () {
@@ -106,7 +131,7 @@
         };
 
         $scope.getGameTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameHeight / 2) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '70px' : 'calc(50% - ' + ($scope.gameHeight / 2) + 'px)';
         };
         $scope.getGameRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';

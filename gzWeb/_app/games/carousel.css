@@ -215,8 +215,16 @@
     top: calc(50% - 35px);
     margin-left: -12px;
     font-size: 5em;
-    width: 80px;
+    /*width: 80px;*/
 }
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .gz-carousel .gz-carousel-control i.fa { width: 80px; }
+}
+@supports (-ms-accelerator:true) {
+    .gz-carousel .gz-carousel-control i.fa { width: 80px; }
+}
+
+
 .gz-carousel .gz-carousel-control.gz-carousel-control-previous {
     left: -80px;
     background: -webkit-linear-gradient(left, transparent, rgba(0, 0, 0, 0.4));

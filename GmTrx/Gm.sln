@@ -9,6 +9,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CpcDataServices", "..\CpcDa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustPortfolioCalcLib", "..\CustPortfolioCalcLib\CustPortfolioCalcLib.csproj", "{BA006926-CA0A-4F9C-B4F6-675C28621359}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GmFsTests", "..\GmFsTests\GmFsTests.fsproj", "{DC51F359-5194-4C16-BDEA-E16BC48FCB70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,12 @@ Global
 		{BA006926-CA0A-4F9C-B4F6-675C28621359}.Production|Any CPU.Build.0 = Production|Any CPU
 		{BA006926-CA0A-4F9C-B4F6-675C28621359}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA006926-CA0A-4F9C-B4F6-675C28621359}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC51F359-5194-4C16-BDEA-E16BC48FCB70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC51F359-5194-4C16-BDEA-E16BC48FCB70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC51F359-5194-4C16-BDEA-E16BC48FCB70}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{DC51F359-5194-4C16-BDEA-E16BC48FCB70}.Production|Any CPU.Build.0 = Production|Any CPU
+		{DC51F359-5194-4C16-BDEA-E16BC48FCB70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC51F359-5194-4C16-BDEA-E16BC48FCB70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

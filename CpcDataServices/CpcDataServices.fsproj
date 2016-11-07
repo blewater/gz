@@ -68,10 +68,10 @@
     <Compile Include="CurrencyRates.fs" />
     <Compile Include="Etl.fs" />
     <Content Include="packages.config" />
-    <None Include="GM Trx 20160719.xlsx" />
     <None Include="openexchangerates.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Losses Prod 201610 %28daily31Oct2016%29.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
