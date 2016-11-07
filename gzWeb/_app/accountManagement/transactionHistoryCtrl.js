@@ -60,7 +60,31 @@
         };
         // #endregion
 
-        $scope.transactionTypes = [deposit, withdraw];//, transfer, buddyTransfer];
+        // #region BuddyTransfer
+        var gamblingTransfer = {
+            name: 'Gambling',
+            display: 'Gambling',
+            getId: getId,
+            getDate: getDate,
+            getAmount: function (trx) {
+                var currency = trx.credit === undefined ? trx.debit.currency : trx.credit.currency;
+                return (trx.credit === undefined
+                            ? "-" + getAmount(trx.debit.amount, trx.debit.currency)
+                            : getAmount(trx.credit.amount, trx.credit.currency)
+                    ) + " / " +
+                    $filter('isoCurrency')(trx.balance, currency, 2);
+
+            },
+            getDescription: function(trx) {
+                return (trx.credit === undefined
+                    ? trx.debit.name
+                    : trx.credit.name) + " - " + trx.description;
+            },
+            getStatus: getStatus
+        };
+        // #endregion
+
+        $scope.transactionTypes = [deposit, withdraw, gamblingTransfer];//, transfer, buddyTransfer];
         // #endregion
 
         var pageSize = 10;
@@ -81,6 +105,7 @@
         }
 
         $scope.search = function (page) {
+           
             emBanking.getTransactionHistory($scope.type.name, $scope.startTime.toISOString(), $scope.endTime.toISOString(), page, pageSize).then(function (response) {
                 $timeout(function () {
                     $scope.pageIndex = response.currentPageIndex;
