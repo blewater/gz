@@ -559,18 +559,7 @@ header .switch .divider {
     background-color: #27A95C;
 }
 
-.navbar-menu-container {
+.navbar-mobile-menu .navbar-menu-container {
     min-height: 400px;
 }
-    /*.navbar-nav>li {
-        float: none;
-    }
-    .navbar-nav>li>a {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-    .navbar-text {
-        float: none;
-        margin: 15px 0;
-    }*/
 
