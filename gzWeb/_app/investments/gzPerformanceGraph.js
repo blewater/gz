@@ -158,22 +158,23 @@
                         .attr("y1", "0%")
                         .attr("x2", "100%")
                         .attr("y2", "0%")
-                        .attr("spreadMethod", "pad");
+                        .attr("spreadMethod", "pad")
+                        .attr("gradientUnits", "userSpaceOnUse");
 
                     gradient.append("stop")
-                        .attr("offset", "0%")
+                        .attr("stop-opacity", opacityStart)
                         .attr("stop-color", "#27A95C")
-                        .attr("stop-opacity", opacityStart);
+                        .attr("offset", "0%");
 
                     gradient.append("stop")
-                        .attr("offset", "30%")
+                        .attr("stop-opacity", opacityMiddle)
                         .attr("stop-color", "#27A95C")
-                        .attr("stop-opacity", opacityMiddle);
+                        .attr("offset", "30%");
 
                     gradient.append("stop")
-                        .attr("offset", "100%")
+                        .attr("stop-opacity", opacityEnd)
                         .attr("stop-color", "#27A95C")
-                        .attr("stop-opacity", opacityEnd);
+                        .attr("offset", "100%");
                 }
 
                 function initGraph() {
@@ -308,15 +309,14 @@
                         .style("text-anchor", "middle")
                         .text("Projected Value");
 
-
                     area3Element = svg.append("path")
-                        .style("fill", "url(" + $location.absUrl() + "#gradient3")
+                        .attr("style", "fill:url(" + $location.absUrl() + "#gradient3")
                         .attr("d", area3(data));
                     area2Element = svg.append("path")
-                        .style("fill", "url(" + $location.absUrl() + "#gradient2")
+                        .attr("style", "fill:url(" + $location.absUrl() + "#gradient2")
                         .attr("d", area2(data));
                     areaElement = svg.append("path")
-                        .style("fill", "url(" + $location.absUrl() + "#gradient1")
+                        .attr("style", "fill:url(" + $location.absUrl() + "#gradient1")
                         .attr("d", area(data));
 
                     avgElement = svg.append("path")
