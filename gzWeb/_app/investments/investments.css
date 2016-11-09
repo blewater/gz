@@ -841,7 +841,7 @@
 }
 .investments .performance #canvas .axis line { display: none; }
 .investments .performance #canvas .axis path { display: none; }
-.investments .performance #canvas .axis text { font-weight: bold; text-transform: uppercase; }
+.investments .performance #canvas .axis text { font-weight: bold; }
 .investments .performance #canvas .axis-title { font-size: 1.4em; }
 .investments .performance #canvas .line {
     fill: none;
