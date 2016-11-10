@@ -5,6 +5,7 @@
     function ctrlFactory($scope, $q, iso4217) {
         $scope.model = {
             amount: undefined,
+            bonusCode: undefined
         };
 
         function loadCreditCardInfo() {
@@ -23,6 +24,7 @@
                 gamingAccountID: $scope.gamingAccount.id,
                 currency: $scope.currency,
                 amount: $scope.model.amount,
+                bonusCode: $scope.model.bonusCode
             };
         }
 

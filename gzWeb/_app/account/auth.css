@@ -609,6 +609,11 @@
     text-decoration: underline;
 }
 
+.auth .payment-methods .payment-method.col-xs-6.single,
+.auth .payment-methods .payment-method.col-xs-6.single {
+    text-align: center;
+    width: 100%;
+}
 
 
 
