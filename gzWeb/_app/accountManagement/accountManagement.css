@@ -36,7 +36,8 @@
 .auth.mgmt-modal .mgmt-menu {
     color: #fff;
     padding: 40px 20px;
-    position: fixed;
+    /*position: fixed;*/
+    position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
@@ -56,6 +57,7 @@
 
 .auth.mgmt-modal nav .nav-menu li {
     margin-bottom: 6px;
+    height: 22px;
 }
 
 /*.auth.mgmt-modal nav .nav-menu li .btn-mgmt-menu-xs .ico-active {
@@ -73,6 +75,10 @@
     margin-left: 60px;
 }*/
 
+.auth.mgmt-modal nav .nav-menu li:nth-of-type(1),
+.auth.mgmt-modal nav .nav-menu li:nth-of-type(2) {
+    height: 45px;
+}
 .auth.mgmt-modal nav .nav-menu li:nth-of-type(3) {
     margin-top: 30px;
 }
@@ -117,6 +123,7 @@
     -ms-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;*/
+    position: fixed;
 }
 .auth.mgmt-modal nav .nav-menu li a.btn-style.active {
     width: 190px;
@@ -168,7 +175,8 @@
 
 /* #region Content */
 .auth.mgmt-modal .mgmt-content {
-    position: fixed;
+    /*position: fixed;*/
+    position: absolute;
     padding: 40px 20px;
     right: 0;
     top: 0;
@@ -486,10 +494,6 @@
 .auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type {
     width: 100%;
 }*/
-.auth.mgmt-modal .payment-methods .payment-method.col-xs-6.single,
-.auth.mgmt-modal .payment-methods .payment-method.col-xs-6.single {
-    width: 100%;
-}
 @media (min-width: 768px) and (max-width: 991px) {
     .auth.mgmt-modal .divider {
         right: 220px;
