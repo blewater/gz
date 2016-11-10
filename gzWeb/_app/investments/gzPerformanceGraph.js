@@ -333,6 +333,73 @@
                         .attr("height", graphRectHeight)
                         .attr("transform", function () {
                             return "translate(" + 0 + "," + -margin.top + ")";
+                        })
+                        .on("touchstart", function () {
+                            var startTime = new Date().getTime();
+                            var initialTouchPosition = d3.touches(this)[0];
+
+                            projections.classed("active", true);
+                            graphRect.on("touchmove", onTouchMove);
+                            d3.event.preventDefault();
+                            d3.event.stopPropagation();
+
+                            function calcNewMonthlyContribution(initialY, currentY) {
+                                var newMonthlyContribution;
+                                initialY = graphRectHeight / 2;
+                                if (initialY < currentY) {
+                                    var belowDiff = currentY - initialY;
+                                    var belowWhole = graphRectHeight - initialY;
+                                    var belowPercent = belowDiff / belowWhole;
+                                    newMonthlyContribution = (1 - belowPercent) * $scope.monthlyContribution;
+                                    if (newMonthlyContribution < 0)
+                                        newMonthlyContribution = 0;
+                                }
+                                else {
+                                    var currentTime = new Date().getTime();
+                                    var timeDiff = currentTime - startTime;
+                                    var factor = timeDiff <= 3000 ? 3 : Math.ceil(timeDiff / 1000);
+                                    var aboveDiff = initialY - currentY;
+                                    var aboveWhole = initialY;
+                                    var aboveMax = $scope.monthlyContribution * factor;
+                                    var abovePercent = aboveDiff / aboveWhole;
+                                    newMonthlyContribution = $scope.monthlyContribution + abovePercent * aboveMax;
+                                }
+                                return newMonthlyContribution;
+                            }
+
+                            function onTouchMove() {
+                                playLoop = false;
+                                triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
+                                var touchPosition = d3.touches(this)[0];
+                                var xDiff = Math.abs(initialTouchPosition[0] - touchPosition[0]);
+                                var yDiff = Math.abs(initialTouchPosition[1] - touchPosition[1]);
+                                if (xDiff >= yDiff) {
+                                    playLoop = false;
+                                    triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
+                                    trianglesVertical.classed('inactive', true);
+                                    $scope.year = x.invert(touchPosition[0]);
+                                    calculateProjection(handlerAnimationStates.dragging);
+                                    graphRect.on("mouseup", function () {
+                                        playLoop = true;
+                                        trianglesVertical.classed('inactive', false);
+                                        projections.classed("active", false);
+                                        graphRect.on("touchmove", null).on("mouseup", null);
+                                        triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; }));
+                                    });
+                                }
+                                else {
+                                    trianglesHorizontal.classed('inactive', true);
+                                    $scope.monthlyContribution = calcNewMonthlyContribution(initialTouchPosition[1], touchPosition[1]);
+                                    calculateProjection(handlerAnimationStates.dragging);
+                                    graphRect.on("mouseup", function () {
+                                        playLoop = true;
+                                        trianglesHorizontal.classed('inactive', false);
+                                        projections.classed("active", false);
+                                        graphRect.on("touchmove", null).on("mouseup", null);
+                                        triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; }));
+                                    });
+                                }
+                            }
                         });
 
                     xProjection = svg.append("path")
@@ -415,25 +482,15 @@
                     var triangles = d3.selectAll(".triangle");
                     var projections = d3.selectAll(".projection");
 
-
-                    trianglesVertical.on("mouseover", function () {
-                        playLoop = false;
-                        trianglesHorizontal.classed('inactive', true);
-                    })
-                    .on("mouseleave", function () {
-                        playLoop = true;
-                        startLoops();
-                        trianglesHorizontal.classed('inactive', false);
-                    })
-                    .on("mousedown", function () {
+                    function onVerticalMouseDown() {
                         var startTime = new Date().getTime();
                         var initialMousePosition = d3.mouse(graphRect.node());
                         var initialMonthlyContribution = $scope.monthlyContribution;
 
                         projections.classed("active", true);
-                        graphRect.on("mousemove", mousemove).on("mouseup", mouseup);
-                        triangles.on("mouseup", mouseup);
-                        projections.on("mouseup", mouseup);
+                        graphRect.on("mousemove", onVerticalMouseMove).on("mouseup", onVerticalMouseUp);
+                        triangles.on("mouseup", onVerticalMouseUp);
+                        projections.on("mouseup", onVerticalMouseUp);
                         d3.event.preventDefault();
 
                         function calcNewMonthlyContribution(initialY, mouseY) {
@@ -460,7 +517,7 @@
                             return newMonthlyContribution;
                         }
 
-                        function mousemove() {
+                        function onVerticalMouseMove() {
                             playLoop = false;
                             triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
                             trianglesHorizontal.classed('inactive', true);
@@ -469,7 +526,7 @@
                             calculateProjection(handlerAnimationStates.dragging);
                         }
 
-                        function mouseup() {
+                        function onVerticalMouseUp() {
                             playLoop = true;
                             trianglesHorizontal.classed('inactive', false);
                             projections.classed("active", false);
@@ -478,7 +535,45 @@
                             triangles.on("mouseup", null);
                             projections.on("mouseup", null);
                         }
-                    });
+                    }
+                    function onHorizontalMouseDown() {
+                        var initialMousePosition = d3.mouse(graphRect.node());
+
+                        projections.classed("active", true);
+                        graphRect.on("mousemove", onHorizontalMouseMove).on("mouseup", onHorizontalMouseUp);
+                        triangles.on("mouseup", onHorizontalMouseUp);
+                        projections.on("mouseup", onHorizontalMouseUp);
+                        d3.event.preventDefault();
+
+                        function onHorizontalMouseMove() {
+                            playLoop = false;
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
+                            trianglesVertical.classed('inactive', true);
+                            var mousePosition = d3.mouse(graphRect.node());
+                            $scope.year = x.invert(mousePosition[0]);
+                            calculateProjection(handlerAnimationStates.dragging);
+                        }
+
+                        function onHorizontalMouseUp() {
+                            playLoop = true;
+                            trianglesVertical.classed('inactive', false);
+                            projections.classed("active", false);
+                            graphRect.on("mousemove", null).on("mouseup", null);
+                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; }));
+                            projections.on("mouseup", null);
+                        }
+                    }
+
+                    trianglesVertical.on("mouseover", function () {
+                        playLoop = false;
+                        trianglesHorizontal.classed('inactive', true);
+                    })
+                    .on("mouseleave", function () {
+                        playLoop = true;
+                        startLoops();
+                        trianglesHorizontal.classed('inactive', false);
+                    })
+                    .on("mousedown", onVerticalMouseDown);
 
                     trianglesHorizontal.on("mouseover", function () {
                         playLoop = false;
@@ -489,33 +584,7 @@
                         startLoops();
                         trianglesVertical.classed('inactive', false);
                     })
-                    .on("mousedown", function () {
-                        var initialMousePosition = d3.mouse(graphRect.node());
-
-                        projections.classed("active", true);
-                        graphRect.on("mousemove", mousemove).on("mouseup", mouseup);
-                        triangles.on("mouseup", mouseup);
-                        projections.on("mouseup", mouseup);
-                        d3.event.preventDefault();
-
-                        function mousemove() {
-                            playLoop = false;
-                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));
-                            trianglesVertical.classed('inactive', true);
-                            var mousePosition = d3.mouse(graphRect.node());
-                            $scope.year = x.invert(mousePosition[0]);
-                            calculateProjection(handlerAnimationStates.dragging);
-                        }
-
-                        function mouseup() {
-                            playLoop = true;
-                            trianglesVertical.classed('inactive', false);
-                            projections.classed("active", false);
-                            graphRect.on("mousemove", null).on("mouseup", null);
-                            triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 25; })).on("mouseup", null);
-                            projections.on("mouseup", null);
-                        }
-                    });
+                    .on("mousedown", onHorizontalMouseDown);
 
                     handler.on("mouseover", function () {
                         triangles.transition().duration(400).attr("d", triangleSymbol.size(function () { return 64; }));

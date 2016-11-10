@@ -14,6 +14,7 @@
             cardExpiryMonth: undefined,
             cardExpiryYear: undefined,
             wantBonus: false,
+            bonusCode: undefined,
             amount: undefined,
         };
 
@@ -100,7 +101,8 @@
                 currency: $scope.currency,
                 amount: $scope.model.amount,
                 payCardID: id,
-                cardSecurityCode: $scope.model.cardSecurityNumber
+                cardSecurityCode: $scope.model.cardSecurityNumber,
+                bonusCode: $scope.model.bonusCode
             };
         }
 
