@@ -1,0 +1,228 @@
+﻿(**********************************************************************
+Perform a build and deployment to greenzorro dev or production site
+
+Requirements:
+    First timers: Run build.cmd to set up fake, paket dependencies.
+    Install azure powershell if you intent to deploy from stage to greenzorro.com
+
+FAKE build script:
+For Gz Web site to build develop or prod and deploy to Azure.
+
+Steps based on mode=<env> parameter:
+
+Dev
+    -> checkout develop
+    -> build 
+    ->    if build fails open azure deployment result page
+    -> deploy to dev site https://www.greenzorrodev.azurewebsites.net
+    -> open stage site in browser
+    ->      --or if the build fails open azure deployment status page 
+prod 
+    -> checkout develop
+    -> pull develop [unique step in this mode]
+    -> merge with develop [unique step in this mode]
+    -> build 
+    ->    if buld fails open azure deployment result page
+    -> deploy to stage site https://www.greenzorro-sgn.azurewebsites.net
+    -> open stage site in browser if new "develop"" branch changes resulted in stage build
+        -- or open production site in browser if production is uptodate 
+    -> prompt user to deploy to production, if there's a new stage build
+    ** Note **  check now result of stage build before answering Y
+    [Requires azure powershell] 
+    -> Swap stage with production, if user answered Y in previous step
+
+Usage :
+
+Go to source directory
+If Fake is installed use fake or fsi (fsharp script interpreter)
+Fake build.fsx mode=<prod or dev>
+
+Examples:
+fake
+    Runs build.fsx with default options for the stage site and prod branch. See steps above.
+fake "build.fsx"
+--or fsi build.fsx
+    Same as before.
+
+fake build.fsx mode=dev
+--or fsi build.fsx mode=dev
+Runs build for dev site using the develop branch.
+
+***********************************************************************)
+#r @"packages/FAKE/tools/FakeLib.dll"
+#r @"packages\FSharp.Text.RegexProvider\lib\net40\FSharp.Text.RegexProvider.dll"
+open Fake
+open Fake.Git
+open System
+open System.Net
+open FSharp.Text.RegexProvider
+
+type GitShaRegex = Regex< @"\.Sha\.(?<SHA>\w+)</" >
+
+(*----------------  Properties  -------------------*)
+[<Literal>]
+let Solution = @"../gz.sln"
+let GitRepo = __SOURCE_DIRECTORY__ @@ ".."
+
+(* Stage *)
+[<Literal>]
+let StageGzUrl = "https://greenzorro-sgn.azurewebsites.net"
+[<Literal>]
+let StageAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/slots/sgn/DeploymentSource"
+let StageAzureProdSlots = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/deploymentSlots"
+let ProdGzUrl = "https://www.greenzorro.com"
+
+(* Dev *)
+[<Literal>]
+let DevGzUrl = "https://greenzorrodev.azurewebsites.net"
+[<Literal>]
+let DevAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorrodev/DeploymentSource"
+
+let mode = getBuildParamOrDefault "mode" "prod"
+let mutable stageIsUpdated = false
+
+(*-------------------  End of property declarations   ---------------------------------*)
+Target "IsModeParamOk" (fun _ ->
+    match mode with
+    | "dev" -> trace "Running in dev mode"
+    | "prod" -> trace  "Running in prod mode"
+    | _ -> failwithf "Unknown mode %s passed in" mode
+)
+Target "CheckoutDevelop" (fun _ ->
+    checkoutBranch GitRepo "develop"
+)
+Target "EndWithDevelop" (fun _ ->
+    checkoutBranch GitRepo "develop"
+)
+Target "PullDevelop" (fun _ ->
+    pull GitRepo "origin" "develop"
+    trace "pulled develop..."
+)
+Target "MergeMaster" (fun _ ->
+    checkoutBranch GitRepo "master"
+    trace "checked out master..."
+    merge GitRepo NoFastForwardFlag "develop"
+    trace "merging with develop"
+)
+
+Target "BuildSln" (fun _ ->
+    !! Solution
+      |>
+      match mode with
+          | "dev" -> MSBuildDebug "" "Build"
+          | _ -> MSBuildRelease "" "Build"
+      |> Log "Build-Output: "
+      tracefn "built %s..." mode
+)
+
+Target "Deploy" (fun _ ->
+    tracefn "about to push to %s" <| if mode = "prod" then "master" else mode
+    match mode with
+        | "prod" -> push GitRepo
+                    trace "pushed to prod"
+        | _ -> ()
+)
+
+Target "OpenResultInBrowser" (fun _ ->
+    let getHtml (url : string) : string =
+        let req = WebRequest.Create(Uri(url)) 
+        use resp = req.GetResponse()
+        use stream = resp.GetResponseStream() 
+        use reader = new IO.StreamReader(stream) 
+        reader.ReadToEnd()
+
+    let getDeployedSha (indexHtml : string) : string =
+        let htmlSha = GitShaRegex().TypedMatch(indexHtml).SHA.Value
+        htmlSha
+
+    let mutable productionUpToDate = false
+    let AzureBuildSuccess (mode : string): bool=
+
+        let htmlStageOrDevSha = 
+            match mode with
+                | "dev" -> DevGzUrl
+                | _ -> StageGzUrl
+            |> getHtml 
+            |> getDeployedSha
+        let gitSha = getSHA1 GitRepo "HEAD"
+        tracefn "The stage html, master git Sha1 hashes are %s,%s" htmlStageOrDevSha gitSha
+
+        if 
+            gitSha = htmlStageOrDevSha
+        then
+            trace "Sha1 tags match so the build succeeded. Opening site in browser..."
+            match mode with
+                | "dev" -> DevGzUrl
+                | _ -> stageIsUpdated <- true; StageGzUrl
+            |> Diagnostics.Process.Start 
+            |> ignore
+            true
+        else
+            if 
+                mode = "prod" 
+            then
+                let prodHtmlSha = ProdGzUrl |> getHtml |> getDeployedSha
+
+                if 
+                    gitSha = prodHtmlSha 
+                then
+                    tracefn "This build has been previously deployed to production. The production html, prod git Sha1 hashes match -> %s,%s" prodHtmlSha gitSha
+                    productionUpToDate <- true
+                    Diagnostics.Process.Start ProdGzUrl 
+                    |> ignore
+                    true
+                else
+                    trace "Sha1 tags do not match with either Stage or Production so the build failed. Opening azure deployment page in browser..."
+                    false
+            else
+                trace "Sha1 tags do not match so the build failed. Opening azure deployment page in browser..."
+                false
+
+    if
+        not <| AzureBuildSuccess mode
+    then
+        // Open Azure build/deployment page and abort this build script
+        match mode with
+            | "dev" -> Diagnostics.Process.Start DevAzDepUrl
+            | _ -> Diagnostics.Process.Start StageAzDepUrl
+            |> ignore
+        failwith "Build deployment to Azure failed." 
+)
+Target "SwapStageLive" (fun _ ->
+
+    (**** provide the powershell script filename WITHOUT the extension ps1 *)
+    let runPowershellScript (ps1FileName : string) : unit =
+            let p = new Diagnostics.Process();              
+            p.StartInfo.FileName <- "cmd.exe";
+            p.StartInfo.Arguments <- ("/c powershell -ExecutionPolicy Unrestricted .\\" + ps1FileName + ".ps1")
+            p.StartInfo.RedirectStandardOutput <- true
+            p.StartInfo.UseShellExecute <- false
+            p.Start() |> ignore
+            printfn "Processing"
+            printfn "%A" (p.StandardOutput.ReadToEnd())
+            printfn "Finished"
+
+    let proceedAns = getUserInput "Check the new build at https://www.greenzorro-sgn.com . Proceed with stage to live swap (Y/N)? "
+    let proceedAzure =
+        match proceedAns with
+        | "Y" | "y" | "Υ" | "υ" -> true
+        | "N" | "n" | "Ν" | "ν" -> false
+        | null -> trace "Null answer"; false
+        | _ -> tracefn "Unknown response %s" proceedAns; false
+    if proceedAzure then
+        runPowershellScript "SwapStageLive"
+)
+
+// Dependencies
+"IsModeParamOk"
+  ==> "CheckoutDevelop"
+  =?> ("PullDevelop", mode.Equals "prod")
+  =?> ("MergeMaster", mode.Equals "prod")
+  ==> "BuildSln"
+  ==> "Deploy"
+  ==> "OpenResultInBrowser"
+  =?> ("SwapStageLive", stageIsUpdated)
+  ==> "EndWithDevelop"
+
+// start build
+RunTargetOrDefault "EndWithDevelop"
