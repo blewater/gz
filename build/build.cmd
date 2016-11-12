@@ -1,4 +1,5 @@
-﻿@echo off
+﻿REM One time Fake bootstraper. See build.fsx for instructions
+@echo off
 SETLOCAL
 
 cls
