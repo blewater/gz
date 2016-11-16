@@ -165,6 +165,7 @@ namespace gzWeb {
                                         , "~/_app/guest/privacyCtrl.js"
                                         , "~/_app/guest/termsCtrl.js"
                                         , "~/_app/guest/playgroundCtrl.js"
+                                        , "~/_app/guest/responsibleGamblingCtrl.js"
             #endregion
 
             #region Account

@@ -649,7 +649,6 @@
 }
 /* #endregion */
 
-
 /* #region Promotions */
 .guest .promotions {
     padding: 60px 0;
@@ -664,4 +663,9 @@
 }
 /* #endregion */
 
+/* #region Responsible Gambling */
+.guest .responsible-gambling {
+    padding: 60px 0;
+}
+/* #endregion */
 
