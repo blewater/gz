@@ -101,6 +101,13 @@
         title: 'Terms & Conditions',
         category: categories.wandering
     };
+    routes.responsibleGambling = {
+        path: '/responsible-gambling',
+        ctrl: 'responsibleGamblingCtrl',
+        tpl: '_app/guest/responsibleGambling.html',
+        title: 'Responsible Gambling',
+        category: categories.wandering
+    };
 
     routes.promotion = {
         path: '/promotions/:code',
