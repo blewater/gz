@@ -58,6 +58,7 @@
     <Content Include="paket.references" />
     <None Include="build.fsx" />
     <None Include="build.cmd" />
+    <None Include="SwapStageLive.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

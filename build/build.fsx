@@ -1,61 +1,66 @@
-﻿(**********************************************************************
-Perform a build and deployment to greenzorro dev or production site
-
-Requirements:
-    First timers: Run build.cmd to set up fake, paket dependencies.
-    Install azure powershell if you intent to deploy from stage to greenzorro.com
-
-FAKE build script:
-For Gz Web site to build develop or prod and deploy to Azure.
-
-Steps based on mode=<env> parameter:
-
-Dev
-    -> checkout develop
-    -> build 
-    ->    if build fails open azure deployment result page
-    -> deploy to dev site https://www.greenzorrodev.azurewebsites.net
-    -> open stage site in browser
-    ->      --or if the build fails open azure deployment status page 
-prod 
-    -> checkout develop
-    -> pull develop [unique step in this mode]
-    -> merge with develop [unique step in this mode]
-    -> build 
-    ->    if buld fails open azure deployment result page
-    -> deploy to stage site https://www.greenzorro-sgn.azurewebsites.net
-    -> open stage site in browser if new "develop"" branch changes resulted in stage build
-        -- or open production site in browser if production is uptodate 
-    -> prompt user to deploy to production, if there's a new stage build
-    ** Note **  check now result of stage build before answering Y
-    [Requires azure powershell] 
-    -> Swap stage with production, if user answered Y in previous step
-
-Usage :
-
-Go to source directory
-If Fake is installed use fake or fsi (fsharp script interpreter)
-Fake build.fsx mode=<prod or dev>
-
-Examples:
-fake
-    Runs build.fsx with default options for the stage site and prod branch. See steps above.
-fake "build.fsx"
---or fsi build.fsx
-    Same as before.
-
-fake build.fsx mode=dev
---or fsi build.fsx mode=dev
-Runs build for dev site using the develop branch.
-
-***********************************************************************)
+﻿//**********************************************************************
+//Perform a build and deployment to greenzorro dev or production site
+//
+//Requirements:
+//    First timers: Run build.cmd to set up fake, paket dependencies.
+//    Install azure powershell if you intent to deploy from stage to greenzorro.com
+//
+//FAKE build script:
+//For Gz Web site to build develop or prod and deploy to Azure.
+//
+//Steps based on mode=<env> parameter:
+//
+//Dev
+//    -> checkout develop
+//    -> build 
+//    ->    if build fails open azure deployment result page
+//    -> deploy to dev site https://www.greenzorrodev.azurewebsites.net
+//    -> open stage site in browser
+//    ->      --or if the build fails open azure deployment status page 
+//prod 
+//    -> checkout develop
+//    -> pull develop [unique step in this mode]
+//    -> merge with develop [unique step in this mode]
+//    -> build 
+//    ->    if buld fails open azure deployment result page
+//    -> deploy to stage site https://www.greenzorro-sgn.azurewebsites.net
+//    -> open stage site in browser if new "develop"" branch changes resulted in stage build
+//        -- or open production site in browser if production is uptodate 
+//    -> prompt user to deploy to production, if there's a new stage build
+//    ** Note **  check now result of stage build before answering Y
+//    [Requires azure powershell] 
+//    -> Swap stage with production, if user answered Y in previous step
+//
+//Usage :
+//
+//Go to source directory
+//If Fake is installed use fake or fsi (fsharp script interpreter)
+//Fake build.fsx mode=<prod or dev>
+//
+//Examples:
+//fake
+//    Runs build.fsx with default options for the stage site and prod branch. See steps above.
+//fake "build.fsx"
+//--or fsi build.fsx
+//    Same as before.
+//
+//fake build.fsx mode=dev
+//--or fsi build.fsx mode=dev
+//Runs build for dev site using the develop branch.
+//
+//***********************************************************************
 #r @"packages/FAKE/tools/FakeLib.dll"
+#r @"packages/Fake.Azure.WebApps/lib/net451/Fake.Azure.WebApps.dll"
 #r @"packages\FSharp.Text.RegexProvider\lib\net40\FSharp.Text.RegexProvider.dll"
-open Fake
-open Fake.Git
 open System
 open System.Net
+open FSharp.Data
 open FSharp.Text.RegexProvider
+
+open Fake
+open Fake.Git
+open Fake.ZipHelper
+open Fake.Azure.WebApps
 
 type GitShaRegex = Regex< @"\.Sha\.(?<SHA>\w+)</" >
 
@@ -80,6 +85,14 @@ let DevAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a67
 
 let mode = getBuildParamOrDefault "mode" "prod"
 let mutable stageIsUpdated = false
+
+let projectName = "gzWeb.csproj"
+
+let baseDir = __SOURCE_DIRECTORY__ @@ @"..\"
+let gzWebProj = baseDir @@ @"gzWeb\gzWeb.csproj"
+
+// Following contains Azure password and it's git-ignored
+let gzWebDevPublishProfile = __SOURCE_DIRECTORY__ @@ "greenzorroDev.pubxml"
 
 (*-------------------  End of property declarations   ---------------------------------*)
 Target "IsModeParamOk" (fun _ ->
@@ -106,21 +119,34 @@ Target "MergeMaster" (fun _ ->
 )
 
 Target "BuildSln" (fun _ ->
-    !! Solution
-      |>
       match mode with
-          | "dev" -> MSBuildDebug "" "Build"
-          | _ -> MSBuildRelease "" "Build"
+          | "dev" ->  !!gzWebProj 
+                        |> MSBuild "" "build" [ ("Configuration", "Debug"); ("PublishDir", "") ]
+          | _ -> !! Solution 
+                    |> MSBuildRelease "" "Build"
       |> Log "Build-Output: "
       tracefn "built %s..." mode
 )
 
-Target "Deploy" (fun _ ->
+Target "DeployAzDev" (fun () ->
+
+    let result =
+        ExecProcess (fun info -> 
+            info.FileName <- @"c:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+            info.Arguments <- "-verb:sync"
+            info.Arguments <- "-source:contentPath=" + @""
+            info.Arguments <- "-verb:sync"
+            info.Arguments <- "-verb:sync"
+            info.Arguments <- "-verb:sync"
+        ) (System.TimeSpan.FromMinutes 1.0)     
+    if result <> 0 then failwith "DeployAzDev timed out!"
+)
+
+Target "PushMaster" (fun _ ->
     tracefn "about to push to %s" <| if mode = "prod" then "master" else mode
-    match mode with
-        | "prod" -> push GitRepo
-                    trace "pushed to prod"
-        | _ -> ()
+    if mode = "prod" then
+        push GitRepo
+        trace "pushed to prod"
 )
 
 Target "OpenResultInBrowser" (fun _ ->
@@ -144,6 +170,7 @@ Target "OpenResultInBrowser" (fun _ ->
                 | _ -> StageGzUrl
             |> getHtml 
             |> getDeployedSha
+
         let gitSha = getSHA1 GitRepo "HEAD"
         tracefn "The stage html, master git Sha1 hashes are %s,%s" htmlStageOrDevSha gitSha
 
@@ -216,10 +243,12 @@ Target "SwapStageLive" (fun _ ->
 // Dependencies
 "IsModeParamOk"
   ==> "CheckoutDevelop"
-  =?> ("PullDevelop", mode.Equals "prod")
-  =?> ("MergeMaster", mode.Equals "prod")
+  =?> ("PullDevelop", mode = "prod")
+  =?> ("MergeMaster", mode = "prod")
   ==> "BuildSln"
-  ==> "Deploy"
+  =?> ("Zip", mode = "dev")
+  =?> ("DeployAzDev", mode.Equals "dev")
+  =?> ("PushMaster", mode = "prod")
   ==> "OpenResultInBrowser"
   =?> ("SwapStageLive", stageIsUpdated)
   ==> "EndWithDevelop"
