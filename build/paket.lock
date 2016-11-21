@@ -1,0 +1,10 @@
+FRAMEWORK: >= NET462
+NUGET
+  remote: https://www.nuget.org/api/v2
+    FAKE (4.45.1)
+    Fake.Azure.WebApps (0.2)
+      FAKE.Lib (>= 4.37.2)
+      FSharp.Data (>= 2.3.2)
+    FAKE.Lib (4.45.1)
+    FSharp.Data (2.3.2)
+    FSharp.Text.RegexProvider (1.0)

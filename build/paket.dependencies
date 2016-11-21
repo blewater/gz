@@ -1,0 +1,6 @@
+source https://www.nuget.org/api/v2/
+framework >= net462
+
+nuget FAKE 4.45.1
+nuget Fake.Azure.WebApps
+nuget FSharp.Text.RegexProvider

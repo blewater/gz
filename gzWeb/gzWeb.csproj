@@ -695,6 +695,7 @@
     <Content Include="_app\guest\home.html" />
     <Content Include="_app\guest\termsContent.html" />
     <Content Include="_app\guest\termsConfirm.html" />
+    <Content Include="_app\guest\responsibleGambling.html" />
     <Content Include="_app\guest\transparency.html" />
     <Content Include="_app\guest\terms.html" />
     <Content Include="_app\guest\privacy.html" />
@@ -704,6 +705,7 @@
     <Content Include="_app\guest\about.html" />
     <Content Include="_app\guest\guest.css" />
     <Content Include="_app\games\games.css" />
+    <Content Include="_app\guest\responsibleGamblingCtrl.js" />
     <Content Include="_app\investments\investments.css" />
     <Content Include="_app\common\header.css" />
     <Content Include="_app\common\preloader.css" />

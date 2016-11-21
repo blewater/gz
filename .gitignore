@@ -229,3 +229,5 @@ _xdinos_tests_/
 gzWeb/logs/
 /gzWeb.Admin/bin
 /gzWebAdmin/
+build/.fake/
+build/.azSession
