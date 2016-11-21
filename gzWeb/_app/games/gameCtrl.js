@@ -131,21 +131,21 @@
         };
 
         $scope.getGameTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? '70px' : 'calc(50% - ' + ($scope.gameHeight / 2) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameHeight - 70) / 2) + 'px)';
         };
         $scope.getGameRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';
         };
 
         $scope.getActionsTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% + ' + ($scope.gameHeight / 2) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% + ' + (($scope.gameHeight + 70) / 2) + 'px)';
         };
         $scope.getActionsRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';
         };
 
         $scope.getCloseTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameHeight / 2) + 18) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ((($scope.gameHeight - 70) / 2) + 18) + 'px)';
         };
         $scope.getCloseRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameWidth / 2) + 18) + 'px)';
