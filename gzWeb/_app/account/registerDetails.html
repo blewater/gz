@@ -144,6 +144,7 @@
                             <div id="phonePrefix" class="btn-group dropup full-width" uib-dropdown on-toggle="setDropdownOffset(open)">
                                 <button type="button" class="form-control" uib-dropdown-toggle ng-class="{'empty': !model.phonePrefix}">
                                     <div class="full-width text-left">{{model.phonePrefix}}</div>
+                                    <i class="fa fa-lg fa-angle-down"></i>
                                 </button>
                                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="phonePrefix">
                                     <li role="menuitem" ng-repeat="prefix in phonePrefixes" ng-class="{'active': prefix.active}">
