@@ -18,6 +18,7 @@
             btnType: 'plus',
             img: '../../Content/Images/plus_icon.svg',
             imgXs: '../../Content/Images/plus_icon_green.svg',
+            iconMenu: 'fa-plus-square',
             action: _attachContent,
             showInMenu: true
         };
@@ -42,6 +43,7 @@
             btnType: 'minus',
             img: '../../Content/Images/minus_icon.svg',
             imgXs: '../../Content/Images/minus_icon_dgrey.svg',
+            iconMenu: 'fa-minus-square',
             showInMenu: true,
             action: _attachContent
         };

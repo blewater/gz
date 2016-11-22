@@ -253,7 +253,7 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
 
 
 /* #region select */
-.gz-select select.form-control {
+/*.gz-select select.form-control {
     -webkit-appearance: none;
     -moz-appearance: none;
     -ms-appearance: none;
@@ -263,8 +263,36 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     cursor: pointer;
     background-color: #fff;
     color: #a5a5a5;
+}*/
+.gz-select select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    color: #a5a5a5;
+    background-color: #ffffff;
+}
+.gz-select i {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    color: #27A95C;
+    font-weight: bold;
 }
 
+/*.gz-select::after {
+    position: absolute;
+    font-family: 'FontAwesome';
+    line-height: 48px;
+    right: 10px;
+    content: "\f107";
+    color: #27A95C;
+    font-weight: bold;
+    top: 0;
+    font-size: 1.3em;
+}*/
 
 .gz-select select.form-control[disabled] {
     background-color: #ccc;

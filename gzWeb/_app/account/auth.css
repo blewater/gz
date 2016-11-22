@@ -369,9 +369,17 @@
 }
 
 .auth #phonePrefix button {
-    background: url('../../../Content/Images/select_arrow_down.png') no-repeat right;
+    /*background: url('../../../Content/Images/select_arrow_down.png') no-repeat right;*/
     background-color: #ffffff;
     cursor: pointer;
+}
+.auth #phonePrefix i {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    color: #27A95C;
+    font-weight: bold;
+    line-height: 48px;
 }
 .auth #phonePrefix button:disabled {
     background-color: #ccc;
