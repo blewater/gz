@@ -26,10 +26,14 @@
                     </span>
                 </span>
                 <ul class="dropdown-menu" ng-class="{'dropdown-menu-right':lg}" aria-labelledby="user-dropdown">
-                    <li class="fullname"><h5><b>{{fullname}}</b></h5></li>
+                    <li class="fullname">{{fullname}}</li>
                     <li role="separator" class="divider"></li>
                     <li ng-repeat="s in accountManagementStates">
-                        <a ng-click="gotoState(s)">{{s.title}}</a>
+                        <hr ng-if="$index === accountManagementStates.length - 1" />
+                        <a ng-click="gotoState(s)">
+                            <span>{{s.title}}</span>
+                            <i ng-if="s.icon || s.iconMenu" class="fa pull-right" ng-class="s.icon || s.iconMenu" aria-hidden="true"></i>
+                        </a>
                     </li>
                 </ul>
                 <div class="switch" ng-class="{'pull-right':!lg}">
