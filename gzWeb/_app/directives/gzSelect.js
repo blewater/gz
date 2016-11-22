@@ -65,6 +65,12 @@
                     unregisterModelWatch();
                 });
 
+                function setIconLineHeight() {
+                    var $select = $element.find('select.form-control');
+                    var $icon = $element.find('i.fa');
+                    $icon.css('line-height', $select.css('height'));
+                }
+                setIconLineHeight();
             }]
         };
     }
