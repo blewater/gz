@@ -148,9 +148,6 @@ header {
     background-color: #27A95C;
     color: #fff;    
 }
-.user-info .dropdown-menu > li h5 {
-    padding: 3px 10px;
-}
 
 .user-info .dropdown-menu > li > a:hover,
 .user-info .dropdown-menu > li > a:focus {
@@ -159,8 +156,18 @@ header {
 }
 .user-info .dropdown-menu > li.fullname {
     cursor: default;
+    padding: 3px 20px;
+    font-weight: bold;
 }
 
+.user-info .dropdown-menu > li:last-of-type > hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-top: 1px dotted rgba(238,238,238,0.6);
+}
+.user-info .dropdown-menu > li:last-of-type > a {
+    font-weight: bold;
+}
 /*.navbar-collapse {
     background-color: #27A95C;
     padding-bottom: 10px;
