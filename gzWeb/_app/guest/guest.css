@@ -639,7 +639,25 @@
     padding: 60px 0;
 }
 .terms ol, .terms ul {
-    margin-left: 30px;
+    margin-left: 20px;
+}
+.terms > ol, .terms > ul, .terms ol.alpha {
+    margin-left: 0;
+}
+.terms ol.alpha {
+  counter-reset: list;
+}
+.terms ol.alpha > li {
+  list-style: none;
+}
+.terms ol.alpha > li:before {
+  content: counter(list, lower-alpha) ") ";
+  counter-increment: list;
+}
+
+
+.terms .general-terms {
+    margin-left: -20px;
 }
 .terms .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: transparent;
