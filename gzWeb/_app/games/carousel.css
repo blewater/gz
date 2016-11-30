@@ -330,6 +330,7 @@
 .gz-carousel .gz-carousel-indicator {
     border-radius: 50%;
     border: 1px solid #fff;
+    box-shadow: 0 0 3px #333;
     background-color: transparent;
     width: 12px;
     height: 12px;
