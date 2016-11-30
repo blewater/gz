@@ -17,3 +17,11 @@
     CONSTRAINT [PK_dbo.LogEntries] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
+
+
+
+GO
+GRANT SELECT
+    ON OBJECT::[dbo].[LogEntries] TO [gzAdminUser]
+    AS [dbo];
+

@@ -62,6 +62,7 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Functions\" />
+    <Folder Include="Security\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\GmTrxs.sql" />
@@ -82,7 +83,10 @@
     <Build Include="dbo\Tables\Portfolios.sql" />
     <Build Include="dbo\Tables\PortFunds.sql" />
     <Build Include="dbo\Tables\Funds.sql" />
-    <Build Include="dbo\Tables\PlayerRevRpt.sql" />
+    <Build Include="dbo\Tables\PlayerRevRpt.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
     <Build Include="dbo\Tables\AspNetRoles.sql" />
     <Build Include="dbo\Tables\__MigrationHistory.sql" />
     <Build Include="dbo\Tables\CustFundShares.sql" />
@@ -97,5 +101,8 @@
     <Build Include="dbo\Tables\GameCategories_1.sql" />
     <Build Include="dbo\Tables\DynamicPageTemplates.sql" />
     <Build Include="dbo\Tables\DynamicPageDatas.sql" />
+    <Build Include="Security\gzAdminUser.sql" />
+    <Build Include="Security\gzdbdevsa.sql" />
+    <Build Include="Security\gzAdminUser_1.sql" />
   </ItemGroup>
 </Project>
