@@ -118,12 +118,13 @@ Target "MergeMaster" (fun _ ->
     trace "merging with develop"
 )
 
-Target "BuildSln" (fun _ ->
+Target "BuildGzWeb" (fun _ ->
+    !!gzWebProj |>
       match mode with
-          | "dev" ->  !!gzWebProj 
-                        |> MSBuild "" "build" [ ("Configuration", "Debug"); ("PublishDir", "") ]
-          | _ -> !! Solution 
-                    |> MSBuildRelease "" "Build"
+          | "dev" ->   
+                MSBuild "" "build" [ ("Configuration", "Debug"); ("RestorePackages", "True") ; ("PublishDir", "") ]
+          | _ -> 
+                MSBuild "" "build"  [ ("Configuration", "Release"); ("RestorePackages", "True") ]
       |> Log "Build-Output: "
       tracefn "built %s..." mode
 )
@@ -229,7 +230,7 @@ Target "SwapStageLive" (fun _ ->
             printfn "%A" (p.StandardOutput.ReadToEnd())
             printfn "Finished"
 
-    let proceedAns = getUserInput "Check the new build at https://www.greenzorro-sgn.com . Proceed with stage to live swap (Y/N)? "
+    let proceedAns = getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net \nProceed with stage to live swap (Y/N)? "
     let proceedAzure =
         match proceedAns with
         | "Y" | "y" | "Υ" | "υ" -> true
@@ -245,7 +246,7 @@ Target "SwapStageLive" (fun _ ->
   ==> "CheckoutDevelop"
   =?> ("PullDevelop", mode = "prod")
   =?> ("MergeMaster", mode = "prod")
-  ==> "BuildSln"
+  ==> "BuildGzWeb"
   =?> ("Zip", mode = "dev")
   =?> ("DeployAzDev", mode.Equals "dev")
   =?> ("PushMaster", mode = "prod")
