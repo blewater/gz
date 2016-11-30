@@ -22,8 +22,8 @@ body {
     height: 100%;
     font-family: 'Fira Sans', sans-serif !important;
     font-weight: 300;
-    /*background: #F2F2F2;*/
-    background-color: #27A95C;
+    background: #F2F2F2;
+    /*background-color: #27A95C;*/
     overflow-x: hidden;
     z-index: 0;
 }
@@ -276,7 +276,8 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
 }
 .gz-select i {
     position: absolute;
-    right: 10px;
+    /*right: 10px;*/
+    right: 25px;
     top: 0;
     color: #27A95C;
     font-weight: bold;
