@@ -92,6 +92,7 @@ namespace gzWeb {
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
+                , "~/Scripts/angular-ui-datetime-picker/datetime-picker.min.js"
                 , "~/Scripts/jsnlog/logToServer.js"
             ));
 

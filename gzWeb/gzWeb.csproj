@@ -608,6 +608,7 @@
     <Content Include="Content\Images\18plus.png" />
     <Content Include="Content\Images\casino-default.jpg" />
     <Content Include="Content\Images\costs.svg" />
+    <Content Include="Content\Images\curacao.png" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
     <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\exit.svg" />
@@ -651,6 +652,9 @@
     <Content Include="Content\Images\gz_logo_sm.png" />
     <Content Include="Content\Styles\font-awesome\font-awesome.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
+    <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.js" />
+    <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
+    <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
     <Content Include="_app\common\footer.css" />
     <Content Include="_app\account\auth.css" />
     <Content Include="_app\common\basic.css" />
