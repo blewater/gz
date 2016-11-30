@@ -31,6 +31,11 @@
 .auth.mgmt-modal .text-frame.text-frame-sm {
     padding: 10px 30px;
 }*/
+@media (max-width: 767px) {
+    .auth.mgmt-modal .field-ok {
+        right: -20px;
+    }
+}
 
 /* #region Menu */
 .auth.mgmt-modal .mgmt-menu {
@@ -250,7 +255,7 @@
 /* #region Transaction History */
 .auth.mgmt-modal .transaction-history .form-group { margin: 0 -5px; }
 .auth.mgmt-modal .transaction-history .filter-btn { margin: 0;width: 100%;border-color: #f2f2f2; }
-.auth.mgmt-modal .transaction-history .table-container {margin-top: 10px; clear: both; /*overflow-x: auto;*/ }
+.auth.mgmt-modal .transaction-history .table-container {margin-top: 10px; clear: both; }
 .auth.mgmt-modal .transaction-history .table-container .table,
 .auth.mgmt-modal .transaction-history .table-container .table tr,
 .auth.mgmt-modal .transaction-history .table-container .table th,
@@ -259,11 +264,16 @@
 .auth.mgmt-modal .transaction-history .pager-btn { margin: 0; padding: 0 5px; width: 150px; }
 @media (max-width: 767px){
     .auth.mgmt-modal .transaction-history .filter-form-group .modal-btn-gz { margin-top: 5px;}
+    .auth.mgmt-modal .transaction-history .table-container { overflow-x: auto; }
+    .auth.mgmt-modal .transaction-history .pager-btn { width: 50px; }
 }
 /* #endregion */
 
 /* #region Pending Withdrawals */
 .auth.mgmt-modal .pending-withdrawals { }
+@media (max-width: 767px){
+    .auth.mgmt-modal .pending-withdrawals .table-container { overflow-x: auto; }
+}
 /* #endregion */
 
 /* #region Responsible Gaming */

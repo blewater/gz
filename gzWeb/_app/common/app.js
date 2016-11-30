@@ -31,6 +31,7 @@ var APP = (function () {
         , 'vcRecaptcha'
         , 'isoCurrency'
         , 'logToServer'
+        , 'ui.bootstrap.datetimepicker'
     ]);
 
     app.run([
@@ -95,14 +96,15 @@ var APP = (function () {
                 onRouteChangeSuccess();
                 $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
                 
-                $rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
-                $rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
-                $rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
-                $rootScope.lg = screenSize.on('lg', function (match) { $rootScope.lg = match; });
-                $rootScope.size = screenSize.get();
-                screenSize.on('xs,sm,md,lg', function () {
-                    $rootScope.size = screenSize.get();
-                });
+                helpers.ui.watchScreenSize($rootScope);
+                //$rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
+                //$rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
+                //$rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
+                //$rootScope.lg = screenSize.on('lg', function (match) { $rootScope.lg = match; });
+                //$rootScope.size = screenSize.get();
+                //screenSize.on('xs,sm,md,lg', function () {
+                //    $rootScope.size = screenSize.get();
+                //});
 
                 $rootScope.scrolled = false;
                 $rootScope.scrollOffset = 0;
