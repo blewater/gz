@@ -155,20 +155,18 @@ footer .footer-payment-methods .footer-payment-method.footer-maestro img{
 
 
 
-footer .footer-license {
+footer .footer-licenses {
     margin-bottom: 15px;
 }
-footer .footer-license .mga,
-footer .footer-license .play-responsibly {
+footer .footer-licenses .license {
     border-radius: 4px;
     padding: 5px;
 }
-footer .footer-license .mga img,
-footer .footer-license .play-responsibly img {
+footer .footer-licenses .license img {
     height: 47px;
 }
 
-footer .footer-license .mga img {
+footer .footer-licenses .license.mga img {
     width: 80px;
 }
 
@@ -211,6 +209,13 @@ footer .debug-info {
 
     footer .company-registration span.company-registration-separator { display: none; }
     footer .company-registration br.company-registration-separator { display: block; }
+
+    footer .footer-payment-methods .footer-payment-method {
+        margin: 0 2px;
+    }
+    footer .footer-licenses .license {
+        padding: 5px 2px;
+    }
 }
 @media (max-width: 420px) {
     /*.non-footer { min-height: calc(100% - 500px); margin-bottom: -500px; }
@@ -248,8 +253,7 @@ footer .debug-info {
     footer .footer-menu a {
         margin: 0 2px;
     }
-    footer .footer-license .mga img,
-    footer .footer-license .play-responsibly img {
+    footer .footer-licenses .license img {
         height: 35px;
     }
     footer .footer-payment-methods .footer-payment-method {
