@@ -754,3 +754,27 @@
 }
 /*#endregion*/
 
+#ns-msgs .msg.msg-modal.msg-mobile {
+    transform: none !important;
+    top: 0 !important;
+    left: 0 !important;
+    max-height: 100% !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+#ns-msgs .msg.msg-modal.msg-mobile .msg-close {
+    background-color: #27A95C !important;
+    border-radius: 4px;
+    box-shadow: none;
+    color: #fff !important;
+    top: 17px;
+    right: 16px;
+}
+
+#ns-msgs .msg.msg-modal.msg-mobile .msg-content {
+    height: auto;
+}
+
+#ns-msgs .msg.msg-modal.msg-mobile .msg-content .msg-body {
+    max-height: 100vh;
+}
