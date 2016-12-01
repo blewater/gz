@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [gzAdminUser]
+    WITH PASSWORD = N'g^jsjVhcyGf|sz#jjvslryklmsFT7_&#$!~<zpckRoyFgggh', SID = 0x4460C4B32E3C024F82161C9F19D45AAF, DEFAULT_DATABASE = [gzProdDb], DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

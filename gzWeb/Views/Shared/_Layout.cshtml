@@ -16,13 +16,13 @@
     @Styles.Render("~/css/app")
 </head>
 <body ng-cloak ng-class="{'mobile-menu':mobileMenuExpanded}">
-    <div class="non-footer">
+    @*<div class="non-footer">*@
         @Html.Partial("_Header")
         @RenderBody()
-    </div>
-    <div class="footer">
+    @*</div>
+    <div class="footer">*@
         @Html.Partial("_Footer")
-    </div>
+    @*</div>*@
 
     @Scripts.Render("~/js/jquery")
     <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz" type="text/javascript"></script>

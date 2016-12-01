@@ -5,7 +5,7 @@
     function serviceFactory($rootScope, $compile, $q) {
         clear();
 
-        var bodyElement = angular.element(document.querySelector('body>.non-footer'));
+        var bodyElement = angular.element(document.querySelector('body'));
         var messagesElement = $compile('<ns-messages ns-modals="nsModals" ns-notifications="nsNotifications" ns-toastrs="nsToastrs"></ns-messages>')($rootScope);
         bodyElement.prepend(messagesElement);
 

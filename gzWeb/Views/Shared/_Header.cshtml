@@ -55,7 +55,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
-                    <li ng-if="hasGamingBalance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip" ng-class="{'text-center':!lg}">
+                    <li ng-if="hasGamingBalance"  class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip" ng-class="{'text-center':!lg}">
                         {{currency}} {{gamingBalance | number : 2}}
                     </li>
                     <li ng-class="{'text-center': sm || md}">

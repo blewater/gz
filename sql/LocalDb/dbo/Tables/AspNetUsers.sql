@@ -26,6 +26,10 @@
 
 
 
+
+
+
+
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [IX_UQ_GmCustomerId]
     ON [dbo].[AspNetUsers]([GmCustomerId] ASC) WHERE ([GmCustomerId] IS NOT NULL);
@@ -34,4 +38,28 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_UQ_GmCustomerId]
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UserNameIndex]
     ON [dbo].[AspNetUsers]([UserName] ASC);
+
+
+GO
+GRANT UPDATE
+    ON OBJECT::[dbo].[AspNetUsers] TO [gzAdminUser]
+    AS [dbo];
+
+
+
+
+GO
+GRANT SELECT
+    ON OBJECT::[dbo].[AspNetUsers] TO [gzAdminUser]
+    AS [dbo];
+
+
+
+
+GO
+GRANT DELETE
+    ON OBJECT::[dbo].[AspNetUsers] TO [gzAdminUser]
+    AS [dbo];
+
+
 
