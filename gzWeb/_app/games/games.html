@@ -81,13 +81,14 @@
                         <div class="col-xs-12">
                             <!--| orderBy : category.sorting.by : category.sorting.order-->
                             <div ng-repeat-start="g in category.games | unique: 'slug'" class="game text-center col-xs-6 col-sm-4 col-md-2">
-                                <a class="game-link" ng-href="{{getGameUrl(g.slug)}}">
+                                <a class="game-link" ng-href="{{getGameUrl(g.slug, g.fun)}}">
                                     <img class="game-img img-responsive full-width" src="{{g.thumbnail}}" cs-fallback-src="../../Content/Images/casino-default.jpg" alt="{{g.name}}" />
                                     <div class="game-info">
                                         <div class="game-play">
                                             <i class="fa fa-play"></i>
                                         </div>
                                         <div class="game-name">{{g.name}}</div>
+                                        <div class="game-play-fun" ng-mouseover="g.fun = true;" ng-mouseleave="g.fun = false;">Play for fun</div>
                                     </div>
                                 </a>
                             </div>

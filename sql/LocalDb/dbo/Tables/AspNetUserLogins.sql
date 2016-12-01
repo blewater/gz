@@ -7,7 +7,19 @@
 );
 
 
+
+
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_UserId]
     ON [dbo].[AspNetUserLogins]([UserId] ASC);
+
+
+GO
+GRANT SELECT
+    ON OBJECT::[dbo].[AspNetUserLogins] TO [gzAdminUser]
+    AS [dbo];
+
+
 

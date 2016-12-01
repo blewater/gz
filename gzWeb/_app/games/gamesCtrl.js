@@ -140,8 +140,8 @@
 
 
         // #region Filtered Games
-        $scope.getGameUrl = function (slug) {
-            return constants.routes.game.path.replace(":slug", slug) + $location.url().substring($location.path().length);
+        $scope.getGameUrl = function (slug, playForFun) {
+            return constants.routes.game.path.replace(":slug", slug) + '?fun=' + (playForFun || false) + '&' + $location.url().substring($location.path().length + 1);
         }
 
         function search() {

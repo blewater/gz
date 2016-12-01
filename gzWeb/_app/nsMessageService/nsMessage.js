@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', '$window', 'message', nsMessage]);
+    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', '$window', 'message', '$rootScope', nsMessage]);
 
-    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest, $window, message) {
+    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest, $window, message, $rootScope) {
         return {
             restrict: 'E',
             replace: true,
@@ -17,6 +17,7 @@
             },
             link: function (scope, element, attrs) {
                 // #region Variables
+                scope.mobile = $rootScope.mobile;
                 scope.now = new Date();
                 var transitionDuration = 500;
                 var intervalPromise, closePromise, hideTime;

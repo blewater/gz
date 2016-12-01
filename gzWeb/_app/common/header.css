@@ -57,7 +57,6 @@ header {
 
 .navbar-brand h2 {
     /*font-family: Helvetica;*/
-    font-size: 18px;
     font-size: 16px;
     font-weight: 300;
 	color:#fff;
@@ -135,7 +134,6 @@ header {
 
 .user-info .user-name {
 	margin-top:8px;
-	font-size:20px;
 	font-size:18px;
 }
 
@@ -225,8 +223,7 @@ header {
     text-transform: uppercase;
 	color:#f2f2f2;
 	font-weight:300;
-	font-size:17px;
-	font-size:12px;
+	font-size:15px;
 	border-bottom: solid 1px #27A95C;
     display: inline;
     padding-bottom: 5px;
@@ -244,7 +241,7 @@ header {
     color:#fff;
 }
 
-.links .tooltip.header-balance-tooltip .tooltip-inner{
+/*.links .tooltip.header-balance-tooltip .tooltip-inner{
     width: 240px;
     max-width: 240px;
     padding: 3px 8px;
@@ -253,6 +250,28 @@ header {
 }
 .links .tooltip.header-balance-tooltip .tooltip-arrow {
     border-bottom-color: #fff;
+}*/
+
+
+.links .tooltip.header-balance-tooltip .tooltip-inner{
+    width: 240px;
+    max-width: 240px;
+    padding: 3px 8px;
+    color: #fff;
+    background-color: #27A95C;
+    border: 1px solid #fff;
+}
+.links .tooltip.header-balance-tooltip.in {
+    filter: alpha(opacity=100);
+    opacity: 1;
+}
+
+.links .tooltip.header-balance-tooltip .tooltip-arrow {
+    border-bottom-color: #fff;
+}
+
+.links .gaming-balance {
+    font-size: 15px;
 }
 
 .cl-effect a {
@@ -477,7 +496,8 @@ header {
 header button.btn-gz,
 header button.btn-gz.btn-gz-alt {
     margin: 18px 0 0;
-	font-size:12px;
+	/*font-size:12px;*/
+	font-size: 15px;
     border: 1px solid #f2f2f2;
     border: 1px solid rgba(242,242,242,0.5);
 }
