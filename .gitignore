@@ -231,3 +231,4 @@ gzWeb/logs/
 /gzWebAdmin/
 build/.fake/
 build/.azSession
+GmFsTests/bin/
