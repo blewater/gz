@@ -20,9 +20,12 @@ Select-AzureRmProfile -Path .\.azSession
 
 # Check if the azure session exists
 Check-Session
-Write-Verbose "User has a valid azure session"
+echo "User has a valid azure session"
 
 # Attention: know what you are doing! Production side-effect:
 # Swap Stage with Production Slots
-Write-Verbose "Swapping stage with production slot"
+echo "Swapping stage with production slot"
 Swap-AzureRmWebAppSlot -Name "greenzorro" -SourceSlotName "sgn" -DestinationSlotName "production" -ResourceGroupName "GreenzorroBizSpark"
+
+echo "Opening greenzorro in browser"
+[System.Diagnostics.Process]::Start("https://www.greenzorro.com")
