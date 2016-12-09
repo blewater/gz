@@ -11,7 +11,7 @@ open gzCpcLib.Task
 
 module Etl = 
     // Compile type
-    type ExcelSchema = ExcelFile< "Losses Prod 201610 (daily31Oct2016).xlsx" >
+    type ExcelSchema = ExcelFile< "Losses Prod 201610.xlsx" >
     let logger = LogManager.GetCurrentClassLogger()
     
     /// <summary>
@@ -65,12 +65,18 @@ module Etl =
     /// <param name="excelRow">The excel row as the source input</param>
     /// <param name="playerRow">The db row matching the id of the excel row</param>
     let setPlayerDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) 
-        (playerRow : DbUtil.DbSchema.ServiceTypes.PlayerRevRpt) = 
+            (playerRow : DbUtil.DbSchema.ServiceTypes.PlayerRevRpt) = 
+
         if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
         let excelCurrency = excelRow.Currency.ToString()
         playerRow.Currency <- excelCurrency
         playerRow.EmailAddress <- excelRow.``Email address``
         playerRow.GrossRevenue <- Convert.ToDecimal(excelRow.``Gross revenue``)
+        
+        // TODO: Handle Bonus out of Cash
+        //playerRow.Acceptsbonuses <- Convert.ToBoolean(excelRow.``Accepts bonuses``)
+        //let b = excelRow.``Last played date``
+
         let excelLastLogin = excelRow.``Last login``
         let parsedLastLogin, lastLogin = 
             DateTime.TryParseExact(excelLastLogin, "dd/MM/yyyy HH:mm:ss", null, Globalization.DateTimeStyles.None)
