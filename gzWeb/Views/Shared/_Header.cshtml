@@ -32,7 +32,7 @@
                         <hr ng-if="$index === accountManagementStates.length - 1" />
                         <a ng-click="gotoState(s)">
                             <span>{{s.title}}</span>
-                            <i ng-if="s.icon || s.iconMenu" class="fa pull-right" ng-class="s.icon || s.iconMenu" aria-hidden="true"></i>
+                            <i ng-if="s.icon || s.iconMenu" class="fa" ng-class="s.icon || s.iconMenu" aria-hidden="true"></i>
                         </a>
                     </li>
                 </ul>
