@@ -146,6 +146,11 @@ header {
     background-color: #27A95C;
     color: #fff;    
 }
+.user-info .dropdown-menu > li > a i {
+    position: absolute;
+    right: 20px;
+    line-height: 1.42857143;
+}
 
 .user-info .dropdown-menu > li > a:hover,
 .user-info .dropdown-menu > li > a:focus {
