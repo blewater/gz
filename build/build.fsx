@@ -150,6 +150,13 @@ Target "PushMaster" (fun _ ->
         trace "pushed to prod"
 )
 
+let userReply2Bool (userAns : string) : bool=
+    match userAns with
+    | "Y" | "y" | "Υ" | "υ" -> true
+    | "N" | "n" | "Ν" | "ν" -> false
+    | null -> trace "Null answer"; false
+    | _ -> tracefn "Unknown response %s" userAns; false
+
 Target "OpenResultInBrowser" (fun _ ->
     let getHtml (url : string) : string =
         let req = WebRequest.Create(Uri(url)) 
@@ -206,39 +213,39 @@ Target "OpenResultInBrowser" (fun _ ->
                 trace "Sha1 tags do not match so the build failed. Opening azure deployment page in browser..."
                 false
 
+    //******** Start Here in this target 
+    match mode with
+        | "dev" -> Diagnostics.Process.Start DevAzDepUrl
+        | _ -> Diagnostics.Process.Start StageAzDepUrl
+        |> ignore
+    let proceedBuildStatus = userReply2Bool "Please check build status in opened page.\nDo you want to proceed (Y/N)?"         
     if
-        not <| AzureBuildSuccess mode
+        proceedBuildStatus
     then
-        // Open Azure build/deployment page and abort this build script
-        match mode with
-            | "dev" -> Diagnostics.Process.Start DevAzDepUrl
-            | _ -> Diagnostics.Process.Start StageAzDepUrl
-            |> ignore
-        failwith "Build deployment to Azure failed." 
+        if not <| AzureBuildSuccess mode then
+            // Open Azure build/deployment page and abort this build script
+            failwith "Build deployment to Azure failed." 
 )
 Target "SwapStageLive" (fun _ ->
 
-    (**** provide the powershell script filename WITHOUT the extension ps1 *)
-    let runPowershellScript (ps1FileName : string) : unit =
-            let p = new Diagnostics.Process();              
-            p.StartInfo.FileName <- "cmd.exe";
-            p.StartInfo.Arguments <- ("/c powershell -ExecutionPolicy Unrestricted .\\" + ps1FileName + ".ps1")
-            p.StartInfo.RedirectStandardOutput <- true
-            p.StartInfo.UseShellExecute <- false
-            p.Start() |> ignore
-            printfn "Processing"
-            printfn "%A" (p.StandardOutput.ReadToEnd())
-            printfn "Finished"
+    if stageIsUpdated then
 
-    let proceedAns = getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net \nProceed with stage to live swap (Y/N)? "
-    let proceedAzure =
-        match proceedAns with
-        | "Y" | "y" | "Υ" | "υ" -> true
-        | "N" | "n" | "Ν" | "ν" -> false
-        | null -> trace "Null answer"; false
-        | _ -> tracefn "Unknown response %s" proceedAns; false
-    if proceedAzure then
-        runPowershellScript "SwapStageLive"
+        (**** run a powershell script by providing the script filename without extension .ps1 *)
+        let runPowershellScript (ps1FileName : string) : unit =
+                let p = new Diagnostics.Process();              
+                p.StartInfo.FileName <- "cmd.exe";
+                p.StartInfo.Arguments <- ("/c powershell -ExecutionPolicy Unrestricted .\\" + ps1FileName + ".ps1")
+                p.StartInfo.RedirectStandardOutput <- true
+                p.StartInfo.UseShellExecute <- false
+                p.Start() |> ignore
+                printfn "Processing"
+                printfn "%A" (p.StandardOutput.ReadToEnd())
+                printfn "Finished"
+
+        let proceedAns = getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net \nProceed with stage to live swap (Y/N)? "
+        let proceedAzure = userReply2Bool proceedAns
+        if proceedAzure then
+            runPowershellScript "SwapStageLive"
 )
 
 // Dependencies
@@ -251,7 +258,7 @@ Target "SwapStageLive" (fun _ ->
   =?> ("DeployAzDev", mode.Equals "dev")
   =?> ("PushMaster", mode = "prod")
   ==> "OpenResultInBrowser"
-  =?> ("SwapStageLive", stageIsUpdated)
+  =?> ("SwapStageLive", mode = "prod")
   ==> "EndWithDevelop"
 
 // start build
