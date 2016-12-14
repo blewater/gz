@@ -645,16 +645,16 @@
     margin-left: 0;
 }
 .terms ol.alpha {
-  counter-reset: list;
+    counter-reset: list;
 }
 .terms ol.alpha > li {
-  list-style: none;
+    list-style: none;
+    counter-increment: inherit;
 }
 .terms ol.alpha > li:before {
-  content: counter(list, lower-alpha) ") ";
-  counter-increment: list;
+    content: counter(list, lower-alpha) ") ";
+    counter-increment: list;
 }
-
 
 .terms .general-terms {
     margin-left: -20px;
