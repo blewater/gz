@@ -8,71 +8,84 @@
 }
 
 <footer class="bg-gz" ng-controller="footerCtrl" ng-hide="playing">
-    <div class="container">
-        <div class="footer-menu cl-effect text-center">
-            <a ng-repeat-start="route in routes" ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
-            <span ng-repeat-end ng-class="{'clearfix': xs && $index % 4 === 3}"></span>
+    <div class="first">
+        <div class="container">
+            <div class="footer-menu cl-effect text-center">
+                <a ng-repeat-start="item in menu" ng-href="{{item.route.path}}" ng-class="getClass(item.route.path)" ng-if="item.when()">{{item.route.title}}</a>
+                <span ng-repeat-end ng-class="{'clearfix': xs && $index % 4 === 3}"></span>
+            </div>
+            <div class="footer-social text-center">
+                <a href="https://www.facebook.com/greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook" ng-class="{'fa-lg': !xs}"></i></a>
+                <a href="https://twitter.com/GrZorro" target="_blank"><i class="fa fa-twitter" ng-class="{'fa-lg': !xs}"></i></a>
+                <a href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home" target="_blank"><i class="fa fa-linkedin" ng-class="{'fa-lg': !xs}"></i></a>
+                <a href="https://www.instagram.com/greenzorro_official/" target="_blank"><i class="fa fa-instagram" ng-class="{'fa-lg': !xs}"></i></a>
+                <a href="mailto:help@greenzorro.com" target="_blank"><i class="fa fa-envelope" ng-class="{'fa-lg': !xs}"></i></a>
+                <a href="http://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker" ng-class="{'fa-lg': !xs}"></i></a>
+            </div>
         </div>
-        <div class="footer-social text-center">
-            <a href="https://www.facebook.com/greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook" ng-class="{'fa-lg': !xs}"></i></a>
-            <a href="https://twitter.com/GrZorro" target="_blank"><i class="fa fa-twitter" ng-class="{'fa-lg': !xs}"></i></a>
-            <a href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home" target="_blank"><i class="fa fa-linkedin" ng-class="{'fa-lg': !xs}"></i></a>
-            <a href="https://www.instagram.com/greenzorro_official/" target="_blank"><i class="fa fa-instagram" ng-class="{'fa-lg': !xs}"></i></a>
-            <a href="mailto:help@greenzorro.com" target="_blank"><i class="fa fa-envelope" ng-class="{'fa-lg': !xs}"></i></a>
-            <a href="http://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker" ng-class="{'fa-lg': !xs}"></i></a>
-        </div>
+    </div>
+    <div class="second">
+        <div class="container">
+            <div class="footer-licenses text-center" ng-show="routeData.gaming || routeData.wandering">
+                <a class="license mga" href="https://www.authorisation.mga.org.mt/verification.aspx?lang=en&company=6d9bcc8f-2ec5-49d3-90c6-58f0dde5d820" target="_blank">
+                    <img src="../../Content/Images/mga.png" alt="EveryMatrix Limited - Licensed">
+                </a>
+                <a class="license curacao" href="http://www.gaminglicences.com/pages/validate.php?lid=8048-E0709353" target="_blank">
+                    <img src="../../Content/Images/curacao.png" alt="AntillePhone Licence Verification">
+                </a>
+                <a class="license play-responsibly" ng-href="/responsible-gambling" target="_blank">
+                    <img src="../../Content/Images/18plus_invert_transparent.png" alt="18+ Play Responsibly"> @*class="img-thumbnail"*@ 
+                </a>
+            </div>
+            <div class="footer-advice text-center" ng-show="routeData.gaming || routeData.wandering">
+                <span class="text-frame-alt text-frame-sm">
+                    Gambling can be addictive, please play responsibly.
+                </span>
+            </div>
 
-        <div class="footer-licenses text-center">
-            <a class="license mga" href="https://www.authorisation.mga.org.mt/verification.aspx?lang=en&company=6d9bcc8f-2ec5-49d3-90c6-58f0dde5d820" target="_blank">
-                <img class="img-thumbnail" src="../../Content/Images/mga.png" alt="EveryMatrix Limited - Licensed">
-            </a>
-            <a class="license curacao" href="http://www.gaminglicences.com/pages/validate.php?lid=8048-E0709353" target="_blank">
-                <img class="img-thumbnail" src="../../Content/Images/curacao.png" alt="AntillePhone Licence Verification">
-            </a>
-            <a class="license play-responsibly" ng-href="/responsible-gambling" target="_blank">
-                <img class="img-thumbnail" src="../../Content/Images/18plus.png" alt="18+ Play Responsibly">
-            </a>
-        </div>
-        <div class="footer-advice text-center">
-            <span class="text-frame text-frame-sm">
-                Gambling can be addictive, please play responsibly.
-            </span>
-        </div>
-
-        <div class="footer-payment-methods text-center">
-            <div class="footer-payment-method footer-visa">
-                <img class="img-thumbnail img-responsive" src="../../Content/Images/payment methods/visa.svg" alt="Visa">
-            </div>
-            <div class="footer-payment-method footer-mastercard">
-                <img class="img-thumbnail img-responsive" src="../../Content/Images/payment methods/mastercard.svg" alt="Master Card">
-            </div>
-            <div class="footer-payment-method footer-maestro">
-                <img class="img-thumbnail img-responsive" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
-            </div>
-            <div class="footer-payment-method footer-trustly">
-                <img class="img-thumbnail img-responsive" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly">
-            </div>
-        </div>
-
-        <div class="license-disclaimer text-center">
-            <div class="row">
-                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-2 col-sm-8">
-                    The website is operated and managed by EveryMatrix Ltd, a company bearing registration number C44411, and having its registered address at Suite 10, Level 4, Portomaso Business Tower, Vjal Portomaso, St.Julians, STJ 4011, Malta. EveryMatrix Ltd. is licensed and regulated by the Malta Gaming Authority (www.mga.org.mt) in virtue of a Class 1 license numbered MGA/CL1/497/2010.
+            <div class="footer-payment-methods text-center" ng-show="routeData.gaming || routeData.wandering">
+                <div class="footer-payment-method footer-visa">
+                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/visa.svg" alt="Visa">
+                </div>
+                <div class="footer-payment-method footer-mastercard">
+                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/mastercard.svg" alt="Master Card">
+                </div>
+                <div class="footer-payment-method footer-maestro">
+                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
+                </div>
+                <div class="footer-payment-method footer-trustly">
+                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly"> @*class="img-thumbnail"*@ 
                 </div>
             </div>
-        </div>
-        <hr class="copyright-hr" />
-        <div class="copyright text-center">
-            &copy; {{copyrightYears}} | greenzorro ltd | All rights reserved
-        </div>
-        <div class="company-registration text-center">
-            <span>Company registration number: 9320285</span>
-            <span class="company-registration-separator"> | </span>
-            <span>Registered in England & Wales</span>
-        </div>
-        <div ng-show="inDebugMode" class="debug-info text-center clearfix">
-            <br />
-            <span>@versionField.GetValue(null)</span>
+
+            <div class="license-disclaimer text-justify">
+                <div class="row">
+                    <div class="col-xs-offset-1 col-xs-10 col-sm-offset-2 col-sm-8">
+                        <div ng-show="routeData.gaming || routeData.wandering">
+                            <p>The Gambling services on the website are operated by EveryMatrix N.V., a limited liability company incorporated under the laws of Curacao, bearing company registration number 108354 and having its registered address at Dr. Hugenholtzweg Z/N, Curacao, and by EveryMatrix Ltd., a company bearing registration number C44411, and having its registered address at Level 5, Suite 1A, Portomaso Business Tower, Vjal Portomaso, St. Julians, STJ 4012, Malta.</p>
+                            <p>Casino games on this website are provided by EveryMatrix N.V., a limited liability company incorporated under the laws of Curacao, bearing company registration number 108354 and having its registered address at Dr. Hugenholtzweg Z/N, Curacao, licensed and regulated in virtue of license number No. 8048/JAZ granted by the Government of Curacao. The Sportsbook services, if provided on this domain, are supplied by EveryMatrix N.V.</p>
+                            <p>Specific casino games content on this website are provided by EveryMatrix Ltd., licensed and regulated by the Malta Gaming Authority (www.mga.org.mt) in virtue of a Class 1 on 4 license numbered MGA/CL1/497/2010 issued on the 2nd of May 2012.</p>
+                        </div>
+                        <div ng-show="routeData.investing">
+                            <p>The investment offering on this site is not operated nor offered by EveryMatrix N.V or EveryMatrix Ltd. Please access the investment section in order to see specific Terms and conditions along with footnote provided by Greenzorro Ltd.</p>
+                        </div>
+                        @*The website is operated and managed by EveryMatrix Ltd, a company bearing registration number C44411, and having its registered address at Suite 10, Level 4, Portomaso Business Tower, Vjal Portomaso, St.Julians, STJ 4011, Malta. EveryMatrix Ltd. is licensed and regulated by the Malta Gaming Authority (www.mga.org.mt) in virtue of a Class 1 license numbered MGA/CL1/497/2010.*@
+                    </div>
+                </div>
+            </div>
+            <hr class="copyright-hr" />
+            <div class="copyright text-center">
+                &copy; {{copyrightYears}} | greenzorro ltd | All rights reserved
+            </div>
+            <div class="company-registration text-center">
+                <span>Company registration number: 9320285</span>
+                <span class="company-registration-separator"> | </span>
+                <span>Registered in England & Wales</span>
+            </div>
+            <div ng-show="inDebugMode" class="debug-info text-center clearfix">
+                <br />
+                <span>@versionField.GetValue(null)</span>
+            </div>
         </div>
     </div>
 </footer>

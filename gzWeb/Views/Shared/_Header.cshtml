@@ -37,12 +37,12 @@
                     </li>
                 </ul>
                 <div class="switch" ng-class="{'pull-right':!lg}">
-                    <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">
-                        <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />
+                    <a ng-class="{'on':!routeData.investing, 'off':routeData.investing}" ng-click="routeData.investing || toInvestments()" ng-mouseover="investingOver = true;" ng-mouseleave="investingOver = false;">@*  uib-tooltip="Investment" tooltip-placement="bottom" tooltip-class="investment-tooltip" *@
+                        <img ng-src="{{routeData.investing ? investmentsImgOff : investmentsImgOn}}" />&nbsp;<span>Investment</span>
                     </a>
                     <div ng-hide="routeData.investing || routeData.gaming" class="divider"></div>
-                    <a ng-class="{'on':!routeData.gaming, 'off':routeData.gaming}" ng-click="routeData.gaming || backToGames()" ng-mouseover="gamingOver = true;" ng-mouseleave="gamingOver = false;">
-                        <img ng-src="{{routeData.gaming ? gamesImgOff : gamesImgOn}}" />
+                    <a ng-class="{'on':!routeData.gaming, 'off':routeData.gaming}" ng-click="routeData.gaming || backToGames()" ng-mouseover="gamingOver = true;" ng-mouseleave="gamingOver = false;">@*  uib-tooltip="Games" tooltip-placement="bottom" tooltip-class="games-tooltip" *@
+                        <img ng-src="{{routeData.gaming ? gamesImgOff : gamesImgOn}}" />&nbsp;<span>Games</span>
                     </a>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
-                    <li ng-if="hasGamingBalance"  class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="header-balance-tooltip" ng-class="{'text-center':!lg}">
+                    <li ng-if="hasGamingBalance" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
                         {{currency}} {{gamingBalance | number : 2}}
                     </li>
                     <li ng-class="{'text-center': sm || md}">
