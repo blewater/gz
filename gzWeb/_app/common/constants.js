@@ -73,17 +73,31 @@
         title: 'Help',
         category: categories.wandering
     };
-    routes.privacy = {
-        path: '/privacy',
-        ctrl: 'privacyCtrl',
-        tpl: '_app/guest/privacy.html',
+    routes.privacyGames = {
+        path: '/gaming-privacy',
+        ctrl: 'privacyGamesCtrl',
+        tpl: '_app/guest/privacyGames.html',
         title: 'Privacy Policy',
         category: categories.wandering
     };
-    routes.terms = {
-        path: '/terms',
-        ctrl: 'termsCtrl',
-        tpl: '_app/guest/terms.html',
+    routes.privacyInvestment = {
+        path: '/investment-privacy',
+        ctrl: 'privacyInvestmentCtrl',
+        tpl: '_app/guest/privacyInvestment.html',
+        title: 'Privacy Policy',
+        category: categories.wandering
+    };
+    routes.termsGames = {
+        path: '/gaming-terms',
+        ctrl: 'termsGamesCtrl',
+        tpl: '_app/guest/termsGames.html',
+        title: 'Terms & Conditions',
+        category: categories.wandering
+    };
+    routes.termsInvestment = {
+        path: '/investment-terms',
+        ctrl: 'termsInvestmentCtrl',
+        tpl: '_app/guest/termsInvestment.html',
         title: 'Terms & Conditions',
         category: categories.wandering
     };
@@ -92,13 +106,6 @@
         ctrl: 'playgroundCtrl',
         tpl: '_app/guest/playground.html',
         title: 'Playground',
-        category: categories.wandering
-    };
-    routes.terms = {
-        path: '/terms',
-        ctrl: 'termsCtrl',
-        tpl: '_app/guest/terms.html',
-        title: 'Terms & Conditions',
         category: categories.wandering
     };
     routes.responsibleGambling = {

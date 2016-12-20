@@ -653,6 +653,7 @@
 .terms > ol, .terms > ul, .terms ol.alpha {
     margin-left: 0;
 }
+
 .terms ol.alpha {
     counter-reset: list;
 }
@@ -673,6 +674,13 @@
 }
 .guest .terms .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: #f9f9f9;
+}
+
+.msg-body .terms > ol, .msg-body .terms > ul, .msg-body .terms ol.alpha {
+    margin-left: 20px;
+}
+.msg-body .terms a {
+    color: #fff !important;
 }
 /* #endregion */
 

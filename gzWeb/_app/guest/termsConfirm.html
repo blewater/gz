@@ -1,4 +1,13 @@
-﻿<div ng-include="'_app/guest/termsContent.html'"></div>
+﻿<!--<uib-tabset justified="true">
+    <uib-tab index="0" heading="Gaming T&C">
+        <div ng-include="'_app/guest/termsContentGames.html'"></div>
+    </uib-tab>
+    <uib-tab index="1" heading="Investment T&C">
+        <div ng-include="'_app/guest/termsContentInvestment.html'"></div>
+    </uib-tab>
+</uib-tabset>-->
+<div ng-show="isGaming" ng-include="'_app/guest/termsContentGames.html'"></div>
+<div ng-show="!isGaming" ng-include="'_app/guest/termsContentInvestment.html'"></div>
 <div class="pull-right">
     <button type="button" class="btn-gz btn-gz-alt" ng-click="nsCancel(false)">Decline</button>
     <button type="button" class="btn-gz" ng-click="nsOk(true)">Accept</button>

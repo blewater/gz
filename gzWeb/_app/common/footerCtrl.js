@@ -10,8 +10,10 @@
             { route: constants.routes.about, when: function () { return true; } },
             { route: constants.routes.faq, when: function () { return $rootScope.routeData && ($rootScope.routeData.investing || $rootScope.routeData.wandering); } },
             { route: constants.routes.help, when: function () { return $rootScope.routeData && ($rootScope.routeData.gaming || $rootScope.routeData.wandering); } },
-            { route: constants.routes.privacy, when: function () { return $rootScope.routeData && ($rootScope.routeData.gaming || $rootScope.routeData.wandering); } },
-            { route: constants.routes.terms, when: function () { return true; } },
+            { route: constants.routes.privacyGames, when: function () { return $rootScope.routeData && ($rootScope.routeData.gaming || $rootScope.routeData.wandering); } },
+            { route: constants.routes.privacyInvestment, when: function () { return $rootScope.routeData && $rootScope.routeData.investing; } },
+            { route: constants.routes.termsGames, when: function () { return $rootScope.routeData && ($rootScope.routeData.gaming || $rootScope.routeData.wandering); } },
+            { route: constants.routes.termsInvestment, when: function () { return $rootScope.routeData && $rootScope.routeData.investing; } },
             { route: constants.routes.promotions, when: function () { return true; } }
         ];
         $scope.getClass = function (path) {
