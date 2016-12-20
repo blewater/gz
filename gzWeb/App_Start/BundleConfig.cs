@@ -163,8 +163,10 @@ namespace gzWeb {
                                         , "~/_app/guest/contactCtrl.js"
                                         , "~/_app/guest/faqCtrl.js"
                                         , "~/_app/guest/helpCtrl.js"
-                                        , "~/_app/guest/privacyCtrl.js"
-                                        , "~/_app/guest/termsCtrl.js"
+                                        , "~/_app/guest/privacyGamesCtrl.js"
+                                        , "~/_app/guest/privacyInvestmentCtrl.js"
+                                        , "~/_app/guest/termsGamesCtrl.js"
+                                        , "~/_app/guest/termsInvestmentCtrl.js"
                                         , "~/_app/guest/playgroundCtrl.js"
                                         , "~/_app/guest/responsibleGamblingCtrl.js"
             #endregion
