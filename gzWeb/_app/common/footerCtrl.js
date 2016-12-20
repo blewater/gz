@@ -8,7 +8,7 @@
         $scope.menu = [
             { route: constants.routes.transparency, when: function () { return true; } },
             { route: constants.routes.about, when: function () { return true; } },
-            { route: constants.routes.faq, when: function () { return $rootScope.routeData && ($rootScope.routeData.investing || $rootScope.routeData.wandering); } },
+            { route: constants.routes.faq, when: function () { return $rootScope.routeData && $rootScope.routeData.investing; } },
             { route: constants.routes.help, when: function () { return $rootScope.routeData && ($rootScope.routeData.gaming || $rootScope.routeData.wandering); } },
             { route: constants.routes.privacyGames, when: function () { return $rootScope.routeData && ($rootScope.routeData.gaming || $rootScope.routeData.wandering); } },
             { route: constants.routes.privacyInvestment, when: function () { return $rootScope.routeData && $rootScope.routeData.investing; } },
