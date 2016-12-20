@@ -52,8 +52,10 @@
 #r @"packages/FAKE/tools/FakeLib.dll"
 #r @"packages/Fake.Azure.WebApps/lib/net451/Fake.Azure.WebApps.dll"
 #r @"packages\FSharp.Text.RegexProvider\lib\net40\FSharp.Text.RegexProvider.dll"
+#r @"packages\System.Management.Automation.dll\lib\net40\System.Management.Automation.dll"
 open System
 open System.Net
+open System.Management.Automation
 open FSharp.Data
 open FSharp.Text.RegexProvider
 
@@ -232,18 +234,25 @@ Target "SwapStageLive" (fun _ ->
 
         (**** run a powershell script by providing the script filename without extension .ps1 *)
         let runPowershellScript (ps1FileName : string) : unit =
-                let p = new Diagnostics.Process();              
-                p.StartInfo.FileName <- "cmd.exe";
-                p.StartInfo.Arguments <- ("/c powershell -ExecutionPolicy Unrestricted .\\" + ps1FileName + ".ps1")
-                p.StartInfo.RedirectStandardOutput <- true
-                p.StartInfo.UseShellExecute <- false
-                p.Start() |> ignore
-                printfn "Processing"
-                printfn "%A" (p.StandardOutput.ReadToEnd())
-                printfn "Finished"
+            let ps = PowerShell.Create()
+            (ps.AddScript (ps1FileName + ".ps1"))
+                .AddParameter("Verbose", "")
+                .Invoke() |> ignore
+          
+//            let p = new Diagnostics.Process();              
+//            p.StartInfo.FileName <- "cmd.exe";
+//            p.StartInfo.Arguments <- ("/c powershell -ExecutionPolicy Unrestricted .\\" + ps1FileName + ".ps1")
+//            p.StartInfo.RedirectStandardOutput <- true
+//            p.StartInfo.UseShellExecute <- false
+//            p.Start() |> ignore
+//            printfn "Processing"
+//            printfn "%A" (p.StandardOutput.ReadToEnd())
+//            printfn "Finished"
 
-        let proceedAns = getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net \nProceed with stage to live swap (Y/N)? "
-        let proceedAzure = userReply2Bool proceedAns
+        let proceedAzure = 
+            getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net \nProceed with stage to live swap (Y/N)? "
+            |> userReply2Bool
+        
         if proceedAzure then
             runPowershellScript "SwapStageLive"
 )
