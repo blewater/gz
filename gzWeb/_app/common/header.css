@@ -258,7 +258,7 @@ header {
 }*/
 
 
-.links .tooltip.header-balance-tooltip .tooltip-inner{
+/*.links .tooltip.header-balance-tooltip .tooltip-inner{
     width: 240px;
     max-width: 240px;
     padding: 3px 8px;
@@ -273,7 +273,35 @@ header {
 
 .links .tooltip.header-balance-tooltip .tooltip-arrow {
     border-bottom-color: #fff;
+}*/
+
+header .tooltip .tooltip-inner{
+    padding: 3px 5px;
+    color: #fff;
+    background-color: #27A95C;
+    border: 1px solid #fff;
 }
+header .tooltip.in {
+    filter: alpha(opacity=100);
+    opacity: 1;
+}
+header .tooltip.bottom .tooltip-arrow {
+    border-bottom-color: #fff;
+}
+header .tooltip.balance-tooltip .tooltip-inner{
+    width: 240px;
+    max-width: 240px;
+}
+header .tooltip.games-tooltip .tooltip-inner{
+    width: 70px;
+    max-width: 70px;
+}
+header .tooltip.investment-tooltip .tooltip-inner{
+    width: 70px;
+    max-width: 70px;
+}
+
+
 
 .links .gaming-balance {
     font-size: 15px;
@@ -529,14 +557,28 @@ header .switch .off {
     margin-top: 3px;
     border: 1px solid #fff;
     float: right;
+
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 12px;
+    /*width: 120px;*/
+}
+header .switch .on span,
+header .switch .off span {
+    float: right;
+    margin-top: 5px;
+    width: 94px;
+    text-align: center;
 }
 header .switch .on {
     background-color: #27A95C;
+    color: #fff;
 }
 /*header .switch .on:hover {
     background-color: #27A95C;
 }*/
 header .switch .off {
+    color: #27A95C;
     background-color: #fff;
     cursor: default;
 }

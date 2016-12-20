@@ -169,15 +169,21 @@
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group text-center">
-                    <gz-check-box gz-model="model" gz-value="agreed">I have read and agreed the <a class="terms" ng-click="readTerms()">terms & conditions</a></gz-check-box>
+                <div class="form-group text-left">
+                    <gz-check-box gz-model="model" gz-value="agreedGames">I have read and agreed the <a class="terms" ng-click="readGamesTerms()">gaming terms & conditions</a></gz-check-box>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group text-left">
+                    <gz-check-box gz-model="model" gz-value="agreedInvestment">I have read and agreed the <a class="terms" ng-click="readInvestmentTerms()">investment terms & conditions</a></gz-check-box>
                 </div>
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <div class="btns text-center">
-                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !model.agreed"
+                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !model.agreedGames || !model.agreedInvestment"
                                 ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                             <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
                             <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
