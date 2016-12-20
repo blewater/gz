@@ -253,15 +253,28 @@
         // #endregion
 
         // #region terms and conditions
-        $scope.readTerms = function(){
-            var promise = message.modal("Terms and conditions", {
+        $scope.readGamesTerms = function(){
+            var promise = message.modal("Gaming terms and conditions", {
                 nsSize: 'xl',
-                nsTemplate: '_app/guest/termsConfirm.html'
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isGaming: true }
             });
             promise.then(function() {
-                $scope.model.agreed = true;
+                $scope.model.agreedGames = true;
             }, function() {
-                $scope.model.agreed = false;
+                //$scope.model.agreed = false;
+            });
+        };
+        $scope.readInvestmentTerms = function () {
+            var promise = message.modal("Investment terms and conditions", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isGaming: false }
+            });
+            promise.then(function () {
+                $scope.model.agreedInvestment = true;
+            }, function () {
+                //$scope.model.agreedInvestment = false;
             });
         };
         // #endregion
