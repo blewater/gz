@@ -20,13 +20,13 @@
 			        { Q: "When will <span class=\"text-gz\"><b>greenzorro</b></span> start accepting bets?", A: "<span class=\"text-gz\"><b>greenzorro</b></span> expects to start sending registration invitations in January 2016 and launch in March 2016." }
                 ]
             },
-            {
-                name: 'Games',
-                items: [
-			        { Q: "What Casino games are available", A: "<span class=\"text-gz\"><b>greenzorro</b></span> will offer the most popular casino games: Blackjack, Roulette, Slot machines, Baccarat, all of which will be renewed on a frequent basis. Across all games, <span class=\"text-gz\"><b>greenzorro</b></span> will offer the best possible odds for the players, maximizing payout." },
-			        { Q: "What about Sports Betting?", A: "<span class=\"text-gz\"><b>greenzorro</b></span> will offer a complete sports book featuring the most popular sports worldwide." }
-                ]
-            },
+            //{
+            //    name: 'Games',
+            //    items: [
+			//        { Q: "What Casino games are available", A: "<span class=\"text-gz\"><b>greenzorro</b></span> will offer the most popular casino games: Blackjack, Roulette, Slot machines, Baccarat, all of which will be renewed on a frequent basis. Across all games, <span class=\"text-gz\"><b>greenzorro</b></span> will offer the best possible odds for the players, maximizing payout." },
+			//        { Q: "What about Sports Betting?", A: "<span class=\"text-gz\"><b>greenzorro</b></span> will offer a complete sports book featuring the most popular sports worldwide." }
+            //    ]
+            //},
             {
                 name: 'Investments',
                 items: [
