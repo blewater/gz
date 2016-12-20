@@ -700,7 +700,8 @@
     <Content Include="_app\games\liveSearch.js" />
     <Content Include="_app\guest\help.html" />
     <Content Include="_app\guest\home.html" />
-    <Content Include="_app\guest\termsContent.html" />
+    <Content Include="_app\guest\termsContentInvestment.html" />
+    <Content Include="_app\guest\termsContentGames.html" />
     <Content Include="_app\guest\termsConfirm.html" />
     <Content Include="_app\guest\responsibleGambling.html" />
     <Content Include="_app\guest\transparency.html" />
