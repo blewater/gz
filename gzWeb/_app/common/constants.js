@@ -64,7 +64,7 @@
         ctrl: 'faqCtrl',
         tpl: '_app/guest/faq.html',
         title: 'FAQ',
-        category: categories.wandering
+        category: categories.investing
     };
     routes.help = {
         path: '/help',
@@ -85,7 +85,7 @@
         ctrl: 'privacyInvestmentCtrl',
         tpl: '_app/guest/privacyInvestment.html',
         title: 'Privacy Policy',
-        category: categories.wandering
+        category: categories.investing
     };
     routes.termsGames = {
         path: '/gaming-terms',
@@ -99,7 +99,7 @@
         ctrl: 'termsInvestmentCtrl',
         tpl: '_app/guest/termsInvestment.html',
         title: 'Terms & Conditions',
-        category: categories.wandering
+        category: categories.investing
     };
     routes.playground = {
         path: '/playground',
