@@ -291,6 +291,12 @@
 	font-size: 22px;
 	margin-top: 20px;
 }
+.guest .transparency .main .trasparency-descr {
+	text-align: justify;
+	font-size: 12px;
+	padding: 5px;
+    height: 120px;
+}
 
 /*** Footer Section Styling ***/
 .guest .transparency .footer-section .we-report {
