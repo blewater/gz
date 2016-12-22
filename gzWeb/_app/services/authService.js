@@ -526,6 +526,9 @@
         factory.getGrantedBonuses = function () {
             return emWamp.getGrantedBonuses();
         }
+        factory.getApplicableBonuses = function (parameters) {
+            return emWamp.getApplicableBonuses(parameters);
+        }
         factory.forfeit = function (bonusID) {
             return emWamp.forfeit(bonusID);
         }
