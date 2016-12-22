@@ -58,7 +58,7 @@
                         setGameDimensions();
                     });
                 
-                    emCasino.getLaunchUrl($scope.game.slug, null, $scope.playForRealMoney).then(function (launchDataResult) {
+                    emCasino.getLaunchUrl($scope.game.slug, null, !$scope.playForFun).then(function (launchDataResult) {
                         $scope.gameLaunchData = launchDataResult;
                         var launchUrl = launchDataResult.url.indexOf('http://') !== -1
                             ? launchDataResult.url.replace(/^http:\/\//i, 'https://')
@@ -84,10 +84,12 @@
 
         $scope._init(function () {
             var params = $location.search();
-            $scope.playForRealMoney = params.fun === "false";
-            delete params['fun'];
+            $scope.playForFun = params.funMode === "true";
+            delete params['funMode'];
             searchParams = Object.keys(params).length === 0 ? {} : params;
             $location.search({});
+            if ($scope.playForFun)
+                $location.search('funMode', true);
             loadGame();
             setClock();
         });
