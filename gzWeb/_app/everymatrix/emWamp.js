@@ -112,6 +112,10 @@
                 return _call("/user/account#updateProfile", parameters);
             },
 
+            getApplicableBonuses: function (parameters) {
+                return _call("/user#getApplicableBonuses", parameters);
+            },
+
             applyBonus: function (parameters) {
                 return _call("/user/bonus#apply", parameters);
             },
