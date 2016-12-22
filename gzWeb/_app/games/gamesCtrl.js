@@ -141,7 +141,7 @@
 
         // #region Filtered Games
         $scope.getGameUrl = function (slug, playForFun) {
-            return constants.routes.game.path.replace(":slug", slug) + '?fun=' + (playForFun || false) + '&' + $location.url().substring($location.path().length + 1);
+            return constants.routes.game.path.replace(":slug", slug) + '?funMode=' + (playForFun || false) + '&' + $location.url().substring($location.path().length + 1);
         }
 
         function search() {
@@ -324,7 +324,7 @@
                 case constants.carouselActionTypes.page:
                     return '/promotions/' + carouselEntry.ActionUrl;
                 case constants.carouselActionTypes.game:
-                    return '/casino/' + carouselEntry.ActionUrl;
+                    return '/casino/' + carouselEntry.ActionUrl + '?fun=false';
                 case constants.carouselActionTypes.url:
                 default:
                     return carouselEntry.ActionUrl.substring(0, 4) === 'http'
@@ -439,26 +439,7 @@
             searchGamesBySlugs(customCategory, customCategory.gameSlugs, function () {
                 deferred.resolve(customCategory);
             });
-            //emCasino.getGames({
-            //    filterBySlug: categoriesEntry.GameSlugs,
-            //    filterByPlatform: null,
-            //    expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.Popularity,
-            //    pageSize: customCategory.paging.size,
-            //    pageIndex: customCategory.currentPageIndex + 1
-            //}).then(function (getCategoryGamesResult) {
-            //    customCategory.currentPageIndex = getCategoryGamesResult.currentPageIndex;
-            //    customCategory.totalGameCount = getCategoryGamesResult.totalGameCount;
-            //    customCategory.totalPageCount = getCategoryGamesResult.totalPageCount;
-            //    //Array.prototype.push.apply(category.games, getCategoryGamesResult.games);
 
-            //    helpers.array.applyWithDelay(getCategoryGamesResult.games, function (g) {
-            //        Array.prototype.push.apply(customCategory.games, [g]);
-            //    }, 50, function () {
-            //        deferred.resolve(customCategory);
-            //    });
-            //}, function (error) {
-            //    $log.error(error);
-            //});
             return deferred.promise;
         }
         function loadCustomCategories() {
