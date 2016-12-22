@@ -359,7 +359,7 @@
     left: -2px;
     padding: 0;
     z-index: 10;
-    border: 2px dashed #fff;
+    border: 2px none #fff;
 }
 .categories .category .game a .game-info .game-play:before {
     speak: none;
@@ -385,6 +385,7 @@
     -webkit-animation: spinAround 9s linear infinite;
     -moz-animation: spinAround 9s linear infinite;
     animation: spinAround 9s linear infinite;
+    border-style: dashed;
 }
 
 .categories .category .game a .game-info .game-play i.fa-play {
