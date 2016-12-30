@@ -2,9 +2,25 @@
     <div class="home">
         <section class="top">
             <div class="container">
-                <img class="laptop-big" src="../../Content/Images/mac.png" />
-                <div class="row">
-                    <div class="col-xs-12 col-xs-pull-6 col-md-push-1 col-md-offset-6 col-md-6 right-heading">
+                <!--<img class="laptop-big" src="../../Content/Images/mac.png" />-->
+                <div class="laptop-big">
+                    <img src="../../Content/Images/mac.png" />
+                    <div class="game-play" ng-click="watchVideo()">
+                        <i class="fa fa-play"></i>
+                    </div>
+                </div>
+                <div class="right-heading">
+                    <h2>Online casino.</h2>
+                    <h2>Keep your winnings.</h2>
+                    <h2>Benefit from your losses.</h2>
+                    <h5>Fair | Transparent | Secure</h5>
+
+                    <button type="button" class="btn-gz sign-up-btn" ng-mouseover="signUpHovered = true;" ng-mouseleave="signUpHovered = false;" ng-click="signup()">
+                        <img ng-show="!signUpHovered" src="../../Content/Images/games.svg" />
+                        <img ng-show="signUpHovered" src="../../Content/Images/games_white.svg" />
+                        <span>sign up and play</span>
+                    </button>
+                    <!--<div class="col-xs-12 col-xs-pull-6 col-md-push-1 col-md-offset-6 col-md-6 right-heading">
                         <h2>Online casino.</h2>
                         <h2>Keep your winnings.</h2>
                         <h2>Benefit from your losses.</h2>
@@ -15,40 +31,11 @@
                             <img ng-show="signUpHovered" src="../../Content/Images/games_white.svg" />
                             <span>sign up and play</span>
                         </button>
-                        <!--<a class="watch-video" ng-click="watchVideo()"><span class="glyphicon glyphicon-play"></span> Watch Video</a>-->
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </section>
 
-        <!--<section class="middle">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="prompt">Say hello to the future of online gambling:</div>
-                        <p>
-                            <span class="text-gz"><b>greenzorro</b></span> is a casino platform that offers all the upside of winning,
-                            but partially protects players from the downside by allowing them to
-                            benefit from their losses. <span class="text-gz"><b>greenzorro</b></span> returns back 50% of players' net
-                            losses as a bonus, payable after 3 months. <span class="text-gz"><b>greenzorro</b></span> invests players'
-                            bonus for 3 months to increase its value.
-                        </p>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="prompt">To achieve the highest possible return of losses to users, we:</div>
-                        <p>
-                            <img src="../../Content/Images/Gfalling-cube.png" />
-                            <span>Minimize costs by eliminating unnecessary expenses</span>
-                        </p>
-                        <p>
-                            <img src="../../Content/Images/Gfalling-cube.png" />
-                            <span>Maximize investments returns through a diversified investments strategy</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>-->
         <section class="middle">
             <div class="container">
                 <div class="row">
@@ -56,12 +43,12 @@
                         <div class="prompt">If you are an online casino player, greenzorro is your hero</div>
                         <ul>
                             <li>Online casino with all popular games</li>
-                            <li>Allocates part of players' net losses to professionally managed investment products</li>
+                            <li>Allocates part of players' net losses to investment products</li>
                             <li>Grows investment value and returns to players as bonus</li>
                         </ul>
                     </div>
 
-                    <div class="col-sm-offset-1 col-sm-5">
+                    <div class="col-sm-6">
                         <div class="prompt">Your benefits</div>
                         <ul>
                             <li>50% of your net loss invested at the end of each month</li>
@@ -129,7 +116,7 @@
                     </div>
 
                     <div class="col-xs-offset-2 col-xs-8 col-sm-offset-1 col-sm-5 col-md-offset-0 col-md-3 process-item">
-                        <h4>2. Play</h4>
+                        <h4>2. Play games</h4>
                         <img src="../../Content/Images/play.svg" />
                         <p><span class="text-gz"><b>greenzorro</b></span> features all popular real money Casino games</p>
                     </div>
