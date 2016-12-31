@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDepositMoneyMatrixCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', 'constants', '$timeout', 'message', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, constants, $timeout, message) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', 'constants', '$timeout', 'message', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, constants, $timeout, message, auth) {
         $scope.spinnerWhiteAbs = constants.spinners.sm_abs_white;
         var thisYear = moment().year();
         var maxYear = thisYear + 30;
@@ -163,6 +163,7 @@
             loadMonths();
             loadCreditCardInfo();
             embedCDE();
+            //fetchApplicableBonuses();
         };
 
         function getFields(id) {
@@ -228,5 +229,21 @@
         };
 
         init();
+
+        function fetchApplicableBonuses() {
+            $scope.fetchingBonuses = true;
+            auth.getApplicableBonuses({
+                type: 'deposit',
+                gamingAccountID: auth.data.gamingAccounts[0].id
+            }).then(function (result) {
+                $scope.fetchingBonuses = false;
+                $scope.enableBonusInput = result.enableBonusInput;
+                $scope.enableBonusSelector = result.enableBonusSelector;
+                $scope.applicableBonuses = result.bonuses;
+            }, function (error) {
+                $scope.fetchingBonuses = false;
+                message.error(error.desc);
+            });
+        }
     }
 })();

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, $q, iso4217) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, auth) {
         var thisYear = moment().year();
         var maxYear = thisYear + 30;
 
@@ -93,6 +93,7 @@
             loadYears();
             loadMonths();
             loadCreditCardInfo();
+            //fetchApplicableBonuses();
         };
 
         function getFields(id) {
@@ -133,5 +134,21 @@
         };
 
         init();
+
+        function fetchApplicableBonuses() {
+            $scope.fetchingBonuses = true;
+            auth.getApplicableBonuses({
+                type: 'deposit',
+                gamingAccountID: auth.data.gamingAccounts[0].id
+            }).then(function (result) {
+                $scope.fetchingBonuses = false;
+                $scope.enableBonusInput = result.enableBonusInput;
+                $scope.enableBonusSelector = result.enableBonusSelector;
+                $scope.applicableBonuses = result.bonuses;
+            }, function (error) {
+                $scope.fetchingBonuses = false;
+                message.error(error.desc);
+            });
+        }
     }
 })();
