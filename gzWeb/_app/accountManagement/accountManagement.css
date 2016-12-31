@@ -499,6 +499,7 @@
 .auth.mgmt-modal .payment-methods .payment-method:nth-of-type(even),
 .auth.mgmt-modal .payment-methods .payment-method:nth-of-type(odd) {
     text-align: center;
+    padding-top: 70px;
 }
 /*.auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type,
 .auth.mgmt-modal .payment-methods .payment-method.col-xs-6:nth-of-type(odd):last-of-type {
