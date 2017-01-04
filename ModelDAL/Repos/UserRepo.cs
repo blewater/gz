@@ -120,7 +120,16 @@ namespace gzDAL.Repos
                 summaryDtoRet = new UserSummaryDTO() {
 
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
-                    InvestmentsBalance = invBalanceRes.Item1, // balance
+                    InvestmentsBalance = invBalanceRes.Balance, // balance
+
+                    // Monthly gaming amounts
+                    BegGmBalance = invBalanceRes.BegGmBalance,
+                    Deposits = invBalanceRes.Deposits,
+                    Withdrawals = invBalanceRes.Withdrawals,
+                    GamingGainLoss = invBalanceRes.GamingGainLoss,
+                    EndGmBalance = invBalanceRes.EndGmBalance,
+
+                    // TODO: Check if removing these after applying the sibling monthly amounts
                     TotalDeposits = totalDeposits,
                     TotalWithdrawals = totalWithdrawalsAmount,
 
@@ -133,7 +142,7 @@ namespace gzDAL.Repos
                     LastInvestmentAmount = lastInvestmentAmount,
 
                     //latestBalanceUpdateDatetime
-                    StatusAsOf = invBalanceRes.Item2 ?? DateTime.UtcNow.AddDays(-1), 
+                    StatusAsOf = invBalanceRes.UpdatedOnUtc ?? DateTime.UtcNow.AddDays(-1), 
                     Vintages = vintages,
 
                     // Withdrawal eligibility
