@@ -575,6 +575,10 @@
     <Compile Include="Migrations\201610260908570_Add_IsMobile_Field.Designer.cs">
       <DependentUpon>201610260908570_Add_IsMobile_Field.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.cs" />
+    <Compile Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.Designer.cs">
+      <DependentUpon>201701041203594_Add_New_GmBalance_Amounts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1215,6 +1219,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610260908570_Add_IsMobile_Field.resx">
       <DependentUpon>201610260908570_Add_IsMobile_Field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.resx">
+      <DependentUpon>201701041203594_Add_New_GmBalance_Amounts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
