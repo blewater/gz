@@ -19,9 +19,46 @@
         </div>
     </div>
 
-    <div class="col-xs-12">
+    <div class="col-xs-12 hidden">
         <div class="form-group">
-            <div class="row">
+            <uib-accordion close-others="true" class="bonus-accordion">
+                <div uib-accordion-group class="panel-default">
+                    <uib-accordion-heading ng-click="model.bonusCode = '';">
+                        <div ng-click="model.bonusCode = '';">I don't want bonus</div>
+                    </uib-accordion-heading>
+                    <div class="row">
+                        No, I don't want a bonus this time!
+                    </div>
+                </div>
+                <div uib-accordion-group class="panel-default">
+                    <uib-accordion-heading ng-click="model.bonusCode = '';">
+                        <div ng-click="model.bonusCode = '';">I have a bonus code</div>
+                    </uib-accordion-heading>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="text" placeholder="BONUS CODE" name="bonusCode" class="form-control" autocomplete="off" ng-model="model.bonusCode"
+                                   ng-class="{ 'empty': !model.bonusCode, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
+                                   ng-focus="bonusCodeFocused = true;" ng-blur="bonusCodeFocused = false;">
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="help-block" ng-class="{'show': !form.bonusCode.$pristine && form.bonusCode.$invalid}">Bonus code is invalid</div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="model.bonusCode.length > 0"></gz-field-ok>
+                </div>
+                <div uib-accordion-group class="panel-default">
+                    <uib-accordion-heading>
+                        <div ng-click="model.bonusCode = '';">I want to select a bonus</div>
+                    </uib-accordion-heading>
+                    <div class="row">
+                        <div ng-if="applicableBonuses.length === 0">There are no bonuses to select.</div>
+                        <div ng-if="applicableBonuses.length > 0" class="applicable-bonus"
+                             ng-repeat="bonus in applicableBonuses" ng-bind="bonus.html"
+                             ng-click="model.bonusCode = bonus.code;"></div>
+                    </div>
+                </div>
+            </uib-accordion>
+            <!--<div class="row">
                 <div class="col-xs-12">
                     <input type="text" placeholder="BONUS CODE" name="bonusCode" class="form-control" autocomplete="off" ng-model="model.bonusCode"
                            ng-class="{ 'empty': !model.bonusCode, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
@@ -31,7 +68,7 @@
                     <div class="help-block" ng-class="{'show': !form.bonusCode.$pristine && form.bonusCode.$invalid}">Bonus code is invalid</div>
                 </div>
             </div>
-            <gz-field-ok gz-when="model.bonusCode.length > 0"></gz-field-ok>
+            <gz-field-ok gz-when="model.bonusCode.length > 0"></gz-field-ok>-->
         </div>
     </div>
 </div>

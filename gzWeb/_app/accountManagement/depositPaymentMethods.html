@@ -5,6 +5,7 @@
     <div ng-if="!initializing">
         <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by $index" ng-class="{'single':paymentMethods.length === 1}">
             <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
+            <div>{{method.name}}</div>
         </div>
     </div>
 </div>

@@ -50,13 +50,13 @@
             }
         }
 
-        //$scope.watchVideo = function() {
-        //    message.open({
-        //        nsType: 'modal',
-        //        nsSize: '640px',
-        //        nsTemplate: '_app/guest/explainerVideo.html'
-        //    });
-        //}
+        $scope.watchVideo = function() {
+            message.open({
+                nsType: 'modal',
+                nsSize: '800px',
+                nsTemplate: '_app/guest/explainerVideo.html'
+            });
+        }
 
         $scope.signup = function() {
             message.open({
