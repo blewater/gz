@@ -8,7 +8,7 @@ namespace gzDAL.Repos.Interfaces {
     public interface IInvBalanceRepo {
 
         Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId);
-        Task<Tuple<decimal, DateTime?>> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask);
+        Task<InvBalAmountsRow> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask);
         Task<Decimal> CacheInvestmentReturnsAsync(int customerId);
         Task<decimal> GetCachedInvestmentReturnsAsync(Task<decimal> invGainSumTask);
         void SetVintagesMarketPrices(int customerId, IEnumerable<VintageDto> vintages);

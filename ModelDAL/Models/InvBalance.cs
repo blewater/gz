@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace gzDAL.Models {
 
     /// <summary>
-    /// The investment balance for the customer per month per row. Hold montly gain or losses.
+    /// The investment balance for the customer per month per row. Hold monthly gain or losses.
     /// </summary>
     public class InvBalance {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
