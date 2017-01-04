@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace gzDAL.Models {
 
     /// <summary>
-    /// The investment balance for the customer per month per row. Hold gain losses too.
+    /// The investment balance for the customer per month per row. Hold montly gain or losses.
     /// </summary>
     public class InvBalance {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -35,7 +34,42 @@ namespace gzDAL.Models {
         public virtual ApplicationUser Customer { get; set; }
 
         /// <summary>
-        /// Investment Balance in $ owned in greenzorro managed funds.
+        /// Monthly Starting Gaming balance imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal BegGmBalance { get; set; }
+
+        /// <summary>
+        /// Monthly deposits imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal Deposits { get; set; }
+
+        /// <summary>
+        /// Monthly withdrawals imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal Withdrawals { get; set; }
+
+        /// <summary>
+        /// Monthly net gain or losses imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal GamingGainLoss { get; set; }
+
+        /// <summary>
+        /// Monthly Ending Gaming balance imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal EndGmBalance { get; set; }
+
+        /// <summary>
+        /// Investment Balance in registered user currency owned in greenzorro managed funds.
         /// </summary>
         [Required]
         public decimal Balance { get; set; }
@@ -47,7 +81,7 @@ namespace gzDAL.Models {
         public decimal CashInvestment { get; set; } = 0;
 
         /// <summary>
-        /// Optional Cash balance only for the where the portfolio was sold.
+        /// Optional Cash balance for when the portfolio is sold.
         /// </summary>
         public decimal? CashBalance { get; set; } = 0;
 

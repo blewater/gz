@@ -523,6 +523,7 @@ namespace gzDAL.Repos {
         /// <param name="cashToInvest">The positive cash to buy shares</param>
         /// <param name="monthlyBalance">Out -> Monthly Cash Value useful in summary page</param>
         /// <param name="invGainLoss">Out -> Monthly Gain or Loss in cash value Used in summary page</param>
+        /// <param name="monthsPortfolioRisk"></param>
         /// <returns></returns>
         public Dictionary<int, PortfolioFundDTO>
             GetCustomerSharesBalancesForMonth(
@@ -660,6 +661,10 @@ namespace gzDAL.Repos {
                             new InvBalance {
                                 YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
                                 CustomerId = customerId,
+                                BegGmBalance = 0,
+                                Deposits = 0,
+                                Withdrawals = 0,
+                                GamingGainLoss = 0,
                                 Balance = monthlyBalance,
                                 InvGainLoss = invGainLoss,
                                 CashInvestment = cashToInvest,
