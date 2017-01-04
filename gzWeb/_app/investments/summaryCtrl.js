@@ -85,6 +85,7 @@
             }, function (response) {
                 $scope.model = response.Result;
                 $scope.model.StatusAsOfLocal = $filter('date')(moment.utc($scope.model.StatusAsOf).toDate(), 'MMM d, h:mm a');
+                $scope.model.CurrentMonth = $filter('date')(moment.utc().toDate(), 'MMMM');
                 $scope.model.OkToWithdraw = false;
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
