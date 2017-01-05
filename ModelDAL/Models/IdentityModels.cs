@@ -37,6 +37,8 @@ namespace gzDAL.Models
         public int? GmCustomerId { get; set; }
 
         [Required]
+        [Column(TypeName = "char")]
+        [StringLength(3)]
         public string Currency { get; set; }
 
         [Required]

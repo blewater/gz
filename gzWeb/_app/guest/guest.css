@@ -784,12 +784,53 @@
 .guest .privacy {
     padding: 60px 0;
 }
+.guest .privacy p {
+    text-align: justify;
+}
+.guest .privacy h4 button {
+    font-size: 12px;
+    margin: -3px 0 7px 0;
+    height: 24px;
+    line-height: 24px;
+    float: right;
+}
+@media (max-width: 767px) {
+    .guest .privacy h4 {
+        text-align: center;
+    }
+    .guest .privacy h4 button {
+        margin: 10px 0;
+        width: 100%;
+        float: none;
+    }
+}
 /* #endregion */
 
 /* #region Terms & Conditions*/
 .guest .terms {
     padding: 60px 0;
 }
+.guest .terms p {
+    text-align: justify;
+}
+.guest .terms h4 button {
+    font-size: 12px;
+    margin: -3px 0 7px 0;
+    height: 24px;
+    line-height: 24px;
+    float: right;
+}
+@media (max-width: 767px) {
+    .guest .terms h4 {
+        text-align: center;
+    }
+    .guest .terms h4 button {
+        margin: 10px 0;
+        width: 100%;
+        float: none;
+    }
+}
+
 .terms ol, .terms ul {
     margin-left: 20px;
 }
