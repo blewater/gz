@@ -12,9 +12,16 @@ namespace gzDAL.DTO
     public class UserSummaryDTO {
         public CurrencyInfo Currency { get; set; }
         public decimal InvestmentsBalance { get; set; }
+
+        //-- New monthly gaming amounts imported by the reports
+        public decimal BegMonthlyGmBalance { get; set; }
+        public decimal MonthlyDeposits { get; set; }
+        public decimal MonthlyWithdrawals { get; set; }
+        public decimal MonthlyGamingGainLoss { get; set; }
+        public decimal EndMonthlyGmBalance { get; set; }
+        //--
         public decimal TotalInvestments { get; set; }
         public decimal TotalInvestmentsReturns { get; set; }
-        //public decimal GamingBalance { get; set; }
         public decimal TotalDeposits { get; set; }
         public decimal TotalWithdrawals { get; set; }
         public DateTime NextInvestmentOn { get; set; }

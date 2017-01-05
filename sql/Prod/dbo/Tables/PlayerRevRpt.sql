@@ -11,6 +11,7 @@
     [Last login]                           DATETIME      NULL,
     [Accepts bonuses]                      BIT           CONSTRAINT [DF_PlayerRevRpt_Accepts bonuses] DEFAULT ((1)) NOT NULL,
     [Total deposits amount]                MONEY         NOT NULL,
+    [Withdraws made]                       MONEY         CONSTRAINT [DF_PlayerRevRpt_Withdraws made] DEFAULT ((0)) NOT NULL,
     [Last played date]                     DATE          NULL,
     [Deposits made]                        MONEY         CONSTRAINT [DF_PlayerRevRpt_Deposits made] DEFAULT ((0)) NOT NULL,
     [Currency]                             CHAR (3)      NOT NULL,
@@ -24,6 +25,8 @@
     [UpdatedOnUtc]                         DATETIME      NOT NULL,
     CONSTRAINT [PK_PlayerRevRpt_ID] PRIMARY KEY NONCLUSTERED ([ID] ASC)
 );
+
+
 
 
 

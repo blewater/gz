@@ -307,7 +307,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
-    <Compile Include="Areas\Mvc\Controllers\InvestmentsController.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.cs" />
@@ -574,6 +573,10 @@
     <Compile Include="Migrations\201610260908570_Add_IsMobile_Field.cs" />
     <Compile Include="Migrations\201610260908570_Add_IsMobile_Field.Designer.cs">
       <DependentUpon>201610260908570_Add_IsMobile_Field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.cs" />
+    <Compile Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.Designer.cs">
+      <DependentUpon>201701041203594_Add_New_GmBalance_Amounts.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1215,6 +1218,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610260908570_Add_IsMobile_Field.resx">
       <DependentUpon>201610260908570_Add_IsMobile_Field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.resx">
+      <DependentUpon>201701041203594_Add_New_GmBalance_Amounts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
