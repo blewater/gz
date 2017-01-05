@@ -381,7 +381,7 @@ namespace gzWeb.Controllers {
             var model = new PerformanceDataViewModel
                         {
                                 InvestmentsBalance =
-                                        DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*invBalanceRes.Item1),
+                                        DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*invBalanceRes.Balance),
                                 NextExpectedInvestment =
                                         DbExpressions.RoundCustomerBalanceAmount(usdToUserRate*
                                                                                  _gzTransactionRepo.LastInvestmentAmount
