@@ -243,7 +243,7 @@
         categories["LIVEDEALER"] = { name: "LIVEDEALER", title: 'Live dealer', include: true, all: false };
         categories["OTHERGAMES"] = { name: "OTHERGAMES", title: 'Other games', include: true, all: false };
         categories["ALLGAMES"] = { name: "ALLGAMES", title: 'All games', include: true, all: true };
-        console.log(categories);
+        //console.log(categories);
             
         //function getFriendlyTitle(name) {
         //    switch (name) {
