@@ -11,7 +11,7 @@ open gzCpcLib.Task
 
 module Etl = 
     // Compile type
-    type ExcelSchema = ExcelFile< "Losses Prod 201610.xlsx" >
+    type ExcelSchema = ExcelFile< "Losses Prod 201609.xlsx" >
     let logger = LogManager.GetCurrentClassLogger()
     
     /// <summary>
