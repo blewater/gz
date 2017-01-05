@@ -123,11 +123,11 @@ namespace gzDAL.Repos
                     InvestmentsBalance = invBalanceRes.Balance, // balance
 
                     // Monthly gaming amounts
-                    BegGmBalance = invBalanceRes.BegGmBalance,
-                    Deposits = invBalanceRes.Deposits,
-                    Withdrawals = invBalanceRes.Withdrawals,
-                    GamingGainLoss = invBalanceRes.GamingGainLoss,
-                    EndGmBalance = invBalanceRes.EndGmBalance,
+                    BegMonthlyGmBalance = invBalanceRes.BegGmBalance,
+                    MonthlyDeposits = invBalanceRes.Deposits,
+                    MonthlyWithdrawals = invBalanceRes.Withdrawals,
+                    MonthlyGamingGainLoss = invBalanceRes.GamingGainLoss,
+                    EndMonthlyGmBalance = invBalanceRes.EndGmBalance,
 
                     // TODO: Check if removing these after applying the sibling monthly amounts
                     TotalDeposits = totalDeposits,
