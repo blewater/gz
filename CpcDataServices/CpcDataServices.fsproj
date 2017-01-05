@@ -66,12 +66,12 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="DbUtil.fs" />
     <Compile Include="CurrencyRates.fs" />
-    <Compile Include="Etl.fs" />
+    <Compile Include="ExcelEtl.fs" />
     <Content Include="packages.config" />
     <None Include="openexchangerates.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Losses Prod 201610.xlsx" />
+    <None Include="Losses Prod 201609.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
