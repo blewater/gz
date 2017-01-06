@@ -4,6 +4,9 @@
     [Username]                             VARCHAR (256) NOT NULL,
     [YearMonth]                            CHAR (6)      NOT NULL,
     [YearMonthDay]                         CHAR (8)      NOT NULL,
+    [BegBalance]                           MONEY         CONSTRAINT [DF_PlayerRevRpt_BegBalance] DEFAULT ((0)) NOT NULL,
+    [EndBalance]                           MONEY         CONSTRAINT [DF_PlayerRevRpt_EndBalance] DEFAULT ((0)) NOT NULL,
+    [PlayerLoss]                           MONEY         CONSTRAINT [DF_PlayerRevRpt_PlayerLoss] DEFAULT ((0)) NOT NULL,
     [Role]                                 VARCHAR (256) NULL,
     [Player status]                        VARCHAR (256) NOT NULL,
     [Block reason]                         VARCHAR (256) NULL,
@@ -25,6 +28,8 @@
     [UpdatedOnUtc]                         DATETIME      NOT NULL,
     CONSTRAINT [PK_PlayerRevRpt_ID] PRIMARY KEY NONCLUSTERED ([ID] ASC)
 );
+
+
 
 
 
