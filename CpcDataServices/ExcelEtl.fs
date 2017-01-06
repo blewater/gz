@@ -11,7 +11,8 @@ open gzCpcLib.Task
 
 module Etl = 
     // Compile type
-    type ExcelSchema = ExcelFile< "Losses Prod 201609.xlsx" >
+    type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
+    type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
     let logger = LogManager.GetCurrentClassLogger()
     
     /// <summary>
@@ -22,7 +23,7 @@ module Etl =
     /// <param name="folderName">The input excel folder name.</param>
     /// <returns>list of excel filenames with extension .xlsx</returns>
     let getDirExcelList (isProd : bool) (folderName : string) : string list= 
-        let fileMask = if isProd then "Losses Prod*.xlsx" else "Losses Stage*.xlsx"
+        let fileMask = if isProd then "Custom Prod*.xlsx" else "Custom Stage*.xlsx"
         Directory.GetFiles(folderName, fileMask) |> Array.toList
     
     /// <summary>
@@ -64,7 +65,7 @@ module Etl =
     /// <param name="yearMonthDay">The yyyyMMdd mask of the filename</param>
     /// <param name="excelRow">The excel row as the source input</param>
     /// <param name="playerRow">The db row matching the id of the excel row</param>
-    let setPlayerDbRowValues (yearMonthDay : string) (excelRow : ExcelSchema.Row) 
+    let setPlayerDbRowValues (yearMonthDay : string) (excelRow : CustomExcelSchema.Row) 
             (playerRow : DbUtil.DbSchema.ServiceTypes.PlayerRevRpt) = 
 
         if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
@@ -105,7 +106,7 @@ module Etl =
     let setPlayerNewDbRowValues
             (db : DbContext) 
             (yearMonthDay : string) 
-            (excelRow : ExcelSchema.Row) = 
+            (excelRow : CustomExcelSchema.Row) = 
 
         let newPlayerRow = 
             new DbUtil.DbSchema.ServiceTypes.PlayerRevRpt(UserID = Convert.ToInt32(excelRow.``User ID``), 
@@ -125,7 +126,7 @@ module Etl =
     /// <param name="excelRow">The excel row as the source input</param>
     let setDbPlayerRow (db : DbContext) 
                         (yyyyMmDd :string) 
-                        (excelRow : ExcelSchema.Row) = 
+                        (excelRow : CustomExcelSchema.Row) = 
 
         let gmUserId = 
             try 
@@ -225,7 +226,7 @@ module Etl =
     /// <param name="creditLossPcnt"></param>
     /// <param name="rates"></param>
     /// <param name="playerRawGrossRevenue"></param>
-    let getCreditedPlayerAmount (excelRow : ExcelSchema.Row)
+    let getCreditedPlayerAmount (excelRow : CustomExcelSchema.Row)
                                 (creditLossPcnt : float32)
                                 (rates : CurrencyRatesValues)
                                 (playerRawGrossRevenue : float) : decimal=
@@ -252,7 +253,7 @@ module Etl =
     /// <param name="rates"></param>
     let setDbGzTrxRow   (db : DbContext) 
                         (yyyyMm :string) 
-                        (excelRow : ExcelSchema.Row)
+                        (excelRow : CustomExcelSchema.Row)
                         (rates : CurrencyRatesValues) = 
 
         let playerRawGrossRevenue = excelRow.``Gross revenue``
@@ -290,7 +291,7 @@ module Etl =
     /// <param name="yyyyMmDd">the date string</param>
     /// <returns>unit</returns>
     let setDbExcelRows 
-                (db : DbContext) (openFile : ExcelSchema) 
+                (db : DbContext) (openFile : CustomExcelSchema) 
                 (yyyyMmDd : string)
                 (rates : CurrencyRatesValues) = 
 
@@ -313,7 +314,7 @@ module Etl =
     /// <param name="excelFilename">the dated excel filename</param>
     /// <returns>the open file excel schema</returns>
     let openExcelSchemaFile excelFilename = 
-        let openFile = new ExcelSchema(excelFilename)
+        let openFile = new CustomExcelSchema(excelFilename)
         logger.Info ""
         logger.Info (sprintf "************ Processing %s excel file" excelFilename)
         logger.Info ""
@@ -376,11 +377,12 @@ module Etl =
         let dirExcelFileList = getDirExcelList isProd inFolder
         if dirExcelFileList.Length > 0 then 
             logger.Debug "Checking read files for date in their name"
+            let datedExcelFilenames = getDatedExcelfiles dirExcelFileList
+
+            (new CustomerBalanceUpdTask(isProd)).DoTask()
+
+            //------------ Save excel value to database
+            processExcelFiles db outFolder datedExcelFilenames rates
+
         else 
             logger.Trace "No excel files were found!"
-        let datedExcelFilenames = getDatedExcelfiles dirExcelFileList
-
-        (new CustomerBalanceUpdTask(isProd)).DoTask()
-
-        //------------ Save excel value to database
-        processExcelFiles db outFolder datedExcelFilenames rates
