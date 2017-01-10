@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav) {
         var factory = {};
 
         // #region AuthData
@@ -162,8 +162,13 @@
                         $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                         //getGamingAccountAndWatchBalance();
 
-                        if (args.initialized === true && $rootScope.routeData.category === constants.categories.wandering) {
-                            if (factory.data.isGamer)
+                        if (args.initialized === true) { //&& $rootScope.routeData.category === constants.categories.wandering
+                            var requestUrl = nav.getRequestUrl();
+                            if (requestUrl) {
+                                $location.path(requestUrl);
+                                nav.clearRequestUrls();
+                            }
+                            else if (factory.data.isGamer)
                                 $location.path(constants.routes.games.path).search({});
                             else if (factory.data.isInvestor)
                                 $location.path(constants.routes.summary.path);
@@ -225,6 +230,7 @@
         // #region Logout
         function gzLogout() {
             clearInvestmentData();
+            nav.clearRequestUrls();
         }
         function emLogout(reason) {
             clearGamingData();

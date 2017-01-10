@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'homeCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, message, constants) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', 'nav', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, message, constants, nav) {
         $controller('authCtrl', { $scope: $scope });
 
         function readForgotPwdEmail(urlParams) {
@@ -76,7 +76,17 @@
                 readForgotPwdEmail(urlParams);
             }
 
-            if ($scope._authData.isGamer)
+            var requestUrl = nav.getRequestUrl();
+            if (requestUrl) {
+                message.open({
+                    nsType: 'modal',
+                    nsSize: '600px',
+                    nsTemplate: '_app/account/login.html',
+                    nsCtrl: 'loginCtrl',
+                    nsStatic: true
+                });
+            }
+            else if ($scope._authData.isGamer)
                 $location.path(constants.routes.games.path).search({});
         });
     }
