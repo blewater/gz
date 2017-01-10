@@ -35,8 +35,8 @@ var APP = (function () {
     ]);
 
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers) {
+        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
+        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
 
             var defaultBeforeSend = function(xhr, json) {
                 var authData = localStorageService.get(constants.storageKeys.authData);
@@ -58,18 +58,21 @@ var APP = (function () {
             $rootScope.$on(constants.events.ON_INIT, function () {
                 function setRouteData(route) {
                     var category = route.category;
-                    if (angular.isDefined(category))
+                    if (angular.isDefined(category)) {
                         $rootScope.routeData = {
                             category: category,
                             wandering: category === constants.categories.wandering,
                             gaming: category === constants.categories.gaming,
                             investing: category === constants.categories.investing
                         }
+                    }
                 }
 
                 var currentRoute = $route.current.$$route;
-                if (!auth.authorize(currentRoute.roles))
+                if (!auth.authorize(currentRoute.roles)) {
+                    nav.setRequestUrl($location.$$path);
                     $location.path(constants.routes.home.path);
+                }
                 else
                     setRouteData(currentRoute);
 
@@ -95,16 +98,8 @@ var APP = (function () {
                 };
                 onRouteChangeSuccess();
                 $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
-                
+
                 helpers.ui.watchScreenSize($rootScope);
-                //$rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
-                //$rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
-                //$rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
-                //$rootScope.lg = screenSize.on('lg', function (match) { $rootScope.lg = match; });
-                //$rootScope.size = screenSize.get();
-                //screenSize.on('xs,sm,md,lg', function () {
-                //    $rootScope.size = screenSize.get();
-                //});
 
                 $rootScope.scrolled = false;
                 $rootScope.scrollOffset = 0;

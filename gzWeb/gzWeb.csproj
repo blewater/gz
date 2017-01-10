@@ -911,6 +911,7 @@
     <Content Include="_app\games\gzFeaturedGame.js" />
     <Content Include="_app\investments\gzPlanHoldingsChart.js" />
     <Content Include="_app\services\authService.js" />
+    <Content Include="_app\services\navService.js" />
     <Content Include="_app\services\iovationService.js" />
     <Content Include="_app\services\loginCtrl.Test.js" />
     <Content Include="_app\guest\faqCtrl.js" />
