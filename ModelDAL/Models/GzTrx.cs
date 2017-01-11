@@ -14,23 +14,26 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 1)]
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = true, Order = 1)]
         [Index("IX_CustomerId_TId_Amnt", IsUnique = false, Order = 1)]
+        [Index("IX_CustomerId_YM_TTyp", IsUnique = true, Order = 1)]
         [Required]
         public int CustomerId { get; set; }
 
-        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 2)]
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = true, Order = 2)]
+        [Index("IX_CustomerId_YM_TTyp", IsUnique = true, Order = 2)]
         [Required]
         [Column(TypeName = "char")]
         [StringLength(6)]
         public string YearMonthCtd { get; set; }
 
-        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 3)]
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = true, Order = 3)]
+        [Index("IX_CustomerId_YM_TTyp", IsUnique = true, Order = 3)]
         [Index("IX_CustomerId_TId_Amnt", IsUnique = false, Order = 2)]
         [ForeignKey("Type")]
         public int TypeId { get; set; }
 
-        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = false, Order = 4)]
+        [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = true, Order = 4)]
         [Index("IX_CustomerId_TId_Amnt", IsUnique = false, Order = 3)]
         public decimal Amount { get; set; }
 
