@@ -124,7 +124,8 @@ namespace gzWeb.Tests.Controllers
 
         private ICollection<VintageDto> SellOneVintage(ApplicationUser user) {
 
-            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUser(user).ToList();
+            
+            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
 
             // Mark for selling earliest that's allowed
             var sellVintage = vintagesVMs.Where(v => !v.Locked && !v.Sold)
@@ -173,7 +174,7 @@ namespace gzWeb.Tests.Controllers
 
             var user = manager.FindByEmail("6month@allocation.com");
 
-            var vintages = investmentsApiController.GetVintagesSellingValuesByUser(user);
+            var vintages = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
             foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
                     vintageViewModel.YearMonthStr,
@@ -190,7 +191,7 @@ namespace gzWeb.Tests.Controllers
 
             var user = manager.FindByEmail("6month@allocation.com");
 
-            var vintages = investmentsApiController.GetVintagesSellingValuesByUser(user);
+            var vintages = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
             foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}", 
                     vintageViewModel.YearMonthStr, 

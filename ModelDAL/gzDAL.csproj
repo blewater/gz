@@ -163,7 +163,6 @@
     <Compile Include="Models\CustFundShare.cs" />
     <Compile Include="Repos\CustFundShareRepo.cs" />
     <Compile Include="Repos\CustomerRepo.cs" />
-    <Compile Include="DTO\CustomerDTO.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
     <Compile Include="Repos\CustPortfolioRepo.cs" />
     <Compile Include="ModelUtil\DbExpressions.cs" />
