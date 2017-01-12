@@ -75,7 +75,9 @@ let GitRepo = __SOURCE_DIRECTORY__ @@ ".."
 [<Literal>]
 let StageGzUrl = "https://greenzorro-sgn.azurewebsites.net"
 [<Literal>]
-let StageAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/slots/sgn/DeploymentSource"
+//let StageAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/slots/sgn/DeploymentSource"
+// Temp url during sites transition
+let StageAzDepUrl = "https://portal.azure.com/#resource/subscriptions/500c96ff-15a2-4861-8a33-8872bdcb6b58/resourceGroups/2ndSub_All_BizSpark_RG/providers/Microsoft.Web/sites/greenzorro/slots/sgn/DeploymentSource"
 let StageAzureProdSlots = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/deploymentSlots"
 let ProdGzUrl = "https://www.greenzorro.com"
 
@@ -174,6 +176,7 @@ Target "OpenResultInBrowser" (fun _ ->
     let mutable productionUpToDate = false
     let AzureBuildSuccess (mode : string): bool=
 
+        trace "Http getting the freshly built home page. Azure may take a while to answer..."
         let htmlStageOrDevSha = 
             match mode with
                 | "dev" -> DevGzUrl
@@ -220,7 +223,8 @@ Target "OpenResultInBrowser" (fun _ ->
         | "dev" -> Diagnostics.Process.Start DevAzDepUrl
         | _ -> Diagnostics.Process.Start StageAzDepUrl
         |> ignore
-    let proceedBuildStatus = userReply2Bool "Please check build status in opened page.\nDo you want to proceed (Y/N)?"         
+    let proceedBuildStatus = getUserInput "Please check build status in opened page.\nHas the build completed successfully (Y/N)?"
+                                |> userReply2Bool
     if
         proceedBuildStatus
     then
@@ -230,7 +234,11 @@ Target "OpenResultInBrowser" (fun _ ->
 )
 Target "SwapStageLive" (fun _ ->
 
-    if stageIsUpdated then
+    let proceedSwap = getUserInput "***Attention*** Stage does not appear to have a new build or you are running this target in isolation.\nAre you sure you want to swap stage with production (Y/N)?"
+                                |> userReply2Bool
+    if stageIsUpdated || proceedSwap then
+
+        trace "Stage was updated with a new build and is cleared to swap with live"
 
         (**** run a powershell script by providing the script filename without extension .ps1 *)
         let runPowershellScript (ps1FileName : string) : unit =
@@ -250,7 +258,7 @@ Target "SwapStageLive" (fun _ ->
 //            printfn "Finished"
 
         let proceedAzure = 
-            getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net \nProceed with stage to live swap (Y/N)? "
+            getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net first\nProceed with stage to live swap (Y/N)? "
             |> userReply2Bool
         
         if proceedAzure then
