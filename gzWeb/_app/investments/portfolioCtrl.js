@@ -42,11 +42,10 @@
             $scope.currency = $scope._authData.currency;
         }
 
-        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
-
         $scope._init(function () {
             loadPortfolioData();
             loadAuthData();
+            $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
         });
     }
 })();
