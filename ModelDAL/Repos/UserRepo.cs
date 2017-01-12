@@ -87,21 +87,15 @@ namespace gzDAL.Repos
                 //--------------- Start async queries
                 var userQtask = CacheUser(userId);
                 var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
-                var invGainLossTask = _invBalanceRepo.CacheInvestmentReturnsAsync(userId);
 
                 //---------------- Execute SQL Functions
-                var totalWithdrawalsAmount = await _gzTransactionRepo.GetTotalWithdrawalsAmountAsync(userId);
-
-                var totalInvestmentsAmount = await _gzTransactionRepo.GetTotalInvestmentsAmountAsync(userId);
+                var totalPlayerLossesAmount = await _gzTransactionRepo.GetTotalPlayerLossesAmountAsync(userId);
 
                 var vintages = _invBalanceRepo.GetCustomerVintages(userId);
 
                 var lastInvestmentAmount = await _gzTransactionRepo.GetLastInvestmentAmountAsync(userId);
 
                 var withdrawalEligibility = await _gzTransactionRepo.GetWithdrawEligibilityDataAsync(userId);
-
-                var totalDeposits = _gzTransactionRepo.GetTotalDeposit(userId);
-
                 //-------------- Retrieve previously executed async query results
 
                 // user
@@ -112,9 +106,6 @@ namespace gzDAL.Repos
 
                 // balance, last update
                 var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
-
-                // investment gain or loss
-                decimal invGainLossSum = await _invBalanceRepo.GetCachedInvestmentReturnsAsync(invGainLossTask);
 
                 // Package all the results
                 summaryDtoRet = new UserSummaryDTO() {
@@ -129,14 +120,10 @@ namespace gzDAL.Repos
                     MonthlyGamingGainLoss = invBalanceRes.GamingGainLoss,
                     EndMonthlyGmBalance = invBalanceRes.EndGmBalance,
 
-                    // TODO: Check if removing these after applying the sibling monthly amounts
-                    TotalDeposits = totalDeposits,
-                    TotalWithdrawals = totalWithdrawalsAmount,
+                    // 
+                    TotalInvestments = totalPlayerLossesAmount,
 
-                    TotalInvestments = totalInvestmentsAmount,
-
-                    // TODO (Mario): Check if it's more accurate to report this as [InvestmentsBalance - TotalInvestments]
-                    TotalInvestmentsReturns = invGainLossSum,
+                    TotalInvestmentsReturns = invBalanceRes.Balance - totalPlayerLossesAmount,
 
                     NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                     LastInvestmentAmount = lastInvestmentAmount,
