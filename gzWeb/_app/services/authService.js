@@ -165,8 +165,10 @@
                         if (args.initialized === true) { //&& $rootScope.routeData.category === constants.categories.wandering
                             var requestUrl = nav.getRequestUrl();
                             if (requestUrl) {
-                                $location.path(requestUrl);
                                 nav.clearRequestUrls();
+                                $rootScope.$broadcast(constants.events.REDIRECTED);
+                                $rootScope.redirected = false;
+                                $location.path(requestUrl);
                             }
                             else if (factory.data.isGamer)
                                 $location.path(constants.routes.games.path).search({});
@@ -555,7 +557,6 @@
                 localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
             });
 
-            emWamp.init();
             var unregisterConnectionInitiated = $rootScope.$on(constants.events.CONNECTION_INITIATED, function () {
                 if (factory.data.username.length > 0) {
                     emWamp.getSessionInfo().then(function (sessionInfo) {
@@ -563,10 +564,11 @@
                             factory.logout();
                     });
                 }
-
-                $rootScope.$broadcast(constants.events.ON_INIT);
                 unregisterConnectionInitiated();
+                $rootScope.$broadcast(constants.events.ON_INIT);
             });
+
+            emWamp.init();
         };
         // #endregion
 

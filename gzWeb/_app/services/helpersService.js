@@ -25,7 +25,8 @@
                 openInNewTab: openInNewTab,
                 isFocusable: isFocusable,
                 isMobile: isMobile,
-                watchScreenSize: watchScreenSize
+                watchScreenSize: watchScreenSize,
+                watchWindowScroll: watchWindowScroll
             },
             utils: {
                 guid: guid,
@@ -193,6 +194,15 @@
             scope.size = screenSize.get();
             screenSize.on('xs,sm,md,lg', function () {
                 scope.size = screenSize.get();
+            });
+        }
+        function watchWindowScroll(scope) {
+            scope.scrolled = false;
+            scope.scrollOffset = 0;
+            angular.element($window).bind("scroll", function () {
+                scope.scrolled = this.pageYOffset > 0;
+                scope.scrollOffset = this.pageYOffset;
+                scope.$apply();
             });
         }
         // #endregion

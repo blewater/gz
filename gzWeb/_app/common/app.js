@@ -47,6 +47,7 @@ var APP = (function () {
 
             $rootScope.loading = true;
             $rootScope.initialized = false;
+            $rootScope.redirected = false;
             localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
 
             angular.element(document).ready(function () {
@@ -56,6 +57,12 @@ var APP = (function () {
             auth.init();
 
             $rootScope.$on(constants.events.ON_INIT, function () {
+                function hidePreloader() {
+                    var $preloader = angular.element(document.querySelector('#preloader'));
+                    $preloader.addClass('die');
+                    $timeout(function () { $preloader.remove(); }, 1000);
+                };
+
                 function setRouteData(route) {
                     var category = route.category;
                     if (angular.isDefined(category)) {
@@ -67,14 +74,6 @@ var APP = (function () {
                         }
                     }
                 }
-
-                var currentRoute = $route.current.$$route;
-                if (!auth.authorize(currentRoute.roles)) {
-                    nav.setRequestUrl($location.$$path);
-                    $location.path(constants.routes.home.path);
-                }
-                else
-                    setRouteData(currentRoute);
 
                 $rootScope.$on('$routeChangeStart', function (event, next, current) {
                     $rootScope.loading = true;
@@ -96,31 +95,23 @@ var APP = (function () {
                         }
                     });
                 };
-                onRouteChangeSuccess();
+                //onRouteChangeSuccess();
                 $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
 
                 helpers.ui.watchScreenSize($rootScope);
-
-                $rootScope.scrolled = false;
-                $rootScope.scrollOffset = 0;
-                angular.element($window).bind("scroll", function () {
-                    $rootScope.scrolled = this.pageYOffset > 0;
-                    $rootScope.scrollOffset = this.pageYOffset;
-                    $rootScope.$apply();
-                });
-
-                //$timeout(function () {
-                //    var $preloader = angular.element(document.querySelector('#preloader'));
-                //    $preloader.addClass('die');
-                //    $timeout(function () { $preloader.remove(); }, 2000);
-                //}, 1000);
-                var $preloader = angular.element(document.querySelector('#preloader'));
-                $preloader.addClass('die');
-                $timeout(function () { $preloader.remove(); }, 1000);
-
+                helpers.ui.watchWindowScroll($rootScope);
+                chat.show();
                 $rootScope.loading = false;
                 $rootScope.initialized = true;
-                chat.show();
+                hidePreloader();
+
+                if (!auth.authorize($route.current.$$route.roles)) {
+                    nav.setRequestUrl($location.$$path);
+                    $location.path(constants.routes.home.path);
+                    $rootScope.redirected = true;
+                }
+
+                $rootScope.$broadcast(constants.events.ON_AFTER_INIT);
             });
         }
     ]);
