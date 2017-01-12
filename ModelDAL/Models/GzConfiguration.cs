@@ -56,9 +56,9 @@ namespace gzDAL.Models {
         /// </summary>
         public RiskToleranceEnum FIRST_PORTFOLIO_RISK_VAL { get; set; } = RiskToleranceEnum.Medium;
 
-        public float CONSERVATIVE_RISK_ROI { get; set; } = 3.5f;
-        public float MEDIUM_RISK_ROI { get; set; } = 5f;
-        public float AGGRESSIVE_RISK_ROI { get; set; } = 7.5f;
+        public float CONSERVATIVE_RISK_ROI { get; set; } = 3f;
+        public float MEDIUM_RISK_ROI { get; set; } = 6f;
+        public float AGGRESSIVE_RISK_ROI { get; set; } = 10f;
 
     }
 }

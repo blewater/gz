@@ -229,6 +229,8 @@
         },
         events: {
             ON_INIT: 'onInit',
+            ON_AFTER_INIT: 'onAfterInit',
+            REDIRECTED: 'redirected',
             CONNECTION_INITIATED: 'connectionInitiated',
             AUTH_CHANGED: 'authChanged',
             CHAT_LOADED: 'chatLoaded',

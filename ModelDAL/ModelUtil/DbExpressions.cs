@@ -106,13 +106,27 @@ namespace gzDAL.ModelUtil {
         }
 
         /// <summary>
+        /// 
+        /// Convert to string representation YYYYMMDD of year month day i.e. 21st April of 2015 -> "20150421"
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string ToStringYearMonthDay(this DateTime source) {
+
+            return source.Year.ToString("0000") + source.Month.ToString("00") + source.Day.ToString("00");
+        }
+
+        /// <summary>
+        /// 
         /// Useful in where clauses
         /// i.e. Jun 2015 -> "20150630"
+        /// 
         /// </summary>
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <returns></returns>
-        public static string GetStrYearMonthDay(int year, int month) {
+        public static string GetStrYearEndofMonthDay(int year, int month) {
 
             int days = DateTime.DaysInMonth(year, month);
 

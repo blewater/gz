@@ -17,9 +17,16 @@
             if ($scope.initialized)
                 callback();
             else {
-                var unregister = $scope.$on(constants.events.ON_INIT, function () {
-                    callback();
-                    unregister();
+                var unregisterAfterInit = $scope.$on(constants.events.ON_AFTER_INIT, function () {
+                    if ($scope.redirected) {
+                        var unregisterRedirected = $scope.$on(constants.events.REDIRECTED, function () {
+                            callback();
+                            unregisterRedirected();
+                        });
+                    }
+                    else
+                        callback();
+                    unregisterAfterInit();
                 });
             }
         }

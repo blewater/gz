@@ -53,15 +53,15 @@ namespace gzWeb.Models
         public decimal MonthlyWithdrawals { get; set; }
         public decimal MonthlyGamingGainLoss { get; set; }
         public decimal EndMonthlyGmBalance { get; set; }
-        //--
-        // Invested so far
+
+        /// <summary>
+        /// Total monthly player losses summed up
+        /// </summary>
         public decimal TotalInvestments { get; set; }
-        // Gained from investment so far
+        /// <summary>
+        /// Total net gain or net loss from investing the player losses
+        /// </summary>
         public decimal TotalInvestmentsReturns { get; set; }
-        // Todo: remove
-        public decimal TotalDeposits { get; set; }
-        // Todo: remove
-        public decimal TotalWithdrawals { get; set; }
         public DateTime NextInvestmentOn { get; set; }
         public decimal LastInvestmentAmount { get; set; }
         public DateTime StatusAsOf { get; set; }

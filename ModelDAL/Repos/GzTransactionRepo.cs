@@ -34,26 +34,6 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Get the customer total deposits.
-        /// 
-        /// This has to query using the Everymatrix customer id.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public decimal GetTotalDeposit(int customerId) {
-
-            decimal totalDeposits = _db.Database
-
-                .SqlQuery<decimal>("Select * From dbo.GetTotalDeposits(@customerId)",
-                    new SqlParameter("@CustomerId", customerId))
-                .SingleOrDefault();
-
-            return totalDeposits;
-        }
-
-        /// <summary>
-        /// 
         /// Last pending loss to be invested
         /// 
         /// </summary>
@@ -110,7 +90,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<decimal> GetTotalInvestmentsAmountAsync(int userId) {
+        public async Task<decimal> GetTotalPlayerLossesAmountAsync(int userId) {
 
             using (var db = new ApplicationDbContext()) {
 
@@ -121,27 +101,6 @@ namespace gzDAL.Repos {
                     .SingleAsync();
 
                 return totalInvestmentsAmount;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// Get Total Liquidation or investment sales.
-        /// 
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public async Task<decimal> GetTotalWithdrawalsAmountAsync(int userId) {
-
-            using (var db = new ApplicationDbContext()) {
-
-                decimal totalWithdrawalsAmount = await db.Database
-                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.TransferToGaming))
-                    .SingleAsync();
-
-                return totalWithdrawalsAmount;
             }
         }
 
@@ -254,27 +213,6 @@ namespace gzDAL.Repos {
             //var lockInDays = tuple.Item3;
 
             return okToWithdraw;
-        }
-
-        /// <summary>
-        /// 
-        /// Return whether a customer has a liquidation transaction in a month
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// 
-        /// <returns>True: The customer has sold their portfolio. False: if not.</returns>
-        public bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent) {
-
-            var currentYearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
-
-            return _db.GzTrxs
-                .Count(t => t.YearMonthCtd == currentYearMonthStr
-                            && t.Type.Code == GzTransactionTypeEnum.FullCustomerFundsLiquidation
-                            && t.CustomerId == customerId)
-                > 0;
         }
 
         /// <summary>

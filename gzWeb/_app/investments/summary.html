@@ -92,24 +92,25 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-8 text-left">Starting balance</div>
-                                        <div class="col-xs-4 text-right"></div>
+                                        <div class="col-xs-4 text-right">{{model.BegMonthlyGmBalance | isoCurrency : currency : 0}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-8 text-left">Deposited</div>
-                                        <div class="col-xs-4 text-right">{{model.TotalDeposits | isoCurrency : currency : 0}}</div>
+                                        <div class="col-xs-4 text-right">{{model.MonthlyDeposits | isoCurrency : currency : 0}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-8 text-left">Withdrawn</div>
-                                        <div class="col-xs-4 text-right">{{model.TotalWithdrawals | isoCurrency : currency : 0}}</div>
+                                        <div class="col-xs-4 text-right">{{model.MonthlyWithdrawals | isoCurrency : currency : 0}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-8 text-left">Net gaming loss/gain</div>
-                                        <div class="col-xs-4 text-right"></div>
+                                        <div class="col-xs-4 text-right">{{model.MonthlyGamingGainLoss | isoCurrency : currency : 0}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-8 text-left">Current balance</div>
-                                        <div ng-if="hasGamingBalance" class="col-xs-4 text-right" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="summary-balance-tooltip">{{gamingBalance | isoCurrency : currency : 0}}</div>
-                                        <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><i>offline</i></div>
+                                        <div class="col-xs-4 text-right">{{model.EndMonthlyGmBalance | isoCurrency : currency : 0}}</div>
+                                        <!--<div ng-if="hasGamingBalance" class="col-xs-4 text-right" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="summary-balance-tooltip">{{gamingBalance | isoCurrency : currency : 0}}</div>
+                                        <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><i>offline</i></div>-->
                                     </div>
                                 </div>
                             </div>
