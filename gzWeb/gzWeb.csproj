@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44300</IISExpressSSLPort>
+    <IISExpressSSLPort>44377</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -577,6 +577,14 @@
     <Compile Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.cs" />
     <Compile Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.Designer.cs">
       <DependentUpon>201701041203594_Add_New_GmBalance_Amounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701111859061_Unique Idx Trx_Customer_Month Type Index.cs" />
+    <Compile Include="Migrations\201701111859061_Unique Idx Trx_Customer_Month Type Index.Designer.cs">
+      <DependentUpon>201701111859061_Unique Idx Trx_Customer_Month Type Index.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701112226379_Unique Idx Customer_Month_TType Index.cs" />
+    <Compile Include="Migrations\201701112226379_Unique Idx Customer_Month_TType Index.Designer.cs">
+      <DependentUpon>201701112226379_Unique Idx Customer_Month_TType Index.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1222,6 +1230,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701041203594_Add_New_GmBalance_Amounts.resx">
       <DependentUpon>201701041203594_Add_New_GmBalance_Amounts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701111859061_Unique Idx Trx_Customer_Month Type Index.resx">
+      <DependentUpon>201701111859061_Unique Idx Trx_Customer_Month Type Index.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701112226379_Unique Idx Customer_Month_TType Index.resx">
+      <DependentUpon>201701112226379_Unique Idx Customer_Month_TType Index.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
