@@ -7,9 +7,9 @@ namespace gzWeb.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.GzConfigurations", "CONSERVATIVE_RISK_ROI", c => c.Single(nullable: false, defaultValue: 3.5f));
-            AddColumn("dbo.GzConfigurations", "MEDIUM_RISK_ROI", c => c.Single(nullable: false, defaultValue: 5f));
-            AddColumn("dbo.GzConfigurations", "AGGRESSIVE_RISK_ROI", c => c.Single(nullable: false, defaultValue: 7.5f));
+            AddColumn("dbo.GzConfigurations", "CONSERVATIVE_RISK_ROI", c => c.Single(nullable: false, defaultValue: 3f));
+            AddColumn("dbo.GzConfigurations", "MEDIUM_RISK_ROI", c => c.Single(nullable: false, defaultValue: 6f));
+            AddColumn("dbo.GzConfigurations", "AGGRESSIVE_RISK_ROI", c => c.Single(nullable: false, defaultValue: 10f));
         }
         
         public override void Down()

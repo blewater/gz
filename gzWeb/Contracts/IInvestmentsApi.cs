@@ -11,7 +11,7 @@ namespace gzWeb.Contracts
     {
         SummaryDataViewModel GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto);
 
-        IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user);
+        IEnumerable<VintageViewModel> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user);
 
         ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, bool bypassQueue = false);
 

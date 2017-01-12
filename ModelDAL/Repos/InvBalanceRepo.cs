@@ -103,42 +103,6 @@ namespace gzDAL.Repos {
             return lastMonthsBalanceRow;
         }
 
-        /// <summary>
-        /// 
-        /// Cache investment returns and ask it asynchronously.
-        /// 
-        /// Meant to be used with CacheInvestmentReturns() if possible after a short time delay.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public Task<Decimal> CacheInvestmentReturnsAsync(int customerId) {
-
-            var invGainSumTask = _db.InvBalances
-                .Where(i => i.CustomerId == customerId)
-                .Select(i => i.InvGainLoss)
-                .DefaultIfEmpty(0)
-                .DeferredSum()
-                // Cache 4 Hours
-                .FromCacheAsync(DateTime.UtcNow.AddHours(4));
-
-            return invGainSumTask;
-        }
-
-        /// <summary>
-        /// 
-        /// Call this after CacheInvestmentReturns() to get the investment result sum.
-        /// 
-        /// </summary>
-        /// <param name="invGainSumTask"></param>
-        /// <returns>Balance Amount of last month.</returns>
-        public async Task<decimal> GetCachedInvestmentReturnsAsync(Task<decimal> invGainSumTask) {
-
-            var invGainSum = await invGainSumTask;
-
-            return invGainSum;
-        }
-
         #region Vintages
 
         /// <summary>
@@ -886,77 +850,5 @@ namespace gzDAL.Repos {
             // --------------- Net amount to invest -------------------------
             return monthlyCashToInvest;
         }
-
-        #region By Transaction
-
-        /// <summary>
-        /// Save to Database the calculated customer monthly investment balances
-        ///     for the given months
-        /// -- Or --
-        ///     by all monthly transaction activity of the customer.
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="monthsToProc">Array of YYYYMM values i.e. [201601, 201502]. If null then select all months with this customers transactional activity.</param>
-        public void SaveDbCustomerMonthlyBalancesByTrx(int customerId, string[] monthsToProc = null) {
-
-            IQueryable<IGrouping<string, GzTrx>> monthlyTrx;
-
-            // Step 1: Retrieve all Transactions by player activity
-            if (monthsToProc == null || monthsToProc.Length == 0) {
-
-                monthlyTrx = _db.GzTrxs.Where(t => t.CustomerId == customerId)
-                    .OrderBy(t => t.YearMonthCtd)
-                    .GroupBy(t => t.YearMonthCtd);
-            }
-            // Add filter condition: given months
-            else {
-
-                monthlyTrx = _db.GzTrxs.Where(t => t.CustomerId == customerId
-                    && monthsToProc.Contains(t.YearMonthCtd))
-                    .OrderBy(t => t.YearMonthCtd)
-                    .GroupBy(t => t.YearMonthCtd);
-            }
-
-            SaveDbCustomerMonthlyBalancesByTrx(customerId, monthlyTrx);
-        }
-
-        /// <summary>
-        /// 
-        /// Called by public SaveDbCustomerMonthlyBalancesByTrx after selection of Monthly Transactions:
-        /// To save to Database the calculated customer monthly investment balances
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="customerMonthlyTrxs"></param>
-        private void SaveDbCustomerMonthlyBalancesByTrx(int customerId, IEnumerable<IGrouping<string, GzTrx>> customerMonthlyTrxs) {
-
-            // Step 2: Loop monthly, calculate Balances based transaction and portfolios return
-            foreach (var customerMonthlyTrx in customerMonthlyTrxs) {
-
-                // Step 3: Calculate monthly cash balances before investment
-                SaveDbCustomerMonthlyBalance(customerId, customerMonthlyTrx);
-            }
-        }
-
-        /// <summary>
-        /// Multiple Customers Version:
-        /// Save to Database the calculated customer monthly investment balances
-        ///     otherwise calculate monthly investment balances for all transaction activity months of the players.
-        /// </summary>
-        /// <param name="customerIds"></param>
-        /// <param name="yearMonthsToProc"></param>
-        public void SaveDbCustomersMonthlyBalancesByTrx(int[] customerIds, string[] yearMonthsToProc) {
-
-            if (customerIds == null) {
-                return;
-            }
-
-            foreach (var customerId in customerIds) {
-                SaveDbCustomerMonthlyBalancesByTrx(customerId, yearMonthsToProc);
-            }
-        }
-
-        #endregion
-
     }
 }

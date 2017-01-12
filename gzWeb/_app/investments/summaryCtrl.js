@@ -91,29 +91,29 @@
             });            
         }
 
-        function loadAuthData() {
-            $scope.hasGamingBalance = $scope._authData.gamingBalance !== undefined;
-            if ($scope.hasGamingBalance) {
-                $scope.gamingBalance = $scope._authData.gamingBalance;
-                $scope.gamingBalanceDetails = $sce.trustAsHtml(
-                    '<div class="row">' +
-                        '<div class="col-xs-8 text-left">Casino Wallet:</div>' +
-                        '<div class="col-xs-4 text-right">' + $filter('number')($scope._authData.gamingAccounts[0].amount, 0) + '</div>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<div class="col-xs-8 text-left">Casino Wallet Bonus:</div>' +
-                        '<div class="col-xs-4 text-right">' + $filter('number')($filter('sum')($filter('map')($scope._authData.gamingAccounts.slice(1), function (acc) { return acc.amount; })), 0) + '</div>' +
-                    '</div>'
-                );
-            }
-            $scope.currency = $scope._authData.currency;
-        }
+        //function loadAuthData() {
+        //    $scope.hasGamingBalance = $scope._authData.gamingBalance !== undefined;
+        //    if ($scope.hasGamingBalance) {
+        //        $scope.gamingBalance = $scope._authData.gamingBalance;
+        //        $scope.gamingBalanceDetails = $sce.trustAsHtml(
+        //            '<div class="row">' +
+        //                '<div class="col-xs-8 text-left">Casino Wallet:</div>' +
+        //                '<div class="col-xs-4 text-right">' + $filter('number')($scope._authData.gamingAccounts[0].amount, 0) + '</div>' +
+        //            '</div>' +
+        //            '<div class="row">' +
+        //                '<div class="col-xs-8 text-left">Casino Wallet Bonus:</div>' +
+        //                '<div class="col-xs-4 text-right">' + $filter('number')($filter('sum')($filter('map')($scope._authData.gamingAccounts.slice(1), function (acc) { return acc.amount; })), 0) + '</div>' +
+        //            '</div>'
+        //        );
+        //    }
+        //    $scope.currency = $scope._authData.currency;
+        //}
 
-        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
+        //$scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
 
         $scope._init(function() {
             loadSummaryData();
-            loadAuthData();
+            //loadAuthData();
         });
     }
 })();
