@@ -24,9 +24,6 @@ namespace gzDAL.Repos.Interfaces
 
         Task<bool> GetEnabledWithdraw(int customerId);
 
-        void SaveDbGmTransaction(int customerId, GmTransactionTypeEnum gzTransactionType, decimal amount,
-            DateTime createdOnUtc);
-
         void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount,
             DateTime createdOnUtc);
 

@@ -451,7 +451,6 @@ namespace gzDAL.Conf
             var trxRepo = new GzTransactionRepo(context);
 
             // Use new API
-            trxRepo.SaveDbGmTransaction(custId, GmTransactionTypeEnum.Deposit, 10000, new DateTime(2016, 7, 4, 7, 23, 42));
             trxRepo.SaveDbPlayingLoss(custId, 200, new DateTime(2016, 7, 31, 23, 46, 01));
 
             // Old implementation before repo
