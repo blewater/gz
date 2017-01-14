@@ -7,6 +7,10 @@ namespace gzWeb.Migrations
     {
         public override void Up()
         {
+            Sql("DELETE FROM GzTrxs");
+            Sql("DELETE FROM CustFundShares");
+            Sql("DELETE FROM InvBalances");
+            Sql("DELETE FROM Funds");
             DropIndex("dbo.GzTrxs", "IX_CustomerId_YM_TId_Amnt");
             CreateIndex("dbo.GzTrxs", new[] { "CustomerId", "YearMonthCtd", "TypeId", "Amount" }, unique: true, name: "IX_CustomerId_YM_TId_Amnt");
 
