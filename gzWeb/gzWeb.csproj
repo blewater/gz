@@ -586,6 +586,18 @@
     <Compile Include="Migrations\201701112226379_Unique Idx Customer_Month_TType Index.Designer.cs">
       <DependentUpon>201701112226379_Unique Idx Customer_Month_TType Index.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701141127562_RemGmTrx.cs" />
+    <Compile Include="Migrations\201701141127562_RemGmTrx.Designer.cs">
+      <DependentUpon>201701141127562_RemGmTrx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701141151061_RemGzTrxSelfRef.cs" />
+    <Compile Include="Migrations\201701141151061_RemGzTrxSelfRef.Designer.cs">
+      <DependentUpon>201701141151061_RemGzTrxSelfRef.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701141205124_AddPlayerRevRpt.cs" />
+    <Compile Include="Migrations\201701141205124_AddPlayerRevRpt.Designer.cs">
+      <DependentUpon>201701141205124_AddPlayerRevRpt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1236,6 +1248,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701112226379_Unique Idx Customer_Month_TType Index.resx">
       <DependentUpon>201701112226379_Unique Idx Customer_Month_TType Index.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701141127562_RemGmTrx.resx">
+      <DependentUpon>201701141127562_RemGmTrx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701141151061_RemGzTrxSelfRef.resx">
+      <DependentUpon>201701141151061_RemGzTrxSelfRef.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701141205124_AddPlayerRevRpt.resx">
+      <DependentUpon>201701141205124_AddPlayerRevRpt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

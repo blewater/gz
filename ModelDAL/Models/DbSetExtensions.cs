@@ -37,22 +37,9 @@ namespace gzDAL.Models {
         /// http://stackoverflow.com/questions/31162576/entity-framework-add-if-not-exist-without-update
         /// 
         /// </summary>
-        public static T AddOrUpdate<T>
-            (this DbSet<T> dbSet, T entity, ApplicationDbContext db, Expression<Func<T, bool>> predicate = null) where T : class, new() 
-        {
-
+        public static T AddIfNotExists<T>(this DbSet<T> dbSet, T entity, Expression<Func<T, bool>> predicate = null) where T : class, new() {
             var exists = predicate != null ? dbSet.Any(predicate) : dbSet.Any();
-
-            if (exists) {
-                dbSet.Attach(entity);
-                db.Entry(entity).State = EntityState.Modified;
-            }
-            else {
-
-                dbSet.Add(entity);
-            }
-
-            return entity;
+            return !exists ? dbSet.Add(entity) : null;
         }
 
         public static void Log(string component, string message) {

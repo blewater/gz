@@ -164,7 +164,6 @@ namespace gzDAL.Models
         public DbSet<Fund> Funds { get; set; }
         public DbSet<FundPrice> FundPrices { get; set; }
         public DbSet<GzConfiguration> GzConfigurations { get; set; }
-        public DbSet<GmTrx> GmTrxs { get; set; }
         public DbSet<GmTrxType> GmTrxTypes { get; set; }
         public DbSet<GzTrx> GzTrxs { get; set; }
         public DbSet<GzTrxType> GzTrxTypes { get; set; }
@@ -178,6 +177,7 @@ namespace gzDAL.Models
         public DbSet<GameCategory> GameCategories { get; set; }
         public DbSet<DynamicPageTemplate> DynamicPageTemplates { get; set; }
         public DbSet<DynamicPageData> DynamicPagesData { get; set; }
+        public DbSet<PlayerRevRpt> PlayerRevRpt { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

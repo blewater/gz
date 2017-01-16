@@ -39,24 +39,18 @@ namespace gzDAL.Models {
 
         /// <summary>
         /// 
-        /// Reference Everymatrix Gm Transaction as source
+        /// Reference PlayerRevRpt as the source of player balance amounts
         /// 
         /// </summary>
-        [ForeignKey("GmTrx")]
-        public int? GmTrxId { get; set; }
-        public virtual GmTrx GmTrx { get; set; }
+        [ForeignKey("PlayerRevRpt")]
+        public int? PlayerRevRptId { get; set; }
+        public virtual PlayerRevRpt PlayerRevRpt { get; set; }
 
         /// <summary>
         /// 
-        /// Reference self source
-        /// http://stackoverflow.com/questions/4811194/what-is-the-syntax-for-self-referencing-foreign-keys-in-ef-code-first
+        /// For Type:CreditedPlayingLoss -> the credit percentage for playing losses i.e. 50 for half
         /// 
         /// </summary>
-        public int? ParentTrxId { get; set; }
-        [ForeignKey("ParentTrxId")]
-        public virtual GzTrx ParentTrx { get; set; }
-
-        // For Type:CreditedPlayingLoss -> the credit percentage for playing losses i.e. 50 for half
         public float? CreditPcntApplied { get; set; }
 
         [Required]

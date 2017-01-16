@@ -95,7 +95,7 @@ var APP = (function () {
                         }
                     });
                 };
-                //onRouteChangeSuccess();
+                onRouteChangeSuccess();
                 $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
 
                 helpers.ui.watchScreenSize($rootScope);
