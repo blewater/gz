@@ -118,7 +118,12 @@ Target "PullDevelop" (fun _ ->
 Target "MergeMaster" (fun _ ->
     checkoutBranch GitRepo "master"
     trace "checked out master..."
-    merge GitRepo NoFastForwardFlag "develop"
+
+    // Attempt to merge with master
+    try
+        merge GitRepo NoFastForwardFlag "develop"
+    with
+        ex -> checkoutBranch GitRepo "develop"; trace "Can't merge with master.\nNeed to checkin your local changes below:" ; raise ex
     trace "merging with develop"
 )
 
@@ -234,9 +239,9 @@ Target "OpenResultInBrowser" (fun _ ->
 )
 Target "SwapStageLive" (fun _ ->
 
-    let proceedSwap = getUserInput "***Attention*** Stage does not appear to have a new build or you are running this target in isolation.\nAre you sure you want to swap stage with production (Y/N)?"
-                                |> userReply2Bool
-    if stageIsUpdated || proceedSwap then
+    let proceedSwap = stageIsUpdated || getUserInput "***Attention*** Stage does not appear to have a new build or you are running this target in isolation.\nPlease check the new build at https://greenzorro-sgn.azurewebsites.net first.\nAre you sure you want to swap stage with production (Y/N)?"
+                                    |> userReply2Bool
+    if proceedSwap then
 
         trace "Stage was updated with a new build and is cleared to swap with live"
 
@@ -257,12 +262,7 @@ Target "SwapStageLive" (fun _ ->
 //            printfn "%A" (p.StandardOutput.ReadToEnd())
 //            printfn "Finished"
 
-        let proceedAzure = 
-            getUserInput "Please check the new build at https://greenzorro-sgn.azurewebsites.net first\nProceed with stage to live swap (Y/N)? "
-            |> userReply2Bool
-        
-        if proceedAzure then
-            runPowershellScript "SwapStageLive"
+        runPowershellScript "SwapStageLive"
 )
 
 // Dependencies
