@@ -123,21 +123,6 @@ namespace gzWeb.Tests.Models {
             }
         }
 
-        public void CreateTestPlayerDepositWidthdrawnTransactions(int custId) {
-            using (var db = new ApplicationDbContext(null)) {
-                var gzTrx = new GzTransactionRepo(db);
-
-                // Add deposit, withdrawals
-                gzTrx.SaveDbTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
-
-                gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
-                    amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
-
-                gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
-                gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
-            }
-        }
-
         public void CreateTestPlayerLossTransactions(int custId) {
             using (var db = new ApplicationDbContext(null)) {
                 var gzTrx = new GzTransactionRepo(db);

@@ -583,51 +583,6 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Save to database a general Gaming type of transaction using an existing DbContext (to support transactions)
-        /// Normally we never write to GmTrx table except for testing purposes.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="gzTransactionType"></param>
-        /// <param name="amount"></param>
-        /// <param name="createdOnUtc"></param>
-        /// <returns></returns>
-        public void SaveDbGmTransaction(int customerId, GmTransactionTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc) {
-
-            var customerIds = _db.Users
-                .Where(u => u.Id == customerId)
-                .Select(u => new {u.GmCustomerId, u.Email})
-                .Single();
-
-            GmTrx newGmTrx = new GmTrx {
-                CustomerId = customerId,
-                GmCustomerId = customerIds.GmCustomerId,
-                CustomerEmail = customerIds.Email,
-                TypeId = _db.GmTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
-                YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
-                Amount = amount,
-                // Truncate Milliseconds to avoid mismatch between .net dt <--> MSSQl dt
-                CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
-            };
-
-            if (customerIds.GmCustomerId.HasValue) {
-                _db.GmTrxs.AddOrUpdate(
-                    t => new {t.GmCustomerId, t.CustomerEmail, t.YearMonthCtd, t.TypeId, t.CreatedOnUtc, t.Amount},
-                    newGmTrx
-                    );
-                _db.SaveChanges();
-            }
-            else {
-                _db.GmTrxs.AddOrUpdate(
-                    t => new { t.CustomerEmail, t.YearMonthCtd, t.TypeId, t.CreatedOnUtc, t.Amount },
-                    newGmTrx
-                    );
-                _db.SaveChanges();
-            }
-        }
-
-        /// <summary>
-        /// 
         /// Save to database a general type of transaction using an existing DbContext (to support transactions)
         /// Save any transaction type to the database
         /// 
