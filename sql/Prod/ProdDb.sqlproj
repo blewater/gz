@@ -95,7 +95,6 @@
     <Build Include="dbo\Functions\GetTotalTrxAmount.sql" />
     <Build Include="dbo\Functions\GetMinDateTrx.sql" />
     <Build Include="dbo\Functions\GetVintages.sql" />
-    <Build Include="dbo\Functions\GetTotalDeposits.sql" />
     <Build Include="dbo\Functions\GetMonthsTrxAmount.sql" />
     <Build Include="dbo\Tables\GameCategories_1.sql" />
     <Build Include="dbo\Tables\DynamicPageTemplates_1.sql" />

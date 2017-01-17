@@ -8,13 +8,97 @@ open DbUtil
 open CurrencyRates
 open NLog
 open gzCpcLib.Task
+open Chessie.ErrorHandling
+
+module ExcelFilesValidation =
+    type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
+    type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
+    type WithdrawalsExcelSchema = ExcelFile< "pendingwithdraw prod 201609.xlsx" >
+
+    let tryF f msg =
+        try f() |> ok with ex -> fail (msg ex)
+
+    /// <summary>
+    ///
+    /// Read dir files
+    ///
+    /// </summary>
+    /// <param name="folderName">The input excel folder name.</param>
+    /// <returns>list of excel filenames with extension .xlsx</returns>
+    let getFirstCustomExcelRptFilename (isProd : bool) (folderName : string) : Result<string, string>= 
+        let fileMask = if isProd then "Custom Prod*.xlsx" else "Custom Stage*.xlsx"
+        try 
+            Directory.GetFiles(folderName, fileMask) 
+            |> Array.toList 
+            |> List.min
+            |> ok
+        with _ -> fail "Need at least one custom report excel files to proceed!"
+
+    
+    // Get first 2 balance filenames
+    let getBalanceRptExcelDirList (isProd : bool) (folderName : string) : Result<(string*string), string>= 
+        let fileMask = if isProd then "Balance Prod*.xlsx" else "Balance Stage*.xlsx"
+        try
+            let sortedBalanceList = 
+                Directory.GetFiles(folderName, fileMask) 
+                |> Array.toList 
+                |> List.sort
+            ok (sortedBalanceList |> List.head, sortedBalanceList |> List.item 1)
+        with _ -> 
+            fail "Need 2 balance excel files to proceed"
+
+    // Get first withdrawal filename
+    let getFirstWithdrawalExcelRptFilename (isProd : bool) (folderName : string) : Result<string, string>= 
+        let fileMask = if isProd then "Balance Prod*.xlsx" else "Balance Stage*.xlsx"
+        try 
+            Directory.GetFiles(folderName, fileMask) 
+                |> Array.toList 
+                |> List.min 
+                |> ok
+        with _ ->
+            fail "Need a withdrawal file to proceed"
+
+
+    /// <summary>
+    ///
+    /// Read the date part of the excel file.
+    ///
+    /// Precondition that the filename has a date part on the filename
+    ///
+    /// </summary>
+    /// <param name="filename">The excel filename</param>
+    /// <returns>the date part YYYYMMDD</returns>
+    let datePartofFilename (filename : string) = 
+        let len = filename.Length
+        filename.Substring(len - 13, 8)
+    
+    let parsedDateOnExcel (filename : string) : string option=
+        if Regex.Match(filename, "\d{8}\.xlsx$", RegexOptions.Compiled &&& RegexOptions.CultureInvariant).Success then 
+            let dateStrPart = datePartofFilename filename
+            let parsed, _ = DateTime.TryParseExact(dateStrPart, "yyyymmdd", null, Globalization.DateTimeStyles.None)
+            if parsed then 
+                Some dateStrPart
+            else
+                None
+        else
+            None
+
+
 
 module Etl = 
     // Compile type
     type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
     type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
+    type WithdrawalsExcelSchema = ExcelFile< "pendingwithdraw prod 201609.xlsx" >
     let logger = LogManager.GetCurrentClassLogger()
-    
+
+    /// <summary>
+    /// Take floats (excel's default type) and convert them to Db nullable decimals
+    /// </summary>
+    let float2NullableDecimal (n : float) : Nullable<decimal>= 
+        Convert.ToDecimal n 
+        |> Nullable<decimal> 
+
     /// <summary>
     ///
     /// Read dir files
@@ -24,7 +108,7 @@ module Etl =
     /// <returns>list of excel filenames with extension .xlsx</returns>
     let getDirExcelList (isProd : bool) (folderName : string) : string list= 
         let fileMask = if isProd then "Custom Prod*.xlsx" else "Custom Stage*.xlsx"
-        Directory.GetFiles(folderName, fileMask) |> Array.toList
+        Directory.GetFiles(folderName, fileMask) |> Array.toList |> List.sort
     
     /// <summary>
     ///
@@ -54,7 +138,7 @@ module Etl =
                       System.DateTime.TryParseExact(datePart, "yyyymmdd", null, Globalization.DateTimeStyles.None)
                   if parsed then yield excelFile
                   else failwithf "No date part in file %s. Cannot continue" excelFile ]
-    
+
     /// <summary>
     ///
     /// Update all values of db Row but not the id or insert time stamp.
@@ -72,7 +156,7 @@ module Etl =
         let excelCurrency = excelRow.Currency.ToString()
         playerRow.Currency <- excelCurrency
         playerRow.EmailAddress <- excelRow.``Email address``
-        playerRow.GrossRevenue <- Convert.ToDecimal(excelRow.``Gross revenue``)
+        playerRow.GrossRevenue <- float2NullableDecimal excelRow.``Gross revenue``
         
         // TODO: Handle Bonus out of Cash
         //playerRow.Acceptsbonuses <- Convert.ToBoolean(excelRow.``Accepts bonuses``)
@@ -82,11 +166,11 @@ module Etl =
         let parsedLastLogin, lastLogin = 
             DateTime.TryParseExact(excelLastLogin, "dd/MM/yyyy HH:mm:ss", null, Globalization.DateTimeStyles.None)
         if parsedLastLogin then playerRow.LastLogin <- Nullable lastLogin
-        playerRow.NetRevenue <- Convert.ToDecimal(excelRow.``Net revenue``)
+        playerRow.NetRevenue <- float2NullableDecimal excelRow.``Net revenue``
         playerRow.PlayerStatus <- excelRow.``Player status``
-        playerRow.RealMoneyBalance <- Convert.ToDecimal(excelRow.``Real money balance``)
+        playerRow.RealMoneyBalance <- float2NullableDecimal excelRow.``Real money balance``
         if not <| isNull excelRow.Role then playerRow.Role <- excelRow.Role.ToString()
-        playerRow.TotalDepositsAmount <- Convert.ToDecimal(excelRow.``Total deposits amount``)
+        playerRow.TotalDepositsAmount <- float2NullableDecimal excelRow.``Total deposits amount``
         //------------- TODO Last played date
         playerRow.Username <- excelRow.Username
         playerRow.YearMonth <- yearMonthDay.Substring(0, 6)

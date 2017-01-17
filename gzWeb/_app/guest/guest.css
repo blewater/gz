@@ -468,7 +468,7 @@
 /* #region About */
 .guest .about {
 	background-color: #ececec;
-	padding: 60px 0;
+	padding: 60px 0 20px;
 }
 
 .guest .about .row { padding: 10px 5px; }
