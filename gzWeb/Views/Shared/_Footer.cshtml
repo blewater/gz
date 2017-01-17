@@ -11,8 +11,16 @@
     <div class="first">
         <div class="container">
             <div class="footer-menu cl-effect text-center">
-                <a ng-repeat-start="item in menu" ng-href="{{item.route.path}}" ng-class="getClass(item.route.path)" ng-if="item.when()">{{item.route.title}}</a>
-                <span ng-repeat-end ng-class="{'clearfix': xs && $index % 4 === 3}"></span>
+                <div ng-repeat-start="item in menu" ng-class="getClass(item.route.path)" ng-if="item.when()">
+                    <a ng-if="item.route" ng-href="{{item.route.path}}">{{item.route.title}}</a>
+                    <a ng-if="item.subroutes">{{item.title}}</a>
+                    <ul ng-if="item.subroutes" class="dropdown-menu">
+                        <li ng-repeat="subroute in item.subroutes">
+                            <a ng-href="{{subroute.route.path}}">{{subroute.route.subtitle || subroute.route.title}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div ng-repeat-end ng-class="{'clearfix': xs && $index % 4 === 3}"></div>
             </div>
             <div class="footer-social text-center">
                 <a href="https://www.facebook.com/greenzorro-520872994721625/timeline/" target="_blank"><i class="fa fa-facebook" ng-class="{'fa-lg': !xs}"></i></a>
@@ -34,7 +42,7 @@
                     <img src="../../Content/Images/curacao.png" alt="AntillePhone Licence Verification">
                 </a>
                 <a class="license play-responsibly" ng-href="/responsible-gambling" target="_blank">
-                    <img src="../../Content/Images/18plus_invert_transparent.png" alt="18+ Play Responsibly"> @*class="img-thumbnail"*@ 
+                    <img src="../../Content/Images/18plus_invert_transparent.png" alt="18+ Play Responsibly"> @*class="img-thumbnail"*@
                 </a>
             </div>
             <div class="footer-advice text-center" ng-show="routeData.gaming || routeData.wandering">
@@ -54,7 +62,7 @@
                     <img class="img-responsive grayscale" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
                 </div>
                 <div class="footer-payment-method footer-trustly">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly"> @*class="img-thumbnail"*@ 
+                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly"> @*class="img-thumbnail"*@
                 </div>
             </div>
 
@@ -67,7 +75,8 @@
                             <p>Specific casino games content on this website are provided by EveryMatrix Ltd., licensed and regulated by the Malta Gaming Authority (www.mga.org.mt) in virtue of a Class 1 on 4 license numbered MGA/CL1/497/2010 issued on the 2nd of May 2012.</p>
                         </div>
                         <div ng-show="routeData.investing || routeData.wandering">
-                            <p>The investment offering on this site is not operated nor offered by EveryMatrix N.V or EveryMatrix Ltd. Please access the investment section in order to see specific Terms and conditions along with footnote provided by Greenzorro Ltd.</p>
+                            @*<p>The investment offering on this site is not operated nor offered by EveryMatrix N.V or EveryMatrix Ltd. Please access the investment section in order to see specific Terms and conditions along with footnote provided by Greenzorro Ltd.</p>*@
+                            <p>The investment offering on this site is not operated nor offered by EveryMatrix N.V or EveryMatrix Ltd. Please access the investment section in order to see specific Terms and conditions provided by Greenzorro Ltd, a company incorporated under the laws of United Kingdom, bearing company registration number 9320285 and having its registered address at 80-83 Long Lane, London, EC1A 9ET, UK.</p>
                         </div>
                         @*The website is operated and managed by EveryMatrix Ltd, a company bearing registration number C44411, and having its registered address at Suite 10, Level 4, Portomaso Business Tower, Vjal Portomaso, St.Julians, STJ 4011, Malta. EveryMatrix Ltd. is licensed and regulated by the Malta Gaming Authority (www.mga.org.mt) in virtue of a Class 1 license numbered MGA/CL1/497/2010.*@
                     </div>
@@ -77,7 +86,7 @@
             <div class="copyright text-center">
                 &copy; {{copyrightYears}} | greenzorro ltd | All rights reserved
             </div>
-            <div class="company-registration text-center">
+            <div class="company-registration text-center hidden">
                 <span>Company registration number: 9320285</span>
                 <span class="company-registration-separator"> | </span>
                 <span>Registered in England & Wales</span>
