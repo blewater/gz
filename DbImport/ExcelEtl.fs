@@ -10,6 +10,9 @@ module ErrorHandling =
     | Missing1stBalanceReport of Exception
     | Missing2ndBalanceReport of Exception
     | MissingWithdrawalReport of Exception
+    | MissingDateInFilename of Exception
+    | NoparsableDateInFilename of Exception
+    | MismatchedFilenameDates of Exception
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -21,12 +24,18 @@ module ErrorHandling =
         logger.Fatal logMsg
         logger.Error ("**Exception: " + ex.Message)
     
-    let tryF f taskExc (logInfo : 'I Option)=
+    // try to call
+    let tryF f taskExc (logInfo : 'I Option) =
         try 
-            f() 
+            f()
         with ex ->
             logError taskExc logInfo ex
             raise ex
+
+    // invalidArg with logging
+    let failWithLogInvalidArg excMsg logMsg =
+        logger.Fatal (excMsg + " : " + logMsg)
+        invalidArg excMsg logMsg
 
 module ExcelFilesValidation =
     open Chessie.ErrorHandling
@@ -37,85 +46,70 @@ module ExcelFilesValidation =
     
     type InputExcelFolder = { isProd : bool; folderName : string }
 
-    let folderTryF isProd f domainException=
+    let folderTryF (isProd : bool) f domainException =
         let logInfo = "isProd", isProd
         tryF f domainException (Some logInfo)
 
-    /// <summary>
-    ///
-    /// Read dir files
-    ///
-    /// </summary>
-    /// <param name="folderName">The input excel folder name.</param>
-    /// <returns>list of excel filenames with extension .xlsx</returns>
-    let get1stCustomExcelRptFilename (isProd : bool) (folderName : string) : string=
-        let fileMask = if isProd then "Custom Prod*.xlsx" else "Custom Stage*.xlsx"
-        let readDir () = 
-            Directory.GetFiles(folderName, fileMask) 
-            |> Array.toList 
-            |> List.min
-        //let logInfo = "isProd", isProd
-        //tryF readDir Need1CustomReportFailure (Some logInfo)
-        folderTryF isProd readDir MissingCustomReport
-
-    
-    // Get first 2 balance filenames
-    let get1stBalanceRptExcelDirList (isProd : bool) (folderName : string) : string = 
-        let fileMask = if isProd then "Balance Prod*.xlsx" else "Balance Stage*.xlsx"
-        let readDir () =
-            Directory.GetFiles(folderName, fileMask) 
+    let getEarliestExcelFile (isProd : bool) (folderName : string) (filenameMask : string Option) (topListIndex : int): string =
+        let fileMask = 
+            match filenameMask with
+            | Some maskToAdd -> if isProd then maskToAdd + "Prod*.xlsx" else maskToAdd + "Stage*.xlsx"
+            | None -> if isProd then "Prod*.xlsx" else "Stage*.xlsx"
+        Directory.GetFiles(folderName, fileMask) 
             |> Array.toList 
             |> List.sort
-            |> List.min
+            |> List.item topListIndex
+    
+    // Get the custom excel rpt filename
+    let getMinCustomExcelRptFilename (isProd : bool) (folderName : string) : string =
+        let readDir () = getEarliestExcelFile isProd folderName (Some "Custom ") 0
+        folderTryF isProd readDir MissingCustomReport
+    
+    // Get first balance filename
+    let getMinBalanceRptExcelDirList (isProd : bool) (folderName : string) : string = 
+        let readDir () = getEarliestExcelFile isProd folderName (Some "Balance ") 0
         folderTryF isProd readDir Missing1stBalanceReport
 
-    let get2ndBalanceRptExcelDirList (isProd : bool) (folderName : string) : string = 
-        let fileMask = if isProd then "Balance Prod*.xlsx" else "Balance Stage*.xlsx"
-        let readDir () =
-            Directory.GetFiles(folderName, fileMask) 
-            |> Array.toList 
-            |> List.sort
-            |> List.item 2
+    // Get the 2nd balance filename
+    let getNxtBalanceRptExcelDirList (isProd : bool) (folderName : string) : string = 
+        let readDir () = getEarliestExcelFile isProd folderName (Some "Balance ") 1
         folderTryF isProd readDir Missing2ndBalanceReport
 
     // Get first withdrawal filename
-    let getFirstWithdrawalExcelRptFilename (isProd : bool) (folderName : string) : string =
-        let fileMask = if isProd then "withdraw Prod*.xlsx" else "withdraw Stage*.xlsx"
-        let readDir () =
-            Directory.GetFiles(folderName, fileMask) 
-                |> Array.toList 
-                |> List.min 
+    let getMinWithdrawalExcelRptFilename (isProd : bool) (folderName : string) : string =
+        let readDir () = getEarliestExcelFile isProd folderName (Some "pendingwithdraw ") 0
         folderTryF isProd readDir MissingWithdrawalReport
 
-
-    /// <summary>
-    ///
-    /// Read the date part of the excel file.
-    ///
-    /// Precondition that the filename has a date part on the filename
-    ///
-    /// </summary>
-    /// <param name="filename">The excel filename</param>
-    /// <returns>the date part YYYYMMDD</returns>
+    /// Read the date part of the excel filename: assuming there's a date part in the filename
     let datePartofFilename (filename : string) = 
         let len = filename.Length
         filename.Substring(len - 13, 8)
-    
-    let parsedDateOnExcel (filename : string) : string option=
+
+    let validateDateOnExcelFilename (filename : string) : string =
         if Regex.Match(filename, "\d{8}\.xlsx$", RegexOptions.Compiled &&& RegexOptions.CultureInvariant).Success then 
             let dateStrPart = datePartofFilename filename
             let parsed, _ = DateTime.TryParseExact(dateStrPart, "yyyymmdd", null, Globalization.DateTimeStyles.None)
-            if parsed then 
-                Some dateStrPart
+            if parsed then dateStrPart
             else
-                None
+                failWithLogInvalidArg "[NoparsableDateInFilename]" (sprintf "No date in filename of %s, with date part of: %s." filename dateStrPart)
         else
-            None
-
-    let combinedValidation (isProd : bool) (folderName : string) =
-        [ get1stCustomExcelRptFilename ; get1stBalanceRptExcelDirList ; get1stBalanceRptExcelDirList ; getFirstWithdrawalExcelRptFilename ]
-        |> List.map (fun f -> f isProd folderName)
-
+            failWithLogInvalidArg "[MissingDateInFilename]" (sprintf "No date in filename of %s." filename)
+       
+    let excelFilenameValidation (isProd : bool) (folderName : string) : bool =
+        let customDate = getMinCustomExcelRptFilename isProd folderName 
+                        |> validateDateOnExcelFilename
+        let minBalanceDate = getMinBalanceRptExcelDirList isProd folderName
+                            |> validateDateOnExcelFilename
+        let nxtBalanceDate = getNxtBalanceRptExcelDirList isProd folderName
+                            |> validateDateOnExcelFilename
+        let minWithdrawalDate = getMinWithdrawalExcelRptFilename isProd folderName
+                                |> validateDateOnExcelFilename
+        let datesLogMsg = sprintf "Passed excel filename date parsing: customDate: %s, minBalanceDate: %s, nxtBalanceDate: %s, minWithdrawalDate: %s" customDate minBalanceDate nxtBalanceDate minWithdrawalDate
+        logger.Info datesLogMsg
+        if (customDate <> minBalanceDate) || (customDate <> minWithdrawalDate) then
+            failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with either/both of minBalanceDate: %s, minWithdrawalDate: %s." customDate minBalanceDate minWithdrawalDate)
+        else
+            false
 
 module Etl = 
     open System
