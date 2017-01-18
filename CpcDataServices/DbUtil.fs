@@ -1,4 +1,4 @@
-﻿namespace CpcDataServices
+﻿namespace DbImport
 
 open NLog
 open FSharp.Data.TypeProviders

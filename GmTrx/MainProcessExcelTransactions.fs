@@ -1,7 +1,7 @@
 ﻿open NLog
 open System
 open FSharp.Configuration
-open CpcDataServices
+open DbImport
 open gzCpcLib.Task
 
 type Settings = AppSettings< "app.config" >

@@ -1,22 +1,22 @@
-﻿namespace CpcDataServices
+﻿namespace DbImport
 
-open System
-open System.IO
-open FSharp.ExcelProvider
-open System.Text.RegularExpressions
-open DbUtil
-open CurrencyRates
-open NLog
-open gzCpcLib.Task
-open Chessie.ErrorHandling
-
-module ExcelFilesValidation =
-    type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
-    type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
-    type WithdrawalsExcelSchema = ExcelFile< "pendingwithdraw prod 201609.xlsx" >
+module Rop =
+    open Chessie.ErrorHandling
 
     let tryF f msg =
         try f() |> ok with ex -> fail (msg ex)
+
+module ExcelFilesValidation =
+    open Chessie.ErrorHandling
+    open FSharp.ExcelProvider
+    open System
+    open System.IO
+    open Rop
+    open System.Text.RegularExpressions
+
+    type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
+    type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
+    type WithdrawalsExcelSchema = ExcelFile< "pendingwithdraw prod 201609.xlsx" >
 
     /// <summary>
     ///
@@ -83,9 +83,20 @@ module ExcelFilesValidation =
         else
             None
 
+    let combinedValidation (isProd : bool) (folderName : string) =
+        getFirstCustomExcelRptFilename isProd folderName
 
 
 module Etl = 
+    open System
+    open System.IO
+    open FSharp.ExcelProvider
+    open DbUtil
+    open CurrencyRates
+    open NLog
+    open gzCpcLib.Task
+    open System.Text.RegularExpressions
+
     // Compile type
     type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
     type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
