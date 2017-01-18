@@ -125,7 +125,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CpcDataServices\DbImport.fsproj">
+    <ProjectReference Include="..\DbImport\DbImport.fsproj">
       <Name>DbImport</Name>
       <Project>{bd103410-e702-454c-ae68-17f50a0a4742}</Project>
       <Private>True</Private>

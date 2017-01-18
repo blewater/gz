@@ -46,7 +46,7 @@
     <Tailcalls>false</Tailcalls>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\CpcDataServices.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\DbImport.XML</DocumentationFile>
     <OutputPath>bin\Production\</OutputPath>
   </PropertyGroup>
   <Choose>
