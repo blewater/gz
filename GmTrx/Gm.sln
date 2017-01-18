@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GmTrx", "GmTrx.fsproj", "{15A3E41A-1268-44BE-9C1A-743AA2172D55}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CpcDataServices", "..\CpcDataServices\CpcDataServices.fsproj", "{BD103410-E702-454C-AE68-17F50A0A4742}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DbImport", "..\CpcDataServices\DbImport.fsproj", "{BD103410-E702-454C-AE68-17F50A0A4742}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustPortfolioCalcLib", "..\CustPortfolioCalcLib\CustPortfolioCalcLib.csproj", "{BA006926-CA0A-4F9C-B4F6-675C28621359}"
 EndProject

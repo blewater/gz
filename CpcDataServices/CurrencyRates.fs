@@ -1,4 +1,4 @@
-﻿namespace CpcDataServices
+﻿namespace DbImport
 
 open System
 open FSharp.Data

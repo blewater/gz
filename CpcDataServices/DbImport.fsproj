@@ -8,11 +8,11 @@
     <ProjectGuid>bd103410-e702-454c-ae68-17f50a0a4742</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>CpcDataServices</RootNamespace>
-    <AssemblyName>CpcDataServices</AssemblyName>
+    <AssemblyName>DbImport</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>CpcDataServices</Name>
+    <Name>DbImport</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
