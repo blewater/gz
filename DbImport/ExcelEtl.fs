@@ -1,22 +1,45 @@
 ﻿namespace DbImport
 
-module Rop =
-    open Chessie.ErrorHandling
+module ErrorHandling =
+    open System
+    open NLog
 
-    let tryF f msg =
-        try f() |> ok with ex -> fail (msg ex)
+    type DomainException = 
+    | DbUpdateFailure of Exception
+    | MissingCustomReport of Exception
+    | Missing1stBalanceReport of Exception
+    | Missing2ndBalanceReport of Exception
+    | MissingWithdrawalReport of Exception
+
+    let logger = LogManager.GetCurrentClassLogger()
+
+    let private logError taskExc (logInfo : 'I Option) (ex : Exception) =
+        let logMsg = 
+            match logInfo with
+            | Some info -> sprintf "Operation failed with %A. Here's additional info: %A" taskExc info
+            | None -> sprintf "Operation failed with %A." taskExc
+        logger.Fatal logMsg
+        logger.Error ("**Exception: " + ex.Message)
+    
+    let tryF f taskExc (logInfo : 'I Option)=
+        try 
+            f() 
+        with ex ->
+            logError taskExc logInfo ex
+            raise ex
 
 module ExcelFilesValidation =
     open Chessie.ErrorHandling
-    open FSharp.ExcelProvider
     open System
     open System.IO
-    open Rop
+    open ErrorHandling
     open System.Text.RegularExpressions
+    
+    type InputExcelFolder = { isProd : bool; folderName : string }
 
-    type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
-    type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
-    type WithdrawalsExcelSchema = ExcelFile< "pendingwithdraw prod 201609.xlsx" >
+    let folderTryF isProd f domainException=
+        let logInfo = "isProd", isProd
+        tryF f domainException (Some logInfo)
 
     /// <summary>
     ///
@@ -25,38 +48,44 @@ module ExcelFilesValidation =
     /// </summary>
     /// <param name="folderName">The input excel folder name.</param>
     /// <returns>list of excel filenames with extension .xlsx</returns>
-    let getFirstCustomExcelRptFilename (isProd : bool) (folderName : string) : Result<string, string>= 
+    let get1stCustomExcelRptFilename (isProd : bool) (folderName : string) : string=
         let fileMask = if isProd then "Custom Prod*.xlsx" else "Custom Stage*.xlsx"
-        try 
+        let readDir () = 
             Directory.GetFiles(folderName, fileMask) 
             |> Array.toList 
             |> List.min
-            |> ok
-        with _ -> fail "Need at least one custom report excel files to proceed!"
+        //let logInfo = "isProd", isProd
+        //tryF readDir Need1CustomReportFailure (Some logInfo)
+        folderTryF isProd readDir MissingCustomReport
 
     
     // Get first 2 balance filenames
-    let getBalanceRptExcelDirList (isProd : bool) (folderName : string) : Result<(string*string), string>= 
+    let get1stBalanceRptExcelDirList (isProd : bool) (folderName : string) : string = 
         let fileMask = if isProd then "Balance Prod*.xlsx" else "Balance Stage*.xlsx"
-        try
-            let sortedBalanceList = 
-                Directory.GetFiles(folderName, fileMask) 
-                |> Array.toList 
-                |> List.sort
-            ok (sortedBalanceList |> List.head, sortedBalanceList |> List.item 1)
-        with _ -> 
-            fail "Need 2 balance excel files to proceed"
+        let readDir () =
+            Directory.GetFiles(folderName, fileMask) 
+            |> Array.toList 
+            |> List.sort
+            |> List.min
+        folderTryF isProd readDir Missing1stBalanceReport
+
+    let get2ndBalanceRptExcelDirList (isProd : bool) (folderName : string) : string = 
+        let fileMask = if isProd then "Balance Prod*.xlsx" else "Balance Stage*.xlsx"
+        let readDir () =
+            Directory.GetFiles(folderName, fileMask) 
+            |> Array.toList 
+            |> List.sort
+            |> List.item 2
+        folderTryF isProd readDir Missing2ndBalanceReport
 
     // Get first withdrawal filename
-    let getFirstWithdrawalExcelRptFilename (isProd : bool) (folderName : string) : Result<string, string>= 
-        let fileMask = if isProd then "Balance Prod*.xlsx" else "Balance Stage*.xlsx"
-        try 
+    let getFirstWithdrawalExcelRptFilename (isProd : bool) (folderName : string) : string =
+        let fileMask = if isProd then "withdraw Prod*.xlsx" else "withdraw Stage*.xlsx"
+        let readDir () =
             Directory.GetFiles(folderName, fileMask) 
                 |> Array.toList 
                 |> List.min 
-                |> ok
-        with _ ->
-            fail "Need a withdrawal file to proceed"
+        folderTryF isProd readDir MissingWithdrawalReport
 
 
     /// <summary>
@@ -84,7 +113,8 @@ module ExcelFilesValidation =
             None
 
     let combinedValidation (isProd : bool) (folderName : string) =
-        getFirstCustomExcelRptFilename isProd folderName
+        [ get1stCustomExcelRptFilename ; get1stBalanceRptExcelDirList ; get1stBalanceRptExcelDirList ; getFirstWithdrawalExcelRptFilename ]
+        |> List.map (fun f -> f isProd folderName)
 
 
 module Etl = 
