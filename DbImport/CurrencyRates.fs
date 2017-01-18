@@ -7,7 +7,7 @@ open System.Collections.Generic
 open DbUtil
 
 module public CurrencyRates = 
-    type UsdRates = JsonProvider<"../CpcDataServices/openexchangerates.json">
+    type UsdRates = JsonProvider<"../DbImport/openexchangerates.json">
 
     let logger = LogManager.GetCurrentClassLogger()
 
