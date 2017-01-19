@@ -2,7 +2,6 @@
 open System
 open FSharp.Configuration
 open DbImport
-open ExcelFilesValidation
 open gzCpcLib.Task
 
 type Settings = AppSettings< "app.config" >
