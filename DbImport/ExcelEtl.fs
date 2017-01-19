@@ -44,7 +44,9 @@ module ExcelFilesValidation =
     open ErrorHandling
     open System.Text.RegularExpressions
     
-    type InputExcelFolder = { isProd : bool; folderName : string }
+    type RptFilenames = { customFile : string; withdrawFile : string; begBalanceFile : string; endBalanceFile : string }
+    type RptStrDates = { customDtStr : string; withdrawDtStr : string; begBalanceDtStr : string; endBalanceDtStr : string }
+    type RptDates = { customDate : DateTime; withdrawDate : DateTime; begBalanceDate : DateTime; endBalanceDate : DateTime }
 
     let folderTryF (isProd : bool) f domainException =
         let logInfo = "isProd", isProd
@@ -95,21 +97,31 @@ module ExcelFilesValidation =
         else
             failWithLogInvalidArg "[MissingDateInFilename]" (sprintf "No date in filename of %s." filename)
        
-    let excelFilenameValidation (isProd : bool) (folderName : string) : bool =
+    let areExcelFilenamesValid (isProd:bool) (folderName :string) =
         let customDate = getMinCustomExcelRptFilename isProd folderName 
                         |> validateDateOnExcelFilename
+        let minWithdrawalDate = getMinWithdrawalExcelRptFilename isProd folderName
+                                |> validateDateOnExcelFilename
         let minBalanceDate = getMinBalanceRptExcelDirList isProd folderName
                             |> validateDateOnExcelFilename
         let nxtBalanceDate = getNxtBalanceRptExcelDirList isProd folderName
                             |> validateDateOnExcelFilename
-        let minWithdrawalDate = getMinWithdrawalExcelRptFilename isProd folderName
-                                |> validateDateOnExcelFilename
         let datesLogMsg = sprintf "Passed excel filename date parsing: customDate: %s, minBalanceDate: %s, nxtBalanceDate: %s, minWithdrawalDate: %s" customDate minBalanceDate nxtBalanceDate minWithdrawalDate
         logger.Info datesLogMsg
         if (customDate <> minBalanceDate) || (customDate <> minWithdrawalDate) then
             failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with either/both of minBalanceDate: %s, minWithdrawalDate: %s." customDate minBalanceDate minWithdrawalDate)
-        else
-            false
+        
+        if (customDate <> minBalanceDate) || (customDate <> minWithdrawalDate) then
+            failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with either/both of minBalanceDate: %s, minWithdrawalDate: %s." customDate minBalanceDate minWithdrawalDate)
+
+    let getExcelFilenames (isProd : bool) (folderName : string) : RptFilenames =
+        { customFile = ""; withdrawFile = ""; begBalanceFile = ""; endBalanceFile = ""}
+
+    let getExcelDtStr (isProd : bool) (folderName : string) : RptStrDates =
+        { customDtStr = ""; withdrawDtStr = ""; begBalanceDtStr = ""; endBalanceDtStr = ""}
+
+    let getExcelDates (isProd : bool) (folderName : string) : RptDates =
+        { customDate = DateTime.UtcNow; withdrawDate = DateTime.UtcNow; begBalanceDate = DateTime.UtcNow; endBalanceDate = DateTime.UtcNow}
 
 module Etl = 
     open System
