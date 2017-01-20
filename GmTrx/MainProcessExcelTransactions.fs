@@ -35,11 +35,13 @@ let main argv =
 
         logger.Info("Validating Gm excel rpt files")
         
-        { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
-        |> GmRptFiles.getExcelFilenames
-        |> GmRptFiles.getExcelDtStr
-        |> GmRptFiles.getExcelDates 
-        |> GmRptFiles.areExcelFilenamesValid
+        let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
+                                    |> GmRptFiles.getExcelFilenames
+                                    |> GmRptFiles.getExcelDtStr
+                                    |> GmRptFiles.getExcelDates 
+                                    |> GmRptFiles.areExcelFilenamesValid
+        if not rptFilesOkToProcess then
+            exit 1
 
         // Create a database context
         use db = DbUtil.getOpenDb dbConnectionString

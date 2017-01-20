@@ -25,7 +25,7 @@ module DateStr =
 
     type String with
         member this.ToDateWithDay = 
-            match DateTime.TryParseExact(this, "yyyymmdd", null, Globalization.DateTimeStyles.None) with
+            match DateTime.TryParseExact(this, "yyyyMMdd", null, Globalization.DateTimeStyles.None) with
             | true, date -> date
             | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
 
