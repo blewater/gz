@@ -8,32 +8,30 @@ module Etl =
     open CurrencyRates
     open NLog
     open gzCpcLib.Task
-    open System.Text.RegularExpressions
+    open GmRptFiles
+    open Microsoft.FSharp.Core
 
     // Compile type
     type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
     type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
     type WithdrawalsExcelSchema = ExcelFile< "pendingwithdraw prod 201609.xlsx" >
+
     let logger = LogManager.GetCurrentClassLogger()
 
-    /// <summary>
-    /// Take floats (excel's default type) and convert them to Db nullable decimals
-    /// </summary>
-    let float2NullableDecimal (n : float) : Nullable<decimal>= 
-        Convert.ToDecimal n 
-        |> Nullable<decimal> 
+    /// From (excel's default decimal type) to Db nullable decimals
+    let float2NullableDecimal (excelFloatExpr : float) : decimal Nullable =
+        excelFloatExpr |> Convert.ToDecimal |> Nullable<decimal> 
 
-    /// <summary>
-    ///
-    /// Read dir files
-    ///
-    /// </summary>
-    /// <param name="folderName">The input excel folder name.</param>
-    /// <returns>list of excel filenames with extension .xlsx</returns>
-    let getDirExcelList (isProd : bool) (folderName : string) : string list= 
-        let fileMask = if isProd then "Custom Prod*.xlsx" else "Custom Stage*.xlsx"
-        Directory.GetFiles(folderName, fileMask) |> Array.toList |> List.sort
-    
+    /// Convert string boolean literal to bool Nullable
+    let string2NullableBool (excelFloatExpr : string) : bool Nullable = 
+        excelFloatExpr |> Convert.ToBoolean |> Nullable<bool> 
+
+    /// Convert DateTime object expression to DateTime Nullable
+    let excelObj2NullableDt (excelObjDt : obj) : DateTime System.Nullable = 
+        match DateTime.TryParseExact(excelObjDt.ToString(), "yyyy-mm-dd", null, Globalization.DateTimeStyles.None) with
+            | true, dtRes -> Nullable dtRes
+            | false, _ -> Nullable DateTime.MinValue
+
     /// <summary>
     ///
     /// Read the date part of the excel file.
@@ -49,22 +47,6 @@ module Etl =
     
     /// <summary>
     ///
-    /// Check excel file for correctness of their name
-    ///
-    /// </summary>
-    /// <param name="excelFiles">The collection of read excel files.</param>
-    /// <returns>list of excel filenames with date mask YYYYMMDD at the end of their names before .xlsx</returns>
-    let getDatedExcelfiles excelFiles = 
-        [ for excelFile in excelFiles do
-              if Regex.Match(excelFile, "\d{8}\.xlsx$", RegexOptions.Compiled &&& RegexOptions.CultureInvariant).Success then 
-                  let datePart = datePartofFilename excelFile
-                  let parsed, _ = 
-                      System.DateTime.TryParseExact(datePart, "yyyymmdd", null, Globalization.DateTimeStyles.None)
-                  if parsed then yield excelFile
-                  else failwithf "No date part in file %s. Cannot continue" excelFile ]
-
-    /// <summary>
-    ///
     /// Update all values of db Row but not the id or insert time stamp.
     ///
     /// -> unit
@@ -73,29 +55,21 @@ module Etl =
     /// <param name="yearMonthDay">The yyyyMMdd mask of the filename</param>
     /// <param name="excelRow">The excel row as the source input</param>
     /// <param name="playerRow">The db row matching the id of the excel row</param>
-    let setPlayerDbRowValues (yearMonthDay : string) (excelRow : CustomExcelSchema.Row) 
-            (playerRow : DbUtil.DbSchema.ServiceTypes.PlayerRevRpt) = 
+    let setPlayerDbRowValues (yearMonthDay : string) (excelRow : CustomExcelSchema.Row) (playerRow : DbPlayerRevRptRow) = 
 
         if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
         let excelCurrency = excelRow.Currency.ToString()
         playerRow.Currency <- excelCurrency
         playerRow.EmailAddress <- excelRow.``Email address``
-        playerRow.GrossRevenue <- float2NullableDecimal excelRow.``Gross revenue``
-        
-        // TODO: Handle Bonus out of Cash
-        //playerRow.Acceptsbonuses <- Convert.ToBoolean(excelRow.``Accepts bonuses``)
-        //let b = excelRow.``Last played date``
-
-        let excelLastLogin = excelRow.``Last login``
-        let parsedLastLogin, lastLogin = 
-            DateTime.TryParseExact(excelLastLogin, "dd/MM/yyyy HH:mm:ss", null, Globalization.DateTimeStyles.None)
-        if parsedLastLogin then playerRow.LastLogin <- Nullable lastLogin
-        playerRow.NetRevenue <- float2NullableDecimal excelRow.``Net revenue``
+        playerRow.GrossRevenue <- excelRow.``Gross revenue`` |> float2NullableDecimal
+        playerRow.AcceptsBonuses <- excelRow.``Accepts bonuses`` |> string2NullableBool
+        playerRow.LastLogin <- excelRow.``Last login`` |> excelObj2NullableDt
+        playerRow.NetRevenue <- excelRow.``Net revenue`` |> float2NullableDecimal 
         playerRow.PlayerStatus <- excelRow.``Player status``
-        playerRow.RealMoneyBalance <- float2NullableDecimal excelRow.``Real money balance``
+        playerRow.RealMoneyBalance <- excelRow.``Real money balance`` |> float2NullableDecimal 
         if not <| isNull excelRow.Role then playerRow.Role <- excelRow.Role.ToString()
-        playerRow.TotalDepositsAmount <- float2NullableDecimal excelRow.``Total deposits amount``
-        //------------- TODO Last played date
+        playerRow.TotalDepositsAmount <- excelRow.``Total deposits amount`` |> float2NullableDecimal
+        playerRow.LastPlayedDate <- excelRow.``Last played date`` |> excelObj2NullableDt
         playerRow.Username <- excelRow.Username
         playerRow.YearMonth <- yearMonthDay.Substring(0, 6)
         playerRow.YearMonthDay <- yearMonthDay
@@ -117,8 +91,7 @@ module Etl =
             (excelRow : CustomExcelSchema.Row) = 
 
         let newPlayerRow = 
-            new DbUtil.DbSchema.ServiceTypes.PlayerRevRpt(UserID = Convert.ToInt32(excelRow.``User ID``), 
-                                                   CreatedOnUtc = DateTime.UtcNow)
+            new DbPlayerRevRptRow(UserID = Convert.ToInt32(excelRow.``User ID``), CreatedOnUtc = DateTime.UtcNow)
         setPlayerDbRowValues yearMonthDay excelRow newPlayerRow
         db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
     
@@ -341,24 +314,23 @@ module Etl =
     let processExcelFiles 
             (db : DbContext) 
             (outFolder : string)
-            (datedExcelFilesNames: string seq) 
+            (customFilename: string)
             (rates : CurrencyRatesValues) = 
 
-        // Open each excel file
-        for excelFilename in datedExcelFilesNames do
-            let openFile = openExcelSchemaFile excelFilename
-            let yyyyMmDd = datePartofFilename excelFilename
-            let transaction = db.Connection.BeginTransaction()
-            db.DataContext.Transaction <- transaction
-            try 
-                setDbExcelRows db openFile yyyyMmDd rates
-                // ********* Commit once per excel File
-                transaction.Commit()
-                (* Move processed file to out folder*)
-                File.Move(excelFilename, outFolder)
-            with _ -> 
-                transaction.Rollback()
-                reraise()
+        // Open excel report file for the memory schema
+        let openFile = customFilename |> openExcelSchemaFile
+        let yyyyMmDd = customFilename |> getCustomDtStr
+        let transaction = db.Connection.BeginTransaction()
+        db.DataContext.Transaction <- transaction
+        try 
+            setDbExcelRows db openFile yyyyMmDd rates
+            // ********* Commit once per excel File
+            transaction.Commit()
+            (* Move processed file to out folder*)
+            File.Move(customFilename, outFolder)
+        with _ -> 
+            transaction.Rollback()
+            reraise()
     
     /// <summary>
     ///
@@ -382,15 +354,12 @@ module Etl =
         
         //------------ Read filenames
         logger.Info (sprintf "Reading the %s folder" inFolder)
-        let dirExcelFileList = getDirExcelList isProd inFolder
-        if dirExcelFileList.Length > 0 then 
-            logger.Debug "Checking read files for date in their name"
-            let datedExcelFilenames = getDatedExcelfiles dirExcelFileList
+        let customRptFilename = 
+            { isProd = isProd ; folderName = inFolder } 
+            |> getCustomFilename
 
-            (new CustomerBalanceUpdTask(isProd)).DoTask()
+        logger.Debug "Starting processing read report files"
+        //------------ Save excel value to database
+        processExcelFiles db outFolder customRptFilename rates
 
-            //------------ Save excel value to database
-            processExcelFiles db outFolder datedExcelFilenames rates
-
-        else 
-            logger.Trace "No excel files were found!"
+        (new CustomerBalanceUpdTask(isProd)).DoTask()

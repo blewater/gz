@@ -14,6 +14,7 @@ module DbUtil =
 
     type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
+    type DbPlayerRevRptRow = DbSchema.ServiceTypes.PlayerRevRpt
 
     type GzTransactionType =
         /// <summary>

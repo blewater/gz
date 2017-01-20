@@ -1,6 +1,6 @@
 ﻿namespace DbImport
 
-module GmExcelFiles =
+module GmRptFiles =
     open System
     open System.IO
     open ErrorHandling
@@ -27,31 +27,30 @@ module GmExcelFiles =
             |> List.sort
             |> List.item topListIndex
     
-    // Get the custom excel rpt filename
+    /// Get the custom excel rpt filename
     let private getMinCustomExcelRptFilename (inRptFolder : InRptFolder) : string =
         let readDir () = getEarliestExcelFile inRptFolder (Some "Custom ") 0
         folderTryF inRptFolder.isProd readDir MissingCustomReport
     
-    // Get first balance filename
+    /// Get first balance filename
     let private getMinBalanceRptExcelDirList (inRptFolder : InRptFolder) : string = 
         let readDir () = getEarliestExcelFile inRptFolder (Some "Balance ") 0
         folderTryF inRptFolder.isProd readDir Missing1stBalanceReport
 
-    // Get the 2nd balance filename
+    /// Get the 2nd balance filename
     let private getNxtBalanceRptExcelDirList (inRptFolder : InRptFolder) : string = 
         let readDir () = getEarliestExcelFile inRptFolder (Some "Balance ") 1
         folderTryF inRptFolder.isProd readDir Missing2ndBalanceReport
 
-    // Get first withdrawal filename
+    /// Get first withdrawal filename
     let private getMinWithdrawalExcelRptFilename (inRptFolder : InRptFolder) : string =
         let readDir () = getEarliestExcelFile inRptFolder (Some "pendingwithdraw ") 0
         folderTryF inRptFolder.isProd readDir MissingWithdrawalReport
 
-    // Read the date part of the excel filename: assuming there's a date part in the filename
+    /// Read the date part of the excel filename: assuming there's a date part in the filename
     let private datePartofFilename (filename : string) = 
         let len = filename.Length
         filename.Substring(len - 13, 8)
-
 
     let validateDateOnExcelFilename (filename : string) : string =
         if Regex.Match(filename, "\d{8}\.xlsx$", RegexOptions.Compiled &&& RegexOptions.CultureInvariant).Success then 
@@ -146,16 +145,28 @@ module GmExcelFiles =
         logger.Info datesLogMsg
         excelFileDates
 
-    let areExcelFilenamesValid (rptDates : RptDates) =
-        let { customDate = customDate ; begBalanceDate = begBalanceDate ; endBalanceDate = endBalanceDate ; withdrawDate = withdrawDate } = rptDates
-        // Enforce same day
+//--------------------- Validation Rules
+
+    /// Enforce same day
+    let private sameDayValidation (customDate : DateTime) (withdrawDate : DateTime) : Unit =
         if customDate <> withdrawDate then
             failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with minWithdrawalDate: %s." <| customDate.ToString("yyyy-mm-dd") <| withdrawDate.ToString("yyyy-mm-dd"))
-        
-        // Enforce begBalance on 1st month day
+
+    /// Enforce begBalance on 1st month day
+    let private begBalance1stDay (customDate : DateTime) (begBalanceDate : DateTime) : Unit =
         if customDate.Month <> begBalanceDate.Month && begBalanceDate.Day <> 1 then
             failWithLogInvalidArg "[BegBalanceDateMismatch]" (sprintf "Custom date %s mismatch or begBalance Report on first of month : %s." <| customDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
 
-        // Enforce begBalance on 1st month day
+    /// Enforce begBalance on 1st month day
+    let private balanceDatesValidation (begBalanceDate : DateTime) (endBalanceDate : DateTime) : Unit =
         if begBalanceDate.AddMonths 1 <> endBalanceDate then
             failWithLogInvalidArg "[EndBalanceDateMismatch]" (sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" <| endBalanceDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
+
+    let areExcelFilenamesValid (rptDates : RptDates) =
+        let { customDate = customDate ; begBalanceDate = begBalanceDate ; endBalanceDate = endBalanceDate ; withdrawDate = withdrawDate } = rptDates
+
+        sameDayValidation customDate withdrawDate
+
+        begBalance1stDay customDate begBalanceDate
+        
+        balanceDatesValidation begBalanceDate endBalanceDate

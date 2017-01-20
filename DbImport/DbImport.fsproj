@@ -68,6 +68,7 @@
     <Compile Include="ErrorHandling.fs" />
     <Compile Include="DbUtil.fs" />
     <Compile Include="CurrencyRates.fs" />
+    <Compile Include="GmRptFiles.fs" />
     <Compile Include="ExcelEtl.fs" />
     <Content Include="packages.config" />
     <None Include="openexchangerates.json">
@@ -76,7 +77,6 @@
     <None Include="Custom Prod 20160930.xlsx" />
     <None Include="Balance Prod 20161001.xlsx" />
     <None Include="pendingwithdraw prod 201609.xlsx" />
-    <Compile Include="GmExcelFiles.fs" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
   </ItemGroup>

@@ -33,6 +33,14 @@ let main argv =
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
 
+        logger.Info("Validating Gm excel rpt files")
+        
+        { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
+        |> GmRptFiles.getExcelFilenames
+        |> GmRptFiles.getExcelDtStr
+        |> GmRptFiles.getExcelDates 
+        |> GmRptFiles.areExcelFilenamesValid
+
         // Create a database context
         use db = DbUtil.getOpenDb dbConnectionString
 
