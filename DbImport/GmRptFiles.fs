@@ -141,7 +141,7 @@ module GmRptFiles =
 
     let getExcelDates (excelDatesStr : RptStrDates) : RptDates =
         let excelFileDates = excelDatesStr2Dt excelDatesStr
-        let datesLogMsg = sprintf "Parsed excel filename title dates in DateTime: %A" excelFileDates
+        let datesLogMsg = sprintf "Parsed excel filename title dates: %A" excelFileDates
         logger.Info datesLogMsg
         excelFileDates
 
@@ -162,7 +162,8 @@ module GmRptFiles =
         if begBalanceDate.AddMonths 1 <> endBalanceDate then
             failWithLogInvalidArg "[EndBalanceDateMismatch]" (sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" <| endBalanceDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
 
-    let areExcelFilenamesValid (rptDates : RptDates) =
+    /// Check for the existence of required report files for a month by checking matching dates etc
+    let areExcelFilenamesValid (rptDates : RptDates) : bool =
         let { customDate = customDate ; begBalanceDate = begBalanceDate ; endBalanceDate = endBalanceDate ; withdrawDate = withdrawDate } = rptDates
 
         sameDayValidation customDate withdrawDate
@@ -170,3 +171,5 @@ module GmRptFiles =
         begBalance1stDay customDate begBalanceDate
         
         balanceDatesValidation begBalanceDate endBalanceDate
+        // if no exception occurs to this point:
+        true
