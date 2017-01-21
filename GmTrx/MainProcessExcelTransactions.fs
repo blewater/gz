@@ -50,10 +50,10 @@ let main argv =
         (new FundsUpdTask(isProd)).DoTask()
 
         // Update Currency Rates from open exchange api
-        let rates = CurrencyRates.updCurrencyRates currencyRatesUrl db
+        CurrencyRates.updCurrencyRates currencyRatesUrl db
 
         // Extract & Load Daily Everymatrix Report
-        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder rates
+        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
 
         logger.Info("----------------------------")
         logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))

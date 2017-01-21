@@ -4,14 +4,14 @@
 module DateStr =
     open System
 
+    /// Strongly-typed shortcut for Enum.TryParse(). Defaults to ignoring case. Ref http://www.extensionmethod.net/fsharp/string/string-toenum-a
     type String with
-        /// Strongly-typed shortcut for Enum.TryParse(). Defaults to ignoring case.
         member this.ToEnum<'a when 'a :> Enum and 'a : struct and 'a : (new: unit -> 'a)> (?ignoreCase) =
             let ok, v = Enum.TryParse<'a>(this, defaultArg ignoreCase true)
             if ok then Some v else None
 
+    /// Converts a Nullable type into an Option. Ref http://www.extensionmethod.net/fsharp/nullable-t/nullable-asoption
     type Nullable<'T when 'T : struct and 'T :> ValueType and 'T:(new: unit -> 'T)> with
-        /// Converts a Nullable type into an Option.
         member inline this.AsOption =
             if this.HasValue then Some(this.Value) else None
 

@@ -1,50 +1,13 @@
 ﻿namespace DbImport
 
-module Etl = 
+module DbPlayerRevRpt =
     open System
-    open System.IO
+    open NLog
     open FSharp.ExcelProvider
     open DbUtil
-    open CurrencyRates
-    open NLog
-    open gzCpcLib.Task
-    open GmRptFiles
-    open Microsoft.FSharp.Core
-
-    // Compile type
-    type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
-    type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
-    type WithdrawalsExcelSchema = ExcelFile< "pendingwithdraw prod 201609.xlsx" >
-
+    open ExcelSchemas
     let logger = LogManager.GetCurrentClassLogger()
 
-    /// From (excel's default decimal type) to Db nullable decimals
-    let float2NullableDecimal (excelFloatExpr : float) : decimal Nullable =
-        excelFloatExpr |> Convert.ToDecimal |> Nullable<decimal> 
-
-    /// Convert string boolean literal to bool Nullable
-    let string2NullableBool (excelFloatExpr : string) : bool Nullable = 
-        excelFloatExpr |> Convert.ToBoolean |> Nullable<bool> 
-
-    /// Convert DateTime object expression to DateTime Nullable
-    let excelObj2NullableDt (excelObjDt : obj) : DateTime System.Nullable = 
-        match DateTime.TryParseExact(excelObjDt.ToString(), "yyyy-mm-dd", null, Globalization.DateTimeStyles.None) with
-            | true, dtRes -> Nullable dtRes
-            | false, _ -> Nullable DateTime.MinValue
-
-    /// <summary>
-    ///
-    /// Read the date part of the excel file.
-    ///
-    /// Precondition that the filename has a date part on the filename
-    ///
-    /// </summary>
-    /// <param name="filename">The excel filename</param>
-    /// <returns>the date part YYYYMMDD</returns>
-    let datePartofFilename (filename : string) = 
-        let len = filename.Length
-        filename.Substring(len - 13, 8)
-    
     /// <summary>
     ///
     /// Update all values of db Row but not the id or insert time stamp.
@@ -128,6 +91,14 @@ module Etl =
             )
             db.DataContext.SubmitChanges()
 
+module DbGzTrx =
+    open System
+    open NLog
+    open FSharp.ExcelProvider
+    open DbUtil
+    open ExcelSchemas
+    let logger = LogManager.GetCurrentClassLogger()
+
     let setGzTrxDbRowValues 
             (amount : decimal)
             (creditPcntApplied : float32)
@@ -205,21 +176,18 @@ module Etl =
     /// </summary>
     /// <param name="excelRow"></param>
     /// <param name="creditLossPcnt"></param>
-    /// <param name="rates"></param>
     /// <param name="playerRawGrossRevenue"></param>
     let getCreditedPlayerAmount (excelRow : CustomExcelSchema.Row)
                                 (creditLossPcnt : float32)
-                                (rates : CurrencyRatesValues)
                                 (playerRawGrossRevenue : float) : decimal=
 
         if playerRawGrossRevenue > 0.0 then
 
-            let curKey = excelRow.Currency + "USD"
-            let convRate = rates.Item (curKey) |> fst
+            let userCurrency = excelRow.Currency
 
             (****  50% of Positive Gross Revenue ***)
-            let usdAmount = (decimal creditLossPcnt / 100m) * decimal playerRawGrossRevenue * convRate
-            usdAmount
+            let creditAmount = (decimal creditLossPcnt / 100m) * decimal playerRawGrossRevenue
+            creditAmount
         else
             0m
     
@@ -231,11 +199,9 @@ module Etl =
     /// <param name="db"></param>
     /// <param name="yyyyMm"></param>
     /// <param name="excelRow"></param>
-    /// <param name="rates"></param>
     let setDbGzTrxRow   (db : DbContext) 
                         (yyyyMm :string) 
-                        (excelRow : CustomExcelSchema.Row)
-                        (rates : CurrencyRatesValues) = 
+                        (excelRow : CustomExcelSchema.Row) =
 
         let playerRawGrossRevenue = excelRow.``Gross revenue``
         if playerRawGrossRevenue > 0.0 then
@@ -253,7 +219,7 @@ module Etl =
             }
             |> (fun trxRow ->
                 let creditLossPcnt = getCreditLossPcnt db 
-                let usdAmount = getCreditedPlayerAmount excelRow creditLossPcnt rates playerRawGrossRevenue
+                let usdAmount = getCreditedPlayerAmount excelRow creditLossPcnt playerRawGrossRevenue
 
                 if isNull trxRow then 
                     setGzTrxNewDbRowValues db yyyyMm usdAmount creditLossPcnt gzUserId 
@@ -262,19 +228,42 @@ module Etl =
             )
             db.DataContext.SubmitChanges()
     
+module BalanceRpt2Db =
+    open System
+    open NLog
+    open FSharp.ExcelProvider
+    open DbUtil
+    open ExcelSchemas
+    let logger = LogManager.GetCurrentClassLogger()
+
+module WithdrawalRpt2Db =
+    open System
+    open NLog
+    open FSharp.ExcelProvider
+    open DbUtil
+    open ExcelSchemas
+    let logger = LogManager.GetCurrentClassLogger()
+
+module CustomRpt2Db =
+    open System.IO
+    open NLog
+    open DbUtil
+    open ExcelSchemas
+    open GmRptFiles
+    let logger = LogManager.GetCurrentClassLogger()
+
     /// <summary>
     ///
     /// Upsert all excel files rows
     ///
     /// </summary>
     /// <param name="db">The database context object</param>
-    /// <param name="ExcelSchema">The excel schema object to read all rows</param>
+    /// <param name="CustomExcelSchema">The custom excel schema object to read all rows</param>
     /// <param name="yyyyMmDd">the date string</param>
     /// <returns>unit</returns>
-    let setDbExcelRows 
+    let setDbCustomRptRows 
                 (db : DbContext) (openFile : CustomExcelSchema) 
-                (yyyyMmDd : string)
-                (rates : CurrencyRatesValues) = 
+                (yyyyMmDd : string) =
 
         // Loop through all excel rows
         for excelRow in openFile.Data do
@@ -283,9 +272,9 @@ module Etl =
                     sprintf "Processing email %s on %s/%s/%s" 
                         excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
 
-                setDbPlayerRow db yyyyMmDd excelRow
+                DbPlayerRevRpt.setDbPlayerRow db yyyyMmDd excelRow
                 // Send string date wout day
-                setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow rates
+                DbGzTrx.setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow
     
     /// <summary>
     ///
@@ -294,7 +283,7 @@ module Etl =
     /// </summary>
     /// <param name="excelFilename">the dated excel filename</param>
     /// <returns>the open file excel schema</returns>
-    let openExcelSchemaFile excelFilename = 
+    let openCustomRptSchemaFile excelFilename = 
         let openFile = new CustomExcelSchema(excelFilename)
         logger.Info ""
         logger.Info (sprintf "************ Processing %s excel file" excelFilename)
@@ -303,7 +292,7 @@ module Etl =
     
     /// <summary>
     ///
-    /// Process excel files: Extract each row and update database customer amounts
+    /// Process the custom excel file: Extract each row and update database customer amounts
     ///
     /// </summary>
     /// <param name="db">The database context</param>
@@ -311,19 +300,18 @@ module Etl =
     /// <param name="dbConnectionString">The database connection string to use to update the database</param>
     /// <param name="datedExcelFilesNames">The list of dated (filename containing YYYYMMDD in their filename)</param>
     /// <returns>Unit</returns>
-    let processExcelFiles 
+    let processCustomRpt 
             (db : DbContext) 
             (outFolder : string)
-            (customFilename: string)
-            (rates : CurrencyRatesValues) = 
+            (customFilename: string) =
 
         // Open excel report file for the memory schema
-        let openFile = customFilename |> openExcelSchemaFile
+        let openFile = customFilename |> openCustomRptSchemaFile
         let yyyyMmDd = customFilename |> getCustomDtStr
         let transaction = db.Connection.BeginTransaction()
         db.DataContext.Transaction <- transaction
         try 
-            setDbExcelRows db openFile yyyyMmDd rates
+            setDbCustomRptRows db openFile yyyyMmDd
             // ********* Commit once per excel File
             transaction.Commit()
             (* Move processed file to out folder*)
@@ -332,6 +320,19 @@ module Etl =
             transaction.Rollback()
             reraise()
     
+module Etl = 
+    open System
+    open System.IO
+    open FSharp.ExcelProvider
+    open DbUtil
+    open CurrencyRates
+    open NLog
+    open gzCpcLib.Task
+    open GmRptFiles
+    open ExcelSchemas
+    open CustomRpt2Db
+    let logger = LogManager.GetCurrentClassLogger()
+
     /// <summary>
     ///
     /// Phase 1 Processing:
@@ -349,8 +350,7 @@ module Etl =
             (isProd : bool) 
             (db : DbContext) 
             (inFolder : string)
-            (outFolder : string)
-            (rates : CurrencyRatesValues) = 
+            (outFolder : string) =
         
         //------------ Read filenames
         logger.Info (sprintf "Reading the %s folder" inFolder)
@@ -359,7 +359,7 @@ module Etl =
             |> getCustomFilename
 
         logger.Debug "Starting processing read report files"
-        //------------ Save excel value to database
-        processExcelFiles db outFolder customRptFilename rates
+        //-- Save custom excel value to database
+        processCustomRpt db outFolder customRptFilename
 
         (new CustomerBalanceUpdTask(isProd)).DoTask()

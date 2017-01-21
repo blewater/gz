@@ -111,6 +111,7 @@ module GmRptFiles =
             endBalanceDtStr = getEndBalanceDtStr excelFiles.endBalanceFilename;
         }
 
+    /// Get the string dates of all the parsed report filenames string dates in format yyyyMMdd
     let getExcelDtStr (excelFiles : RptFilenames) : RptStrDates =
         let excelFileStrDates = excelFilenames2DatesStr excelFiles
         let datesLogMsg = sprintf "Parsed excel filename title string dates: %A" excelFileStrDates
@@ -138,7 +139,7 @@ module GmRptFiles =
             begBalanceDate = getBegBalanceDate excelDatesStr.begBalanceDtStr; 
             endBalanceDate = getEndBalanceDate excelDatesStr.endBalanceDtStr
         }
-
+    /// Get the DateTime dates of all the parsed report filenames string dates in format yyyyMMdd
     let getExcelDates (excelDatesStr : RptStrDates) : RptDates =
         let excelFileDates = excelDatesStr2Dt excelDatesStr
         let datesLogMsg = sprintf "Parsed excel filename title dates: %A" excelFileDates
