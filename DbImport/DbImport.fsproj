@@ -69,6 +69,7 @@
     <Compile Include="DbUtil.fs" />
     <Compile Include="CurrencyRates.fs" />
     <Compile Include="GmRptFiles.fs" />
+    <Compile Include="ExcelSchemas.fs" />
     <Compile Include="ExcelEtl.fs" />
     <Content Include="packages.config" />
     <None Include="openexchangerates.json">

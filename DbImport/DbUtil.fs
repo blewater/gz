@@ -4,6 +4,7 @@ open NLog
 open FSharp.Data.TypeProviders
 
 module DbUtil =
+    open System
 
     // Use for compile time memory schema representation
     [<Literal>]
@@ -12,9 +13,27 @@ module DbUtil =
     
     let logger = LogManager.GetCurrentClassLogger()
 
+//-- Types
+
     type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
     type DbPlayerRevRptRow = DbSchema.ServiceTypes.PlayerRevRpt
+
+//----Extensions
+
+    /// From (excel's default decimal type) to Db nullable decimals
+    let float2NullableDecimal (excelFloatExpr : float) : decimal Nullable =
+        excelFloatExpr |> Convert.ToDecimal |> Nullable<decimal> 
+
+    /// Convert string boolean literal to bool Nullable
+    let string2NullableBool (excelFloatExpr : string) : bool Nullable = 
+        excelFloatExpr |> Convert.ToBoolean |> Nullable<bool> 
+
+    /// Convert DateTime object expression to DateTime Nullable
+    let excelObj2NullableDt (excelObjDt : obj) : DateTime System.Nullable = 
+        match DateTime.TryParseExact(excelObjDt.ToString(), "yyyy-mm-dd", null, Globalization.DateTimeStyles.None) with
+            | true, dtRes -> Nullable dtRes
+            | false, _ -> Nullable DateTime.MinValue
 
     type GzTransactionType =
         /// <summary>

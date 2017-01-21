@@ -7,4 +7,5 @@
       "../DbUtil.fs"
       "../CurrencyRates.fs"
       "../GmRptFiles.fs"
+      "../ExcelSchemas.fs"
       "../ExcelEtl.fs"
