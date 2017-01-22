@@ -6,6 +6,7 @@ module DbPlayerRevRpt =
     open FSharp.ExcelProvider
     open DbUtil
     open ExcelSchemas
+
     let logger = LogManager.GetCurrentClassLogger()
 
     /// <summary>
@@ -20,20 +21,30 @@ module DbPlayerRevRpt =
     /// <param name="playerRow">The db row matching the id of the excel row</param>
     let setPlayerDbRowValues (yearMonthDay : string) (excelRow : CustomExcelSchema.Row) (playerRow : DbPlayerRevRptRow) = 
 
-        if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
-        let excelCurrency = excelRow.Currency.ToString()
-        playerRow.Currency <- excelCurrency
-        playerRow.EmailAddress <- excelRow.``Email address``
-        playerRow.GrossRevenue <- excelRow.``Gross revenue`` |> float2NullableDecimal
-        playerRow.AcceptsBonuses <- excelRow.``Accepts bonuses`` |> string2NullableBool
-        playerRow.LastLogin <- excelRow.``Last login`` |> excelObj2NullableDt
-        playerRow.NetRevenue <- excelRow.``Net revenue`` |> float2NullableDecimal 
-        playerRow.PlayerStatus <- excelRow.``Player status``
-        playerRow.RealMoneyBalance <- excelRow.``Real money balance`` |> float2NullableDecimal 
-        if not <| isNull excelRow.Role then playerRow.Role <- excelRow.Role.ToString()
-        playerRow.TotalDepositsAmount <- excelRow.``Total deposits amount`` |> float2NullableDecimal
-        playerRow.LastPlayedDate <- excelRow.``Last played date`` |> excelObj2NullableDt
         playerRow.Username <- excelRow.Username
+        if not <| isNull excelRow.Role then playerRow.Role <- excelRow.Role.ToString()
+        playerRow.PlayerStatus <- excelRow.``Player status``
+        if not <| isNull excelRow.``Block reason`` then playerRow.BlockReason <- excelRow.``Block reason``.ToString()
+        playerRow.EmailAddress <- excelRow.``Email address``
+        playerRow.LastLogin <- excelRow.``Last login`` |> excelObj2NullableDt
+        playerRow.AcceptsBonuses <- excelRow.``Accepts bonuses`` |> string2NullableBool
+        playerRow.TotalDepositsAmount <- excelRow.``Total deposits amount`` |> float2NullableDecimal
+        playerRow.WithdrawsMade <- excelRow.``Withdraws made`` |> float2NullableDecimal
+        playerRow.LastPlayedDate <- excelRow.``Last played date`` |> excelObj2NullableDt
+        playerRow.Currency <- excelRow.Currency.ToString()
+        playerRow.TotalBonusesAcceptedByThePlayer <- excelRow.``Total bonuses accepted by the player`` |> float2NullableDecimal
+        playerRow.NetRevenue <- excelRow.``Net revenue`` |> float2NullableDecimal 
+        playerRow.GrossRevenue <- excelRow.``Gross revenue`` |> float2NullableDecimal
+        playerRow.RealMoneyBalance <- excelRow.``Real money balance`` |> float2NullableDecimal
+        // Zero out balance amounts, playerloss
+        playerRow.BegBalance <- Nullable 0m
+        playerRow.EndBalance <- Nullable 0m
+        playerRow.PlayerLoss <- Nullable 0m
+        playerRow.PendingWithdrawals <- Nullable 0m
+        playerRow.TotalWithdrawals <- Nullable 0m
+
+        //Non-excel content
+        playerRow.Processed <- int GmRptProcessStatus.CustomRptUpd
         playerRow.YearMonth <- yearMonthDay.Substring(0, 6)
         playerRow.YearMonthDay <- yearMonthDay
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -273,8 +284,6 @@ module CustomRpt2Db =
                         excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
 
                 DbPlayerRevRpt.setDbPlayerRow db yyyyMmDd excelRow
-                // Send string date wout day
-                DbGzTrx.setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow
     
     /// <summary>
     ///
@@ -308,18 +317,11 @@ module CustomRpt2Db =
         // Open excel report file for the memory schema
         let openFile = customFilename |> openCustomRptSchemaFile
         let yyyyMmDd = customFilename |> getCustomDtStr
-        let transaction = db.Connection.BeginTransaction()
-        db.DataContext.Transaction <- transaction
         try 
             setDbCustomRptRows db openFile yyyyMmDd
-            // ********* Commit once per excel File
-            transaction.Commit()
-            (* Move processed file to out folder*)
-            File.Move(customFilename, outFolder)
         with _ -> 
-            transaction.Rollback()
             reraise()
-    
+
 module Etl = 
     open System
     open System.IO
@@ -332,6 +334,21 @@ module Etl =
     open ExcelSchemas
     open CustomRpt2Db
     let logger = LogManager.GetCurrentClassLogger()
+
+    /// Start a Db Transaction
+    let startDbTransaction (db : DbContext) = 
+        let transaction = db.Connection.BeginTransaction()
+        db.DataContext.Transaction <- transaction
+        transaction
+
+    /// Commit a transaction
+    let commitTransaction (transaction : Data.Common.DbTransaction) = 
+            // ********* Commit once per excel File
+            transaction.Commit()
+
+    let handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
+        transaction.Rollback()
+        logger.Fatal(ex, "Runtime Exception at main")
 
     /// <summary>
     ///
@@ -354,12 +371,31 @@ module Etl =
         
         //------------ Read filenames
         logger.Info (sprintf "Reading the %s folder" inFolder)
-        let customRptFilename = 
+        let customRptInPathFilename = 
             { isProd = isProd ; folderName = inFolder } 
             |> getCustomFilename
 
-        logger.Debug "Starting processing read report files"
-        //-- Save custom excel value to database
-        processCustomRpt db outFolder customRptFilename
+        logger.Debug "Starting processing excel report files"
 
+        let transaction = startDbTransaction db
+        try
+            //-- Save custom excel value to database
+            processCustomRpt db outFolder customRptInPathFilename
+
+            // Process GzTrx
+            //DbGzTrx.setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow
+
+            (* Move processed file to out folder*)
+            let customRptOutPathFilename = customRptInPathFilename.Replace(inFolder, outFolder)
+            File.Move(customRptInPathFilename, customRptOutPathFilename)
+
+            commitTransaction transaction
+
+        with ex -> 
+            handleFailure transaction ex
+            reraise ()
+
+        // Process investment balance
         (new CustomerBalanceUpdTask(isProd)).DoTask()
+
+

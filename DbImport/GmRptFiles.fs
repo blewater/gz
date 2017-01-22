@@ -151,7 +151,7 @@ module GmRptFiles =
     /// Enforce same day
     let private sameDayValidation (customDate : DateTime) (withdrawDate : DateTime) : Unit =
         if customDate <> withdrawDate then
-            failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with minWithdrawalDate: %s." <| customDate.ToString("yyyy-mm-dd") <| withdrawDate.ToString("yyyy-mm-dd"))
+            failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with Withdrawal Date: %s." <| customDate.ToString("yyyy-MMM-dd") <| withdrawDate.ToString("yyyy-MMM-dd"))
 
     /// Enforce begBalance on 1st month day
     let private begBalance1stDay (customDate : DateTime) (begBalanceDate : DateTime) : Unit =

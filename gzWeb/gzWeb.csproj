@@ -598,6 +598,10 @@
     <Compile Include="Migrations\201701141205124_AddPlayerRevRpt.Designer.cs">
       <DependentUpon>201701141205124_AddPlayerRevRpt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701222044238_Withdrawals Total.cs" />
+    <Compile Include="Migrations\201701222044238_Withdrawals Total.Designer.cs">
+      <DependentUpon>201701222044238_Withdrawals Total.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1257,6 +1261,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701141205124_AddPlayerRevRpt.resx">
       <DependentUpon>201701141205124_AddPlayerRevRpt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701222044238_Withdrawals Total.resx">
+      <DependentUpon>201701222044238_Withdrawals Total.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
