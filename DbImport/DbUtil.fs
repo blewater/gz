@@ -19,11 +19,17 @@ module DbUtil =
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
     type DbPlayerRevRptRow = DbSchema.ServiceTypes.PlayerRevRpt
 
-//----Extensions
+//----Helpers
+
+    /// Zero out null values in Nullables
+    let ifNull0Decimal (nullableDec : decimal Nullable) : decimal Nullable =
+        match nullableDec.HasValue with
+        | false -> Nullable 0m
+        | _ -> nullableDec
 
     /// From (excel's default decimal type) to Db nullable decimals
     let float2NullableDecimal (excelFloatExpr : float) : decimal Nullable =
-        excelFloatExpr |> Convert.ToDecimal |> Nullable<decimal> 
+        excelFloatExpr |> Convert.ToDecimal |> Nullable<decimal>
 
     /// Convert string boolean literal to bool Nullable
     let string2NullableBool (excelFloatExpr : string) : bool Nullable = 
@@ -37,6 +43,14 @@ module DbUtil =
                 | true, dtRes -> Nullable dtRes
                 | false, _ -> nullableDate
         else nullableDate
+
+    /// PlayerRevRpt update status
+    type GmRptProcessStatus =
+        | CustomRptUpd = 1
+        | BegBalanceRptUpd = 2
+        | EndBalanceRptUpd = 3
+        | WithdrawsRptUpd = 4
+        | GainLossRptUpd = 5
             
     type GzTransactionType =
         /// <summary>
