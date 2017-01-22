@@ -31,10 +31,13 @@ module DbUtil =
 
     /// Convert DateTime object expression to DateTime Nullable
     let excelObj2NullableDt (excelObjDt : obj) : DateTime System.Nullable = 
-        match DateTime.TryParseExact(excelObjDt.ToString(), "yyyy-mm-dd", null, Globalization.DateTimeStyles.None) with
-            | true, dtRes -> Nullable dtRes
-            | false, _ -> Nullable DateTime.MinValue
-
+        let nullableDate = System.Nullable<DateTime>()
+        if not <| isNull excelObjDt then
+            match DateTime.TryParseExact(excelObjDt.ToString(), "yyyy-mm-dd", null, Globalization.DateTimeStyles.None) with
+                | true, dtRes -> Nullable dtRes
+                | false, _ -> nullableDate
+        else nullableDate
+            
     type GzTransactionType =
         /// <summary>
         /// 
