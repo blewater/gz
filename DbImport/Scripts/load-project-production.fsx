@@ -8,4 +8,5 @@
       "../CurrencyRates.fs"
       "../GmRptFiles.fs"
       "../ExcelSchemas.fs"
+      "../ExcelUtil.fs"
       "../ExcelEtl.fs"

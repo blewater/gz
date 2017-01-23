@@ -19,5 +19,9 @@ module ExcelSchemas =
     | BeginingBalance
     | EndingBalance
 
+    type WithdrawalType =
+    | Pending
+    | Rollback
+
     let logger = LogManager.GetCurrentClassLogger()    
 

@@ -19,31 +19,6 @@ module DbUtil =
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
     type DbPlayerRevRptRow = DbSchema.ServiceTypes.PlayerRevRpt
 
-//----Helpers
-
-    /// Zero out null values in Nullables
-    let ifNull0Decimal (nullableDec : decimal Nullable) : decimal Nullable =
-        match nullableDec.HasValue with
-        | false -> Nullable 0m
-        | _ -> nullableDec
-
-    /// From (excel's default decimal type) to Db nullable decimals
-    let float2NullableDecimal (excelFloatExpr : float) : decimal Nullable =
-        excelFloatExpr |> Convert.ToDecimal |> Nullable<decimal>
-
-    /// Convert string boolean literal to bool Nullable
-    let string2NullableBool (excelFloatExpr : string) : bool Nullable = 
-        excelFloatExpr |> Convert.ToBoolean |> Nullable<bool> 
-
-    /// Convert DateTime object expression to DateTime Nullable
-    let excelObj2NullableDt (excelObjDt : obj) : DateTime System.Nullable = 
-        let nullableDate = System.Nullable<DateTime>()
-        if not <| isNull excelObjDt then
-            match DateTime.TryParseExact(excelObjDt.ToString(), "yyyy-mm-dd", null, Globalization.DateTimeStyles.None) with
-                | true, dtRes -> Nullable dtRes
-                | false, _ -> nullableDate
-        else nullableDate
-
     /// PlayerRevRpt update status
     type GmRptProcessStatus =
         | CustomRptUpd = 1

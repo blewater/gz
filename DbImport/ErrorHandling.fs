@@ -27,7 +27,7 @@ module ErrorHandling =
         logger.Fatal logMsg
         logger.Error ("**Exception: " + ex.Message)
     
-    // try to call
+    // try to call with a DomailException and Option-al logInfo
     let tryF f taskExc (logInfo : 'I Option) =
         try 
             f()
