@@ -34,26 +34,6 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Get the customer total deposits.
-        /// 
-        /// This has to query using the Everymatrix customer id.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public decimal GetTotalDeposit(int customerId) {
-
-            decimal totalDeposits = _db.Database
-
-                .SqlQuery<decimal>("Select * From dbo.GetTotalDeposits(@customerId)",
-                    new SqlParameter("@CustomerId", customerId))
-                .SingleOrDefault();
-
-            return totalDeposits;
-        }
-
-        /// <summary>
-        /// 
         /// Last pending loss to be invested
         /// 
         /// </summary>
@@ -110,7 +90,7 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<decimal> GetTotalInvestmentsAmountAsync(int userId) {
+        public async Task<decimal> GetTotalPlayerLossesAmountAsync(int userId) {
 
             using (var db = new ApplicationDbContext()) {
 
@@ -121,27 +101,6 @@ namespace gzDAL.Repos {
                     .SingleAsync();
 
                 return totalInvestmentsAmount;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// Get Total Liquidation or investment sales.
-        /// 
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public async Task<decimal> GetTotalWithdrawalsAmountAsync(int userId) {
-
-            using (var db = new ApplicationDbContext()) {
-
-                decimal totalWithdrawalsAmount = await db.Database
-                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@customerId, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.TransferToGaming))
-                    .SingleAsync();
-
-                return totalWithdrawalsAmount;
             }
         }
 
@@ -254,27 +213,6 @@ namespace gzDAL.Repos {
             //var lockInDays = tuple.Item3;
 
             return okToWithdraw;
-        }
-
-        /// <summary>
-        /// 
-        /// Return whether a customer has a liquidation transaction in a month
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// 
-        /// <returns>True: The customer has sold their portfolio. False: if not.</returns>
-        public bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent) {
-
-            var currentYearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
-
-            return _db.GzTrxs
-                .Count(t => t.YearMonthCtd == currentYearMonthStr
-                            && t.Type.Code == GzTransactionTypeEnum.FullCustomerFundsLiquidation
-                            && t.CustomerId == customerId)
-                > 0;
         }
 
         /// <summary>
@@ -641,51 +579,6 @@ namespace gzDAL.Repos {
                 creditPcnt);
 
             _db.SaveChanges();
-        }
-
-        /// <summary>
-        /// 
-        /// Save to database a general Gaming type of transaction using an existing DbContext (to support transactions)
-        /// Normally we never write to GmTrx table except for testing purposes.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="gzTransactionType"></param>
-        /// <param name="amount"></param>
-        /// <param name="createdOnUtc"></param>
-        /// <returns></returns>
-        public void SaveDbGmTransaction(int customerId, GmTransactionTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc) {
-
-            var customerIds = _db.Users
-                .Where(u => u.Id == customerId)
-                .Select(u => new {u.GmCustomerId, u.Email})
-                .Single();
-
-            GmTrx newGmTrx = new GmTrx {
-                CustomerId = customerId,
-                GmCustomerId = customerIds.GmCustomerId,
-                CustomerEmail = customerIds.Email,
-                TypeId = _db.GmTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
-                YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
-                Amount = amount,
-                // Truncate Milliseconds to avoid mismatch between .net dt <--> MSSQl dt
-                CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
-            };
-
-            if (customerIds.GmCustomerId.HasValue) {
-                _db.GmTrxs.AddOrUpdate(
-                    t => new {t.GmCustomerId, t.CustomerEmail, t.YearMonthCtd, t.TypeId, t.CreatedOnUtc, t.Amount},
-                    newGmTrx
-                    );
-                _db.SaveChanges();
-            }
-            else {
-                _db.GmTrxs.AddOrUpdate(
-                    t => new { t.CustomerEmail, t.YearMonthCtd, t.TypeId, t.CreatedOnUtc, t.Amount },
-                    newGmTrx
-                    );
-                _db.SaveChanges();
-            }
         }
 
         /// <summary>

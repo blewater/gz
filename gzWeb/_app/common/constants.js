@@ -64,7 +64,7 @@
         ctrl: 'faqCtrl',
         tpl: '_app/guest/faq.html',
         title: 'FAQ',
-        category: categories.investing
+        category: categories.wandering
     };
     routes.help = {
         path: '/help',
@@ -77,29 +77,33 @@
         path: '/gaming-privacy',
         ctrl: 'privacyGamesCtrl',
         tpl: '_app/guest/privacyGames.html',
-        title: 'Privacy Policy',
-        category: categories.wandering
+        title: 'Gaming Privacy Policy',
+        category: categories.wandering,
+        subtitle: 'Gaming'
     };
     routes.privacyInvestment = {
         path: '/investment-privacy',
         ctrl: 'privacyInvestmentCtrl',
         tpl: '_app/guest/privacyInvestment.html',
-        title: 'Privacy Policy',
-        category: categories.investing
+        title: 'Investment Privacy Policy',
+        category: categories.investing,
+        subtitle: 'Investment'
     };
     routes.termsGames = {
         path: '/gaming-terms',
         ctrl: 'termsGamesCtrl',
         tpl: '_app/guest/termsGames.html',
-        title: 'Terms & Conditions',
-        category: categories.wandering
+        title: 'Gaming Terms & Conditions',
+        category: categories.wandering,
+        subtitle: 'Gaming'
     };
     routes.termsInvestment = {
         path: '/investment-terms',
         ctrl: 'termsInvestmentCtrl',
         tpl: '_app/guest/termsInvestment.html',
-        title: 'Terms & Conditions',
-        category: categories.investing
+        title: 'Investment Terms & Conditions',
+        category: categories.investing,
+        subtitle: 'Investment'
     };
     routes.playground = {
         path: '/playground',
@@ -229,6 +233,8 @@
         },
         events: {
             ON_INIT: 'onInit',
+            ON_AFTER_INIT: 'onAfterInit',
+            REDIRECTED: 'redirected',
             CONNECTION_INITIATED: 'connectionInitiated',
             AUTH_CHANGED: 'authChanged',
             CHAT_LOADED: 'chatLoaded',

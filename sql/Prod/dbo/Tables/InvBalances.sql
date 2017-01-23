@@ -12,9 +12,16 @@
     [SoldAmount]     DECIMAL (29, 16) NULL,
     [SoldFees]       DECIMAL (29, 16) NULL,
     [SoldOnUtc]      DATETIME         NULL,
+    [BegGmBalance]   DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [Deposits]       DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [Withdrawals]    DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [GamingGainLoss] DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [EndGmBalance]   DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_dbo.InvBalances] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE
 );
+
+
 
 
 

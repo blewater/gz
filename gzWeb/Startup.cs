@@ -74,7 +74,6 @@ namespace gzWeb {
 
             //Automapper
             var mapperConfiguration = new MapperConfiguration(cfg => {
-                cfg.CreateMap<ApplicationUser, CustomerDTO>();
                 cfg.CreateMap<VintageDto, VintageViewModel>().ReverseMap();
             });
 

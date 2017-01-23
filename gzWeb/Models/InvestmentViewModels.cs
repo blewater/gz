@@ -46,11 +46,22 @@ namespace gzWeb.Models
     public class SummaryDataViewModel
     {
         public decimal InvestmentsBalance { get; set; }
+
+        //-- New monthly gaming amounts imported by the reports
+        public decimal BegMonthlyGmBalance { get; set; }
+        public decimal MonthlyDeposits { get; set; }
+        public decimal MonthlyWithdrawals { get; set; }
+        public decimal MonthlyGamingGainLoss { get; set; }
+        public decimal EndMonthlyGmBalance { get; set; }
+
+        /// <summary>
+        /// Total monthly player losses summed up
+        /// </summary>
         public decimal TotalInvestments { get; set; }
+        /// <summary>
+        /// Total net gain or net loss from investing the player losses
+        /// </summary>
         public decimal TotalInvestmentsReturns { get; set; }
-        //public decimal GamingBalance { get; set; }
-        public decimal TotalDeposits { get; set; }
-        public decimal TotalWithdrawals { get; set; }
         public DateTime NextInvestmentOn { get; set; }
         public decimal LastInvestmentAmount { get; set; }
         public DateTime StatusAsOf { get; set; }

@@ -8,19 +8,13 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface IGzTransactionRepo {
 
-        decimal GetTotalDeposit(int customerId);
-
         decimal LastInvestmentAmount(int customerId, string yearMonthStr);
 
         Task<decimal> GetLastInvestmentAmountAsync(int userId);
 
-        Task<decimal> GetTotalInvestmentsAmountAsync(int userId);
-
-        Task<decimal> GetTotalWithdrawalsAmountAsync(int userId);
+        Task<decimal> GetTotalPlayerLossesAmountAsync(int userId);
 
         IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
-
-        bool GetLiquidationTrxCount(int customerId, int yearCurrent, int monthCurrent);
 
         DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent);
 
@@ -29,9 +23,6 @@ namespace gzDAL.Repos.Interfaces
         Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId);
 
         Task<bool> GetEnabledWithdraw(int customerId);
-
-        void SaveDbGmTransaction(int customerId, GmTransactionTypeEnum gzTransactionType, decimal amount,
-            DateTime createdOnUtc);
 
         void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount,
             DateTime createdOnUtc);

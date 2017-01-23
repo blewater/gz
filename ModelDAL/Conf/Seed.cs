@@ -5,6 +5,7 @@ using System;
 using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
+using gzDAL.ModelUtil;
 
 namespace gzDAL.Conf
 {
@@ -52,7 +53,13 @@ namespace gzDAL.Conf
         /// </summary>
         /// <param name="context"></param>
         private static void AddUpdData(ApplicationDbContext context) {
-            
+
+            context.Database.ExecuteSqlCommand("Delete GzTrxs");
+            context.Database.ExecuteSqlCommand("Delete CustFundShares");
+            context.Database.ExecuteSqlCommand("Delete InvBalances");
+            context.Database.ExecuteSqlCommand("Delete FundPrices");
+            context.Database.ExecuteSqlCommand("Delete CurrencyListXes");
+
             // GzConfigurations
             CreateUpdConfiguationRow(context);
 
@@ -117,9 +124,9 @@ namespace gzDAL.Conf
                     FUND_FEE_PCNT = dbConf.FUND_FEE_PCNT,
                     LOCK_IN_NUM_DAYS = dbConf.LOCK_IN_NUM_DAYS,
                     FIRST_PORTFOLIO_RISK_VAL = RiskToleranceEnum.Medium,
-                    CONSERVATIVE_RISK_ROI = 3.5f,
-                    MEDIUM_RISK_ROI = 5f,
-                    AGGRESSIVE_RISK_ROI = 7.5f
+                    CONSERVATIVE_RISK_ROI = 3f,
+                    MEDIUM_RISK_ROI = 6f,
+                    AGGRESSIVE_RISK_ROI = 10f
                 }
             );
 
@@ -184,7 +191,7 @@ namespace gzDAL.Conf
                     custPortfolioRepo), 
                 new GzTransactionRepo(context), 
                 custPortfolioRepo)
-                .SaveDbCustomerMonthlyBalancesByTrx(custId);
+                .SaveDbCustomerAllMonthlyBalances(custId);
         }
 
         private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
@@ -248,128 +255,119 @@ namespace gzDAL.Conf
             context.Funds.AddOrUpdate(
                 f => f.Symbol,
                 new Fund {
-                    HoldingName = "iShares MUB", Symbol = "MUB", YearToDate = 1.91f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
+                    HoldingName = "iShares National Muni Bond", Symbol = "MUB", YearToDate = 4.63f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
                 new Fund {
-                    HoldingName = "Schwab SCHP", Symbol = "SCHP", YearToDate = 4.76f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
+                    HoldingName = "Vanguard Short-Term Federal", Symbol = "VSGBX", YearToDate = 2.02f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
                 new Fund {
-                    HoldingName = "State Street XLE", Symbol = "XLE", YearToDate = 12.70f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
+                    HoldingName = "Vanguard VTI", Symbol = "VTI", YearToDate = 6.15f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VEA", Symbol = "VEA", YearToDate = 0.42f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
+                    HoldingName = "Vanguard Total Bond Market Index", Symbol = "VBMFX", YearToDate = 5.88f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VIG", Symbol = "VIG", YearToDate = 4.67f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
+                    HoldingName = "Vanguard Strategic Small-Cap Equity", Symbol = "VSTCX", YearToDate = 8.30f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
                 new Fund {
-                    HoldingName = "Vanguard VTI", Symbol = "VTI", YearToDate = 1.64f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
-                },
-                new Fund {
-                    HoldingName = "Vanguard VWO", Symbol = "VWO", YearToDate = 6.97f, UpdatedOnUTC = new DateTime(2016, 5, 16, 14, 56, 0)
+                    HoldingName = "Victory CEMP US 500 Enhanced Vol Wtd", Symbol = "CFO", YearToDate = 11.21f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 }
                 );
         }
 
         private static void CreateUpdFundsPrices(ApplicationDbContext context) {
+
+            // End of 2015
             context.FundPrices.AddOrUpdate(
-                f => new { f.FundId, f.YearMonthDay },
+                f => new {f.FundId, f.YearMonthDay},
 
-                // End of 2014
                 new FundPrice {
-                    ClosingPrice = 110.34F,
+                    ClosingPrice = 1F,
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20141231",
-                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                    YearMonthDay = "20151231",
+                    UpdatedOnUTC = DateTime.UtcNow
                 },
                 new FundPrice {
-                    ClosingPrice = 106.00F,
+                    ClosingPrice = 1F,
                     FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20141231",
-                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                    YearMonthDay = "20151231",
+                    UpdatedOnUTC = DateTime.UtcNow
                 },
                 new FundPrice {
-                    ClosingPrice = 54.24F,
-                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20141231",
-                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                    ClosingPrice = 1F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VSGBX").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20151231",
+                    UpdatedOnUTC = DateTime.UtcNow
                 },
                 new FundPrice {
-                    ClosingPrice = 37.88F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20141231",
-                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                    ClosingPrice = 1F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VBMFX").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20151231",
+                    UpdatedOnUTC = DateTime.UtcNow
                 },
                 new FundPrice {
-                    ClosingPrice = 40.02F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20141231",
-                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
+                    ClosingPrice = 1F,
+                    FundId = context.Funds.Where(f => f.Symbol == "VSTCX").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20151231",
+                    UpdatedOnUTC = DateTime.UtcNow
                 },
                 new FundPrice {
-                    ClosingPrice = 79.16F,
-                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20141231",
-                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
-                },
-                new FundPrice {
-                    ClosingPrice = 81.16F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20141231",
-                    UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
-                },
-
-                // June 2015
-                new FundPrice {
-                    ClosingPrice = 108.44F,
-                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150601",
-                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
-                },
-                new FundPrice {
-                    ClosingPrice = 109.58F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150601",
-                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
-                },
-                new FundPrice {
-                    ClosingPrice = 54.44F,
-                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150601",
-                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
-                },
-                new FundPrice {
-                    ClosingPrice = 41.25F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150601",
-                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
-                },
-                new FundPrice {
-                    ClosingPrice = 42.31F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150601",
-                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
-                },
-                new FundPrice {
-                    ClosingPrice = 78.19F,
-                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150601",
-                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
-                },
-                new FundPrice {
-                    ClosingPrice = 81.19F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20150601",
-                    UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
+                    ClosingPrice = 1F,
+                    FundId = context.Funds.Where(f => f.Symbol == "CFO").Select(f => f.Id).FirstOrDefault(),
+                    YearMonthDay = "20151231",
+                    UpdatedOnUTC = DateTime.UtcNow
                 }
-                //, later with the rest
-                //new FundPrice {
-                //    ClosingPrice = 108.79F,
-                //    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                //    YearMonthDay = "20150721",
-                //    UpdatedOnUTC = new DateTime(2015, 7, 21, 23, 50, 0)
-                //}
                 );
+
+            var begDateTime = new DateTime(2016, 9, 1, 18, 1, 1);
+            var endDateTime = DateTime.UtcNow;
+
+            while (begDateTime < endDateTime) {
+
+                context.FundPrices.AddOrUpdate(
+                    f => new { f.FundId, f.YearMonthDay },
+                    new FundPrice {
+                        ClosingPrice = 1F,
+                        FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
+                        YearMonthDay = begDateTime.ToStringYearMonth(),
+                        UpdatedOnUTC = DateTime.UtcNow
+                    },
+                    new FundPrice {
+                        ClosingPrice = 1F,
+                        FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
+                        YearMonthDay = begDateTime.ToStringYearMonth(),
+                        UpdatedOnUTC = DateTime.UtcNow
+                    },
+                    new FundPrice {
+                        ClosingPrice = 1F,
+                        FundId = context.Funds.Where(f => f.Symbol == "VSGBX").Select(f => f.Id).FirstOrDefault(),
+                        YearMonthDay = begDateTime.ToStringYearMonth(),
+                        UpdatedOnUTC = DateTime.UtcNow
+                    },
+                    new FundPrice {
+                        ClosingPrice = 1F,
+                        FundId = context.Funds.Where(f => f.Symbol == "VSTCX").Select(f => f.Id).FirstOrDefault(),
+                        YearMonthDay = begDateTime.ToStringYearMonth(),
+                        UpdatedOnUTC = DateTime.UtcNow
+                    },
+                    new FundPrice {
+                        ClosingPrice = 1F,
+                        FundId = context.Funds.Where(f => f.Symbol == "CFO").Select(f => f.Id).FirstOrDefault(),
+                        YearMonthDay = begDateTime.ToStringYearMonth(),
+                        UpdatedOnUTC = DateTime.UtcNow
+                    },
+                    new FundPrice {
+                        ClosingPrice = 1F,
+                        FundId = context.Funds.Where(f => f.Symbol == "VBMFX").Select(f => f.Id).FirstOrDefault(),
+                        YearMonthDay = begDateTime.ToStringYearMonth(),
+                        UpdatedOnUTC = DateTime.UtcNow
+                    }
+                    );
+
+                context.SaveChanges();
+
+                begDateTime = begDateTime.AddDays(7);
+            }
         }
 
         private static void CreateUpdPortfolios(ApplicationDbContext context, int custId) {
@@ -414,167 +412,35 @@ namespace gzDAL.Conf
                 p => new { p.PortfolioId, p.FundId },
                 // LOW
                 new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 8,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 15,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 7,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 25f,
+                    FundId = context.Funds.Where(f => f.Symbol == "VSGBX").Select(f => f.Id).FirstOrDefault(),
+                    Weight = 50f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 35f,
+                    Weight = 50f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low).Select(p => p.Id).FirstOrDefault(),
-                },
-                // LOW_MEDIUM
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 26,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 11,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 8,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 6,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "SCHP").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 9,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 35f,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Low_Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 // MEDIUM
                 new PortFund {
                     FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 33,
+                    Weight = 50f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 15,
+                    FundId = context.Funds.Where(f => f.Symbol == "VBMFX").Select(f => f.Id).FirstOrDefault(),
+                    Weight = 50f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 12,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 6,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 29,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium).Select(p => p.Id).FirstOrDefault(),
-                },
-                // MEDIUM-HIGH
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 35,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 21,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 16,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 8,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 15,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.Medium_High).Select(p => p.Id).FirstOrDefault(),
                 },
                 // HIGH
                 new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 35,
+                    FundId = context.Funds.Where(f => f.Symbol == "VSTCX").Select(f => f.Id).FirstOrDefault(),
+                    Weight = 50f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VEA").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 22,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VWO").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 28,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "VIG").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "XLE").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
-                    PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
-                },
-                new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    Weight = 5,
+                    FundId = context.Funds.Where(f => f.Symbol == "CFO").Select(f => f.Id).FirstOrDefault(),
+                    Weight = 50f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 }
                 );
@@ -585,66 +451,53 @@ namespace gzDAL.Conf
             var trxRepo = new GzTransactionRepo(context);
 
             // Use new API
-            trxRepo.SaveDbGmTransaction(custId, GmTransactionTypeEnum.Deposit, 10000, new DateTime(2015, 3, 4, 7, 23, 42));
-            trxRepo.SaveDbGmTransaction(custId, GmTransactionTypeEnum.Deposit, 90000, new DateTime(2015, 3, 18, 18, 22, 13));
-            trxRepo.SaveDbPlayingLoss(custId, 9853, new DateTime(2015, 3, 31, 23, 46, 01));
-
-            trxRepo.SaveDbTransferToGamingAmount(custId, 300, new DateTime(2015, 4, 15, 11, 26, 02, 52));
-            trxRepo.SaveDbPlayingLoss(custId, 2013, new DateTime(2015, 4, 29, 23, 56, 12, 42));
+            trxRepo.SaveDbPlayingLoss(custId, 200, new DateTime(2016, 7, 31, 23, 46, 01));
 
             // Old implementation before repo
             context.GzTrxs.AddOrUpdate(
                 t => new { t.CustomerId, t.CreatedOnUtc },
-                // May
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201505",
-                    CreatedOnUtc = new DateTime(2015, 5, 31, 23, 47, 12),
-                    Amount = new decimal(784.22),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
                 // June
                 new GzTrx {
                     CustomerId = custId,
-                    YearMonthCtd = "201506",
-                    CreatedOnUtc = new DateTime(2015, 6, 30, 23, 47, 32),
-                    Amount = new decimal(1192.11),
+                    YearMonthCtd = "201608",
+                    CreatedOnUtc = new DateTime(2016, 8, 31, 23, 47, 32),
+                    Amount = new decimal(200),
                     CreditPcntApplied = 50,
                     TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
-                // August Skip July he won
+                // Skip August
                 new GzTrx {
                     CustomerId = custId,
-                    YearMonthCtd = "201508",
-                    CreatedOnUtc = new DateTime(2015, 8, 31, 23, 47, 46),
-                    Amount = new decimal(292.12),
+                    YearMonthCtd = "201609",
+                    CreatedOnUtc = new DateTime(2016, 9, 30, 23, 47, 46),
+                    Amount = new decimal(200),
+                    CreditPcntApplied = 50,
                     TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // Sept
                 new GzTrx {
                     CustomerId = custId,
-                    YearMonthCtd = "201509",
-                    CreatedOnUtc = new DateTime(2015, 9, 30, 23, 47, 46),
-                    Amount = new decimal(1471.5),
+                    YearMonthCtd = "201610",
+                    CreatedOnUtc = new DateTime(2016, 10, 31, 23, 47, 46),
+                    Amount = new decimal(200),
                     CreditPcntApplied = 50,
                     TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // Oct
                 new GzTrx {
                     CustomerId = custId,
-                    YearMonthCtd = "201510",
-                    CreatedOnUtc = new DateTime(2015, 10, 31, 23, 47, 46),
-                    Amount = new decimal(916.11),
+                    YearMonthCtd = "201611",
+                    CreatedOnUtc = new DateTime(2016, 11, 30, 23, 47, 46),
+                    Amount = new decimal(200),
                     CreditPcntApplied = 50,
                     TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 },
                 // Dec Skip Nov either won or did not play
                 new GzTrx {
                     CustomerId = custId,
-                    YearMonthCtd = "201512",
-                    CreatedOnUtc = new DateTime(2015, 12, 31, 23, 47, 12),
-                    Amount = new decimal(1677.02),
+                    YearMonthCtd = "201612",
+                    CreatedOnUtc = new DateTime(2016, 12, 31, 23, 47, 12),
+                    Amount = new decimal(200),
                     CreditPcntApplied = 50,
                     TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 }

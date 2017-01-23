@@ -120,11 +120,11 @@
             $scope.currency = $scope._authData.currency;
         }
         
-        $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);
-
-        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
-
-        $scope._init(loadAuthData);
+        $scope._init(function () {
+            loadAuthData();
+            $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);
+            $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
+        });
 
         $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
 
