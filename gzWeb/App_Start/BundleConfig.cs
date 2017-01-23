@@ -247,6 +247,7 @@ namespace gzWeb {
                                         , "~/_app/services/apiService.js"
                                         , "~/_app/services/helpersService.js"
                                         , "~/_app/services/chatService.js"
+                                        , "~/_app/services/navService.js"
                                         , "~/_app/services/iovationService.js"
             #endregion
 

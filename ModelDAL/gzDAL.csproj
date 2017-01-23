@@ -105,6 +105,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -156,6 +157,7 @@
     <Compile Include="Models\GzTrx.cs" />
     <Compile Include="Models\GzTrxType.cs" />
     <Compile Include="Models\LogEntry.cs" />
+    <Compile Include="Models\PlayerRevRpt.cs" />
     <Compile Include="Models\TestDbContext.cs" />
     <Compile Include="Repos\Interfaces\IUserRepo.cs" />
     <Compile Include="Repos\UserRepo.cs" />
@@ -163,7 +165,6 @@
     <Compile Include="Models\CustFundShare.cs" />
     <Compile Include="Repos\CustFundShareRepo.cs" />
     <Compile Include="Repos\CustomerRepo.cs" />
-    <Compile Include="DTO\CustomerDTO.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
     <Compile Include="Repos\CustPortfolioRepo.cs" />
     <Compile Include="ModelUtil\DbExpressions.cs" />
@@ -171,7 +172,6 @@
     <Compile Include="Models\FundPrice.cs" />
     <Compile Include="Repos\EmailService.cs" />
     <Compile Include="Repos\FundRepo.cs" />
-    <Compile Include="Models\GmTrx.cs" />
     <Compile Include="Repos\GzTransactionRepo.cs" />
     <Compile Include="Models\GmTrxType.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -197,7 +197,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

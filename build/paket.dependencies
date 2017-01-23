@@ -4,3 +4,5 @@ framework >= net462
 nuget FAKE 4.45.1
 nuget Fake.Azure.WebApps
 nuget FSharp.Text.RegexProvider
+nuget Microsoft.WindowsAzure.Management.WebSites 4.0
+nuget System.Management.Automation.dll

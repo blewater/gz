@@ -24,11 +24,10 @@
             return $scope._authData.isInvestor && $scope.model.NextExpectedInvestment ? $scope.model.NextExpectedInvestment : 100;
         }
 
-        $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
-
         $scope._init(function () {
             loadPerformanceData();
             loadAuthData();
+            $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
         });
     }
 })();

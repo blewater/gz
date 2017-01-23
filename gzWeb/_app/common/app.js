@@ -35,8 +35,8 @@ var APP = (function () {
     ]);
 
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers) {
+        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
+        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
 
             var defaultBeforeSend = function(xhr, json) {
                 var authData = localStorageService.get(constants.storageKeys.authData);
@@ -47,6 +47,7 @@ var APP = (function () {
 
             $rootScope.loading = true;
             $rootScope.initialized = false;
+            $rootScope.redirected = false;
             localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
 
             angular.element(document).ready(function () {
@@ -56,22 +57,23 @@ var APP = (function () {
             auth.init();
 
             $rootScope.$on(constants.events.ON_INIT, function () {
+                function hidePreloader() {
+                    var $preloader = angular.element(document.querySelector('#preloader'));
+                    $preloader.addClass('die');
+                    $timeout(function () { $preloader.remove(); }, 1000);
+                };
+
                 function setRouteData(route) {
                     var category = route.category;
-                    if (angular.isDefined(category))
+                    if (angular.isDefined(category)) {
                         $rootScope.routeData = {
                             category: category,
                             wandering: category === constants.categories.wandering,
                             gaming: category === constants.categories.gaming,
                             investing: category === constants.categories.investing
                         }
+                    }
                 }
-
-                var currentRoute = $route.current.$$route;
-                if (!auth.authorize(currentRoute.roles))
-                    $location.path(constants.routes.home.path);
-                else
-                    setRouteData(currentRoute);
 
                 $rootScope.$on('$routeChangeStart', function (event, next, current) {
                     $rootScope.loading = true;
@@ -95,37 +97,21 @@ var APP = (function () {
                 };
                 onRouteChangeSuccess();
                 $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
-                
+
                 helpers.ui.watchScreenSize($rootScope);
-                //$rootScope.xs = screenSize.on('xs', function (match) { $rootScope.xs = match; });
-                //$rootScope.sm = screenSize.on('sm', function (match) { $rootScope.sm = match; });
-                //$rootScope.md = screenSize.on('md', function (match) { $rootScope.md = match; });
-                //$rootScope.lg = screenSize.on('lg', function (match) { $rootScope.lg = match; });
-                //$rootScope.size = screenSize.get();
-                //screenSize.on('xs,sm,md,lg', function () {
-                //    $rootScope.size = screenSize.get();
-                //});
-
-                $rootScope.scrolled = false;
-                $rootScope.scrollOffset = 0;
-                angular.element($window).bind("scroll", function () {
-                    $rootScope.scrolled = this.pageYOffset > 0;
-                    $rootScope.scrollOffset = this.pageYOffset;
-                    $rootScope.$apply();
-                });
-
-                //$timeout(function () {
-                //    var $preloader = angular.element(document.querySelector('#preloader'));
-                //    $preloader.addClass('die');
-                //    $timeout(function () { $preloader.remove(); }, 2000);
-                //}, 1000);
-                var $preloader = angular.element(document.querySelector('#preloader'));
-                $preloader.addClass('die');
-                $timeout(function () { $preloader.remove(); }, 1000);
-
+                helpers.ui.watchWindowScroll($rootScope);
+                chat.show();
                 $rootScope.loading = false;
                 $rootScope.initialized = true;
-                chat.show();
+                hidePreloader();
+
+                if (!auth.authorize($route.current.$$route.roles)) {
+                    nav.setRequestUrl($location.$$path);
+                    $location.path(constants.routes.home.path);
+                    $rootScope.redirected = true;
+                }
+
+                $rootScope.$broadcast(constants.events.ON_AFTER_INIT);
             });
         }
     ]);

@@ -27,7 +27,7 @@ namespace gzWeb.Tests.Models {
 
             /*** For phase I we test only single portfolio selections ***/
             //// Jan 2015
-            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2016, 6, DateTime.UtcNow);
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 1, new DateTime(2015, 1, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 20, 2015, 1, new DateTime(2015, 1, 1));
             //// Feb
@@ -35,7 +35,7 @@ namespace gzWeb.Tests.Models {
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 50, 2015, 2, new DateTime(2015, 2, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 40, 2015, 2, new DateTime(2015, 2, 1));
             // Mar
-            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.High, 100, 2015, 3, new DateTime(2015, 3, 1));
+            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.High, 100, 2016, 9, DateTime.UtcNow);
             //// Apr
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Low, 30, 2015, 4, new DateTime(2015, 4, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 30, 2015, 4, new DateTime(2015, 4, 1));
@@ -45,7 +45,7 @@ namespace gzWeb.Tests.Models {
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.Medium, 20, 2015, 5, new DateTime(2015, 5, 1));
             //await cpRepo.SetCustMonthsPortfolio(custId, RiskToleranceEnum.High, 70, 2015, 5, new DateTime(2015, 5, 1));
             // Jun
-            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2015, 6, new DateTime(2015, 6, 1));
+            cpRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Medium, 100, 2016, 12, DateTime.UtcNow);
 
             cpRepo.SaveDbCustomerSelectNextMonthsPortfolio(custId, RiskToleranceEnum.High);
         }
@@ -123,26 +123,11 @@ namespace gzWeb.Tests.Models {
             }
         }
 
-        public void CreateTestPlayerDepositWidthdrawnTransactions(int custId) {
-            using (var db = new ApplicationDbContext(null)) {
-                var gzTrx = new GzTransactionRepo(db);
-
-                // Add deposit, withdrawals
-                gzTrx.SaveDbTransferToGamingAmount(custId, 50, new DateTime(2015, 4, 30));
-
-                gzTrx.SaveDbGmTransaction(customerId: custId, gzTransactionType: GmTransactionTypeEnum.Deposit,
-                    amount: 100, createdOnUtc: new DateTime(2015, 7, 15));
-
-                gzTrx.SaveDbTransferToGamingAmount(custId, 40, new DateTime(2015, 5, 31));
-                gzTrx.SaveDbTransferToGamingAmount(custId, 20, new DateTime(2015, 6, 15));
-            }
-        }
-
         public void CreateTestPlayerLossTransactions(int custId) {
             using (var db = new ApplicationDbContext(null)) {
                 var gzTrx = new GzTransactionRepo(db);
 
-                var startYearMonthStr = "201501";
+                var startYearMonthStr = "201606";
                 var endYeerMonthStr = DateTime.UtcNow.AddMonths(2).ToStringYearMonth();
 
                 while (startYearMonthStr.BeforeEq(endYeerMonthStr)) {
@@ -184,7 +169,7 @@ namespace gzWeb.Tests.Models {
 
         [Test]
         public void SaveDbUpdOneCustomerOneMonthBalance() {
-            UpdateInvBalanceOneMonth("201501");
+            UpdateInvBalanceOneMonth("201701");
         }
 
         private static void UpdateInvBalanceOneMonth(string yearMonth) {

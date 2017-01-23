@@ -15,13 +15,15 @@
     [LockoutEnabled]             BIT            NOT NULL,
     [AccessFailedCount]          INT            NOT NULL,
     [UserName]                   NVARCHAR (256) NOT NULL,
-    [Currency]                   NVARCHAR (MAX) NOT NULL,
+    [Currency]                   CHAR (3)       NOT NULL,
     [GmCustomerId]               INT            NULL,
     [DisabledGzCustomer]         BIT            DEFAULT ((0)) NOT NULL,
     [ClosedGzAccount]            BIT            DEFAULT ((0)) NOT NULL,
     [LastLogin]                  DATETIME       NULL,
     CONSTRAINT [PK_dbo.AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

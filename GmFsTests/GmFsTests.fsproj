@@ -70,6 +70,7 @@
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
+    <Content Include="connectionStrings.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ActiveUp.Net.Common">
@@ -112,6 +113,14 @@
       <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.WhoIs.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Chessie">
+      <HintPath>..\GmTrx\packages\Chessie.0.6.0\lib\net40\Chessie.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Configuration">
+      <HintPath>..\GmTrx\packages\FSharp.Configuration.0.6.4\lib\net40\FSharp.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FSharp.Core">
       <HintPath>..\GmTrx\packages\FSharp.Core.4.0.1.5\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>
@@ -131,6 +140,10 @@
     </Reference>
     <Reference Include="OpenPop">
       <HintPath>..\GmTrx\packages\OpenPop.NET.2.0.6.1120\lib\net40\OpenPop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpYaml">
+      <HintPath>..\GmTrx\packages\FSharp.Configuration.0.6.4\lib\net40\SharpYaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
