@@ -146,6 +146,38 @@ module DbPlayerRevRpt =
     open ExcelUtil
     let logger = LogManager.GetCurrentClassLogger()
 
+    /// Updated db player Gain Loss
+    let setDbPlayerGainLoss (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
+        let totalWithdrawals = row.TotalWithdrawals.Value + row.PendingWithdrawals.Value
+        let gainLoss = 
+            row.BegBalance.Value 
+            + row.TotalDepositsAmount.Value 
+            - totalWithdrawals
+            - row.EndBalance.Value
+        row.PlayerLoss <- Nullable gainLoss
+        row.UpdatedOnUtc <- DateTime.UtcNow
+        row.Processed <- int GmRptProcessStatus.GainLossRptUpd
+
+    /// Query non zero balance affecting amounts and update the player GailLoss
+    let setDbMonthyGainLossAmounts
+                        (db : DbContext)
+                        (yyyyMmDd :string) =
+
+        query { 
+            for playerDbRow in db.PlayerRevRpt do
+                where (playerDbRow.YearMonthDay = yyyyMmDd 
+                        && (
+                            playerDbRow.BegBalance <> Nullable 0M 
+                            || playerDbRow.EndBalance <> Nullable 0M
+                            || playerDbRow.TotalDepositsAmount <> Nullable 0M
+                            || playerDbRow.PendingWithdrawals <> Nullable 0M
+                            || playerDbRow.TotalWithdrawals <> Nullable 0M
+                        ))
+                select playerDbRow
+        }
+        |> Seq.iter setDbPlayerGainLoss
+        db.DataContext.SubmitChanges()
+
     /// Update the withdrawal amount with an addition for pending withdrawal amounts or deducting rollback withdrawal amounts
     let setDbRowWithdrawalsValues (withdrawalType : WithdrawalType) (withdrawalsExcelRow : WithdrawalsExcelSchema.Row) (playerRow : DbPlayerRevRptRow) = 
         let dbWithdrawalAmount = playerRow.PendingWithdrawals.Value
@@ -196,6 +228,7 @@ module DbPlayerRevRpt =
         playerRow.BegBalance <- Nullable 0m
         playerRow.EndBalance <- Nullable 0m
         playerRow.PlayerLoss <- Nullable 0m
+        playerRow.TotalDepositsAmount  <- Nullable 0m
         playerRow.PendingWithdrawals <- Nullable 0m
         playerRow.TotalWithdrawals <- Nullable 0m
         //Non-excel content
@@ -214,7 +247,7 @@ module DbPlayerRevRpt =
             new DbPlayerRevRptRow(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
         setDbRowCustomValues yearMonthDay excelRow newPlayerRow
         db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
-    
+
     /// Set withdrawal amount in a db PlayerRevRpt Row
     let setDbWithdrawalsPlayerRow 
                         (withdrawalType : WithdrawalType)
@@ -333,6 +366,7 @@ module WithdrawalRpt2Db =
 
                 let transStatus = excelRow.``Trans status``.ToString().ToLower()
 
+                // initiatedCurrently && CompletedInSameMonth are within TotalWithdrawals in Custom
                 if initiatedCurrently && not completedInSameMonth then
                     DbPlayerRevRpt.setDbWithdrawalsPlayerRow Pending db yyyyMmDd excelRow
 
