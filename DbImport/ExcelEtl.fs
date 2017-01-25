@@ -104,22 +104,12 @@ module DbGzTrx =
         )
         db.DataContext.SubmitChanges()
 
-    /// Upsert a GzTrxs transaction row with the credited amount
+    /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
     let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
 
         query { 
             for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonthDay = yyyyMmDd 
-                        && (
-                            playerDbRow.BegBalance <> Nullable 0M 
-                            || playerDbRow.EndBalance <> Nullable 0M
-                            || playerDbRow.TotalDepositsAmount <> Nullable 0M
-                            // Withdrawals that deduct balance but have not completed yet
-                            || playerDbRow.PendingWithdrawals <> Nullable 0M
-                            // Completed Withdrawals like TotalDepositsAmount is for Deposits
-                            || playerDbRow.WithdrawsMade <> Nullable 0M
-                            || playerDbRow.PlayerGainLoss <> Nullable 0M
-                        ))
+                where (playerDbRow.YearMonthDay = yyyyMmDd)
                 select playerDbRow
         }
         |> Seq.iter (fun playerDbRow -> setDbGzTrxRow db yyyyMmDd playerDbRow)
