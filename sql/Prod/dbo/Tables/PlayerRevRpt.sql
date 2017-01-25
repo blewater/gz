@@ -16,7 +16,7 @@
     [Total deposits amount]                DECIMAL (29, 16) NULL,
     [Withdraws made]                       DECIMAL (29, 16) NULL,
     [Last played date]                     DATE             NULL,
-    [Deposits made]                        DECIMAL (29, 16) NULL,
+    [Deposits made]                        INT              NULL,
     [Currency]                             CHAR (3)         NOT NULL,
     [Total bonuses accepted by the player] DECIMAL (29, 16) NULL,
     [Net revenue]                          DECIMAL (29, 16) NULL,
@@ -26,8 +26,12 @@
     [Processed]                            INT              NOT NULL,
     [CreatedOnUtc]                         DATETIME         NOT NULL,
     [UpdatedOnUtc]                         DATETIME         NOT NULL,
+    [PendingWithdrawals]                   DECIMAL (29, 16) NULL,
+    [TotalWithdrawals]                     DECIMAL (29, 16) NULL,
     CONSTRAINT [PK_dbo.PlayerRevRpt] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
