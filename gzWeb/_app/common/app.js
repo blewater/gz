@@ -32,6 +32,7 @@ var APP = (function () {
         , 'isoCurrency'
         , 'logToServer'
         , 'ui.bootstrap.datetimepicker'
+        , 'angular-appinsights'
     ]);
 
     app.run([
