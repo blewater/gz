@@ -33,6 +33,11 @@ namespace gzDAL.Models {
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser Customer { get; set; }
 
+        [Required]
+        public int PortfolioId { get; set; }
+        [ForeignKey("PortfolioId")]
+        public virtual Portfolio Portfolio { get; set; }
+
         /// <summary>
         /// Monthly Starting Gaming balance imported from Everymatrix reports
         /// </summary>
@@ -108,6 +113,10 @@ namespace gzDAL.Models {
 #endregion
 
         [Required]
-        public DateTime UpdatedOnUtc { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedOnUtc { get; set; }
+        public InvBalance() {
+            PortfolioId = (int) RiskToleranceEnum.Medium;
+            UpdatedOnUtc = DateTime.UtcNow;
+        }
     }
 }
