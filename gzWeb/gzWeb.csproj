@@ -645,6 +645,10 @@
     <Compile Include="Migrations\201701242353044_AddBalanceAmounts2GzTrx.Designer.cs">
       <DependentUpon>201701242353044_AddBalanceAmounts2GzTrx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701252215561_Add CustPortfolios PortfolioPrice PortfolioIdinInvBalance.cs" />
+    <Compile Include="Migrations\201701252215561_Add CustPortfolios PortfolioPrice PortfolioIdinInvBalance.Designer.cs">
+      <DependentUpon>201701252215561_Add CustPortfolios PortfolioPrice PortfolioIdinInvBalance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1317,6 +1321,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701242353044_AddBalanceAmounts2GzTrx.resx">
       <DependentUpon>201701242353044_AddBalanceAmounts2GzTrx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701252215561_Add CustPortfolios PortfolioPrice PortfolioIdinInvBalance.resx">
+      <DependentUpon>201701252215561_Add CustPortfolios PortfolioPrice PortfolioIdinInvBalance.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

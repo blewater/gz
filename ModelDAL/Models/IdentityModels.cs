@@ -178,6 +178,8 @@ namespace gzDAL.Models
         public DbSet<DynamicPageTemplate> DynamicPageTemplates { get; set; }
         public DbSet<DynamicPageData> DynamicPagesData { get; set; }
         public DbSet<PlayerRevRpt> PlayerRevRpt { get; set; }
+        public DbSet<PortfolioPrice> PortfolioPrices { get; set; }
+        public DbSet<CustPortfoliosShares> CustPortfoliosShares { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
