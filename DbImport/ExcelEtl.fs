@@ -3,53 +3,45 @@
 module DbGzTrx =
     open System
     open NLog
-    open FSharp.ExcelProvider
     open DbUtil
-    open ExcelSchemas
+
     let logger = LogManager.GetCurrentClassLogger()
 
-    let setGzTrxDbRowValues 
+    /// Update a trx row with PlayerRevRpt as the source
+    let updDbGzTrxRowValues 
             (amount : decimal)
             (creditPcntApplied : float32)
-            (trxRow : DbUtil.DbSchema.ServiceTypes.GzTrxs)=
+            (playerRevRpt : DbPlayerRevRpt)
+            (trxRow : DbGzTrx) =
 
+        trxRow.PlayerRevRptId <- Nullable playerRevRpt.Id
         trxRow.Amount <- amount
         trxRow.CreditPcntApplied <- Nullable creditPcntApplied
+        trxRow.BegGmBalance <- playerRevRpt.BegBalance
+        trxRow.EndGmBalance <- playerRevRpt.EndBalance
+        trxRow.Deposits <- playerRevRpt.TotalDepositsAmount
+        trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
 
-    /// <summary>
-    /// 
     /// Create & Insert a GzTrxs row
-    /// 
-    /// </summary>
-    /// <param name="db"></param>
-    /// <param name="yearMonth"></param>
-    /// <param name="amount"></param>
-    /// <param name="creditPcntApplied"></param>
-    /// <param name="gzUserId"></param>
-    let setGzTrxNewDbRowValues
+    let setDbGzTrxRowValues
             (db : DbContext) 
             (yearMonth : string)
             (amount : decimal)
             (creditPcntApplied : float32)
-            (gzUserId : int) = 
+            (gzUserId : int)
+            (playerRevRpt : DbPlayerRevRpt) =
 
         let newGzTrxRow = 
-            new DbUtil.DbSchema.ServiceTypes.GzTrxs(
+            new DbGzTrx(
                 CustomerId=gzUserId,
                 YearMonthCtd = yearMonth,
                 CreatedOnUTC = DateTime.UtcNow,
                 TypeId = int DbUtil.GzTransactionType.CreditedPlayingLoss)
 
-        setGzTrxDbRowValues amount creditPcntApplied newGzTrxRow
+        updDbGzTrxRowValues amount creditPcntApplied playerRevRpt newGzTrxRow
         db.GzTrxs.InsertOnSubmit(newGzTrxRow)
 
-    /// <summary>
-    /// 
     /// Get the greenzorro used id by email
-    /// 
-    /// </summary>
-    /// <param name="db"></param>
-    /// <param name="gmUserEmail"></param>
     let getGzUserId (db : DbContext) (gmUserEmail : string) : int =
         query {
             for user in db.AspNetUsers do
@@ -64,11 +56,7 @@ module DbGzTrx =
                 userId
         )
 
-    /// <summary>
-    /// 
     /// Get the credited loss Percentage in human form % i.e. 50 from gzConfiguration
-    /// 
-    /// </summary>
     /// <param name="db"></param>
     let getCreditLossPcnt (db : DbContext) : float32 =
         query {
@@ -77,69 +65,68 @@ module DbGzTrx =
         }
         |> (fun conf -> conf.CREDIT_LOSS_PCNT)
 
-    /// <summary>
-    /// 
     /// Main formula calculating the amount that will be credited to the users account
-    /// 
-    /// </summary>
-    /// <param name="excelRow"></param>
-    /// <param name="creditLossPcnt"></param>
-    /// <param name="playerRawGrossRevenue"></param>
-    let getCreditedPlayerAmount (excelRow : CustomExcelSchema.Row)
-                                (creditLossPcnt : float32)
-                                (playerRawGrossRevenue : float) : decimal=
+    /// (**** Player Loss in GzTrx is a positive amount. No point with negatives in there. ***)
+    let getCreditedPlayerAmount (creditLossPcnt : float32)
+                                (playerGainLoss : decimal) : decimal =
 
-        if playerRawGrossRevenue > 0.0 then
-
-            let userCurrency = excelRow.Currency
-
-            (****  50% of Positive Gross Revenue ***)
-            let creditAmount = (decimal creditLossPcnt / 100m) * decimal playerRawGrossRevenue
-            creditAmount
-        else
-            0m
+        let (|Gain|Loss|) (amount : decimal) = if amount >= 0M then Gain 0M else Loss amount
+        match playerGainLoss with
+        | Gain _ -> 0M
+        | Loss lossAmount -> (decimal creditLossPcnt / 100m) * -lossAmount
     
-    /// <summary>
-    /// 
     /// Upsert a GzTrxs transaction row with the credited amount
-    /// 
-    /// </summary>
-    /// <param name="db"></param>
-    /// <param name="yyyyMm"></param>
-    /// <param name="excelRow"></param>
-    let setDbGzTrxRow   (db : DbContext) 
-                        (yyyyMm :string) 
-                        (excelRow : CustomExcelSchema.Row) =
+    let private setDbGzTrxRow(db : DbContext)(yyyyMmDd :string)(playerRevRpt : DbPlayerRevRpt) =
 
-        let playerRawGrossRevenue = excelRow.``Gross revenue``
-        if playerRawGrossRevenue > 0.0 then
-            let gmEmail = excelRow.``Email address``
-            let gzUserId = getGzUserId db gmEmail
-            query { 
-                for trxRow in db.GzTrxs do
-                    where (
-                        trxRow.YearMonthCtd = yyyyMm 
-                        && trxRow.CustomerId = gzUserId
-                        && trxRow.GzTrxTypes.Code = int DbUtil.GzTransactionType.CreditedPlayingLoss
-                    )
-                    select trxRow
-                    exactlyOneOrDefault
-            }
-            |> (fun trxRow ->
-                let creditLossPcnt = getCreditLossPcnt db 
-                let usdAmount = getCreditedPlayerAmount excelRow creditLossPcnt playerRawGrossRevenue
+        let playerGainLoss = playerRevRpt.PlayerGainLoss.Value
+        let yyyyMm = yyyyMmDd.Substring(0, 6) 
+        let gmEmail = playerRevRpt.EmailAddress
+        let gzUserId = getGzUserId db gmEmail
 
-                if isNull trxRow then 
-                    setGzTrxNewDbRowValues db yyyyMm usdAmount creditLossPcnt gzUserId 
-                else 
-                    setGzTrxDbRowValues usdAmount creditLossPcnt trxRow
-            )
-            db.DataContext.SubmitChanges()
+        query { 
+            for trxRow in db.GzTrxs do
+                where (
+                    trxRow.YearMonthCtd = yyyyMm
+                    && trxRow.CustomerId = gzUserId
+                    && trxRow.GzTrxTypes.Code = int DbUtil.GzTransactionType.CreditedPlayingLoss
+                )
+                select trxRow
+                exactlyOneOrDefault
+        }
+        |> (fun trxRow ->
+            let creditLossPcnt = getCreditLossPcnt db 
+            let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
+
+            if isNull trxRow then
+                setDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId playerRevRpt
+            else 
+                updDbGzTrxRowValues playerLossToInvest creditLossPcnt playerRevRpt trxRow
+        )
+        db.DataContext.SubmitChanges()
+
+    /// Upsert a GzTrxs transaction row with the credited amount
+    let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
+
+        query { 
+            for playerDbRow in db.PlayerRevRpt do
+                where (playerDbRow.YearMonthDay = yyyyMmDd 
+                        && (
+                            playerDbRow.BegBalance <> Nullable 0M 
+                            || playerDbRow.EndBalance <> Nullable 0M
+                            || playerDbRow.TotalDepositsAmount <> Nullable 0M
+                            // Withdrawals that deduct balance but have not completed yet
+                            || playerDbRow.PendingWithdrawals <> Nullable 0M
+                            // Completed Withdrawals like TotalDepositsAmount is for Deposits
+                            || playerDbRow.WithdrawsMade <> Nullable 0M
+                            || playerDbRow.PlayerGainLoss <> Nullable 0M
+                        ))
+                select playerDbRow
+        }
+        |> Seq.iter (fun playerDbRow -> setDbGzTrxRow db yyyyMmDd playerDbRow)
 
 module DbPlayerRevRpt =
     open System
     open NLog
-    open FSharp.ExcelProvider
     open DbUtil
     open ExcelSchemas
     open ExcelUtil
@@ -148,11 +135,12 @@ module DbPlayerRevRpt =
     /// Updated db player Gain Loss
     let private setDbPlayerGainLoss (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
         let totalWithdrawals = row.WithdrawsMade.Value + row.PendingWithdrawals.Value
+        // Formula to get player losses as negative amounts
         let gainLoss = 
-            row.BegBalance.Value 
-            + row.TotalDepositsAmount.Value 
-            - totalWithdrawals
-            - row.EndBalance.Value
+            row.EndBalance.Value
+            + totalWithdrawals
+            - row.TotalDepositsAmount.Value 
+            - row.BegBalance.Value 
         row.PlayerGainLoss <- Nullable gainLoss
         row.UpdatedOnUtc <- DateTime.UtcNow
         row.Processed <- int GmRptProcessStatus.GainLossRptUpd
@@ -338,6 +326,7 @@ module WithdrawalRpt2Db =
     open ExcelSchemas
     open GmRptFiles
     open ExcelUtil
+
     let logger = LogManager.GetCurrentClassLogger()
 
     /// Withdrawal performed in current processing month
@@ -576,9 +565,8 @@ module Etl =
             loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
             updDbWithdrawalsRpt db withdrawalFilename
             DbPlayerRevRpt.setDbMonthyGainLossAmounts db customDtStr
-
-            // Process GzTrx
-            //DbGzTrx.setDbGzTrxRow db (yyyyMmDd.Substring(0, 6)) excelRow
+            // Finally upsert GzTrx with the balance, credit amounts
+            DbGzTrx.setDbPlayerRevRpt2GzTrx db customDtStr 
 
             moveRptsToOutFolder inFolder outFolder customFilename begBalanceFilename withdrawalFilename
 
