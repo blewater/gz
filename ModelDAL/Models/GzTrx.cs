@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -36,6 +37,29 @@ namespace gzDAL.Models {
         [Index("IX_CustomerId_YM_TId_Amnt", IsUnique = true, Order = 4)]
         [Index("IX_CustomerId_TId_Amnt", IsUnique = false, Order = 3)]
         public decimal Amount { get; set; }
+        /// <summary>
+        /// Monthly Starting Gaming balance imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        public decimal? BegGmBalance { get; set; }
+
+        /// <summary>
+        /// Monthly deposits imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        public decimal? Deposits { get; set; }
+
+        /// <summary>
+        /// Monthly withdrawals imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        public decimal? Withdrawals { get; set; }
+
+        /// <summary>
+        /// Monthly Ending Gaming balance imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        public decimal? EndGmBalance { get; set; }
 
         /// <summary>
         /// 
