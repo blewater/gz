@@ -31,7 +31,7 @@ namespace gzDAL.Models {
 
         public decimal? BegBalance { get; set; }
         public decimal? EndBalance { get; set; }
-        public decimal? PlayerLoss { get; set; }
+        public decimal? PlayerGainLoss { get; set; }
 
         [StringLength(256)]
         public string Role { get; set; }
@@ -58,14 +58,14 @@ namespace gzDAL.Models {
         [Column("Total deposits amount")]
         public decimal? TotalDepositsAmount { get; set; }
 
+        [Column("PendingWithdrawals")]
+        public decimal? PendingWithdrawals { get; set; }
+
         [Column("Withdraws made")]
         public decimal? WithdrawsMade { get; set; }
 
         [Column("Last played date", TypeName = "date")]
         public DateTime? LastPlayedDate { get; set; }
-
-        [Column("Deposits made")]
-        public decimal? DepositsMade { get; set; }
 
         [Required]
         [Column(TypeName = "char")]
@@ -94,6 +94,12 @@ namespace gzDAL.Models {
 
         public PlayerRevRpt() {
             Processed = 0;
+            BegBalance = 0;
+            EndBalance = 0;
+            PlayerGainLoss = 0;
+            TotalDepositsAmount = 0;
+            WithdrawsMade = 0;
+            PendingWithdrawals = 0;
             CreatedOnUtc = DateTime.UtcNow;
             UpdatedOnUtc = DateTime.UtcNow;
         }

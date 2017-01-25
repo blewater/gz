@@ -633,6 +633,18 @@
     <Compile Include="Migrations\201701141205124_AddPlayerRevRpt.Designer.cs">
       <DependentUpon>201701141205124_AddPlayerRevRpt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701222044238_Withdrawals Total.cs" />
+    <Compile Include="Migrations\201701222044238_Withdrawals Total.Designer.cs">
+      <DependentUpon>201701222044238_Withdrawals Total.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701241750557_WithdrawalGainLoss.cs" />
+    <Compile Include="Migrations\201701241750557_WithdrawalGainLoss.Designer.cs">
+      <DependentUpon>201701241750557_WithdrawalGainLoss.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701242353044_AddBalanceAmounts2GzTrx.cs" />
+    <Compile Include="Migrations\201701242353044_AddBalanceAmounts2GzTrx.Designer.cs">
+      <DependentUpon>201701242353044_AddBalanceAmounts2GzTrx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1297,6 +1309,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701141205124_AddPlayerRevRpt.resx">
       <DependentUpon>201701141205124_AddPlayerRevRpt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701222044238_Withdrawals Total.resx">
+      <DependentUpon>201701222044238_Withdrawals Total.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701241750557_WithdrawalGainLoss.resx">
+      <DependentUpon>201701241750557_WithdrawalGainLoss.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701242353044_AddBalanceAmounts2GzTrx.resx">
+      <DependentUpon>201701242353044_AddBalanceAmounts2GzTrx.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
