@@ -21,11 +21,11 @@
 #preloader.die {
     -ms-opacity: 0;
     opacity: 0;
-    -webkit-transition: all linear 0.2s;
-    -moz-transition: all linear 0.2s;
-    -ms-transition: all linear 0.2s;
-    -o-transition: all linear 0.2s;
-    transition: all linear 0.2s;
+    -webkit-transition: all linear 0.4s;
+    -moz-transition: all linear 0.4s;
+    -ms-transition: all linear 0.4s;
+    -o-transition: all linear 0.4s;
+    transition: all linear 0.4s;
     /*-webkit-transition-delay: 1s;
     -moz-transition-delay: 1s;
     -ms-transition-delay: 1s;
@@ -50,11 +50,11 @@
 #preloader.die .spinner-container {
     -ms-opacity: 0;
     opacity: 0;
-    -webkit-transition: all linear 0.2s;
-    -moz-transition: all linear 0.2s;
-    -ms-transition: all linear 0.2s;
-    -o-transition: all linear 0.2s;
-    transition: all linear 0.2s;
+    -webkit-transition: all linear 0.4s;
+    -moz-transition: all linear 0.4s;
+    -ms-transition: all linear 0.4s;
+    -o-transition: all linear 0.4s;
+    transition: all linear 0.4s;
 }
 
 

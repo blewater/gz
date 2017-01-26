@@ -4,45 +4,12 @@ var AsyncLoad = (function () {
     var styles = [], scripts = [];
     var asyncLoad = {};
 
-    function hidePreloader() {
-        var preloader = document.getElementById("preloader");
-        preloader.className = "die";
-        setTimeout(function () {
-            var body = document.getElementsByTagName("BODY")[0];
-            body.removeChild(preloader);
-        }, 200);
-    }
-    asyncLoad.AddStyles = function (src) {
-        styles.push(src);
-    };
-    asyncLoad.LoadStyles = function () {
-        loadStyles(styles);
-    };
-    function loadStyles(styles) {
-        if (styles.length > 0) {
-            var style = styles.splice(0, 1)[0];
-            var cb = function () { loadStyles(styles); };
-            loadStyle(style, cb);
-        }
-        else {
-            hidePreloader();
-            //removeUnnecessaryScripts();
-        }
-    }
-    function removeUnnecessaryScripts() {
-        var body = document.getElementsByTagName("BODY")[0];
-        var allScripts = document.getElementsByTagName("SCRIPT");
-        for (var i = 0; i < allScripts.length; i++) {
-            var script = allScripts[i];
-            if (script.getAttribute("data-remove"))
-                body.removeChild(script);
-        }
-    }
+    // #region Styles
     function loadStyle(src, callback) {
         var cb = function () {
             var l = document.createElement('link'); l.rel = 'stylesheet';
             l.href = src;
-            var h = document.getElementsByTagName('head')[0]; h.parentNode.appendChild(l, h);
+            var h = document.getElementsByTagName('head')[0]; h.appendChild(l, h);
             if (typeof callback === 'function') {
                 callback();
             }
@@ -52,20 +19,23 @@ var AsyncLoad = (function () {
         if (raf) raf(cb);
         else window.addEventListener('load', cb);
     };
-
-
-    asyncLoad.AddScript = function (src, callback) {
-        scripts.push({ src: src, callback: callback });
-    };
-    asyncLoad.LoadScripts = function (srcs, callback) {
-        if (Array.isArray(srcs) && srcs.length > 0) {
-            var src = srcs.splice(0, 1)[0];
-            var cb = srcs.length === 1 ? callback : function () { asyncLoad.LoadScripts(srcs, callback); };
-            loadScript(src, cb);
+    function loadStyles() {
+        if (styles.length > 0) {
+            var style = styles.splice(0, 1)[0];
+            loadStyle(style, function () {
+                loadStyles(styles);
+            });
         }
-        else if (typeof srcs === 'string')
-            loadScript(srcs, callback);
-    }
+        else {
+            loadScripts();
+        }
+    };
+    asyncLoad.AddStyles = function (src) {
+        styles.push(src);
+    };
+    // #endregion
+
+    // #region Scripts
     function loadScript(src, callback) {
         var s, r, t, a, d;
         r = false;
@@ -90,9 +60,57 @@ var AsyncLoad = (function () {
                     callback();
             }
         };
-        t = document.getElementsByTagName('script')[0];
-        t.parentNode.appendChild(s);
-    }
+        var b = document.getElementsByTagName('BODY')[0];
+        b.appendChild(s);
+        //t = document.getElementsByTagName('script')[0];
+        //t.parentNode.appendChild(s);
+    };
+    function loadScripts() {
+        if (scripts.length > 0) {
+            var script = scripts.splice(0, 1)[0];
+            loadScript(script.src, function () {
+                if (typeof script.callback === 'function')
+                    script.callback();
+                loadScripts(scripts);
+            });
+        }
+        else {
+            //hidePreloader();
+            removeUnnecessaryScripts("data-remove");
+        }
+    };
+    asyncLoad.AddScripts = function (src, callback) {
+        scripts.push({ src: src, callback: callback });
+    };
+    // #endregion
+
+    // #region Common
+    function hidePreloader() {
+        var preloader = document.getElementById("preloader");
+        preloader.className = "die";
+        setTimeout(function () {
+            var body = document.getElementsByTagName("BODY")[0];
+            body.removeChild(preloader);
+        }, 400);
+    };
+    function removeUnnecessaryScripts(attr) {
+        var allScripts = document.getElementsByTagName("SCRIPT");
+        var scriptsToRemove = [], i;
+        for (i = 0; i < allScripts.length; i++) {
+            var script = allScripts[i];
+            if (script.getAttribute(attr))
+                scriptsToRemove.push(script);
+        }
+        for (i = 0; i < scriptsToRemove.length; i++) {
+            var script = scriptsToRemove[i];
+            script.parentElement.removeChild(script);
+        }
+    };
+    asyncLoad.Load = function () {
+        loadStyles();
+    };
+    // #endregion
+
     return asyncLoad;
 })(AsyncLoad);
 
