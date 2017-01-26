@@ -74,72 +74,72 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ActiveUp.Net.Common">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Common.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.Dns">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Dns.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Dns.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.Groupware">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Groupware.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Groupware.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.Imap4">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Imap4.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Imap4.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.Mail">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Mail.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Mail.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.Nntp">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Nntp.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Nntp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.OpenPGP">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.OpenPGP.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.OpenPGP.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.Pop3">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Pop3.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Pop3.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.Smtp">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Smtp.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Smtp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ActiveUp.Net.WhoIs">
-      <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.WhoIs.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.WhoIs.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Configuration">
-      <HintPath>..\GmTrx\packages\FSharp.Configuration.0.6.4\lib\net40\FSharp.Configuration.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\FSharp.Configuration.0.6.4\lib\net40\FSharp.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GmTrx\packages\FSharp.Core.4.0.1.5\lib\net40\FSharp.Core.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\FSharp.Core.4.0.1.5\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FsUnit.NUnit">
-      <HintPath>..\GmTrx\packages\FsUnit.2.3.2\lib\net45\FsUnit.NUnit.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\FsUnit.2.3.2\lib\net45\FsUnit.NUnit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NHamcrest">
-      <HintPath>..\GmTrx\packages\FsUnit.2.3.2\lib\net45\NHamcrest.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\FsUnit.2.3.2\lib\net45\NHamcrest.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\GmTrx\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="OpenPop">
-      <HintPath>..\GmTrx\packages\OpenPop.NET.2.0.6.1120\lib\net40\OpenPop.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\OpenPop.NET.2.0.6.1120\lib\net40\OpenPop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SharpYaml">
-      <HintPath>..\GmTrx\packages\FSharp.Configuration.0.6.4\lib\net40\SharpYaml.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\FSharp.Configuration.0.6.4\lib\net40\SharpYaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
