@@ -49,9 +49,6 @@ let main argv =
         // Update Funds from Yahoo Api
         (new FundsUpdTask(isProd)).DoTask()
 
-        // Update Currency Rates from open exchange api
-        CurrencyRates.updCurrencyRates currencyRatesUrl db
-
         // Extract & Load Daily Everymatrix Report
         Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
 
