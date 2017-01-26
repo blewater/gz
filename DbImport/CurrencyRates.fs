@@ -1,4 +1,4 @@
-﻿namespace CpcDataServices
+﻿namespace DbImport
 
 open System
 open FSharp.Data
@@ -7,7 +7,7 @@ open System.Collections.Generic
 open DbUtil
 
 module public CurrencyRates = 
-    type UsdRates = JsonProvider<"../CpcDataServices/openexchangerates.json">
+    type UsdRates = JsonProvider<"../DbImport/openexchangerates.json">
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -87,10 +87,7 @@ module public CurrencyRates =
     /// </summary>
     /// <param name="db">db context</param>
     /// <param name="usdRates">Map of rates to update</param>
-    let setDbRates 
-            (db : DbContext) 
-            (usdRates : CurrencyRatesValues) 
-            : CurrencyRatesValues = 
+    let setDbRates (db : DbContext) (usdRates : CurrencyRatesValues) : unit = 
 
         for marketRate in usdRates do
 
@@ -117,22 +114,20 @@ module public CurrencyRates =
 
         // Commit for all rates once!
         db.DataContext.SubmitChanges()
-        usdRates
 
     /// <summary>
     /// 
     /// Get the latest exchange rates and update the database rates table with them
-    /// -> latest rates
     ///
     /// </summary>
     /// <param name="currencyApiUrl"></param>
     /// <param name="db"></param>
-    let updCurrencyRates 
-            (currencyApiUrl : string)
-            (db : DbContext)
-            : CurrencyRatesValues =
+    let updCurrencyRates (currencyApiUrl : string)(db : DbContext) : unit =
 
         logger.Info("Retrieving last hour's currency values...")
 
+        // setDbCurrencyRates curried
         let setDbCurrencyRates = setDbRates db
-        getCurrencyRates currencyApiUrl |> setDbCurrencyRates
+
+        getCurrencyRates currencyApiUrl
+        |> setDbCurrencyRates

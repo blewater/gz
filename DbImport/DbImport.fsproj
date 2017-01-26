@@ -8,11 +8,11 @@
     <ProjectGuid>bd103410-e702-454c-ae68-17f50a0a4742</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>CpcDataServices</RootNamespace>
-    <AssemblyName>CpcDataServices</AssemblyName>
+    <AssemblyName>DbImport</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>CpcDataServices</Name>
+    <Name>DbImport</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -46,7 +46,7 @@
     <Tailcalls>false</Tailcalls>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\CpcDataServices.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\DbImport.XML</DocumentationFile>
     <OutputPath>bin\Production\</OutputPath>
   </PropertyGroup>
   <Choose>
@@ -64,8 +64,13 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="DateStr.fs" />
+    <Compile Include="ErrorHandling.fs" />
     <Compile Include="DbUtil.fs" />
     <Compile Include="CurrencyRates.fs" />
+    <Compile Include="GmRptFiles.fs" />
+    <Compile Include="ExcelSchemas.fs" />
+    <Compile Include="ExcelUtil.fs" />
     <Compile Include="ExcelEtl.fs" />
     <Content Include="packages.config" />
     <None Include="openexchangerates.json">
@@ -73,6 +78,9 @@
     </None>
     <None Include="Custom Prod 20160930.xlsx" />
     <None Include="Balance Prod 20161001.xlsx" />
+    <None Include="pendingwithdraw prod 201609.xlsx" />
+    <None Include="Scripts\load-references-production.fsx" />
+    <None Include="Scripts\load-project-production.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
@@ -119,12 +127,12 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\GmTrx\packages\FSharpLint.MSBuild.0.4.5\build\FSharpLint.MSBuild.targets" Condition="Exists('..\GmTrx\packages\FSharpLint.MSBuild.0.4.5\build\FSharpLint.MSBuild.targets')" />
+  <Import Project="..\GmTrx\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets" Condition="Exists('..\GmTrx\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\GmTrx\packages\FSharpLint.MSBuild.0.4.5\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GmTrx\packages\FSharpLint.MSBuild.0.4.5\build\FSharpLint.MSBuild.targets'))" />
+    <Error Condition="!Exists('..\GmTrx\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GmTrx\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

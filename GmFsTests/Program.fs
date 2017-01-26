@@ -4,10 +4,14 @@ open FsUnit
 open OpenPop.Pop3
 open System.IO
 open ActiveUp.Net.Mail
+open FSharp.Configuration
+
+type Settings = AppSettings< "app.config" >
 
 [<TestFixture; 
     Description("Test gmail inbox reading")>]
 type Test() =
+
     [<Test; Description("Read message(s) from hostmaster@greenzorro.com")>]
     member x.ReadImapGmail () =
         let gmReader = new Imap4Client()
