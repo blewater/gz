@@ -1,4 +1,4 @@
-﻿namespace DbImport
+﻿namespace GzDb
 
 open NLog
 open FSharp.Data.TypeProviders

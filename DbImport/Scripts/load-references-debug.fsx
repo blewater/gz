@@ -5,7 +5,6 @@
 #r "../../Gm2Gz/packages/FSharp.Data.2.3.2/lib/net40/FSharp.Data.dll"
 #r "../../Gm2Gz/packages/FSharp.Data.TypeProviders.5.0.0.2/lib/net40/FSharp.Data.TypeProviders.dll"
 #r "../../Gm2Gz/packages/ExcelProvider.0.8.0/lib/ICSharpCode.SharpZipLib.dll"
-#r "../../Gm2Gz/packages/NLog.4.3.9/lib/net45/NLog.dll"
 #r "System.Core.dll"
 #r "System.Data.dll"
 #r "System.Data.Linq.dll"
@@ -13,3 +12,5 @@
 #r "System.Numerics.dll"
 #r "System.Transactions.dll"
 #r "System.Xml.Linq.dll"
+#r "../../Gm2Gz/packages/NLog.4.4.1/lib/net45/NLog.dll"
+#r "../../GzDb/bin/Debug/GzDb.dll"
