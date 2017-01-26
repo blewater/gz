@@ -3,7 +3,8 @@
 module DbGzTrx =
     open System
     open NLog
-    open DbUtil
+    open GzDb
+    open GzDb.DbUtil
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -117,7 +118,7 @@ module DbGzTrx =
 module DbPlayerRevRpt =
     open System
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
     open ExcelSchemas
     open ExcelUtil
     let logger = LogManager.GetCurrentClassLogger()
@@ -312,7 +313,7 @@ module DbPlayerRevRpt =
 module WithdrawalRpt2Db =
     open System
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
     open ExcelUtil
@@ -390,7 +391,7 @@ module WithdrawalRpt2Db =
             
 module BalanceRpt2Db =
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
     open ExcelSchemas
 
     let logger = LogManager.GetCurrentClassLogger()
@@ -438,7 +439,7 @@ module BalanceRpt2Db =
 
 module CustomRpt2Db =
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
     let logger = LogManager.GetCurrentClassLogger()
@@ -481,7 +482,7 @@ module CustomRpt2Db =
 module Etl = 
     open System
     open System.IO
-    open DbUtil
+    open GzDb.DbUtil
     open NLog
     open GmRptFiles
     open ExcelSchemas

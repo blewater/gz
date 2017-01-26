@@ -1,8 +1,9 @@
 ﻿open NLog
 open System
 open FSharp.Configuration
+open GzBalances.Portfolio
+open GzDb
 open DbImport
-open gzCpcLib.Task
 
 type Settings = AppSettings< "app.config" >
 let logger = LogManager.GetCurrentClassLogger()
@@ -30,6 +31,8 @@ let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 let main argv = 
 
     try
+        let stock = getStockPrices "VTI" 2
+
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
 
@@ -47,7 +50,7 @@ let main argv =
         use db = DbUtil.getOpenDb dbConnectionString
 
         // Update Funds from Yahoo Api
-        (new FundsUpdTask(isProd)).DoTask()
+        //(new FundsUpdTask(isProd)).DoTask()
 
         // Extract & Load Daily Everymatrix Report
         Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
