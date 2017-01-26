@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -684,6 +684,7 @@
     <Content Include="_app\common\footer.css" />
     <Content Include="_app\account\auth.css" />
     <Content Include="_app\common\basic.css" />
+    <Content Include="_app\common\asyncLoad.js" />
     <Content Include="_app\directives\gzAuthAccess.js" />
     <Content Include="_app\directives\gzCheckBox.html" />
     <Content Include="_app\directives\gzCheckBox.js" />

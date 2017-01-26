@@ -8,25 +8,40 @@
     <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
     <link href="/apple-touch-icon.png" rel="apple-touch-icon-precomposed" />
     <title>greenzorro</title>
-    <title>{{documentTitle}}</title>
     <base href="/" />
-
-    @Styles.Render("~/css/bootstrap")
+    @*@Styles.Render("~/css/bootstrap")
     @Styles.Render("~/css/fa")
     <link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,500,700,400italic,500italic,700italic&subset=latin,greek' rel='stylesheet' type='text/css'>
-    @Styles.Render("~/css/app")
+    @Styles.Render("~/css/app")*@
+    @Styles.Render("~/css/preloader")
 </head>
 <body ng-cloak ng-class="{'mobile-menu':mobileMenuExpanded}">
-    @*<div class="non-footer">*@
-        @Html.Partial("_Header")
-        @RenderBody()
-    @*</div>
-    <div class="footer">*@
-        @Html.Partial("_Footer")
-    @*</div>*@
+    @Html.Partial("_Header")
+    @RenderBody()
+    @Html.Partial("_Footer")
+
+    @*@Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/jquery")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}', 'vcRecaptchaApiLoaded')</script>", "https://www.google.com/recaptcha/api.js?render=explicit")
+    @Html.Raw(JSNLog.JavascriptLogging.Configure())
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/plugins")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/bootstrap")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/d3")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/angular")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/modules")
+    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/app")*@
+
+    @Scripts.Render("~/js/asyncLoad")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove>AsyncLoad.AddStyles('{0}')</script>", "https://fonts.googleapis.com/css?family=Fira+Sans:400,500,700,400italic,500italic,700italic&subset=latin,greek")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove>AsyncLoad.AddStyles('{0}')</script>", "~/css/bootstrap")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove>AsyncLoad.AddStyles('{0}')</script>", "~/css/fa")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove>AsyncLoad.AddStyles('{0}')</script>", "~/css/app")
+    <script type="text/javascript">AsyncLoad.LoadStyles()</script>
 
     @Scripts.Render("~/js/jquery")
-    <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz" type="text/javascript"></script>
+    <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz" type="text/javascript" defer></script>
     <script src="https://mpsnare.iesnare.com/snare.js" type="text/javascript"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places" type="text/javascript"></script>
     <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit" type="text/javascript" async defer></script>
