@@ -43,7 +43,7 @@ module DbGzTrx =
         db.GzTrxs.InsertOnSubmit(newGzTrxRow)
 
     /// Get the greenzorro used id by email
-    let getGzUserId (db : DbContext) (gmUserEmail : string) : int =
+    let getGzUserId (db : DbContext) (gmUserEmail : string) : int option =
         query {
             for user in db.AspNetUsers do
             where (user.Email = gmUserEmail)
@@ -52,9 +52,10 @@ module DbGzTrx =
         }
         |> (fun userId ->
             if userId = 0 then
-                failwithf "Everymatrix email %s not found in db: %s. Cannot continue..." gmUserEmail db.DataContext.Connection.DataSource
+                logger.Warn (sprintf "*** Everymatrix email %s not found in the AspNetUsers table of db: %s. Cannot award..." gmUserEmail db.DataContext.Connection.DataSource)
+                None
             else
-                userId
+                Some userId
         )
 
     /// Get the credited loss Percentage in human form % i.e. 50 from gzConfiguration
@@ -84,26 +85,27 @@ module DbGzTrx =
         let gmEmail = playerRevRpt.EmailAddress
         let gzUserId = getGzUserId db gmEmail
 
-        query { 
-            for trxRow in db.GzTrxs do
-                where (
-                    trxRow.YearMonthCtd = yyyyMm
-                    && trxRow.CustomerId = gzUserId
-                    && trxRow.GzTrxTypes.Code = int DbUtil.GzTransactionType.CreditedPlayingLoss
-                )
-                select trxRow
-                exactlyOneOrDefault
-        }
-        |> (fun trxRow ->
-            let creditLossPcnt = getCreditLossPcnt db 
-            let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
+        if gzUserId.IsSome then
+            query { 
+                for trxRow in db.GzTrxs do
+                    where (
+                        trxRow.YearMonthCtd = yyyyMm
+                        && trxRow.CustomerId = gzUserId.Value
+                        && trxRow.GzTrxTypes.Code = int DbUtil.GzTransactionType.CreditedPlayingLoss
+                    )
+                    select trxRow
+                    exactlyOneOrDefault
+            }
+            |> (fun trxRow ->
+                let creditLossPcnt = getCreditLossPcnt db 
+                let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
 
-            if isNull trxRow then
-                setDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId playerRevRpt
-            else 
-                updDbGzTrxRowValues playerLossToInvest creditLossPcnt playerRevRpt trxRow
-        )
-        db.DataContext.SubmitChanges()
+                if isNull trxRow then
+                    setDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId.Value playerRevRpt
+                else 
+                    updDbGzTrxRowValues playerLossToInvest creditLossPcnt playerRevRpt trxRow
+            )
+            db.DataContext.SubmitChanges()
 
     /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
     let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
