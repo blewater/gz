@@ -100,6 +100,10 @@ namespace gzWeb {
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
                 , "~/Scripts/angular-ui-datetime-picker/datetime-picker.min.js"
                 , "~/Scripts/jsnlog/logToServer.js"
+                , "~/Scripts/angular-appinsights/angular-appinsights.js"
+
+                , "~/_app/modules/customDirectives.js"
+                , "~/_app/modules/customFilters.js"
             ));
 
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
@@ -265,11 +269,9 @@ namespace gzWeb {
                                         , "~/_app/nsMessageService/nsMessageService.js"
             #endregion
 
-            #region Modules
-                , "~/_app/modules/customDirectives.js"
-                , "~/_app/modules/customFilters.js"
-                //, "~/_app/modules/styleInjector.js"
-            #endregion
+            //#region Bootstrap
+                                        , "~/_app/common/bootstrap.js"
+            //#endregion
                                 ));
 
             #endregion

@@ -35,6 +35,8 @@ var APP = (function () {
         , 'angular-appinsights'
     ]);
 
+    app.id = id;
+
     app.run([
         '$rootScope', '$location', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
         function ($rootScope, $location, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
@@ -115,10 +117,6 @@ var APP = (function () {
             });
         }
     ]);
-
-    //angular.element(document).ready(function () {
-    //    angular.bootstrap(document, [id]);
-    //});
 
     return app;
 })(APP);
