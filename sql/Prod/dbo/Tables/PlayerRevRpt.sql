@@ -1,32 +1,34 @@
 ﻿CREATE TABLE [dbo].[PlayerRevRpt] (
-    [ID]                                   INT           IDENTITY (1, 1) NOT NULL,
-    [User ID]                              INT           NOT NULL,
-    [Username]                             VARCHAR (256) NOT NULL,
-    [YearMonth]                            CHAR (6)      NOT NULL,
-    [YearMonthDay]                         CHAR (8)      NOT NULL,
-    [BegBalance]                           MONEY         CONSTRAINT [DF_PlayerRevRpt_BegBalance] DEFAULT ((0)) NOT NULL,
-    [EndBalance]                           MONEY         CONSTRAINT [DF_PlayerRevRpt_EndBalance] DEFAULT ((0)) NOT NULL,
-    [PlayerLoss]                           MONEY         CONSTRAINT [DF_PlayerRevRpt_PlayerLoss] DEFAULT ((0)) NOT NULL,
-    [Role]                                 VARCHAR (256) NULL,
-    [Player status]                        VARCHAR (256) NOT NULL,
-    [Block reason]                         VARCHAR (256) NULL,
-    [Email address]                        VARCHAR (256) NOT NULL,
-    [Last login]                           DATETIME      NULL,
-    [Accepts bonuses]                      BIT           CONSTRAINT [DF_PlayerRevRpt_Accepts bonuses] DEFAULT ((1)) NOT NULL,
-    [Total deposits amount]                MONEY         NOT NULL,
-    [Withdraws made]                       MONEY         CONSTRAINT [DF_PlayerRevRpt_Withdraws made] DEFAULT ((0)) NOT NULL,
-    [Last played date]                     DATE          NULL,
-    [Deposits made]                        MONEY         CONSTRAINT [DF_PlayerRevRpt_Deposits made] DEFAULT ((0)) NOT NULL,
-    [Currency]                             CHAR (3)      NOT NULL,
-    [Total bonuses accepted by the player] MONEY         CONSTRAINT [DF_PlayerRevRpt_Total bonuses accepted by the player] DEFAULT ((0)) NOT NULL,
-    [Net revenue]                          MONEY         NOT NULL,
-    [Gross revenue]                        MONEY         NOT NULL,
-    [NetLossInUSD]                         MONEY         NOT NULL,
-    [Real money balance]                   MONEY         NOT NULL,
-    [Processed]                            BIT           NOT NULL,
-    [CreatedOnUtc]                         DATETIME      NOT NULL,
-    [UpdatedOnUtc]                         DATETIME      NOT NULL,
-    CONSTRAINT [PK_PlayerRevRpt_ID] PRIMARY KEY NONCLUSTERED ([ID] ASC)
+    [Id]                                   INT              IDENTITY (1, 1) NOT NULL,
+    [User ID]                              INT              NOT NULL,
+    [Username]                             NVARCHAR (256)   NOT NULL,
+    [YearMonth]                            CHAR (6)         NOT NULL,
+    [YearMonthDay]                         CHAR (8)         NOT NULL,
+    [BegBalance]                           DECIMAL (29, 16) NULL,
+    [EndBalance]                           DECIMAL (29, 16) NULL,
+    [PlayerLoss]                           DECIMAL (29, 16) NULL,
+    [Role]                                 NVARCHAR (256)   NULL,
+    [Player status]                        NVARCHAR (256)   NULL,
+    [Block reason]                         NVARCHAR (256)   NULL,
+    [Email address]                        NVARCHAR (256)   NOT NULL,
+    [Last login]                           DATETIME         NULL,
+    [Accepts bonuses]                      BIT              NULL,
+    [Total deposits amount]                DECIMAL (29, 16) NULL,
+    [Withdraws made]                       DECIMAL (29, 16) NULL,
+    [Last played date]                     DATE             NULL,
+    [Deposits made]                        INT              NULL,
+    [Currency]                             CHAR (3)         NOT NULL,
+    [Total bonuses accepted by the player] DECIMAL (29, 16) NULL,
+    [Net revenue]                          DECIMAL (29, 16) NULL,
+    [Gross revenue]                        DECIMAL (29, 16) NULL,
+    [NetLossInUSD]                         DECIMAL (29, 16) NULL,
+    [Real money balance]                   DECIMAL (29, 16) NULL,
+    [Processed]                            INT              NOT NULL,
+    [CreatedOnUtc]                         DATETIME         NOT NULL,
+    [UpdatedOnUtc]                         DATETIME         NOT NULL,
+    [PendingWithdrawals]                   DECIMAL (29, 16) NULL,
+    [TotalWithdrawals]                     DECIMAL (29, 16) NULL,
+    CONSTRAINT [PK_dbo.PlayerRevRpt] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 
@@ -34,4 +36,18 @@
 
 
 
+
+
+
+
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_YM]
+    ON [dbo].[PlayerRevRpt]([YearMonth] ASC);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_UserId_YM]
+    ON [dbo].[PlayerRevRpt]([User ID] ASC, [YearMonth] ASC);
 

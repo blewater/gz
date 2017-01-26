@@ -21,17 +21,17 @@
     @Html.Partial("_Footer")
 
     @*@Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/jquery")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}', 'vcRecaptchaApiLoaded')</script>", "https://www.google.com/recaptcha/api.js?render=explicit")
-    @Html.Raw(JSNLog.JavascriptLogging.Configure())
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/plugins")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/bootstrap")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/d3")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/angular")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/modules")
-    @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/app")*@
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}', 'vcRecaptchaApiLoaded')</script>", "https://www.google.com/recaptcha/api.js?render=explicit")
+        @Html.Raw(JSNLog.JavascriptLogging.Configure())
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/plugins")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/bootstrap")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/d3")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/angular")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/modules")
+        @Scripts.RenderFormat("<script type=\"text/javascript\">AsyncLoad.LoadScripts('{0}')</script>", "~/js/app")*@
 
     @Scripts.Render("~/js/asyncLoad")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove>AsyncLoad.AddStyles('{0}')</script>", "https://fonts.googleapis.com/css?family=Fira+Sans:400,500,700,400italic,500italic,700italic&subset=latin,greek")
@@ -51,6 +51,17 @@
     @Scripts.Render("~/js/d3")
     @Scripts.Render("~/js/angular")
     @Scripts.Render("~/js/modules")
+    <script src="~/Scripts/angular-appinsights/angular-appinsights.js" type="text/javascript"></script>
+    <script type='text/javascript'>
+        var appInsights = window.appInsights || function (config) {
+            function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } }
+            var t = { config: config }, u = document, e = window, o = 'script', s = u.createElement(o), i, f; for (s.src = config.url || '//az416426.vo.msecnd.net/scripts/a/ai.0.js', u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ['Event', 'Exception', 'Metric', 'PageView', 'Trace', 'Ajax']; i.length;) r('track' + i.pop()); return r('setAuthenticatedUserContext'), r('clearAuthenticatedUserContext'), config.disableExceptionTracking || (i = 'onerror', r('_' + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o), s }), t
+        };
+        //({ instrumentationKey: '628931d5-f603-41ea-8210-3e8e54532b62' });
+
+        window.appInsights = appInsights;
+        //appInsights.trackPageView();
+    </script>
     @Scripts.Render("~/js/app")
 </body>
 </html>
