@@ -1081,6 +1081,7 @@
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Scripts\jsnlog\jsnlog.js.map" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
+    <Content Include="Views\Shared\_Preloader.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
