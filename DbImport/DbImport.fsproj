@@ -8,11 +8,11 @@
     <ProjectGuid>bd103410-e702-454c-ae68-17f50a0a4742</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>CpcDataServices</RootNamespace>
-    <AssemblyName>CpcDataServices</AssemblyName>
+    <AssemblyName>DbImport</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>CpcDataServices</Name>
+    <Name>DbImport</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -46,7 +46,7 @@
     <Tailcalls>false</Tailcalls>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\CpcDataServices.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\DbImport.XML</DocumentationFile>
     <OutputPath>bin\Production\</OutputPath>
   </PropertyGroup>
   <Choose>
@@ -64,8 +64,13 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="DateStr.fs" />
+    <Compile Include="ErrorHandling.fs" />
     <Compile Include="DbUtil.fs" />
     <Compile Include="CurrencyRates.fs" />
+    <Compile Include="GmRptFiles.fs" />
+    <Compile Include="ExcelSchemas.fs" />
+    <Compile Include="ExcelUtil.fs" />
     <Compile Include="ExcelEtl.fs" />
     <Content Include="packages.config" />
     <None Include="openexchangerates.json">
@@ -74,12 +79,10 @@
     <None Include="Custom Prod 20160930.xlsx" />
     <None Include="Balance Prod 20161001.xlsx" />
     <None Include="pendingwithdraw prod 201609.xlsx" />
+    <None Include="Scripts\load-references-production.fsx" />
+    <None Include="Scripts\load-project-production.fsx" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Chessie">
-      <HintPath>..\GmTrx\packages\Chessie.0.6.0\lib\net40\Chessie.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Excel">
       <HintPath>..\GmTrx\packages\ExcelProvider.0.8.0\lib\Excel.dll</HintPath>
       <Private>True</Private>

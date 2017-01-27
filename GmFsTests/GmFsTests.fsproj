@@ -113,10 +113,6 @@
       <HintPath>..\GmTrx\packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.WhoIs.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Chessie">
-      <HintPath>..\GmTrx\packages\Chessie.0.6.0\lib\net40\Chessie.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="FSharp.Configuration">
       <HintPath>..\GmTrx\packages\FSharp.Configuration.0.6.4\lib\net40\FSharp.Configuration.dll</HintPath>
       <Private>True</Private>

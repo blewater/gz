@@ -1,7 +1,7 @@
 ﻿open NLog
 open System
 open FSharp.Configuration
-open CpcDataServices
+open DbImport
 open gzCpcLib.Task
 
 type Settings = AppSettings< "app.config" >
@@ -33,6 +33,16 @@ let main argv =
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
 
+        logger.Info("Validating Gm excel rpt files")
+        
+        let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
+                                    |> GmRptFiles.getExcelFilenames
+                                    |> GmRptFiles.getExcelDtStr
+                                    |> GmRptFiles.getExcelDates 
+                                    |> GmRptFiles.areExcelFilenamesValid
+        if not rptFilesOkToProcess then
+            exit 1
+
         // Create a database context
         use db = DbUtil.getOpenDb dbConnectionString
 
@@ -40,10 +50,10 @@ let main argv =
         (new FundsUpdTask(isProd)).DoTask()
 
         // Update Currency Rates from open exchange api
-        let rates = CurrencyRates.updCurrencyRates currencyRatesUrl db
+        CurrencyRates.updCurrencyRates currencyRatesUrl db
 
         // Extract & Load Daily Everymatrix Report
-        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder rates
+        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
 
         logger.Info("----------------------------")
         logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
@@ -57,7 +67,6 @@ let main argv =
 (*****
 * Notes
 * http://stackoverflow.com/questions/22608584/how-to-project-transform-an-array-of-fileinfo-to-a-list-of-strings-with-fsharp/22608949#22608949
-* http://theburningmonk.com/2011/09/fsharp-pipe-forward-and-pipe-backward/
 * http://stackoverflow.com/questions/14657954/using-nlog-with-f-interactive-in-visual-studio-need-documentation
 * http://www.c-sharpcorner.com/UploadFile/mgold/writing-equivalent-linq-expressions-in-fsharp/
 * https://msdn.microsoft.com/visualfsharpdocs/conceptual/walkthrough-accessing-a-sql-database-by-using-type-providers-%5bfsharp%5d

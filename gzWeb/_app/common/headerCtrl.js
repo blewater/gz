@@ -124,6 +124,7 @@
             loadAuthData();
             $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);
             $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
+            $scope.revealed = true;
         });
 
         $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);

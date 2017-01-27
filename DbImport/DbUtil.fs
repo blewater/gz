@@ -1,9 +1,10 @@
-﻿namespace CpcDataServices
+﻿namespace DbImport
 
 open NLog
 open FSharp.Data.TypeProviders
 
 module DbUtil =
+    open System
 
     // Use for compile time memory schema representation
     [<Literal>]
@@ -12,9 +13,23 @@ module DbUtil =
     
     let logger = LogManager.GetCurrentClassLogger()
 
+//-- Types
+
     type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
+    type DbPlayerRevRptRow = DbSchema.ServiceTypes.PlayerRevRpt
+    type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
+    type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
 
+
+    /// PlayerRevRpt update status
+    type GmRptProcessStatus =
+        | CustomRptUpd = 1
+        | BegBalanceRptUpd = 2
+        | EndBalanceRptUpd = 3
+        | WithdrawsRptUpd = 4
+        | GainLossRptUpd = 5
+            
     type GzTransactionType =
         /// <summary>
         /// 
