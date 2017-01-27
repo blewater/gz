@@ -3,7 +3,6 @@
 module DbGzTrx =
     open System
     open NLog
-    open GzDb
     open GzDb.DbUtil
 
     let logger = LogManager.GetCurrentClassLogger()
@@ -37,7 +36,7 @@ module DbGzTrx =
                 CustomerId=gzUserId,
                 YearMonthCtd = yearMonth,
                 CreatedOnUTC = DateTime.UtcNow,
-                TypeId = int DbUtil.GzTransactionType.CreditedPlayingLoss)
+                TypeId = int GzTransactionType.CreditedPlayingLoss)
 
         updDbGzTrxRowValues amount creditPcntApplied playerRevRpt newGzTrxRow
         db.GzTrxs.InsertOnSubmit(newGzTrxRow)
@@ -91,7 +90,7 @@ module DbGzTrx =
                     where (
                         trxRow.YearMonthCtd = yyyyMm
                         && trxRow.CustomerId = gzUserId.Value
-                        && trxRow.GzTrxTypes.Code = int DbUtil.GzTransactionType.CreditedPlayingLoss
+                        && trxRow.GzTrxTypes.Code = int GzTransactionType.CreditedPlayingLoss
                     )
                     select trxRow
                     exactlyOneOrDefault

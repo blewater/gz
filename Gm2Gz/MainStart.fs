@@ -1,7 +1,7 @@
 ﻿open NLog
 open System
 open FSharp.Configuration
-open GzBalances.Portfolio
+open GzBalances
 open GzDb
 open DbImport
 
@@ -31,7 +31,9 @@ let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 let main argv = 
 
     try
-        let stock = getStockPrices "VTI" 2
+        use db = DbUtil.getOpenDb dbConnectionString
+
+        let stock = Portfolio.setDbFundsPrices db
 
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
@@ -68,8 +70,7 @@ let main argv =
 * Notes
 * http://stackoverflow.com/questions/22608584/how-to-project-transform-an-array-of-fileinfo-to-a-list-of-strings-with-fsharp/22608949#22608949
 * http://stackoverflow.com/questions/14657954/using-nlog-with-f-interactive-in-visual-studio-need-documentation
-* http://www.c-sharpcorner.com/UploadFile/mgold/writing-equivalent-linq-expressions-in-fsharp/
-* https://msdn.microsoft.com/visualfsharpdocs/conceptual/walkthrough-accessing-a-sql-database-by-using-type-providers-%5bfsharp%5d
+* https://msdn.microsoft.com/en-us/microsoft-r/hh225374 walkthrough of sql data provider
 * http://stackoverflow.com/questions/13768757/how-is-one-supposed-to-use-the-f-sqldataconnection-typeprovider-with-an-app-con
 * http://stackoverflow.com/questions/13107676/f-type-provider-for-sql-in-a-class
 * http://stackoverflow.com/questions/32312503/f-typeproviders-how-to-change-database?noredirect=1&lq=1

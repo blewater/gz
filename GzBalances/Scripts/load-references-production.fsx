@@ -3,3 +3,5 @@
 #r "System.Core.dll"
 #r "System.dll"
 #r "System.Numerics.dll"
+#r "../../GzDb/bin/Production/GzDb.dll"
+#r "System.Data.Linq.dll"
