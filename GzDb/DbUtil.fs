@@ -21,7 +21,7 @@ module DbUtil =
     type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
     type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
     type DbFunds = DbSchema.ServiceTypes.Funds
-    type DbPortFunds = DbSchema.ServiceTypes.PortFunds
+    type DbPortfolioFunds = DbSchema.ServiceTypes.PortFunds
 
     /// PlayerRevRpt update status
     type GmRptProcessStatus =

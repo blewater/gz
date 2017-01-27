@@ -33,7 +33,7 @@ let main argv =
     try
         use db = DbUtil.getOpenDb dbConnectionString
 
-        let stock = Portfolio.setDbFundsPrices db
+        let stock = Portfolio.getPortfolioPrices db
 
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
