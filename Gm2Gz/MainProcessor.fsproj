@@ -80,6 +80,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="NLog.xsd" />
+    <None Include="Scripts\load-references-production.fsx" />
+    <None Include="Scripts\load-project-production.fsx" />
+    <None Include="Script.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
