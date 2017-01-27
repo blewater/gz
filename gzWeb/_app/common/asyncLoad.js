@@ -26,9 +26,6 @@ var AsyncLoad = (function () {
                 loadStyles(styles);
             });
         }
-        else {
-            loadScripts();
-        }
     };
     asyncLoad.AddStyles = function (src) {
         styles.push(src);
@@ -44,8 +41,8 @@ var AsyncLoad = (function () {
         s.src = src;
         //a = document.createAttribute("async");
         //s.setAttributeNode(a);
-        d = document.createAttribute("defer");
-        s.setAttributeNode(d);
+        //d = document.createAttribute("defer");
+        //s.setAttributeNode(d);
         //if (defer) {
         //    s.setAttribute(document.createAttribute("async"));
         //    s.setAttribute(document.createAttribute("defer"));
@@ -54,7 +51,6 @@ var AsyncLoad = (function () {
         s.onload = s.onreadystatechange = function () {
             //console.log( this.readyState ); //uncomment this line to see which ready states are called.
             if (!r && (!this.readyState || this.readyState == 'complete')) {
-                console.log(src);
                 r = true;
                 if (typeof callback === 'function')
                     callback();
@@ -74,10 +70,6 @@ var AsyncLoad = (function () {
                 loadScripts(scripts);
             });
         }
-        else {
-            //hidePreloader();
-            removeUnnecessaryScripts("data-remove");
-        }
     };
     asyncLoad.AddScripts = function (src, callback) {
         scripts.push({ src: src, callback: callback });
@@ -85,14 +77,6 @@ var AsyncLoad = (function () {
     // #endregion
 
     // #region Common
-    function hidePreloader() {
-        var preloader = document.getElementById("preloader");
-        preloader.className = "die";
-        setTimeout(function () {
-            var body = document.getElementsByTagName("BODY")[0];
-            body.removeChild(preloader);
-        }, 400);
-    };
     function removeUnnecessaryScripts(attr) {
         var allScripts = document.getElementsByTagName("SCRIPT");
         var scriptsToRemove = [], i;
@@ -108,6 +92,8 @@ var AsyncLoad = (function () {
     };
     asyncLoad.Load = function () {
         loadStyles();
+        loadScripts();
+        removeUnnecessaryScripts("data-remove");
     };
     // #endregion
 
