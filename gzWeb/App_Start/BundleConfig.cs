@@ -24,9 +24,11 @@ namespace gzWeb {
                 "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
             ));
 
+            bundles.Add(new StyleBundle("~/css/preloader").Include(
+                "~/_app/common/preloader.css"
+            ));
             bundles.Add(new StyleBundle("~/css/app").Include(
                 "~/_app/common/basic.css"
-                , "~/_app/common/preloader.css"
                 , "~/_app/common/header.css"
                 , "~/_app/common/footer.css"
                 , "~/_app/guest/guest.css"
@@ -41,6 +43,10 @@ namespace gzWeb {
             #endregion
 
             #region Scripts
+            bundles.Add(new ScriptBundle("~/js/asyncLoad").Include(
+                "~/_app/common/asyncLoad.js"
+            ));
+
             bundles.Add(new ScriptBundle("~/js/jquery").Include(
                 "~/Scripts/jquery/jquery-{version}.js"
             ));
@@ -94,6 +100,10 @@ namespace gzWeb {
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
                 , "~/Scripts/angular-ui-datetime-picker/datetime-picker.min.js"
                 , "~/Scripts/jsnlog/logToServer.js"
+                , "~/Scripts/angular-appinsights/angular-appinsights.js"
+
+                , "~/_app/modules/customDirectives.js"
+                , "~/_app/modules/customFilters.js"
             ));
 
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
@@ -259,11 +269,9 @@ namespace gzWeb {
                                         , "~/_app/nsMessageService/nsMessageService.js"
             #endregion
 
-            #region Modules
-                , "~/_app/modules/customDirectives.js"
-                , "~/_app/modules/customFilters.js"
-                //, "~/_app/modules/styleInjector.js"
-            #endregion
+            //#region Bootstrap
+                                        , "~/_app/common/bootstrap.js"
+            //#endregion
                                 ));
 
             #endregion

@@ -32,11 +32,14 @@ var APP = (function () {
         , 'isoCurrency'
         , 'logToServer'
         , 'ui.bootstrap.datetimepicker'
+        , 'angular-appinsights'
     ]);
 
+    app.id = id;
+
     app.run([
-        '$rootScope', '$location', '$window', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
-        function ($rootScope, $location, $window, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
+        '$rootScope', '$location', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
+        function ($rootScope, $location, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
 
             var defaultBeforeSend = function(xhr, json) {
                 var authData = localStorageService.get(constants.storageKeys.authData);
@@ -85,14 +88,13 @@ var APP = (function () {
                 function onRouteChangeSuccess() {
                     $timeout(function () {
                         $rootScope.loading = false;
-                        $rootScope.documentTitle = constants.title;
+                        var title = constants.title;
                         if ($route.current.$$route) {
-                            if ($route.current.$$route.title) {
-                                $rootScope.title = $route.current.$$route.title;
-                                $rootScope.documentTitle += " - " + $rootScope.title;
-                            }
+                            if ($route.current.$$route.title)
+                                title += " - " + $route.current.$$route.title;
                             setRouteData($route.current.$$route);
                         }
+                        document.title = title;
                     });
                 };
                 onRouteChangeSuccess();
@@ -103,7 +105,7 @@ var APP = (function () {
                 chat.show();
                 $rootScope.loading = false;
                 $rootScope.initialized = true;
-                hidePreloader();
+                //hidePreloader();
 
                 if (!auth.authorize($route.current.$$route.roles)) {
                     nav.setRequestUrl($location.$$path);
@@ -115,10 +117,6 @@ var APP = (function () {
             });
         }
     ]);
-
-    //angular.element(document).ready(function () {
-    //    angular.bootstrap(document, [id]);
-    //});
 
     return app;
 })(APP);

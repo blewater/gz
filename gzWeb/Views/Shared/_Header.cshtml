@@ -101,7 +101,7 @@
                 </button>
             </div>
 
-            <div class="visible-lg navbar-desktop-menu">
+            <div class="visible-lg navbar-desktop-menu" ng-class="{'revealed': revealed}" ng-init="revealed = false;">
                 <div ng-include src="'navbar-menu.html'"></div>
             </div>
         </div>

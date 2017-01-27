@@ -4,35 +4,13 @@ open FsUnit
 open OpenPop.Pop3
 open System.IO
 open ActiveUp.Net.Mail
-open Chessie.ErrorHandling
 open FSharp.Configuration
 
 type Settings = AppSettings< "app.config" >
-let tryF f msg =
-    try f() |> ok with ex -> fail (msg ex)
-
-type DomainMessage = 
-    | DbUpdateFailure of Exception
-    | ExcelFileAccessFailure of Exception
-    | ConfigurationFailure of Exception
 
 [<TestFixture; 
     Description("Test gmail inbox reading")>]
 type Test() =
-
-    let dbInsert (connString : string) =
-        ok connString
-
-    [<Test; Description("Chessie Connection String")>]
-    member x.ConnResInjection () =
-        let csResult = tryF (fun () -> Settings.ConnectionStrings.GzDevDb) ConfigurationFailure
-        let j = csResult >>= fun cs -> dbInsert cs
-        j
-
-    [<Test; Description("Chessie Connection String")>]
-    member x.ConnRes () =
-        let csResult = tryF (fun () -> Settings.ConnectionStrings.GzDevDb) ConfigurationFailure
-        csResult
 
     [<Test; Description("Read message(s) from hostmaster@greenzorro.com")>]
     member x.ReadImapGmail () =
