@@ -9,7 +9,8 @@ var AsyncLoad = (function () {
         var cb = function () {
             var l = document.createElement('link'); l.rel = 'stylesheet';
             l.href = src;
-            var h = document.getElementsByTagName('head')[0]; h.appendChild(l, h);
+            var h = document.getElementsByTagName('BODY')[0];
+            h.appendChild(l, h);
             if (typeof callback === 'function') {
                 callback();
             }
