@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -725,12 +725,15 @@
     <Content Include="Content\Images\gz_logo_sm.png" />
     <Content Include="Content\Styles\font-awesome\font-awesome.css" />
     <Content Include="Content\Styles\font-awesome\font-awesome.min.css" />
+    <Content Include="Scripts\angular-appinsights\angular-appinsights.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
+    <Content Include="_app\common\bootstrap.js" />
     <Content Include="_app\common\footer.css" />
     <Content Include="_app\account\auth.css" />
     <Content Include="_app\common\basic.css" />
+    <Content Include="_app\common\asyncLoad.js" />
     <Content Include="_app\directives\gzAuthAccess.js" />
     <Content Include="_app\directives\gzCheckBox.html" />
     <Content Include="_app\directives\gzCheckBox.js" />
@@ -1078,6 +1081,7 @@
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Scripts\jsnlog\jsnlog.js.map" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
+    <Content Include="Views\Shared\_Preloader.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
