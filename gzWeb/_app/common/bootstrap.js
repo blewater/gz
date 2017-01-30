@@ -10,8 +10,20 @@
         }, 1000);
     };
 
+    function showContent() {
+        var content = document.getElementById("body-content");
+        content.className = "ok";
+
+        var loading = document.getElementById("loading");
+        loading.className = "ok";
+
+        var headerNav = document.getElementById("header-nav");
+        headerNav.className += " navbar-fixed-top";
+    };
+
     angular.element(document).ready(function () {
         angular.bootstrap(document, [APP.id]);
+        showContent();
         hidePreloader();
     });
 })();

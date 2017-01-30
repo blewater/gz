@@ -1,24 +1,26 @@
 var AsyncLoad = (function () {
     'use strict';
 
-    var styles = [], scripts = [];
+    var styles = [], scripts = [], total = 0;
     var asyncLoad = {};
 
     // #region Styles
     function loadStyle(src, callback) {
         var cb = function () {
-            var l = document.createElement('link'); l.rel = 'stylesheet';
+            var l = document.createElement('link');
+            l.rel = 'stylesheet';
             l.href = src;
             var h = document.getElementsByTagName('BODY')[0];
             h.appendChild(l, h);
-            if (typeof callback === 'function') {
+            setPercent();
+            if (typeof callback === 'function')
                 callback();
-            }
         };
-        var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-            webkitRequestAnimationFrame || msRequestAnimationFrame;
-        if (raf) raf(cb);
-        else window.addEventListener('load', cb);
+        var raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame || msRequestAnimationFrame;
+        if (raf)
+            raf(cb);
+        else
+            window.addEventListener('load', cb);
     };
     function loadStyles() {
         if (styles.length > 0) {
@@ -53,6 +55,7 @@ var AsyncLoad = (function () {
             //console.log( this.readyState ); //uncomment this line to see which ready states are called.
             if (!r && (!this.readyState || this.readyState == 'complete')) {
                 r = true;
+                setPercent();
                 if (typeof callback === 'function')
                     callback();
             }
@@ -78,6 +81,16 @@ var AsyncLoad = (function () {
     // #endregion
 
     // #region Common
+    function getCount() {
+        return styles.length + scripts.length;
+    };
+    function setPercent() {
+        var count = getCount();
+        var percent = Math.floor(((total - count) / total) * 100);
+        var element = document.getElementById("loading-percentage");
+        element.innerHTML = '';
+        element.appendChild(document.createTextNode(percent + " %"));
+    };
     function removeUnnecessaryScripts(attr) {
         var allScripts = document.getElementsByTagName("SCRIPT");
         var scriptsToRemove = [], i;
@@ -92,6 +105,7 @@ var AsyncLoad = (function () {
         }
     };
     asyncLoad.Load = function () {
+        total = getCount();
         loadStyles();
         loadScripts();
         removeUnnecessaryScripts("data-remove");
