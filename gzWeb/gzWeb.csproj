@@ -729,10 +729,12 @@
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
+    <Content Include="_app\common\appInsightsProdCfg.js" />
     <Content Include="_app\common\asyncLoad.min.js">
       <DependentUpon>asyncLoad.js</DependentUpon>
     </Content>
     <Content Include="_app\common\bootstrap.js" />
+    <Content Include="_app\common\appInsightsDevCfg.js" />
     <Content Include="_app\common\footer.css" />
     <Content Include="_app\account\auth.css" />
     <Content Include="_app\common\basic.css" />

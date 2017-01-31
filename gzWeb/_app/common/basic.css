@@ -42,13 +42,17 @@ body.mobile-menu {
     display: none !important;
 }
 
-#body-content {
+/*#body-content {
+    display: none;
+    visibility: hidden;
     position: absolute;
     top: 100%;
-}
+}*/
 #body-content.ok {
-    position: static;
-    top: auto;
+    display: block;
+    visibility: visible;
+    /*position: static;
+    top: auto;*/
 }
 
 

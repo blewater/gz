@@ -21,9 +21,17 @@
         headerNav.className += " navbar-fixed-top";
     };
 
+    function loadWebFonts() {
+        WebFont.load({
+            google: {
+                families: ['Fira Sans']
+            }
+        });
+    }
+
     angular.element(document).ready(function () {
         angular.bootstrap(document, [APP.id]);
-        showContent();
         hidePreloader();
+        showContent();
     });
 })();
