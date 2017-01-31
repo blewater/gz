@@ -87,6 +87,12 @@ module Portfolio =
                   yield yQuote }
         |> Seq.take count |> Seq.rev
 
+    let setDbPortfolioPrices(db : DbContext)(tradingDay : DateTime) =
+       query {
+           for row in db.PortfolioPrices do
+           where (row.YearMonthDay = tradingDay.to)
+       } 
+
 
     /// 1. Read The portfolio funds from Db
     /// 2. Ask yahoo their closing prices
