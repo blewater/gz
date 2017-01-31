@@ -22,6 +22,10 @@ module DbUtil =
     type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
     type DbFunds = DbSchema.ServiceTypes.Funds
     type DbPortfolioFunds = DbSchema.ServiceTypes.PortFunds
+    type DbPortfolioPrices = DbSchema.ServiceTypes.PortfolioPrices
+    type DbCustPortfolioShares = DbSchema.ServiceTypes.CustPortfoliosShares
+    type DbInvBalances = DbSchema.ServiceTypes.InvBalances
+    type DbCustoPortfolios = DbSchema.ServiceTypes.CustPortfolios
 
     /// PlayerRevRpt update status
     type GmRptProcessStatus =
