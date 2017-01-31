@@ -10,7 +10,7 @@ var AsyncLoad = (function () {
             var l = document.createElement('link');
             l.rel = 'stylesheet';
             l.href = src;
-            var h = document.getElementsByTagName('BODY')[0];
+            var h = document.getElementsByTagName('HEAD')[0];
             h.appendChild(l, h);
             setPercent();
             if (typeof callback === 'function')

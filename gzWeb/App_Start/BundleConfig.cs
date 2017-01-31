@@ -11,23 +11,27 @@ namespace gzWeb {
             bundles.UseCdn = true;
 
             #region Styles
-            var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
-            bundles.Add(new StyleBundle("~/css/bootstrap", bootstrapCdnPath)
-                .Include(
-                    "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
-                ).Include(
-                    "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
-                ));
+            //var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
+            //bundles.Add(new StyleBundle("~/css/bootstrap", bootstrapCdnPath)
+            //    .Include(
+            //        "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
+            //    ).Include(
+            //        "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
+            //    ));
 
-            var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
-            bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
-                "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
-            ));
+            //var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
+            //bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
+            //    "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
+            //));
 
-            bundles.Add(new StyleBundle("~/css/preloader").Include(
-                "~/_app/common/preloader.css"
-            ));
+            //bundles.Add(new StyleBundle("~/css/preloader").Include(
+            //    "~/_app/common/preloader.css"
+            //));
+
             bundles.Add(new StyleBundle("~/css/app").Include(
+                "~/Content/Styles/bootstrap/bootstrap.min.css", new CssRewriteUrlTransform()).Include(
+                "~/Content/Styles/bootstrap/bootstrap-theme.min.css", new CssRewriteUrlTransform()).Include(
+                "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()).Include(
                 "~/_app/common/basic.css"
                 , "~/_app/common/header.css"
                 , "~/_app/common/footer.css"
@@ -110,6 +114,9 @@ namespace gzWeb {
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
             var everyMatrixStage = !string.IsNullOrEmpty(everyMatrixStageSetting) && Convert.ToBoolean(everyMatrixStageSetting);
 
+            var appInsightsProductionSetting = ConfigurationManager.AppSettings["appInsightsProd"];
+            var appInsightsProduction = !string.IsNullOrEmpty(appInsightsProductionSetting) && Convert.ToBoolean(appInsightsProductionSetting);
+
             bundles.Add(new ScriptBundle("~/js/app")
                                 .Include("~/_app/common/app.js")
                                 .Include(
@@ -117,15 +124,14 @@ namespace gzWeb {
                                         "~/_app/common/global.js"
                                         , "~/_app/common/config.js"
                                         , "~/_app/common/constants.js"
+                                        , appInsightsProduction ? "~/_app/common/appInsightsProdCfg.js" : "~/_app/common/appInsightsDevCfg.js"
                                         , "~/_app/common/authCtrl.js"
                                         , "~/_app/common/headerCtrl.js"
                                         , "~/_app/common/footerCtrl.js"
             #endregion
 
             #region EveryMatrix
-                                        , everyMatrixStage
-                                            ? "~/_app/everymatrix/emConCfg-stage.js"
-                                            : "~/_app/everymatrix/emConCfg.js"
+                                        , everyMatrixStage ? "~/_app/everymatrix/emConCfg-stage.js" : "~/_app/everymatrix/emConCfg.js"
                                         , "~/_app/everymatrix/emWamp.js"
                                         , "~/_app/everymatrix/emCasino.js"
                                         , "~/_app/everymatrix/emBanking.js"
