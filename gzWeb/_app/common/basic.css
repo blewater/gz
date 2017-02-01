@@ -38,6 +38,24 @@ body.mobile-menu {
 }*/
 
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+}
+
+/*#body-content {
+    display: none;
+    visibility: hidden;
+    position: absolute;
+    top: 100%;
+}*/
+#body-content.ok {
+    display: block;
+    visibility: visible;
+    /*position: static;
+    top: auto;*/
+}
+
+
 .content-wrap {
     position: relative;
     height: 100%;
@@ -130,7 +148,7 @@ a { text-decoration:none; }
     height: auto;
 }
 
-.loading {
+#loading {
     position: fixed;
     min-height: 100%;
     width: 100%;
@@ -140,6 +158,10 @@ a { text-decoration:none; }
     z-index: 10000000;
     background-color: transparent;
     background-color: rgba(255, 255, 255, 0.6);
+    display: none;
+}
+#loading.ok {
+    display: block;
 }
 
 
