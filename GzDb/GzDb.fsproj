@@ -63,6 +63,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="DateStr.fs" />
     <Compile Include="DbUtil.fs" />
     <Content Include="packages.config" />
     <Compile Include="CurrencyRates.fs" />
@@ -87,6 +88,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <Import Project="..\Gm2Gz\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets" Condition="Exists('..\Gm2Gz\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" />

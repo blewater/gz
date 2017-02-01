@@ -1,10 +1,10 @@
 ﻿namespace GzDb
 
-open NLog
-open FSharp.Data.TypeProviders
-
 module DbUtil =
+    open NLog
+    open FSharp.Data.TypeProviders
     open System
+
 
     // Use for compile time memory schema representation
     [<Literal>]
@@ -17,7 +17,6 @@ module DbUtil =
 
     type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
-    type DbPlayerRevRptRow = DbSchema.ServiceTypes.PlayerRevRpt
     type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
     type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
     type DbFunds = DbSchema.ServiceTypes.Funds
@@ -113,3 +112,18 @@ module DbUtil =
         //db.DataContext.Log <- System.Console.Out
         db.Connection.Open()
         db
+
+    /// Start a Db Transaction
+    let private startDbTransaction (db : DbContext) = 
+        let transaction = db.Connection.BeginTransaction()
+        db.DataContext.Transaction <- transaction
+        transaction
+
+    /// Commit a transaction
+    let private commitTransaction (transaction : Data.Common.DbTransaction) = 
+            // ********* Commit once per excel File
+            transaction.Commit()
+
+    let private handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
+        transaction.Rollback()
+        logger.Fatal(ex, "Runtime Exception at main")

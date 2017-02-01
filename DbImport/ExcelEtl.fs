@@ -164,7 +164,7 @@ module DbPlayerRevRpt =
     let private updDbRowWithdrawalsValues 
                     (withdrawalType : WithdrawalType) 
                     (withdrawalsExcelRow : WithdrawalsExcelSchema.Row) 
-                    (playerRow : DbPlayerRevRptRow) = 
+                    (playerRow : DbPlayerRevRpt) = 
 
         let dbWithdrawalAmount = playerRow.PendingWithdrawals.Value
         if withdrawalType = Pending then
@@ -180,7 +180,7 @@ module DbPlayerRevRpt =
     /// Update begining balance amount of the selected month
     let private updDbRowBegBalanceValues 
             (begBalanceExcelRow : BalanceExcelSchema.Row) 
-            (playerRow : DbPlayerRevRptRow) = 
+            (playerRow : DbPlayerRevRpt) = 
 
         playerRow.BegBalance <- begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
@@ -189,7 +189,7 @@ module DbPlayerRevRpt =
     
     /// Update ending balance amount of the selected month
     let private updDbRowEndBalanceValues 
-                (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRptRow) = 
+                (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRpt) = 
 
         // Zero out balance amounts, playerloss
         playerRow.EndBalance <- endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
@@ -201,7 +201,7 @@ module DbPlayerRevRpt =
     let private setDbRowCustomValues 
             (yearMonthDay : string) 
             (customExcelRow : CustomExcelSchema.Row) 
-            (playerRow : DbPlayerRevRptRow) = 
+            (playerRow : DbPlayerRevRpt) = 
 
         playerRow.Username <- customExcelRow.Username
         if not <| isNull customExcelRow.Role then playerRow.Role <- customExcelRow.Role.ToString()
@@ -237,7 +237,7 @@ module DbPlayerRevRpt =
             (excelRow : CustomExcelSchema.Row) = 
 
         let newPlayerRow = 
-            new DbPlayerRevRptRow(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
+            new DbPlayerRevRpt(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
         setDbRowCustomValues yearMonthDay excelRow newPlayerRow
         db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
 
@@ -314,6 +314,7 @@ module DbPlayerRevRpt =
 module WithdrawalRpt2Db =
     open System
     open NLog
+    open GzDb
     open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
@@ -481,7 +482,6 @@ module CustomRpt2Db =
             reraise()
 
 module Etl = 
-    open System
     open System.IO
     open GzDb.DbUtil
     open NLog
@@ -492,21 +492,6 @@ module Etl =
     open WithdrawalRpt2Db
 
     let logger = LogManager.GetCurrentClassLogger()
-
-    /// Start a Db Transaction
-    let private startDbTransaction (db : DbContext) = 
-        let transaction = db.Connection.BeginTransaction()
-        db.DataContext.Transaction <- transaction
-        transaction
-
-    /// Commit a transaction
-    let private commitTransaction (transaction : Data.Common.DbTransaction) = 
-            // ********* Commit once per excel File
-            transaction.Commit()
-
-    let private handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
-        transaction.Rollback()
-        logger.Fatal(ex, "Runtime Exception at main")
 
     /// Move processed files to out folder except endBalanceFile which is the next month's begBalanceFile
     let private moveRptsToOutFolder 
