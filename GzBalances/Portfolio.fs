@@ -4,6 +4,7 @@ module Portfolio =
 
     open System
     open System.Net
+    open GzDb
     open GzDb.DbUtil
 
     //type Risk = Low | Medium | High
@@ -61,7 +62,6 @@ module Portfolio =
         Price : float;
         TradedOn : DateTime;
     }
-    //type PortfolioFunds = PortfolioFund list
 
     // URL of a service that generates price data
     let url = "http://ichart.finance.yahoo.com/table.csv?s="
@@ -87,12 +87,38 @@ module Portfolio =
                   yield yQuote }
         |> Seq.take count |> Seq.rev
 
-    let setDbPortfolioPrices(db : DbContext)(tradingDay : DateTime) =
-       query {
-           for row in db.PortfolioPrices do
-           where (row.YearMonthDay = tradingDay.to)
-       } 
+    /// insert a new portfolio price for a trading day and price
+    let private insDbNewRowPortfolioPrice (db : DbContext)(portfolioShare : PortfolioShare) =
+        let newPortfolioPriceRow = new DbPortfolioPrices(
+                                        PortfolioId = portfolioShare.PortfolioId,
+                                        YearMonthDay = portfolioShare.TradedOn.ToYyyyMmDd,
+                                        Price = float32 portfolioShare.Price
+                                    )
 
+        db.PortfolioPrices.InsertOnSubmit(newPortfolioPriceRow)
+
+    /// De-construct the seq of portfolio shares to get the trading day in yyyyMMdd format
+    let getTradingDay (portfolioShareSeq : PortfolioShare seq) : string= 
+        let {PortfolioId = _; Price = _; TradedOn = TradedOn} = portfolioShareSeq |> (Seq.head)
+        TradedOn.ToYyyyMmDd
+
+    /// Insert the portofolio prices for a trading day
+    let insDbPortfolioPrices(db : DbContext)(portfolioShareSeq : PortfolioShare seq) : unit =
+
+        let portfolioPriceList  = 
+            query {
+                for row in db.PortfolioPrices do
+                where (row.YearMonthDay = (portfolioShareSeq |> getTradingDay))
+                select row
+            } 
+            |> Seq.toList
+
+        if portfolioPriceList.Length = 0 then
+
+            portfolioShareSeq |> Seq.iter (fun (portfolioShare : PortfolioShare) -> 
+                (db, portfolioShare) ||> insDbNewRowPortfolioPrice
+                db.DataContext.SubmitChanges()
+            )
 
     /// 1. Read The portfolio funds from Db
     /// 2. Ask yahoo their closing prices
@@ -125,3 +151,11 @@ module Portfolio =
             )
 //        gSeq |> Seq.iter(fun i -> printfn "%A" i)
         gSeq
+
+
+    // Read from GzTrx
+    // Read from CustPortfolioShare
+    // Calc shares save ->
+    //    InvBalances
+    //    CustPortfolioShare
+    //    CustPortfolios

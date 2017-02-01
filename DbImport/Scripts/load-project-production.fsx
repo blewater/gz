@@ -2,7 +2,6 @@
 #I __SOURCE_DIRECTORY__
 #load "load-references-production.fsx"
 #load "../AssemblyInfo.fs"
-      "../DateStr.fs"
       "../ErrorHandling.fs"
       "../GmRptFiles.fs"
       "../ExcelSchemas.fs"

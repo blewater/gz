@@ -1,4 +1,4 @@
-﻿namespace DbImport
+﻿namespace GzDb
 
 [<AutoOpen>]
 module DateStr =

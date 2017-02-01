@@ -5,6 +5,7 @@ module GmRptFiles =
     open System.IO
     open ErrorHandling
     open System.Text.RegularExpressions
+    open GzDb
     
     type InRptFolder = { isProd : bool; folderName : string }
     type RptFilenames = { customFilename : string; withdrawalFilename : string; begBalanceFilename : string; endBalanceFilename : string }
