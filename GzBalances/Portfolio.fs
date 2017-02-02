@@ -9,26 +9,19 @@ module Portfolio =
 
     type Risk = Low | Medium | High
 
+    type PortfolioId = int
+
     type PortfolioRisk = {
-        Id : int;
+        PortfolioId : PortfolioId;
         Risk : Risk
     }
 
-    let lowRiskPortfolioId = 1
-    let mediumRiskPortfolioId = 3
-    let highRiskPortfolioId = 5
-
-    let getPortfolioRiskById (portfolioId : int) : Risk =
-        match portfolioId with
-        | lowRiskPortfolioId -> Low
-        | mediumRiskPortfolioId -> Medium
-        | highRiskPortfolioId -> High
-        //| _ -> invalidArg "Portfolio Id" (sprintf "Unknown portfolio id: %d" portfolioId)
-
-    type Portfolio = { 
-        ClosingPrice : float32;
-        Risk : PortfolioRisk;
-    }
+    [<Literal>]
+    let LowRiskPortfolioId = 1
+    [<Literal>]
+    let MediumRiskPortfolioId = 3
+    [<Literal>]
+    let HighRiskPortfolioId = 5
 
     type CustomerPortfolioShares = {
         SharesLowRisk : Decimal;
@@ -38,7 +31,7 @@ module Portfolio =
 
     type InvBalance = {
         CustomerPortfolio : CustomerPortfolioShares;
-        PortfolioRisk : PortfolioRisk;
+        PortfolioId : PortfolioId;
         YearMonth : string;
         Balance : Decimal;
         LastUpdated : DateTime;
@@ -47,7 +40,6 @@ module Portfolio =
     type Vintages = InvBalance list
 
     type FundQuote = { Symbol : string; TradedOn : DateTime; ClosingPrice : float }
-    type PortfolioId = int
     type PortfolioWeight = float32
     type PortfolioFundRecord = {PortfolioId : PortfolioId; PortfolioWeight : PortfolioWeight; Fund : FundQuote}
     type PortfolioSharePrice = {
@@ -55,22 +47,30 @@ module Portfolio =
         Price : float;
         TradedOn : DateTime;
     }
-    type PortfoliosSharePrice = {
-        LowRiskPrice : float;
-        MediumRiskPrice : float;
-        HighRiskPrice : float;
-        TradedOn : DateTime;
-    }
+
+    let getPortfolioRiskById (portfolioId : PortfolioId) : Risk =
+        match portfolioId with
+        | LowRiskPortfolioId -> Low
+        | MediumRiskPortfolioId -> Medium
+        | HighRiskPortfolioId -> High
+        | _ -> invalidArg "Portfolio Id" (sprintf "Unknown portfolio id: %d" portfolioId)
+
+    let getPortfolioIdByRisk (portfolioRisk : Risk) : PortfolioId =
+        match portfolioRisk with
+        | Low -> LowRiskPortfolioId
+        | Medium -> MediumRiskPortfolioId
+        | High -> HighRiskPortfolioId
 
     // URL of a service that generates price data
-    let url = "http://ichart.finance.yahoo.com/table.csv?s="
+    [<Literal>]
+    let YahooFinanceUrl = "http://ichart.finance.yahoo.com/table.csv?s="
 
     /// Returns prices (as YQ type) of a given stock for a 
     /// specified number of days on ascending order of trading time
     let getStockPrices stock count =
         // Download the data and split it into lines
         let wc = new WebClient()
-        let data = wc.DownloadString(url + stock)
+        let data = wc.DownloadString(YahooFinanceUrl + stock)
         let dataLines = 
             data.Split([| '\n' |], StringSplitOptions.RemoveEmptyEntries) 
 
@@ -100,31 +100,42 @@ module Portfolio =
     let getTradingDay (portfolioShareSeq : PortfolioSharePrice seq) : string= 
         let {PortfolioId = _; Price = _; TradedOn = TradedOn} = portfolioShareSeq |> (Seq.head)
         TradedOn.ToYyyyMmDd
+        
+    let getPortfolioPriceList (db : DbContext)(tradingDay : string) : DbPortfolioPrices list=
+        query {
+            for row in db.PortfolioPrices do
+            where (row.YearMonthDay = tradingDay)
+            select row
+        } 
+        |> Seq.toList
 
-    /// Insert the portofolio prices for a trading day
-    let insDbPortfolioPrices(db : DbContext)(portfolioShareSeq : PortfolioSharePrice seq) : unit =
+    let private insDbPortfolioPrices (db : DbContext)(portfolioShareSeq : PortfolioSharePrice seq) : unit =
 
-        let portfolioPriceList  = 
-            query {
-                for row in db.PortfolioPrices do
-                where (row.YearMonthDay = (portfolioShareSeq |> getTradingDay))
-                select row
-            } 
-            |> Seq.toList
+            portfolioShareSeq 
+            |> Seq.iter (fun (portfolioShare : PortfolioSharePrice) -> 
+                (db, portfolioShare) ||> insDbNewRowPortfolioPrice
+
+                db.DataContext.SubmitChanges()
+            )
+
+    /// Insert the portfolio prices for a trading day
+    let setDbPortfolioPrices(db : DbContext)(portfolioShareSeq : PortfolioSharePrice seq) : unit =
+
+        let portfolioPriceList = (db, portfolioShareSeq |> getTradingDay) ||> getPortfolioPriceList
 
         if portfolioPriceList.Length = 0 then
 
-            portfolioShareSeq |> Seq.iter (fun (portfolioShare : PortfolioSharePrice) -> 
-                (db, portfolioShare) ||> insDbNewRowPortfolioPrice
-                db.DataContext.SubmitChanges()
-            )
+            /// Box function pointer with required parameters
+            let dbOperation() = (db, portfolioShareSeq) ||> insDbPortfolioPrices
+            (db, dbOperation) ||> tryDbTransOperation
+     
 
     /// 1. Read The portfolio funds from Db
     /// 2. Ask yahoo their closing prices
     /// 3. Calculate each portfolio single virtual share closing price
-    let getPortfolioPrices(db : DbContext) : PortfolioSharePrice seq =
+    let getPortfolioPrices(db : DbContext) : PortfolioSharePrice list =
 
-        let gSeq =
+        let portfolioPricesList =
             query { 
                 for f in db.Funds do
                 join fp in db.PortFunds on (f.Id = fp.FundId)
@@ -148,15 +159,19 @@ module Portfolio =
                     let topPortfolioFundRecord = spsf |> Seq.head
                     { PortfolioId = p; Price = price; TradedOn = topPortfolioFundRecord.Fund.TradedOn }
             )
-//        gSeq |> Seq.iter(fun i -> printfn "%A" i)
-        gSeq
+            |> Seq.toList
+        // Need for refactoring if the following fails
+        assert (portfolioPricesList.Length = 3)
+        // portfolioPricesList |> Seq.iter(fun i -> printfn "%A" i)
+        portfolioPricesList
 
-    let getCustomerPortfolio(db : DbContext)(yyyyMm : string)(customerId : int) : DbCustoPortfolios = 
+    /// get single Customer Portfolio of the desired month param in the yyyyMM format
+    let private getCustomerPortfolio(db : DbContext)(yyyyMm : string)(customerId : int) : DbCustoPortfolios = 
         let custPortfolios =
             query {
                 for row in db.CustPortfolios do
                 where (
-                    row.YearMonth < yyyyMm
+                    row.YearMonth <= yyyyMm
                     && row.CustomerId = customerId
                 )
                 sortByDescending row.YearMonth
@@ -164,13 +179,14 @@ module Portfolio =
                 exactlyOneOrDefault
             }
         custPortfolios
-        
-    let getCustomerPortShares(db : DbContext)(yyyyMm : string)(customerId : int) : DbCustPortfolioShares = 
+
+    /// get CustomerPortfolioShares of the desired month param in the yyyyMM format  
+    let private getCustomerPortShares(db : DbContext)(yyyyMm : string)(customerId : int) : DbCustPortfolioShares = 
         let customerPortfolioShares =
             query {
                 for row in db.CustPortfoliosShares do
                 where (
-                    row.YearMonth = yyyyMm.ToPrevYyyyMm
+                    row.YearMonth = yyyyMm
                     && row.CustomerId = customerId
                 )
                 select row
@@ -178,42 +194,122 @@ module Portfolio =
             }
         customerPortfolioShares
 
-    let getListIdxbyPortfolioId = 
+    let private getPortfolioPricesListIdxbyPortfolioId = 
         function
-            | 1 -> 0
-            | 3 -> 1
-            | 5 -> 2
-            | _ -> -1
+            | Low -> 0
+            | Medium -> 1
+            | High -> 2
 
-    let buyShares (existingShares : decimal)(cashAmount : decimal)(sharePrice : float) : decimal = 
+    let private cash2PortfolioShares (existingShares : decimal)(cashAmount : decimal)(sharePrice : float) : decimal = 
         let newShares = (cashAmount / decimal sharePrice) + existingShares
         newShares
 
+    let private priceLowRiskPortfolio
+            (cashAmount : decimal)
+            (portfolioPricesList : PortfolioSharePrice list)
+            (custPortfolioShares : DbCustPortfolioShares) =
+
+        let lowRiskPrice = portfolioPricesList.[Low |> getPortfolioPricesListIdxbyPortfolioId].Price
+        let sharesLowRisk = (custPortfolioShares.PortfolioLowShares, cashAmount, lowRiskPrice) |||> cash2PortfolioShares 
+        { 
+            SharesLowRisk = sharesLowRisk; 
+            SharesMediumRisk = custPortfolioShares.PortfolioMediumShares; 
+            SharesHighRisk = custPortfolioShares.PortfolioHighShares
+        }
+
+    let private priceMediumRiskPortfolio
+            (cashAmount : decimal)
+            (portfolioPricesList : PortfolioSharePrice list)
+            (custPortfolioShares : DbCustPortfolioShares) =
+
+        let mediumRiskPrice = portfolioPricesList.[Medium |> getPortfolioPricesListIdxbyPortfolioId].Price
+        let sharesMediumRisk = (custPortfolioShares.PortfolioLowShares, cashAmount, mediumRiskPrice) |||> cash2PortfolioShares 
+        { 
+            SharesLowRisk = custPortfolioShares.PortfolioLowShares; 
+            SharesMediumRisk = sharesMediumRisk; 
+            SharesHighRisk = custPortfolioShares.PortfolioHighShares
+        }
+
+    let private priceHighRiskPortfolio
+            (cashAmount : decimal)
+            (portfolioPricesList : PortfolioSharePrice list)
+            (custPortfolioShares : DbCustPortfolioShares) =
+
+        let highRiskPrice = portfolioPricesList.[High |> getPortfolioPricesListIdxbyPortfolioId].Price
+        let sharesHighRisk = (custPortfolioShares.PortfolioHighShares, cashAmount, highRiskPrice) |||> cash2PortfolioShares
+        { 
+            SharesLowRisk = custPortfolioShares.PortfolioLowShares; 
+            SharesMediumRisk = custPortfolioShares.PortfolioMediumShares; 
+            SharesHighRisk = sharesHighRisk
+        }
+
     let getNewCustomerShares
             (cashAmount : decimal)
-            (portfolioSharePrices : PortfolioSharePrice seq)
+            (portfolioPricesList : PortfolioSharePrice list)
             (custPortfolioShares : DbCustPortfolioShares)
             (customerPortfolio : DbCustoPortfolios) =
 
-        
-        let portfolioPricesList = portfolioSharePrices |> Seq.toList
         let newPortfolioShares =
             match customerPortfolio.PortfolioId |> getPortfolioRiskById with
-            | Low -> 
-                let lowRiskPrice = portfolioPricesList.[customerPortfolio.PortfolioId |> getListIdxbyPortfolioId].Price
-                let sharesLowRisk = buyShares custPortfolioShares.PortfolioLowShares cashAmount lowRiskPrice
-                { SharesLowRisk = sharesLowRisk; SharesMediumRisk = custPortfolioShares.PortfolioMediumShares; SharesHighRisk = custPortfolioShares.PortfolioHighShares}
-            | Medium -> 
-                let mediumRiskPrice = portfolioPricesList.[customerPortfolio.PortfolioId |> getListIdxbyPortfolioId].Price
-                let sharesMediumRisk = buyShares custPortfolioShares.PortfolioMediumShares cashAmount mediumRiskPrice 
-                { SharesLowRisk = custPortfolioShares.PortfolioLowShares; SharesMediumRisk = sharesMediumRisk; SharesHighRisk = custPortfolioShares.PortfolioHighShares}
-            | High -> 
-                let highRiskPrice = portfolioPricesList.[customerPortfolio.PortfolioId |> getListIdxbyPortfolioId].Price
-                let sharesHighRisk = buyShares custPortfolioShares.PortfolioHighShares cashAmount highRiskPrice
-                { SharesLowRisk = custPortfolioShares.PortfolioLowShares; SharesMediumRisk = custPortfolioShares.PortfolioMediumShares ; SharesHighRisk = sharesHighRisk}
+            | Low -> (cashAmount, portfolioPricesList, custPortfolioShares) |||> priceLowRiskPortfolio
+            | Medium ->  (cashAmount, portfolioPricesList, custPortfolioShares) |||> priceMediumRiskPortfolio
+            | High -> (cashAmount, portfolioPricesList, custPortfolioShares) |||> priceHighRiskPortfolio
 
         newPortfolioShares
 
+    let private updDbCustomerPortfolio 
+                (customerPortfolioRisk : Risk)
+                (db : DbContext)
+                (customerPortfolioRow : DbCustoPortfolios)
+                (weight : PortfolioWeight) =
+
+        let portfolioId = customerPortfolioRisk |> getPortfolioIdByRisk 
+        customerPortfolioRow.Weight <- weight
+        customerPortfolioRow.PortfolioId <- portfolioId
+
+    let private insDbCustomerPortfolio (customerPortfolioRisk : Risk)(db : DbContext)(yyyyMm : string)(customerId : int) : unit =
+        let newCustomerPortfolioRow = new DbCustoPortfolios(
+                                        CustomerId = customerId,
+                                        YearMonth = yyyyMm
+                                    )
+        (db, newCustomerPortfolioRow, 100.00F) |||> updDbCustomerPortfolio customerPortfolioRisk
+        db.CustPortfolios.InsertOnSubmit(newCustomerPortfolioRow)
+        
+
+    let upsCustomerPortfolio(db : DbContext)(yyyyMm : string)(customerId : int)(customerPortfolioRisk : Risk) : unit =
+        let currentCustomerPortfolio = (db, yyyyMm, customerId) |||> getCustomerPortfolio
+
+        if isNull currentCustomerPortfolio then
+            (db, yyyyMm, customerId) |||> insDbCustomerPortfolio customerPortfolioRisk
+        else
+            (db, currentCustomerPortfolio, 100.00F) |||> updDbCustomerPortfolio customerPortfolioRisk
+
+
+        db.DataContext.SubmitChanges()
+        
+//    let updDbCustomerPortfolio(db : DbContext)(customerPortfolioRisk : Risk)(weight : float32)(customerPortfolioRow : DbCustoPortfolios) =
+//        let portfolioId = customerPortfolioRisk |> getPortfolioIdByRisk 
+//        customerPortfolioRow.Weight <- weight
+//        customerPortfolioRow.PortfolioId <- portfolioId
+//
+//    let insDbCustomerPortfolio (customerPortfolioRisk : Risk)(db : DbContext)(yyyyMm : string)(customerId : int) : unit =
+//        let portfolioId = customerPortfolioRisk |> getPortfolioIdByRisk 
+//        let newCustomerPortfolioRow = new DbCustoPortfolios(
+//                                        CustomerId = customerId,
+//                                        PortfolioId = portfolioId,
+//                                        YearMonth = yyyyMm,
+//                                        Weight = 100.00F
+//                                    )
+//        db.CustPortfolios.InsertOnSubmit(newCustomerPortfolioRow)
+//        
+//
+//    let upsCustomerPortfolio(db : DbContext)(yyyyMm : string)(customerId : int)(customerPortfolioRisk : Risk) : unit =
+//        let currentCustomerPortfolio = (db, yyyyMm, customerId) |||> getCustomerPortfolio
+//
+//        if isNull currentCustomerPortfolio then
+//            (db, yyyyMm, customerId) |||> insDbCustomerPortfolio customerPortfolioRisk
+//
+//        db.DataContext.SubmitChanges()
 module InvBalance =
     open System
     open GzDb
@@ -244,6 +340,21 @@ module InvBalance =
             }
             |> Seq.toList
         customerGzTrxRows
+
+    /// get single Customer Portfolio of the month param
+    let getInvBalance(db : DbContext)(yyyyMm : string)(customerId : int) : DbInvBalances = 
+        let invBalance =
+            query {
+                for row in db.InvBalances do
+                where (
+                    row.YearMonth = yyyyMm
+                    && row.CustomerId = customerId
+                )
+                select row
+                exactlyOneOrDefault
+            }
+        invBalance
+
         
 //        .iter (fun trxRow -> 
 //            let customerGzTrx = { 
