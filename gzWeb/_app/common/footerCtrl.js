@@ -41,7 +41,6 @@
             var currentYear = moment().year();
             return currentYear === startingYear ? startingYear : startingYear + " - " + currentYear;
         })();
-        $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
 
         $scope.gotoResponsibleGaming = function () {
             accountManagement.open(accountManagement.states.responsibleGaming);
@@ -51,6 +50,8 @@
 
         function loadAuthData() {
             $scope.isGamer = $scope._authData.isGamer;
+            $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
+            $scope.version = localStorageService.get(constants.storageKeys.version);
         }
     }
 })();

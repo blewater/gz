@@ -29,6 +29,7 @@
                         scope.$eval(attrs.gzChange);
                 };
                 determineVisibility();
+                scope.$on(constants.events.ON_INIT, determineVisibility);
                 scope.$on(constants.events.AUTH_CHANGED, determineVisibility);
             }
         };

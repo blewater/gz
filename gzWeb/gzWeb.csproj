@@ -733,7 +733,8 @@
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
-    <Content Include="_app\common\appInsightsProdCfg.js" />
+    <Content Include="_app\common\appInsightsSgnCfg.js" />
+    <Content Include="_app\common\appInsightsPrdCfg.js" />
     <Content Include="_app\common\asyncLoad.min.js">
       <DependentUpon>asyncLoad.js</DependentUpon>
     </Content>
@@ -743,6 +744,8 @@
     <Content Include="_app\account\auth.css" />
     <Content Include="_app\common\basic.css" />
     <Content Include="_app\common\asyncLoad.js" />
+    <Content Include="_app\common\footer.html" />
+    <Content Include="_app\common\header.html" />
     <Content Include="_app\common\preloader.min.css">
       <DependentUpon>preloader.css</DependentUpon>
     </Content>
