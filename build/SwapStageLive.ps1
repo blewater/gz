@@ -5,16 +5,14 @@ function Check-Session () {
     $Error.Clear()
 
     #if context already exist
-    Select-AzureRmProfile -Path .\.azSession -ErrorAction Continue
-    #Get-AzureRmContext -ErrorAction Continue
+    Select-AzureRmProfile -Path .\.azSession
+    Get-AzureRmContext -ErrorAction Continue
     foreach ($eacherror in $Error) {
-        if ($eacherror.Exception.ToString() -like "*Running Login-AzureRmAccount to login.*") {
-            Write-Output "Error in Select-AzureRmProfile... attempt to login..."
-            Login-AzureRmAccount
-			#Get-AzureRmSubscription -SubscriptionId "d92ca232-a672-424c-975d-1dcf45a58b0b" | Select-AzureRmSubscription
-            Get-AzureRmSubscription -SubscriptionId "500c96ff-15a2-4861-8a33-8872bdcb6b58" | Select-AzureRmSubscription
-			Save-AzureRMProfile -Path .\.azSession -Force
-        }
+        Write-Output "Error in Select-AzureRmProfile... attempt to login..."
+        Login-AzureRmAccount
+        #Old site Guid: Get-AzureRmSubscription -SubscriptionId "d92ca232-a672-424c-975d-1dcf45a58b0b" | Select-AzureRmSubscription
+        Get-AzureRmSubscription -SubscriptionId "500c96ff-15a2-4861-8a33-8872bdcb6b58" | Select-AzureRmSubscription
+        Save-AzureRMProfile -Path .\.azSession -Force
     }
 
     $Error.Clear();
