@@ -114,16 +114,31 @@ module DbUtil =
         db
 
     /// Start a Db Transaction
-    let startDbTransaction (db : DbContext) = 
+    let private startDbTransaction (db : DbContext) = 
         let transaction = db.Connection.BeginTransaction()
         db.DataContext.Transaction <- transaction
         transaction
 
     /// Commit a transaction
-    let commitTransaction (transaction : Data.Common.DbTransaction) = 
+    let private commitTransaction (transaction : Data.Common.DbTransaction) = 
             // ********* Commit once per excel File
             transaction.Commit()
 
-    let handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
+    /// Rollback transaction and raise exception
+    let private handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
         transaction.Rollback()
         logger.Fatal(ex, "Runtime Exception at main")
+
+    /// Enclose db operation within a transaction
+    let tryDbTransOperation (db : DbContext) (dbOperation : (unit -> unit)) : unit =
+        let transaction = startDbTransaction db
+        try
+
+            dbOperation()
+
+            commitTransaction transaction
+
+        with ex ->
+            handleFailure transaction ex
+            reraise ()
+

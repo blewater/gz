@@ -503,6 +503,27 @@ module Etl =
         File.Move(begBalanceFilename, begBalanceFilename.Replace(inFolder, outFolder))
         File.Move(withdrawalFilename, withdrawalFilename.Replace(inFolder, outFolder))
 
+
+    let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) =
+        let { 
+                customFilename = customFilename; 
+                withdrawalFilename = withdrawalFilename; 
+                begBalanceFilename = begBalanceFilename; 
+                endBalanceFilename = endBalanceFilename 
+            }   = reportFilenames
+
+        let customDtStr = getCustomDtStr customFilename
+        logger.Debug (sprintf "Starting processing excel report files for %O" customDtStr)
+
+        (db, customFilename) ||> loadCustomRpt 
+        loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr
+        loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
+        (db, withdrawalFilename) ||> updDbWithdrawalsRpt
+        (db, customDtStr) ||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
+        // Finally upsert GzTrx with the balance, credit amounts
+        (db, customDtStr) ||> DbGzTrx.setDbPlayerRevRpt2GzTrx
+
+
     /// <summary>
     ///
     ///     Read all excel files from input folder
@@ -522,36 +543,15 @@ module Etl =
         //------------ Read filenames
         logger.Info (sprintf "Reading the %s folder" inFolder)
         
-        let { 
-            customFilename = customFilename; 
-            withdrawalFilename = withdrawalFilename; 
-            begBalanceFilename = begBalanceFilename; 
-            endBalanceFilename = endBalanceFilename 
-            } = 
+        let reportfileNames = 
             { isProd = isProd ; folderName = inFolder } 
             |> getExcelFilenames
 
-        let customDtStr = getCustomDtStr customFilename
+        /// Box function pointer with required parameters
+        let dbOperation() = (db, reportfileNames) ||> setDbimportExcel
+        (db, dbOperation) ||> tryDbTransOperation
 
-        logger.Debug (sprintf "Starting processing excel report files for %O" customDtStr)
-
-        let transaction = startDbTransaction db
-        try
-            loadCustomRpt db customFilename
-            loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr
-            loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
-            updDbWithdrawalsRpt db withdrawalFilename
-            DbPlayerRevRpt.setDbMonthyGainLossAmounts db customDtStr
-            // Finally upsert GzTrx with the balance, credit amounts
-            DbGzTrx.setDbPlayerRevRpt2GzTrx db customDtStr 
-
-            moveRptsToOutFolder inFolder outFolder customFilename begBalanceFilename withdrawalFilename
-
-            commitTransaction transaction
-
-        with ex -> 
-            handleFailure transaction ex
-            reraise ()
+        moveRptsToOutFolder inFolder outFolder reportfileNames.customFilename reportfileNames.begBalanceFilename reportfileNames.withdrawalFilename
 
         // Process investment balance
         //(new CustomerBalanceUpdTask(isProd)).DoTask()
