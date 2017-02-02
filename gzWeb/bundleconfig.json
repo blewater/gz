@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "_app/common/asyncLoad.min.js",
+    "inputFiles": [
+      "_app/common/asyncLoad.js"
+    ]
+  },
+  {
+    "outputFileName": "_app/common/preloader.min.css",
+    "inputFiles": [
+      "_app/common/preloader.css"
+    ]
+  }
+]

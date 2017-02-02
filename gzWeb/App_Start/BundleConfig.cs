@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Globalization;
 using System.Web.Optimization;
 
 namespace gzWeb {
@@ -11,23 +12,27 @@ namespace gzWeb {
             bundles.UseCdn = true;
 
             #region Styles
-            var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
-            bundles.Add(new StyleBundle("~/css/bootstrap", bootstrapCdnPath)
-                .Include(
-                    "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
-                ).Include(
-                    "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
-                ));
+            //var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
+            //bundles.Add(new StyleBundle("~/css/bootstrap", bootstrapCdnPath)
+            //    .Include(
+            //        "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
+            //    ).Include(
+            //        "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
+            //    ));
 
-            var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
-            bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
-                "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
-            ));
+            //var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
+            //bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
+            //    "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
+            //));
 
-            bundles.Add(new StyleBundle("~/css/preloader").Include(
-                "~/_app/common/preloader.css"
-            ));
+            //bundles.Add(new StyleBundle("~/css/preloader").Include(
+            //    "~/_app/common/preloader.css"
+            //));
+
             bundles.Add(new StyleBundle("~/css/app").Include(
+                "~/Content/Styles/bootstrap/bootstrap.min.css", new CssRewriteUrlTransform()).Include(
+                "~/Content/Styles/bootstrap/bootstrap-theme.min.css", new CssRewriteUrlTransform()).Include(
+                "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()).Include(
                 "~/_app/common/basic.css"
                 , "~/_app/common/header.css"
                 , "~/_app/common/footer.css"
@@ -99,6 +104,7 @@ namespace gzWeb {
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
                 , "~/Scripts/angular-ui-datetime-picker/datetime-picker.min.js"
+                , "~/Scripts/jsnlog/jsnlog.min.js"
                 , "~/Scripts/jsnlog/logToServer.js"
                 , "~/Scripts/angular-appinsights/angular-appinsights.js"
 
@@ -109,6 +115,13 @@ namespace gzWeb {
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
             var everyMatrixStage = !string.IsNullOrEmpty(everyMatrixStageSetting) && Convert.ToBoolean(everyMatrixStageSetting);
 
+            var appInsightsEnvironmentKeySetting = ConfigurationManager.AppSettings["appInsightsEnvKey"];
+            var appInsightsEnvironmentKey = string.IsNullOrEmpty(appInsightsEnvironmentKeySetting)
+                ? "Dev"
+                : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(appInsightsEnvironmentKeySetting);
+                //: (appInsightsEnvironmentKeySetting.First().ToString().ToUpperInvariant() + appInsightsEnvironmentKeySetting.Substring(1).ToLowerInvariant());
+            var appInsightsCfg = $"~/_app/common/appInsights{appInsightsEnvironmentKey}Cfg.js";
+
             bundles.Add(new ScriptBundle("~/js/app")
                                 .Include("~/_app/common/app.js")
                                 .Include(
@@ -116,15 +129,14 @@ namespace gzWeb {
                                         "~/_app/common/global.js"
                                         , "~/_app/common/config.js"
                                         , "~/_app/common/constants.js"
+                                        , appInsightsCfg
                                         , "~/_app/common/authCtrl.js"
                                         , "~/_app/common/headerCtrl.js"
                                         , "~/_app/common/footerCtrl.js"
             #endregion
 
             #region EveryMatrix
-                                        , everyMatrixStage
-                                            ? "~/_app/everymatrix/emConCfg-stage.js"
-                                            : "~/_app/everymatrix/emConCfg.js"
+                                        , everyMatrixStage ? "~/_app/everymatrix/emConCfg-stage.js" : "~/_app/everymatrix/emConCfg.js"
                                         , "~/_app/everymatrix/emWamp.js"
                                         , "~/_app/everymatrix/emCasino.js"
                                         , "~/_app/everymatrix/emBanking.js"

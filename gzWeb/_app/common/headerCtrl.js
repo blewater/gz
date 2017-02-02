@@ -120,15 +120,6 @@
             $scope.currency = $scope._authData.currency;
         }
         
-        $scope._init(function () {
-            loadAuthData();
-            $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);
-            $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
-            $scope.revealed = true;
-        });
-
-        $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
-
         $scope.expandCollapseMobileMenu = function(){
             $rootScope.mobileMenuExpanded = !$rootScope.mobileMenuExpanded
             if ($rootScope.mobileMenuExpanded)
@@ -136,5 +127,13 @@
             else
                 chat.show()
         }
+
+        $scope._init(function () {
+            loadAuthData();
+            $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
+            $scope.$on(constants.events.AUTH_CHANGED, loadAuthData);
+            $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
+            $scope.revealed = true;
+        });
     }
 })();
