@@ -20,12 +20,16 @@ html.mobile {
 body {
     position: relative;
     height: 100%;
-    font-family: 'Fira Sans', sans-serif !important;
     font-weight: 300;
     background: #F2F2F2;
     /*background-color: #27A95C;*/
     overflow-x: hidden;
     z-index: 0;
+    font-family: sans-serif !important;
+}
+/*html.wf-active body,*/
+body.fonts-loaded {
+    font-family: 'Fira Sans', sans-serif !important;
 }
 body.mobile-menu {
     overflow-y: hidden;
@@ -51,8 +55,8 @@ body.mobile-menu {
 #body-content.ok {
     display: block;
     visibility: visible;
-    /*position: static;
-    top: auto;*/
+    position: static;
+    top: auto;
 }
 
 

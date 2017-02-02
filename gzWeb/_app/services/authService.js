@@ -212,7 +212,7 @@
 
         // #region Authorize
         factory.authorize = function (roles, mode) {
-            if (roles) {
+            if (roles && factory.data) {
                 var rolesArray = angular.isArray(roles) ? roles : roles.split(',');
                 var contains = function (r) {
                     return factory.data.roles.indexOf(r) !== -1;

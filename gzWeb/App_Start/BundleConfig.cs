@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Globalization;
 using System.Web.Optimization;
 
 namespace gzWeb {
@@ -114,8 +115,12 @@ namespace gzWeb {
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
             var everyMatrixStage = !string.IsNullOrEmpty(everyMatrixStageSetting) && Convert.ToBoolean(everyMatrixStageSetting);
 
-            var appInsightsProductionSetting = ConfigurationManager.AppSettings["appInsightsProd"];
-            var appInsightsProduction = !string.IsNullOrEmpty(appInsightsProductionSetting) && Convert.ToBoolean(appInsightsProductionSetting);
+            var appInsightsEnvironmentKeySetting = ConfigurationManager.AppSettings["appInsightsEnvKey"];
+            var appInsightsEnvironmentKey = string.IsNullOrEmpty(appInsightsEnvironmentKeySetting)
+                ? "Dev"
+                : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(appInsightsEnvironmentKeySetting);
+                //: (appInsightsEnvironmentKeySetting.First().ToString().ToUpperInvariant() + appInsightsEnvironmentKeySetting.Substring(1).ToLowerInvariant());
+            var appInsightsCfg = $"~/_app/common/appInsights{appInsightsEnvironmentKey}Cfg.js";
 
             bundles.Add(new ScriptBundle("~/js/app")
                                 .Include("~/_app/common/app.js")
@@ -124,7 +129,7 @@ namespace gzWeb {
                                         "~/_app/common/global.js"
                                         , "~/_app/common/config.js"
                                         , "~/_app/common/constants.js"
-                                        , appInsightsProduction ? "~/_app/common/appInsightsProdCfg.js" : "~/_app/common/appInsightsDevCfg.js"
+                                        , appInsightsCfg
                                         , "~/_app/common/authCtrl.js"
                                         , "~/_app/common/headerCtrl.js"
                                         , "~/_app/common/footerCtrl.js"
