@@ -64,7 +64,7 @@ open Fake.Git
 open Fake.ZipHelper
 open Fake.Azure.WebApps
 
-type GitShaRegex = Regex< @"\.Sha\.(?<SHA>\w+)</" >
+type GitShaRegex = Regex< @"Sha\.(?<SHA>\w+)" >
 
 (*----------------  Properties  -------------------*)
 [<Literal>]
@@ -74,6 +74,7 @@ let GitRepo = __SOURCE_DIRECTORY__ @@ ".."
 (* Stage *)
 [<Literal>]
 let StageGzUrl = "https://greenzorro-sgn.azurewebsites.net"
+let StageDeploymentApiInfo = "https://greenzorro-sgn.azurewebsites.net/api/Account/GetDeploymentInfo"
 [<Literal>]
 //let StageAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/slots/sgn/DeploymentSource"
 // Temp url during sites transition
@@ -83,6 +84,7 @@ let ProdGzUrl = "https://www.greenzorro.com"
 
 (* Dev *)
 [<Literal>]
+let DevDeploymentApiInfo = "https://greenzorrodev.azurewebsites.net/api/Account/GetDeploymentInfo"
 let DevGzUrl = "https://greenzorrodev.azurewebsites.net"
 [<Literal>]
 let DevAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorrodev/DeploymentSource"
@@ -201,8 +203,8 @@ Target "OpenResultInBrowser" (fun _ ->
         trace "Http getting the freshly built home page. Azure may take a while to answer..."
         let htmlStageOrDevSha = 
             match mode with
-                | "dev" -> DevGzUrl
-                | _ -> StageGzUrl
+                | "dev" -> DevDeploymentApiInfo
+                | _ -> StageDeploymentApiInfo
             |> getHtml 
             |> getDeployedSha
 
