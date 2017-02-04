@@ -106,6 +106,7 @@ _ReSharper*/
 # Auto generated fsx files
 **/load-references-debug.fsx
 **/load-references-production.fsx
+**/load-project-production.fsx
 
 # JustCode is a .NET coding add-in
 .JustCode
