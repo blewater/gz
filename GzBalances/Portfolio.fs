@@ -1,13 +1,14 @@
 ﻿namespace GzBalances
 
-module Portfolio =
+module PortfolioTypes =
     open System
+    open GzDb.DbUtil
 
     type Risk = Low | Medium | High
 
     type PortfolioId = int
 
-    type PortfolioRisk = {
+    type Portfolio = {
         PortfolioId : PortfolioId;
         Risk : Risk
     }
@@ -19,14 +20,37 @@ module Portfolio =
     [<Literal>]
     let HighRiskPortfolioId = 5
 
-    type CustomerPortfolioShares = {
+    /// Input monthly argument for calculating portfolio
+    type UserPortfolioShares = {
         SharesLowRisk : Decimal;
         SharesMediumRisk : Decimal;
         SharesHighRisk : Decimal;
     }
 
+    type PortfolioSharePrice = {
+        PortfolioId : PortfolioId;
+        Price : float;
+        TradedOn : DateTime;
+    }
+
+    type PortfoliosPrices = {
+        PortfolioLowRiskPrice : PortfolioSharePrice;
+        PortfolioMediumRiskPrice : PortfolioSharePrice;
+        PortfolioHighRiskPrice : PortfolioSharePrice;
+    }
+
+    type UserInputPortfolio = {
+        Db : DbContext;
+        UserId : int;
+        Month : string;
+        PrevMonth : string;
+        Portfolio : Portfolio;
+        CashToInvest : decimal;
+        PortfoliosPrices : PortfoliosPrices
+    }
+
     type InvBalance = {
-        CustomerPortfolio : CustomerPortfolioShares;
+        CustomerPortfolio : UserPortfolioShares;
         PortfolioId : PortfolioId;
         YearMonth : string;
         Balance : Decimal;
@@ -38,11 +62,6 @@ module Portfolio =
     type FundQuote = { Symbol : string; TradedOn : DateTime; ClosingPrice : float }
     type PortfolioWeight = float32
     type PortfolioFundRecord = {PortfolioId : PortfolioId; PortfolioWeight : PortfolioWeight; Fund : FundQuote}
-    type PortfolioSharePrice = {
-        PortfolioId : PortfolioId;
-        Price : float;
-        TradedOn : DateTime;
-    }
 
     let getPortfolioRiskById (portfolioId : PortfolioId) : Risk =
         match portfolioId with
@@ -62,7 +81,7 @@ module DailyPortfolioShares =
     open System.Net
     open GzDb
     open GzDb.DbUtil
-    open Portfolio
+    open PortfolioTypes
 
     // URL of a service that generates price data
     [<Literal>]
@@ -131,14 +150,21 @@ module DailyPortfolioShares =
             /// Box function pointer with required parameters
             let dbOperation() = (db, portfolioShareSeq) ||> insDbPortfolioPrices
             (db, dbOperation) ||> tryDbTransOperation
-     
+
+    let private portfolioPricesToType(portfolioPricesArr : PortfolioSharePrice[]) : PortfoliosPrices =
+        let portfoliosPrices = { 
+            PortfolioLowRiskPrice = {PortfolioId = portfolioPricesArr.[0].PortfolioId; Price = portfolioPricesArr.[0].Price; TradedOn = portfolioPricesArr.[0].TradedOn} 
+            PortfolioMediumRiskPrice = {PortfolioId = portfolioPricesArr.[1].PortfolioId; Price = portfolioPricesArr.[1].Price; TradedOn = portfolioPricesArr.[1].TradedOn}; 
+            PortfolioHighRiskPrice = {PortfolioId = portfolioPricesArr.[1].PortfolioId; Price = portfolioPricesArr.[2].Price; TradedOn = portfolioPricesArr.[2].TradedOn} 
+        }
+        portfoliosPrices
 
     /// 1. Read The portfolio funds from Db
     /// 2. Ask yahoo their closing prices
     /// 3. Calculate each portfolio single virtual share closing price
-    let getPortfolioPrices(db : DbContext) : PortfolioSharePrice list =
+    let getPortfolioPrices(db : DbContext) : PortfolioSharePrice[] =
 
-        let portfolioPricesList =
+        let portfolioPricesArr =
             query { 
                 for f in db.Funds do
                 join fp in db.PortFunds on (f.Id = fp.FundId)
@@ -162,77 +188,67 @@ module DailyPortfolioShares =
                     let topPortfolioFundRecord = spsf |> Seq.head
                     { PortfolioId = p; Price = price; TradedOn = topPortfolioFundRecord.Fund.TradedOn }
             )
-            |> Seq.toList
+            |> Seq.toArray
         // Need for refactoring if the following fails
-        assert (portfolioPricesList.Length = 3)
-        // portfolioPricesList |> Seq.iter(fun i -> printfn "%A" i)
-        portfolioPricesList
+        assert (portfolioPricesArr.Length = 3)
+        // portfolioPricesArr |> Seq.iter(fun i -> printfn "%A" i)
+        portfolioPricesArr
 
 module CalcUserPortfolioShares  =
     open GzDb
-    open GzDb.DbUtil
-    open Portfolio
+    open PortfolioTypes
         
-    let private getPortfolioPricesListIdxbyPortfolioId = 
-        function
-            | Low -> 0
-            | Medium -> 1
-            | High -> 2
-
     let private cash2PortfolioShares (existingShares : decimal)(cashAmount : decimal)(sharePrice : float) : decimal = 
         let newShares = (cashAmount / decimal sharePrice) + existingShares
         newShares
 
     let private priceLowRiskPortfolio
-            (cashAmount : decimal)
-            (portfolioPricesList : PortfolioSharePrice list)
-            (custPortfolioShares : DbCustPortfolioShares) =
+            (userInputPortfolio : UserInputPortfolio)
+            (userPortfolioShares : UserPortfolioShares) =
 
-        let lowRiskPrice = portfolioPricesList.[Low |> getPortfolioPricesListIdxbyPortfolioId].Price
-        let sharesLowRisk = (custPortfolioShares.PortfolioLowShares, cashAmount, lowRiskPrice) |||> cash2PortfolioShares 
+        let lowRiskPrice = userInputPortfolio.PortfoliosPrices.PortfolioLowRiskPrice.Price
+        let sharesLowRisk = (userPortfolioShares.SharesLowRisk, userInputPortfolio.CashToInvest, lowRiskPrice) |||> cash2PortfolioShares 
         { 
             SharesLowRisk = sharesLowRisk; 
-            SharesMediumRisk = custPortfolioShares.PortfolioMediumShares; 
-            SharesHighRisk = custPortfolioShares.PortfolioHighShares
+            SharesMediumRisk = userPortfolioShares.SharesMediumRisk; 
+            SharesHighRisk = userPortfolioShares.SharesHighRisk
         }
 
     let private priceMediumRiskPortfolio
-            (cashAmount : decimal)
-            (portfolioPricesList : PortfolioSharePrice list)
-            (custPortfolioShares : DbCustPortfolioShares) =
+            (userInputPortfolio : UserInputPortfolio)
+            (userPortfolioShares : UserPortfolioShares) =
 
-        let mediumRiskPrice = portfolioPricesList.[Medium |> getPortfolioPricesListIdxbyPortfolioId].Price
-        let sharesMediumRisk = (custPortfolioShares.PortfolioLowShares, cashAmount, mediumRiskPrice) |||> cash2PortfolioShares 
+        let mediumRiskPrice = userInputPortfolio.PortfoliosPrices.PortfolioMediumRiskPrice.Price
+        let sharesMediumRisk = (userPortfolioShares.SharesMediumRisk, userInputPortfolio.CashToInvest, mediumRiskPrice) |||> cash2PortfolioShares 
         { 
-            SharesLowRisk = custPortfolioShares.PortfolioLowShares; 
+            SharesLowRisk = userPortfolioShares.SharesLowRisk; 
             SharesMediumRisk = sharesMediumRisk; 
-            SharesHighRisk = custPortfolioShares.PortfolioHighShares
+            SharesHighRisk = userPortfolioShares.SharesHighRisk
         }
 
     let private priceHighRiskPortfolio
-            (cashAmount : decimal)
-            (portfolioPricesList : PortfolioSharePrice list)
-            (custPortfolioShares : DbCustPortfolioShares) =
+            (userInputPortfolio : UserInputPortfolio)
+            (userPortfolioShares : UserPortfolioShares) =
 
-        let highRiskPrice = portfolioPricesList.[High |> getPortfolioPricesListIdxbyPortfolioId].Price
-        let sharesHighRisk = (custPortfolioShares.PortfolioHighShares, cashAmount, highRiskPrice) |||> cash2PortfolioShares
+        let highRiskPrice = userInputPortfolio.PortfoliosPrices.PortfolioHighRiskPrice.Price
+        let sharesHighRisk = (userPortfolioShares.SharesHighRisk, userInputPortfolio.CashToInvest, highRiskPrice) |||> cash2PortfolioShares
         { 
-            SharesLowRisk = custPortfolioShares.PortfolioLowShares; 
-            SharesMediumRisk = custPortfolioShares.PortfolioMediumShares; 
+            SharesLowRisk = userPortfolioShares.SharesLowRisk; 
+            SharesMediumRisk = userPortfolioShares.SharesMediumRisk; 
             SharesHighRisk = sharesHighRisk
         }
 
     let getNewCustomerShares
-            (cashAmount : decimal)
-            (portfolioPricesList : PortfolioSharePrice list)
-            (custPortfolioShares : DbCustPortfolioShares)
-            (customerPortfolio : DbCustoPortfolios) : CustomerPortfolioShares =
+            (userInputPortfolio : UserInputPortfolio)
+            (userPortfolioShares : UserPortfolioShares) : UserPortfolioShares =
+
+        let inputPortfolio = (userInputPortfolio, userPortfolioShares)
 
         let newPortfolioShares =
-            match customerPortfolio.PortfolioId |> getPortfolioRiskById with
-            | Low -> (cashAmount, portfolioPricesList, custPortfolioShares) |||> priceLowRiskPortfolio
-            | Medium ->  (cashAmount, portfolioPricesList, custPortfolioShares) |||> priceMediumRiskPortfolio
-            | High -> (cashAmount, portfolioPricesList, custPortfolioShares) |||> priceHighRiskPortfolio
+            match userInputPortfolio.Portfolio.Risk with
+            | Low -> inputPortfolio ||> priceLowRiskPortfolio
+            | Medium ->  inputPortfolio ||> priceMediumRiskPortfolio
+            | High -> inputPortfolio ||> priceHighRiskPortfolio
 
         newPortfolioShares
 
@@ -240,107 +256,106 @@ module CustomerPortfolio =
     open System
     open GzDb
     open GzDb.DbUtil
-    open Portfolio
+    open PortfolioTypes
         
     let private updDbCustomerPortfolio 
-                (customerPortfolioRisk : Risk)
-                (customerPortfolioRow : DbCustoPortfolios) =
+                (userPortfolioRisk : Risk)
+                (userPortfolioRow : DbCustoPortfolios) =
 
-        let portfolioId = customerPortfolioRisk |> getPortfolioIdByRisk 
+        let portfolioId = userPortfolioRisk |> getPortfolioIdByRisk 
         (**** Hard coded to 100% for now *****)
-        customerPortfolioRow.Weight <- 100.00F
-        customerPortfolioRow.PortfolioId <- portfolioId
-        customerPortfolioRow.UpdatedOnUTC <- DateTime.UtcNow
+        userPortfolioRow.Weight <- 100.00F
+        userPortfolioRow.PortfolioId <- portfolioId
+        userPortfolioRow.UpdatedOnUTC <- DateTime.UtcNow
 
-    let private insDbCustomerPortfolio (customerPortfolioRisk : Risk)(db : DbContext)(yyyyMm : string)(customerId : int) : unit =
+    let private insDbCustomerPortfolio (userInputPortfolio : UserInputPortfolio) : unit =
         let newCustomerPortfolioRow = new DbCustoPortfolios(
-                                        CustomerId = customerId,
-                                        YearMonth = yyyyMm
+                                        CustomerId = userInputPortfolio.UserId,
+                                        YearMonth = userInputPortfolio.Month
                                     )
-        (customerPortfolioRisk, newCustomerPortfolioRow) ||> updDbCustomerPortfolio
-        db.CustPortfolios.InsertOnSubmit(newCustomerPortfolioRow)
+        (userInputPortfolio.Portfolio.Risk, newCustomerPortfolioRow) ||> updDbCustomerPortfolio
+        userInputPortfolio.Db.CustPortfolios.InsertOnSubmit(newCustomerPortfolioRow)
         
 
     /// get single Customer Portfolio of the desired month param in the yyyyMM format
-    let private getCustomerPortfolio(db : DbContext)(yyyyMm : string)(customerId : int) : DbCustoPortfolios = 
-        let custPortfolios =
+    let private getCustomerPortfolio (userInputPortfolio : UserInputPortfolio) : DbCustoPortfolios = 
+        let userPortfolio =
             query {
-                for row in db.CustPortfolios do
+                for row in userInputPortfolio.Db.CustPortfolios do
                 where (
-                    row.YearMonth <= yyyyMm
-                    && row.CustomerId = customerId
+                    String.Compare(row.YearMonth, userInputPortfolio.Month, StringComparison.Ordinal) <= 0
+                    && row.CustomerId = userInputPortfolio.UserId
                 )
                 sortByDescending row.YearMonth
                 select row
-                exactlyOneOrDefault
+                headOrDefault
             }
-        custPortfolios
+        userPortfolio
 
-    let upsCustomerPortfolio(db : DbContext)(yyyyMm : string)(customerId : int)(customerPortfolioRisk : Risk) : unit =
-        let currentCustomerPortfolio = (db, yyyyMm, customerId) |||> getCustomerPortfolio
+    let upsCustomerPortfolio(userInputPortfolio : UserInputPortfolio) : unit =
+        let currentCustomerPortfolio = userInputPortfolio |> getCustomerPortfolio
 
         if isNull currentCustomerPortfolio then
-            (db, yyyyMm, customerId) |||> insDbCustomerPortfolio customerPortfolioRisk
+            userInputPortfolio |> insDbCustomerPortfolio 
         else
-            (customerPortfolioRisk, currentCustomerPortfolio) ||> updDbCustomerPortfolio
+            (userInputPortfolio.Portfolio.Risk, currentCustomerPortfolio) ||> updDbCustomerPortfolio
 
-        db.DataContext.SubmitChanges()
+        userInputPortfolio.Db.DataContext.SubmitChanges()
 
 module CustomerPortfolioShares =
     open System
     open GzDb
     open GzDb.DbUtil
-    open Portfolio
+    open PortfolioTypes
         
     let private updDbCustomerPortfolioShares
-            (customerPortfolioShares : CustomerPortfolioShares)
-            (customerPortfolioSharesRow : DbCustPortfolioShares) : unit =
+            (userPortfolioShares : UserPortfolioShares)
+            (userPortfolioSharesRow : DbCustPortfolioShares) : unit =
 
-        customerPortfolioSharesRow.PortfolioLowShares <- customerPortfolioShares.SharesLowRisk
-        customerPortfolioSharesRow.PortfolioMediumShares <- customerPortfolioShares.SharesMediumRisk
-        customerPortfolioSharesRow.PortfolioHighShares <- customerPortfolioShares.SharesHighRisk
-        customerPortfolioSharesRow.UpdatedOnUtc <- DateTime.UtcNow
+        userPortfolioSharesRow.PortfolioLowShares <- userPortfolioShares.SharesLowRisk
+        userPortfolioSharesRow.PortfolioMediumShares <- userPortfolioShares.SharesMediumRisk
+        userPortfolioSharesRow.PortfolioHighShares <- userPortfolioShares.SharesHighRisk
+        userPortfolioSharesRow.UpdatedOnUtc <- DateTime.UtcNow
 
     let private insDbCustomerPortfolioShares 
-                (customerPortfolioShares : CustomerPortfolioShares)
-                (db : DbContext)
-                (yyyyMm : string)(customerId : int) : unit =
+                (userPortfolioShares : UserPortfolioShares)
+                (userInputPortfolio : UserInputPortfolio) : unit =
 
-        let newCustPortfoliosSharesRow = new DbCustPortfolioShares(CustomerId = customerId, YearMonth = yyyyMm)
-        (customerPortfolioShares, newCustPortfoliosSharesRow) ||> updDbCustomerPortfolioShares
+        let newCustPortfoliosSharesRow = new DbCustPortfolioShares
+                                            (CustomerId = userInputPortfolio.UserId, YearMonth = userInputPortfolio.Month)
+        (userPortfolioShares, newCustPortfoliosSharesRow) ||> updDbCustomerPortfolioShares
 
-        db.CustPortfoliosShares.InsertOnSubmit(newCustPortfoliosSharesRow)
-        
+        userInputPortfolio.Db.CustPortfoliosShares.InsertOnSubmit(newCustPortfoliosSharesRow)
 
     /// get CustomerPortfolioShares of the desired month param in the yyyyMM format  
-    let private getCurrentCustomerPortfolioShares(db : DbContext)(yyyyMm : string)(customerId : int) : DbCustPortfolioShares = 
-        let customerPortfolioShares =
+    let private getCurrentCustomerPortfolioShares(userInputPortfolio : UserInputPortfolio) : DbCustPortfolioShares = 
+        let userPortfolioShares =
             query {
-                for row in db.CustPortfoliosShares do
+                for row in userInputPortfolio.Db.CustPortfoliosShares do
                 where (
-                    row.YearMonth = yyyyMm
-                    && row.CustomerId = customerId
+                    row.YearMonth = userInputPortfolio.Month
+                    && row.CustomerId = userInputPortfolio.UserId
                 )
                 select row
                 exactlyOneOrDefault
             }
-        customerPortfolioShares
+        userPortfolioShares
 
-    let upsDbCustomerPortfolioShares(db : DbContext)(yyyyMm : string)(customerId : int)(customerPortfolioShares : CustomerPortfolioShares) : unit =
-        let currentCustomerPortfolioShares = (db, yyyyMm, customerId) |||> getCurrentCustomerPortfolioShares
+    let upsDbCustomerPortfolioShares(userInputPortfolio : UserInputPortfolio)(userPortfolioShares : UserPortfolioShares) : unit =
+        let dbUserSharesRow = userInputPortfolio |> getCurrentCustomerPortfolioShares
 
-        if isNull currentCustomerPortfolioShares then
-            (db, yyyyMm, customerId) |||> insDbCustomerPortfolioShares customerPortfolioShares
+        if isNull dbUserSharesRow then
+            (userPortfolioShares, userInputPortfolio) ||> insDbCustomerPortfolioShares
         else
-            (customerPortfolioShares, currentCustomerPortfolioShares) ||> updDbCustomerPortfolioShares
+            (userPortfolioShares, dbUserSharesRow) ||> updDbCustomerPortfolioShares
 
-        db.DataContext.SubmitChanges()
+        userInputPortfolio.Db.DataContext.SubmitChanges()
 
 module InvBalance =
     open System
     open GzDb
     open GzDb.DbUtil
-    open Portfolio
+    open PortfolioTypes
 
     type GzTrxGainLoss = {
         CustomerId : int;
@@ -354,7 +369,7 @@ module InvBalance =
 
     let getGzTrx(db : DbContext)(yyyyMm : string) : DbGzTrx list=
 
-        let customerGzTrxRows =
+        let userGzTrxRows =
             query { 
                 for trxRow in db.GzTrxs do
                     where (
@@ -365,23 +380,59 @@ module InvBalance =
                     select trxRow
             }
             |> Seq.toList
-        customerGzTrxRows
+        userGzTrxRows
 
-    /// get single Customer Portfolio of the month param
-    let getInvBalance(db : DbContext)(yyyyMm : string)(customerId : int) : DbInvBalances = 
+    /// get the invBalance row of the desired month in the format of yyyyMm
+    let getInvBalance (userInputPortfolio : UserInputPortfolio) : DbInvBalances = 
         let invBalance =
             query {
-                for row in db.InvBalances do
+                for row in userInputPortfolio.Db.InvBalances do
                 where (
-                    row.YearMonth = yyyyMm
-                    && row.CustomerId = customerId
+                    row.YearMonth = userInputPortfolio.Month
+                    && row.CustomerId = userInputPortfolio.UserId
                 )
                 select row
                 exactlyOneOrDefault
             }
         invBalance
 
+    let getInvBalanceAmounts
+            (userInputPortfolio : UserInputPortfolio)
+            (userPortfolioShares : UserPortfolioShares) =
+
+
+        let prevMonInvBalanceRow = userInputPortfolio |> getInvBalance
+        let prevBalance = prevMonInvBalanceRow.Balance
+        let userNewShares = (userInputPortfolio, userPortfolioShares) ||> CalcUserPortfolioShares.getNewCustomerShares
+
+        userNewShares
+
+
+    let private updDbInvBalance
+            (userPortfolioShares : UserPortfolioShares)
+            (invBalanceRow : DbInvBalances) : unit =
+
+        invBalanceRow.UpdatedOnUTC <- DateTime.UtcNow
+
+    let private insDbInvBalance
+                (userInputPortfolio : UserInputPortfolio)(userPortfolioShares : UserPortfolioShares) : unit =
+
+        let newInvBalanceRow = new DbInvBalances(CustomerId = userInputPortfolio.UserId, YearMonth = userInputPortfolio.Month)
+        (userPortfolioShares, newInvBalanceRow) ||> updDbInvBalance
+
+        userInputPortfolio.Db.InvBalances.InsertOnSubmit(newInvBalanceRow)
         
+    let upsDbInvBalance(userInputPortfolio : UserInputPortfolio)(userPortfolioShares : UserPortfolioShares) : unit =
+        let invBalanceRow = userInputPortfolio |> getInvBalance
+//        let currBalance = prevMonInvBalanceRow.Balance
+
+        if isNull invBalanceRow then
+            (userInputPortfolio, userPortfolioShares) ||> insDbInvBalance
+        else
+            (userPortfolioShares, invBalanceRow) ||> updDbInvBalance
+
+        userInputPortfolio.Db.DataContext.SubmitChanges()
+
 //        .iter (fun trxRow -> 
 //            let customerGzTrx = { 
 //                CustomerId = trxRow.CustomerId; 
