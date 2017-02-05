@@ -20,6 +20,7 @@ module DbUtil =
     type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
     type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
     type DbFunds = DbSchema.ServiceTypes.Funds
+    type DbPortfolios = DbSchema.ServiceTypes.Portfolios
     type DbPortfolioFunds = DbSchema.ServiceTypes.PortFunds
     type DbPortfolioPrices = DbSchema.ServiceTypes.PortfolioPrices
     type DbCustPortfolioShares = DbSchema.ServiceTypes.CustPortfoliosShares
