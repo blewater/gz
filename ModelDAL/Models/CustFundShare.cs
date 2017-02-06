@@ -62,6 +62,8 @@ namespace gzDAL.Models {
         /// Link to month's invBalance
         /// </summary>
         public int? InvBalanceId { get; set; }
+        [ForeignKey("InvBalanceId")]
+        public virtual InvBalance InvBalance { get; set; }
 
         #endregion
         #region NewShares
