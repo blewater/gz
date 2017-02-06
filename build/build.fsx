@@ -338,7 +338,7 @@ Target "SwapStageLive" (fun _ ->
   =?> ("PushMaster", mode = "prod")
   ==> "OpenResultInBrowser"
   =?> ("SwapStageLive", mode = "prod")
-  ==> "EndWithDevelop"
+  ==> "DisplaySha"
 
 // start build
 RunTargetOrDefault "EndWithDevelop"
