@@ -48,6 +48,11 @@
 //--or fsi build.fsx mode=dev
 //Runs build for dev site using the develop branch.
 //
+// Fake.exe "target=Build" --> starts the Build target and runs the dependency Clean
+// Fake.exe Build --> starts the Build target and runs the dependency Clean
+// Fake.exe Build --single-target --> starts only the Build target and runs no dependencies
+// Fake.exe Build -st --> starts only the Build target and runs no dependencies
+// Fake.exe --> starts the Deploy target (and runs the dependencies Clean and Build)
 //***********************************************************************
 #r @"packages/FAKE/tools/FakeLib.dll"
 #r @"packages/Fake.Azure.WebApps/lib/net451/Fake.Azure.WebApps.dll"
@@ -74,12 +79,19 @@ let GitRepo = __SOURCE_DIRECTORY__ @@ ".."
 (* Stage *)
 [<Literal>]
 let StageGzUrl = "https://greenzorro-sgn.azurewebsites.net"
-let StageDeploymentApiInfo = "https://greenzorro-sgn.azurewebsites.net/api/Account/GetDeploymentInfo"
 [<Literal>]
+let StageDeploymentApiInfo = "https://greenzorro-sgn.azurewebsites.net/api/Account/GetDeploymentInfo"
+//[<Literal>]
 //let StageAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/slots/sgn/DeploymentSource"
 // Temp url during sites transition
+[<Literal>]
 let StageAzDepUrl = "https://portal.azure.com/#resource/subscriptions/500c96ff-15a2-4861-8a33-8872bdcb6b58/resourceGroups/2ndSub_All_BizSpark_RG/providers/Microsoft.Web/sites/greenzorro/slots/sgn/DeploymentSource"
+[<Literal>]
 let StageAzureProdSlots = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorro/deploymentSlots"
+(* Prod *)
+[<Literal>]
+let ProdDeploymentApiInfo = "https://greenzorro.com/api/Account/GetDeploymentInfo"
+[<Literal>]
 let ProdGzUrl = "https://www.greenzorro.com"
 
 (* Dev *)
@@ -166,6 +178,49 @@ Target "PushMaster" (fun _ ->
         trace "pushed to prod"
 )
 
+///<summary>
+/// Get html content by Http Get
+///</summary>
+let getHtml (url : string) : string =
+    let req = WebRequest.Create(Uri(url)) 
+    use resp = req.GetResponse()
+    use stream = resp.GetResponseStream() 
+    use reader = new IO.StreamReader(stream) 
+    reader.ReadToEnd()
+
+///<summary>
+/// Get the parsed sha value from a string.
+///</summary>
+let getDeployedSha (htmlResp : string) : string =
+    let htmlSha = GitShaRegex().TypedMatch(htmlResp).SHA.Value
+    htmlSha
+
+/// Diagnostic target
+/// fake DisplaySha -st
+Target "DisplaySha" (fun _ ->
+    let devSha = 
+        DevDeploymentApiInfo
+        |> getHtml 
+        |> getDeployedSha
+    let sgnSha = 
+        StageDeploymentApiInfo
+        |> getHtml 
+        |> getDeployedSha
+    let prodSha = 
+        ProdDeploymentApiInfo
+        |> getHtml 
+        |> getDeployedSha
+    checkoutBranch GitRepo "develop"
+    let devGitSha = getSHA1 GitRepo "HEAD"
+    checkoutBranch GitRepo "master"
+    let masterSha = getSHA1 GitRepo "HEAD"
+    tracefn "The dev Azure Sha1 hash is %s, latest deployed to Dev? %b" devSha (devSha = devGitSha )
+    tracefn "The dev git Sha1 hash is %s" devGitSha
+    tracefn "The sgn Azure Sha1 hash is %s, latest deployed to Stage? %b" sgnSha (sgnSha = masterSha)
+    tracefn "The prod Azure Sha1 hash is %s, latest deployed to Prod? %b" prodSha (prodSha = masterSha)
+    tracefn "The git master Sha1 hash is %s" masterSha
+    checkoutBranch GitRepo "develop"
+)
 let userReply2Bool (userAns : string) : bool=
     match userAns.Trim() with
     | "Y" | "y" | "Υ" | "υ" -> true
@@ -174,23 +229,6 @@ let userReply2Bool (userAns : string) : bool=
     | _ -> tracefn "Unknown response %s" userAns; false
 
 Target "OpenResultInBrowser" (fun _ ->
-
-    ///<summary>
-    /// Get html content by Http Get
-    ///</summary>
-    let getHtml (url : string) : string =
-        let req = WebRequest.Create(Uri(url)) 
-        use resp = req.GetResponse()
-        use stream = resp.GetResponseStream() 
-        use reader = new IO.StreamReader(stream) 
-        reader.ReadToEnd()
-
-    ///<summary>
-    /// Get the parsed sha value from a string.
-    ///</summary>
-    let getDeployedSha (indexHtml : string) : string =
-        let htmlSha = GitShaRegex().TypedMatch(indexHtml).SHA.Value
-        htmlSha
 
     ///<summary>
     /// Compare the local git sha with the newly built sha value on azure site (dev or stage) or whether it matches the one already in production.
@@ -209,17 +247,17 @@ Target "OpenResultInBrowser" (fun _ ->
             |> getDeployedSha
 
         let gitSha = getSHA1 GitRepo "HEAD"
-        tracefn "The stage html, master git Sha1 hashes are %s,%s" htmlStageOrDevSha gitSha
 
         if 
             gitSha = htmlStageOrDevSha
         then
-            trace "** Successful build in Azure! ** Sha1 tags match. Opening site in browser..."
             match mode with
                 | "dev" -> DevGzUrl
                 | _ -> stageIsUpdated <- true; StageGzUrl
             |> Diagnostics.Process.Start 
             |> ignore
+            tracefn "The stage html, master git Sha1 hashes are %s,%s" htmlStageOrDevSha gitSha
+            trace "** Successful build in Azure! ** Sha1 tags match. Opened site in browser..."
             true
         else
             if 
@@ -300,7 +338,7 @@ Target "SwapStageLive" (fun _ ->
   =?> ("PushMaster", mode = "prod")
   ==> "OpenResultInBrowser"
   =?> ("SwapStageLive", mode = "prod")
-  ==> "EndWithDevelop"
+  ==> "DisplaySha"
 
 // start build
 RunTargetOrDefault "EndWithDevelop"
