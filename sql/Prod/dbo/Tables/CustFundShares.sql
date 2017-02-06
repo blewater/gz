@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[CustFundShares] (
+﻿CREATE TABLE [dbo].[CustFundShares] (
     [Id]                    INT              IDENTITY (1, 1) NOT NULL,
     [CustomerId]            INT              NOT NULL,
     [YearMonth]             CHAR (6)         NOT NULL,
@@ -22,6 +22,8 @@ CREATE TABLE [dbo].[CustFundShares] (
 
 
 
+
+
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [CustFundShareId_YMD_idx]
     ON [dbo].[CustFundShares]([CustomerId] ASC, [YearMonth] ASC, [FundId] ASC);
@@ -33,6 +35,5 @@ CREATE NONCLUSTERED INDEX [IX_SharesFundPriceId]
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_InvBalanceId]
-    ON [dbo].[CustFundShares]([InvBalanceId] ASC);
+
 
