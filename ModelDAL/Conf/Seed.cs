@@ -102,8 +102,8 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Balances
-            CalcMonthlyBalances(context, custId);
-            context.SaveChanges();
+            //CalcMonthlyBalances(context, custId);
+            //context.SaveChanges();
         }
 
         /// <summary>
