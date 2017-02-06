@@ -21,9 +21,10 @@ module DbGzTrx =
         trxRow.EndGmBalance <- playerRevRpt.EndBalance
         trxRow.Deposits <- playerRevRpt.TotalDepositsAmount
         trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
+        trxRow.GainLoss <- playerRevRpt.PlayerGainLoss
 
     /// Create & Insert a GzTrxs row
-    let setDbGzTrxRowValues
+    let insDbGzTrxRowValues
             (db : DbContext) 
             (yearMonth : string)
             (amount : decimal)
@@ -100,7 +101,7 @@ module DbGzTrx =
                 let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
 
                 if isNull trxRow then
-                    setDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId.Value playerRevRpt
+                    insDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId.Value playerRevRpt
                 else 
                     updDbGzTrxRowValues playerLossToInvest creditLossPcnt playerRevRpt trxRow
             )

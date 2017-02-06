@@ -14,28 +14,28 @@ namespace gzDAL.Models {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Index("IDX_PortfolioPrice_Id_YMD", IsUnique = true, Order = 1)]
-        [ForeignKey("Portfolio")]
-        [Required]
-        public int PortfolioId { get; set; }
-        public virtual Portfolio Portfolio { get; set; }
-
         /// <summary>
         /// The monthly cleared typically based on last month's trading 
         /// funds closing prices.
         /// </summary>
-        [Index("IDX_PortfolioPrice_Id_YMD", IsUnique = true, Order = 2)]
+        [Index("IDX_PortfolioPrices_YMD", IsUnique = true)]
         [Required]
         [Column(TypeName = "char")]
         [StringLength(8)]
         public string YearMonthDay { get; set; }
 
         /// <summary>
-        /// Its value in virtual currency though in $ practically it will
-        /// be used to track portfolio value appreciation
+        /// Its value in $ though it will
+        /// be used to track portfolio value appreciation in any user denominated currency
         /// </summary>
         [Required]
-        public float Price { get; set; }
+        public float PortfolioLowPrice { get; set; }
+
+        [Required]
+        public float PortfolioMediumPrice { get; set; }
+
+        [Required]
+        public float PortfolioHighPrice { get; set; }
 
         [Required]
         public DateTime UpdatedOnUtc { get; set; }

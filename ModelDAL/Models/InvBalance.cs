@@ -38,6 +38,8 @@ namespace gzDAL.Models {
         [ForeignKey("PortfolioId")]
         public virtual Portfolio Portfolio { get; set; }
 
+        #region Balance Amounts
+
         /// <summary>
         /// Monthly Starting Gaming balance imported from Everymatrix reports
         /// </summary>
@@ -79,16 +81,47 @@ namespace gzDAL.Models {
         [Required]
         public decimal Balance { get; set; }
 
+        #endregion
         /// <summary>
-        /// The month's cash investment
+        /// The month's cash investment or the credited player's loss to buy stock for
         /// </summary>
         [Index("IDX_InvBalance_Cust_YM_CashInv", IsUnique = true, Order = 3)]
+        [DefaultValue(0)]
         public decimal CashInvestment { get; set; } = 0;
 
         /// <summary>
-        /// Optional Cash balance for when the portfolio is sold.
+        /// Total cash investment of previous months; used in investment gain and direct queries.
         /// </summary>
-        public decimal? CashBalance { get; set; } = 0;
+        [DefaultValue(0)]
+        public decimal TotalCashInvestments { get; set; } = 0;
+
+        /// <summary>
+        /// Sum of all previous vintage selling value
+        /// </summary>
+        [Required]
+        [DefaultValue(0)]
+        public decimal TotalSoldVintagesValue { get; set; }
+
+        /// <summary>
+        /// Monthly virtual purchase of low risk portfolio shares
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal LowRiskShares { get; set; }
+
+        /// <summary>
+        /// Monthly virtual purchase of low risk portfolio shares
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal MediumRiskShares { get; set; }
+
+        /// <summary>
+        /// Monthly virtual purchase of low risk portfolio shares
+        /// </summary>
+        [DefaultValue(0)]
+        [Required]
+        public decimal HighRiskShares { get; set; }
 
         /// <summary>
         /// The positive or negative difference compared to the last month.
@@ -97,24 +130,33 @@ namespace gzDAL.Models {
 
         #region Sold Info
 
-
         [Index("IDX_InvBalance_Cust_SoldYM_Sold", Order = 2)]
         [Index("IDX_InvBalance_Cust_YM_Sold", IsUnique = true, Order = 3)]
         public bool Sold { get; set; }
 
+        /// <summary>
+        /// On which month this vintage (month's shares) was sold
+        /// </summary>
         [Index("IDX_InvBalance_Cust_SoldYM_Sold", Order = 3)]
         [Column(TypeName = "char")]
         [StringLength(6)]
         public string SoldYearMonth { get; set; }
+        /// <summary>
+        /// Cash value of this month's shares when they were sold
+        /// </summary>
         public decimal? SoldAmount { get; set; }
+
+        /// <summary>
+        /// Commission & fees by Gz, Funds
+        /// </summary>
         public decimal? SoldFees { get; set; }
         public DateTime? SoldOnUtc { get; set; }
-        public virtual ICollection<CustFundShare> SoldShares { get; set; }
 #endregion
 
         [Required]
         public DateTime UpdatedOnUtc { get; set; }
         public InvBalance() {
+            CashInvestment = TotalCashInvestments = TotalSoldVintagesValue = 0M;
             PortfolioId = (int) RiskToleranceEnum.Medium;
             UpdatedOnUtc = DateTime.UtcNow;
         }

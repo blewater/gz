@@ -10,7 +10,7 @@ namespace gzDAL.Models {
     /// <summary>
     /// Vintage optimized customer monthly portfolio shares tracking 
     /// </summary>
-    public class CustPortfoliosShares {
+    public class VintageShares {
 
         #region Keys
 
@@ -18,11 +18,11 @@ namespace gzDAL.Models {
         public int Id { get; set; }
 
         [Required]
-        [Index("CustPortfoliosShareId_YMD_idx", IsUnique = true, Order = 1)]
-        public int CustomerId { get; set; }
+        [Index("UserPortfoliosShareId_YMD_idx", IsUnique = true, Order = 1)]
+        public int UserId { get; set; }
 
         [Required]
-        [Index("CustPortfoliosShareId_YMD_idx", IsUnique = true, Order = 2)]
+        [Index("UserPortfoliosShareId_YMD_idx", IsUnique = true, Order = 2)]
         [Column(TypeName = "char")]
         [StringLength(6)]
         public string YearMonth { get; set; }
@@ -49,37 +49,12 @@ namespace gzDAL.Models {
         /// Just Track the monthly price of the portfolio
         /// </summary>
 
-        #region Portfolio Prices
+        #region Portfolio Price Trade Days
 
         [Required]
-        public float BuyPortfolioLowPrice { get; set; } = 0;
+        public DateTime BuyPortfolioTradeDay { get; set; }
 
-        [Required]
-        public float BuyPortfolioMediumPrice { get; set; } = 0;
-
-        [Required]
-        public float BuyPortfolioHighPrice { get; set; } = 0;
-
-        #endregion
-
-        /// <summary>
-        ///  Track the specific month's trading day used to calculate cash value
-        /// </summary>
-
-        #region Sold Portfolio Prices
-
-        //[ForeignKey("PortfolioPrices")]
-        public int? SoldPortfolioLowPriceId { get; set; }
-        public virtual PortfolioPrice SoldPortfolioLowPrice { get; set; }
-
-
-        //[ForeignKey("PortfolioPrices")]
-        public int? SoldPortfolioMediumPriceId { get; set; }
-        public virtual PortfolioPrice SoldPortfolioMediumPrice { get; set; }
-
-        //[ForeignKey("PortfolioPrices")]
-        public int? SoldPortfolioHighPriceId { get; set; }
-        public virtual PortfolioPrice SoldPortfolioHighPrice { get; set; }
+        public DateTime? SoldPortfolioTradeDay { get; set; }
 
         #endregion
 
@@ -88,8 +63,7 @@ namespace gzDAL.Models {
         /// </summary>
         [Required]
         public DateTime UpdatedOnUtc { get; set; }
-        public CustPortfoliosShares() {
-
+        public VintageShares() {
             PortfolioLowShares = 0;
             PortfolioMediumShares = 0;
             PortfolioHighShares = 0;
