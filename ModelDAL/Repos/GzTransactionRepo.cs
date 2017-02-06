@@ -287,6 +287,7 @@ namespace gzDAL.Repos {
             VintageDto vintage, 
             DateTime soldOnUtc) {
 
+            // TODO: Revisit to refactor
             SaveDbSoldVintageCustFundShares(customerId, vintage, soldOnUtc);
 
             SaveDbSoldVintageInvBalance(customerId, vintage, soldOnUtc);
@@ -324,7 +325,7 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Update InvBalance for a sold vintage.
+        /// Update CustFundShares for a sold vintage.
         /// 
         /// </summary>
         /// <param name="customerId"></param>

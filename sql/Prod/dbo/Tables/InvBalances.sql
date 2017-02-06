@@ -1,25 +1,32 @@
 ﻿CREATE TABLE [dbo].[InvBalances] (
-    [Id]             INT              IDENTITY (1, 1) NOT NULL,
-    [CustomerId]     INT              NOT NULL,
-    [YearMonth]      CHAR (6)         NOT NULL,
-    [Balance]        DECIMAL (29, 16) NOT NULL,
-    [InvGainLoss]    DECIMAL (29, 16) NOT NULL,
-    [CashInvestment] DECIMAL (29, 16) NOT NULL,
-    [UpdatedOnUTC]   DATETIME         NOT NULL,
-    [CashBalance]    DECIMAL (29, 16) NULL,
-    [Sold]           BIT              DEFAULT ((0)) NOT NULL,
-    [SoldYearMonth]  CHAR (6)         NULL,
-    [SoldAmount]     DECIMAL (29, 16) NULL,
-    [SoldFees]       DECIMAL (29, 16) NULL,
-    [SoldOnUtc]      DATETIME         NULL,
-    [BegGmBalance]   DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
-    [Deposits]       DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
-    [Withdrawals]    DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
-    [GamingGainLoss] DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
-    [EndGmBalance]   DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [Id]               INT              IDENTITY (1, 1) NOT NULL,
+    [CustomerId]       INT              NOT NULL,
+    [YearMonth]        CHAR (6)         NOT NULL,
+    [Balance]          DECIMAL (29, 16) NOT NULL,
+    [InvGainLoss]      DECIMAL (29, 16) NOT NULL,
+    [CashInvestment]   DECIMAL (29, 16) NOT NULL,
+    [UpdatedOnUTC]     DATETIME         NOT NULL,
+    [CashBalance]      DECIMAL (29, 16) NULL,
+    [Sold]             BIT              DEFAULT ((0)) NOT NULL,
+    [SoldYearMonth]    CHAR (6)         NULL,
+    [SoldAmount]       DECIMAL (29, 16) NULL,
+    [SoldFees]         DECIMAL (29, 16) NULL,
+    [SoldOnUtc]        DATETIME         NULL,
+    [BegGmBalance]     DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [Deposits]         DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [Withdrawals]      DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [GamingGainLoss]   DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [EndGmBalance]     DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [PortfolioId]      INT              DEFAULT ((3)) NOT NULL,
+    [LowRiskShares]    DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [MediumRiskShares] DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [HighRiskShares]   DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_dbo.InvBalances] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE
+    CONSTRAINT [FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_dbo.InvBalances_dbo.Portfolios_PortfolioId] FOREIGN KEY ([PortfolioId]) REFERENCES [dbo].[Portfolios] ([Id])
 );
+
+
 
 
 
@@ -54,4 +61,9 @@ CREATE UNIQUE NONCLUSTERED INDEX [IDX_InvBalance_Cust_YM_CashInv]
 GO
 CREATE NONCLUSTERED INDEX [IDX_InvBalance_Cust_SoldYM_Sold]
     ON [dbo].[InvBalances]([CustomerId] ASC, [Sold] ASC, [SoldYearMonth] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_PortfolioId]
+    ON [dbo].[InvBalances]([PortfolioId] ASC);
 

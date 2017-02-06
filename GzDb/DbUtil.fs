@@ -23,7 +23,7 @@ module DbUtil =
     type DbPortfolios = DbSchema.ServiceTypes.Portfolios
     type DbPortfolioFunds = DbSchema.ServiceTypes.PortFunds
     type DbPortfolioPrices = DbSchema.ServiceTypes.PortfolioPrices
-    type DbCustPortfolioShares = DbSchema.ServiceTypes.CustPortfoliosShares
+    type DbVintageShares = DbSchema.ServiceTypes.VintageShares
     type DbInvBalances = DbSchema.ServiceTypes.InvBalances
     type DbCustoPortfolios = DbSchema.ServiceTypes.CustPortfolios
 
