@@ -296,6 +296,7 @@
         factory.login = function (usernameOrEmail, password, captcha) {
             var q = $q.defer();
             emLogin(usernameOrEmail, password, captcha).then(function(emLoginResult) {
+                window.appInsights.setAuthenticatedUserContext(usernameOrEmail);
                 if (emLoginResult.hasToEnterCaptcha)
                     q.resolve({ enterCaptcha: true });
                 else {
@@ -314,6 +315,7 @@
                 //}, function (gzLoginError) {
                 //    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
                 //});
+                window.appInsights.setAuthenticatedUserContext('');
                 q.resolve({ emLogin: false, emError: emLoginError });
             });
             return q.promise;
