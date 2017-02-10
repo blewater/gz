@@ -51,7 +51,11 @@ module PortfolioTypes =
         Worth : Money
     }
 
-    type VintagesSold = PortfolioPriced
+    type VintagesSold = {
+        PortfolioShares : PortfolioShares; 
+        BoughtAt : Money; 
+        SoldAt : Money 
+    }
 
     type PortfolioSharePrice = {
         PortfolioId : PortfolioId;
@@ -427,7 +431,8 @@ module InvBalance =
 
     type InvBalancePrevTotals = {
         TotalCashInvestments : decimal;
-        TotalSoldVintagesSold : decimal;
+        TotalCashInvInHold : decimal;
+        TotalSoldVintagesSold : decimal
     }
 
     type InvBalanceInput = {
@@ -455,20 +460,31 @@ module InvBalance =
 
         let nowBalance = input.PrevPortfolioShares.Worth + input.NewPortfolioShares.Worth
         let cashInv = input.UserInputPortfolio.CashToInvest
-        let totalCashInvestment = input.InvBalancePrevTotals.TotalCashInvestments + cashInv
         let vintagesSoldThisMonth = input.UserInputPortfolio.VintagesSold
-        let totalSoldVintagesSold = input.InvBalancePrevTotals.TotalSoldVintagesSold + vintagesSoldThisMonth.Worth
+        let ``total Cash invested for All vintages`` = input.InvBalancePrevTotals.TotalCashInvestments + cashInv
+        let ``selling Price Of All Sold Vintages`` = input.InvBalancePrevTotals.TotalSoldVintagesSold + vintagesSoldThisMonth.SoldAt
+        let ``bought Price of Sold Vintages`` = vintagesSoldThisMonth.BoughtAt
+        let ``total Cash Invested for Unsold Vintages`` = input.InvBalancePrevTotals.TotalCashInvInHold - ``bought Price of Sold Vintages``
 
         invBalanceRow.Balance <- nowBalance
-        invBalanceRow.InvGainLoss <- nowBalance - totalCashInvestment + totalSoldVintagesSold
+        // Note: See line below for investment gain including sold vintages
+        // invBalanceRow.InvGainLoss <- (nowBalance + ``selling Price Of All Sold Vintages``) - ``total Cash invested for All vintages``
+        // Present business choice: Investment gain of vintages in hold. 
+        invBalanceRow.InvGainLoss <- nowBalance - ``total Cash Invested for Unsold Vintages``
         invBalanceRow.PortfolioId <- input.UserInputPortfolio.Portfolio.PortfolioId
         invBalanceRow.CashInvestment <- cashInv
-        invBalanceRow.TotalCashInvestments <- totalCashInvestment
-        invBalanceRow.TotalSoldVintagesValue <- totalSoldVintagesSold
+
+        // Vintage Shares
         invBalanceRow.LowRiskShares <- input.NewPortfolioShares.PortfolioShares.SharesLowRisk
         invBalanceRow.MediumRiskShares <- input.NewPortfolioShares.PortfolioShares.SharesMediumRisk
         invBalanceRow.HighRiskShares <- input.NewPortfolioShares.PortfolioShares.SharesHighRisk
 
+        // Totals
+        invBalanceRow.TotalCashInvestments <- ``total Cash invested for All vintages``
+        invBalanceRow.TotalCashInvInHold <- ``total Cash Invested for Unsold Vintages``
+        invBalanceRow.TotalSoldVintagesValue <- ``selling Price Of All Sold Vintages``
+
+        // Gaming Activity
         invBalanceRow.BegGmBalance <- input.UserInputPortfolio.BegBalance
         invBalanceRow.Deposits <- input.UserInputPortfolio.Deposits
         invBalanceRow.Withdrawals <- input.UserInputPortfolio.Withdrawals
@@ -497,24 +513,16 @@ module InvBalance =
 
         input.UserInputPortfolio.TrxInput.Db.DataContext.SubmitChanges()
 
-    let getInvBalancePrevTotals(trxInput : TrxInput) =
+    let getInvBalancePrevTotals(trxInput : TrxInput) : InvBalancePrevTotals =
         let invB = { trxInput with Month = trxInput.Month.ToPrevYyyyMm }
                 |> getInvBalance
         if not <| isNull invB then
-            { TotalCashInvestments = invB.TotalCashInvestments; TotalSoldVintagesSold = invB.TotalSoldVintagesValue }
+            { TotalCashInvestments = invB.TotalCashInvestments; TotalCashInvInHold = invB.TotalCashInvInHold; TotalSoldVintagesSold = invB.TotalSoldVintagesValue }
         else
-            { TotalCashInvestments = 0M; TotalSoldVintagesSold = 0M }
+            { TotalCashInvestments = 0M; TotalCashInvInHold = 0M; TotalSoldVintagesSold = 0M }
 
-    let getPrevInvBalanceTotals(trxInput : TrxInput) : InvBalancePrevTotals =
-        let prevMonth = { trxInput with Month = trxInput.Month.ToPrevYyyyMm }
-        let invBalanceRow = prevMonth |> getInvBalance
-        if not <| isNull invBalanceRow then
-            { TotalCashInvestments = 0M; TotalSoldVintagesSold = 0M; }
-        else
-            { TotalCashInvestments = 0M; TotalSoldVintagesSold = 0M; }
-        
     /// get any sold vintages for this user during the month we're presently clearing
-    let getSoldVintages (trxInput : TrxInput) = 
+    let getSoldVintages (trxInput : TrxInput) : VintagesSold = 
         let vintageTotals =
             query {
                 for row in trxInput.Db.InvBalances do
@@ -523,19 +531,19 @@ module InvBalance =
                     && row.CustomerId = trxInput.UserId
                 )
                 // Cast drop nullable from SoldAmount
-                select (row.LowRiskShares, row.MediumRiskShares, row.HighRiskShares, decimal row.SoldAmount)
+                select (row.LowRiskShares, row.MediumRiskShares, row.HighRiskShares, row.CashInvestment, decimal row.SoldAmount)
             }
             // Sum fold. The query linq would not allow for Null return of grouped summed tuple so we do summation in F#
             // it's also shorter much shorter
-            |> Seq.fold (fun (ls, ms, hs, ss) (l, m, h, s) -> (ls+l, ms+m, hs+h, ss + s)) (0M, 0M, 0M,0M)
+            |> Seq.fold (fun (ls, ms, hs, cs, ss) (l, m, h, c, s) -> (ls+l, ms+m, hs+h, cs+c, ss + s)) (0M, 0M, 0M, 0M, 0M)
         vintageTotals 
-                |> (fun (lowShares, mediumShares, highShares, soldAmount) ->
+                |> (fun (lowShares, mediumShares, highShares, cashInv, soldAmount) ->
                     let vintShares = {
                         SharesLowRisk = lowShares;
                         SharesMediumRisk = mediumShares;
                         SharesHighRisk = highShares
                     }
-                    { PortfolioShares = vintShares; Worth = soldAmount }
+                    { PortfolioShares = vintShares; BoughtAt = cashInv; SoldAt = soldAmount }
                 )
 
 module UserTrx =
