@@ -5,7 +5,6 @@ module DbUtil =
     open FSharp.Data.TypeProviders
     open System
 
-
     // Use for compile time memory schema representation
     [<Literal>]
     let CompileTimeDbString = 
@@ -131,7 +130,7 @@ module DbUtil =
         logger.Fatal(ex, "Runtime Exception at main")
 
     /// Enclose db operation within a transaction
-    let tryDbTransOperation (db : DbContext) (dbOperation : (unit -> unit)) : unit =
+    let private tryDbTransOperation (db : DbContext) (dbOperation : (unit -> unit)) : unit =
         let transaction = startDbTransaction db
         try
 
@@ -143,3 +142,17 @@ module DbUtil =
             handleFailure transaction ex
             reraise ()
 
+    /// retry x times a function (fn)
+    let rec retry times fn = 
+        if times > 0 then
+            try
+                fn()
+            with 
+            | _ -> System.Threading.Thread.Sleep(50); retry (times - 1) fn
+        else
+            fn()
+    
+    /// Try a database operation within a transaction 3 times with a delay of 50ms before each commit.
+    let tryDBCommit3Times (db : DbContext) (dbOperation : (unit -> unit)) : unit =
+        let dbTransOperation() = (db, dbOperation) ||> tryDbTransOperation 
+        retry 3 dbTransOperation

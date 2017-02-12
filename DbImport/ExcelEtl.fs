@@ -550,7 +550,7 @@ module Etl =
 
         /// Box function pointer with required parameters
         let dbOperation() = (db, reportfileNames) ||> setDbimportExcel
-        (db, dbOperation) ||> tryDbTransOperation
+        (db, dbOperation) ||> tryDBCommit3Times
 
         moveRptsToOutFolder inFolder outFolder reportfileNames.customFilename reportfileNames.begBalanceFilename reportfileNames.withdrawalFilename
 
