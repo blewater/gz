@@ -83,11 +83,11 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
-      <HintPath>..\Gm2Gz\packages\ExcelProvider.0.8.0\lib\Excel.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\ExcelProvider.0.8.1\lib\Excel.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ExcelProvider">
-      <HintPath>..\Gm2Gz\packages\ExcelProvider.0.8.0\lib\ExcelProvider.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\ExcelProvider.0.8.1\lib\ExcelProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -100,12 +100,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\Gm2Gz\packages\ExcelProvider.0.8.0\lib\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\ExcelProvider.0.8.1\lib\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\Gm2Gz\packages\NLog.4.4.1\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -117,8 +117,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GzDb\GzDb.fsproj">
-      <Name>GzDb</Name>
+    <ProjectReference Include="..\GzCommon\GzCommon.fsproj">
+      <Name>GzCommon</Name>
       <Project>{d118702e-4b38-4bcf-9184-daa324c5d160}</Project>
       <Private>True</Private>
     </ProjectReference>

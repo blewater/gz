@@ -79,20 +79,20 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="NLog.xsd" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
     <None Include="Scripts\load-project-debug.fsx" />
     <None Include="Script.fsx" />
+    <None Include="NLog.xsd" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
-      <HintPath>packages\ExcelProvider.0.8.0\lib\Excel.dll</HintPath>
+      <HintPath>packages\ExcelProvider.0.8.1\lib\Excel.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ExcelProvider">
-      <HintPath>packages\ExcelProvider.0.8.0\lib\ExcelProvider.dll</HintPath>
+      <HintPath>packages\ExcelProvider.0.8.1\lib\ExcelProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Configuration">
@@ -109,12 +109,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>packages\ExcelProvider.0.8.0\lib\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>packages\ExcelProvider.0.8.1\lib\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>packages\NLog.4.4.1\lib\net45\NLog.dll</HintPath>
+      <HintPath>packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SharpYaml">
@@ -139,8 +139,8 @@
       <Project>{906609cb-1aa2-4596-8584-94c2ccc23274}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\GzDb\GzDb.fsproj">
-      <Name>GzDb</Name>
+    <ProjectReference Include="..\GzCommon\GzCommon.fsproj">
+      <Name>GzCommon</Name>
       <Project>{d118702e-4b38-4bcf-9184-daa324c5d160}</Project>
       <Private>True</Private>
     </ProjectReference>
