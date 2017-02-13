@@ -116,7 +116,7 @@ module PortfolioTypes =
 module DailyPortfolioShares =
     open System
     open System.Net
-    open GzDb
+    open GzCommon
     open GzDb.DbUtil
     open PortfolioTypes
 
@@ -341,7 +341,7 @@ module CalcUserPortfolioShares =
 
 module VintageShares =
     open System
-    open GzDb
+    open GzCommon
     open GzDb.DbUtil
     open PortfolioTypes
         
@@ -425,7 +425,7 @@ module VintageShares =
 
 module InvBalance =
     open System
-    open GzDb
+    open GzCommon
     open GzDb.DbUtil
     open PortfolioTypes
 
