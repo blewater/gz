@@ -7,7 +7,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MainProcessor", "MainProces
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DbImport", "..\DbImport\DbImport.fsproj", "{BD103410-E702-454C-AE68-17F50A0A4742}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzDb", "..\GzDb\GzDb.fsproj", "{D118702E-4B38-4BCF-9184-DAA324C5D160}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzCommon", "..\GzCommon\GzCommon.fsproj", "{D118702E-4B38-4BCF-9184-DAA324C5D160}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzBalances", "..\GzBalances\GzBalances.fsproj", "{906609CB-1AA2-4596-8584-94C2CCC23274}"
 EndProject
