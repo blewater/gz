@@ -315,7 +315,7 @@ module DbPlayerRevRpt =
 module WithdrawalRpt2Db =
     open System
     open NLog
-    open GzDb
+    open GzCommon
     open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles

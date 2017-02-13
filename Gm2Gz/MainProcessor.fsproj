@@ -70,6 +70,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="ArgumentsProcessor.fs" />
     <Compile Include="MainStart.fs" />
     <None Include="App.config" />
     <Content Include="connectionStrings.config">
@@ -87,6 +88,10 @@
     <None Include="NLog.xsd" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Argu">
+      <HintPath>packages\Argu.3.7.0\lib\net40\Argu.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Excel">
       <HintPath>packages\ExcelProvider.0.8.1\lib\Excel.dll</HintPath>
       <Private>True</Private>

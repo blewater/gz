@@ -1,4 +1,4 @@
-﻿namespace GzDb
+﻿namespace GzCommon
 
 [<AutoOpen>]
 module DateStr =
