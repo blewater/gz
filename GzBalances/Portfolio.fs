@@ -186,6 +186,48 @@ module DailyPortfolioShares =
         }
         portfoliosPrices
 
+    let pFundsQry (db : DbContext) =
+            query { 
+                for f in db.Funds do
+                join fp in db.PortFunds on (f.Id = fp.FundId)
+                join p in db.Portfolios on (fp.PortfolioId = p.Id)
+                where (p.IsActive)
+                sortBy fp.PortfolioId
+                thenBy f.Id
+                select (f, fp)
+            }
+            |> Seq.toList
+
+    let getPortfoliosPrices(db : DbContext)(takenDays: int) =
+
+        let portfolioPrices =
+            db 
+            |> pFundsQry
+            |> Seq.map(fun (f : DbFunds, fp : DbPortfolioFunds) -> 
+                takenDays |> getStockPrices f.Symbol
+                |> Seq.map(fun(quote : FundQuote) -> 
+                    let portfolioFundRec = {PortfolioId = fp.PortfolioId; PortfolioWeight = fp.Weight; Fund = quote}
+                    portfolioFundRec)
+                )
+                |> Seq.concat
+                |> Seq.groupBy(fun (portfolioFundRec : PortfolioFundRecord) -> portfolioFundRec.Fund.TradedOn)
+                |> Seq.map(fun (tradedOnKey : DateTime, spfr : PortfolioFundRecord seq) -> 
+                    spfr |> Seq.groupBy (fun(pfr)->pfr.PortfolioId))
+                    |> Seq.map(fun(portfolioseq ) -> 
+                        // Flatten the seq<fundquote> to a single price per portfolioId group : seq PortfolioId, sspfr : PortfolioFundRecord seq
+                        portfolioseq |> Seq.map (
+                            fun (p : PortfolioId, spsf : (seq<PortfolioFundRecord>)) ->
+                                let price = 
+                                    spsf 
+                                    |> Seq.map (fun (pfr : PortfolioFundRecord) -> pfr.Fund.ClosingPrice * float pfr.PortfolioWeight / 100.0) 
+                                    |> Seq.reduce (+)
+                                let topPortfolioFundRecord = spsf |> Seq.head
+                                { PortfolioId = p; Price = price; TradedOn = topPortfolioFundRecord.Fund.TradedOn }
+                        )
+                    )
+        portfolioPrices
+       // portfolioPrices |> Seq.iter(fun i -> printfn "%A" i)
+
     /// 1. Read The portfolio funds from Db
     /// 2. Ask yahoo their closing prices
     /// 3. Calculate each portfolio single virtual share closing price
@@ -195,7 +237,10 @@ module DailyPortfolioShares =
             query { 
                 for f in db.Funds do
                 join fp in db.PortFunds on (f.Id = fp.FundId)
+                join p in db.Portfolios on (fp.PortfolioId = p.Id)
+                where (p.IsActive)
                 sortBy fp.PortfolioId
+                thenBy f.Id
                 select (f, fp)
             }
             // Ask yahoo api funds closing pricing
