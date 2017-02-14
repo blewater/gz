@@ -285,7 +285,7 @@ namespace gzDAL.Conf {
                     HoldingName = "Vanguard Strategic Small-Cap Equity", Symbol = "VSTCX", YearToDate = 8.30f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
                 new Fund {
-                    HoldingName = "Victory CEMP US 500 Enhanced Vol Wtd", Symbol = "CFO", YearToDate = 11.21f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
+                    HoldingName = "Victory CEMP US 500 Enhanced Vol Wtd", Symbol = "CFA", YearToDate = 11.21f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 }
                 );
         }
@@ -327,7 +327,7 @@ namespace gzDAL.Conf {
                 },
                 new FundPrice {
                     ClosingPrice = 79.16F,
-                    FundId = context.Funds.Where(f => f.Symbol == "CFO").Select(f => f.Id).FirstOrDefault(),
+                    FundId = context.Funds.Where(f => f.Symbol == "CFA").Select(f => f.Id).FirstOrDefault(),
                     YearMonthDay = "20141231",
                     UpdatedOnUTC = new DateTime(2014, 12, 31, 23, 50, 0)
                 },
@@ -359,7 +359,7 @@ namespace gzDAL.Conf {
                 },
                 new FundPrice {
                     ClosingPrice = 42.31F,
-                    FundId = context.Funds.Where(f => f.Symbol == "CFO").Select(f => f.Id).FirstOrDefault(),
+                    FundId = context.Funds.Where(f => f.Symbol == "CFA").Select(f => f.Id).FirstOrDefault(),
                     YearMonthDay = "20150601",
                     UpdatedOnUTC = new DateTime(2015, 6, 1, 23, 50, 0)
                 },
@@ -448,7 +448,7 @@ namespace gzDAL.Conf {
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 },
                 new PortFund {
-                    FundId = context.Funds.Where(f => f.Symbol == "CFO").Select(f => f.Id).FirstOrDefault(),
+                    FundId = context.Funds.Where(f => f.Symbol == "CFA").Select(f => f.Id).FirstOrDefault(),
                     Weight = 50f,
                     PortfolioId = context.Portfolios.Where(p => p.RiskTolerance == RiskToleranceEnum.High).Select(p => p.Id).FirstOrDefault(),
                 }
