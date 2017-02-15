@@ -191,7 +191,7 @@
             loadTitles();
             loadCountries();
             loadCurrencies();
-            window.appInsights.trackPageView("DETAILS");
+            window.appInsights.trackPageView("REGISTER DETAILS");
         };
         // #endregion
 
