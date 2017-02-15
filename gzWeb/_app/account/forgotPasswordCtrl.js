@@ -51,6 +51,7 @@
                 $scope.model.email = $scope.email;
                 //$scope.emailValidOnce = true;
             }
+            window.appInsights.trackPageView("FORGOT PASSWORD");
         }
         init();
     }

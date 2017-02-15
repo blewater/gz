@@ -246,6 +246,7 @@
         factory.logout = function (reason) {
             gzLogout();
             emLogout(reason);
+            window.appInsights.trackEvent("LOGOUT");
             //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
 
             // TODO
@@ -297,6 +298,7 @@
             var q = $q.defer();
             emLogin(usernameOrEmail, password, captcha).then(function(emLoginResult) {
                 window.appInsights.setAuthenticatedUserContext(usernameOrEmail);
+                window.appInsights.trackEvent("LOGIN");
                 if (emLoginResult.hasToEnterCaptcha)
                     q.resolve({ enterCaptcha: true });
                 else {

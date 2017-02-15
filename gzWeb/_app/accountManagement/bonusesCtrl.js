@@ -11,6 +11,7 @@
             if ($scope.form.$valid) {
                 $scope.applyingBonus = true;
                 auth.applyBonus($scope.bonusCode).then(function () {
+                    window.appInsights.trackEvent("BONUS APPLY", { code: $scope.bonusCode });
                     $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                     $scope.applyingBonus = false;
                     $scope.bonusCode = '';
@@ -51,6 +52,7 @@
         $scope.forfeit = function (index) {
             message.confirm("Are you sure you want to continue?", function () {
                 auth.forfeit($scope.grantedBonuses[index].id).then(function () {
+                    window.appInsights.trackEvent("BONUS FORFEIT", { id: $scope.grantedBonuses[index].id });
                     $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                     $scope.grantedBonuses.splice(index, 1);
                 });

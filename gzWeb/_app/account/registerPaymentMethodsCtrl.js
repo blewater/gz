@@ -43,6 +43,7 @@
 
         function init() {
             loadPaymentMethods();
+            window.appInsights.trackPageView("REGISTER PAYMENT METHODS");
         };
         // #endregion
 

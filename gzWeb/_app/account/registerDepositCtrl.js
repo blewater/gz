@@ -23,6 +23,7 @@
         // #region init
         function init() {
             getPaymentMethodCfg();
+            window.appInsights.trackPageView("REGISTER DEPOSIT");
         };
 
         function getPaymentMethodCfg() {
