@@ -669,6 +669,10 @@
     <Compile Include="Migrations\201702110946067_TotalCashInvInHold.Designer.cs">
       <DependentUpon>201702110946067_TotalCashInvInHold.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702152027186_PortfolioPricetoDouble.cs" />
+    <Compile Include="Migrations\201702152027186_PortfolioPricetoDouble.Designer.cs">
+      <DependentUpon>201702152027186_PortfolioPricetoDouble.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1378,6 +1382,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702110946067_TotalCashInvInHold.resx">
       <DependentUpon>201702110946067_TotalCashInvInHold.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702152027186_PortfolioPricetoDouble.resx">
+      <DependentUpon>201702152027186_PortfolioPricetoDouble.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

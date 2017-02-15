@@ -1,5 +1,6 @@
 ﻿namespace GzDb
 
+[<AutoOpen>]
 module DbUtil =
     open NLog
     open FSharp.Data.TypeProviders
