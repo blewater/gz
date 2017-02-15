@@ -101,6 +101,7 @@
 
         function init() {
             checkResetKeyAvailability();
+            window.appInsights.trackPageView("RESET PASSWORD");
         };
         init();
     }

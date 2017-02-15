@@ -68,5 +68,7 @@
                 nsStatic: true
             });
         };
+
+        window.appInsights.trackPageView("LOGIN");
     }
 })();

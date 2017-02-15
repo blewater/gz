@@ -17,7 +17,7 @@
                 state.action(state, $scope, params, function () {
                     $scope.changingState = false;
                 });
-                window.appInsights.trackPageView("Account Management: " + state.title);
+                window.appInsights.trackPageView("ACOUNT MANAGEMENT: " + state.title);
             }, 0);
         }
         $scope.setState($scope.state || $scope.menuStates[0]);
