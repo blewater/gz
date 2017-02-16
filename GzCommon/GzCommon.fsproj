@@ -24,7 +24,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\GzDb.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\GzCommon.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,7 +33,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\GzDb.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\GzCommon.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -45,7 +45,7 @@
     <Tailcalls>false</Tailcalls>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\GzDb.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\GzCommon.XML</DocumentationFile>
     <OutputPath>bin\Production\</OutputPath>
   </PropertyGroup>
   <Choose>
