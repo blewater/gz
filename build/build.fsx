@@ -99,7 +99,7 @@ let ProdGzUrl = "https://www.greenzorro.com"
 let DevDeploymentApiInfo = "https://greenzorrodev.azurewebsites.net/api/Account/GetDeploymentInfo"
 let DevGzUrl = "https://greenzorrodev.azurewebsites.net"
 [<Literal>]
-let DevAzDepUrl = "https://portal.azure.com/#resource/subscriptions/d92ca232-a672-424c-975d-1dcf45a58b0b/resourceGroups/GreenzorroBizSpark/providers/Microsoft.Web/sites/greenzorrodev/DeploymentSource"
+let DevAzDepUrl = "https://portal.azure.com/#resource/subscriptions/500c96ff-15a2-4861-8a33-8872bdcb6b58/resourceGroups/2ndSubDevSites_RG/providers/Microsoft.Web/sites/greenzorrodev/DeploymentSource"
 
 let mode = getBuildParamOrDefault "mode" "prod"
 
@@ -155,20 +155,6 @@ Target "BuildGzWeb" (fun _ ->
                 MSBuild "" "build"  [ ("Configuration", "Release"); ("RestorePackages", "True") ]
       |> Log "Build-Output: "
       tracefn "built %s..." mode
-)
-
-Target "DeployAzDev" (fun () ->
-
-    let result =
-        ExecProcess (fun info -> 
-            info.FileName <- @"c:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-            info.Arguments <- "-verb:sync"
-            info.Arguments <- "-source:contentPath=" + @""
-            info.Arguments <- "-verb:sync"
-            info.Arguments <- "-verb:sync"
-            info.Arguments <- "-verb:sync"
-        ) (System.TimeSpan.FromMinutes 1.0)     
-    if result <> 0 then failwith "DeployAzDev timed out!"
 )
 
 Target "PushMaster" (fun _ ->
@@ -333,12 +319,10 @@ Target "SwapStageLive" (fun _ ->
   =?> ("PullDevelop", mode = "prod")
   =?> ("MergeMaster", mode = "prod")
   ==> "BuildGzWeb"
-  =?> ("Zip", mode = "dev")
-  =?> ("DeployAzDev", mode.Equals "dev")
   =?> ("PushMaster", mode = "prod")
   ==> "OpenResultInBrowser"
   =?> ("SwapStageLive", mode = "prod")
   ==> "DisplaySha"
 
 // start build
-RunTargetOrDefault "EndWithDevelop"
+RunTargetOrDefault "DisplaySha"
