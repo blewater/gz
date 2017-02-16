@@ -147,9 +147,11 @@
     <Compile Include="DTO\CustFundShareDto.cs" />
     <Compile Include="Migrations\MigrationExtensions.cs" />
     <Compile Include="Models\CarouselEntry.cs" />
+    <Compile Include="Models\VintageShares.cs" />
     <Compile Include="Models\DbSetExtensions.cs" />
     <Compile Include="Models\DynamicPage.cs" />
     <Compile Include="Models\EmailTemplate.cs" />
+    <Compile Include="Models\PortfolioPrice.cs" />
     <Compile Include="Models\GameCategory.cs" />
     <Compile Include="Models\GzConfiguration.cs" />
     <Compile Include="Models\CurrencyListX.cs" />

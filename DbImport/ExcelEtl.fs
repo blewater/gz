@@ -3,7 +3,7 @@
 module DbGzTrx =
     open System
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -21,9 +21,10 @@ module DbGzTrx =
         trxRow.EndGmBalance <- playerRevRpt.EndBalance
         trxRow.Deposits <- playerRevRpt.TotalDepositsAmount
         trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
+        trxRow.GainLoss <- playerRevRpt.PlayerGainLoss
 
     /// Create & Insert a GzTrxs row
-    let setDbGzTrxRowValues
+    let insDbGzTrxRowValues
             (db : DbContext) 
             (yearMonth : string)
             (amount : decimal)
@@ -36,13 +37,13 @@ module DbGzTrx =
                 CustomerId=gzUserId,
                 YearMonthCtd = yearMonth,
                 CreatedOnUTC = DateTime.UtcNow,
-                TypeId = int DbUtil.GzTransactionType.CreditedPlayingLoss)
+                TypeId = int GzTransactionType.CreditedPlayingLoss)
 
         updDbGzTrxRowValues amount creditPcntApplied playerRevRpt newGzTrxRow
         db.GzTrxs.InsertOnSubmit(newGzTrxRow)
 
     /// Get the greenzorro used id by email
-    let getGzUserId (db : DbContext) (gmUserEmail : string) : int =
+    let getGzUserId (db : DbContext) (gmUserEmail : string) : int option =
         query {
             for user in db.AspNetUsers do
             where (user.Email = gmUserEmail)
@@ -51,9 +52,10 @@ module DbGzTrx =
         }
         |> (fun userId ->
             if userId = 0 then
-                failwithf "Everymatrix email %s not found in db: %s. Cannot continue..." gmUserEmail db.DataContext.Connection.DataSource
+                logger.Warn (sprintf "*** Everymatrix email %s not found in the AspNetUsers table of db: %s. Cannot award..." gmUserEmail db.DataContext.Connection.DataSource)
+                None
             else
-                userId
+                Some userId
         )
 
     /// Get the credited loss Percentage in human form % i.e. 50 from gzConfiguration
@@ -83,26 +85,27 @@ module DbGzTrx =
         let gmEmail = playerRevRpt.EmailAddress
         let gzUserId = getGzUserId db gmEmail
 
-        query { 
-            for trxRow in db.GzTrxs do
-                where (
-                    trxRow.YearMonthCtd = yyyyMm
-                    && trxRow.CustomerId = gzUserId
-                    && trxRow.GzTrxTypes.Code = int DbUtil.GzTransactionType.CreditedPlayingLoss
-                )
-                select trxRow
-                exactlyOneOrDefault
-        }
-        |> (fun trxRow ->
-            let creditLossPcnt = getCreditLossPcnt db 
-            let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
+        if gzUserId.IsSome then
+            query { 
+                for trxRow in db.GzTrxs do
+                    where (
+                        trxRow.YearMonthCtd = yyyyMm
+                        && trxRow.CustomerId = gzUserId.Value
+                        && trxRow.GzTrxTypes.Code = int GzTransactionType.CreditedPlayingLoss
+                    )
+                    select trxRow
+                    exactlyOneOrDefault
+            }
+            |> (fun trxRow ->
+                let creditLossPcnt = getCreditLossPcnt db 
+                let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
 
-            if isNull trxRow then
-                setDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId playerRevRpt
-            else 
-                updDbGzTrxRowValues playerLossToInvest creditLossPcnt playerRevRpt trxRow
-        )
-        db.DataContext.SubmitChanges()
+                if isNull trxRow then
+                    insDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId.Value playerRevRpt
+                else 
+                    updDbGzTrxRowValues playerLossToInvest creditLossPcnt playerRevRpt trxRow
+            )
+            db.DataContext.SubmitChanges()
 
     /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
     let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
@@ -117,7 +120,7 @@ module DbGzTrx =
 module DbPlayerRevRpt =
     open System
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
     open ExcelSchemas
     open ExcelUtil
     let logger = LogManager.GetCurrentClassLogger()
@@ -162,7 +165,7 @@ module DbPlayerRevRpt =
     let private updDbRowWithdrawalsValues 
                     (withdrawalType : WithdrawalType) 
                     (withdrawalsExcelRow : WithdrawalsExcelSchema.Row) 
-                    (playerRow : DbPlayerRevRptRow) = 
+                    (playerRow : DbPlayerRevRpt) = 
 
         let dbWithdrawalAmount = playerRow.PendingWithdrawals.Value
         if withdrawalType = Pending then
@@ -178,7 +181,7 @@ module DbPlayerRevRpt =
     /// Update begining balance amount of the selected month
     let private updDbRowBegBalanceValues 
             (begBalanceExcelRow : BalanceExcelSchema.Row) 
-            (playerRow : DbPlayerRevRptRow) = 
+            (playerRow : DbPlayerRevRpt) = 
 
         playerRow.BegBalance <- begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
@@ -187,7 +190,7 @@ module DbPlayerRevRpt =
     
     /// Update ending balance amount of the selected month
     let private updDbRowEndBalanceValues 
-                (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRptRow) = 
+                (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRpt) = 
 
         // Zero out balance amounts, playerloss
         playerRow.EndBalance <- endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
@@ -199,7 +202,7 @@ module DbPlayerRevRpt =
     let private setDbRowCustomValues 
             (yearMonthDay : string) 
             (customExcelRow : CustomExcelSchema.Row) 
-            (playerRow : DbPlayerRevRptRow) = 
+            (playerRow : DbPlayerRevRpt) = 
 
         playerRow.Username <- customExcelRow.Username
         if not <| isNull customExcelRow.Role then playerRow.Role <- customExcelRow.Role.ToString()
@@ -235,7 +238,7 @@ module DbPlayerRevRpt =
             (excelRow : CustomExcelSchema.Row) = 
 
         let newPlayerRow = 
-            new DbPlayerRevRptRow(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
+            new DbPlayerRevRpt(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
         setDbRowCustomValues yearMonthDay excelRow newPlayerRow
         db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
 
@@ -312,7 +315,8 @@ module DbPlayerRevRpt =
 module WithdrawalRpt2Db =
     open System
     open NLog
-    open DbUtil
+    open GzCommon
+    open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
     open ExcelUtil
@@ -390,7 +394,7 @@ module WithdrawalRpt2Db =
             
 module BalanceRpt2Db =
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
     open ExcelSchemas
 
     let logger = LogManager.GetCurrentClassLogger()
@@ -438,7 +442,7 @@ module BalanceRpt2Db =
 
 module CustomRpt2Db =
     open NLog
-    open DbUtil
+    open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
     let logger = LogManager.GetCurrentClassLogger()
@@ -479,9 +483,8 @@ module CustomRpt2Db =
             reraise()
 
 module Etl = 
-    open System
     open System.IO
-    open DbUtil
+    open GzDb.DbUtil
     open NLog
     open GmRptFiles
     open ExcelSchemas
@@ -490,21 +493,6 @@ module Etl =
     open WithdrawalRpt2Db
 
     let logger = LogManager.GetCurrentClassLogger()
-
-    /// Start a Db Transaction
-    let private startDbTransaction (db : DbContext) = 
-        let transaction = db.Connection.BeginTransaction()
-        db.DataContext.Transaction <- transaction
-        transaction
-
-    /// Commit a transaction
-    let private commitTransaction (transaction : Data.Common.DbTransaction) = 
-            // ********* Commit once per excel File
-            transaction.Commit()
-
-    let private handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
-        transaction.Rollback()
-        logger.Fatal(ex, "Runtime Exception at main")
 
     /// Move processed files to out folder except endBalanceFile which is the next month's begBalanceFile
     let private moveRptsToOutFolder 
@@ -515,6 +503,26 @@ module Etl =
         // Move only the beginning balance file.
         File.Move(begBalanceFilename, begBalanceFilename.Replace(inFolder, outFolder))
         File.Move(withdrawalFilename, withdrawalFilename.Replace(inFolder, outFolder))
+
+
+    let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) : unit =
+        let { 
+                customFilename = customFilename; 
+                withdrawalFilename = withdrawalFilename; 
+                begBalanceFilename = begBalanceFilename; 
+                endBalanceFilename = endBalanceFilename 
+            }   = reportFilenames
+
+        let customDtStr = getCustomDtStr customFilename
+        logger.Debug (sprintf "Starting processing excel report files for %O" customDtStr)
+
+        (db, customFilename) ||> loadCustomRpt 
+        loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr
+        loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
+        (db, withdrawalFilename) ||> updDbWithdrawalsRpt
+        (db, customDtStr) ||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
+        // Finally upsert GzTrx with the balance, credit amounts
+        (db, customDtStr) ||> DbGzTrx.setDbPlayerRevRpt2GzTrx
 
     /// <summary>
     ///
@@ -535,38 +543,13 @@ module Etl =
         //------------ Read filenames
         logger.Info (sprintf "Reading the %s folder" inFolder)
         
-        let { 
-            customFilename = customFilename; 
-            withdrawalFilename = withdrawalFilename; 
-            begBalanceFilename = begBalanceFilename; 
-            endBalanceFilename = endBalanceFilename 
-            } = 
+        let reportfileNames = 
             { isProd = isProd ; folderName = inFolder } 
             |> getExcelFilenames
 
-        let customDtStr = getCustomDtStr customFilename
+        /// Box function pointer with required parameters
+        let dbOperation() = (db, reportfileNames) ||> setDbimportExcel
+        (db, dbOperation) ||> tryDBCommit3Times
 
-        logger.Debug (sprintf "Starting processing excel report files for %O" customDtStr)
-
-        let transaction = startDbTransaction db
-        try
-            loadCustomRpt db customFilename
-            loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr
-            loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
-            updDbWithdrawalsRpt db withdrawalFilename
-            DbPlayerRevRpt.setDbMonthyGainLossAmounts db customDtStr
-            // Finally upsert GzTrx with the balance, credit amounts
-            DbGzTrx.setDbPlayerRevRpt2GzTrx db customDtStr 
-
-            moveRptsToOutFolder inFolder outFolder customFilename begBalanceFilename withdrawalFilename
-
-            commitTransaction transaction
-
-        with ex -> 
-            handleFailure transaction ex
-            reraise ()
-
-        // Process investment balance
-        //(new CustomerBalanceUpdTask(isProd)).DoTask()
-
+        moveRptsToOutFolder inFolder outFolder reportfileNames.customFilename reportfileNames.begBalanceFilename reportfileNames.withdrawalFilename
 

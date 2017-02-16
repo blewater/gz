@@ -65,8 +65,10 @@
 
         function deposit() {
             $scope.waiting = true;
+            window.appInsights.trackEvent("DEPOSIT", { status: "READ FIELDS" });
             $scope.readFields().then(function (fields) {
-                emBanking.prepare({paymentMethodCode: $scope.selectedMethod.code, fields: fields}).then(function (prepareResult) {
+                window.appInsights.trackEvent("DEPOSIT", { status: "PREPARE" });
+                emBanking.prepare({ paymentMethodCode: $scope.selectedMethod.code, fields: fields }).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
 
                     var prepareData = {
@@ -76,12 +78,24 @@
                         debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount
                     };
 
+                    function appInsightsTrackEvent(status) {
+                        window.appInsights.trackEvent("DEPOSIT", {
+                            credit: prepareData.creditTo + " " + prepareData.creditAmount,
+                            debit: prepareData.debitTo + " " + prepareData.debitAmount,
+                            status: status
+                        });
+                    };
+
                     if (prepareResult.status === "setup") {
+                        appInsightsTrackEvent('PREPARE SETUP');
                         message.confirm("Please confirm you want to continue with the deposit", function () {
                             emBanking.confirm($scope.pid).then(function (confirmResult) {
+                                appInsightsTrackEvent('CONFIRM');
                                 if (confirmResult.status === "success") {
+                                    appInsightsTrackEvent('GET TRANSACTION INFO');
                                     emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
                                         if (transactionResult.status === "success") {
+                                            appInsightsTrackEvent('TRANSACTION SUCCESS');
                                             var msg = "You have made the deposit successfully!";
                                             message.success(msg, { nsType: 'toastr' });
                                             emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
@@ -91,15 +105,18 @@
                                             if ($location.path() === constants.routes.home.path)
                                                 $location.path(constants.routes.games.path).search({});
                                         } else if (transactionResult.status === "incomplete") {
+                                            appInsightsTrackEvent('TRANSACTION INCOMPLETE');
                                             $scope.waiting = false;
                                             $log.error("show transaction is not completed");
                                             // TODO: show transaction is not completed
                                         } else if (transactionResult.status === "pending") {
+                                            appInsightsTrackEvent('TRANSACTION PENDING');
                                             $scope.waiting = false;
                                             $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
                                                 $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                             });
                                         } else if (transactionResult.status === "error") {
+                                            appInsightsTrackEvent('TRANSACTION ERROR');
                                             $scope.waiting = false;
                                             $log.error("show error");
                                             init();
@@ -111,6 +128,7 @@
                                         init();
                                     });
                                 } else if (confirmResult.status === "redirection") {
+                                    appInsightsTrackEvent('CONFIRM REDIRECTION');
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
                                     var thirdPartyPromise = message.open({
                                         nsType: 'modal',
@@ -123,24 +141,29 @@
                                         nsShowClose: false
                                     });
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
+                                        appInsightsTrackEvent('TRANSACTION SUCCESS');
                                         var msg = "You have made the deposit successfully!";
                                         message.success(msg, { nsType: 'toastr' });
                                         emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
                                         $scope.waiting = false;
                                         $scope.nsOk(true);
                                     }, function (thirdPartyPromiseError) {
+                                        appInsightsTrackEvent('TRANSACTION ERROR');
                                         $scope.waiting = false;
                                         message.error(thirdPartyPromiseError);
                                         init();
                                     });
                                 } else if (confirmResult.status === "instructions") {
+                                    appInsightsTrackEvent('CONFIRM INSTRUCTIONS');
                                     // TODO: instructions ...
                                 } else {
+                                    appInsightsTrackEvent('CONFIRM ERROR');
                                     // TODO: log error ???
                                 }
                             }, function (error) {
                                 $scope.waiting = false;
                                 message.error(error.desc);
+                                appInsightsTrackEvent('CONFIRM FAILED');
                                 init();
                             });
                         }, function () {
@@ -153,21 +176,25 @@
                             nsSize: 'md'
                         });
                     } else if (prepareResult.status === "redirection") {
+                        appInsightsTrackEvent('PREPARE REDIRECTION');
                         // TODO: redirection ...
                     } else {
                         // TODO: log error ???
                         $scope.waiting = false;
                         message.error("Unexpected payment method prepare status");
+                        appInsightsTrackEvent('PREPARE FAILED');
                         init();
                     }
                 }, function (error) {
                     $scope.waiting = false;
                     message.error(error.desc);
+                    window.appInsights.trackEvent("DEPOSIT", { status: "PREPARE ERROR" });
                     init();
                 });
             }, function (error) {
                 $scope.waiting = false;
                 message.error(error);
+                window.appInsights.trackEvent("DEPOSIT", { status: "READ FIELDS ERROR" });
                 init();
             });
         };

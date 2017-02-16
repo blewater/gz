@@ -62,6 +62,12 @@ namespace gzDAL.Models {
         public decimal? EndGmBalance { get; set; }
 
         /// <summary>
+        /// Monthly Ending Gaming balance imported from Everymatrix reports
+        /// </summary>
+        [DefaultValue(0)]
+        public decimal? GainLoss { get; set; }
+
+        /// <summary>
         /// 
         /// Reference PlayerRevRpt as the source of player balance amounts
         /// 

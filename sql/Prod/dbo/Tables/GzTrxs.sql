@@ -11,11 +11,14 @@
     [Deposits]          DECIMAL (29, 16) DEFAULT ((0)) NULL,
     [Withdrawals]       DECIMAL (29, 16) DEFAULT ((0)) NULL,
     [EndGmBalance]      DECIMAL (29, 16) DEFAULT ((0)) NULL,
+    [GainLoss]          DECIMAL (29, 16) DEFAULT ((0)) NULL,
     CONSTRAINT [PK_dbo.GzTrxs] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.GzTransactions_dbo.AspNetUsers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_dbo.GzTransactions_dbo.GzTransactionTypes_TypeId] FOREIGN KEY ([TypeId]) REFERENCES [dbo].[GzTrxTypes] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_dbo.GzTrxs_dbo.PlayerRevRpt_PlayerRevRptId] FOREIGN KEY ([PlayerRevRptId]) REFERENCES [dbo].[PlayerRevRpt] ([ID])
 );
+
+
 
 
 

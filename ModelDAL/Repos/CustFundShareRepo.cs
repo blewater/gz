@@ -56,29 +56,29 @@ namespace gzDAL.Repos {
                     YearMonth = yearMonthStr,
 
                     InvBalanceId = _db.InvBalances
-                        .Where(b=>b.YearMonth == yearMonthStr
+                        .Where(b => b.YearMonth == yearMonthStr
                             && b.CustomerId == customerId)
-                        .Select(b=>b.Id)
+                        .Select(b => b.Id)
                         .SingleOrDefault(),
 
                     // Updated Shares Values Monthly balance
                     // -- Buying or Selling logic
-                    SharesNum = boughtShares 
-                                    ? fundShares.Value.SharesNum 
+                    SharesNum = boughtShares
+                                    ? fundShares.Value.SharesNum
                                     : -fundShares.Value.SharesNum,
 
-                    SharesValue = boughtShares 
-                                    ? fundShares.Value.SharesValue 
+                    SharesValue = boughtShares
+                                    ? fundShares.Value.SharesValue
                                     : -fundShares.Value.SharesValue,
 
                     // New Shares
                     // -- Buying or Selling logic
-                    NewSharesNum = boughtShares 
-                                        ? fundShares.Value.NewSharesNum 
+                    NewSharesNum = boughtShares
+                                        ? fundShares.Value.NewSharesNum
                                         : 0,
 
-                    NewSharesValue = boughtShares 
-                                        ? fundShares.Value.NewSharesValue 
+                    NewSharesValue = boughtShares
+                                        ? fundShares.Value.NewSharesValue
                                         : 0,
 
                     SharesFundPriceId = fundShares.Value.SharesFundPriceId,
