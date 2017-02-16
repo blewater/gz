@@ -1,4 +1,4 @@
-﻿namespace GzDb
+﻿namespace GzCommon
 
 [<AutoOpen>]
 module DateStr =
@@ -38,6 +38,18 @@ module DateStr =
         member this.ToPrevYyyyMm = 
             match DateTime.TryParseExact(this + "1", "yyyyMMd", null, Globalization.DateTimeStyles.None) with
             | true, date -> date.AddMonths(-1).ToYyyyMm
+            | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
+
+    type String with
+        member this.ToNextMonth1st = 
+            match DateTime.TryParseExact(this + "1", "yyyyMMd", null, Globalization.DateTimeStyles.None) with
+            | true, date -> date.AddMonths(1).ToYyyyMmDd
+            | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
+
+    type String with
+        member this.ToEndOfMonth = 
+            match DateTime.TryParseExact(this + "1", "yyyyMMd", null, Globalization.DateTimeStyles.None) with
+            | true, date -> date.AddMonths(1).AddDays(-1.0).ToYyyyMmDd
             | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
 
     type String with

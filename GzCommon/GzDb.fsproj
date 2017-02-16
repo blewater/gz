@@ -8,7 +8,7 @@
     <ProjectGuid>d118702e-4b38-4bcf-9184-daa324c5d160</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>GzDb</RootNamespace>
-    <AssemblyName>GzDb</AssemblyName>
+    <AssemblyName>GzCommon</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -76,7 +76,6 @@
     <Compile Include="CurrencyRates.fs" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
-    <Compile Include="AttemptBuilder.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -90,7 +89,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\Gm2Gz\packages\NLog.4.4.1\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

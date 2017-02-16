@@ -4,6 +4,7 @@ open FSharp.Configuration
 open GzBalances
 open GzDb
 open DbImport
+open ArgumentsProcessor
 
 type Settings = AppSettings< "app.config" >
 let logger = LogManager.GetCurrentClassLogger()
@@ -27,14 +28,8 @@ let inRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelInFolder)
 let outRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelOutFolder)
 let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
-[<EntryPoint>]
-let main argv = 
-
+let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
     try
-        use db = DbUtil.getOpenDb dbConnectionString
-
-        let stock = DailyPortfolioShares.getPortfolioPrices db
-
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
 
@@ -45,23 +40,34 @@ let main argv =
                                     |> GmRptFiles.getExcelDtStr
                                     |> GmRptFiles.getExcelDates 
                                     |> GmRptFiles.areExcelFilenamesValid
-        if not rptFilesOkToProcess then
+        if not rptFilesOkToProcess.Valid then
             exit 1
-
-        // Create a database context
-        use db = DbUtil.getOpenDb dbConnectionString
-
-        // Update Funds from Yahoo Api
-        //(new FundsUpdTask(isProd)).DoTask()
 
         // Extract & Load Daily Everymatrix Report
         Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
+
+        (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) |||> UserTrx.processGzTrx
 
         logger.Info("----------------------------")
         logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
 
     with ex ->
         logger.Fatal(ex, "Runtime Exception at main")
+
+let processArgs (db : DbContext)(argResult : HandleShares) =
+    match argResult with
+        | StoreOnlyShares days -> (db, days) ||> DailyPortfolioShares.storeShares |> ignore
+        | GetShares days -> (db, days) ||> DailyPortfolioShares.storeShares
+                            |> processGm2Gz db
+
+[<EntryPoint>]
+let main argv = 
+
+    // Create a database context
+    use db = DbUtil.getOpenDb dbConnectionString
+    argv 
+    |> parseCmdArgs
+    |> processArgs db
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore

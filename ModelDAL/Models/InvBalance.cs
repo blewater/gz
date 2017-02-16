@@ -93,6 +93,12 @@ namespace gzDAL.Models {
         /// Total cash investment of previous months; used in investment gain and direct queries.
         /// </summary>
         [DefaultValue(0)]
+        public decimal TotalCashInvInHold { get; set; } = 0;
+
+        /// <summary>
+        /// Total cash investment of previous months; used in investment gain and direct queries.
+        /// </summary>
+        [DefaultValue(0)]
         public decimal TotalCashInvestments { get; set; } = 0;
 
         /// <summary>
