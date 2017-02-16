@@ -29,13 +29,13 @@ namespace gzDAL.Models {
         /// be used to track portfolio value appreciation in any user denominated currency
         /// </summary>
         [Required]
-        public float PortfolioLowPrice { get; set; }
+        public double PortfolioLowPrice { get; set; }
 
         [Required]
-        public float PortfolioMediumPrice { get; set; }
+        public double PortfolioMediumPrice { get; set; }
 
         [Required]
-        public float PortfolioHighPrice { get; set; }
+        public double PortfolioHighPrice { get; set; }
 
         [Required]
         public DateTime UpdatedOnUtc { get; set; }

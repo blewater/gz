@@ -341,4 +341,4 @@ Target "SwapStageLive" (fun _ ->
   ==> "DisplaySha"
 
 // start build
-RunTargetOrDefault "EndWithDevelop"
+RunTargetOrDefault "DisplaySha"
