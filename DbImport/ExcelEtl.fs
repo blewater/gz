@@ -315,7 +315,7 @@ module DbPlayerRevRpt =
 module WithdrawalRpt2Db =
     open System
     open NLog
-    open GzDb
+    open GzCommon
     open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
@@ -505,7 +505,7 @@ module Etl =
         File.Move(withdrawalFilename, withdrawalFilename.Replace(inFolder, outFolder))
 
 
-    let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) =
+    let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) : unit =
         let { 
                 customFilename = customFilename; 
                 withdrawalFilename = withdrawalFilename; 
@@ -523,7 +523,6 @@ module Etl =
         (db, customDtStr) ||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
         // Finally upsert GzTrx with the balance, credit amounts
         (db, customDtStr) ||> DbGzTrx.setDbPlayerRevRpt2GzTrx
-
 
     /// <summary>
     ///
@@ -550,11 +549,7 @@ module Etl =
 
         /// Box function pointer with required parameters
         let dbOperation() = (db, reportfileNames) ||> setDbimportExcel
-        (db, dbOperation) ||> tryDbTransOperation
+        (db, dbOperation) ||> tryDBCommit3Times
 
         moveRptsToOutFolder inFolder outFolder reportfileNames.customFilename reportfileNames.begBalanceFilename reportfileNames.withdrawalFilename
-
-        // Process investment balance
-        //(new CustomerBalanceUpdTask(isProd)).DoTask()
-
 

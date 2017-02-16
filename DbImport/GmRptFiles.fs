@@ -5,12 +5,13 @@ module GmRptFiles =
     open System.IO
     open ErrorHandling
     open System.Text.RegularExpressions
-    open GzDb
+    open GzCommon
     
     type InRptFolder = { isProd : bool; folderName : string }
     type RptFilenames = { customFilename : string; withdrawalFilename : string; begBalanceFilename : string; endBalanceFilename : string }
     type RptStrDates = { customDtStr : string; withdrawDtStr : string; begBalanceDtStr : string; endBalanceDtStr : string }
     type RptDates = { customDate : DateTime; withdrawDate : DateTime; begBalanceDate : DateTime; endBalanceDate : DateTime }
+    type ExcelDatesValid = { Valid : bool; DayToProcess : string }
 
     let private folderTryF (isProd : bool) f domainException =
         let logInfo = "isProd", isProd
@@ -165,7 +166,7 @@ module GmRptFiles =
             failWithLogInvalidArg "[EndBalanceDateMismatch]" (sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" <| endBalanceDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
 
     /// Check for the existence of required report files for a month by checking matching dates etc
-    let areExcelFilenamesValid (rptDates : RptDates) : bool =
+    let areExcelFilenamesValid (rptDates : RptDates) : ExcelDatesValid =
         let { customDate = customDate ; begBalanceDate = begBalanceDate ; endBalanceDate = endBalanceDate ; withdrawDate = withdrawDate } = rptDates
 
         sameDayValidation customDate withdrawDate
@@ -174,4 +175,4 @@ module GmRptFiles =
         
         balanceDatesValidation begBalanceDate endBalanceDate
         // if no exception occurs to this point:
-        true
+        { Valid = true; DayToProcess = customDate.ToYyyyMmDd } 
