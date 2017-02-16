@@ -1,9 +1,9 @@
-﻿namespace DbImport
+﻿namespace GzDb
 
-open NLog
-open FSharp.Data.TypeProviders
-
+[<AutoOpen>]
 module DbUtil =
+    open NLog
+    open FSharp.Data.TypeProviders
     open System
 
     // Use for compile time memory schema representation
@@ -17,10 +17,15 @@ module DbUtil =
 
     type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
     type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
-    type DbPlayerRevRptRow = DbSchema.ServiceTypes.PlayerRevRpt
     type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
     type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
-
+    type DbFunds = DbSchema.ServiceTypes.Funds
+    type DbPortfolios = DbSchema.ServiceTypes.Portfolios
+    type DbPortfolioFunds = DbSchema.ServiceTypes.PortFunds
+    type DbPortfolioPrices = DbSchema.ServiceTypes.PortfolioPrices
+    type DbVintageShares = DbSchema.ServiceTypes.VintageShares
+    type DbInvBalances = DbSchema.ServiceTypes.InvBalances
+    type DbCustoPortfolios = DbSchema.ServiceTypes.CustPortfolios
 
     /// PlayerRevRpt update status
     type GmRptProcessStatus =
@@ -108,3 +113,47 @@ module DbUtil =
         //db.DataContext.Log <- System.Console.Out
         db.Connection.Open()
         db
+
+    /// Start a Db Transaction
+    let private startDbTransaction (db : DbContext) = 
+        let transaction = db.Connection.BeginTransaction()
+        db.DataContext.Transaction <- transaction
+        transaction
+
+    /// Commit a transaction
+    let private commitTransaction (transaction : Data.Common.DbTransaction) = 
+            // ********* Commit once per excel File
+            transaction.Commit()
+
+    /// Rollback transaction and raise exception
+    let private handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
+        transaction.Rollback()
+        logger.Fatal(ex, "Runtime Exception at main")
+
+    /// Enclose db operation within a transaction
+    let private tryDbTransOperation (db : DbContext) (dbOperation : (unit -> unit)) : unit =
+        let transaction = startDbTransaction db
+        try
+
+            dbOperation()
+
+            commitTransaction transaction
+
+        with ex ->
+            handleFailure transaction ex
+            reraise ()
+
+    /// retry x times a function (fn)
+    let rec retry times fn = 
+        if times > 0 then
+            try
+                fn()
+            with 
+            | _ -> System.Threading.Thread.Sleep(50); retry (times - 1) fn
+        else
+            fn()
+    
+    /// Try a database operation within a transaction 3 times with a delay of 50ms before each commit.
+    let tryDBCommit3Times (db : DbContext) (dbOperation : (unit -> unit)) : unit =
+        let dbTransOperation() = (db, dbOperation) ||> tryDbTransOperation 
+        retry 3 dbTransOperation

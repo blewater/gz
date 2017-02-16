@@ -362,6 +362,7 @@ namespace gzDAL.Repos {
         /// <param name="updatedDateTimeUtc">The database creation time-stamp.</param>
         /// <param name="yearCurrent">Optional year value for selling in the past</param>
         /// <param name="monthCurrent">Optional month value for selling in the past</param>
+        [Obsolete]
         public bool SaveDbSellAllCustomerFundsShares(
             int customerId,
             DateTime updatedDateTimeUtc,
@@ -384,11 +385,12 @@ namespace gzDAL.Repos {
             }
 
             var yyyyMm = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
-            var liquidatedMonth = _db.InvBalances
-                .Any(b => b.YearMonth == yyyyMm
-                          && b.CustomerId == customerId
-                          && b.CashBalance > 0
-                          && b.CashInvestment < 0);
+            var liquidatedMonth = true;
+                //_db.InvBalances
+                //.Any(b => b.YearMonth == yyyyMm
+                //          && b.CustomerId == customerId
+                //          && b.CashBalance > 0
+                //          && b.CashInvestment < 0);
 
             if (!liquidatedMonth) {
 
@@ -441,6 +443,7 @@ namespace gzDAL.Repos {
         /// <param name="invGainLoss"></param>
         /// <param name="monthsPortfolioRisk"></param>
         /// <param name="updatedDateTimeUtc">Set the desired datetime stamp of the db operations</param>
+        [Obsolete]
         private void SaveDbLiquidateCustomerPortfolio(
             Dictionary<int, PortfolioFundDTO> portfolioFunds,
             int customerId,
@@ -480,7 +483,7 @@ namespace gzDAL.Repos {
                         YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
                         CustomerId = customerId,
                         Balance = 0,
-                        CashBalance = remainingCashAmount,
+                        //CashBalance = remainingCashAmount,
                         InvGainLoss = invGainLoss,
                             // Save cash from sale trx and last month's credit
                             CashInvestment = -(remainingCashAmount + lastInvestmentCredit),

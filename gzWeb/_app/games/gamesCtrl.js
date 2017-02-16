@@ -172,6 +172,11 @@
                     $scope.projectedCategories = $scope.customCategories;
                 }
             }
+            window.appInsights.trackEvent("GAMES SEARCH", {
+                name: $scope.searchByNameTerm || 'ALL',
+                vendors: $scope.searchByVendorTerm || 'ALL',
+                category: $scope.selectedCategory ? $scope.selectedCategory.name : 'ALL'
+            });
         }
         function searchGamesByCategory(category, names, vendors, callback) {
             emCasino.getGames({

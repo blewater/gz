@@ -1,8 +1,10 @@
 ﻿open NLog
 open System
 open FSharp.Configuration
+open GzBalances
+open GzDb
 open DbImport
-open gzCpcLib.Task
+open ArgumentsProcessor
 
 type Settings = AppSettings< "app.config" >
 let logger = LogManager.GetCurrentClassLogger()
@@ -26,9 +28,7 @@ let inRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelInFolder)
 let outRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelOutFolder)
 let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
-[<EntryPoint>]
-let main argv = 
-
+let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
     try
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
@@ -40,26 +40,34 @@ let main argv =
                                     |> GmRptFiles.getExcelDtStr
                                     |> GmRptFiles.getExcelDates 
                                     |> GmRptFiles.areExcelFilenamesValid
-        if not rptFilesOkToProcess then
+        if not rptFilesOkToProcess.Valid then
             exit 1
-
-        // Create a database context
-        use db = DbUtil.getOpenDb dbConnectionString
-
-        // Update Funds from Yahoo Api
-        (new FundsUpdTask(isProd)).DoTask()
-
-        // Update Currency Rates from open exchange api
-        CurrencyRates.updCurrencyRates currencyRatesUrl db
 
         // Extract & Load Daily Everymatrix Report
         Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
+
+        (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) |||> UserTrx.processGzTrx
 
         logger.Info("----------------------------")
         logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
 
     with ex ->
         logger.Fatal(ex, "Runtime Exception at main")
+
+let processArgs (db : DbContext)(argResult : HandleShares) =
+    match argResult with
+        | StoreOnlyShares days -> (db, days) ||> DailyPortfolioShares.storeShares |> ignore
+        | GetShares days -> (db, days) ||> DailyPortfolioShares.storeShares
+                            |> processGm2Gz db
+
+[<EntryPoint>]
+let main argv = 
+
+    // Create a database context
+    use db = DbUtil.getOpenDb dbConnectionString
+    argv 
+    |> parseCmdArgs
+    |> processArgs db
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore
@@ -68,8 +76,7 @@ let main argv =
 * Notes
 * http://stackoverflow.com/questions/22608584/how-to-project-transform-an-array-of-fileinfo-to-a-list-of-strings-with-fsharp/22608949#22608949
 * http://stackoverflow.com/questions/14657954/using-nlog-with-f-interactive-in-visual-studio-need-documentation
-* http://www.c-sharpcorner.com/UploadFile/mgold/writing-equivalent-linq-expressions-in-fsharp/
-* https://msdn.microsoft.com/visualfsharpdocs/conceptual/walkthrough-accessing-a-sql-database-by-using-type-providers-%5bfsharp%5d
+* https://msdn.microsoft.com/en-us/microsoft-r/hh225374 walkthrough of sql data provider
 * http://stackoverflow.com/questions/13768757/how-is-one-supposed-to-use-the-f-sqldataconnection-typeprovider-with-an-app-con
 * http://stackoverflow.com/questions/13107676/f-type-provider-for-sql-in-a-class
 * http://stackoverflow.com/questions/32312503/f-typeproviders-how-to-change-database?noredirect=1&lq=1

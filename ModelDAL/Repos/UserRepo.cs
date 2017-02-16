@@ -8,6 +8,7 @@ using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using Z.EntityFramework.Plus;
 using NLog;
+using static System.Diagnostics.Debug;
 
 namespace gzDAL.Repos
 {
@@ -103,6 +104,7 @@ namespace gzDAL.Repos
                 if (userRet == null) {
                     _logger.Error("User with id {0} is null in GetSummaryData()", userId);
                 }
+                Assert(userRet != null);
 
                 // balance, last update
                 var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);

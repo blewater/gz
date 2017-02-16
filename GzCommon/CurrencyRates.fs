@@ -1,10 +1,10 @@
-﻿namespace DbImport
+﻿namespace GzDb
 
 open System
 open FSharp.Data
 open NLog
 open System.Collections.Generic
-open DbUtil
+open GzDb.DbUtil
 
 module public CurrencyRates = 
     type UsdRates = JsonProvider<"../DbImport/openexchangerates.json">

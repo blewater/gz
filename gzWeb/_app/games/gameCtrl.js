@@ -58,6 +58,13 @@
                         setGameDimensions();
                     });
                 
+                    window.appInsights.trackEvent("GAME PLAY", {
+                        slug: $scope.game.slug,
+                        name: $scope.game.name,
+                        forFun: $scope.playForFun,
+                        status: 'BEGIN'
+                    });
+
                     emCasino.getLaunchUrl($scope.game.slug, null, !$scope.playForFun).then(function (launchDataResult) {
                         $scope.gameLaunchData = launchDataResult;
                         var launchUrl = launchDataResult.url.indexOf('http://') !== -1
@@ -69,7 +76,22 @@
                             $scope.openFullscreen();
                         else
                             $scope.isFullscreen = false;
-                    }, logError);
+
+                        window.appInsights.trackEvent("GAME PLAY", {
+                            slug: $scope.game.slug,
+                            name: $scope.game.name,
+                            forFun: $scope.playForFun,
+                            status: 'LAUNCH SUCCESS'
+                        });
+                    }, function () {
+                        logError();
+                        window.appInsights.trackEvent("GAME PLAY", {
+                            slug: $scope.game.slug,
+                            name: $scope.game.name,
+                            forFun: $scope.playForFun,
+                            status: 'LAUNCH FAILED'
+                        });
+                    });
                 }, logError);
             //}
         }
@@ -125,8 +147,16 @@
         }
 
         $scope.$on('$locationChangeStart', function (event, next, current) {
-            $rootScope.playing = false;
-            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+            if (current.indexOf('?') === -1) {
+                $rootScope.playing = false;
+                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                window.appInsights.trackEvent("GAME PLAY", {
+                    slug: $scope.game.slug,
+                    name: $scope.game.name,
+                    forFun: $scope.playForFun,
+                    status: 'STOP'
+                });
+            }
         });
 
         function logError(error) {

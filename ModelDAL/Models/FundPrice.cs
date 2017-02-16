@@ -13,7 +13,7 @@ namespace gzDAL.Models {
         public int Id { get; set; }
 
         [ForeignKey("FundId")]
-        virtual public Fund Fund { get; set; }
+        public virtual Fund Fund { get; set; }
 
         [Index("IDX_FundPrice_Id_YMD", IsUnique = true, Order = 1)]
         [Required]

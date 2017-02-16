@@ -1,4 +1,4 @@
-﻿namespace DbImport
+﻿namespace GzCommon
 
 [<AutoOpen>]
 module DateStr =
@@ -17,16 +17,39 @@ module DateStr =
 
     type DateTime with
         member this.ToYyyyMm =
-            this.Year.ToString() + this.Month.ToString("00")
+            this.Year.ToString("0000") + this.Month.ToString("00")
             
     type DateTime with
         member this.ToYyyyMmDd = 
             this.ToYyyyMm + this.Day.ToString("00") 
 
+    type DateTime with
+        member this.ToPrevYyyyMm = 
+            let prev = this.AddMonths(-1)
+            prev.ToYyyyMm
+
     type String with
         member this.ToDateWithDay = 
             match DateTime.TryParseExact(this, "yyyyMMdd", null, Globalization.DateTimeStyles.None) with
             | true, date -> date
+            | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
+
+    type String with
+        member this.ToPrevYyyyMm = 
+            match DateTime.TryParseExact(this + "1", "yyyyMMd", null, Globalization.DateTimeStyles.None) with
+            | true, date -> date.AddMonths(-1).ToYyyyMm
+            | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
+
+    type String with
+        member this.ToNextMonth1st = 
+            match DateTime.TryParseExact(this + "1", "yyyyMMd", null, Globalization.DateTimeStyles.None) with
+            | true, date -> date.AddMonths(1).ToYyyyMmDd
+            | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
+
+    type String with
+        member this.ToEndOfMonth = 
+            match DateTime.TryParseExact(this + "1", "yyyyMMd", null, Globalization.DateTimeStyles.None) with
+            | true, date -> date.AddMonths(1).AddDays(-1.0).ToYyyyMmDd
             | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %s." this)
 
     type String with

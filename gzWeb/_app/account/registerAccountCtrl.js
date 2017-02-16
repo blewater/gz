@@ -164,6 +164,7 @@
 
         function init() {
             getPasswordPolicy();
+            window.appInsights.trackPageView("REGISTER ACCOUNT");
         };
         init();
     }

@@ -27,11 +27,6 @@ namespace gzDAL.Models
         [Required]
         public DateTime Birthday { get; set; }
 
-        public virtual ICollection<InvBalance> InvBalances { get; set; }
-        public virtual ICollection<GzTrx> GzTrxs { get; set; }
-
-        public virtual ICollection<CustPortfolio> CustPortfolios { get; set; }
-
         //http://stackoverflow.com/questions/24361518/ef-6-1-unique-nullable-index
         [Index]
         public int? GmCustomerId { get; set; }
@@ -178,6 +173,8 @@ namespace gzDAL.Models
         public DbSet<DynamicPageTemplate> DynamicPageTemplates { get; set; }
         public DbSet<DynamicPageData> DynamicPagesData { get; set; }
         public DbSet<PlayerRevRpt> PlayerRevRpt { get; set; }
+        public DbSet<PortfolioPrice> PortfolioPrices { get; set; }
+        public DbSet<VintageShares> VintageShares { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

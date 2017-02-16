@@ -27,7 +27,7 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
-GmTrx/[Bb]in/
+Gm2Gz/[Bb]in/
 CustPortfolioCalcLib/[Bb]in/
 CpcDataServices/[Bb]in/
 
@@ -102,6 +102,11 @@ $tf/
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+
+# Auto generated fsx files
+**/load-references-debug.fsx
+**/load-references-production.fsx
+**/load-project-production.fsx
 
 # JustCode is a .NET coding add-in
 .JustCode
