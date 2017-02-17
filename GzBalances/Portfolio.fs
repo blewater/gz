@@ -30,9 +30,6 @@ module PortfolioTypes =
     [<Literal>]
     let HighRiskArrayIndex = 2
 
-    (*** Default Portfolio for new Users ***)
-    let defaultPortfolio = { PortfolioId = MediumRiskPortfolioId; Risk = Medium}
-
     /// Input monthly argument for calculating portfolio
     type PortfolioShares = {
         SharesLowRisk : Shares;
@@ -324,6 +321,16 @@ module UserPortfolio =
     open GzDb.DbUtil
     open PortfolioTypes
         
+    (*** Default Portfolio for new Users ***)
+    let defaultPortfolio (db : DbContext) =  
+        let gzConf = query {
+            for gzConf in db.GzConfigurations do
+            select gzConf
+            exactlyOne
+        } 
+        let portfolioRisk = gzConf.FIRST_PORTFOLIO_RISK_VAL |> getPortfolioRiskById // getPortfolioIdByRisk
+        { PortfolioId = gzConf.FIRST_PORTFOLIO_RISK_VAL; Risk = portfolioRisk}
+
     let private updDbUserPortfolio 
                 (userPortfolioRisk : Risk)
                 (userPortfolioRow : DbCustoPortfolios) =
@@ -341,7 +348,6 @@ module UserPortfolio =
                                     )
         (userInputPortfolio.Portfolio.Risk, newCustomerPortfolioRow) ||> updDbUserPortfolio
         userInputPortfolio.DbUserMonth.Db.CustPortfolios.InsertOnSubmit(newCustomerPortfolioRow)
-        
 
     /// get single Customer Portfolio of the desired month param in the yyyyMM format
     let private getUserPortfolio (dbUserMonth : DbUserMonth) : DbCustoPortfolios= 
@@ -375,7 +381,7 @@ module UserPortfolio =
                 if not <| isNull portfolioRow then
                     {PortfolioId = portfolioRow.Id; Risk = portfolioRow.RiskTolerance |> getPortfolioRiskById}
                 else
-                    defaultPortfolio
+                    dbUserMonth.Db |> defaultPortfolio
            )
 
     /// Upsert a customer portfolio
