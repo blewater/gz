@@ -64,7 +64,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="ErrorHandling.fs" />
+    <Compile Include="Exceptions.fs" />
     <Compile Include="GmRptFiles.fs" />
     <Compile Include="ExcelSchemas.fs" />
     <Compile Include="ExcelUtil.fs" />

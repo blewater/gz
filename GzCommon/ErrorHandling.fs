@@ -1,21 +1,10 @@
-﻿namespace DbImport
+﻿namespace GzCommon
 
+[<AutoOpen>]
 module ErrorHandling =
+
     open System
     open NLog
-
-    type DomainException = 
-    | DbUpdateFailure of Exception
-    | MissingCustomReport of Exception
-    | Missing1stBalanceReport of Exception
-    | Missing2ndBalanceReport of Exception
-    | MissingWithdrawalReport of Exception
-    | MissingDateInFilename of Exception
-    | NoparsableDateInFilename of Exception
-    | MismatchedFilenameDates of Exception
-    | BegBalanceDateMismatch of Exception
-    | EndBalanceDateMismatch of Exception
-    | RptDateProcessed of Exception
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -39,4 +28,9 @@ module ErrorHandling =
     let failWithLogInvalidArg excMsg logMsg =
         logger.Fatal (excMsg + " : " + logMsg)
         invalidArg excMsg logMsg
+
+    let traceExc (condition : bool)(message : string) : unit =
+        Diagnostics.Trace.Assert(condition, message)
+        if not condition then
+            ("Assert failed: ", message) ||> failWithLogInvalidArg
 

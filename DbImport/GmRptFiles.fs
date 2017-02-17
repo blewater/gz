@@ -3,7 +3,7 @@
 module GmRptFiles =
     open System
     open System.IO
-    open ErrorHandling
+    open Exceptions
     open System.Text.RegularExpressions
     open GzCommon
     
