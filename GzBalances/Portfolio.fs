@@ -198,7 +198,8 @@ module DailyPortfolioShares =
     let private portfolioPricesArrToType(portfolioPricesArr : PortfolioSharePrice[]) : PortfoliosPrices =
 
         // Low : 0, Medium, High
-        Diagnostics.Debug.Assert(portfolioPricesArr.Length = 3)
+        (portfolioPricesArr.Length = 3, "Incoming Portfolio prices array is not 3 (Low, Medium, High)")
+        ||> traceExc
 
         let portfoliosPrices = { 
             PortfolioLowRiskPrice = {PortfolioId = portfolioPricesArr.[LowRiskArrayIndex].PortfolioId; Price = portfolioPricesArr.[LowRiskArrayIndex].Price; TradedOn = portfolioPricesArr.[LowRiskArrayIndex].TradedOn} 
@@ -441,6 +442,7 @@ module VintageShares =
     open GzDb.DbUtil
     open PortfolioTypes
         
+    /// update a row to VintageShares
     let private updDbVintageShares
             (userPortfolioShares : PortfolioShares)
             (tradingDay : DateTime)
@@ -452,6 +454,7 @@ module VintageShares =
         userPortfolioSharesRow.BuyPortfolioTradeDay <- tradingDay
         userPortfolioSharesRow.UpdatedOnUtc <- DateTime.UtcNow
 
+    /// insert a row to VintageShares
     let private insDbVintageShares 
                 (userPortfolioShares : PortfolioShares)
                 (tradingDay : DateTime)
@@ -492,6 +495,7 @@ module VintageShares =
 
         dbUserMonth.Db.DataContext.SubmitChanges()
 
+    /// Price portfolio shares
     let private getPricedPortfolioShares (shares : PortfolioShares)(prices :PortfoliosPrices) : PortfolioPriced=
         { 
             PortfolioShares = shares; 
@@ -559,6 +563,7 @@ module InvBalance =
             }
         invBalance
 
+    /// update an invBalance row
     let private updDbInvBalance(input : InvBalanceInput)(invBalanceRow : DbInvBalances) : unit =
 
         let prevShares = input.UserPortfolioShares.PrevPortfolioShares
@@ -598,6 +603,7 @@ module InvBalance =
 
         invBalanceRow.UpdatedOnUTC <- DateTime.UtcNow
 
+    /// insert a InvBalance row
     let private insDbInvBalance (input : InvBalanceInput) : unit =
         let newInvBalanceRow = 
             new DbInvBalances(
@@ -608,6 +614,7 @@ module InvBalance =
 
         input.UserInputPortfolio.DbUserMonth.Db.InvBalances.InsertOnSubmit(newInvBalanceRow)
 
+    /// upsert a InvBalance row
     let upsDbInvBalance (input : InvBalanceInput) : unit =
         let invBalanceRow = input.UserInputPortfolio.DbUserMonth |> getInvBalance
 
@@ -618,6 +625,7 @@ module InvBalance =
 
         input.UserInputPortfolio.DbUserMonth.Db.DataContext.SubmitChanges()
 
+    /// get db invBalance totals of previous month
     let getInvBalancePrevTotals(dbUserMonth : DbUserMonth) : InvBalancePrevTotals =
         let invB = { dbUserMonth with Month = dbUserMonth.Month.ToPrevYyyyMm }
                 |> getInvBalance
@@ -671,6 +679,7 @@ module UserTrx =
     open PortfolioTypes
     open InvBalance
     open System.Collections.Generic
+    open System
 
     /// Upsert UserPortfolio, VintageShares, InvBalance
     let private upsDbClearMonth (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance) : unit =
@@ -696,16 +705,18 @@ module UserTrx =
         let dbOper() = (userPortfolioInput, userFinance) ||> upsDbClearMonth
         (userPortfolioInput.DbUserMonth.Db, dbOper) ||> tryDBCommit3Times
 
+    /// get the portfolio market quote that's latest within the month processing
     let findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
         let nextMonth = month.ToNextMonth1st
-        portfoliosPrices
-        |> Map.filter(fun key _ -> key < nextMonth)
-        |> Seq.maxBy(fun kvp -> kvp.Key)
-        |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
-//        |> Map.fold(fun st k2 v2 -> 
-//            match st with
-//            | Some(k1, _) when k1 < k2 -> st
-//            | _ -> Some(k2, v2)) None
+        let monthLateQuote = 
+            portfoliosPrices
+            |> Map.filter(fun key _ -> key < nextMonth)
+            |> Seq.maxBy(fun kvp -> kvp.Key)
+            |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
+        // asseert quote is within the month
+        (monthLateQuote.PortfolioHighRiskPrice.TradedOn.Month = Int32.Parse(month.Substring(4, 2)), "Found a portfolio market quote not within the processing month: " + month)
+        ||> traceExc
+        monthLateQuote
         
 
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPricesMap) =
