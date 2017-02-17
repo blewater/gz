@@ -568,13 +568,29 @@ module InvBalance =
 
         let prevShares = input.UserPortfolioShares.PrevPortfolioShares
         let newShares = input.UserPortfolioShares.NewPortfolioShares
-        let nowBalance = prevShares.Worth + newShares.Worth
+        
+        let nowBalance = 
+            prevShares.Worth 
+            + newShares.Worth
+
         let cashInv = input.UserInputPortfolio.CashToInvest
+
         let vintagesSoldThisMonth = input.UserInputPortfolio.VintagesSold
-        let ``total Cash invested for All vintages`` = input.InvBalancePrevTotals.TotalCashInvestments + cashInv
-        let ``selling Price Of All Sold Vintages`` = input.InvBalancePrevTotals.TotalSoldVintagesSold + vintagesSoldThisMonth.SoldAt
+
+        let ``total Cash invested for All vintages`` = 
+            input.InvBalancePrevTotals.TotalCashInvestments 
+            + cashInv
+
+        let ``selling Price Of All Sold Vintages`` = 
+            input.InvBalancePrevTotals.TotalSoldVintagesSold 
+            + vintagesSoldThisMonth.SoldAt
+
         let ``bought Price of Sold Vintages`` = vintagesSoldThisMonth.BoughtAt
-        let ``total Cash Invested for Unsold Vintages`` = input.InvBalancePrevTotals.TotalCashInvInHold - ``bought Price of Sold Vintages``
+
+        let ``total Cash Invested for Unsold Vintages`` = 
+            input.InvBalancePrevTotals.TotalCashInvInHold 
+            + cashInv
+            - ``bought Price of Sold Vintages``
 
         invBalanceRow.Balance <- nowBalance
         // Note: See line below for investment gain including sold vintages
