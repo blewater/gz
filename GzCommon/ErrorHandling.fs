@@ -24,6 +24,12 @@ module ErrorHandling =
             logError taskExc logInfo ex
             raise ex
 
+    /// community breakpoint for peeking intermediate transformations
+    let breakpoint fn value = 
+        let result = fn value
+        printfn "%A" result
+        result        
+
     // invalidArg with logging
     let failWithLogInvalidArg excMsg logMsg =
         logger.Fatal (excMsg + " : " + logMsg)
