@@ -205,26 +205,19 @@ module DbPlayerRevRpt =
             (playerRow : DbPlayerRevRpt) = 
 
         playerRow.Username <- customExcelRow.Username
-        if not <| isNull customExcelRow.Role then playerRow.Role <- customExcelRow.Role.ToString()
-        playerRow.PlayerStatus <- customExcelRow.``Player status``
-        if not <| isNull customExcelRow.``Block reason`` then playerRow.BlockReason <- customExcelRow.``Block reason``.ToString()
         playerRow.EmailAddress <- customExcelRow.``Email address``
-        playerRow.LastLogin <- customExcelRow.``Last login`` |> excelObj2NullableDt CustomRpt
-        playerRow.AcceptsBonuses <- customExcelRow.``Accepts bonuses`` |> string2NullableBool
         playerRow.TotalDepositsAmount <- customExcelRow.``Total deposits amount`` |> float2NullableDecimal
         playerRow.WithdrawsMade <- customExcelRow.``Withdraws made`` |> float2NullableDecimal
-        playerRow.LastPlayedDate <- customExcelRow.``Last played date`` |> excelObj2NullableDt CustomRpt
         playerRow.Currency <- customExcelRow.Currency.ToString()
-        playerRow.TotalBonusesAcceptedByThePlayer <- customExcelRow.``Total bonuses accepted by the player`` |> float2NullableDecimal
-        playerRow.NetRevenue <- customExcelRow.``Net revenue`` |> float2NullableDecimal 
-        playerRow.GrossRevenue <- customExcelRow.``Gross revenue`` |> float2NullableDecimal
-        playerRow.RealMoneyBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
-        // Zero out balance amounts, playerloss
+
+        // Zero out gaming balance amounts, playerloss
         playerRow.BegBalance <- Nullable 0m
         playerRow.EndBalance <- Nullable 0m
         playerRow.PlayerGainLoss <- Nullable 0m
+
         // Withdrawals that deduct balance but have not completed yet they come from the pending report
         playerRow.PendingWithdrawals <- Nullable 0m
+
         //Non-excel content
         playerRow.YearMonth <- yearMonthDay.Substring(0, 6)
         playerRow.YearMonthDay <- yearMonthDay

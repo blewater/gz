@@ -328,7 +328,7 @@ module UserPortfolio =
             select gzConf
             exactlyOne
         } 
-        let portfolioRisk = gzConf.FIRST_PORTFOLIO_RISK_VAL |> getPortfolioRiskById // getPortfolioIdByRisk
+        let portfolioRisk = gzConf.FIRST_PORTFOLIO_RISK_VAL |> getPortfolioRiskById
         { PortfolioId = gzConf.FIRST_PORTFOLIO_RISK_VAL; Risk = portfolioRisk}
 
     let private updDbUserPortfolio 
