@@ -253,7 +253,7 @@ namespace gzDAL.Conf
 
         private static void CreateUpdFunds(ApplicationDbContext context) {
             context.Funds.AddOrUpdate(
-                f => f.Symbol,
+                f => f.HoldingName,
                 new Fund {
                     HoldingName = "iShares National Muni Bond", Symbol = "MUB", YearToDate = 4.63f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
