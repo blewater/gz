@@ -694,7 +694,6 @@ module InvBalance =
             UserFinance = userFinance
         }
 
-
 module UserTrx =
     open GzCommon
     open GzDb.DbUtil
@@ -724,8 +723,8 @@ module UserTrx =
         invBalanceInput 
         |> InvBalance.upsDbInvBalance
 
-
-    let private processUser (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance): unit = 
+    /// Process input balances
+    let private processUserBalances (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance): unit = 
         if userPortfolioInput.CashToInvest > 0M || userFinance.EndBalance > 0M then
             logger.Info(sprintf "Processing investment balances for user id %d on month of %s having financial amounts of %A" 
                 userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance)
@@ -741,12 +740,12 @@ module UserTrx =
             |> Map.filter(fun key _ -> key < nextMonth)
             |> Seq.maxBy(fun kvp -> kvp.Key)
             |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
-        // asseert quote is within the month
+        // assert quote is within the month
         (monthLateQuote.PortfolioHighRiskPrice.TradedOn.Month = Int32.Parse(month.Substring(4, 2)), "Found a portfolio market quote not within the processing month: " + month)
         ||> traceExc
         monthLateQuote
         
-
+    /// Input type for portfolio processing
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPricesMap) =
         { 
             DbUserMonth = dbUserMonth;
@@ -755,6 +754,8 @@ module UserTrx =
             CashToInvest = trxRow.Amount;
             PortfoliosPrices = (portfoliosPricesMap, dbUserMonth.Month) ||> findNearestPortfolioPrice
         }
+
+    /// Input type for gaming activities reporting
     let private getUserFinance (trxRow : DbGzTrx): UserFinance =
         {
             BegBalance = trxRow.BegGmBalance.Value;
@@ -782,5 +783,5 @@ module UserTrx =
                     let dbUserMonth = {Db = db; UserId = trxRow.CustomerId; Month = yyyyMm}
                     let userPortfolioInput = (dbUserMonth, trxRow, portfoliosPrices) |||> getUserPortfolioInput
                     let userFinance = trxRow |> getUserFinance
-                    (userPortfolioInput, userFinance) ||> processUser
+                    (userPortfolioInput, userFinance) ||> processUserBalances
                 )

@@ -487,15 +487,21 @@ module Etl =
 
     let logger = LogManager.GetCurrentClassLogger()
 
+    let private moveFileWithOverwrite(inFolder : string)(outFolder : string)(fullPathfilename : string) : unit =
+        let destFilename = fullPathfilename.Replace(inFolder, outFolder)
+        if File.Exists(destFilename) then
+            File.Delete(destFilename)
+        File.Move(fullPathfilename, destFilename)
+
     /// Move processed files to out folder except endBalanceFile which is the next month's begBalanceFile
     let private moveRptsToOutFolder 
             (inFolder : string) (outFolder :string) 
             (customFilename : string) (begBalanceFilename : string) (withdrawalFilename : string) : unit =
         
-        File.Move(customFilename, customFilename.Replace(inFolder, outFolder))
+        (inFolder, outFolder, customFilename) |||> moveFileWithOverwrite
         // Move only the beginning balance file.
-        File.Move(begBalanceFilename, begBalanceFilename.Replace(inFolder, outFolder))
-        File.Move(withdrawalFilename, withdrawalFilename.Replace(inFolder, outFolder))
+        (inFolder, outFolder, begBalanceFilename) |||> moveFileWithOverwrite
+        (inFolder, outFolder, withdrawalFilename) |||> moveFileWithOverwrite
 
 
     let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) : unit =
