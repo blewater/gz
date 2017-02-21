@@ -6,6 +6,7 @@ module GmRptFiles =
     open Exceptions
     open System.Text.RegularExpressions
     open GzCommon
+    open ExcelSchemas
     
     type InRptFolder = { isProd : bool; folderName : string }
     type RptFilenames = { customFilename : string; withdrawalFilename : string; begBalanceFilename : string; endBalanceFilename : string }
@@ -148,6 +149,33 @@ module GmRptFiles =
         logger.Info datesLogMsg
         excelFileDates
 
+//--------------------- Content validation
+
+    /// Check if balance report dates content mismatches title 
+    let matchBalanceRptDatesWithTitle(excelFilename : string) : bool =
+        let balanceRptDate =  excelFilename |> getBegBalanceDtStr |> getBegBalanceDate
+        let balanceFileExcelSchema = new BalanceExcelSchema(excelFilename)
+
+        balanceFileExcelSchema.Data
+        |> Seq.tryFind(fun (excelRow) ->
+            if excelRow.``User ID`` > 0.0 then 
+                let excelRowDtStr = DateTime.ParseExact(excelRow.Date, "dd/MM/yyyy", null, Globalization.DateTimeStyles.None)
+                excelRowDtStr <> balanceRptDate
+            else false
+        )
+        |> function
+            | None -> true // Content dates match with title or empty content
+            | _ -> false // Row date mismatch with title
+
+    /// Enforce beginning and ending balance Report files title dates match their content
+    let balanceRptDateMatchTitles(excelFiles : RptFilenames) : RptFilenames =
+        if not (excelFiles.begBalanceFilename |> matchBalanceRptDatesWithTitle) then 
+            failWithLogInvalidArg "[Begin_BalanceRptDatesNotMathingTitle]" (sprintf "The beginning balance excel report filename: %s does not match its contents." excelFiles.begBalanceFilename)
+
+        if not (excelFiles.endBalanceFilename|> matchBalanceRptDatesWithTitle) then 
+            failWithLogInvalidArg "[Ending_BalanceRptDatesNotMathingTitle]" (sprintf "The ending balance excel report filename: %s does not match its contents." excelFiles.endBalanceFilename)
+        excelFiles
+
 //--------------------- Validation Rules
 
     /// Enforce same day
@@ -172,7 +200,7 @@ module GmRptFiles =
         sameDayValidation customDate withdrawDate
 
         begBalance1stDay customDate begBalanceDate
-        
+
         balanceDatesValidation begBalanceDate endBalanceDate
         // if no exception occurs to this point:
         { Valid = true; DayToProcess = customDate.ToYyyyMmDd } 

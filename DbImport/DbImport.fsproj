@@ -65,8 +65,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Exceptions.fs" />
-    <Compile Include="GmRptFiles.fs" />
     <Compile Include="ExcelSchemas.fs" />
+    <Compile Include="GmRptFiles.fs" />
     <Compile Include="ExcelUtil.fs" />
     <Compile Include="ExcelEtl.fs" />
     <Content Include="packages.config" />
@@ -75,7 +75,7 @@
     </None>
     <None Include="Custom Prod 20160930.xlsx" />
     <None Include="Balance Prod 20161001.xlsx" />
-    <None Include="pendingwithdraw prod 201609.xlsx" />
+    <None Include="pendingwithdraw prod 20160930.xlsx" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
@@ -90,7 +90,10 @@
       <HintPath>..\Gm2Gz\packages\ExcelProvider.0.8.1\lib\ExcelProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="FSharp.Core">
+      <HintPath>..\Gm2Gz\packages\FSharp.Core.4.1.0\lib\net40\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>..\Gm2Gz\packages\FSharp.Data.2.3.2\lib\net40\FSharp.Data.dll</HintPath>
       <Private>True</Private>
@@ -105,7 +108,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\Gm2Gz\packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\NLog.4.4.3\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -114,6 +117,10 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\Gm2Gz\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
