@@ -702,6 +702,8 @@ module UserTrx =
     open InvBalance
     open System.Collections.Generic
     open System
+    open NLog
+    let logger = LogManager.GetCurrentClassLogger()
 
     /// Upsert UserPortfolio, VintageShares, InvBalance
     let private upsDbClearMonth (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance) : unit =
@@ -724,6 +726,10 @@ module UserTrx =
 
 
     let private processUser (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance): unit = 
+        if userPortfolioInput.CashToInvest > 0M || userFinance.EndBalance > 0M then
+            logger.Info(sprintf "Processing investment balances for user id %d on month of %s having financial amounts of %A" 
+                userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance)
+
         let dbOper() = (userPortfolioInput, userFinance) ||> upsDbClearMonth
         (userPortfolioInput.DbUserMonth.Db, dbOper) ||> tryDBCommit3Times
 
@@ -758,7 +764,7 @@ module UserTrx =
             GainLoss = trxRow.GainLoss.Value
         }
 
-    /// Main entry to process or credit losses for the month
+    /// Main entry to process credit losses for the month and put forth balance amounts from gaming activities
     let processGzTrx(db : DbContext)(yyyyMmDd : string)(portfoliosPrices : PortfoliosPricesMap) =
 
         let yyyyMm = yyyyMmDd.Substring(0, 6)
@@ -772,6 +778,7 @@ module UserTrx =
                 select trxRow
         }
         |> Seq.iter (fun (trxRow : DbGzTrx) ->
+                    // set input types
                     let dbUserMonth = {Db = db; UserId = trxRow.CustomerId; Month = yyyyMm}
                     let userPortfolioInput = (dbUserMonth, trxRow, portfoliosPrices) |||> getUserPortfolioInput
                     let userFinance = trxRow |> getUserFinance
