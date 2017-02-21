@@ -205,6 +205,8 @@ module DbPlayerRevRpt =
             (playerRow : DbPlayerRevRpt) = 
 
         playerRow.Username <- customExcelRow.Username
+        playerRow.PlayerStatus <- customExcelRow.``Player status``
+        if not <| isNull customExcelRow.``Block reason`` then playerRow.BlockReason <- customExcelRow.``Block reason``.ToString()
         playerRow.EmailAddress <- customExcelRow.``Email address``
         playerRow.TotalDepositsAmount <- customExcelRow.``Total deposits amount`` |> float2NullableDecimal
         playerRow.WithdrawsMade <- customExcelRow.``Withdraws made`` |> float2NullableDecimal

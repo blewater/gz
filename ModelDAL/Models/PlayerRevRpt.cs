@@ -33,6 +33,14 @@ namespace gzDAL.Models {
         public decimal? EndBalance { get; set; }
         public decimal? PlayerGainLoss { get; set; }
 
+        [Column("Player status")]
+        [StringLength(256)]
+        public string PlayerStatus { get; set; }
+
+        [Column("Block reason")]
+        [StringLength(256)]
+        public string BlockReason { get; set; }
+
         [Column("Email address")]
         [Required]
         [StringLength(256)]

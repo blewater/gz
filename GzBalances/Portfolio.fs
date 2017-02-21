@@ -98,7 +98,8 @@ module PortfolioTypes =
         Deposits : Money;
         Withdrawals : Money;
         GainLoss : Money;
-        EndBalance : Money
+        EndBalance : Money;
+        AmountToBuyStock : Money;
     }
 
     type FundQuote = { Symbol : string; TradedOn : DateTime; ClosingPrice : float }
@@ -762,7 +763,8 @@ module UserTrx =
             EndBalance = trxRow.EndGmBalance.Value;
             Deposits = trxRow.Deposits.Value;
             Withdrawals = trxRow.Withdrawals.Value;
-            GainLoss = trxRow.GainLoss.Value
+            GainLoss = trxRow.GainLoss.Value;
+            AmountToBuyStock = trxRow.Amount
         }
 
     /// Main entry to process credit losses for the month and put forth balance amounts from gaming activities
