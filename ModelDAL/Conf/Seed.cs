@@ -5,6 +5,7 @@ using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 using gzDAL.ModelUtil;
+using System.Linq.Expressions;
 
 namespace gzDAL.Conf
 {
@@ -371,39 +372,46 @@ namespace gzDAL.Conf
 
         private static void CreateUpdPortfolios(ApplicationDbContext context, int custId) {
 
-            context.Portfolios.AddOrUpdate(
-                p => p.RiskTolerance,
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Low,
                     IsActive = true,
                     Color = "#00A69C",
                     Title = "Conservative"
-                },
+                }, 
+                p => p.RiskTolerance == RiskToleranceEnum.Low);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Low_Medium,
                     IsActive = false,
                     Color = "#FF0000",
                     Title = "Low Medium"
                 },
+                p => p.RiskTolerance == RiskToleranceEnum.Low_Medium);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Medium,
                     IsActive = true,
                     Color = "#90278E",
                     Title = "Medium"
                 },
+                p => p.RiskTolerance == RiskToleranceEnum.Medium);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Medium_High,
                     IsActive = false,
                     Color = "#00FF00",
                     Title = "Medium High"
                 },
+                p => p.RiskTolerance == RiskToleranceEnum.Medium);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.High,
                     IsActive = true,
                     Color = "#FF9500",
                     Title = "Aggressive"
-                });
-
+                },
+                p => p.RiskTolerance == RiskToleranceEnum.Medium);
         }
 
         private static void CreateUpdPortFunds(ApplicationDbContext context) {
