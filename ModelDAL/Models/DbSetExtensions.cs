@@ -25,7 +25,7 @@ namespace gzDAL.Models {
         static DbSetExtensions() {
 
 #if DEBUG
-            _sqlLogFile = new StreamWriter(TempSqlLogPath);
+            //_sqlLogFile = new StreamWriter(TempSqlLogPath);
 #endif
 
         }
