@@ -54,7 +54,7 @@
     <DocumentationFile>bin\Debug\GmEtl.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
     <OutputPath>bin\Production\</OutputPath>
-    <StartArguments>--get-shares 98</StartArguments>
+    <StartArguments>--get-shares 120</StartArguments>
   </PropertyGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '11.0'">
