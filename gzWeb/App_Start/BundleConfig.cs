@@ -133,6 +133,7 @@ namespace gzWeb {
                                         , "~/_app/common/authCtrl.js"
                                         , "~/_app/common/headerCtrl.js"
                                         , "~/_app/common/footerCtrl.js"
+                                        , "~/_app/common/footerMenu.js"
             #endregion
 
             #region EveryMatrix
