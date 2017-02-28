@@ -1,6 +1,5 @@
 ﻿using gzDAL.Models;
 using gzDAL.Repos;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Data.Entity.Migrations;
 using System.IO;
@@ -377,7 +376,7 @@ namespace gzDAL.Conf
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Low,
                     IsActive = true,
-                    Color = "#B4DCC4",
+                    Color = "#00A69C",
                     Title = "Conservative"
                 },
                 new Portfolio {
@@ -389,7 +388,7 @@ namespace gzDAL.Conf
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Medium,
                     IsActive = true,
-                    Color = "#64BF89",
+                    Color = "#90278E",
                     Title = "Medium"
                 },
                 new Portfolio {
@@ -401,7 +400,7 @@ namespace gzDAL.Conf
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.High,
                     IsActive = true,
-                    Color = "#227B46",
+                    Color = "#FF9500",
                     Title = "Aggressive"
                 });
 
