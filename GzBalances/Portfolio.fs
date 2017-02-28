@@ -703,6 +703,7 @@ module UserTrx =
     open System.Collections.Generic
     open System
     open NLog
+
     let logger = LogManager.GetCurrentClassLogger()
 
     /// Upsert UserPortfolio, VintageShares, InvBalance
@@ -727,7 +728,7 @@ module UserTrx =
     /// Process input balances
     let private processUserBalances (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance): unit = 
         if userPortfolioInput.CashToInvest > 0M || userFinance.EndBalance > 0M then
-            logger.Info(sprintf "Processing investment balances for user id %d on month of %s having financial amounts of %A" 
+            logger.Info(sprintf "Processing investment balances for user id %d on month of %s having these financial amounts\n%A" 
                 userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance)
 
         let dbOper() = (userPortfolioInput, userFinance) ||> upsDbClearMonth
@@ -736,11 +737,15 @@ module UserTrx =
     /// get the portfolio market quote that's latest within the month processing
     let findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
         let nextMonth = month.ToNextMonth1st
-        let monthLateQuote = 
+
+        let getMonthLateQuote (portfoliosPrices)= 
             portfoliosPrices
             |> Map.filter(fun key _ -> key < nextMonth)
             |> Seq.maxBy(fun kvp -> kvp.Key)
             |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
+        let boxedGetmonthLateQuote() = portfoliosPrices |> getMonthLateQuote
+        let monthLateQuote = tryF boxedGetmonthLateQuote NoCurrentMarketQuote (sprintf "Couldn't find a portfolio market quote within %s" month)
+
         // assert quote is within the month
         (monthLateQuote.PortfolioHighRiskPrice.TradedOn.Month = Int32.Parse(month.Substring(4, 2)), "Found a portfolio market quote not within the processing month: " + month)
         ||> traceExc

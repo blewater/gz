@@ -77,7 +77,7 @@ module DbGzTrx =
         | Gain _ -> 0M
         | Loss lossAmount -> (decimal creditLossPcnt / 100m) * -lossAmount
     
-    /// Upsert a GzTrxs transaction row with the credited amount
+    /// Upsert a GzTrxs transaction row with the credited amount: 1 user row per month
     let private setDbGzTrxRow(db : DbContext)(yyyyMmDd :string)(playerRevRpt : DbPlayerRevRpt) =
 
         let playerGainLoss = playerRevRpt.PlayerGainLoss.Value
@@ -122,7 +122,9 @@ module DbPlayerRevRpt =
     open NLog
     open GzDb.DbUtil
     open ExcelSchemas
+    open GzCommon
     open ExcelUtil
+
     let logger = LogManager.GetCurrentClassLogger()
 
     /// Updated db player Gain Loss
@@ -138,7 +140,7 @@ module DbPlayerRevRpt =
         row.UpdatedOnUtc <- DateTime.UtcNow
         row.Processed <- int GmRptProcessStatus.GainLossRptUpd
 
-    /// Query non zero balance affecting amounts and update the player GailLoss
+    /// Query non zero balance affecting amounts and update the player GainLoss
     let setDbMonthyGainLossAmounts
                         (db : DbContext)
                         (yyyyMmDd :string) =
@@ -255,8 +257,8 @@ module DbPlayerRevRpt =
         }
         |> (fun playerDbRow -> 
             if isNull playerDbRow then 
-                let failMsg = sprintf "When importing a withdrawals file you can't have a user Id %d that is not found in the PlayerRevRpt table!" gmUserId
-                failwith failMsg
+                let warningMsg = sprintf "Couldn't find user Id %d from pending withdrawals excel in the PlayerRevRpt table." gmUserId
+                logger.Warn warningMsg
             else
                 updDbRowWithdrawalsValues withdrawalType withdrawalRow playerDbRow
         )
@@ -364,7 +366,8 @@ module WithdrawalRpt2Db =
                 else if not initiatedCurrently && completedCurrently && transStatus = "rollback" then
                     DbPlayerRevRpt.updDbWithdrawalsPlayerRow Rollback db yyyyMmDd excelRow
                 else
-                    logger.Warn(sprintf "Withdrawal row not imported! Initiated: %O, CurrentDt: %s, CompletedDt Val: %A, trans status: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" initiatedDt yyyyMmDd completedDt.Value transStatus initiatedCurrently completedCurrently completedInSameMonth)
+                    logger.Warn(sprintf "\nWithdrawal row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %A, trans status: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
+                        initiatedDt yyyyMmDd completedDt transStatus initiatedCurrently completedCurrently completedInSameMonth)
     
     /// Open an excel file and return its memory schema
     let private openWithdrawalRptSchemaFile (excelFilename : string) : WithdrawalsExcelSchema =
@@ -382,15 +385,13 @@ module WithdrawalRpt2Db =
         // Open excel report file for the memory schema
         let openFile = withdrawalsRptFullPath |> openWithdrawalRptSchemaFile
         let withdrawalRptDtStr = withdrawalsRptFullPath |> getWithdrawalDtStr
-        try 
-            updDbWithdrawalsExcelRptRows db openFile withdrawalRptDtStr
-        with _ -> 
-            reraise()
+        updDbWithdrawalsExcelRptRows db openFile withdrawalRptDtStr
             
 module BalanceRpt2Db =
     open NLog
     open GzDb.DbUtil
     open ExcelSchemas
+    open GzCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -403,8 +404,8 @@ module BalanceRpt2Db =
 
         // Loop through all excel rows
         for excelRow in balanceExcelFile.Data do
-            // Skip totals line
-            if excelRow.``User ID`` > 0.0 then
+            // Skip totals line & test emails
+            if excelRow.``User ID`` > 0.0 && excelRow.Email |> allowedPlayerEmail then
                 logger.Info(
                     sprintf "Processing balance email %s on %s/%s/%s" 
                         excelRow.Email <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
@@ -430,16 +431,15 @@ module BalanceRpt2Db =
         let balanceTypedOpenSchema = openBalanceRptSchemaFile balanceType
         // Open excel report file for the memory schema
         let openFile = balanceRptFullPath |> balanceTypedOpenSchema
-        try 
-            importBalanceExcelRptRows balanceType db openFile customYyyyMmDd
-        with _ -> 
-            reraise()
+        importBalanceExcelRptRows balanceType db openFile customYyyyMmDd
 
 module CustomRpt2Db =
     open NLog
     open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
+    open GzCommon
+
     let logger = LogManager.GetCurrentClassLogger()
 
     /// Process all excel lines except Totals and upsert them
@@ -449,7 +449,10 @@ module CustomRpt2Db =
 
         // Loop through all excel rows
         for excelRow in customExcelSchemaFile.Data do
-            if not <| isNull excelRow.``Email address`` then
+            if excelRow.``Player status`` = "Active" 
+                && not <| isNull excelRow.``Email address``
+                && excelRow.``Email address`` |> allowedPlayerEmail then
+
                 logger.Info(
                     sprintf "Processing email %s on %s/%s/%s" 
                         excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))

@@ -2,22 +2,29 @@
 
 [<AutoOpen>]
 module ErrorHandling =
-
     open System
     open NLog
 
+    type DomainException = 
+    | MissingCustomReport of Exception
+    | Missing1stBalanceReport of Exception
+    | Missing2ndBalanceReport of Exception
+    | MissingWithdrawalReport of Exception
+    | MissingDateInFilename of Exception // Reserved for future use
+    | NoparsableDateInFilename of Exception // Reserved for future use
+    | MismatchedFilenameDates of Exception // Reserved for future use
+    | BegBalanceDateMismatch of Exception // Reserved for future use
+    | NoCurrentMarketQuote of Exception
+
     let logger = LogManager.GetCurrentClassLogger()
 
-    let private logError taskExc (logInfo : 'I Option) (ex : Exception) =
-        let logMsg = 
-            match logInfo with
-            | Some info -> sprintf "Operation failed with %A. Here's additional info: %A" taskExc info
-            | None -> sprintf "Operation failed with %A." taskExc
-        logger.Fatal logMsg
-        logger.Error ("**Exception: " + ex.Message)
+    /// Log error with domain exception, log message and runtime exception
+    let private logError taskExc (logInfo : 'I) (ex : Exception) =
+        let logMsg = sprintf "Operation failed with %A. Here's additional info: %A" taskExc logInfo
+        logger.Fatal (ex, logMsg)
     
     // try to call with a DomailException and Option-al logInfo
-    let tryF f taskExc (logInfo : 'I Option) =
+    let tryF f taskExc (logInfo : 'I) =
         try 
             f()
         with ex ->
@@ -30,13 +37,26 @@ module ErrorHandling =
         printfn "%A" result
         result        
 
-    // invalidArg with logging
+    /// invalidArg with logging
     let failWithLogInvalidArg excMsg logMsg =
         logger.Fatal (excMsg + " : " + logMsg)
         invalidArg excMsg logMsg
 
+    /// Assert with runtime exception
     let traceExc (condition : bool)(message : string) : unit =
-        Diagnostics.Trace.Assert(condition, message)
         if not condition then
             ("Assert failed: ", message) ||> failWithLogInvalidArg
+
+    /// Emails not allowed
+    let allowedPlayerEmail (emailAddress : string) : bool =
+        match emailAddress.ToLowerInvariant() with
+        | playerAddress when playerAddress.Contains("@noemail.com") -> false
+        | playerAddress when playerAddress.Contains("@everymatrix.com") -> false
+        | playerAddress when playerAddress.Contains("@mailinator.com") -> false
+        | playerAddress when playerAddress.Contains("@sharklasers.com") -> false
+        | playerAddress when playerAddress.Contains("@asdasd") -> false
+        | playerAddress when playerAddress.Contains("@test.gr") -> false
+        | _ -> true
+
+
 
