@@ -1,6 +1,6 @@
 ﻿<script type="text/ng-template" id="withdrawTpl.html">
     <div class="withdraw" ng-click="withdraw()">
-        <img src="../../Content/Images/cash.svg" alt=" cash" />
+        <img src="../../Content/Images/cash.svg" alt="Withdraw cash" />
         <span>WITHDRAW</span>
     </div>
 </script>
@@ -12,11 +12,167 @@
     </div>
 </script>
 
-
 <div class="clearfix investments">
     <div class="container">
         <div class="summary">
             <div class="row">
+                <div class="col-xs-12 col-md-4">
+                    <div class="summary-box investment-history" ng-class="{'expanded': investmentHistoryExpanded}">
+                        <div class="summary-box-head">
+                            <div class="summary-box-head-icon">
+                                <img src="../../Content/Images/Investment Icons/history.svg" />
+                            </div>
+                            <div class="summary-box-head-title">Investment history</div>
+                        </div>
+                        <div class="summary-box-body">
+                            <div class="label text-normal">Invested so far</div>
+                            <div class="amount text-emphasis">{{model.TotalInvestments | isoCurrency : currency : 0}}</div>
+                            <div class="symbol text-emphasis">+</div>
+                            <div class="label text-normal">Gained from investment so far:</div>
+                            <div class="amount text-emphasis">{{model.TotalInvestmentsReturns | isoCurrency : currency : 0}}</div>
+
+                            <div class="implication hidden-xs hidden-sm">
+                                <img src="../../Content/Images/Investment Icons/big_green_arrow.svg" />
+                            </div>
+                        </div>
+                        <div class="summary-box-foot">
+                            <div class="investment-vintages">
+                                <img src="../../Content/Images/Investment Icons/invest_white.svg" alt="Withdraw cash" />
+                                <span>Investment vintages</span>
+                            </div>
+                            <div class="no-vintages" ng-if="vintages.length === 0">
+                                No vintages yet
+                            </div>
+                            <div class="vintage" ng-repeat="vintage in vintages.slice(0, investmentHistoryExpanded ? 12 : 2)">
+                                <div class="vintage-label">{{vintage.Date | date : 'MMMM'}}</div>
+                                <div class="vintage-value">{{vintage.InvestmentAmount | isoCurrency : currency : 0}}</div>
+                            </div>
+                            <div ng-show="investmentHistoryExpanded">
+                                <div class="summary-box-btn" ng-click="showAllVintages()">
+                                    <img src="../../Content/Images/plus_icon.svg" alt="Show More" />
+                                    <span>SHOW ALL</span>
+                                </div>
+                            </div>
+                            <div class="expansion" ng-if="vintages.length > 0">
+                                <div>
+                                    <span>show&nbsp;</span>
+                                    <span ng-show="investmentHistoryExpanded">less</span>
+                                    <span ng-hide="investmentHistoryExpanded">more</span>
+                                </div>
+                                <img class="arrow pull-right" src="../../Content/Images/Investment Icons/expand_arrow.svg" ng-click="toggleInvestmentHistory()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-md-4">
+                    <div class="summary-box current-balance">
+                        <div class="summary-box-head">
+                            <div class="summary-box-head-icon">
+                                <img src="../../Content/Images/Investment Icons/current.svg" />
+                            </div>
+                            <div class="summary-box-head-title">Current Investment bonus balance</div>
+                        </div>
+                        <div class="summary-box-body">
+                            <div class="amount text-emphasis">{{model.InvestmentsBalance | isoCurrency : currency : 0}}</div>
+                            <div class="date">
+                                <div class="date-icon">
+                                    <img src="../../Content/Images/Investment Icons/calendar_grey.svg" />
+                                </div>
+                                <div class="date-details">
+                                    <div class="date-label">Status as of:</div>
+                                    <div class="date-data text-emphasis">
+                                        <span class="date-datetime">
+                                            <span class="date-datevalue">{{model.StatusAsOfLocalDate}}</span>
+                                            <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
+                                        </span>
+                                        <span class="info">
+                                            <img src="../../Content/Images/Investment Icons/info.png" tooltip-class="summary-tooltip" uib-tooltip="Calculated once every day at 12:00 pm. Any incremental losses or gains incurred after each daily calculation are not reflected." />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="summary-box-foot">
+                            <div class="summary-box-btn" ng-click="withdraw()">
+                                <img src="../../Content/Images/Investment Icons/cash_white.svg" alt="Withdraw cash" />
+                                <span>WITHDRAW</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-md-4">
+                    <div class="summary-box expected-amount" ng-class="{'expanded': gamingActivitiesExpanded}">
+                        <div class="summary-box-head">
+                            <div class="summary-box-head-icon">
+                                <img src="../../Content/Images/Investment Icons/expected.svg" />
+                            </div>
+                            <div class="summary-box-head-title">Next expected investment amount</div>
+                        </div>
+                        <div class="summary-box-body">
+                            <div class="amount text-emphasis">{{model.LastInvestmentAmount | isoCurrency : currency : 0}}</div>
+                            <div class="amount-note">
+                                <span class="amount-note-text">50% of net loss</span>
+                                <span class="info">
+                                    <img src="../../Content/Images/Investment Icons/info.png" tooltip-class="summary-tooltip" uib-tooltip-html="'<div>Calculated as:<br />bet wins - bet losses for the given month.</div>'" />
+                                </span>
+                            </div>
+                            <div class="date">
+                                <div class="date-icon">
+                                    <img src="../../Content/Images/Investment Icons/calendar_green.svg" />
+                                </div>
+                                <div class="date-details">
+                                    <div class="date-label">Next investment deposited on:</div>
+                                    <div class="date-data text-emphasis">
+                                        <span class="date-datetime">
+                                            <span class="date-datevalue">{{model.NextInvestmentOnLocalDate}}</span>
+                                            <span class="date-timevalue">{{model.NextInvestmentOnLocalTime}}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="summary-box-foot">
+                            <div class="summary-box-btn" ng-click="backToGames()">
+                                <img src="../../Content/Images/games_white.svg" alt="Games" />
+                                <span>BACK TO GAMES</span>
+                            </div>
+                            <div class="expansion-content">
+                                <div class="gaming-activities-date">{{model.GamingActivitiesRange}}</div>
+                                <div class="amount starting-balance">
+                                    <div class="amount-label">Starting balance</div>
+                                    <div class="amount-value">{{model.BegMonthlyGmBalance | isoCurrency : currency : 0}}</div>
+                                </div>
+                                <div class="amount">
+                                    <div class="amount-label">Deposited</div>
+                                    <div class="amount-value">{{model.MonthlyDeposits | isoCurrency : currency : 0}}</div>
+                                </div>
+                                <div class="amount">
+                                    <div class="amount-label">Withdrawn</div>
+                                    <div class="amount-value">{{model.MonthlyWithdrawals | isoCurrency : currency : 0}}</div>
+                                </div>
+                                <div class="amount"><hr /></div>
+                                <div class="amount net-gaming-loss-gain">
+                                    <div class="amount-label">Net gaming loss/gain</div>
+                                    <div class="amount-value">{{model.MonthlyGamingGainLoss | isoCurrency : currency : 0}}</div>
+                                </div>
+                                <div class="amount"><hr /></div>
+                                <div class="amount">
+                                    <div class="amount-label">Current balance</div>
+                                    <div class="amount-value">{{model.EndMonthlyGmBalance | isoCurrency : currency : 0}}</div>
+                                </div>
+                            </div>
+                            <div class="expansion">
+                                <div>gaming activities</div>
+                                <img class="arrow pull-right" src="../../Content/Images/Investment Icons/expand_arrow.svg" ng-click="toggleGamingActivities();" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row hidden">
                 <div class="col-xs-12">
                     <div class="text-center">
                         <div class="investments-balance-amount text-gz">
@@ -30,7 +186,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row hidden">
                 <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-12 col-lg-offset-0 col-lg-6 col-lg-push-3">
                     <div class="summary-section investments-overview">
                         <div class="text-center">
@@ -115,45 +271,47 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="visible-lg" ng-include src="'backToGamesTpl.html'"></div>
                     </div>
+                    <div class="visible-lg" ng-in
+                    <div class="visible-lg" ng-include src="'backToGamesTpl.html'"></div>
                 </div>
-                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-lg-3">
-                    <div class="summary-section investments-schedule">
-                        <div class="text-center">
-                            <img src="../../Content/Images/calendar.svg" alt="Diagram" class="icon" />
-                        </div>
-                        <div class="side-box">
-                            <div class="side-box-table">
-                                <div class="side-box-table-head">
-                                    <div class="row">
-                                        <div class="col-xs-12">Next Investment on:</div>
-                                    </div>
-                                </div>
-                                <div class="side-box-table-body">
-                                    <div class="row">
-                                        <div class="col-xs-12 text-left">{{model.NextInvestmentOn | ordinalDate : 'MMMM d'}}</div>
-                                    </div>
-                                </div>
+                    <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-lg-3">
+                        <div class="summary-section investments-schedule">
+                            <div class="text-center">
+                                <img src="../../Content/Images/calendar.svg" alt="Diagram" class="icon" />
                             </div>
-                            <div class="side-box-table">
-                                <div class="side-box-table-head">
-                                    <div class="row">
-                                        <div class="col-xs-12">Expected investment amount:</div>
+                            <div class="side-box">
+                                <div class="side-box-table">
+                                    <div class="side-box-table-head">
+                                        <div class="row">
+                                            <div class="col-xs-12">Next Investment on:</div>
+                                        </div>
+                                    </div>
+                                    <div class="side-box-table-body">
+                                        <div class="row">
+                                            <div class="col-xs-12 text-left">{{model.NextInvestmentOn | ordinalDate : 'MMMM d'}}</div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="side-box-table-body">
-                                    <div class="row">
-                                        <div class="col-xs-12 text-left">{{model.LastInvestmentAmount | isoCurrency : currency : 0}}</div>
+                                <div class="side-box-table">
+                                    <div class="side-box-table-head">
+                                        <div class="row">
+                                            <div class="col-xs-12">Expected investment amount:</div>
+                                        </div>
+                                    </div>
+                                    <div class="side-box-table-body">
+                                        <div class="row">
+                                            <div class="col-xs-12 text-left">{{model.LastInvestmentAmount | isoCurrency : currency : 0}}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="side-box-table">
-                                <div class="side-box-table-foot">
-                                    <div class="row">
-                                        <div class="col-xs-12 text-left">
-                                            <!--*Status as of {{model.StatusAsOfLocal}} - 50% of net losses (cash in - cash out - bonus balance allocated to investments)-->
-                                            50% of net gaming loss/gain
+                                <div class="side-box-table">
+                                    <div class="side-box-table-foot">
+                                        <div class="row">
+                                            <div class="col-xs-12 text-left">
+                                                <!--*Status as of {{model.StatusAsOfLocal}} - 50% of net losses (cash in - cash out - bonus balance allocated to investments)-->
+                                                50% of net gaming loss/gain
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -163,15 +321,14 @@
                     </div>
                 </div>
             </div>
-            <div class="row hidden-lg">
-                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-sm-push-6" ng-include src="'withdrawTpl.html'">
-                </div>
-                <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-sm-pull-6" ng-include src="'backToGamesTpl.html'">
-                </div>
+        </div>
+        <div class="row hidden-lg hidden">
+            <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-sm-push-6" ng-include src="'withdrawTpl.html'">
+            </div>
+            <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-6 col-sm-pull-6" ng-include src="'backToGamesTpl.html'">
             </div>
         </div>
     </div>
-</div>
 
 
 

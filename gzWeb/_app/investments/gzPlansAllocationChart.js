@@ -69,7 +69,7 @@
                             '</div>';
 
                         tooltip.html(html)
-                            .style("background-color", d3.rgb("#27A95C").darker(plan.Gamma))
+                            .style("background-color", plan.Color)
                             .style("opacity", 1);
                     };
                     function hideTooltip() {
@@ -141,7 +141,7 @@
 
                     arcs.append("path")
                         .attr("fill", function (d, i) {
-                            return d3.rgb("#27A95C").darker(d.data.Gamma);
+                            return d.data.Color;
                         })
                         .transition()
                         .delay(function (d, i) {
