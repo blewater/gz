@@ -76,6 +76,8 @@
     <Compile Include="CurrencyRates.fs" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
+    <None Include="Scripts\load-references-debug.fsx" />
+    <None Include="Scripts\load-project-debug.fsx" />
     <Compile Include="ErrorHandling.fs" />
   </ItemGroup>
   <ItemGroup>
