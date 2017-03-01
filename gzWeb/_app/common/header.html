@@ -78,6 +78,22 @@
             </nav>
         </div>
         <div ng-if="!lg" ng-include src="'login-signup.html'"></div>
+        <!--<div ng-if="!lg" class="clearfix">
+            <hr />
+            <div class="links col-lg-pull-12">
+                <nav class="cl-effect text-center">
+                    <div ng-repeat="item in footerMenu" ng-class="getClass(item.route.path)" ng-if="item.when()">
+                        <a ng-if="item.route" ng-href="{{item.route.path}}">{{item.route.title}}</a>
+                        <a ng-if="item.subroutes">{{item.title}}</a>
+                        <ul ng-if="item.subroutes" class="dropdown-menu">
+                            <li ng-repeat="subroute in item.subroutes">
+                                <a ng-href="{{subroute.route.path}}">{{subroute.route.subtitle || subroute.route.title}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>-->
     </div>
 </script>
 
