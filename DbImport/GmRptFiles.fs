@@ -3,9 +3,9 @@
 module GmRptFiles =
     open System
     open System.IO
-    open ErrorHandling
     open System.Text.RegularExpressions
     open GzCommon
+    open ExcelSchemas
     
     type InRptFolder = { isProd : bool; folderName : string }
     type RptFilenames = { customFilename : string; withdrawalFilename : string; begBalanceFilename : string; endBalanceFilename : string }
@@ -15,7 +15,7 @@ module GmRptFiles =
 
     let private folderTryF (isProd : bool) f domainException =
         let logInfo = "isProd", isProd
-        tryF f domainException (Some logInfo)
+        tryF f domainException logInfo
 
     let private getEarliestExcelFile (inRptFolder : InRptFolder) (filenameMask : string Option) (topListIndex : int): string =
         // Deconstruct
@@ -87,7 +87,7 @@ module GmRptFiles =
 
     let getExcelFilenames (inRptFolder : InRptFolder) : RptFilenames =
         let excelFiles = getRptFilenames inRptFolder
-        let datesLogMsg = sprintf "Excel filenames: %A" excelFiles
+        let datesLogMsg = sprintf "Excel filenames: \n%A" excelFiles
         logger.Info datesLogMsg
         excelFiles
 
@@ -116,7 +116,7 @@ module GmRptFiles =
     /// Get the string dates of all the parsed report filenames string dates in format yyyyMMdd
     let getExcelDtStr (excelFiles : RptFilenames) : RptStrDates =
         let excelFileStrDates = excelFilenames2DatesStr excelFiles
-        let datesLogMsg = sprintf "Parsed excel filename title string dates: %A" excelFileStrDates
+        let datesLogMsg = sprintf "Parsed string dates in excel filenames: \n%A" excelFileStrDates
         logger.Info datesLogMsg
         excelFileStrDates
 
@@ -144,9 +144,36 @@ module GmRptFiles =
     /// Get the DateTime dates of all the parsed report filenames string dates in format yyyyMMdd
     let getExcelDates (excelDatesStr : RptStrDates) : RptDates =
         let excelFileDates = excelDatesStr2Dt excelDatesStr
-        let datesLogMsg = sprintf "Parsed excel filename title dates: %A" excelFileDates
+        let datesLogMsg = sprintf "Parsed dates in excel filenames: \n%A" excelFileDates
         logger.Info datesLogMsg
         excelFileDates
+
+//--------------------- Content validation
+
+    /// Check if balance report dates content mismatches title 
+    let matchBalanceRptDatesWithTitle(excelFilename : string) : bool =
+        let balanceRptDate =  excelFilename |> getBegBalanceDtStr |> getBegBalanceDate
+        let balanceFileExcelSchema = new BalanceExcelSchema(excelFilename)
+
+        balanceFileExcelSchema.Data
+        |> Seq.tryFind(fun (excelRow) ->
+            if excelRow.``User ID`` > 0.0 then 
+                let excelRowDtStr = DateTime.ParseExact(excelRow.Date, "dd/MM/yyyy", null, Globalization.DateTimeStyles.None)
+                excelRowDtStr <> balanceRptDate
+            else false
+        )
+        |> function
+            | None -> true // Content dates match with title or empty content
+            | _ -> false // Row date mismatch with title
+
+    /// Enforce beginning and ending balance Report files title dates match their content
+    let balanceRptDateMatchTitles(excelFiles : RptFilenames) : RptFilenames =
+        if not (excelFiles.begBalanceFilename |> matchBalanceRptDatesWithTitle) then 
+            failWithLogInvalidArg "[Begin_BalanceRptDatesNotMathingTitle]" (sprintf "The beginning balance excel report filename: %s does not match its contents." excelFiles.begBalanceFilename)
+
+        if not (excelFiles.endBalanceFilename|> matchBalanceRptDatesWithTitle) then 
+            failWithLogInvalidArg "[Ending_BalanceRptDatesNotMathingTitle]" (sprintf "The ending balance excel report filename: %s does not match its contents." excelFiles.endBalanceFilename)
+        excelFiles
 
 //--------------------- Validation Rules
 
@@ -160,10 +187,18 @@ module GmRptFiles =
         if customDate.Month <> begBalanceDate.Month && begBalanceDate.Day <> 1 then
             failWithLogInvalidArg "[BegBalanceDateMismatch]" (sprintf "Custom date %s mismatch or begBalance Report on first of month : %s." <| customDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
 
-    /// Enforce begBalance on 1st month day
-    let private balanceDatesValidation (begBalanceDate : DateTime) (endBalanceDate : DateTime) : Unit =
-        if begBalanceDate.AddMonths 1 <> endBalanceDate then
-            failWithLogInvalidArg "[EndBalanceDateMismatch]" (sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" <| endBalanceDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
+    /// Enforce endBalance on 1st of next month (if next month is in the past) or enforce endBalanceDate is downloaded today
+    let private endBalanceDateValidation (begBalanceDate : DateTime) (endBalanceDate : DateTime) : Unit =
+        let nextMonth = begBalanceDate.AddMonths 1
+        let nowMidnightUtc = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+        let totalDaysInPast = nowMidnightUtc.Subtract(nextMonth).Days
+        if totalDaysInPast >= 0 then
+            if begBalanceDate.AddMonths 1 <> endBalanceDate then
+                failWithLogInvalidArg "[EndBalanceDateMismatch]" (sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" 
+                    <| endBalanceDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
+        elif nowMidnightUtc.Subtract(endBalanceDate).Days <> 0 then
+                failWithLogInvalidArg "[EndBalanceDateMismatch]" (sprintf "End balance date: %s is not freshly downloaded today: %s !" 
+                    <| endBalanceDate.ToString("yyyy-MMM-dd") <| nowMidnightUtc.ToString("yyyy-MMM-dd"))
 
     /// Check for the existence of required report files for a month by checking matching dates etc
     let areExcelFilenamesValid (rptDates : RptDates) : ExcelDatesValid =
@@ -172,7 +207,7 @@ module GmRptFiles =
         sameDayValidation customDate withdrawDate
 
         begBalance1stDay customDate begBalanceDate
-        
-        balanceDatesValidation begBalanceDate endBalanceDate
+
+        endBalanceDateValidation begBalanceDate endBalanceDate
         // if no exception occurs to this point:
         { Valid = true; DayToProcess = customDate.ToYyyyMmDd } 

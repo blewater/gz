@@ -33,9 +33,6 @@ namespace gzDAL.Models {
         public decimal? EndBalance { get; set; }
         public decimal? PlayerGainLoss { get; set; }
 
-        [StringLength(256)]
-        public string Role { get; set; }
-
         [Column("Player status")]
         [StringLength(256)]
         public string PlayerStatus { get; set; }
@@ -49,12 +46,6 @@ namespace gzDAL.Models {
         [StringLength(256)]
         public string EmailAddress { get; set; }
 
-        [Column("Last login")]
-        public DateTime? LastLogin { get; set; }
-
-        [Column("Accepts bonuses")]
-        public bool? AcceptsBonuses { get; set; }
-
         [Column("Total deposits amount")]
         public decimal? TotalDepositsAmount { get; set; }
 
@@ -64,27 +55,10 @@ namespace gzDAL.Models {
         [Column("Withdraws made")]
         public decimal? WithdrawsMade { get; set; }
 
-        [Column("Last played date", TypeName = "date")]
-        public DateTime? LastPlayedDate { get; set; }
-
         [Required]
         [Column(TypeName = "char")]
         [StringLength(3)]
         public string Currency { get; set; }
-
-        [Column("Total bonuses accepted by the player")]
-        public decimal? TotalBonusesAcceptedByThePlayer { get; set; }
-
-        [Column("Net revenue")]
-        public decimal? NetRevenue { get; set; }
-
-        [Column("Gross revenue")]
-        public decimal? GrossRevenue { get; set; }
-
-        public decimal? NetLossInUSD { get; set; }
-
-        [Column("Real money balance")]
-        public decimal? RealMoneyBalance { get; set; }
 
         public int Processed { get; set; }
 
