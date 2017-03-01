@@ -515,7 +515,7 @@ namespace gzDAL.Repos {
         /// <param name="invGainLoss">Out -> Monthly Gain or Loss in cash value Used in summary page</param>
         /// <param name="monthsPortfolioRisk"></param>
         /// <returns></returns>
-        public Dictionary<int, PortfolioFundDTO>
+        private Dictionary<int, PortfolioFundDTO>
             GetCustomerSharesBalancesForMonth(
                 int customerId,
                 int yearCurrent,
