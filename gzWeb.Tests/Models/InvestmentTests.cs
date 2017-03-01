@@ -53,29 +53,29 @@ namespace gzWeb.Tests.Models {
         [Test]
         public void SaveDbSellPortfolio() {
 
-            using (var db = new ApplicationDbContext(null)) {
+            //using (var db = new ApplicationDbContext(null)) {
 
-                var custId = CreateTestCustomer(db, TestUser6Month(db));
+            //    var custId = CreateTestCustomer(db, TestUser6Month(db));
 
-                // Last Day of present Month @ 23:00
-                var yearCurrent = DateTime.UtcNow.Year;
-                var monthCurrent = DateTime.UtcNow.Month;
-                var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
-                    23, 00, 00);
+            //    // Last Day of present Month @ 23:00
+            //    var yearCurrent = DateTime.UtcNow.Year;
+            //    var monthCurrent = DateTime.UtcNow.Month;
+            //    var lastMonthDay = new DateTime(yearCurrent, monthCurrent, DateTime.DaysInMonth(yearCurrent, monthCurrent),
+            //        23, 00, 00);
 
-                var custPortfolioRepo = new CustPortfolioRepo(db);
-                var soldShares = new InvBalanceRepo(
-                    db, 
-                    new CustFundShareRepo(db, custPortfolioRepo),
-                    new GzTransactionRepo(db),
-                    custPortfolioRepo)
-                    .SaveDbSellAllCustomerFundsShares(
-                        custId, 
-                        lastMonthDay);
+            //    var custPortfolioRepo = new CustPortfolioRepo(db);
+            //    var soldShares = new InvBalanceRepo(
+            //        db, 
+            //        new CustFundShareRepo(db, custPortfolioRepo),
+            //        new GzTransactionRepo(db),
+            //        custPortfolioRepo)
+            //        .SaveDbSellAllCustomerFundsShares(
+            //            custId, 
+            //            lastMonthDay);
 
-                Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
+            //    Console.WriteLine("SaveDbSellPortfolio() returned soldShares: " + soldShares);
 
-            }
+            //}
         }
 
         [Test]

@@ -10,15 +10,6 @@ namespace gzDAL.Repos.Interfaces {
         Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId);
         Task<InvBalAmountsRow> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask);
         void SetVintagesMarketPrices(int customerId, IEnumerable<VintageDto> vintages);
-        Dictionary<int, PortfolioFundDTO> GetCustomerSharesBalancesForMonth(
-            int customerId, 
-            int yearCurrent, 
-            int monthCurrent, 
-            decimal cashToInvest, 
-            out decimal monthlyBalance, 
-            out decimal invGainLoss,
-            out RiskToleranceEnum monthsPortfolioRisk);
-
         ICollection<VintageDto> GetCustomerVintages(int customerId);
 
         ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId);
