@@ -4,8 +4,8 @@
 /* #region Common */
 .investments {
     font-weight: 300;
-    padding-top: 130px;
-    padding-bottom: 50px;
+    padding-top: 100px;
+    padding-bottom: 100px;
 }
 /* #endregion */
 
@@ -13,10 +13,6 @@
 /* #region side-box */
 .side-box {
 	border:1px solid #ccc;
-	-webkit-transition: border 0.5s ease; /* Safari */
-    -moz-transition: border 0.5s ease;
-    -ms-transition: border 0.5s ease;
-    -o-transition: border 0.5s ease;
     transition: border 0.5s ease;
 	padding: 20px;
 }
@@ -28,7 +24,6 @@
     margin-top: 10px;
 }
 .side-box .side-box-table .side-box-table-head {
-    /*font-size: 20px;*/
     font-size: 16px;
     color: #646464;
     padding-bottom: 5px;
@@ -48,7 +43,6 @@
 }
 .side-box .side-box-table .side-box-table-body .text-left {
 	color:#000;
-	/*font-size:18px;*/
 	font-size:14px;
     padding-left:5px;
     padding-right:5px;
@@ -62,7 +56,6 @@
 
 .side-box .side-box-table .side-box-table-body .text-right {
     color:#000;
-    /*font-size: 20px;*/
     font-size: 18px;
     opacity: 0.65;
     padding-left:5px;
@@ -79,9 +72,343 @@
 
 
 /* #region Summary */
-.investments .summary {
-
+.investments .summary { }
+.investments .summary .summary-box {
+    position: relative;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 0;
+    margin: 20px -10px;
 }
+.investments .summary .summary-box .summary-box-head {
+    padding: 30px 0;
+    position: relative;
+    height: 140px;
+}
+.investments .summary .summary-box .summary-box-head-icon {
+    width: 50px;
+    margin: 0 auto;
+}
+.investments .summary .summary-box .summary-box-head-title {
+    color: #fff;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+.investments .summary .summary-box .summary-box-body {
+    padding: 30px 0;
+    position: relative;
+    height: 240px;
+}
+
+.investments .summary .summary-box .summary-box-foot {
+    position: relative;
+    height: 170px;
+    overflow: hidden;
+    transition: all 0.5s ease;
+}
+
+.investments .summary .summary-box .summary-box-foot .summary-box-btn {
+    margin: 0 auto;
+    padding: 15px 0;
+    width: 60%;
+    height: 50px;
+    color: #fff;
+    cursor: pointer;
+}
+.investments .summary .summary-box .summary-box-foot .summary-box-btn img {
+    margin-right: 20px;
+}
+.investments .summary .summary-box .expansion {
+    margin: 0 auto;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    position: absolute;
+    bottom: 0;
+    color: #555;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    z-index: 500;
+    background-color: #f2f2f2;
+}
+.investments .summary .summary-box .expansion .arrow {
+    position: absolute;
+    width: 20px;
+    top: 15px;
+    right: 10px;
+    transition: all 0.5s ease;
+    cursor: pointer;
+}
+.investments .summary .summary-box.expanded .expansion .arrow {
+    transform: rotate(180deg);
+}
+
+.investments .summary .summary-box .summary-box-foot .expansion-content {
+    position: relative;
+    height: 0;
+    opacity: 0;
+    text-align: left;
+    transition: all 0.5s ease;
+}
+.investments .summary .summary-box.expanded .summary-box-foot .expansion-content {
+    transition: all 0.5s ease;
+    opacity: 1;
+}
+
+
+.investments .summary .summary-box .text-normal {
+    color: #999;
+}
+.investments .summary .summary-box .text-emphasis {
+    font-weight: bold;
+    color: #555;
+}
+
+.investments .summary .summary-box .summary-box-body .date {
+    margin: 0 auto;
+    width: 100%;
+    height: 50px;
+    padding-top: 5px;
+    position: absolute;
+    bottom: 0;
+}
+.investments .summary .summary-box .summary-box-body .date-icon {
+    display: inline-block;
+    width: 40px;
+}
+.investments .summary .summary-box .summary-box-body .date-icon img {
+    vertical-align: sub;
+}
+.investments .summary .summary-box .summary-box-body .date-details {
+    display: inline-block;
+    margin-left: 10px;
+    text-align: left;
+}
+.investments .summary .summary-box .summary-box-body .date-label {
+    color: #555;
+    font-weight: bold;
+    padding: 0;
+    font-size: 12px;
+}
+.investments .summary .summary-box .summary-box-body .date-data {
+}
+
+.investments .summary .summary-box .summary-box-body .date-datevalue {
+    margin-right: 5px;
+}
+.investments .summary .summary-box .summary-box-body .date-timevalue {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.investments .summary .summary-box .summary-box-body .info {
+    margin-left: 10px;
+    width: 15px;
+    display: inline-block;
+}
+.investments .summary .summary-box .summary-box-body .info img {
+    vertical-align: sub;
+}
+
+
+
+
+
+
+
+
+
+.investments .summary .summary-box.investment-history .summary-box-head {
+    background-color: #27A95C;
+}
+.investments .summary .summary-box.investment-history .text-emphasis {
+    color: #27A95C;
+}
+.investments .summary .summary-box.investment-history .summary-box-body .label  {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+.investments .summary .summary-box.investment-history .summary-box-body .symbol  {
+    font-size: 36px;
+    line-height: 24px;
+    margin-top: -10px;
+}
+.investments .summary .summary-box.investment-history .summary-box-body .amount  {
+    font-size: 42px;
+}
+.investments .summary .summary-box.investment-history .summary-box-body .implication  {
+    position: absolute;
+    width: 60px;
+    right: -40px;
+    top: 70px;
+    z-index: 1000;
+}
+.investments .summary .summary-box.investment-history .summary-box-foot .investment-vintages  {
+    height: 40px;
+    line-height: 40px;
+    background-color: #27A95C;
+    border-bottom: 1px solid #ccc;
+    color: #fff;
+    font-weight: bold;
+}
+.investments .summary .summary-box.investment-history .summary-box-foot .investment-vintages img  {
+    margin-right: 30px;
+    width: 18px;
+}
+
+.investments .summary .summary-box.investment-history .summary-box-foot .no-vintages {
+    line-height: 130px;
+    font-weight: bold;
+    color: #555;
+}
+
+.investments .summary .summary-box.investment-history .summary-box-foot .vintage {
+    clear: both;
+    margin-top: 15px;
+    border-bottom: 1px solid #ccc;
+    height: 25px;
+    padding: 0 20px;
+    text-align: left;
+}
+.investments .summary .summary-box.investment-history .summary-box-foot .vintage .vintage-label {
+    font-size: 15px;
+    color: #555;
+    display: inline-block;
+}
+.investments .summary .summary-box.investment-history .summary-box-foot .vintage .vintage-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007850;
+    float: right;
+}
+.investments .summary .summary-box.investment-history.expanded .summary-box-foot {
+    height: 670px;
+}
+.investments .summary .summary-box.investment-history .summary-box-foot .summary-box-btn {
+    background-color: #27A95C;
+    margin-top: 25px;
+}
+
+
+
+
+
+.investments .summary .summary-box.current-balance .summary-box-head {
+    background-color: #148DA4;
+}
+.investments .summary .summary-box.current-balance .text-emphasis {
+    color: #148DA4;
+}
+.investments .summary .summary-box.current-balance .summary-box-body .amount {
+    font-size: 72px;
+    margin-top: 40px;
+}
+.investments .summary .summary-box.current-balance .summary-box-body .date {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+.investments .summary .summary-box.current-balance .summary-box-foot  {
+    padding-top: 40px;
+}
+.investments .summary .summary-box.current-balance .summary-box-foot .summary-box-btn {
+    background-color: #148DA4;
+}
+
+
+
+.investments .summary .summary-box.expected-amount .summary-box-head {
+    background-color: #007850;
+}
+.investments .summary .summary-box.expected-amount .text-emphasis {
+    color: #007850;
+}
+.investments .summary .summary-box.expected-amount .summary-box-body .amount  {
+    font-size: 72px;
+    margin-top: 40px;
+}
+.investments .summary .summary-box.expected-amount .summary-box-body .amount-note {
+    color: #777;
+    font-weight: bold;
+    margin-top: -20px;
+}
+.investments .summary .summary-box.expected-amount .summary-box-body .date {
+    background-color: #e2e2e2;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot  {
+    padding-top: 40px;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .summary-box-btn {
+    background-color: #007850;
+}
+.investments .summary .summary-box.expected-amount.expanded .summary-box-foot {
+    height: 470px;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content {
+    margin-top: 30px;
+    border-top: 1px solid #ccc;
+    padding: 30px 40px;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .gaming-activities-date {
+    font-size: 18px;
+    color: #007850;
+    font-style: italic;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount {
+    clear: both;
+    margin: 15px 0;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount .amount-label {
+    font-size: 15px;
+    color: #333;
+    display: inline-block;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount .amount-value {
+    font-size: 17px;
+    color: #007850;
+    float: right;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount.starting-balance .amount-value {
+    font-weight: bold;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount.net-gaming-loss-gain,
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount.net-gaming-loss-gain .amount-value {
+    font-weight: bold;
+    color: #000;
+}
+.investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount hr {
+    border-color: #ccc;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .investments .summary .investments-balance-amount {
     font-size: 57px;
 }
@@ -99,7 +426,6 @@
 }
 .investments .summary .summary-section img.icon {
     margin-bottom: 40px;
-    -ms-opacity: 0.35;
     opacity: 0.35;
     height: 45px;
 }
@@ -110,12 +436,6 @@
 } 
 .investments .summary .summary-section.investments-schedule {
 }
-
-/*.investments .summary .summary-section.gaming-activities .side-box-table-head h4 {
-    margin-left: 15px;
-}*/ 
-
-
 
 .investments .summary .side-box {
     min-height: 300px;    
@@ -152,7 +472,6 @@
 }
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-body {
     font-size: 18px;
-    -ms-opacity: 0.6;
     opacity: 0.6;
 }
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-foot {
@@ -162,16 +481,13 @@
     text-transform: uppercase;
     font-size: 15px;
     color: #000;
-    -ms-opacity: 0.65;
     opacity: 0.65;
     margin: 0;
     line-height: 18px;
 }
-
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-foot .showmore:hover {
     text-decoration: none;
 }
-
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-foot .showmore img {
     margin-right: 15px;
     width: 18px;
@@ -184,21 +500,15 @@
     height: 60px;
     color: #000;
     font-weight: bold;
-    -ms-opacity: 1;
     opacity: 1;
     border: 2px solid #fff;
     line-height: 60px;
     text-align: center;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -ms-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     cursor: pointer;
 }
 .investments .summary .withdraw:hover {
     background: #fff;
-    -ms-opacity: 0.8;
     opacity: 0.8;
 }
 .investments .summary .withdraw.disabled {
@@ -208,7 +518,6 @@
 }
 .investments .summary .withdraw.disabled:hover {
     background-color: #ddd;
-    -ms-opacity: 1;
     opacity: 1;
 }
 
@@ -222,11 +531,6 @@
     color: #000;
     text-align: center;
     margin-top: 10px;
-
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -ms-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
 .investments .summary .withdraw-msg i {
@@ -242,7 +546,6 @@
     height: 60px;
     color: #fff;
     font-weight: bold;
-    -ms-opacity: 1;
     opacity: 1;
     border: 2px solid #27A95C;
     line-height: 60px;
@@ -256,8 +559,6 @@
     background-color: #27A95C;
 }
 .investments .summary .back-to-games:hover {
-    /*-ms-opacity: 0.8;
-    opacity: 0.8;*/
     background-color: #07893C;
     border-color: #07893C;
 }
@@ -269,26 +570,25 @@
 }
 
 
-.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner {
-    width: 240px;
-    max-width: 240px;
+.investments .summary .tooltip.summary-tooltip .tooltip-inner {
+    width: 280px;
+    max-width: 280px;
     padding: 3px 8px;
     background-color: #27A95C;
 }
-.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner .text-left,
-.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner .text-right {
+.investments .summary .tooltip.summary-tooltip .tooltip-inner .text-left,
+.investments .summary .tooltip.summary-tooltip .tooltip-inner .text-right {
     font-size: 12px;
     color: #fff;
     opacity: 1;
 }
-.investments .summary .tooltip.summary-balance-tooltip .tooltip-inner .row {
+.investments .summary .tooltip.summary-tooltip .tooltip-inner .row {
      padding-top: 0; 
      line-height: 1em; 
 }
 
-
-.investments .summary  .tooltip.summary-balance-tooltip .tooltip-arrow {
-    border-bottom-color: #27A95C;
+.investments .summary  .tooltip.summary-tooltip .tooltip-arrow {
+    border-top-color: #27A95C;
 }
 
 
@@ -320,24 +620,14 @@
     cursor: pointer;
     line-height: 20px;
     margin-right: 5px;
-    -webkit-transition: all 0.4s ease-in-out;
-    -moz-transition: all 0.4s ease-in-out;
-    -ms-transition: all 0.4s ease-in-out;
-    -o-transition: all 0.4s ease-in-out;
     transition: all 0.4s ease-in-out;
 }
 
 .summary-vintages .group .months {
-    -webkit-transition: all 0.4s ease-in-out;
-    -moz-transition: all 0.4s ease-in-out;
-    -ms-transition: all 0.4s ease-in-out;
-    -o-transition: all 0.4s ease-in-out;
     transition: all 0.4s ease-in-out;
-    -ms-opacity: 0;
     opacity: 0;
 }
 .summary-vintages .group.expanded .months {
-    -ms-opacity: 1;
     opacity: 1;
 }
 
@@ -348,11 +638,9 @@
     background-color: #17994c;
 }
 .summary-vintages .group .months .month.locked {
-    -ms-opacity: 0.6;
     opacity: 0.6;
 }
 .summary-vintages .group .months .month.sold {
-    -ms-opacity: 0.3;
     opacity: 0.3;
 }
 .summary-vintages .group .months .month.sold > div {
@@ -365,12 +653,6 @@
     background-color: #17994c;
 }
 
-/*.summary-vintages .group .months .month {
-    height: 0;
-}
-.summary-vintages .group.expanded .months .month {
-    height: 20px;
-}*/
 .summary-vintages .hide {
    position: absolute !important;
    top: -9999px !important;
@@ -401,21 +683,18 @@
 /* #region Portfolio */
 .investments .portfolio { }
 .investments .portfolio .invest-prompt{
-    font-size: 22px;
-    margin-bottom: 100px;
+    font-size: 36px;
+    color: #27A95C;
 }
 
 .investments .portfolio .portfolio-section {
     margin-top: 20px;
 }
 
-.investments .portfolio .side-box {
-    min-height: 240px;
-}
 
 .investments .portfolio .next-investment {
     font-size: 20px;
-    color: #646464;
+    color: #27A95C;
     position: relative;
 }
 .investments .portfolio .next-investment svg {
@@ -423,10 +702,6 @@
     right: -58px;
     top: 0;
     opacity: 1;
-    -webkit-transition: opacity 0.4s ease-in-out;
-    -moz-transition: opacity 0.4s ease-in-out;
-    -ms-transition: opacity 0.4s ease-in-out;
-    -o-transition: opacity 0.4s ease-in-out;
     transition: opacity 0.4s ease-in-out;
 }
 .investments .portfolio .next-investment svg.hide {
@@ -434,16 +709,49 @@
 }
 
 
-.investments .portfolio .next-investment .balance {
-    font-size: 47px;
-    font-style: normal;
+.investments .portfolio .side-box {
+    min-height: 240px;
+    background-color: #fff;
+    padding: 0;
+}
+.investments .portfolio .side-box .side-box-section {
+    height: 80px;
+    position: relative;
+}
+.investments .portfolio .side-box .side-box-section.side-box-top {
+}
+.investments .portfolio .side-box .side-box-section.side-box-top .next-investment-label {
+    position: absolute;
+    bottom: 0;
+    font-size: 14px;
+    width: 100%;
+}
+.investments .portfolio .side-box .side-box-section.side-box-middle {
+    background-color: #27A95C;
+}
+.investments .portfolio .side-box .side-box-section.side-box-middle .next-investment-balance {
+    color: #fff;
+    font-size: 48px;
+    font-weight: bold;
+    line-height: 80px;
+}
+.investments .portfolio .side-box .side-box-section.side-box-bottom {
+    padding-top: 20px;
+}
+.investments .portfolio .side-box .side-box-section.side-box-bottom .next-investment-on {
+    font-size: 14px;
+}
+.investments .portfolio .side-box .side-box-section.side-box-bottom .next-investment-date {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: -8px;
 }
 
-.investments .portfolio .portfolio-plans {
-    margin-top: -20px;
-}
+
+
+
 .investments .portfolio .portfolio-plans .row {
-    margin: 0 40px 0 20px;
+    margin: 0;
 }
 .investments .portfolio .portfolio-plans .header {
     height: 40px;
@@ -461,57 +769,45 @@
     height: 70px;
     line-height: 50px;
     font-size: 18px;
-    padding: 10px 0;
+    padding: 10px 40px 10px 0;
     margin-bottom: 15px;
     position: relative;
 }
 .investments .portfolio .portfolio-plans .plan .basic > span {
-    -webkit-transition: color 0.4s ease;
-    -moz-transition: color 0.4s ease;
-    -ms-transition: color 0.4s ease;
-    -o-transition: color 0.4s ease;
     transition: color 0.4s ease;
+}
+.investments .portfolio .portfolio-plans .plan .basic .title {
+    text-transform: uppercase; 
 }
 
 .investments .portfolio .portfolio-plans .plan .basic.selected {
     border: 1px #27A95C solid;
-    -webkit-box-shadow: 0 0 3px 0 #27A95C;
-    -ms-box-shadow: 0 0 3px 0 #27A95C;
     box-shadow: 0 0 3px 0 #27A95C;
     color: #27A95C;
-
-    -webkit-transition: color 0.4s ease;
-    -moz-transition: color 0.4s ease;
-    -ms-transition: color 0.4s ease;
-    -o-transition: color 0.4s ease;
     transition: color 0.4s ease;
 }
 
 .investments .portfolio .portfolio-plans .plan .basic.selected .title {
-    color: #27A95C;
-    -webkit-transition: color 0.4s ease;
-    -moz-transition: color 0.4s ease;
-    -ms-transition: color 0.4s ease;
-    -o-transition: color 0.4s ease;
+    font-weight: bold;
+    transition: color 0.4s ease;
+}
+.investments .portfolio .portfolio-plans .plan .basic .balance {
+    font-size: 25px;
+    color: #7b7b7b;
     transition: color 0.4s ease;
 }
 .investments .portfolio .portfolio-plans .plan .basic.selected .balance {
-    color: #27A95C;
-    -webkit-transition: color 0.4s ease;
-    -moz-transition: color 0.4s ease;
-    -ms-transition: color 0.4s ease;
-    -o-transition: color 0.4s ease;
-    transition: color 0.4s ease;
+    color: inherit;
+    font-weight: bold;
+}
+.investments .portfolio .portfolio-plans .plan .basic.selected button {
+    text-transform: uppercase; 
 }
 
 .investments .portfolio .portfolio-plans .plan .details {
     overflow: hidden;
     display: block;
     background: none;
-    -webkit-transition: all 0.4s ease-out;
-    -moz-transition: all 0.4s ease-out;
-    -ms-transition: all 0.4s ease-out;
-    -o-transition: all 0.4s ease-out;
     transition: all 0.4s ease-out;
     font-size: 11px;
     margin: 0;
@@ -549,37 +845,26 @@
 
 .investments .portfolio .portfolio-plans .plan img {
     position: absolute;
-    right: -40px;
-    top: 25px;
-    -webkit-transition: all 0.4s ease-in-out;
-    -moz-transition: all 0.4s ease-in-out;
-    -ms-transition: all 0.4s ease-in-out;
-    -o-transition: all 0.4s ease-in-out;
+    right: 15px;
+    width: 18px;
+    top: 28px;
     transition: all 0.4s ease-in-out;
 	cursor:pointer;
 }
 .investments .portfolio .portfolio-plans .plan.expanded img {
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
     transform: rotate(180deg);
-
-    -webkit-transform-origin:center center;
-    -moz-transform-origin:center center;
-    -ms-transform-origin:center center;
-    -o-transform-origin:center center;
     transform-origin:center center;
 }
 
 .investments .portfolio .portfolio-plans .plan .title {
     font-size: 18px;
-    color: #7b7b7b;
+    /*color: #7b7b7b;*/
 }
-.investments .portfolio .portfolio-plans .plan .balance {
+/*.investments .portfolio .portfolio-plans .plan .balance {
     font-size: 25px;
     color: #7b7b7b;
-}
+}*/
+
 .investments .portfolio .portfolio-plans .plan .selection button {
     width: 100%;
     height: 36px;
@@ -588,8 +873,6 @@
     padding: 0;
     border: 1px solid #27A95C;
     background: none;
-    -webkit-box-shadow: none;
-    -ms-box-shadow: none;
     box-shadow: none;
     outline: none;
     color: #27A95C;
@@ -597,11 +880,13 @@
     font-size: 16px;
     letter-spacing: 1px;
     cursor: pointer;
-    -webkit-transition: background 0.3s ease;
-    -moz-transition: background 0.3s ease;
-    -ms-transition: background 0.3s ease;
-    -o-transition: background 0.3s ease;
     transition: background 0.3s ease;
+}
+.investments .portfolio .portfolio-plans .plan .selected .selection button {
+    color: inherit;
+}
+.investments .portfolio .portfolio-plans .plan .selected .selection button .fa {
+    font-size: 1.6em;
 }
 .investments .portfolio .portfolio-plans .plan .selection button:hover{
 	background:#27A95C;
@@ -636,32 +921,17 @@
 }
 
 .investments .portfolio #portfolio-chart .arc path {
-    /*-ms-opacity: 1;
-    opacity: 1;*/
-
     stroke: transparent;
     stroke-width: 1px;
-    -webkit-transition: stroke 400ms linear;
-    -moz-transition: stroke 400ms linear;
-    -ms-transition: stroke 400ms linear;
-    -o-transition: stroke 400ms linear;
     transition: stroke 400ms linear;
-    -webkit-transition-delay: 200ms;
-    -moz-transition-delay: 200ms;
-    -ms-transition-delay: 200ms;
-    -o-transition-delay: 200ms;
     transition-delay: 200ms;
 }
 
 .investments .portfolio #portfolio-chart .arc path:hover {
-    /*-ms-opacity: 0.8;
-    opacity: 0.8;*/
-
     stroke: #999;
 }
 
 .investments .portfolio #portfolio-chart text {
-    -ms-text-shadow: 1px 1px 1px #555;
     text-shadow: 1px 1px 1px #555;
 }
 
@@ -675,21 +945,11 @@
     font: 12px sans-serif;
     background: #27A95C;
     color: #fff;
-    /*border: 0;*/
-    -ms-border-radius: 5px;
     border-radius: 5px;
     pointer-events: none;
     width: 180px;
     height: 120px;
-
-    -webkit-box-shadow: 0 0 3px 0 #fff;
-    -ms-box-shadow: 0 0 3px 0 #fff;
     box-shadow: 0 0 3px 0 #fff;
-
-    -webkit-transition: opacity 200ms linear;
-    -moz-transition: opacity 200ms linear;
-    -ms-transition: opacity 200ms linear;
-    -o-transition: opacity 200ms linear;
     transition: opacity 200ms linear;
 }
 .portfolio-chart-tooltip .title {
@@ -704,19 +964,14 @@
 }
 
 
-/*.tooltip .key {
-    position: absolute;			
-    text-align: center;
-    margin: 10px;
-    padding: 5px;				
-    font: 12px sans-serif;		
-    background: #27A95C;
-    color: #fff;
-    border: 0;
-    -ms-border-radius: 5px;
-    border-radius: 5px;			
-    pointer-events: none;
-}*/
+@media (min-width: 992px) {
+    .investments .portfolio .invest-prompt{
+        margin-bottom: 100px;
+    }
+    .investments .portfolio .portfolio-plans {
+        margin-top: -20px;
+    }
+}
 
 @media (max-width: 1199px) {
     .investments .portfolio .portfolio-plans .row {
@@ -746,26 +1001,69 @@
     position: relative;
 }
 .investments .performance .title {
-    font-size: 22px;
+    font-size: 36px;
+    color: #27A95C;
+}
+.investments .performance .subtitle {
+    font-size: 16px;
     color: #646464;
 }
 .investments .performance .values {
     position: absolute;
-    /*margin: 30px auto;*/
     width: 100%;
     font-weight: 400;
+    margin-top: 30px;
+}
+.investments .performance .values .value-container {
+    padding-right: 5px;
+    padding-left: 5px;
 }
 .investments .performance .values .value {
-    /*height: 130px;
-    -ms-border-radius: 5px;
-    border-radius: 5px;
-    background-color: #fff;*/
+    background-color: #fff;
+    border: 1px solid #ccc;
+    height: 60px;
+}
+.investments .performance .values .value .value-label,
+.investments .performance .values .value .value-data {
+    height: 60px;
+    line-height: 60px;
 }
 
-.investments .performance .values .value-top {
+.investments .performance .values .value .value-label {
+    color: #777777;
+    font-size: 20px;
+    float: left;
+    margin-left: 10px;
+}
+.investments .performance .values .value .value-data {
+    color: #27A95C;
+    font-size: 48px;
+    font-weight: bold;
+    float: right;
+    margin-right: 10px;
+}
+
+.investments .performance .values .value.projected-value {
+    background-color: #27A95C;
+}
+.investments .performance .values .value.projected-value img {
+    height: 50px;
+    margin: 5px 0 0 10px;
+}
+
+.investments .performance .values .value.projected-value .value-label {
+    color: #fff;
+}
+.investments .performance .values .value.projected-value .value-data {
+    color: #fff;
+}
+
+
+
+
+/*.investments .performance .values .value-top {
     font-size: 15px;
     color: #000;
-    -ms-opacity: 0.65;
     opacity: 0.65;
     margin-top: 20px;
 }
@@ -783,7 +1081,7 @@
     font-size: 14px;
     font-weight: 300;
     color: #646464;
-}
+}*/
 
 .investments .performance .plans {
     position: absolute;
@@ -802,8 +1100,6 @@
     border-style: solid;
     border-color: transparent;
     background: none;
-    -webkit-box-shadow: none;
-    -ms-box-shadow: none;
     box-shadow: none;
     outline: none;
     color: #27A95C;
@@ -811,25 +1107,17 @@
     font-size: 16px;
     letter-spacing: 1px;
     cursor: pointer;
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    -ms-transition: all 0.3s ease;
-    -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
 .investments .performance .plans button.selected {
     font-weight: 800;
     background-color: #fff;
     border-color: #27A95C;
-    -webkit-box-shadow: 0 0 3px 0 #27A95C;
-    -ms-box-shadow: 0 0 3px 0 #27A95C;
     box-shadow: 0 0 3px 0 #27A95C;
 }
 .investments .performance .plans button:hover {
     font-weight: 800;
 }
-
-
 
 
 
@@ -850,9 +1138,7 @@
 
 .investments .performance #canvas {
     width: 100%;
-    /*height: 480px;*/
     font: 10px sans-serif;
-    /*margin: 50px auto;*/
 }
 .investments .performance #canvas .axis line { display: none; }
 .investments .performance #canvas .axis path { display: none; }
@@ -867,7 +1153,7 @@
 
 /* #region triangles with animation */
 .investments .performance #canvas .handler .triangle {
-    stroke: #27a95c;
+    /*stroke: #27a95c;*/
     stroke-width: 1px;
     fill: #ffffff;
     fill: rgba(255, 255, 255, 0.8);
@@ -886,12 +1172,6 @@
     cursor: e-resize;
 }
 
-
-/*.investments .performance #canvas .handler:hover .triangle,
-.investments .performance #canvas .handler .triangle.active {
-    display: block;
-}*/
-
 .investments .performance #canvas .projection {
     stroke: transparent;
 }
@@ -902,17 +1182,17 @@
 
 
 @media (min-width: 768px) {
-    .investments .performance .values .value {
+    /*.investments .performance .values .value {
         border-left: 2px solid transparent;
         border-right: 2px solid transparent;
-    }
+    }*/
     .investments .performance .plans .plan {
         border-left: 2px solid transparent;
         border-right: 2px solid transparent;
     }
 }
 @media (max-width: 767px) {
-    .investments .performance .values .value {
+    /*.investments .performance .values .value {
         border-top: 2px solid transparent;
         border-bottom: 2px solid transparent;
     }
@@ -927,7 +1207,7 @@
     }
     .investments .performance .values .value-bottom {
         font-size: 11px;
-    }
+    }*/
 
     .investments .performance .plans {
         margin-top: 110px;
@@ -947,9 +1227,3 @@
 }
 /* #endregion */
 
-
-
-/* #region Activity */
-.investments .activity {
-}
-/* #endregion */

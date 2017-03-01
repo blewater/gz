@@ -419,7 +419,7 @@
 
                     handler.append("circle")
                         .attr("r", 10)
-                        .style("fill", "#27A95C");
+                        .style("fill", function () { return $scope.plan.Color; });
                     handler.append("circle")
                         .attr("r", 4)
                         .style("fill", "#fff");
@@ -461,19 +461,23 @@
                     var triangleTop = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(0, -20)")
-                        .attr("class", "triangle triangle-top triangle-vertical");
+                        .attr("class", "triangle triangle-top triangle-vertical")
+                        .style("stroke", function () { return $scope.plan.Color; });
                     var triangleRight = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(20, 0)rotate(90)")
-                        .attr("class", "triangle triangle-right triangle-horizontal");
+                        .attr("class", "triangle triangle-right triangle-horizontal")
+                        .style("stroke", function () { return $scope.plan.Color; });
                     var triangleLeft = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(-20, 0)rotate(-90)")
-                        .attr("class", "triangle triangle-left triangle-horizontal");
+                        .attr("class", "triangle triangle-left triangle-horizontal")
+                        .style("stroke", function () { return $scope.plan.Color; });
                     var triangleBottom = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(0, 20)rotate(180)")
-                        .attr("class", "triangle triangle-bottom triangle-vertical");
+                        .attr("class", "triangle triangle-bottom triangle-vertical")
+                        .style("stroke", function () { return $scope.plan.Color; });
 
                     startLoops();
                     
