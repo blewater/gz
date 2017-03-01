@@ -218,26 +218,30 @@ module DailyPortfolioShares =
                 select (f, fp)
             }
 
-(*Return from (Dbfunds, DbPortfolioFunds) }   
-Key         Value
-20170213    PortfolioLowRiskPrice     PortfolioId 1
-                                      Price 59.5350015
-                                      TradedOn 2/13/2017 0:00
-            PortfolioMediumRiskPrice  PortfolioId 3
-                                      Price 65.4049995
-                                      TradedOn 2/13/2017 0:00
-            PortfolioHighRiskPrice    PortfolioId 5
-                                      Price 38.8099995
-                                      TradedOn 2/13/2017 0:00
-20170214    PortfolioLowRiskPrice     PortfolioId 1
-                                      Price 59.385001
-                                      TradedOn 2/14/2017 0:00
-            PortfolioMediumRiskPrice  PortfolioId 3
-                                      Price 65.615001
-                                      TradedOn 2/14/2017 0:00
-            PortfolioHighRiskPrice    PortfolioId 5
-                                      Price 38.8670005
-                                      TradedOn 2/14/2017 0:00*)
+    /// 1. Read The portfolio funds from Db (in another function)
+    /// 2. Ask yahoo for the fund market closing prices
+    /// 3. Fold fund prices into a portfolio single share market price
+
+    (* Return from (Dbfunds, DbPortfolioFunds) }   
+            Key         Value
+            20170213    PortfolioLowRiskPrice     PortfolioId 1
+                                                  Price 59.5350015
+                                                  TradedOn 2/13/2017 0:00
+                        PortfolioMediumRiskPrice  PortfolioId 3
+                                                  Price 65.4049995
+                                                  TradedOn 2/13/2017 0:00
+                        PortfolioHighRiskPrice    PortfolioId 5
+                                                  Price 38.8099995
+                                                  TradedOn 2/13/2017 0:00
+            20170214    PortfolioLowRiskPrice     PortfolioId 1
+                                                  Price 59.385001
+                                                  TradedOn 2/14/2017 0:00
+                        PortfolioMediumRiskPrice  PortfolioId 3
+                                                  Price 65.615001
+                                                  TradedOn 2/14/2017 0:00
+                        PortfolioHighRiskPrice    PortfolioId 5
+                                                  Price 38.8670005
+                                                  TradedOn 2/14/2017 0:00*)
     let private getPortfoliosPrices (takeNdays: int) 
                             (dbFundsWithPortfolioFunds : (DbFunds * DbPortfolioFunds) Linq.IQueryable)
                             : PortfoliosPricesMap =
@@ -277,44 +281,6 @@ Key         Value
         |> pFundsQry
         |> getPortfoliosPrices takeNdays
         |> setDbPortfoliosPrices db
-
-    /// 1. Read The portfolio funds from Db
-    /// 2. Ask yahoo their closing prices
-    /// 3. Calculate each portfolio single virtual share closing price
-    let getPortfolioPrices(db : DbContext) : PortfolioSharePrice[] =
-
-        let portfolioPricesArr =
-            query { 
-                for f in db.Funds do
-                join fp in db.PortFunds on (f.Id = fp.FundId)
-                join p in db.Portfolios on (fp.PortfolioId = p.Id)
-                where (p.IsActive)
-                sortBy fp.PortfolioId
-                thenBy f.Id
-                select (f, fp)
-            }
-            // Ask yahoo api funds closing pricing
-            |> Seq.map(fun (f : DbFunds, fp : DbPortfolioFunds) -> 
-                let quote = getStockPrices f.Symbol 1 |> Seq.head
-                let portfolioFundRec = {PortfolioId = fp.PortfolioId; PortfolioWeight = fp.Weight; Fund = quote}
-                portfolioFundRec)
-            // Group per portfolio
-            |> Seq.groupBy (fun (portfolioFundRec : PortfolioFundRecord) -> portfolioFundRec.PortfolioId)
-            // Flatten the seq<fundquote> to a single price per portfolioId group
-            |> Seq.map (
-                fun (p : PortfolioId, spsf : (seq<PortfolioFundRecord>)) ->
-                    let price = 
-                        spsf 
-                        |> Seq.map (fun (pfr : PortfolioFundRecord) -> pfr.Fund.ClosingPrice * float pfr.PortfolioWeight / 100.0) 
-                        |> Seq.reduce (+)
-                    let topPortfolioFundRecord = spsf |> Seq.head
-                    { PortfolioId = p; Price = price; TradedOn = topPortfolioFundRecord.Fund.TradedOn }
-            )
-            |> Seq.toArray
-        // Need for refactoring if the following fails
-        assert (portfolioPricesArr.Length = 3)
-        // portfolioPricesArr |> Seq.iter(fun i -> printfn "%A" i)
-        portfolioPricesArr
 
 module UserPortfolio =
     open System
@@ -514,6 +480,7 @@ module VintageShares =
     /// Price a db row of portfolio shares
     let private getDbPortfolioShares
                 (portfolioSharesRow : DbVintageShares) : PortfolioShares =
+
         if not <| isNull portfolioSharesRow then
             { 
                 SharesLowRisk = portfolioSharesRow.PortfolioLowShares;
@@ -527,11 +494,15 @@ module VintageShares =
     let private getPricedDbPortfolioShares
                 (portfoliosPrices :PortfoliosPrices) 
                 (portfolioSharesRow : PortfolioShares) : PortfolioPriced =
+
             (portfolioSharesRow, portfoliosPrices) ||> getPricedPortfolioShares
 
     /// get the previous month's priced with latest prices and adjusted by vintages sold of present month
+    (* Note when selling vintages on the site does not affect the user VintageShares balance other than
+    ** the subtraction below *)
     let getPricedPrevMonthShares(userPortfolioInput : UserPortfolioInput) : PortfolioPriced =
         let prevMonth = { userPortfolioInput.DbUserMonth with Month = userPortfolioInput.DbUserMonth.Month.ToPrevYyyyMm }
+
         prevMonth   |> getDbVintageSharesRow
                     |> getDbPortfolioShares 
                     |> (-) userPortfolioInput.VintagesSold.PortfolioShares
@@ -584,26 +555,26 @@ module InvBalance =
 
         let vintagesSoldThisMonth = input.UserInputPortfolio.VintagesSold
 
-        let ``total Cash invested for All vintages`` = 
+        let totalCashInvestedForAllVintages = 
             input.InvBalancePrevTotals.TotalCashInvestments 
             + cashInv
 
-        let ``selling Price Of All Sold Vintages`` = 
+        let sellingPriceOfAllSoldVintages = 
             input.InvBalancePrevTotals.TotalSoldVintagesSold 
             + vintagesSoldThisMonth.SoldAt
 
         let ``bought Price of Sold Vintages`` = vintagesSoldThisMonth.BoughtAt
 
-        let ``total Cash Invested for Unsold Vintages`` = 
+        let totalCashInvestedForUnsoldVintages = 
             input.InvBalancePrevTotals.TotalCashInvInHold 
             + cashInv
             - ``bought Price of Sold Vintages``
 
         invBalanceRow.Balance <- nowBalance
-        // Note: See line below for investment gain including sold vintages
-        // invBalanceRow.InvGainLoss <- (nowBalance + ``selling Price Of All Sold Vintages``) - ``total Cash invested for All vintages``
-        // Present business choice: Investment gain of vintages in hold. 
-        invBalanceRow.InvGainLoss <- nowBalance - ``total Cash Invested for Unsold Vintages``
+        (* Note: See line below for investment gain including sold vintages
+        ** invBalanceRow.InvGainLoss <- (nowBalance + ``selling Price Of All Sold Vintages``) - ``total Cash invested for All vintages``
+        ** Present business choice: Investment gain of vintages in hold. *)
+        invBalanceRow.InvGainLoss <- nowBalance - totalCashInvestedForUnsoldVintages
         invBalanceRow.PortfolioId <- input.UserInputPortfolio.Portfolio.PortfolioId
         invBalanceRow.CashInvestment <- cashInv
 
@@ -613,9 +584,9 @@ module InvBalance =
         invBalanceRow.HighRiskShares <- newShares.PortfolioShares.SharesHighRisk
 
         // Totals
-        invBalanceRow.TotalCashInvestments <- ``total Cash invested for All vintages``
-        invBalanceRow.TotalCashInvInHold <- ``total Cash Invested for Unsold Vintages``
-        invBalanceRow.TotalSoldVintagesValue <- ``selling Price Of All Sold Vintages``
+        invBalanceRow.TotalCashInvestments <- totalCashInvestedForAllVintages
+        invBalanceRow.TotalCashInvInHold <- totalCashInvestedForUnsoldVintages
+        invBalanceRow.TotalSoldVintagesValue <- sellingPriceOfAllSoldVintages
 
         // Gaming Activity
         invBalanceRow.BegGmBalance <- input.UserFinance.BegBalance
@@ -658,8 +629,9 @@ module InvBalance =
             { TotalCashInvestments = 0M; TotalCashInvInHold = 0M; TotalSoldVintagesSold = 0M }
 
     /// get any sold vintages for this user during the month we're presently clearing
+    (* Note this is the only table that is affected by sold vintages and available to read them back and deduct them from user shares *)
     let getSoldVintages (dbUserMonth : DbUserMonth) : VintagesSold = 
-        let vintageTotals =
+        let totalVintagesSold =
             query {
                 for row in dbUserMonth.Db.InvBalances do
                 where (
@@ -672,8 +644,11 @@ module InvBalance =
             // Sum fold. The query linq would not allow for Null return of grouped summed tuple so we do summation in F#
             // it's also much shorter
             |> Seq.fold (fun (ls, ms, hs, cs, ss) (l, m, h, c, s) -> (ls+l, ms+m, hs+h, cs+c, ss + s)) (0M, 0M, 0M, 0M, 0M)
-        vintageTotals 
-                |> (fun (lowShares, mediumShares, highShares, cashInv, soldAmount) ->
+
+        // Package summed sold vintage shares into return type of VintagesSold
+        totalVintagesSold 
+                |> 
+                (fun (lowShares, mediumShares, highShares, cashInv, soldAmount) ->
                     let vintShares = {
                         SharesLowRisk = lowShares;
                         SharesMediumRisk = mediumShares;
@@ -710,7 +685,7 @@ module UserTrx =
     let private upsDbClearMonth (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance) : unit =
         let invBalanceInput = (userPortfolioInput, userFinance) ||> getInvBalanceInput
 
-        // Ups CustPortfolios
+        // Ups User Portfolios
         userPortfolioInput |> UserPortfolio.upsDbUserPortfolio
         
         // Ups VintageShares
