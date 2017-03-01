@@ -55,10 +55,8 @@ namespace gzDAL.Conf
         private static void AddUpdData(ApplicationDbContext context) {
 
             context.Database.ExecuteSqlCommand("Delete GzTrxs");
-            context.Database.ExecuteSqlCommand("Delete CustFundShares");
+            context.Database.ExecuteSqlCommand("Delete VintageShares");
             context.Database.ExecuteSqlCommand("Delete InvBalances");
-            context.Database.ExecuteSqlCommand("Delete FundPrices");
-            context.Database.ExecuteSqlCommand("Delete CurrencyListXes");
 
             // GzConfigurations
             CreateUpdConfiguationRow(context);
@@ -102,8 +100,9 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Balances
+            CreateUpdInvBalances(context, custId);
+            context.SaveChanges();
             //CalcMonthlyBalances(context, custId);
-            //context.SaveChanges();
         }
 
         /// <summary>
@@ -509,6 +508,54 @@ namespace gzDAL.Conf
                     TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 }
                 );
+        }
+
+        private static void CreateUpdInvBalances(ApplicationDbContext context, int custId) {
+            var custPortfolioRepo = new CustPortfolioRepo(context);
+            var invB = new InvBalanceRepo(
+                context,
+                new CustFundShareRepo(
+                    context,
+                    custPortfolioRepo),
+                new GzTransactionRepo(context),
+                custPortfolioRepo);
+
+            var nowUtc = DateTime.UtcNow;
+            var startYearMonthStr = nowUtc.AddMonths(-6).ToStringYearMonth();
+            var endYeerMonthStr = nowUtc.ToStringYearMonth();
+
+            var balance = 1000M;
+            var totalCashInv = 1000m;
+            while (startYearMonthStr.BeforeEq(endYeerMonthStr)) {
+
+                var gain = balance*0.06M;
+                invB.UpsInvBalance(
+                    custId, 
+                    RiskToleranceEnum.Medium, 
+                    int.Parse(startYearMonthStr.Substring(4)), 
+                    int.Parse(startYearMonthStr.Substring(4,2)), 
+                    1000M, 
+                    balance, 
+                    gain, 
+                    0m, 
+                    1m, 
+                    0m, 
+                    4000m, 
+                    2000m, 
+                    1000m, 
+                    -2000M, 
+                    3000m, 
+                    // Assume no sold vintages
+                    totalCashInv, 
+                    totalCashInv, 
+                    0m, 
+                    nowUtc);
+
+                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+                // 6%
+                balance = balance + balance * 1.06m;
+                totalCashInv += 1000m;
+            }
         }
 
         private static void CreateUpdTranxType(ApplicationDbContext context) {
