@@ -183,6 +183,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GzBalances\GzBalances.fsproj">
+      <Project>{906609cb-1aa2-4596-8584-94c2ccc23274}</Project>
+      <Name>GzBalances</Name>
+    </ProjectReference>
     <ProjectReference Include="..\gzWeb\gzWeb.csproj">
       <Project>{6459A7AB-F7C0-49E6-A099-2A3DEE11A255}</Project>
       <Name>gzWeb</Name>

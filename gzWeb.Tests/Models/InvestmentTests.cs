@@ -108,7 +108,7 @@ namespace gzWeb.Tests.Models {
                     if (custId != 0) {
 
                         db.Database.ExecuteSqlCommand("Delete GzTrxs Where CustomerId = " + custId);
-                        db.Database.ExecuteSqlCommand("Delete CustFundShares Where CustomerId = " + custId);
+                        db.Database.ExecuteSqlCommand("Delete VintageShares Where CustomerId = " + custId);
                         db.Database.ExecuteSqlCommand("Update InvBalances Set Sold = 0 Where CustomerId = " + custId);
 
                         // Add invested Customer Portfolio
