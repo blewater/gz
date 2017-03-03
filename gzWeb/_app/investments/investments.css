@@ -1179,37 +1179,33 @@
 
 @media (max-width: 767px) {
     .investments .performance .title {
-        font-size: 24px;
+        font-size: 20px;
         margin-bottom: 10px;
     }
     .investments .performance .subtitle {
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .investments .performance .values .value-container {
         padding-right: 2px;
         padding-left: 2px;
-    }
-
-    .investments .performance .values .value .value-label {
-        font-size: 12px;
-        margin-left: 5px;
+        margin-top: 10px;
     }
     .investments .performance .values .value .value-data {
-        font-size: 18px;
+        float: none;
+        margin-right: 0;
+    }
+    .investments .performance .values .value.projected-value .value-data {
+        margin-right: 50px;
+    }
+    .investments .performance .values .value .value-spinners {
         margin-right: 20px;
     }
-    .investments .value-spinner {
-        height: 8px;
-    }
     .investments .up-spinner {
-        top: 18px;
+        top: 30px;
     }
     .investments .down-spinner {
-        bottom: 18px;
-    }
-    .investments .performance .values .value.projected-value {
-        margin-top: 5px;
+        bottom: 10px;
     }
 
     .investments .performance .plans .plan-container {

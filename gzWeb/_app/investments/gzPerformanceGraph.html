@@ -1,7 +1,8 @@
 ﻿<div class="values">
     <div class="col-xs-8 col-sm-5 value-container text-center">
+        <span class="value-label visible-xs text-left">Monthly Bonus Invested:</span>
         <div class="value monthly-bouns">
-            <span class="value-label">Monthly Bonus Invested:</span>
+            <span class="value-label hidden-xs">Monthly Bonus Invested:</span>
             <span class="value-data">
                 {{monthlyContribution | isoCurrency : gzCurrency : 0}}
                 <span class="value-spinners">
@@ -12,8 +13,9 @@
         </div>
     </div>
     <div class="col-xs-4 col-sm-2 value-container text-center">
+        <div class="value-label visible-xs text-left">Years:</div>
         <div class="value years">
-            <span class="value-label">Years:</span>
+            <span class="value-label hidden-xs">Years:</span>
             <span class="value-data">
                 {{getYear() | number : 1}}
                 <span class="value-spinners">
@@ -24,9 +26,10 @@
         </div>
     </div>
     <div class="col-xs-12 col-sm-5 value-container text-center">
+        <div class="value-label visible-xs text-left">Projected Value:</div>
         <div class="value projected-value">
             <img class="pull-left" src="../../Content/Images/Investment Icons/white_arrow.svg" />
-            <span class="value-label">Projected Value</span>
+            <span class="value-label hidden-xs">Projected Value:</span>
             <span class="value-data value-bold">{{getProjectedValue() | isoCurrency : gzCurrency : 0}}</span>
         </div>
     </div>
