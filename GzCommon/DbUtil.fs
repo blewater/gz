@@ -128,7 +128,7 @@ module DbUtil =
     /// Rollback transaction and raise exception
     let private handleFailure (transaction : Data.Common.DbTransaction) (ex : exn) = 
         transaction.Rollback()
-        logger.Fatal(ex, "Runtime Exception at main")
+        logger.Fatal(ex, "Database Runtime Exception:")
 
     /// Enclose db operation within a transaction
     let private tryDbTransOperation (db : DbContext) (dbOperation : (unit -> unit)) : unit =
