@@ -1,70 +1,61 @@
 ﻿<div class="values">
-    <div class="col-xs-4 value text-center">
-        <div class="value-top">Years</div>
-        <div class="value-middle">{{getYear() | number : 1}}</div>
-        <div class="value-bottom"></div>
+    <div class="col-xs-8 col-sm-5 value-container text-center">
+        <span class="value-label visible-xs text-left">Monthly Bonus Invested:</span>
+        <div class="value monthly-bouns">
+            <span class="value-label hidden-xs">Monthly Bonus Invested:</span>
+            <span class="value-data">
+                {{monthlyContribution | isoCurrency : gzCurrency : 0}}
+                <span class="value-spinners">
+                    <img class="value-spinner up-spinner" src="../../Content/Images/Investment Icons/up_arrow.svg" ng-click="increaseMonthlyBonus()" />
+                    <img class="value-spinner down-spinner" src="../../Content/Images/Investment Icons/down_arrow.svg" ng-click="decreaseMonthlyBonus()" />
+                </span>
+            </span>
+        </div>
     </div>
-    <div class="col-xs-4 value text-center">
-        <div class="value-top">Projected Value</div>
-        <div class="value-middle value-bold">{{getProjectedValue() | isoCurrency : gzCurrency : 0}}</div>
-        <div class="value-bottom">({{getProfit() > 0 ? '+' : ''}}{{getProfit() | isoCurrency : gzCurrency : 0}})</div>
+    <div class="col-xs-4 col-sm-2 value-container text-center">
+        <div class="value-label visible-xs text-left">Years:</div>
+        <div class="value years">
+            <span class="value-label hidden-xs">Years:</span>
+            <span class="value-data">
+                {{getYear() | number : 1}}
+                <span class="value-spinners">
+                    <img class="value-spinner up-spinner" src="../../Content/Images/Investment Icons/up_arrow.svg" ng-click="increaseYear()" />
+                    <img class="value-spinner down-spinner" src="../../Content/Images/Investment Icons/down_arrow.svg" ng-click="decreaseYear()" />
+                </span>
+            </span>
+        </div>
     </div>
-    <div class="col-xs-4 value text-center">
-        <div class="value-top">Monthly Bonus Invested</div>
-        <div class="value-middle">{{monthlyContribution | isoCurrency : gzCurrency : 0}}</div>
-        <div class="value-bottom"></div>
+    <div class="col-xs-12 col-sm-5 value-container text-center">
+        <div class="value-label visible-xs text-left">Projected Value:</div>
+        <div class="value projected-value">
+            <img class="pull-left" src="../../Content/Images/Investment Icons/white_arrow.svg" />
+            <span class="value-label hidden-xs">Projected Value:</span>
+            <span class="value-data value-bold">{{getProjectedValue() | isoCurrency : gzCurrency : 0}}</span>
+        </div>
     </div>
 </div>
-<div class="plans clearfix col-xs-12 col-sm-offset-3 col-sm-6">
-    <div class="col-xs-4 plan text-center" ng-repeat="plan in plans">
-        <button type="button" ng-class="{'selected':plan.Selected}" ng-click="selectPlan(plan)">
-            <span>{{plan.Title}}</span>
-            <span class="plan-roi">(%{{plan.ROI | number : 2}})</span>
-        </button>
+<div class="plans clearfix">
+    <div class="col-xs-12 col-sm-4 plan-container text-center" ng-repeat="plan in plans">
+        <div class="plan" ng-class="{'selected':plan.Selected}" ng-click="selectPlan(plan)" ng-style="{
+                 'color': plan.Selected ? '#ffffff' : plan.Color,
+                 'border-color': plan.Color,
+                 'background-color': plan.Selected ? plan.Color : 'transparent'
+             }">
+            <div class="plan-title">{{plan.Title}}</div>
+            <div class="plan-roi">(%{{plan.ROI | number : 2}})</div>
+            <div class="plan-check" ng-style="{ 'color': plan.Selected ? plan.Color : 'transparent' }">
+                <i class="fa fa-lg fa-check"></i>
+            </div>
+        </div>
     </div>
 </div>
-<div class="prompt clearfix col-xs-12 col-sm-offset-3 col-sm-6">
-    <div class="col-xs-12 plan text-center">
+<div class="graph clearfix">
+    <div class="prompt">
         Drag and slide to check portfolio performance
     </div>
+    <div class="col-xs-12 canvas-container">
+        <div id="canvas"></div>
+    </div>
 </div>
-<div id="canvas" class="clearfix"></div>
-
-
-
-
-
-
-<!--<div class="clearfix" style="margin-top: 30px;">
-    <div>
-        <div class="col-xs-12 col-sm-3 text-center">
-            <div>Initial Amount:</div>
-            <div><input type="number" ng-model="principalAmount" ng-change="calculateProjection()" /></div>
-        </div>
-        <div class="col-xs-12 col-sm-3 text-center">
-            <div>Year:</div>
-            <div><input type="number" ng-model="year" ng-change="calculateProjection()" /></div>
-        </div>
-        <div class="col-xs-12 col-sm-3 text-center">
-            <div>Annual Contribution:</div>
-            <div><input type="number" ng-model="annualContribution" ng-change="calculateProjection()" /></div>
-        </div>
-        <div class="col-xs-12 col-sm-3 text-center">
-            <div>Return Rate:</div>
-            <div><input type="number" ng-model="rate" ng-change="calculateProjection()" /></div>
-        </div>
-    </div>
-    <div class="text-center">
-        <button type="button" ng-click="toggleFullScreen()" style="margin-top: 20px;">
-            GO FULLSCREEN
-        </button>
-    </div>
-</div>-->
-<!--<div id="canvas" class="clearfix" fullscreen="isFullscreen" only-watched-property>
-    <div class="fullscreen-hud" ng-show="isFullscreen">
-        <span class="clock"><i class="fa fa-clock-o"></i>{{ clock | date:'HH:mm:ss'}}</span>
-        <span class="exit" ng-click="toggleFullScreen()"><i class="fa fa-times"></i>Exit</span>
-    </div>
-</div>-->
 
 

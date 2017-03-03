@@ -37,6 +37,7 @@ let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.Portfol
         
         let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
                                     |> GmRptFiles.getExcelFilenames
+                                    |> GmRptFiles.balanceRptDateMatchTitles
                                     |> GmRptFiles.getExcelDtStr
                                     |> GmRptFiles.getExcelDates 
                                     |> GmRptFiles.areExcelFilenamesValid

@@ -34,5 +34,26 @@ namespace gzDAL.Repos.Interfaces {
         void SaveDbCustomerAllMonthlyBalances(int customerId, string startYearMonthStr = null, string endYearMonthStr = null);
         void SaveDbAllCustomersMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null);
         void SaveDbCustomerMonthlyBalance(int customerId, string thisYearMonth);
+
+        void UpsInvBalance(
+            int customerId,
+            RiskToleranceEnum userPortfolioRiskSelection,
+            int yearCurrent,
+            int monthCurrent,
+            decimal cashToInvest,
+            decimal monthlyBalance,
+            decimal invGainLoss,
+            decimal lowRiskShares,
+            decimal mediumRiskShares,
+            decimal highRiskShares,
+            decimal begGmBalance,
+            decimal deposits,
+            decimal withdrawals,
+            decimal gamingGainLoss,
+            decimal endGmBalance,
+            decimal totalCashInvInHold,
+            decimal totalCashInvestments,
+            decimal totalSoldVintagesValue,
+            DateTime updatedOnUtc);
     }
 }
