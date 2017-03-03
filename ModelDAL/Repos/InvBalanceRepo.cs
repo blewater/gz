@@ -19,13 +19,15 @@ namespace gzDAL.Repos {
     /// </summary>
     public class InvBalAmountsRow {
         public decimal Balance { get; set; }
+        public decimal LowRiskShares { get; set; }
+        public decimal MediumRiskShares { get; set; }
+        public decimal HighRiskShares { get; set; }
         //-- New monthly gaming amounts imported by the reports
         public decimal BegGmBalance { get; set; }
         public decimal Deposits { get; set; }
         public decimal Withdrawals { get; set; }
         public decimal GamingGainLoss { get; set; }
         public decimal EndGmBalance { get; set; }
-        //
         public DateTime? UpdatedOnUtc { get; set; }
     }
 
@@ -50,6 +52,28 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// CacheBalance specifying the month and ask it asynchronously.
+        /// 
+        /// Meant to be used with GetCachedLatestBalanceTimestamp() if possible after a short time delay.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="db"></param>
+        /// <param name="yyyyMm"></param>
+        /// <returns></returns>
+        public Task<IEnumerable<InvBalance>> CacheLatestBalanceAsyncByMonth(int customerId, string yyyyMm) {
+
+            var lastBalanceRowTask = _db.InvBalances
+                .Where(i => i.CustomerId == customerId
+                            && i.YearMonth == yyyyMm)
+                // Cache 4 hours
+                .FromCacheAsync(DateTime.UtcNow.AddHours(4));
+
+            return lastBalanceRowTask;
+        }
+
+        /// <summary>
+        /// 
         /// CacheBalance and ask it asynchronously.
         /// 
         /// Meant to be used with GetCachedLatestBalanceTimestamp() if possible after a short time delay.
@@ -62,13 +86,7 @@ namespace gzDAL.Repos {
 
             var currentMonth = DateTime.UtcNow.ToStringYearMonth();
 
-            var lastBalanceRowTask = _db.InvBalances
-                .Where(i => i.CustomerId == customerId
-                            && i.YearMonth == currentMonth)
-                // Cache 4 hours
-                .FromCacheAsync(DateTime.UtcNow.AddHours(4));
-
-            return lastBalanceRowTask;
+            return CacheLatestBalanceAsyncByMonth(customerId, currentMonth);
         }
 
         /// <summary>
@@ -85,22 +103,25 @@ namespace gzDAL.Repos {
 
             var res = await lastBalanceRowTask;
 
-            var lastMonthsBalanceRow = new InvBalAmountsRow();
+            var cachedBalanceRow = new InvBalAmountsRow();
 
             var balRow = res.Select(b => new {
-                b.Balance, b.BegGmBalance, b.Deposits, b.Withdrawals, b.GamingGainLoss, b.EndGmBalance, b.UpdatedOnUtc
+                b.Balance, b.LowRiskShares, b.MediumRiskShares, b.HighRiskShares, b.BegGmBalance, b.Deposits, b.Withdrawals, b.GamingGainLoss, b.EndGmBalance, b.UpdatedOnUtc
             })
             .SingleOrDefault();
 
-            lastMonthsBalanceRow.Balance = balRow?.Balance ?? 0;
-            lastMonthsBalanceRow.BegGmBalance = balRow?.BegGmBalance??0;
-            lastMonthsBalanceRow.Deposits = balRow?.Deposits ?? 0;
-            lastMonthsBalanceRow.Withdrawals = balRow?.Withdrawals ?? 0;
-            lastMonthsBalanceRow.GamingGainLoss = balRow?.GamingGainLoss ?? 0;
-            lastMonthsBalanceRow.EndGmBalance = balRow?.EndGmBalance ?? 0;
-            lastMonthsBalanceRow.UpdatedOnUtc = balRow?.UpdatedOnUtc;
+            cachedBalanceRow.Balance = balRow?.Balance ?? 0;
+            cachedBalanceRow.LowRiskShares = balRow.LowRiskShares;
+            cachedBalanceRow.MediumRiskShares = balRow.LowRiskShares;
+            cachedBalanceRow.HighRiskShares = balRow.LowRiskShares;
+            cachedBalanceRow.BegGmBalance = balRow?.BegGmBalance??0;
+            cachedBalanceRow.Deposits = balRow?.Deposits ?? 0;
+            cachedBalanceRow.Withdrawals = balRow?.Withdrawals ?? 0;
+            cachedBalanceRow.GamingGainLoss = balRow?.GamingGainLoss ?? 0;
+            cachedBalanceRow.EndGmBalance = balRow?.EndGmBalance ?? 0;
+            cachedBalanceRow.UpdatedOnUtc = balRow?.UpdatedOnUtc;
 
-            return lastMonthsBalanceRow;
+            return cachedBalanceRow;
         }
 
         #region Vintages
@@ -147,25 +168,22 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="yearMonthStr"></param>
-        /// <param name="monthsCustomerFunds"></param>
+        /// <param name="vintageSharesDto"></param>
         /// <param name="fees"></param>
         /// <returns></returns>
         private decimal GetVintageValuePricedNow(
             int customerId,
             string yearMonthStr,
-            out IEnumerable<CustFundShareDto> monthsCustomerFunds,
+            out VintageSharesDto vintageSharesDto,
             out decimal fees) {
 
-            monthsCustomerFunds = _customerFundSharesRepo.GetMonthsBoughtFundsValue(
+            vintageSharesDto = _customerFundSharesRepo.GetVintageSharesMarketValue(
                 customerId,
                 yearMonthStr);
 
-            // *NewShares* values meaning purchased on this month
-            var monthsNewSharesPrice = monthsCustomerFunds.Sum(f => f.NewSharesValue ?? 0);
+            fees = _gzTransactionRepo.GetWithdrawnFees(vintageSharesDto.MarketPrice);
 
-            fees = _gzTransactionRepo.GetWithdrawnFees(monthsNewSharesPrice);
-
-            return monthsNewSharesPrice;
+            return vintageSharesDto.MarketPrice;
         }
 
         /// <summary>
@@ -193,14 +211,14 @@ namespace gzDAL.Repos {
                     if (VintageSatisfiesSellingPreConditions(customerId, vintageDto)) {
 
                         decimal fees;
-                        IEnumerable<CustFundShareDto> monthsCustomerShares;
+                        VintageSharesDto vintageShares;
                         vintageDto.MarketPrice = GetVintageValuePricedNow(
                             customerId,
                             vintageDto.YearMonthStr,
-                            out monthsCustomerShares,
+                            out vintageShares,
                             out fees);
 
-                        vintageDto.CustomerVintageShares = monthsCustomerShares;
+                        vintageDto.VintageShares = vintageShares;
                         vintageDto.Fees = fees;
                     } else {
                         // Deselect it for selling it
@@ -285,18 +303,18 @@ namespace gzDAL.Repos {
                 .Where(v => v.SellingValue == 0 && !v.Locked)) {
 
                 // out var declarations
-                IEnumerable<CustFundShareDto> customerVintageShares;
+                VintageSharesDto vintageShares;
                 decimal fees;
 
                 // Call to calculate latest selling price
                 decimal vintageMarketPrice = GetVintageValuePricedNow(
                         customerId,
                         dto.YearMonthStr,
-                        out customerVintageShares,
+                        out vintageShares,
                         out fees);
 
                 // Save the selling price and shares
-                dto.CustomerVintageShares = customerVintageShares;
+                dto.VintageShares = vintageShares;
                 dto.SellingValue = vintageMarketPrice - fees;
             }
 

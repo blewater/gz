@@ -106,6 +106,12 @@ module PortfolioTypes =
     type PortfolioWeight = float32
     type PortfolioFundRecord = {PortfolioId : PortfolioId; PortfolioWeight : PortfolioWeight; Fund : FundQuote}
 
+    /// Convert .net dictionary to map 
+    let inline toMap kvps =
+        kvps
+        |> Seq.map (|KeyValue|)
+        |> Map.ofSeq
+
     let getPortfolioRiskById (portfolioId : PortfolioId) : Risk =
         match portfolioId with
         | LowRiskPortfolioId -> Low
@@ -710,7 +716,7 @@ module UserTrx =
         (userPortfolioInput.DbUserMonth.Db, dbOper) ||> tryDBCommit3Times
 
     /// get the portfolio market quote that's latest within the month processing
-    let findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
+    let private findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
         let nextMonth = month.ToNextMonth1st
 
         let getMonthLateQuote (portfoliosPrices)= 
@@ -739,11 +745,11 @@ module UserTrx =
     /// Input type for gaming activities reporting
     let private getUserFinance (trxRow : DbGzTrx): UserFinance =
         {
-            BegBalance = trxRow.BegGmBalance.Value;
-            EndBalance = trxRow.EndGmBalance.Value;
-            Deposits = trxRow.Deposits.Value;
-            Withdrawals = trxRow.Withdrawals.Value;
-            GainLoss = trxRow.GainLoss.Value;
+            BegBalance = if trxRow.BegGmBalance.HasValue then trxRow.BegGmBalance.Value else 0m
+            EndBalance = if trxRow.EndGmBalance.HasValue then trxRow.EndGmBalance.Value else 0m
+            Deposits = if trxRow.Deposits.HasValue then trxRow.Deposits.Value else 0m
+            Withdrawals = if trxRow.Withdrawals.HasValue then trxRow.Withdrawals.Value else 0m
+            GainLoss = if trxRow.GainLoss.HasValue then trxRow.GainLoss.Value else 0m
             AmountToBuyStock = trxRow.Amount
         }
 

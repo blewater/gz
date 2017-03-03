@@ -14,6 +14,7 @@ using gzDAL.Models;
 using Z.EntityFramework.Plus;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls.Expressions;
 using NLog;
 
 namespace gzDAL.Repos {
@@ -166,8 +167,6 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="eligibleWithdrawDate"></param>
-        /// <param name="lockInDays"></param>
         /// <returns></returns>
         private async Task<Tuple<bool, DateTime, int>> IsWithdrawalEligible(int customerId) {
 
@@ -288,7 +287,7 @@ namespace gzDAL.Repos {
             DateTime soldOnUtc) {
 
             // TODO: Revisit to refactor
-            SaveDbSoldVintageCustFundShares(customerId, vintage, soldOnUtc);
+            //SaveDbSoldVintageCustFundShares(customerId, vintage, soldOnUtc);
 
             SaveDbSoldVintageInvBalance(customerId, vintage, soldOnUtc);
         }
@@ -331,25 +330,25 @@ namespace gzDAL.Repos {
         /// <param name="customerId"></param>
         /// <param name="vintage"></param>
         /// <param name="soldOnUtc"></param>
-        private void SaveDbSoldVintageCustFundShares(int customerId, VintageDto vintage, DateTime soldOnUtc) {
+        //private void SaveDbSoldVintageCustFundShares(int customerId, VintageDto vintage, DateTime soldOnUtc) {
 
-            try {
-                // Copy DTOs back to the InvBalance(vintage).CustFundShare entity
-                foreach (var dto in vintage.CustomerVintageShares) {
+        //    try {
+        //        // Copy DTOs back to the InvBalance(vintage).CustFundShare entity
+        //        foreach (var dto in vintage.VintageShares) {
 
-                    var custFundShare = _db.CustFundShares
-                        .SingleOrDefault(s => s.Id == dto.Id);
+        //            var custFundShare = _db.CustFundShares
+        //                .SingleOrDefault(s => s.Id == dto.Id);
 
-                    custFundShare.SoldSharesValue = dto.NewSharesValue;
-                    custFundShare.SoldOnUtc = soldOnUtc;
-                    custFundShare.SharesFundPriceId = dto.SharesFundPriceId;
-                }
-                _db.SaveChanges();
-            }
-            catch (Exception ex) {
-                _logger.Error("While selling vintage: {0}, for customerId: {1}, updating custFundShares: Exception {2}", vintage.YearMonthStr, customerId, ex);
-            }
-        }
+        //            custFundShare.SoldSharesValue = dto.NewSharesValue;
+        //            custFundShare.SoldOnUtc = soldOnUtc;
+        //            custFundShare.SharesFundPriceId = dto.SharesFundPriceId;
+        //        }
+        //        _db.SaveChanges();
+        //    }
+        //    catch (Exception ex) {
+        //        _logger.Error("While selling vintage: {0}, for customerId: {1}, updating custFundShares: Exception {2}", vintage.YearMonthStr, customerId, ex);
+        //    }
+        //}
 
         /// <summary>
         /// 
@@ -566,9 +565,21 @@ namespace gzDAL.Repos {
         /// <param name="customerId"></param>
         /// <param name="totPlayinLossAmount">Total amount that was lost</param>
         /// <param name="createdOnUtc">Date of the transaction in UTC</param>
-        /// 
+        /// <param name="begGmBalance"></param>
+        /// <param name="deposits"></param>
+        /// <param name="withdrawals"></param>
+        /// <param name="gainLoss"></param>
+        /// <param name="endGmbalance"></param>
         /// <returns></returns>
-        public void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, DateTime createdOnUtc) {
+        public void SaveDbPlayingLoss(
+                int customerId, 
+                decimal totPlayinLossAmount, 
+                DateTime createdOnUtc,
+                decimal begGmBalance,
+                decimal deposits,
+                decimal withdrawals,
+                decimal gainLoss,
+                decimal endGmbalance) {
 
             var creditPcnt = _db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single();
 
@@ -577,7 +588,12 @@ namespace gzDAL.Repos {
                 GzTransactionTypeEnum.CreditedPlayingLoss,
                 totPlayinLossAmount * (decimal) creditPcnt / 100,
                 createdOnUtc,
-                creditPcnt);
+                creditPcnt, 
+                begGmBalance, 
+                deposits, 
+                withdrawals, 
+                gainLoss, 
+                endGmbalance);
 
             _db.SaveChanges();
         }
@@ -593,19 +609,62 @@ namespace gzDAL.Repos {
         /// <param name="amount"></param>
         /// <param name="createdOnUtc">Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions</param>
         /// <param name="creditPcntApplied"></param>
+        /// <param name="begGmBalance"></param>
+        /// <param name="deposits"></param>
+        /// <param name="withdrawals"></param>
+        /// <param name="gainLoss"></param>
+        /// <param name="endGmbalance"></param>
         /// <returns></returns>
-        private void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount, DateTime createdOnUtc, float? creditPcntApplied) {
+        private void SaveDbGzTransaction(
+                int customerId, 
+                GzTransactionTypeEnum gzTransactionType, 
+                decimal amount, 
+                DateTime createdOnUtc, 
+                float? creditPcntApplied, 
+                decimal begGmBalance = 0,   // Used only for playerLoss type of transactions
+                decimal deposits = 0,       // Used only for playerLoss type of transactions
+                decimal withdrawals = 0,    // Used only for playerLoss type of transactions
+                decimal gainLoss = 0,       // Used only for playerLoss type of transactions
+                decimal endGmbalance = 0) { // Used only for playerLoss type of transactions
 
-            //Not thread safe but ok...within a single request context
-            _db.GzTrxs.AddOrUpdate(
 
-                // Assume CreatedOnUtc remains constant for same transaction
-                // to support idempotent transactions
+            if (gzTransactionType == GzTransactionTypeEnum.CreditedPlayingLoss) {
+                //Not thread safe ...but used only within batch processing
+                _db.GzTrxs.AddOrUpdate(
 
-                t => new { t.CustomerId, t.TypeId, t.YearMonthCtd, t.Amount, t.CreatedOnUtc },
+                    // Assume CreatedOnUtc remains constant for same transaction
+                    // to support idempotent transactions
+
+                    t => new {t.CustomerId, t.TypeId, t.YearMonthCtd, t.Amount, t.CreatedOnUtc},
                     new GzTrx {
                         CustomerId = customerId,
-                        TypeId = _db.GzTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
+                        TypeId =
+                            _db.GzTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
+                        YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
+                        Amount = amount,
+                        BegGmBalance = begGmBalance,
+                        Deposits = deposits,
+                        Withdrawals = withdrawals,
+                        GainLoss = gainLoss,
+                        EndGmBalance = endGmbalance,
+                        // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
+                        CreditPcntApplied = creditPcntApplied,
+                        // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
+                        CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
+                    }
+                    );
+            }
+            else {
+                _db.GzTrxs.AddOrUpdate(
+
+                    // Assume CreatedOnUtc remains constant for same transaction
+                    // to support idempotent transactions
+
+                    t => new {t.CustomerId, t.TypeId, t.YearMonthCtd, t.Amount, t.CreatedOnUtc},
+                    new GzTrx {
+                        CustomerId = customerId,
+                        TypeId =
+                            _db.GzTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
                         YearMonthCtd = createdOnUtc.Year.ToString("0000") + createdOnUtc.Month.ToString("00"),
                         Amount = amount,
                         // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
@@ -614,6 +673,7 @@ namespace gzDAL.Repos {
                         CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
                     }
                 );
+            }
         }
 
         /// <summary>
