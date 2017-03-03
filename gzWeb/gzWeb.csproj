@@ -673,6 +673,14 @@
     <Compile Include="Migrations\201702152027186_PortfolioPricetoDouble.Designer.cs">
       <DependentUpon>201702152027186_PortfolioPricetoDouble.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702201547016_Shrink_PlayerRevRpt.cs" />
+    <Compile Include="Migrations\201702201547016_Shrink_PlayerRevRpt.Designer.cs">
+      <DependentUpon>201702201547016_Shrink_PlayerRevRpt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702212206315_Add block player status.cs" />
+    <Compile Include="Migrations\201702212206315_Add block player status.Designer.cs">
+      <DependentUpon>201702212206315_Add block player status.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1422,6 +1430,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702152027186_PortfolioPricetoDouble.resx">
       <DependentUpon>201702152027186_PortfolioPricetoDouble.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702201547016_Shrink_PlayerRevRpt.resx">
+      <DependentUpon>201702201547016_Shrink_PlayerRevRpt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702212206315_Add block player status.resx">
+      <DependentUpon>201702212206315_Add block player status.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

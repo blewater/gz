@@ -24,7 +24,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\GzDb.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\GzCommon.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,7 +33,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\GzDb.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\GzCommon.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -45,7 +45,7 @@
     <Tailcalls>false</Tailcalls>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\GzDb.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\GzCommon.XML</DocumentationFile>
     <OutputPath>bin\Production\</OutputPath>
   </PropertyGroup>
   <Choose>
@@ -76,9 +76,15 @@
     <Compile Include="CurrencyRates.fs" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
+    <None Include="Scripts\load-references-debug.fsx" />
+    <None Include="Scripts\load-project-debug.fsx" />
+    <Compile Include="ErrorHandling.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="FSharp.Core">
+      <HintPath>..\Gm2Gz\packages\FSharp.Core.4.1.0\lib\net40\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>..\Gm2Gz\packages\FSharp.Data.2.3.2\lib\net40\FSharp.Data.dll</HintPath>
       <Private>True</Private>
@@ -89,7 +95,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\Gm2Gz\packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\Gm2Gz\packages\NLog.4.4.3\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -98,6 +104,10 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\Gm2Gz\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
