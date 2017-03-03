@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -673,6 +673,14 @@
     <Compile Include="Migrations\201702152027186_PortfolioPricetoDouble.Designer.cs">
       <DependentUpon>201702152027186_PortfolioPricetoDouble.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702201547016_Shrink_PlayerRevRpt.cs" />
+    <Compile Include="Migrations\201702201547016_Shrink_PlayerRevRpt.Designer.cs">
+      <DependentUpon>201702201547016_Shrink_PlayerRevRpt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702212206315_Add block player status.cs" />
+    <Compile Include="Migrations\201702212206315_Add block player status.Designer.cs">
+      <DependentUpon>201702212206315_Add block player status.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -716,6 +724,23 @@
     <Content Include="Content\Images\falling-cube.png" />
     <Content Include="Content\Images\Gfalling-cube.png" />
     <Content Include="Content\Images\invest.png" />
+    <Content Include="Content\Images\investment icons\big_green_arrow.png" />
+    <Content Include="Content\Images\investment icons\calendar_green.png" />
+    <Content Include="Content\Images\investment icons\calendar_grey.png" />
+    <Content Include="Content\Images\investment icons\check_aggessive_neg.png" />
+    <Content Include="Content\Images\investment icons\check_aggressive_pos.png" />
+    <Content Include="Content\Images\investment icons\check_conservative_pos.png" />
+    <Content Include="Content\Images\investment icons\check_conservative_pos_1.png" />
+    <Content Include="Content\Images\investment icons\check_medium_neg.png" />
+    <Content Include="Content\Images\investment icons\check_medium_pos.png" />
+    <Content Include="Content\Images\investment icons\current.png" />
+    <Content Include="Content\Images\investment icons\down_arrow.png" />
+    <Content Include="Content\Images\investment icons\expand_arrow.png" />
+    <Content Include="Content\Images\investment icons\expected.png" />
+    <Content Include="Content\Images\investment icons\history.png" />
+    <Content Include="Content\Images\investment icons\info.png" />
+    <Content Include="Content\Images\investment icons\up_arrow.png" />
+    <Content Include="Content\Images\investment icons\white_arrow.png" />
     <Content Include="Content\Images\investments.svg" />
     <Content Include="Content\Images\invest_main.svg" />
     <Content Include="Content\Images\king.png" />
@@ -770,6 +795,7 @@
     <Content Include="_app\common\asyncLoad.js" />
     <Content Include="_app\common\footer.html" />
     <Content Include="_app\common\header.html" />
+    <Content Include="_app\common\footerMenu.js" />
     <Content Include="_app\common\preloader.min.css">
       <DependentUpon>preloader.css</DependentUpon>
     </Content>
@@ -943,6 +969,25 @@
     <Content Include="Content\Images\payment methods\visa.svg" />
     <Content Include="Content\Images\loader.svg" />
     <None Include="bundleconfig.json" />
+    <Content Include="Content\Images\investment icons\big_green_arrow.svg" />
+    <Content Include="Content\Images\investment icons\calendar_green.svg" />
+    <Content Include="Content\Images\investment icons\calendar_grey.svg" />
+    <Content Include="Content\Images\investment icons\check_aggessive_neg.svg" />
+    <Content Include="Content\Images\investment icons\check_aggressive_pos.svg" />
+    <Content Include="Content\Images\investment icons\check_conservative_pos.svg" />
+    <Content Include="Content\Images\investment icons\check_conservative_pos_1.svg" />
+    <Content Include="Content\Images\investment icons\check_medium_neg.svg" />
+    <Content Include="Content\Images\investment icons\check_medium_pos.svg" />
+    <Content Include="Content\Images\investment icons\current.svg" />
+    <Content Include="Content\Images\investment icons\down_arrow.svg" />
+    <Content Include="Content\Images\investment icons\expand_arrow.svg" />
+    <Content Include="Content\Images\investment icons\expected.svg" />
+    <Content Include="Content\Images\investment icons\history.svg" />
+    <Content Include="Content\Images\investment icons\info.svg" />
+    <Content Include="Content\Images\investment icons\up_arrow.svg" />
+    <Content Include="Content\Images\investment icons\white_arrow.svg" />
+    <Content Include="Content\Images\investment icons\cash_white.svg" />
+    <Content Include="Content\Images\investment icons\invest_white.svg" />
     <None Include="Properties\PublishProfiles\greenzorro-sgn - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorro-sgn - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - FTP.pubxml" />
@@ -1385,6 +1430,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702152027186_PortfolioPricetoDouble.resx">
       <DependentUpon>201702152027186_PortfolioPricetoDouble.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702201547016_Shrink_PlayerRevRpt.resx">
+      <DependentUpon>201702201547016_Shrink_PlayerRevRpt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702212206315_Add block player status.resx">
+      <DependentUpon>201702212206315_Add block player status.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

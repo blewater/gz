@@ -22,6 +22,7 @@
                 $scope.plan = $filter('filter')($scope.plans, { Selected: true })[0];
                 $scope.year = 5;
                 $scope.monthlyContribution = $scope.gzMonthlyContribution;
+                var monthlyContributionStep = $scope.gzMonthlyContribution / 10;
                 $scope.projectedValue = 0;
                 $scope.profit = 0;
                 //$scope.principalAmount = $scope.gzPrincipalAmount > 0 ? $scope.gzPrincipalAmount : $scope.annualContribution;
@@ -81,6 +82,32 @@
                         $scope.plans[i].Selected = index === i;
                     $scope.plan = $scope.plans[index];
                     calculateProjection(handlerAnimationStates.rescaling);
+
+                    handler.select("circle").style("fill", function () { return $scope.plan.Color; });
+                    handler.selectAll(".triangle").style("stroke", function () { return $scope.plan.Color; });
+                }
+
+                $scope.increaseMonthlyBonus = function () {
+                    $scope.monthlyContribution = $scope.monthlyContribution + monthlyContributionStep;
+                    calculateProjection(handlerAnimationStates.dragging);
+                }
+                $scope.decreaseMonthlyBonus = function () {
+                    $scope.monthlyContribution = $scope.monthlyContribution - monthlyContributionStep;
+                    if ($scope.monthlyContribution < 0)
+                        $scope.monthlyContribution = 0;
+                    calculateProjection(handlerAnimationStates.dragging);
+                }
+                $scope.increaseYear = function () {
+                    $scope.year = $scope.year + 0.5;
+                    if ($scope.year > 10)
+                        $scope.year = 10;
+                    calculateProjection(handlerAnimationStates.dragging);
+                }
+                $scope.decreaseYear = function () {
+                    $scope.year = $scope.year - 0.5;
+                    if ($scope.year < 0)
+                        $scope.year = 0;
+                    calculateProjection(handlerAnimationStates.dragging);
                 }
 
                 function getHandlerTransitionDuration(handlerAnimationState) {
@@ -187,7 +214,7 @@
                     }
                     margin = {
                         top: (function () { return $rootScope.xs ? 80 : 120; })(),
-                        right: 20,
+                        right: 30,
                         bottom: (function () { return $rootScope.xs ? 60 : 80; })(),
                         left: (function () { return $rootScope.xs ? 70 : 100; })()
                     };
@@ -419,7 +446,7 @@
 
                     handler.append("circle")
                         .attr("r", 10)
-                        .style("fill", "#27A95C");
+                        .style("fill", function () { return $scope.plan.Color; });
                     handler.append("circle")
                         .attr("r", 4)
                         .style("fill", "#fff");
@@ -461,19 +488,23 @@
                     var triangleTop = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(0, -20)")
-                        .attr("class", "triangle triangle-top triangle-vertical");
+                        .attr("class", "triangle triangle-top triangle-vertical")
+                        .style("stroke", function () { return $scope.plan.Color; });
                     var triangleRight = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(20, 0)rotate(90)")
-                        .attr("class", "triangle triangle-right triangle-horizontal");
+                        .attr("class", "triangle triangle-right triangle-horizontal")
+                        .style("stroke", function () { return $scope.plan.Color; });
                     var triangleLeft = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(-20, 0)rotate(-90)")
-                        .attr("class", "triangle triangle-left triangle-horizontal");
+                        .attr("class", "triangle triangle-left triangle-horizontal")
+                        .style("stroke", function () { return $scope.plan.Color; });
                     var triangleBottom = handler.append("path")
                         .attr("d", triangleSymbol.size(function () { return 25; }))
                         .attr("transform", "translate(0, 20)rotate(180)")
-                        .attr("class", "triangle triangle-bottom triangle-vertical");
+                        .attr("class", "triangle triangle-bottom triangle-vertical")
+                        .style("stroke", function () { return $scope.plan.Color; });
 
                     startLoops();
                     

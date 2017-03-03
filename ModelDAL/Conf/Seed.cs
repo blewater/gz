@@ -1,11 +1,11 @@
 ﻿using gzDAL.Models;
 using gzDAL.Repos;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 using gzDAL.ModelUtil;
+using System.Linq.Expressions;
 
 namespace gzDAL.Conf
 {
@@ -55,10 +55,8 @@ namespace gzDAL.Conf
         private static void AddUpdData(ApplicationDbContext context) {
 
             context.Database.ExecuteSqlCommand("Delete GzTrxs");
-            context.Database.ExecuteSqlCommand("Delete CustFundShares");
+            context.Database.ExecuteSqlCommand("Delete VintageShares");
             context.Database.ExecuteSqlCommand("Delete InvBalances");
-            context.Database.ExecuteSqlCommand("Delete FundPrices");
-            context.Database.ExecuteSqlCommand("Delete CurrencyListXes");
 
             // GzConfigurations
             CreateUpdConfiguationRow(context);
@@ -102,8 +100,9 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Balances
+            CreateUpdInvBalances(context, custId);
+            context.SaveChanges();
             //CalcMonthlyBalances(context, custId);
-            //context.SaveChanges();
         }
 
         /// <summary>
@@ -253,7 +252,7 @@ namespace gzDAL.Conf
 
         private static void CreateUpdFunds(ApplicationDbContext context) {
             context.Funds.AddOrUpdate(
-                f => f.Symbol,
+                f => f.HoldingName,
                 new Fund {
                     HoldingName = "iShares National Muni Bond", Symbol = "MUB", YearToDate = 4.63f, UpdatedOnUTC = new DateTime(2017, 1, 11, 9, 34, 0)
                 },
@@ -372,39 +371,46 @@ namespace gzDAL.Conf
 
         private static void CreateUpdPortfolios(ApplicationDbContext context, int custId) {
 
-            context.Portfolios.AddOrUpdate(
-                p => p.RiskTolerance,
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Low,
                     IsActive = true,
-                    Color = "#B4DCC4",
+                    Color = "#00A69C",
                     Title = "Conservative"
-                },
+                }, 
+                p => p.RiskTolerance == RiskToleranceEnum.Low);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Low_Medium,
                     IsActive = false,
                     Color = "#FF0000",
                     Title = "Low Medium"
                 },
+                p => p.RiskTolerance == RiskToleranceEnum.Low_Medium);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Medium,
                     IsActive = true,
-                    Color = "#64BF89",
+                    Color = "#90278E",
                     Title = "Medium"
                 },
+                p => p.RiskTolerance == RiskToleranceEnum.Medium);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.Medium_High,
                     IsActive = false,
                     Color = "#00FF00",
                     Title = "Medium High"
                 },
+                p => p.RiskTolerance == RiskToleranceEnum.Medium);
+            context.Set<Portfolio>().AddIfNotExists(
                 new Portfolio {
                     RiskTolerance = RiskToleranceEnum.High,
                     IsActive = true,
-                    Color = "#227B46",
+                    Color = "#FF9500",
                     Title = "Aggressive"
-                });
-
+                },
+                p => p.RiskTolerance == RiskToleranceEnum.Medium);
         }
 
         private static void CreateUpdPortFunds(ApplicationDbContext context) {
@@ -502,6 +508,54 @@ namespace gzDAL.Conf
                     TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
                 }
                 );
+        }
+
+        private static void CreateUpdInvBalances(ApplicationDbContext context, int custId) {
+            var custPortfolioRepo = new CustPortfolioRepo(context);
+            var invB = new InvBalanceRepo(
+                context,
+                new CustFundShareRepo(
+                    context,
+                    custPortfolioRepo),
+                new GzTransactionRepo(context),
+                custPortfolioRepo);
+
+            var nowUtc = DateTime.UtcNow;
+            var startYearMonthStr = nowUtc.AddMonths(-6).ToStringYearMonth();
+            var endYeerMonthStr = nowUtc.ToStringYearMonth();
+
+            var balance = 1000M;
+            var totalCashInv = 1000m;
+            while (startYearMonthStr.BeforeEq(endYeerMonthStr)) {
+
+                var gain = balance*0.06M;
+                invB.UpsInvBalance(
+                    custId, 
+                    RiskToleranceEnum.Medium, 
+                    int.Parse(startYearMonthStr.Substring(4)), 
+                    int.Parse(startYearMonthStr.Substring(4,2)), 
+                    1000M, 
+                    balance, 
+                    gain, 
+                    0m, 
+                    1m, 
+                    0m, 
+                    4000m, 
+                    2000m, 
+                    1000m, 
+                    -2000M, 
+                    3000m, 
+                    // Assume no sold vintages
+                    totalCashInv, 
+                    totalCashInv, 
+                    0m, 
+                    nowUtc);
+
+                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+                // 6%
+                balance = balance + balance * 1.06m;
+                totalCashInv += 1000m;
+            }
         }
 
         private static void CreateUpdTranxType(ApplicationDbContext context) {

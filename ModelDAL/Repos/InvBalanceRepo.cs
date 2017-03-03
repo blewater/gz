@@ -619,10 +619,37 @@ namespace gzDAL.Repos {
         /// <param name="yearCurrent"></param>
         /// <param name="monthCurrent"></param>
         /// <param name="cashToInvest">Positive cash amount to invest</param>
-        private void SaveDbCustomerMonthlyBalanceByCashInv(int customerId, int yearCurrent, int monthCurrent, decimal cashToInvest) {
+        /// <param name="lowRiskShares"></param>
+        /// <param name="mediumRiskShares"></param>
+        /// <param name="highRiskShares"></param>
+        /// <param name="totalCashInvestments"></param>
+        /// <param name="totalSoldVintagesValue"></param>
+        /// <param name="begGmBalance"></param>
+        /// <param name="deposits"></param>
+        /// <param name="withdrawals"></param>
+        /// <param name="gamingGainLoss"></param>
+        /// <param name="endGmBalance"></param>
+        /// <param name="totalCashInvInHold"></param>
+        private void SaveDbCustomerMonthlyBalanceByCashInv(
+                int customerId, 
+                int yearCurrent, 
+                int monthCurrent, 
+                decimal cashToInvest,
+                decimal lowRiskShares,
+                decimal mediumRiskShares,
+                decimal highRiskShares,
+                decimal begGmBalance,
+                decimal deposits,
+                decimal withdrawals,
+                decimal gamingGainLoss,
+                decimal endGmBalance,
+                decimal totalCashInvInHold,
+                decimal totalCashInvestments,
+                decimal totalSoldVintagesValue
+            ) {
 
             decimal monthlyBalance, invGainLoss;
-            RiskToleranceEnum monthsPortfolioRisk;
+            RiskToleranceEnum userPortfolioRiskSelection;
             var portfolioFunds = GetCustomerSharesBalancesForMonth(
                 customerId,
                 yearCurrent,
@@ -630,45 +657,162 @@ namespace gzDAL.Repos {
                 cashToInvest,
                 out monthlyBalance,
                 out invGainLoss,
-                out monthsPortfolioRisk);
+                out userPortfolioRiskSelection);
 
             /************ Update Monthly Balance *****************/
 
             ConnRetryConf.TransactWithRetryStrategy(_db,
 
                 () => {
-                    var updatedOnUtc = DateTime.UtcNow;
 
-                    // Save the portfolio for the month
-                    _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(
-                        customerId,
-                        monthsPortfolioRisk,
-                        yearCurrent,
-                        monthCurrent,
-                        updatedOnUtc);
+                    SetDbMonthlyClearance(
+                        customerId, 
+                        yearCurrent, 
+                        monthCurrent, 
+                        cashToInvest, 
+                        userPortfolioRiskSelection, 
+                        monthlyBalance, 
+                        invGainLoss,
+                        lowRiskShares,
+                        mediumRiskShares,
+                        highRiskShares,
+                        begGmBalance,
+                        deposits,
+                        withdrawals,
+                        gamingGainLoss,
+                        endGmBalance,
+                        totalCashInvInHold,
+                        totalCashInvestments,
+                        totalSoldVintagesValue,
+                        portfolioFunds);
 
-                    _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
-                            new InvBalance {
-                                YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
-                                CustomerId = customerId,
-                                BegGmBalance = 0,
-                                Deposits = 0,
-                                Withdrawals = 0,
-                                GamingGainLoss = 0,
-                                Balance = monthlyBalance,
-                                InvGainLoss = invGainLoss,
-                                CashInvestment = cashToInvest,
-                                UpdatedOnUtc = updatedOnUtc
-                            });
+                });
+        }
 
-                    _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
-                        boughtShares: true,
-                        customerId: customerId,
-                        fundsShares: portfolioFunds,
-                        year: yearCurrent,
-                        month: monthCurrent,
-                        updatedOnUtc: updatedOnUtc);
+        private void SetDbMonthlyClearance(
+                int customerId, 
+                int yearCurrent, 
+                int monthCurrent, 
+                decimal cashToInvest,
+                RiskToleranceEnum userPortfolioRiskSelection, 
+                decimal monthlyBalance, 
+                decimal invGainLoss,
+                decimal lowRiskShares,
+                decimal mediumRiskShares,
+                decimal highRiskShares,
+                decimal begGmBalance,
+                decimal deposits,
+                decimal withdrawals,
+                decimal gamingGainLoss,
+                decimal endGmBalance,
+                decimal totalCashInvInHold,
+                decimal totalCashInvestments,
+                decimal totalSoldVintagesValue,
+                Dictionary<int, PortfolioFundDTO> portfolioFunds) {
 
+            var updatedOnUtc = DateTime.UtcNow;
+
+            // Save the portfolio for the month
+            _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(
+                customerId,
+                userPortfolioRiskSelection,
+                yearCurrent,
+                monthCurrent,
+                updatedOnUtc);
+
+            UpsInvBalance(
+                customerId,
+                userPortfolioRiskSelection,
+                yearCurrent, 
+                monthCurrent, 
+                cashToInvest, 
+                monthlyBalance, 
+                invGainLoss, 
+                lowRiskShares,
+                mediumRiskShares,
+                highRiskShares,
+                begGmBalance,
+                deposits,
+                withdrawals,
+                gamingGainLoss,
+                endGmBalance,
+                totalCashInvInHold,
+                totalCashInvestments,
+                totalSoldVintagesValue,
+                updatedOnUtc);
+
+            _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
+                boughtShares: true,
+                customerId: customerId,
+                fundsShares: portfolioFunds,
+                year: yearCurrent,
+                month: monthCurrent,
+                updatedOnUtc: updatedOnUtc);
+        }
+
+        /// <summary>
+        /// Upsert an investment balance monthly row
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="userPortfolioRiskSelection"></param>
+        /// <param name="yearCurrent"></param>
+        /// <param name="monthCurrent"></param>
+        /// <param name="cashToInvest"></param>
+        /// <param name="monthlyBalance"></param>
+        /// <param name="invGainLoss"></param>
+        /// <param name="lowRiskShares"></param>
+        /// <param name="mediumRiskShares"></param>
+        /// <param name="highRiskShares"></param>
+        /// <param name="begGmBalance"></param>
+        /// <param name="deposits"></param>
+        /// <param name="withdrawals"></param>
+        /// <param name="gamingGainLoss"></param>
+        /// <param name="endGmBalance"></param>
+        /// <param name="totalCashInvInHold"></param>
+        /// <param name="totalCashInvestments"></param>
+        /// <param name="totalSoldVintagesValue"></param>
+        /// <param name="updatedOnUtc"></param>
+        public void UpsInvBalance(
+                int customerId,
+                RiskToleranceEnum userPortfolioRiskSelection,
+                int yearCurrent, 
+                int monthCurrent, 
+                decimal cashToInvest,
+                decimal monthlyBalance, 
+                decimal invGainLoss,
+                decimal lowRiskShares,
+                decimal mediumRiskShares,
+                decimal highRiskShares,
+                decimal begGmBalance,
+                decimal deposits,
+                decimal withdrawals,
+                decimal gamingGainLoss,
+                decimal endGmBalance,
+                decimal totalCashInvInHold,
+                decimal totalCashInvestments,
+                decimal totalSoldVintagesValue,
+                DateTime updatedOnUtc) {
+
+            _db.InvBalances.AddOrUpdate(i => new {i.CustomerId, i.YearMonth},
+                new InvBalance {
+                    YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),
+                    CustomerId = customerId,
+                    PortfolioId = (int) userPortfolioRiskSelection,
+                    Balance = monthlyBalance,
+                    InvGainLoss = invGainLoss,
+                    CashInvestment = cashToInvest,
+                    LowRiskShares = lowRiskShares,
+                    MediumRiskShares = mediumRiskShares,
+                    HighRiskShares = highRiskShares,
+                    BegGmBalance = begGmBalance,
+                    Deposits = deposits,
+                    Withdrawals = withdrawals,
+                    GamingGainLoss = gamingGainLoss,
+                    EndGmBalance = endGmBalance,
+                    TotalCashInvInHold = totalCashInvInHold,
+                    TotalCashInvestments = totalCashInvestments,
+                    TotalSoldVintagesValue = totalSoldVintagesValue,
+                    UpdatedOnUtc = updatedOnUtc
                 });
         }
 
@@ -691,7 +835,8 @@ namespace gzDAL.Repos {
             // Loop through all the months activity
             while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
 
-                SaveDbCustomerMonthlyBalance(customerId, startYearMonthStr);
+                // TODO : Replace
+                //SaveDbCustomerMonthlyBalance(customerId, startYearMonthStr);
 
                 // month ++
                 startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
@@ -805,7 +950,8 @@ namespace gzDAL.Repos {
             var monthlyCashToInvest = GetMonthlyCashToInvest(customerMonthlyTrxs);
 
             if (monthlyCashToInvest >= 0) {
-                SaveDbCustomerMonthlyBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
+                // TODO : Replace
+                //SaveDbCustomerMonthlyBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
             }
         }
 

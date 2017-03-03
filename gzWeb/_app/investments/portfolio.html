@@ -5,7 +5,7 @@
                 <div class="col-xs-12">
                     <div class="text-center">
                         <div class="invest-prompt">
-                            Please select which investment plan your bonus should trail
+                            Select the plan to allocate your next month's investment bonus
                         </div>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
                             <div class="col-xs-4"><div>Selection</div></div>
                         </div>
                         <div class="row plan" ng-class="{'expanded': plan.expanded}" ng-repeat="plan in model.Plans">
-                            <div class="basic" ng-class="{'selected': plan.Selected}">
+                            <div class="basic" ng-class="{'selected': plan.Selected}" ng-style="{color: plan.Color}">
                                 <div class="col-xs-4">
                                     <div class="title text-left">{{plan.Title}}</div>
                                 </div>
@@ -32,7 +32,7 @@
                                         <button type="button" ng-disabled="plan.Selected" ng-click="selectPlan(plan)" ng-mouseenter="plan.selectHovered = true" ng-mouseleave="plan.selectHovered = false">
                                             <span ng-show="plan.Selected">
                                                 <span>Selected</span>
-                                                <i class="fa fa fa-check-circle"></i>
+                                                <i class="fa fa-lg fa-check-circle"></i>
                                             </span>
                                             <span ng-show="!plan.Selected">
                                                 <span ng-show="plan.selecting && !plan.selectHovered" class="spinner" us-spinner="spinnerGreen"></span>
@@ -76,18 +76,15 @@
                 <div class="col-xs-12 col-sm-6 col-lg-3 col-lg-pull-6">
                     <div class="portfolio-section next-investment text-center">
                         <div class="side-box">
-                            <div class="side-box-table">
-                                <div class="side-box-table-head">
-                                    Next expected investment:
-                                </div>
-                                <div class="side-box-table-body">
-                                    <div class="balance text-gz">{{model.NextExpectedInvestment | isoCurrency : currency : 0}}</div>
-                                </div>
+                            <div class="side-box-section side-box-top">
+                                <div class="next-investment-label">Next expected investment:</div>
                             </div>
-                            <div class="side-box-table">
-                                <div class="side-box-table-head">
-                                    On {{model.NextInvestmentOn | ordinalDate : 'MMMM d'}}
-                                </div>
+                            <div class="side-box-section side-box-middle">
+                                <div class="next-investment-balance">{{model.NextExpectedInvestment | isoCurrency : currency : 0}}</div>
+                            </div>
+                            <div class="side-box-section side-box-bottom">
+                                <div class="next-investment-on">on</div>
+                                <div class="next-investment-date">{{model.NextInvestmentOn | ordinalDate : 'MMMM d'}}</div>
                             </div>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"

@@ -79,41 +79,43 @@
             return ordered;
         }
 
+        $scope.toggleInvestmentHistory = function () {
+            $scope.investmentHistoryExpanded = !$scope.investmentHistoryExpanded;;
+        };
+        $scope.toggleGamingActivities = function () {
+            $scope.gamingActivitiesExpanded = !$scope.gamingActivitiesExpanded
+        };
+
         function loadSummaryData() {
             api.call(function () {
                 return api.getSummaryData();
             }, function (response) {
                 $scope.model = response.Result;
-                $scope.model.StatusAsOfLocal = $filter('date')(moment.utc($scope.model.StatusAsOf).toDate(), 'MMM d, h:mm a');
+                var statusAsOfLocal = moment.utc($scope.model.StatusAsOf).toDate();
+                $scope.model.StatusAsOfLocalDate = $filter('date')(statusAsOfLocal, 'MMMM d');
+                $scope.model.StatusAsOfLocalTime = $filter('date')(statusAsOfLocal, 'h:mm a');
+                var nextInvestmentOnLocal = moment.utc($scope.model.NextInvestmentOn).toDate();
+                $scope.model.NextInvestmentOnLocalDate = $filter('date')(nextInvestmentOnLocal, 'MMMM d');
+                $scope.model.NextInvestmentOnLocalTime = $filter('date')(nextInvestmentOnLocal, 'h:mm a');
                 $scope.model.CurrentMonth = $filter('date')(moment.utc().toDate(), 'MMMM');
+                var utcNow = moment.utc().toDate();
+                var startOfMonth = new Date(utcNow.getFullYear(), utcNow.getMonth(), 1);
+                var todayDate = utcNow.getDate();
+                $scope.model.GamingActivitiesRange =
+                    $filter('ordinalDate')(startOfMonth, 'MMMM d') +
+                    (todayDate === 1 ? '' : (' - ' + $filter('ordinalDate')(utcNow, 'd')));
                 $scope.model.OkToWithdraw = false;
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
         }
 
-        //function loadAuthData() {
-        //    $scope.hasGamingBalance = $scope._authData.gamingBalance !== undefined;
-        //    if ($scope.hasGamingBalance) {
-        //        $scope.gamingBalance = $scope._authData.gamingBalance;
-        //        $scope.gamingBalanceDetails = $sce.trustAsHtml(
-        //            '<div class="row">' +
-        //                '<div class="col-xs-8 text-left">Casino Wallet:</div>' +
-        //                '<div class="col-xs-4 text-right">' + $filter('number')($scope._authData.gamingAccounts[0].amount, 0) + '</div>' +
-        //            '</div>' +
-        //            '<div class="row">' +
-        //                '<div class="col-xs-8 text-left">Casino Wallet Bonus:</div>' +
-        //                '<div class="col-xs-4 text-right">' + $filter('number')($filter('sum')($filter('map')($scope._authData.gamingAccounts.slice(1), function (acc) { return acc.amount; })), 0) + '</div>' +
-        //            '</div>'
-        //        );
-        //    }
-        //    $scope.currency = $scope._authData.currency;
-        //}
-
-        //$scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
+        function loadAuthData() {
+            $scope.currency = $scope._authData.currency;
+        }
 
         $scope._init(function() {
             loadSummaryData();
-            //loadAuthData();
+            loadAuthData();
         });
     }
 })();

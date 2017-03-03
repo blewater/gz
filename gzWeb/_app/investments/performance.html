@@ -2,7 +2,10 @@
     <div class="container">
         <div class="performance">
             <div class="title text-center">
-                Check your expected returns - Portfolio simulation
+                Check how much more you gain with greenzorro
+            </div>
+            <div class="subtitle text-center">
+                Select monthly bonus invested, years and investment plan to see how much you can gain!
             </div>
             <gz-performance-graph ng-if="model" gz-plans="model.Plans" gz-monthly-contribution="getMonthlyContribution()" gz-currency="{{currency}}"></gz-performance-graph>
         </div>

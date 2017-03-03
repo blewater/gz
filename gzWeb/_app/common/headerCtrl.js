@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', 'footerMenu', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -28,7 +28,6 @@
                 constants.routes.summary,
                 constants.routes.portfolio,
                 constants.routes.performance
-                //constants.routes.activity
             ]
         }
         $scope.getClass = function (path) {
@@ -96,6 +95,8 @@
         $scope.withdraw = function () {
             accountManagement.open(accountManagement.states.withdrawPaymentMethods);
         };
+
+        $scope.footerMenu = footerMenu.getMenu();
 
         function loadAuthData() {
             $scope.name = $scope._authData.firstname;
