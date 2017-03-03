@@ -6,6 +6,9 @@ module DbUtil =
     open FSharp.Data.TypeProviders
     open System
 
+    [<Literal>]
+    let WaitBefRetryinMillis = 500 // milliseconds
+
     // Use for compile time memory schema representation
     [<Literal>]
     let CompileTimeDbString = 
@@ -149,7 +152,7 @@ module DbUtil =
             try
                 fn()
             with 
-            | _ -> System.Threading.Thread.Sleep(50); retry (times - 1) fn
+            | _ -> System.Threading.Thread.Sleep(WaitBefRetryinMillis); retry (times - 1) fn
         else
             fn()
     

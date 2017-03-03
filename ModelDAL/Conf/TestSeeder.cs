@@ -460,8 +460,8 @@ namespace gzDAL.Conf {
             var trxRepo = new GzTransactionRepo(context);
 
             // Use new API
-            trxRepo.SaveDbPlayingLoss(custId, 9853, new DateTime(2015, 3, 31, 23, 46, 01));
-            trxRepo.SaveDbPlayingLoss(custId, 2013, new DateTime(2015, 4, 29, 23, 56, 12, 42));
+            trxRepo.SaveDbPlayingLoss(custId, 1000, new DateTime(2015, 3, 31, 23, 46, 01), 5000, 1000, 1000, 2000, 3000);
+            trxRepo.SaveDbPlayingLoss(custId, 1000, new DateTime(2015, 4, 29, 23, 56, 12, 42), 5000, 1000, 1000, 2000, 3000);
 
             // Old implementation before repo
             context.GzTrxs.AddOrUpdate(

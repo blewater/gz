@@ -100,7 +100,7 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Balances
-            CreateUpdInvBalances(context, custId);
+            UpsDbInvBalances(context, custId);
             context.SaveChanges();
             //CalcMonthlyBalances(context, custId);
         }
@@ -452,65 +452,50 @@ namespace gzDAL.Conf
                 );
         }
 
+        private static void SetDbMonthlyPlayerLossTrx(string trxYearMonthStr, GzTransactionRepo gzTrx, int custId) {
+
+            var createdOnUtc =
+                new DateTime(
+                    DbExpressions.GetYear(trxYearMonthStr),
+                    DbExpressions.GetMonth(trxYearMonthStr),
+                    15,
+                    19,
+                    12,
+                    59,
+                    333,
+                    DateTimeKind.Utc);
+
+            gzTrx.SaveDbPlayingLoss(
+                custId,
+                1000,
+                createdOnUtc,
+                3000, 3000, 1000, -2000, 3000);
+        }
+
         private static void CreateUpdGzTransaction(ApplicationDbContext context, int custId) {
 
             var trxRepo = new GzTransactionRepo(context);
 
-            // Use new API
-            trxRepo.SaveDbPlayingLoss(custId, 200, new DateTime(2016, 7, 31, 23, 46, 01));
+            var now = DateTime.UtcNow;
+            var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
+            var endYearMonthStr = now.ToStringYearMonth();
 
-            // Old implementation before repo
-            context.GzTrxs.AddOrUpdate(
-                t => new { t.CustomerId, t.CreatedOnUtc },
-                // June
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201608",
-                    CreatedOnUtc = new DateTime(2016, 8, 31, 23, 47, 32),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Skip August
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201609",
-                    CreatedOnUtc = new DateTime(2016, 9, 30, 23, 47, 46),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Sept
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201610",
-                    CreatedOnUtc = new DateTime(2016, 10, 31, 23, 47, 46),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Oct
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201611",
-                    CreatedOnUtc = new DateTime(2016, 11, 30, 23, 47, 46),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Dec Skip Nov either won or did not play
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201612",
-                    CreatedOnUtc = new DateTime(2016, 12, 31, 23, 47, 12),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                }
-                );
+            // Loop through all the months activity
+            while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
+
+                SetDbMonthlyPlayerLossTrx(startYearMonthStr, trxRepo, custId);
+                // month ++
+                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+            }
         }
 
-        private static void CreateUpdInvBalances(ApplicationDbContext context, int custId) {
+        private static void UpsDbInvBalances(ApplicationDbContext context, int custId) {
+
+            // Reset invBalances for test user
+            context.Database.ExecuteSqlCommand("Delete InvBalances Where CustomerId = " + custId);
+            // Put fake amounts for gaming balances that are null
+            context.Database.ExecuteSqlCommand("Update InvBalances Set BegGmBalance = 3000, Deposits = 3000, Withdrawals = 1000, GamingGainLoss = -2000, EndGmBalance = 3000 Where BegGmBalance is NUll OR Deposits is Null OR Withdrawals is Null OR GamingGainLoss is NUll OR EndGmBalance is NUll");
+
             var custPortfolioRepo = new CustPortfolioRepo(context);
             var invB = new InvBalanceRepo(
                 context,
@@ -540,8 +525,8 @@ namespace gzDAL.Conf
                     0m, 
                     1m, 
                     0m, 
-                    4000m, 
-                    2000m, 
+                    3000m, 
+                    3000m, 
                     1000m, 
                     -2000M, 
                     3000m, 

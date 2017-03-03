@@ -243,19 +243,28 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Calculate the value of a month's bought (not owned) funds shares.
+        /// Calculate the present value of a vintage shares.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="yearMonthStr"></param>
         /// <returns></returns>
-        public IEnumerable<CustFundShareDto> GetMonthsBoughtFundsValue(int customerId, string yearMonthStr) {
+        public VintageSharesDto GetVintageSharesMarketValue(int customerId, string yearMonthStr) {
 
-            var customerShares = GetMonthsBoughtFundsShares(customerId, yearMonthStr);
+            var vintageSharesTask =
+                _db.InvBalances
+                    .Where(c => c.CustomerId == customerId && c.YearMonth == yearMonthStr)
+                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
+            var invBalanceRes = vintageSharesTask.Result;
 
-            SetFundsSharesLatestValue(customerShares);
+            var vintageShares = invBalanceRes.Select(b => new VintageSharesDto {
+                LowRiskShares = b.LowRiskShares, MediumRiskShares = b.MediumRiskShares, HighRiskShares = b.HighRiskShares
+            })
+            .SingleOrDefault();
 
-            return customerShares;
+            SetFundsSharesLatestValue(vintageShares);
+
+            return vintageShares;
         }
 
         /// <summary>
@@ -308,22 +317,15 @@ namespace gzDAL.Repos {
         /// To be used for selling shares not for calculating balances.
         /// 
         /// </summary>
-        /// <param name="monthsCustFundShares"></param>
-        private void SetFundsSharesLatestValue(
-                IEnumerable<CustFundShareDto> monthsCustFundShares) {
+        /// <param name="vintageShares"></param>
+        private void SetFundsSharesLatestValue(VintageSharesDto vintageShares) {
 
-            // Process the portfolio funds and any additional customer owned funds
-            foreach (var custFundShare in monthsCustFundShares) {
+            var latestPortfoliosPrices = GetCachedLatestPortfolioSharePrice();
 
-                var fundId = custFundShare.FundId;
-
-                // Calculate the current fund shares value
-                float fundPrice = GetCachedLatestFundPrice(fundId);
-
-                // Calculate this month current fund value including the new cash investment
-                custFundShare.SharesValue = custFundShare.SharesNum * (decimal)fundPrice;
-                custFundShare.NewSharesValue = custFundShare.NewSharesNum * (decimal)fundPrice;
-            }
+            vintageShares.MarketPrice = vintageShares.LowRiskShares    * (decimal) latestPortfoliosPrices.PortfolioLowPrice +
+                                  vintageShares.MediumRiskShares * (decimal) latestPortfoliosPrices.PortfolioMediumPrice +
+                                  vintageShares.HighRiskShares   * (decimal) latestPortfoliosPrices.PortfolioHighPrice;
+            vintageShares.TradingDay = DbExpressions.GetDtYearMonthDay(latestPortfoliosPrices.YearMonthDay);
         }
 
         /// <summary>
@@ -355,28 +357,24 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Gets the latest stored fund price for a traded fund share.
+        /// Gets the latest stored portfolio share price. Edited from fund shares equivalent.
         /// 
         /// Cached for 2 hours.
         /// 
         /// </summary>
         /// <param name="fundId"></param>
         /// <returns></returns>
-        private float GetCachedLatestFundPrice(int fundId) {
+        private PortfolioPrice GetCachedLatestPortfolioSharePrice() {
 
             // Find latest closing price
-            var closingPrice = _db.FundPrices
-                .Where(f => f.FundId == fundId
-                            && f.YearMonthDay == _db.FundPrices
-                                .Where(p => p.FundId == f.FundId)
-                                .Select(p => p.YearMonthDay)
-                                .Max())
-                .Select(f => f.ClosingPrice)
+            var latestPortfoliosPrices = 
+                _db.PortfolioPrices
+                    .OrderByDescending(p => p.YearMonthDay)
                 .DeferredSingle()
                 .FromCacheAsync(DateTime.UtcNow.AddHours(2))
                 .Result;
 
-            return closingPrice;
+            return latestPortfoliosPrices;
         }
 
         /// <summary>
@@ -555,10 +553,6 @@ namespace gzDAL.Repos {
         private IEnumerable<CustFundShareDto> GetMonthsBoughtFundsShares(
             int customerId, 
             string yearMonthStr) {
-
-            // TODO: is the line below needed? To ever search for a previous month's shares
-            //string lastFundsHoldingMonth = GetMonthsFundShares(customerId, db,
-            // DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent));
 
             var custFundShareTask =
                 _db.CustFundShares
