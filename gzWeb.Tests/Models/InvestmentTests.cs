@@ -32,29 +32,32 @@ namespace gzWeb.Tests.Models {
 
             var devDbConnString = ConfigurationManager.ConnectionStrings["gzDevDb"].ConnectionString;
 
-            using (var dbSimpleCtx = DbUtil.getOpenDb(devDbConnString))
-            using (ApplicationDbContext db = new ApplicationDbContext(null)) {
+            var now = DateTime.UtcNow;
+            var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
+            var endYearMonthStr = now.ToStringYearMonth();
 
-                var cpRepo = new CustPortfolioRepo(db);
-                var gzTrx = new GzTransactionRepo(db);
+            int monthsCnt = 0;
+            // Loop through all the months activity
+            while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
 
-                var now = DateTime.UtcNow;
-                var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
-                var endYearMonthStr = now.ToStringYearMonth();
+                monthsCnt++;
 
-                int monthsCnt = 0;
-                // Loop through all the months activity
-                while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
+                using (ApplicationDbContext db = new ApplicationDbContext(null)) {
 
-                    monthsCnt++;
+                    var cpRepo = new CustPortfolioRepo(db);
+                    var gzTrx = new GzTransactionRepo(db);
 
-                    SetDbMonthlyPortfolioLossesForTestPlayers(customerEmails, db, monthsCnt, cpRepo, startYearMonthStr, gzTrx);
+                    SetDbMonthlyPortfolioLossesForTestPlayers(customerEmails, db, monthsCnt, cpRepo,
+                        startYearMonthStr, gzTrx);
+                }
+
+                using (var dbSimpleCtx = DbUtil.getOpenDb(devDbConnString)) {
 
                     SetDbClearMonth(startYearMonthStr, dbSimpleCtx);
-
-                    // month ++
-                    startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
                 }
+
+                // month ++
+                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
             }
         }
 
@@ -121,7 +124,7 @@ namespace gzWeb.Tests.Models {
             gzTrx.SaveDbPlayingLoss(
                 custId,
                 1000,
-                createdOnUtc, 
+                createdOnUtc,
                 3000, 3000, 1000, -2000, 3000);
         }
 
