@@ -684,13 +684,12 @@ module UserTrx =
     open System.Collections.Generic
     open System
     open NLog
+    open GzDb.Trx
 
     let logger = LogManager.GetCurrentClassLogger()
 
     /// Upsert UserPortfolio, VintageShares, InvBalance
-    let private upsDbClearMonth (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance) : unit =
-        let invBalanceInput = (userPortfolioInput, userFinance) ||> getInvBalanceInput
-
+    let private upsDbClearMonth (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance)(invBalanceInput : InvBalanceInput) : unit =
         // Ups User Portfolios
         userPortfolioInput |> UserPortfolio.upsDbUserPortfolio
         
@@ -707,13 +706,13 @@ module UserTrx =
         |> InvBalance.upsDbInvBalance
 
     /// Process input balances
-    let private processUserBalances (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance): unit = 
+    let private setDbProcessUserBalances (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance)(invBalanceInput : InvBalanceInput): unit = 
         if userPortfolioInput.CashToInvest > 0M || userFinance.EndBalance > 0M then
             logger.Info(sprintf "Processing investment balances for user id %d on month of %s having these financial amounts\n%A" 
                 userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance)
 
-        let dbOper() = (userPortfolioInput, userFinance) ||> upsDbClearMonth
-        (userPortfolioInput.DbUserMonth.Db, dbOper) ||> tryDBCommit3Times
+        let dbTrxOper() = transactionWith <| fun () -> (userPortfolioInput, userFinance, invBalanceInput) |||> upsDbClearMonth
+        (3, dbTrxOper) ||> retry
 
     /// get the portfolio market quote that's latest within the month processing
     let private findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
@@ -771,5 +770,7 @@ module UserTrx =
                     let dbUserMonth = {Db = db; UserId = trxRow.CustomerId; Month = yyyyMm}
                     let userPortfolioInput = (dbUserMonth, trxRow, portfoliosPrices) |||> getUserPortfolioInput
                     let userFinance = trxRow |> getUserFinance
-                    (userPortfolioInput, userFinance) ||> processUserBalances
+                    let invBalanceInput = (userPortfolioInput, userFinance) ||> getInvBalanceInput
+
+                    (userPortfolioInput, userFinance, invBalanceInput) |||> setDbProcessUserBalances
                 )
