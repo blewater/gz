@@ -27,7 +27,15 @@ namespace gzDAL.Repos.Interfaces
         void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount,
             DateTime createdOnUtc);
 
-        void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, DateTime createdOnUtc);
+        void SaveDbPlayingLoss(
+            int customerId, 
+            decimal totPlayinLossAmount, 
+            DateTime createdOnUtc,
+            decimal begGmBalance, 
+            decimal deposits, 
+            decimal withdrawals, 
+            decimal gainLoss,
+            decimal endGmbalance);
 
         void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, DateTime createdOnUtc);
 
