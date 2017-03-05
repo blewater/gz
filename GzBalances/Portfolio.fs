@@ -598,7 +598,7 @@ module InvBalance =
         invBalanceRow.BegGmBalance <- input.UserFinance.BegBalance
         invBalanceRow.Deposits <- input.UserFinance.Deposits
         invBalanceRow.Withdrawals <- input.UserFinance.Withdrawals
-        invBalanceRow.GamingGainLoss <- input.UserFinance.GainLoss
+        invBalanceRow.GmGainLoss <- input.UserFinance.GainLoss
         invBalanceRow.EndGmBalance <- input.UserFinance.EndBalance
 
         invBalanceRow.UpdatedOnUTC <- DateTime.UtcNow
@@ -748,7 +748,7 @@ module UserTrx =
             EndBalance = if trxRow.EndGmBalance.HasValue then trxRow.EndGmBalance.Value else 0m
             Deposits = if trxRow.Deposits.HasValue then trxRow.Deposits.Value else 0m
             Withdrawals = if trxRow.Withdrawals.HasValue then trxRow.Withdrawals.Value else 0m
-            GainLoss = if trxRow.GainLoss.HasValue then trxRow.GainLoss.Value else 0m
+            GainLoss = if trxRow.GmGainLoss.HasValue then trxRow.GmGainLoss.Value else 0m
             AmountToBuyStock = trxRow.Amount
         }
 

@@ -494,7 +494,7 @@ namespace gzDAL.Conf
             // Reset invBalances for test user
             context.Database.ExecuteSqlCommand("Delete InvBalances Where CustomerId = " + custId);
             // Put fake amounts for gaming balances that are null
-            context.Database.ExecuteSqlCommand("Update InvBalances Set BegGmBalance = 3000, Deposits = 3000, Withdrawals = 1000, GamingGainLoss = -2000, EndGmBalance = 3000 Where BegGmBalance is NUll OR Deposits is Null OR Withdrawals is Null OR GamingGainLoss is NUll OR EndGmBalance is NUll");
+            context.Database.ExecuteSqlCommand("Update InvBalances Set BegGmBalance = 3000, Deposits = 3000, Withdrawals = 1000, GmGainLoss = -2000, EndGmBalance = 3000 Where BegGmBalance is NUll OR Deposits is Null OR Withdrawals is Null OR GmGainLoss is NUll OR EndGmBalance is NUll");
 
             var custPortfolioRepo = new CustPortfolioRepo(context);
             var invB = new InvBalanceRepo(

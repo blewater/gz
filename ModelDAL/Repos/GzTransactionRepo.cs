@@ -645,7 +645,7 @@ namespace gzDAL.Repos {
                         BegGmBalance = begGmBalance,
                         Deposits = deposits,
                         Withdrawals = withdrawals,
-                        GainLoss = gainLoss,
+                        GmGainLoss = gainLoss,
                         EndGmBalance = endGmbalance,
                         // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
                         CreditPcntApplied = creditPcntApplied,
