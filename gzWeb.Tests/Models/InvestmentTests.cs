@@ -82,7 +82,7 @@ namespace gzWeb.Tests.Models {
             }
         }
 
-        private static void SetDbClearMonth(string startYearMonthStr, DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.Gzdevdb dbSimpleCtx) {
+        private static void SetDbClearMonth(string startYearMonthStr, DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev dbSimpleCtx) {
 
             var lowPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Low, 1f,
                 DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));

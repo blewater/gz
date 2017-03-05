@@ -106,7 +106,7 @@ namespace gzDAL.Repos {
             var cachedBalanceRow = new InvBalAmountsRow();
 
             var balRow = res.Select(b => new {
-                b.Balance, b.LowRiskShares, b.MediumRiskShares, b.HighRiskShares, b.BegGmBalance, b.Deposits, b.Withdrawals, b.GamingGainLoss, b.EndGmBalance, b.UpdatedOnUtc
+                b.Balance, b.LowRiskShares, b.MediumRiskShares, b.HighRiskShares, BegGmBalance = b.BegGmBalance, b.Deposits, b.Withdrawals, GamingGainLoss = b.GmGainLoss, EndGmBalance = b.EndGmBalance, b.UpdatedOnUtc
             })
             .SingleOrDefault();
 
@@ -825,7 +825,7 @@ namespace gzDAL.Repos {
                     BegGmBalance = begGmBalance,
                     Deposits = deposits,
                     Withdrawals = withdrawals,
-                    GamingGainLoss = gamingGainLoss,
+                    GmGainLoss = gamingGainLoss,
                     EndGmBalance = endGmBalance,
                     TotalCashInvInHold = totalCashInvInHold,
                     TotalCashInvestments = totalCashInvestments,

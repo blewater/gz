@@ -11,14 +11,15 @@ module DbUtil =
 
     // Use for compile time memory schema representation
     [<Literal>]
-    let CompileTimeDbString = "Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + __SOURCE_DIRECTORY__ + @"\gzDevDb.mdf;Integrated Security=True;Connect Timeout=30"
-
+    // TODO: investigate switching to local db if compilation perf suffers
+    // let CompileTimeDbString = "Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + __SOURCE_DIRECTORY__ + @"\gzdbdev.mdf;Integrated Security=True;Connect Timeout=30"
+    let CompileTimeDbString = "Server=tcp:gzdbdev.database.windows.net,1433;Database=gzDbDev;User ID=gzdbdevsa@gzdbdev;Password=Gzdb2016;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     let logger = LogManager.GetCurrentClassLogger()
 
 //-- Types
 
     type DbSchema = SqlDataConnection<ConnectionString=CompileTimeDbString >
-    type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.Gzdevdb
+    type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev
     type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
     type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
     type DbFunds = DbSchema.ServiceTypes.Funds

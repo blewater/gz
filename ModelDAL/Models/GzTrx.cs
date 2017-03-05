@@ -65,7 +65,7 @@ namespace gzDAL.Models {
         /// Monthly Ending Gaming balance imported from Everymatrix reports
         /// </summary>
         [DefaultValue(0)]
-        public decimal? GainLoss { get; set; }
+        public decimal? GmGainLoss { get; set; }
 
         /// <summary>
         /// 
