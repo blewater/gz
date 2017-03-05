@@ -31,33 +31,30 @@ namespace gzWeb.Tests.Models {
             };
 
             var devDbConnString = ConfigurationManager.ConnectionStrings["gzDevDb"].ConnectionString;
+            using (ApplicationDbContext db = new ApplicationDbContext(null))
+            using (var dbSimpleCtx = DbUtil.getOpenDb(devDbConnString)) {
 
-            var now = DateTime.UtcNow;
-            var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
-            var endYearMonthStr = now.ToStringYearMonth();
+                var now = DateTime.UtcNow;
+                var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
+                var endYearMonthStr = now.ToStringYearMonth();
 
-            int monthsCnt = 0;
-            // Loop through all the months activity
-            while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
+                int monthsCnt = 0;
+                // Loop through all the months activity
+                while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
 
-                monthsCnt++;
-
-                using (ApplicationDbContext db = new ApplicationDbContext(null)) {
+                    monthsCnt++;
 
                     var cpRepo = new CustPortfolioRepo(db);
                     var gzTrx = new GzTransactionRepo(db);
 
                     SetDbMonthlyPortfolioLossesForTestPlayers(customerEmails, db, monthsCnt, cpRepo,
                         startYearMonthStr, gzTrx);
-                }
-
-                using (var dbSimpleCtx = DbUtil.getOpenDb(devDbConnString)) {
 
                     SetDbClearMonth(startYearMonthStr, dbSimpleCtx);
-                }
 
-                // month ++
-                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+                    // month ++
+                    startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+                }
             }
         }
 
@@ -85,7 +82,7 @@ namespace gzWeb.Tests.Models {
             }
         }
 
-        private static void SetDbClearMonth(string startYearMonthStr, DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb dbSimpleCtx) {
+        private static void SetDbClearMonth(string startYearMonthStr, DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.Gzdevdb dbSimpleCtx) {
 
             var lowPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Low, 1f,
                 DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
@@ -123,7 +120,7 @@ namespace gzWeb.Tests.Models {
 
             gzTrx.SaveDbPlayingLoss(
                 custId,
-                1000,
+                2000,
                 createdOnUtc,
                 3000, 3000, 1000, -2000, 3000);
         }
