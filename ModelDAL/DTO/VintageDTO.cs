@@ -41,8 +41,8 @@ namespace gzDAL.DTO {
         public bool Selected { get; set; }
 
         /// <summary>
-        /// Shares comprising this vintage
+        /// Portfolio Shares of a month (vintage)
         /// </summary>
-        public IEnumerable<CustFundShareDto> CustomerVintageShares { get; set; } 
+        public VintageSharesDto VintageShares { get; set; } 
     }
 }

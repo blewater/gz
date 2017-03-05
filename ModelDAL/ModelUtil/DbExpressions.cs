@@ -69,6 +69,42 @@ namespace gzDAL.ModelUtil {
         }
 
         /// <summary>
+        /// 
+        /// Get the year from a yyyyMm or yyyyMmDd string value i.e. 20160512 -> 2016
+        /// 
+        /// </summary>
+        /// <param name="yearMonth">Could be YyyyMm Or YyyyMmDd</param>
+        /// <returns></returns>
+        public static int GetYear(string yearMonth) {
+
+            return int.Parse(yearMonth.Substring(0, 4));
+        }
+
+        /// <summary>
+        /// 
+        /// Get the month from a yyyyMm or yyyyMmDd string value i.e. 20160512 -> 5
+        /// 
+        /// </summary>
+        /// <param name="yearMonth">Could be YyyyMm Or YyyyMmDd</param>
+        /// <returns></returns>
+        public static int GetMonth(string yearMonth) {
+
+            return int.Parse(yearMonth.Substring(4, 2));
+        }
+
+        /// <summary>
+        /// 
+        /// Get the day from a yyyyMmDd string value i.e. 20160502 -> 2
+        /// 
+        /// </summary>
+        /// <param name="yyyyMmDd">the year month day string in value format: YyyyMmDd</param>
+        /// <returns></returns>
+        public static int GetDay(string yyyyMmDd) {
+
+            return int.Parse(yyyyMmDd.Substring(6, 2));
+        }
+
+        /// <summary>
         /// Get string rep of previous month
         /// i.e. June 2015 -> "201505"
         /// January 2016 -> "201512"

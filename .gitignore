@@ -108,6 +108,8 @@ _ReSharper*/
 **/load-references-production.fsx
 **/load-project-production.fsx
 **/load-project-debug.fsx
+**/load-project-release.fsx
+**/load-references-release.fsx
 
 # JustCode is a .NET coding add-in
 .JustCode
