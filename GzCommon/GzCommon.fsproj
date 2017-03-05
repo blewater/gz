@@ -74,12 +74,12 @@
     <Compile Include="DateStr.fs" />
     <Compile Include="DbUtil.fs" />
     <Content Include="packages.config" />
-    <Compile Include="CurrencyRates.fs" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
     <None Include="Scripts\load-project-debug.fsx" />
     <Compile Include="ErrorHandling.fs" />
+    <None Include="gzDevDbSchema.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
