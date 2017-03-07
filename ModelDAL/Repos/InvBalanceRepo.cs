@@ -19,6 +19,9 @@ namespace gzDAL.Repos {
     /// </summary>
     public class InvBalAmountsRow {
         public decimal Balance { get; set; }
+        public decimal CashInvestment { get; set; }
+        // Total player losses for vintages that have not been sold
+        public decimal TotalCashInvInHold { get; set; }
         public decimal LowRiskShares { get; set; }
         public decimal MediumRiskShares { get; set; }
         public decimal HighRiskShares { get; set; }
@@ -106,11 +109,13 @@ namespace gzDAL.Repos {
             var cachedBalanceRow = new InvBalAmountsRow();
 
             var balRow = res.Select(b => new {
-                b.Balance, b.LowRiskShares, b.MediumRiskShares, b.HighRiskShares, BegGmBalance = b.BegGmBalance, b.Deposits, b.Withdrawals, GmGainLoss = b.GmGainLoss, EndGmBalance = b.EndGmBalance, b.UpdatedOnUtc
+                b.Balance, b.CashInvestment, b.TotalCashInvInHold, b.LowRiskShares, b.MediumRiskShares, b.HighRiskShares, b.BegGmBalance, b.Deposits, b.Withdrawals, GmGainLoss = b.GmGainLoss, EndGmBalance = b.EndGmBalance, b.UpdatedOnUtc
             })
             .SingleOrDefault();
 
             cachedBalanceRow.Balance = balRow?.Balance ?? 0;
+            cachedBalanceRow.CashInvestment = balRow?.CashInvestment ?? 0;
+            cachedBalanceRow.TotalCashInvInHold = balRow?.TotalCashInvInHold ?? 0;
             cachedBalanceRow.LowRiskShares = balRow?.LowRiskShares ?? 0;
             cachedBalanceRow.MediumRiskShares = balRow?.MediumRiskShares ?? 0;
             cachedBalanceRow.HighRiskShares = balRow?.HighRiskShares ?? 0;

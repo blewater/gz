@@ -370,7 +370,7 @@ namespace gzDAL.Repos {
             var latestPortfoliosPrices = 
                 _db.PortfolioPrices
                     .OrderByDescending(p => p.YearMonthDay)
-                .DeferredSingle()
+                .DeferredFirst()
                 .FromCacheAsync(DateTime.UtcNow.AddHours(2))
                 .Result;
 
