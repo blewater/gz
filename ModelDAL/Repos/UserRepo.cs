@@ -119,7 +119,7 @@ namespace gzDAL.Repos
                     BegMonthlyGmBalance = invBalanceRes.BegGmBalance,
                     MonthlyDeposits = invBalanceRes.Deposits,
                     MonthlyWithdrawals = invBalanceRes.Withdrawals,
-                    MonthlyGamingGainLoss = invBalanceRes.GamingGainLoss,
+                    MonthlyGamingGainLoss = invBalanceRes.GmGainLoss,
                     EndMonthlyGmBalance = invBalanceRes.EndGmBalance,
 
                     // 
