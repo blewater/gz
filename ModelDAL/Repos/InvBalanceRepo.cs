@@ -26,7 +26,7 @@ namespace gzDAL.Repos {
         public decimal BegGmBalance { get; set; }
         public decimal Deposits { get; set; }
         public decimal Withdrawals { get; set; }
-        public decimal GamingGainLoss { get; set; }
+        public decimal GmGainLoss { get; set; }
         public decimal EndGmBalance { get; set; }
         public DateTime? UpdatedOnUtc { get; set; }
     }
@@ -106,20 +106,20 @@ namespace gzDAL.Repos {
             var cachedBalanceRow = new InvBalAmountsRow();
 
             var balRow = res.Select(b => new {
-                b.Balance, b.LowRiskShares, b.MediumRiskShares, b.HighRiskShares, BegGmBalance = b.BegGmBalance, b.Deposits, b.Withdrawals, GamingGainLoss = b.GmGainLoss, EndGmBalance = b.EndGmBalance, b.UpdatedOnUtc
+                b.Balance, b.LowRiskShares, b.MediumRiskShares, b.HighRiskShares, BegGmBalance = b.BegGmBalance, b.Deposits, b.Withdrawals, GmGainLoss = b.GmGainLoss, EndGmBalance = b.EndGmBalance, b.UpdatedOnUtc
             })
             .SingleOrDefault();
 
             cachedBalanceRow.Balance = balRow?.Balance ?? 0;
-            cachedBalanceRow.LowRiskShares = balRow.LowRiskShares;
-            cachedBalanceRow.MediumRiskShares = balRow.LowRiskShares;
-            cachedBalanceRow.HighRiskShares = balRow.LowRiskShares;
+            cachedBalanceRow.LowRiskShares = balRow?.LowRiskShares ?? 0;
+            cachedBalanceRow.MediumRiskShares = balRow?.MediumRiskShares ?? 0;
+            cachedBalanceRow.HighRiskShares = balRow?.HighRiskShares ?? 0;
             cachedBalanceRow.BegGmBalance = balRow?.BegGmBalance??0;
             cachedBalanceRow.Deposits = balRow?.Deposits ?? 0;
             cachedBalanceRow.Withdrawals = balRow?.Withdrawals ?? 0;
-            cachedBalanceRow.GamingGainLoss = balRow?.GamingGainLoss ?? 0;
+            cachedBalanceRow.GmGainLoss = balRow?.GmGainLoss ?? 0;
             cachedBalanceRow.EndGmBalance = balRow?.EndGmBalance ?? 0;
-            cachedBalanceRow.UpdatedOnUtc = balRow?.UpdatedOnUtc;
+            cachedBalanceRow.UpdatedOnUtc = balRow?.UpdatedOnUtc ?? DateTime.MinValue;
 
             return cachedBalanceRow;
         }
