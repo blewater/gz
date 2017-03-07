@@ -62,51 +62,6 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Get month's playling loss
-        /// 
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public async Task<decimal> GetLastInvestmentAmountAsync(int userId) {
-
-            using (var db = new ApplicationDbContext()) {
-
-                var thisYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
-
-                var lastInvestmentAmount = await db.Database
-                    .SqlQuery<decimal>("Select Amount From dbo.GetMonthsTrxAmount(@CustomerId, @YearMonth, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@YearMonth", thisYearMonthStr),
-                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
-                    .SingleOrDefaultAsync();
-
-                return lastInvestmentAmount;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// Get Total playing loss
-        ///   
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public async Task<decimal> GetTotalPlayerLossesAmountAsync(int userId) {
-
-            using (var db = new ApplicationDbContext()) {
-
-                decimal totalInvestmentsAmount = await db.Database
-                    .SqlQuery<decimal>("Select dbo.GetTotalTrxAmount(@CustomerId, @TrxType)",
-                        new SqlParameter("@CustomerId", userId),
-                        new SqlParameter("@TrxType", (int)GzTransactionTypeEnum.CreditedPlayingLoss))
-                    .SingleAsync();
-
-                return totalInvestmentsAmount;
-            }
-        }
-
-        /// <summary>
-        /// 
         /// Get the Customer ids whose transaction activity has been initiated already 
         /// within a range of months
         /// 

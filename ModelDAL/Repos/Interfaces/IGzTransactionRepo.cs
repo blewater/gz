@@ -10,10 +10,6 @@ namespace gzDAL.Repos.Interfaces
 
         decimal LastInvestmentAmount(int customerId, string yearMonthStr);
 
-        Task<decimal> GetLastInvestmentAmountAsync(int userId);
-
-        Task<decimal> GetTotalPlayerLossesAmountAsync(int userId);
-
         IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
 
         DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent);

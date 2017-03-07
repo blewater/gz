@@ -90,11 +90,7 @@ namespace gzDAL.Repos
                 var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
 
                 //---------------- Execute SQL Functions
-                var totalPlayerLossesAmount = await _gzTransactionRepo.GetTotalPlayerLossesAmountAsync(userId);
-
                 var vintages = _invBalanceRepo.GetCustomerVintages(userId);
-
-                var lastInvestmentAmount = await _gzTransactionRepo.GetLastInvestmentAmountAsync(userId);
 
                 var withdrawalEligibility = await _gzTransactionRepo.GetWithdrawEligibilityDataAsync(userId);
                 //-------------- Retrieve previously executed async query results
@@ -106,7 +102,6 @@ namespace gzDAL.Repos
                 }
                 Assert(userRet != null);
 
-                // balance, last update
                 var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
 
                 // Package all the results
@@ -122,13 +117,10 @@ namespace gzDAL.Repos
                     MonthlyGamingGainLoss = invBalanceRes.GmGainLoss,
                     EndMonthlyGmBalance = invBalanceRes.EndGmBalance,
 
-                    // 
-                    TotalInvestments = totalPlayerLossesAmount,
-
-                    TotalInvestmentsReturns = invBalanceRes.Balance - totalPlayerLossesAmount,
+                    TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
 
                     NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                    LastInvestmentAmount = lastInvestmentAmount,
+                    LastInvestmentAmount = invBalanceRes.CashInvestment,
 
                     //latestBalanceUpdateDatetime
                     StatusAsOf = invBalanceRes.UpdatedOnUtc ?? DateTime.UtcNow.AddDays(-1), 
