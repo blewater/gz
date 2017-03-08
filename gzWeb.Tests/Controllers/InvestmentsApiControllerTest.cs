@@ -187,15 +187,17 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public void GetPortfoliosAllocationValues() {
+        public void GetVintages()
+        {
 
             var user = manager.FindByEmail("6month@allocation.com");
 
             var vintages = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
-            foreach (var vintageViewModel in vintages) {
-                Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}", 
-                    vintageViewModel.YearMonthStr, 
-                    vintageViewModel.InvestmentAmount, 
+            foreach (var vintageViewModel in vintages)
+            {
+                Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
+                    vintageViewModel.YearMonthStr,
+                    vintageViewModel.InvestmentAmount,
                     vintageViewModel.SellingValue,
                     vintageViewModel.Sold,
                     vintageViewModel.Locked);
