@@ -133,6 +133,84 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// Data method to enforce the 6? month lock-in period before allowed withdrawals.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public async Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId)
+        {
+
+            string prompt = "First available withdrawal on: ";
+
+            var tuple = await IsWithdrawalEligible(customerId);
+            var eligibleWithdrawDate = tuple.Item2;
+            var lockInDays = tuple.Item3;
+            bool okToWithdraw = tuple.Item1;
+
+            var retValues = new WithdrawEligibilityDTO()
+            {
+                LockInDays = lockInDays,
+                EligibleWithdrawDate = eligibleWithdrawDate,
+                OkToWithdraw = okToWithdraw,
+                Prompt = prompt
+            };
+
+            return retValues;
+        }
+
+        /// <summary>
+        /// 
+        /// Biz logic for withdrawal eligibility
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        private async Task<Tuple<bool, DateTime, int>> IsWithdrawalEligible(int customerId)
+        {
+
+            var task = _db.GzConfigurations
+                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            var confRow = task.Result;
+
+            var lockInDays = confRow
+                .Select(c => c.LOCK_IN_NUM_DAYS)
+                .Single();
+
+            var nowUtc = DateTime.UtcNow;
+            var monthsLockCnt = lockInDays / 30;
+
+            var oldestVintageStr =
+                await _db.InvBalances
+                    .Where(i => i.CustomerId == customerId)
+                    .DeferredMin(i => i.YearMonth)
+                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
+
+            var oldestVintage = oldestVintageStr != null ? DbExpressions.GetDtYearMonthStrTo1StOfMonth(oldestVintageStr) : nowUtc;
+            var eligibleWithdrawDate = oldestVintage.AddMonths( monthsLockCnt + 1 ); // the 1st of the 4th month
+            var okToWithdraw = eligibleWithdrawDate <= nowUtc;
+
+            return Tuple.Create(okToWithdraw, eligibleWithdrawDate, lockInDays);
+        }
+
+        /// <summary>
+        /// 
+        /// Enable or disable the withdrawal button
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public async Task<bool> GetEnabledWithdraw(int customerId)
+        {
+
+            var tuple = await IsWithdrawalEligible(customerId);
+            bool okToWithdraw = tuple.Item1;
+
+            return okToWithdraw;
+        }
+
+        /// <summary>
+        /// 
         /// Get User Vintages from InvBalance.
         /// 
         /// </summary>
@@ -140,9 +218,6 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public ICollection<VintageDto> GetCustomerVintages(int customerId) {
 
-            //var cacheDuration = new CacheItemPolicy() {
-            //    SlidingExpiration = TimeSpan.FromDays(1)
-            //};
             var task = _db.GzConfigurations
                 .FromCacheAsync(DateTime.UtcNow.AddDays(1));
             var confRow = task.Result;

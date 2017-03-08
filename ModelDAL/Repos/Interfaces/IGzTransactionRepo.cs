@@ -16,10 +16,6 @@ namespace gzDAL.Repos.Interfaces
 
         decimal GetWithdrawnFees(decimal liquidationAmount);
 
-        Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId);
-
-        Task<bool> GetEnabledWithdraw(int customerId);
-
         void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount,
             DateTime createdOnUtc);
 

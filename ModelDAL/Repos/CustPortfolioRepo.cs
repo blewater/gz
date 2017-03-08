@@ -213,30 +213,31 @@ namespace gzDAL.Repos
                 .Select(c => c)
                 .Single();
 
-            var portfolioDtos = (await (from p in db.Portfolios
-                join c in db.CustPortfolios on p.Id equals c.PortfolioId
-                join b in db.InvBalances on
-                    new {CustomerId = c.CustomerId, YearMonth = c.YearMonth} equals
-                    new {CustomerId = b.CustomerId, YearMonth = b.YearMonth}
-                where c.CustomerId == customerId
-                      && !b.Sold
-                group b by p
-                into g
-                select new PortfolioDto {
-                    Id = g.Key.Id,
-                    Title = g.Key.Title,
-                    Color = g.Key.Color,
-                    ROI = ((RiskToleranceEnum)g.Key.RiskTolerance) == RiskToleranceEnum.Low
-                                ? gzDbConf.CONSERVATIVE_RISK_ROI
-                                : (RiskToleranceEnum)g.Key.RiskTolerance == RiskToleranceEnum.Medium
-                                    ? gzDbConf.MEDIUM_RISK_ROI
-                                    : gzDbConf.AGGRESSIVE_RISK_ROI,
-                    Risk = ((RiskToleranceEnum)g.Key.RiskTolerance),
-                    AllocatedAmount = g.Sum(b => b.CashInvestment),
-                    Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
-                        Name = f.Fund.HoldingName,
-                        Weight = f.Weight
-                    })
+            var portfolioDtos = 
+                (
+                    await 
+                (
+                    from p in db.Portfolios
+                        join b in db.InvBalances on p.Id equals b.PortfolioId
+                        where b.CustomerId == 8
+                        && !b.Sold
+                    group b by p
+                    into g
+                    select new PortfolioDto {
+                        Id = g.Key.Id,
+                        Title = g.Key.Title,
+                        Color = g.Key.Color,
+                        ROI = ((RiskToleranceEnum)g.Key.RiskTolerance) == RiskToleranceEnum.Low
+                                    ? gzDbConf.CONSERVATIVE_RISK_ROI
+                                    : (RiskToleranceEnum)g.Key.RiskTolerance == RiskToleranceEnum.Medium
+                                        ? gzDbConf.MEDIUM_RISK_ROI
+                                        : gzDbConf.AGGRESSIVE_RISK_ROI,
+                        Risk = ((RiskToleranceEnum)g.Key.RiskTolerance),
+                        AllocatedAmount = g.Sum(b => b.CashInvestment),
+                        Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
+                            Name = f.Fund.HoldingName,
+                            Weight = f.Weight
+                        })
                 })
 
                 // Cache 1 Day

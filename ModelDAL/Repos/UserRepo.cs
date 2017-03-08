@@ -89,10 +89,16 @@ namespace gzDAL.Repos
                 var userQtask = CacheUser(userId);
                 var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
 
-                //---------------- Execute SQL Functions
+                // Cashed linq query
+                var withdrawalEligibility = await _invBalanceRepo.GetWithdrawEligibilityDataAsync(userId);
+
+                //---------------- Execute SQL Function
                 var vintages = _invBalanceRepo.GetCustomerVintages(userId);
 
-                var withdrawalEligibility = await _gzTransactionRepo.GetWithdrawEligibilityDataAsync(userId);
+                var lastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(_gzTransactionRepo.LastInvestmentAmount(userId,
+                                                                                 DateTime.UtcNow
+                                                                                         .ToStringYearMonth
+                                                                                         ()));
                 //-------------- Retrieve previously executed async query results
 
                 // user
@@ -120,7 +126,7 @@ namespace gzDAL.Repos
                     TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
 
                     NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                    LastInvestmentAmount = invBalanceRes.CashInvestment,
+                    LastInvestmentAmount = lastInvestmentAmount,
 
                     //latestBalanceUpdateDatetime
                     StatusAsOf = invBalanceRes.UpdatedOnUtc ?? DateTime.UtcNow.AddDays(-1), 
