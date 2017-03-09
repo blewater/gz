@@ -151,7 +151,7 @@ namespace gzWeb.Tests.Controllers
 
             var s = Stopwatch.StartNew();
             var userId = _db.Users
-                .Where(u => u.Email == "salem8@gmail.com")
+                .Where(u => u.Email == "testuser@gz.com")
                 .Select(u => u.Id).Single();
             var tuple = await _userRepo.GetSummaryDataAsync(userId);
             var user = tuple.Item2;

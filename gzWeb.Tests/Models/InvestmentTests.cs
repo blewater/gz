@@ -33,6 +33,8 @@ namespace gzWeb.Tests.Models {
 
             string[] customerEmails = new string[] {
                 "salem8@gmail.com",
+                "joe@mymail.com",
+                "testuser@gz.com",
                 "info@nessos.gr",
                 "info1@nessos.gr",
                 "testuser@gz.com",

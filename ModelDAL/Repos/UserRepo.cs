@@ -123,13 +123,14 @@ namespace gzDAL.Repos
                     MonthlyGamingGainLoss = invBalanceRes.GmGainLoss,
                     EndMonthlyGmBalance = invBalanceRes.EndGmBalance,
 
+                    TotalInvestments = invBalanceRes.TotalCashInvInHold,
                     TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
 
                     NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                     LastInvestmentAmount = lastInvestmentAmount,
 
                     //latestBalanceUpdateDatetime
-                    StatusAsOf = invBalanceRes.UpdatedOnUtc ?? DateTime.UtcNow.AddDays(-1), 
+                    StatusAsOf = invBalanceRes.UpdatedOnUtc > DateTime.MinValue ? invBalanceRes.UpdatedOnUtc : DateTime.UtcNow.AddDays(-1), 
                     Vintages = vintages,
 
                     // Withdrawal eligibility

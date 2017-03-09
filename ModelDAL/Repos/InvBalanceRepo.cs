@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 using gzDAL.Conf;
 using gzDAL.DTO;
@@ -31,7 +33,7 @@ namespace gzDAL.Repos {
         public decimal Withdrawals { get; set; }
         public decimal GmGainLoss { get; set; }
         public decimal EndGmBalance { get; set; }
-        public DateTime? UpdatedOnUtc { get; set; }
+        public DateTime UpdatedOnUtc { get; set; }
     }
 
     public class InvBalanceRepo : IInvBalanceRepo {
@@ -180,13 +182,19 @@ namespace gzDAL.Repos {
             var nowUtc = DateTime.UtcNow;
             var monthsLockCnt = lockInDays / 30;
 
-            var oldestVintageStr =
+            string key = "oldestVintage" + customerId;
+            var oldestVintageYm = (string) MemoryCache.Default.Get(key)
+                ??
                 await _db.InvBalances
                     .Where(i => i.CustomerId == customerId)
-                    .DeferredMin(i => i.YearMonth)
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
+                    .Select(i => i.YearMonth)
+                    .OrderBy(ym => ym)
+                    .FirstOrDefaultAsync();
 
-            var oldestVintage = oldestVintageStr != null ? DbExpressions.GetDtYearMonthStrTo1StOfMonth(oldestVintageStr) : nowUtc;
+            // 1 week cache
+            if (oldestVintageYm != null) MemoryCache.Default.Set(key, oldestVintageYm, DateTimeOffset.UtcNow.AddDays(7));
+
+            var oldestVintage = oldestVintageYm != null ? DbExpressions.GetDtYearMonthStrTo1StOfMonth(oldestVintageYm) : nowUtc;
             var eligibleWithdrawDate = oldestVintage.AddMonths( monthsLockCnt + 1 ); // the 1st of the 4th month
             var okToWithdraw = eligibleWithdrawDate <= nowUtc;
 
