@@ -72,7 +72,7 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // FundPrices
-            CreateUpdFundsPrices(context);
+            CreateUpdPortfoliosPrices(context);
             context.SaveChanges();
 
             // Portfolios
@@ -270,92 +270,22 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdFundsPrices(ApplicationDbContext context) {
+        private static void CreateUpdPortfoliosPrices(ApplicationDbContext context) {
 
-            // End of 2015
-            context.FundPrices.AddOrUpdate(
-                f => new {f.FundId, f.YearMonthDay},
-
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VSGBX").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VBMFX").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VSTCX").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "CFA").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                }
-                );
-
-            var begDateTime = new DateTime(2016, 9, 1, 18, 1, 1);
-            var endDateTime = DateTime.UtcNow;
+            var now = DateTime.UtcNow;
+            var begDateTime = now.AddMonths(-6);
+            var endDateTime = now;
 
             while (begDateTime < endDateTime) {
 
-                context.FundPrices.AddOrUpdate(
-                    f => new { f.FundId, f.YearMonthDay },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VSGBX").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VSTCX").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "CFA").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VBMFX").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
+                context.PortfolioPrices.AddOrUpdate(
+                    pf => new { pf.YearMonthDay },
+                    new PortfolioPrice() {
+                        PortfolioLowPrice = 1,
+                        PortfolioMediumPrice = 1,
+                        PortfolioHighPrice = 1,
+                        YearMonthDay = begDateTime.ToStringYearMonthDay(),
+                        UpdatedOnUtc = DateTime.UtcNow
                     }
                     );
 
