@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
@@ -110,7 +109,7 @@ namespace gzWeb.Tests.Controllers
                 .First();
             latestVin.Selected = true;
 
-            _invBalanceRepo.SetVintagesMarketPrices(user.Id, vintagesDto);
+            _invBalanceRepo.SetVintagesPresentMarketValue(user.Id, vintagesDto);
 
             investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto, bypassQueue: true);
         }
@@ -137,7 +136,7 @@ namespace gzWeb.Tests.Controllers
             ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
 
-            _invBalanceRepo.SetVintagesMarketPrices(user.Id, vintagesDto);
+            _invBalanceRepo.SetVintagesPresentMarketValue(user.Id, vintagesDto);
 
             vintagesDto = investmentsApiController.SaveDbSellVintages(
                 user.Id, 

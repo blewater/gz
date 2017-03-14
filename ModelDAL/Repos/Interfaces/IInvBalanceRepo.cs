@@ -12,13 +12,13 @@ namespace gzDAL.Repos.Interfaces {
         Task<InvBalAmountsRow> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask);
         Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId);
         Task<bool> GetEnabledWithdraw(int customerId);
-        void SetVintagesMarketPrices(int customerId, IEnumerable<VintageDto> vintages);
+        int SetVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages);
         ICollection<VintageDto> GetCustomerVintages(int customerId);
-
         ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId);
         ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId, List<VintageDto> customerVintages);
-        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
-
+        ICollection<VintageDto> GetCustomerVintagesSellingValueOn(int customerId, List<VintageDto> customerVintages,
+            string sellOnThisYearMonth);
+        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "");
         bool SaveDbSellAllCustomerFundsShares(
             int customerId, 
             DateTime updatedDateTimeUtc, 
