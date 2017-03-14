@@ -685,6 +685,10 @@
     <Compile Include="Migrations\201703051931024_Standardize Gm balance naming.Designer.cs">
       <DependentUpon>201703051931024_Standardize Gm balance naming.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703142156373_Clear GzTrx Indices.cs" />
+    <Compile Include="Migrations\201703142156373_Clear GzTrx Indices.Designer.cs">
+      <DependentUpon>201703142156373_Clear GzTrx Indices.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1443,6 +1447,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703051931024_Standardize Gm balance naming.resx">
       <DependentUpon>201703051931024_Standardize Gm balance naming.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703142156373_Clear GzTrx Indices.resx">
+      <DependentUpon>201703142156373_Clear GzTrx Indices.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
