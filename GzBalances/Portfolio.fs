@@ -157,15 +157,23 @@ module DailyPortfolioShares =
                   yield yQuote }
         |> Seq.take count |> Seq.rev
 
+    /// Update an existing row of PortfolioPrices
+    let private updDbPortfolioPrice
+                (dbPortfolioPrices : DbPortfolioPrices)
+                (portfolioPrices : PortfoliosPrices) =
+
+        dbPortfolioPrices.PortfolioLowPrice <- portfolioPrices.PortfolioLowRiskPrice.Price
+        dbPortfolioPrices.PortfolioMediumPrice <- portfolioPrices.PortfolioMediumRiskPrice.Price
+        dbPortfolioPrices.PortfolioHighPrice <- portfolioPrices.PortfolioHighRiskPrice.Price
+        dbPortfolioPrices.UpdatedOnUtc <- DateTime.UtcNow
+
     /// insert a new portfolio price for a trading day and price
     let private insDbNewRowPortfolioPrice (db : DbContext)(portfolioPrices : PortfoliosPrices) =
         let newPortfolioPriceRow = new DbPortfolioPrices(
-                                        PortfolioLowPrice = portfolioPrices.PortfolioLowRiskPrice.Price,
-                                        PortfolioMediumPrice = portfolioPrices.PortfolioMediumRiskPrice.Price,
-                                        PortfolioHighPrice = portfolioPrices.PortfolioHighRiskPrice.Price,
-                                        YearMonthDay = portfolioPrices.PortfolioLowRiskPrice.TradedOn.ToYyyyMmDd,
-                                        UpdatedOnUtc = DateTime.UtcNow
+                                        YearMonthDay = portfolioPrices.PortfolioLowRiskPrice.TradedOn.ToYyyyMmDd
                                     )
+        (newPortfolioPriceRow, portfolioPrices) 
+            ||> updDbPortfolioPrice
 
         db.PortfolioPrices.InsertOnSubmit(newPortfolioPriceRow)
         
@@ -177,11 +185,6 @@ module DailyPortfolioShares =
             exactlyOneOrDefault
         }
 
-    let private insDbPortfolioPrices (db : DbContext)(portfoliosPrices : PortfoliosPrices) : unit =
-
-        (db, portfoliosPrices) ||> insDbNewRowPortfolioPrice
-        db.DataContext.SubmitChanges()
-
     /// Insert the portfolio prices for a trading day if not existing already
     let private setDbAskToSavePortfolioPrices(db : DbContext)(portfoliosPrices : PortfoliosPrices) : unit =
 
@@ -190,12 +193,19 @@ module DailyPortfolioShares =
 
         if isNull portfolioPricesRow then
 
-            (db, portfoliosPrices) ||> insDbPortfolioPrices
+            (db, portfoliosPrices) ||> insDbNewRowPortfolioPrice
+        else
+            (portfolioPricesRow, portfoliosPrices) 
+                ||> updDbPortfolioPrice
+
+        db.DataContext.SubmitChanges()
 
     /// Save all trading days portfolio prices
-    let private setDbPortfoliosPrices(db : DbContext)(portfoliosPrices : PortfoliosPricesMap) : PortfoliosPricesMap=
+    let setDbPortfoliosPrices(db : DbContext)(portfoliosPrices : PortfoliosPricesMap) : PortfoliosPricesMap=
         portfoliosPrices 
-        |> Map.iter (fun key value -> (db, value) ||> setDbAskToSavePortfolioPrices)
+        |> Map.iter (fun key value 
+                        -> (db, value) 
+                            ||> setDbAskToSavePortfolioPrices)
         portfoliosPrices
 
     /// Cast an array of 3 risk portfolios to PortfoliosPrices

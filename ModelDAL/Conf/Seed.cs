@@ -394,6 +394,7 @@ namespace gzDAL.Conf
             gzTrx.SaveDbPlayingLoss(
                 custId,
                 1000,
+                trxYearMonthStr,
                 createdOnUtc,
                 3000, 3000, 1000, -2000, 3000);
         }
@@ -405,6 +406,8 @@ namespace gzDAL.Conf
             var now = DateTime.UtcNow;
             var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
             var endYearMonthStr = now.ToStringYearMonth();
+
+            context.Database.ExecuteSqlCommand("Delete From GzTrxs");
 
             // Loop through all the months activity
             while (startYearMonthStr.BeforeEq(endYearMonthStr)) {

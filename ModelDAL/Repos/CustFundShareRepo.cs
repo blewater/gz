@@ -243,26 +243,62 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Calculate the present value of a vintage shares.
+        /// Unit Test Supporting version.
+        /// 
+        /// Calculate the value of a vintage shares on a given month in the past to support Unit testing.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="yearMonthStr"></param>
+        /// <param name="vintageYearMonthStr"></param>
+        /// <param name="sellOnThisYearMonth"></param>
         /// <returns></returns>
-        public VintageSharesDto GetVintageSharesMarketValue(int customerId, string yearMonthStr) {
+        public VintageSharesDto GetVintageSharesMarketValueOn(int customerId, string vintageYearMonthStr, string sellOnThisYearMonth)
+        {
+            var vintageShares = GetVintagePortfolioSharesDto(customerId, vintageYearMonthStr);
+
+            SetPortfolioSharesValueOn(vintageShares, sellOnThisYearMonth);
+
+            return vintageShares;
+        }
+
+        /// <summary>
+        /// 
+        /// Get a month's (vintage) portfolio shares.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintageYearMonthStr"></param>
+        /// <returns></returns>
+        private VintageSharesDto GetVintagePortfolioSharesDto(int customerId, string vintageYearMonthStr) {
 
             var vintageSharesTask =
                 _db.InvBalances
-                    .Where(c => c.CustomerId == customerId && c.YearMonth == yearMonthStr)
+                    .Where(c => c.CustomerId == customerId && c.YearMonth == vintageYearMonthStr)
                     .FromCacheAsync(DateTime.UtcNow.AddHours(4));
             var invBalanceRes = vintageSharesTask.Result;
 
             var vintageShares = invBalanceRes.Select(b => new VintageSharesDto {
-                LowRiskShares = b.LowRiskShares, MediumRiskShares = b.MediumRiskShares, HighRiskShares = b.HighRiskShares
+                LowRiskShares = b.LowRiskShares,
+                MediumRiskShares = b.MediumRiskShares,
+                HighRiskShares = b.HighRiskShares
             })
-            .SingleOrDefault();
+                .SingleOrDefault();
+            return vintageShares;
+        }
 
-            SetFundsSharesLatestValue(vintageShares);
+        /// <summary>
+        /// 
+        /// Calculate the present value of a vintage shares.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="vintageYearMonthStr"></param>
+        /// <returns></returns>
+        public VintageSharesDto GetVintageSharesMarketValue(int customerId, string vintageYearMonthStr) {
+
+            var vintageShares = GetVintagePortfolioSharesDto(customerId, vintageYearMonthStr);
+
+            SetPortfolioSharesLatestValue(vintageShares);
 
             return vintageShares;
         }
@@ -312,20 +348,49 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Calculate the latest funds prices of the In parameter shares collection.
+        /// Unit test supporting version
+        /// 
+        /// Calculate the latest portfolio prices of the In parameter shares collection.
         /// 
         /// To be used for selling shares not for calculating balances.
         /// 
         /// </summary>
         /// <param name="vintageShares"></param>
-        private void SetFundsSharesLatestValue(VintageSharesDto vintageShares) {
+        /// <param name="sellOnThisYearMonth"></param>
+        private void SetPortfolioSharesValueOn(VintageSharesDto vintageShares, string sellOnThisYearMonth) {
+            var latestPortfoliosPrices = GetPortfolioSharePriceOn(sellOnThisYearMonth);
+
+            SetVintageMarketPricing(vintageShares, latestPortfoliosPrices);
+        }
+
+        /// <summary>
+        /// 
+        /// Set vintage market pricing by in argument portfoliosPrices
+        /// 
+        /// </summary>
+        /// <param name="vintageShares"></param>
+        /// <param name="portfoliosPrices"></param>
+        private void SetVintageMarketPricing(VintageSharesDto vintageShares, PortfolioPrice portfoliosPrices) {
+
+            vintageShares.MarketPrice = vintageShares.LowRiskShares*(decimal) portfoliosPrices.PortfolioLowPrice +
+                                        vintageShares.MediumRiskShares*(decimal) portfoliosPrices.PortfolioMediumPrice +
+                                        vintageShares.HighRiskShares*(decimal) portfoliosPrices.PortfolioHighPrice;
+            vintageShares.TradingDay = DbExpressions.GetDtYearMonthDay(portfoliosPrices.YearMonthDay);
+        }
+
+        /// <summary>
+        /// 
+        /// Calculate the latest portfolio prices of the In parameter shares collection.
+        /// 
+        /// To be used for selling shares not for calculating balances.
+        /// 
+        /// </summary>
+        /// <param name="vintageShares"></param>
+        private void SetPortfolioSharesLatestValue(VintageSharesDto vintageShares) {
 
             var latestPortfoliosPrices = GetCachedLatestPortfolioSharePrice();
 
-            vintageShares.MarketPrice = vintageShares.LowRiskShares    * (decimal) latestPortfoliosPrices.PortfolioLowPrice +
-                                  vintageShares.MediumRiskShares * (decimal) latestPortfoliosPrices.PortfolioMediumPrice +
-                                  vintageShares.HighRiskShares   * (decimal) latestPortfoliosPrices.PortfolioHighPrice;
-            vintageShares.TradingDay = DbExpressions.GetDtYearMonthDay(latestPortfoliosPrices.YearMonthDay);
+            SetVintageMarketPricing(vintageShares, latestPortfoliosPrices);
         }
 
         /// <summary>
@@ -357,12 +422,37 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
+        /// Unit test supporting version
+        /// 
+        /// Gets the stored portfolio share price on a given month. Supports unit testing.
+        /// 
+        /// </summary>
+        /// <param name="onThisYearMonth"></param>
+        /// <returns></returns>
+        private PortfolioPrice GetPortfolioSharePriceOn(string onThisYearMonth) {
+            var onThisYearMonthDay = 
+                DbExpressions.GetStrYearEndofMonthDay
+                (
+                    int.Parse( onThisYearMonth.Substring(0, 4)), 
+                    int.Parse( onThisYearMonth.Substring(4, 2))
+                );
+            // Find latest closing price
+            var latestPortfoliosPrices =
+                _db.PortfolioPrices
+                    .Where(pp => String.Compare(pp.YearMonthDay, onThisYearMonthDay, StringComparison.Ordinal) <= 0)
+                    .OrderByDescending(p => p.YearMonthDay)
+                    .First();
+
+            return latestPortfoliosPrices;
+        }
+
+        /// <summary>
+        /// 
         /// Gets the latest stored portfolio share price. Edited from fund shares equivalent.
         /// 
         /// Cached for 2 hours.
         /// 
         /// </summary>
-        /// <param name="fundId"></param>
         /// <returns></returns>
         private PortfolioPrice GetCachedLatestPortfolioSharePrice() {
 
