@@ -274,7 +274,7 @@ namespace gzDAL.Repos
 
             foreach (var dto in vintagesList)
             {
-                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);
+                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod + 1);
                 dto.Locked = firstOfMonthUnlocked > DateTime.UtcNow;
             }
 
