@@ -49,43 +49,39 @@ namespace gzWeb.Tests.Models
             invBalRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, userPortfolio), gzTrx, userPortfolio);
         }
 
-        // Excel numbers for asserts
-        //TotalCashInv CashInv Balance Share Price Total Shares VintageShares   InvGain
-        //    1000	    1000	1000	    1	    1000	    1000	        0
-        //    2000	    1000	2100	    1.1	    1909.090909	909.0909091	    100
-        //    3000	    1000	3290.909091	1.2	    2742.424242	833.3333333	    290.9090909
-        //    4000	    1000	4565.151515	1.3	    3511.655012	769.2307692	    565.1515152
-        //    5000	    1000	5916.317016	1.4	    4225.940726	714.2857143	    916.3170163
-        //    6000	    1000	7338.911089	1.5	    4892.607393	666.6666667	    1338.911089
-        //    7000	    1000	8828.171828	1.6	    5517.607393	625	            1828.171828
-        [Test]
-        public void SetDb6MonthInvBalancesWithFreshTrx()
+        private FSharpMap<string, PortfolioTypes.PortfoliosPrices> GetPortfoliosPricesMapTable(string startYearMonthStr, int monthCnt)
         {
 
-            var devDbConnString = ConfigurationManager.ConnectionStrings["gzDevDb"].ConnectionString;
-            using (ApplicationDbContext db = new ApplicationDbContext(null))
-            using (var dbSimpleCtx = DbUtil.getOpenDb(devDbConnString))
-            {
+            var stockPrice = 1 + (monthCnt / 10.0);
 
-                ClearTrxHistory(userEmails);
-
-                var now = DateTime.UtcNow;
-                var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
-                var endYearMonthStr = now.ToStringYearMonth();
-
-                int monthsCnt = 0;
-                var usersFound = new List<int>();
-                // Loop through all the months activity
-                while (startYearMonthStr.BeforeEq(endYearMonthStr))
+            var lowPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Low, stockPrice,
+                DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
+            var mediumPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Medium, stockPrice,
+                DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
+            var highPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.High, stockPrice,
+                DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
+            var portfolioPricesEoM = new PortfolioTypes.PortfoliosPrices(lowPortfolioPrice, mediumPortfolioPrice,
+                highPortfolioPrice);
+            var portfoliosPriceDict = new Dictionary<string, PortfolioTypes.PortfoliosPrices>() {
                 {
-
-                    ProcessInvBalances(usersFound, monthsCnt, startYearMonthStr);
-
-                    monthsCnt++;
-                    startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+                    DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr)
+                        .ToStringYearMonthDay(),
+                    portfolioPricesEoM
                 }
-                AssertBalanceNumbers(usersFound, endYearMonthStr);
-            }
+            };
+
+            var portfoliosPriceMap = PortfolioTypes.toMap(portfoliosPriceDict);
+            return portfoliosPriceMap;
+        }
+
+        private FSharpMap<string, PortfolioTypes.PortfoliosPrices> SetDbPortfoliosPriceMap(
+            FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap,
+            string startYearMonthStr,
+            int monthCnt)
+        {
+
+            DailyPortfolioShares.setDbPortfoliosPrices(SqlProviderCtx, portfoliosPriceMap);
+            return portfoliosPriceMap;
         }
 
         private void AssertBalanceNumbers(List<int> usersFound, string endYearMonthStr)
@@ -111,7 +107,7 @@ namespace gzWeb.Tests.Models
         }
 
         private void ProcessInvBalances(
-            List<int> usersFound, 
+            List<int> usersFound,
             int monthsCnt,
             string startYearMonthStr)
         {
@@ -130,7 +126,9 @@ namespace gzWeb.Tests.Models
                 }
             }
 
-            SetDbClearMonth(startYearMonthStr, monthsCnt);
+            var portfoliosPriceMap = SetDbPortfoliosPriceMap(GetPortfoliosPricesMapTable(startYearMonthStr, monthsCnt), startYearMonthStr, monthsCnt);
+
+            UserTrx.processGzTrx(SqlProviderCtx, startYearMonthStr, portfoliosPriceMap);
         }
 
         private void ClearTrxHistory(string[] customerEmails)
@@ -157,7 +155,7 @@ namespace gzWeb.Tests.Models
         }
 
         private void SetDbMonthlyPortfolioLossesForTestPlayers(
-                int userId, 
+                int userId,
                 int monthsCnt,
                 string startYearMonthStr)
         {
@@ -165,32 +163,6 @@ namespace gzWeb.Tests.Models
             SetDbMonthlyPortfolioSelection(monthsCnt, userId, startYearMonthStr);
 
             SetDbMonthlyPlayerLossTrx(startYearMonthStr, userId);
-        }
-
-        private void SetDbClearMonth(string startYearMonthStr, int monthCnt)
-        {
-
-            var stockPrice = 1 + (monthCnt / 10.0);
-
-            var lowPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Low, stockPrice,
-                DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
-            var mediumPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Medium, stockPrice,
-                DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
-            var highPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.High, stockPrice,
-                DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
-            var portfolioPricesEoM = new PortfolioTypes.PortfoliosPrices(lowPortfolioPrice, mediumPortfolioPrice,
-                highPortfolioPrice);
-            var portfoliosPriceDict = new Dictionary<string, PortfolioTypes.PortfoliosPrices>() {
-                    {
-                        DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr)
-                            .ToStringYearMonthDay(),
-                        portfolioPricesEoM
-                    }
-                };
-
-            var portfoliosPriceMap = PortfolioTypes.toMap(portfoliosPriceDict);
-
-            UserTrx.processGzTrx(SqlProviderCtx, startYearMonthStr, portfoliosPriceMap);
         }
 
         private void SetDbMonthlyPlayerLossTrx(string trxYearMonthStr, int custId)
@@ -234,6 +206,37 @@ namespace gzWeb.Tests.Models
                 DateTime.UtcNow);
         }
 
+        // Excel numbers for asserts
+        //TotalCashInv CashInv Balance Share Price Total Shares VintageShares   InvGain
+        //    1000	    1000	1000	    1	    1000	    1000	        0
+        //    2000	    1000	2100	    1.1	    1909.090909	909.0909091	    100
+        //    3000	    1000	3290.909091	1.2	    2742.424242	833.3333333	    290.9090909
+        //    4000	    1000	4565.151515	1.3	    3511.655012	769.2307692	    565.1515152
+        //    5000	    1000	5916.317016	1.4	    4225.940726	714.2857143	    916.3170163
+        //    6000	    1000	7338.911089	1.5	    4892.607393	666.6666667	    1338.911089
+        //    7000	    1000	8828.171828	1.6	    5517.607393	625	            1828.171828
+        [Test]
+        public void SetDb6MonthInvBalancesWithFreshTrx()
+        {
+            ClearTrxHistory(userEmails);
+
+            var now = DateTime.UtcNow;
+            var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
+            var endYearMonthStr = now.ToStringYearMonth();
+
+            int monthsCnt = 0;
+            var usersFound = new List<int>();
+            // Loop through all the months activity
+            while (startYearMonthStr.BeforeEq(endYearMonthStr))
+            {
+                ProcessInvBalances(usersFound, monthsCnt, startYearMonthStr);
+
+                monthsCnt++;
+                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+            }
+            AssertBalanceNumbers(usersFound, endYearMonthStr);
+        }
+
         private void SetDbMonthlyPlayerLossTrx_D(string trxYearMonthStr, int userId)
         {
 
@@ -242,10 +245,11 @@ namespace gzWeb.Tests.Models
                     DbExpressions.GetYear(trxYearMonthStr),
                     DbExpressions.GetMonth(trxYearMonthStr),
                     15,
-                    19,12,59,333,
+                    19, 12, 59, 333,
                     DateTimeKind.Utc);
 
-            switch (trxYearMonthStr) {
+            switch (trxYearMonthStr)
+            {
                 case "201611":
                 case "201612":
                 case "201702":
@@ -256,10 +260,10 @@ namespace gzWeb.Tests.Models
                         createdOnUtc,
                         30, 30, 10, -20, 30);
                     break;
-                case "201701" :
+                case "201701":
                     gzTrx.SaveDbPlayingLoss(
                         userId,
-                        30, 
+                        30,
                         trxYearMonthStr,
                         createdOnUtc,
                         30, 40, 10, -30, 30);
@@ -267,7 +271,7 @@ namespace gzWeb.Tests.Models
                 case "201703":
                     gzTrx.SaveDbPlayingLoss(
                         userId,
-                        40, 
+                        40,
                         trxYearMonthStr,
                         createdOnUtc,
                         30, 50, 10, -40, 30);
@@ -275,13 +279,14 @@ namespace gzWeb.Tests.Models
             }
         }
 
-        private PortfolioTypes.PortfoliosPrices createMonthlyPortfolioPrices(string currentYearMonthStr, double stockPrice) {
+        private PortfolioTypes.PortfoliosPrices createMonthlyPortfolioPrices(string currentYearMonthStr, double stockPrice)
+        {
 
-            var lowPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int) RiskToleranceEnum.Low, stockPrice,
+            var lowPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Low, stockPrice,
                 DbExpressions.GetDtYearMonthStrToEndOfMonth(currentYearMonthStr));
-            var mediumPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int) RiskToleranceEnum.Medium, stockPrice,
+            var mediumPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.Medium, stockPrice,
                 DbExpressions.GetDtYearMonthStrToEndOfMonth(currentYearMonthStr));
-            var highPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int) RiskToleranceEnum.High, stockPrice,
+            var highPortfolioPrice = new PortfolioTypes.PortfolioSharePrice((int)RiskToleranceEnum.High, stockPrice,
                 DbExpressions.GetDtYearMonthStrToEndOfMonth(currentYearMonthStr));
             var portfolioPricesEoM = new PortfolioTypes.PortfoliosPrices(lowPortfolioPrice, mediumPortfolioPrice,
                 highPortfolioPrice);
@@ -325,32 +330,24 @@ namespace gzWeb.Tests.Models
             return portfoliosPriceMap;
         }
 
-        private FSharpMap<string, PortfolioTypes.PortfoliosPrices> SetDbPortfolioPrices(string currentYearMonthStr, int monthCnt)
-        {
-            var portfoliosPriceMap = GetPortfoliosPricesMapTable(currentYearMonthStr);
-
-            // Call F# implementation
-            // Save portfolio prices
-            DailyPortfolioShares.setDbPortfoliosPrices(SqlProviderCtx, portfoliosPriceMap);
-
-            return portfoliosPriceMap;
-        }
-
         private void ProcessInvBalances_D(
             List<int> usersFound,
             int monthsCnt,
-            string currentYearMonthStr) {
+            string currentYearMonthStr)
+        {
 
             FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap = null;
 
-            foreach (var email in userEmails) {
+            foreach (var email in userEmails)
+            {
 
                 int userId = db.Users
                     .Where(u => u.Email == email)
                     .Select(u => u.Id)
                     .SingleOrDefault();
 
-                if (userId != 0) {
+                if (userId != 0)
+                {
                     usersFound.Add(userId);
 
                     SetDbMonthlyPortfolioSelection(monthsCnt, userId, currentYearMonthStr);
@@ -359,7 +356,9 @@ namespace gzWeb.Tests.Models
 
                     var userVintages = AssertUserVintagesCount(userId, monthsCnt);
 
-                    portfoliosPriceMap = SetDbPortfolioPrices(currentYearMonthStr, monthsCnt);
+                    portfoliosPriceMap = GetPortfoliosPricesMapTable(currentYearMonthStr);
+
+                    DailyPortfolioShares.setDbPortfoliosPrices(SqlProviderCtx, portfoliosPriceMap);
 
                     SellVintages(currentYearMonthStr, userVintages, userId);
                 }
@@ -371,15 +370,18 @@ namespace gzWeb.Tests.Models
             AssertAllUsersVintagesCountAfterMonthClearance(usersFound, monthsCnt + 1);
         }
 
-        private void SellVintages(string currentYearMonthStr, ICollection<VintageDto> userVintages, int userId) {
+        private void SellVintages(string currentYearMonthStr, ICollection<VintageDto> userVintages, int userId)
+        {
 
-            switch (currentYearMonthStr) {
+            switch (currentYearMonthStr)
+            {
                 case "201702":
                     var selectedVintages =
                         userVintages
                             .Where(v => v.YearMonthStr == "201611" || v.YearMonthStr == "201612")
                             .ToList();
-                    foreach (var selectedVintage in selectedVintages) {
+                    foreach (var selectedVintage in selectedVintages)
+                    {
                         selectedVintage.Selected = true;
                         // Override locking period
                         selectedVintage.Locked = false;
@@ -389,7 +391,8 @@ namespace gzWeb.Tests.Models
             invBalRepo.SaveDbSellVintages(userId, userVintages, currentYearMonthStr);
         }
 
-        private ICollection<VintageDto> AssertUserVintagesCount(int userId, int numberOfVintages) {
+        private ICollection<VintageDto> AssertUserVintagesCount(int userId, int numberOfVintages)
+        {
 
             var userVintages = invBalRepo.GetCustomerVintages(userId);
 
@@ -398,9 +401,11 @@ namespace gzWeb.Tests.Models
             return userVintages;
         }
 
-        private void AssertAllUsersVintagesCountAfterMonthClearance(List<int> usersFound, int numberOfVintages) {
+        private void AssertAllUsersVintagesCountAfterMonthClearance(List<int> usersFound, int numberOfVintages)
+        {
 
-            foreach (var userId in usersFound) {
+            foreach (var userId in usersFound)
+            {
 
                 AssertUserVintagesCount(userId, numberOfVintages);
             }
@@ -411,7 +416,8 @@ namespace gzWeb.Tests.Models
 
             decimal expectedBal = int.MinValue, expectedLastVintageShares = int.MinValue, expectedTotalShares = int.MinValue, expectedInvGain = int.MinValue;
 
-            switch (currentYearMonthStr) {
+            switch (currentYearMonthStr)
+            {
                 case "201611":
                     expectedBal = 10;
                     expectedLastVintageShares = expectedTotalShares = 10;
@@ -446,24 +452,26 @@ namespace gzWeb.Tests.Models
         }
 
         private void AssertUsersBalances(
-            List<int> usersFound, 
-            string currentYearMonthStr, 
+            List<int> usersFound,
+            string currentYearMonthStr,
             decimal expectedBal,
             decimal expectedLastVintageShares,
             decimal expectedTotalShares,
-            decimal expectedInvGain) {
+            decimal expectedInvGain)
+        {
 
-            foreach (var userId in usersFound) {
+            foreach (var userId in usersFound)
+            {
                 var invB = db.InvBalances
                     .Single(
-                        i => 
-                            i.CustomerId == userId 
+                        i =>
+                            i.CustomerId == userId
                             &&
                             string.Compare(i.YearMonth, currentYearMonthStr, StringComparison.Ordinal) == 0);
                 var totalVintagesShares = db.VintageShares
                     .Single(
                         s =>
-                            s.UserId == userId 
+                            s.UserId == userId
                             &&
                             string.Compare(s.YearMonth, currentYearMonthStr, StringComparison.Ordinal) == 0);
                 var bal = invB.Balance;
@@ -471,7 +479,7 @@ namespace gzWeb.Tests.Models
                 var totalShares = totalVintagesShares.PortfolioLowShares + totalVintagesShares.PortfolioMediumShares +
                                   totalVintagesShares.PortfolioHighShares;
                 var gain = invB.InvGainLoss;
-                var totalInvestments = invB.TotalCashInvInHold;
+                var totalCashInvInHold = invB.TotalCashInvInHold;
 
                 Assert.AreEqual(expectedBal, DbExpressions.RoundCustomerBalanceAmount(bal));
                 Assert.AreEqual(expectedLastVintageShares, DbExpressions.RoundCustomerBalanceAmount(thisVintageShares));
@@ -480,7 +488,7 @@ namespace gzWeb.Tests.Models
                 // Assert invGain in both ways: 
                 // 1. bal-total cash invested
                 Assert.AreEqual(DbExpressions.RoundCustomerBalanceAmount(gain),
-                    DbExpressions.RoundCustomerBalanceAmount(bal - totalInvestments));
+                    DbExpressions.RoundCustomerBalanceAmount(bal - totalCashInvInHold));
 
                 // 2. db gain figure
                 Assert.AreEqual(expectedInvGain, DbExpressions.RoundCustomerBalanceAmount(gain));
