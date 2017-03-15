@@ -400,16 +400,14 @@ namespace gzDAL.Repos {
                         // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
                         CreditPcntApplied = creditPcntApplied,
                         // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
-                        CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
+                        CreatedOnUtc = createdOnUtc.Truncate(TimeSpan.FromSeconds(1))
                     }
                     );
             }
             else {
-                _db.GzTrxs.AddOrUpdate(
-
-                    // For trx types other than player losses transactions allow multiple per month of the same trx type 
-                    t => new {t.CustomerId, t.YearMonthCtd},
-                    new GzTrx {
+                // Plain insert for non credit loss gztrx
+                var newGzTrx =
+                    new GzTrx() {
                         CustomerId = customerId,
                         TypeId =
                             _db.GzTrxTypes.Where(t => t.Code == gzTransactionType).Select(t => t.Id).FirstOrDefault(),
@@ -418,9 +416,10 @@ namespace gzDAL.Repos {
                         // Applicable only for TransferTypeEnum.CreditedPlayingLoss type of transactions
                         CreditPcntApplied = creditPcntApplied,
                         // Truncate Millis to avoid mismatch between .net dt <--> mssql dt
-                        CreatedOnUtc = DbExpressions.Truncate(createdOnUtc, TimeSpan.FromSeconds(1))
-                    }
-                );
+                        CreatedOnUtc = createdOnUtc.Truncate(TimeSpan.FromSeconds(1))
+                    };
+                _db.GzTrxs.Add(newGzTrx);
+                _db.SaveChanges();
             }
         }
 

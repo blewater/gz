@@ -361,11 +361,8 @@ namespace gzDAL.Repos
             var numOfVintagesSold = 0;
             foreach (var vintageDto in vintages)
             {
-
                 if (vintageDto.Selected)
                 {
-                    SetVinageLatestSoldStatus(vintageDto);
-
                     decimal fees;
                     VintageSharesDto vintageShares;
                     vintageDto.MarketPrice = GetVintageValuePricedOn(
@@ -406,79 +403,24 @@ namespace gzDAL.Repos
             var numOfVintagesSold = 0;
             foreach (var vintageDto in vintages)
             {
-
                 if (vintageDto.Selected)
                 {
+                    decimal fees;
+                    VintageSharesDto vintageShares;
+                    vintageDto.MarketPrice = GetVintageValuePricedNow(
+                        customerId,
+                        vintageDto.YearMonthStr,
+                        out vintageShares,
+                        out fees);
 
-                    SetVinageLatestSoldStatus(vintageDto);
+                    vintageDto.VintageShares = vintageShares;
+                    vintageDto.Fees = fees;
 
-                    if (VintageSatisfiesSellingPreConditions(customerId, vintageDto))
-                    {
-
-                        decimal fees;
-                        VintageSharesDto vintageShares;
-                        vintageDto.MarketPrice = GetVintageValuePricedNow(
-                            customerId,
-                            vintageDto.YearMonthStr,
-                            out vintageShares,
-                            out fees);
-
-                        vintageDto.VintageShares = vintageShares;
-                        vintageDto.Fees = fees;
-
-                        numOfVintagesSold++;
-                    }
-                    else
-                    {
-                        // Deselect it for selling it
-                        vintageDto.Selected = false;
-                    }
+                    numOfVintagesSold++;
                 }
             }
 
             return numOfVintagesSold;
-        }
-
-        /// <summary>
-        /// 
-        /// Check before attempting to sell a vintage that it meets the preconditions.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="vintageDto"></param>
-        private bool VintageSatisfiesSellingPreConditions(int customerId, VintageDto vintageDto)
-        {
-
-            // Assume ok to proceed
-            bool sellThisVintage = true;
-
-            if (vintageDto.Locked)
-            {
-                int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
-                    vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
-                _logger.Error(
-                    "For customer: {0}, the vintage for the year of {1} and month: {2} is locked and not available for selling it. !",
-                    customerId, vinYear, vinMonth);
-
-                sellThisVintage = false;
-            }
-            // Not Locked
-            else
-            {
-
-                if (vintageDto.Sold)
-                {
-                    int vinYear = int.Parse(vintageDto.YearMonthStr.Substring(0, 4)),
-                        vinMonth = int.Parse(vintageDto.YearMonthStr.Substring(4, 2));
-                    _logger.Error(
-                        "For customer: {0}, the vintage for the year of {1} and month: {2} cannot be resold !",
-                        customerId, vinYear, vinMonth);
-
-                    sellThisVintage = false;
-                }
-            }
-
-            return sellThisVintage;
         }
 
         /// <summary>
@@ -581,27 +523,6 @@ namespace gzDAL.Repos
 
         /// <summary>
         /// 
-        /// Read latest sold value from the database
-        /// 
-        /// We care only if it appears not sold yet.
-        /// 
-        /// </summary>
-        /// <param name="vintageDto"></param>
-        private void SetVinageLatestSoldStatus(VintageDto vintageDto)
-        {
-
-            if (!vintageDto.Sold)
-            {
-
-                vintageDto.Sold = _db.InvBalances
-                    .Any(v => v.Id == vintageDto.InvBalanceId
-                              && v.Sold
-                    );
-            }
-        }
-
-        /// <summary>
-        /// 
         /// Update custFundShares with sold values for a sold vintage
         /// 
         /// </summary>
@@ -654,13 +575,6 @@ namespace gzDAL.Repos
         private void SaveDbSellVintagesBalances(int customerId, ICollection<VintageDto> vintages, string soldOnYearMonth = "")
         {
             var soldOnUtc = DateTime.UtcNow;
-
-            /*  Set the transaction occuring within the present month,
-             *   or if called from a unit test set it to the requested past month */
-            var trxYearMonth =
-                soldOnYearMonth.Length == 0
-                ? soldOnUtc.ToStringYearMonth()
-                : soldOnYearMonth;
 
             foreach (var vintage in vintages)
             {
