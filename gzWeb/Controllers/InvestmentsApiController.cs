@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Http;
 using System.Threading.Tasks;
@@ -27,8 +28,6 @@ namespace gzWeb.Controllers {
                 ApplicationDbContext dbContext,
                 IInvBalanceRepo invBalanceRepo,
                 IGzTransactionRepo gzTransactionRepo,
-                ICustFundShareRepo custFundShareRepo,
-                ICurrencyRateRepo currencyRateRepo,
                 ICustPortfolioRepo custPortfolioRepo,
                 IUserRepo userRepo,
                 IMapper mapper,
@@ -37,8 +36,6 @@ namespace gzWeb.Controllers {
             _dbContext = dbContext;
             _invBalanceRepo = invBalanceRepo;
             _gzTransactionRepo = gzTransactionRepo;
-            _custFundShareRepo = custFundShareRepo;
-            _currencyRateRepo = currencyRateRepo;
             _custPortfolioRepo = custPortfolioRepo;
             _userRepo = userRepo;
             _mapper = mapper;
@@ -136,28 +133,45 @@ namespace gzWeb.Controllers {
 
         /// <summary>
         /// 
-        /// ** Test Helper **
+        /// Get vintages ready for UI
+        /// 
+        /// </summary>
+        /// <param name="vintageDtos"></param>
+        /// <returns></returns>
+        private List<VintageViewModel> GetVintagesDto2Vm(List<VintageDto> vintageDtos)
+        {
+            // Round amounts according to business rule
+            foreach (var dto in vintageDtos)
+            {
+                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount);
+                dto.SellingValue = DbExpressions.RoundCustomerBalanceAmount(dto.SellingValue);
+            }
+
+            var vintagesVmRet = vintageDtos
+                .Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+            return vintagesVmRet;
+        }
+
+        /// <summary>
+        /// 
+        /// ** Unit Test Helper **
         /// 
         /// Get the customer vintages with their selling value converted to the user currency.
         /// 
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user) {
+        public async Task<List<VintageViewModel>> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user)
+        {
             Logger.Trace("GetVintagesSellingValuesByUser requested for [User#{0}]", user.Id);
 
-            var customerVintages = _invBalanceRepo
+            var vintagesValuedAtPresentValue = 
+                await _invBalanceRepo
                     .GetCustomerVintagesSellingValue(user.Id);
 
-            // Round amounts for user presentation
-            foreach (var dto in customerVintages) {
-                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount);
-                dto.SellingValue = DbExpressions.RoundCustomerBalanceAmount(dto.SellingValue);
-            }
+            var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValue);
 
-            var vintages = customerVintages
-                    .Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
-            return vintages;
+            return vintagesVmRet;
         }
 
         /// <summary>
@@ -166,25 +180,18 @@ namespace gzWeb.Controllers {
         /// 
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="vintagesVM"></param>
         /// <returns></returns>
-        public IEnumerable<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user,
-                                                                            IList<VintageViewModel> vintagesVM)
+        public List<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVM)
         {
             var vintageDtos = vintagesVM
-                    .Select(t => _mapper.Map<VintageViewModel, VintageDto>(t)).ToList();
+                    .Select(t => _mapper.Map<VintageViewModel, VintageDto>(t))
+                    .ToList();
 
-            var customerVintages = _invBalanceRepo
-                    .GetCustomerVintagesSellingValue(user.Id, vintageDtos);
+            var vintagesValuedAtPresentValue = _invBalanceRepo
+                    .GetCustomerVintagesSellingValueNow(user.Id, vintageDtos);
 
-            // Round amounts according to business rule
-            foreach (var dto in customerVintages)
-            {
-                dto.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(dto.InvestmentAmount);
-                dto.SellingValue = DbExpressions.RoundCustomerBalanceAmount(dto.SellingValue);
-            }
-
-            var vintagesVmRet = vintageDtos
-                    .Select(t => _mapper.Map<VintageDto, VintageViewModel>(t)).ToList();
+            var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValue);
 
             return vintagesVmRet;
         }
@@ -242,6 +249,12 @@ namespace gzWeb.Controllers {
                 bool bypassQueue = false)
         {
 
+            // Bypass the byPassQueue of IIS or Azure when in IIS Express because it slows down or hangs
+            bool isExpress = String.CompareOrdinal(Process.GetCurrentProcess().ProcessName, "iisexpress") == 0;
+
+            // TODO: check performance in Azure
+            if (isExpress) bypassQueue = true;
+            
             if (!bypassQueue)
             {
                 // Compatible only with IIS hosting
@@ -386,7 +399,7 @@ namespace gzWeb.Controllers {
 
         #region Methods
 
-        public async Task<IEnumerable<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0)
+        public async Task<List<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0)
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetCustomerPlansAsync requested for [User#{0}]", userId);
@@ -409,6 +422,7 @@ namespace gzWeb.Controllers {
                                                                           Name = h.Name,
                                                                           Weight = h.Weight
                                                                   })
+                                                                    .ToList()
                                  })
                     .OrderBy(x => x.Risk)
                     .ToList();
@@ -423,8 +437,6 @@ namespace gzWeb.Controllers {
         private readonly IMapper _mapper;
         private readonly IInvBalanceRepo _invBalanceRepo;
         private readonly IGzTransactionRepo _gzTransactionRepo;
-        private readonly ICurrencyRateRepo _currencyRateRepo;
-        private readonly ICustFundShareRepo _custFundShareRepo;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
         private readonly IUserRepo _userRepo;
         private readonly ApplicationDbContext _dbContext;

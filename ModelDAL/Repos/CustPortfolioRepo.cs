@@ -18,9 +18,11 @@ namespace gzDAL.Repos
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly ApplicationDbContext db;
-        public CustPortfolioRepo(ApplicationDbContext db)
+        private readonly IConfRepo confRepo;
+        public CustPortfolioRepo(ApplicationDbContext db, IConfRepo confRepo)
         {
             this.db = db;
+            this.confRepo = confRepo;
         }
         /// <summary>
         /// Phase 1 Implementation
@@ -111,9 +113,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public Portfolio GetCurrentCustomerPortfolio(int customerId) {
+        public async Task<Portfolio> GetCurrentCustomerPortfolio(int customerId) {
 
-            return GetCustomerPortfolioForMonth(customerId, DateTime.UtcNow.ToStringYearMonth());
+            return await GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.ToStringYearMonth());
         }
 
         /// <summary>
@@ -123,9 +125,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public Portfolio GetNextMonthsCustomerPortfolio(int customerId) {
+        public async Task<Portfolio> GetNextMonthsCustomerPortfolioAsync(int customerId) {
 
-            return GetCustomerPortfolioForMonth(customerId, DateTime.UtcNow.AddMonths(1).ToStringYearMonth());
+            return await GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.AddMonths(1).ToStringYearMonth());
         }
 
         /// <summary>
@@ -134,22 +136,23 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="yearMonthStr"></param>
+        /// <param name="nextYearMonthStr">+1 Month from Present To be safe we have the latest</param>
         /// <returns></returns>
-        public Portfolio GetCustomerPortfolioForMonth(int customerId, string yearMonthStr) {
+        public async Task<Portfolio> GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr) {
 
             Portfolio customerMonthPortfolioReturn;
 
-            var portfolioMonth = GetCustPortfYearMonth(customerId, yearMonthStr);
+            // userPortfolioMaxMonthSet typically comes back as the present month
+            var userPortfolioMaxMonthSet = GetCustPortfYearMonth(customerId, nextYearMonthStr);
 
-            if (portfolioMonth != null) {
+            if (userPortfolioMaxMonthSet != null) {
 
-                customerMonthPortfolioReturn = db.CustPortfolios
-                    .Where(p => p.YearMonth == portfolioMonth && p.CustomerId == customerId)
+                customerMonthPortfolioReturn = 
+                    await db.CustPortfolios
+                    .Where(p => p.YearMonth == userPortfolioMaxMonthSet && p.CustomerId == customerId)
                     .Select(cp => cp.Portfolio)
                     .DeferredSingleOrDefault()
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
-                    .Result;
+                    .FromCacheAsync(DateTime.UtcNow.AddHours(2));
             }
             /**
              * Edge Case for leaky user registrations: 
@@ -160,9 +163,7 @@ namespace gzDAL.Repos
             else {
 
                 // Cached already
-                var defaultRisk = db.GzConfigurations
-                    .Select(c => c.FIRST_PORTFOLIO_RISK_VAL)
-                    .Single();
+                var defaultRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
                 customerMonthPortfolioReturn = db
                     .Portfolios
@@ -174,16 +175,13 @@ namespace gzDAL.Repos
             return customerMonthPortfolioReturn;
         }
 
-        public void SaveDefaultPorfolio(int customerId, int gmUserId)
+        public async Task SaveDefaultPorfolio(int customerId, int gmUserId)
         {
             var user = db.Users.SingleOrDefault(x => x.Id == customerId);
             if (user==null)
                 throw new InvalidOperationException("User not found.");
 
-            var defaultPortfolioRisk = 
-                db.GzConfigurations
-                .Select(c => c.FIRST_PORTFOLIO_RISK_VAL)
-                .Single();
+            var defaultPortfolioRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
             ConnRetryConf.TransactWithRetryStrategy(
                     db,
@@ -202,16 +200,15 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="nextInvestAmount"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<PortfolioDto>> GetCustomerPlansAsync(int customerId) {
+        public async Task<List<PortfolioDto>> GetCustomerPlansAsync(int customerId) {
 
-            var selCustomerPortfolioId = GetNextMonthsCustomerPortfolio(customerId).Id;
+            var nextMonthPortfolioId = (await 
+                                            GetNextMonthsCustomerPortfolioAsync(customerId))
+                                                .Id;
 
             // Get gz Database Configuration
-            var gzDbConf = db.GzConfigurations
-                .Select(c => c)
-                .Single();
+            var gzDbConf = await confRepo.GetConfRow();
 
             var portfolioDtos = 
                 (
@@ -238,11 +235,12 @@ namespace gzDAL.Repos
                             Name = f.Fund.HoldingName,
                             Weight = f.Weight
                         })
+                        .ToList()
                 })
 
                 // Cache 1 Day
                 .FromCacheAsync(DateTime.UtcNow.AddDays(1)))
-                .AsEnumerable()
+                .ToList()
                 /*** Union with non-allocated customer portfolio ****/
                 .Union(
                     await (from p in db.Portfolios
@@ -262,6 +260,7 @@ namespace gzDAL.Repos
                                 Name = f.Fund.HoldingName,
                                 Weight = f.Weight
                             })
+                            .ToList()
                         })
 
                         // Cache 1 day
@@ -275,7 +274,7 @@ namespace gzDAL.Repos
                 if (totalSum != 0) {
                     portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
                 }
-                portfolioDto.Selected = portfolioDto.Id == selCustomerPortfolioId;
+                portfolioDto.Selected = portfolioDto.Id == nextMonthPortfolioId;
             }
 
             return portfolioDtos;

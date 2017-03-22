@@ -27,10 +27,12 @@ namespace gzDAL.Repos {
     /// </summary>
     public class GzTransactionRepo : IGzTransactionRepo {
         private readonly ApplicationDbContext _db;
+        private readonly IConfRepo confRepo;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        public GzTransactionRepo(ApplicationDbContext db) {
+        public GzTransactionRepo(ApplicationDbContext db, IConfRepo confRepo) {
             this._db = db;
+            this.confRepo = confRepo;
         }
 
         /// <summary>
@@ -55,38 +57,11 @@ namespace gzDAL.Repos {
                     .SingleOrDefault();
 
                 // 1 day cache
-                MemoryCache.Default.Set(key, lastInvestmentAmount.Value, DateTimeOffset.UtcNow.AddDays(1));
+                MemoryCache
+                    .Default
+                    .Set(key, lastInvestmentAmount.Value, DateTimeOffset.UtcNow.AddDays(1));
             }
             return lastInvestmentAmount.Value;
-        }
-
-        /// <summary>
-        /// 
-        /// Get the Customer ids whose transaction activity has been initiated already 
-        /// within a range of months
-        /// 
-        /// </summary>
-        /// <param name="startYearMonthStr"></param>
-        /// <param name="endYearMonthStr"></param>
-        /// <returns></returns>
-        public IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr) {
-
-            if (string.IsNullOrEmpty(startYearMonthStr) && string.IsNullOrEmpty(endYearMonthStr)) {
-                throw new Exception("startYearMonth and endYearMonth cannot be empty or null");
-            }
-
-            var customerIds =
-
-                from t in _db.GzTrxs
-                join c in _db.Users on t.CustomerId equals c.Id
-                where !c.DisabledGzCustomer && !c.ClosedGzAccount 
-                    && string.Compare(t.YearMonthCtd, startYearMonthStr, StringComparison.Ordinal) >= 0
-                    && string.Compare(t.YearMonthCtd, endYearMonthStr, StringComparison.Ordinal) <= 0
-                group c by c.Id
-                into g
-                select g.Key;
-
-            return customerIds;
         }
 
         /// <summary>
@@ -209,20 +184,17 @@ namespace gzDAL.Repos {
         /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
         private decimal GetWithdrawnFees(decimal liquidationAmount, out decimal gzFeesAmount, out decimal fundsFeesAmount) {
 
-            var confTask = _db.GzConfigurations
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            var confTask = confRepo.GetConfRow();
 
             var confRow = confTask.Result;
 
             gzFeesAmount = liquidationAmount *
                 // COMMISSION_PCNT: Database Configuration Value
-                (decimal)confRow.Select(c => c.COMMISSION_PCNT)
-                    .Single() / 100;
+                (decimal)confRow.COMMISSION_PCNT / 100;
 
             fundsFeesAmount = liquidationAmount *
                 // FUND_FEE_PCNT: Database Configuration Value
-                (decimal)confRow.Select(c => c.FUND_FEE_PCNT)
-                    .Single() / 100;
+                (decimal)confRow.FUND_FEE_PCNT / 100;
 
             return gzFeesAmount + fundsFeesAmount;
         }
@@ -331,7 +303,7 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, string trxYearMonth, DateTime createdOnUtc, decimal begGmBalance, decimal deposits, decimal withdrawals, decimal gainLoss, decimal endGmbalance) {
 
-            var creditPcnt = _db.GzConfigurations.Select(c => c.CREDIT_LOSS_PCNT).Single();
+            var creditPcnt = confRepo.GetConfRow().Result.CREDIT_LOSS_PCNT;
 
             SaveDbGzTransaction(
                 customerId, 

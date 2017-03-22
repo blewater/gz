@@ -8,22 +8,22 @@ using gzDAL.Repos;
 using gzDAL.ModelUtil;
 using GzBalances;
 using System.Configuration;
+using System.Threading.Tasks;
 using gzDAL.DTO;
 using GzDb;
 using Microsoft.FSharp.Collections;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Assert = NUnit.Framework.Assert;
 
 namespace gzWeb.Tests.Models
 {
     [TestFixture]
-    public class InvestmentTests
+    public class InvestmentTests : IDisposable
     {
         private CustPortfolioRepo cpRepo;
         private GzTransactionRepo gzTrx;
         private InvBalanceRepo invBalRepo;
         private ApplicationDbContext db;
-        private DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev SqlProviderCtx;
+        private string devDbConnString = null;
 
         private readonly string[] userEmails = new string[] {
                 "salem8@gmail.com",
@@ -41,12 +41,23 @@ namespace gzWeb.Tests.Models
             Database.SetInitializer<ApplicationDbContext>(null);
 
             db = new ApplicationDbContext();
-            var devDbConnString = ConfigurationManager.ConnectionStrings["gzDevDb"].ConnectionString;
-            SqlProviderCtx = DbUtil.getOpenDb(devDbConnString);
-            cpRepo = new CustPortfolioRepo(db);
-            gzTrx = new GzTransactionRepo(db);
-            var userPortfolio = new CustPortfolioRepo(db);
-            invBalRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, userPortfolio), gzTrx, userPortfolio);
+            devDbConnString = ConfigurationManager.ConnectionStrings["gzDevDb"].ConnectionString;
+            var confRepo = new ConfRepo(db);
+            gzTrx = new GzTransactionRepo(db, confRepo);
+            cpRepo = new CustPortfolioRepo(db, confRepo);
+            invBalRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, cpRepo), gzTrx, cpRepo, confRepo);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            //SqlProviderCtx.Connection.Dispose();
+            db.Dispose();
         }
 
         private FSharpMap<string, PortfolioTypes.PortfoliosPrices> GetPortfoliosPricesMapTable(string startYearMonthStr, int monthCnt)
@@ -75,6 +86,7 @@ namespace gzWeb.Tests.Models
         }
 
         private FSharpMap<string, PortfolioTypes.PortfoliosPrices> SetDbPortfoliosPriceMap(
+            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev SqlProviderCtx,
             FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap,
             string startYearMonthStr,
             int monthCnt)
@@ -126,9 +138,15 @@ namespace gzWeb.Tests.Models
                 }
             }
 
-            var portfoliosPriceMap = SetDbPortfoliosPriceMap(GetPortfoliosPricesMapTable(startYearMonthStr, monthsCnt), startYearMonthStr, monthsCnt);
+            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev sqlProviderCtx;
+            using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString))
+            {
+                var portfoliosPriceMap =
+                    SetDbPortfoliosPriceMap(sqlProviderCtx, GetPortfoliosPricesMapTable(startYearMonthStr, monthsCnt), startYearMonthStr,
+                        monthsCnt);
 
-            UserTrx.processGzTrx(SqlProviderCtx, startYearMonthStr, portfoliosPriceMap);
+                UserTrx.processGzTrx(sqlProviderCtx, startYearMonthStr, portfoliosPriceMap);
+            }
         }
 
         private void ClearTrxHistory(string[] customerEmails)
@@ -237,7 +255,7 @@ namespace gzWeb.Tests.Models
             AssertBalanceNumbers(usersFound, endYearMonthStr);
         }
 
-        private void SetDbMonthlyPlayerLossTrx_D(string trxYearMonthStr, int userId)
+        private void SetDbMonthlyPlayerLossTrx_3_4(string trxYearMonthStr, int userId)
         {
 
             var createdOnUtc =
@@ -330,47 +348,42 @@ namespace gzWeb.Tests.Models
             return portfoliosPriceMap;
         }
 
-        private void ProcessInvBalances_D(
-            List<int> usersFound,
-            int monthsCnt,
-            string currentYearMonthStr)
+        private void SetCaseVintagesToSell_2(string currentYearMonthStr, ICollection<VintageDto> userVintages)
         {
 
-            FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap = null;
+            if (currentYearMonthStr=="201702") {
 
-            foreach (var email in userEmails)
-            {
+                var vintageToBeSold = userVintages
+                    .Single(v => v.YearMonthStr == "201611");
+                vintageToBeSold.Selected = true;
+                vintageToBeSold.Locked = false;
 
-                int userId = db.Users
-                    .Where(u => u.Email == email)
-                    .Select(u => u.Id)
-                    .SingleOrDefault();
-
-                if (userId != 0)
-                {
-                    usersFound.Add(userId);
-
-                    SetDbMonthlyPortfolioSelection(monthsCnt, userId, currentYearMonthStr);
-
-                    SetDbMonthlyPlayerLossTrx_D(currentYearMonthStr, userId);
-
-                    var userVintages = AssertUserVintagesCount(userId, monthsCnt);
-
-                    portfoliosPriceMap = GetPortfoliosPricesMapTable(currentYearMonthStr);
-
-                    DailyPortfolioShares.setDbPortfoliosPrices(SqlProviderCtx, portfoliosPriceMap);
-
-                    SellVintages(currentYearMonthStr, userVintages, userId);
-                }
             }
-
-            // Process losses -> invbalance
-            UserTrx.processGzTrx(SqlProviderCtx, currentYearMonthStr, portfoliosPriceMap);
-
-            AssertAllUsersVintagesCountAfterMonthClearance(usersFound, monthsCnt + 1);
         }
 
-        private void SellVintages(string currentYearMonthStr, ICollection<VintageDto> userVintages, int userId)
+        private void SetCaseVintagesToSell_3(string currentYearMonthStr, ICollection<VintageDto> userVintages) {
+
+            VintageDto vintageToBeSold = null;
+            switch (currentYearMonthStr)
+            {
+                case "201702":
+                    vintageToBeSold =
+                        userVintages
+                            .Single(v => v.YearMonthStr == "201611");
+                    vintageToBeSold.Selected = true;
+                    vintageToBeSold.Locked = false;
+                    break;
+                case "201703":
+                    vintageToBeSold =
+                        userVintages
+                            .Single(v => v.YearMonthStr == "201612");
+                    vintageToBeSold.Selected = true;
+                    vintageToBeSold.Locked = false;
+                    break;
+            }
+        }
+
+        private void SetCaseVintagesToSell_4(string currentYearMonthStr, ICollection<VintageDto> userVintages)
         {
 
             switch (currentYearMonthStr)
@@ -388,30 +401,205 @@ namespace gzWeb.Tests.Models
                     }
                     break;
             }
+        }
+
+        private void SellVintages(int caseNo, string currentYearMonthStr, ICollection<VintageDto> userVintages, int userId) {
+            switch (caseNo) {
+                // case 1 : No sold vintages
+                case 2:
+                    SetCaseVintagesToSell_2(currentYearMonthStr, userVintages);
+                    break;
+                case 3:
+                    SetCaseVintagesToSell_3(currentYearMonthStr, userVintages);
+                    break;
+                case 4:
+                    SetCaseVintagesToSell_4(currentYearMonthStr, userVintages);
+                    break;
+
+            }
             invBalRepo.SaveDbSellVintages(userId, userVintages, currentYearMonthStr);
         }
 
-        private ICollection<VintageDto> AssertUserVintagesCount(int userId, int numberOfVintages)
+        private async Task ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)
         {
 
-            var userVintages = invBalRepo.GetCustomerVintages(userId);
+            FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap = null;
+
+            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev sqlProviderCtx;
+            using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString)) {
+
+                foreach (var email in userEmails) {
+
+                    int userId = db.Users
+                        .Where(u => u.Email == email)
+                        .Select(u => u.Id)
+                        .SingleOrDefault();
+
+                    if (userId != 0) {
+                        usersFound.Add(userId);
+
+                        SetDbMonthlyPortfolioSelection(monthsCnt, userId, currentYearMonthStr);
+
+                        SetDbMonthlyPlayerLossTrx_3_4(currentYearMonthStr, userId);
+
+                        var userVintages = await AssertUserVintagesCount(userId, monthsCnt);
+
+                        portfoliosPriceMap = GetPortfoliosPricesMapTable(currentYearMonthStr);
+
+                        DailyPortfolioShares.setDbPortfoliosPrices(sqlProviderCtx, portfoliosPriceMap);
+
+                        SellVintages(caseNo, currentYearMonthStr, userVintages, userId);
+                    }
+                }
+
+                // Process losses -> invbalance
+                UserTrx.processGzTrx(sqlProviderCtx, currentYearMonthStr, portfoliosPriceMap);
+            }
+
+            await AssertAllUsersVintagesCountAfterMonthClearance(usersFound, monthsCnt + 1);
+        }
+
+        private async Task<List<VintageDto>> AssertUserVintagesCount(int userId, int numberOfVintages)
+        {
+
+            var userVintages = await invBalRepo.GetCustomerVintagesAsync(userId);
 
             // Pre Clearance vintages.count check: First month (Nov) is 0 vintages
             Assert.AreEqual(numberOfVintages, userVintages.Count);
             return userVintages;
         }
 
-        private void AssertAllUsersVintagesCountAfterMonthClearance(List<int> usersFound, int numberOfVintages)
+        private async Task AssertAllUsersVintagesCountAfterMonthClearance(List<int> usersFound, int numberOfVintages)
         {
 
             foreach (var userId in usersFound)
             {
 
-                AssertUserVintagesCount(userId, numberOfVintages);
+                await AssertUserVintagesCount(userId, numberOfVintages);
             }
         }
 
-        private void AssertBalanceNumbers_D(List<int> usersFound, string currentYearMonthStr)
+        private void AssertBalanceNumbers_1(List<int> usersFound, string currentYearMonthStr)
+        {
+
+            decimal expectedBal = int.MinValue, expectedLastVintageShares = int.MinValue, expectedTotalShares = int.MinValue, expectedInvGain = int.MinValue;
+
+            switch (currentYearMonthStr)
+            {
+                case "201611":
+                    expectedBal = 10;
+                    expectedLastVintageShares = expectedTotalShares = 10;
+                    expectedInvGain = 0;
+                    break;
+                case "201612":
+                    expectedBal = 30;
+                    expectedLastVintageShares = 5;
+                    expectedTotalShares = 15;
+                    expectedInvGain = 10;
+                    break;
+                case "201701":
+                    expectedBal = 60;
+                    expectedLastVintageShares = 5;
+                    expectedTotalShares = 20;
+                    expectedInvGain = 25;
+                    break;
+                case "201702":
+                    expectedBal = 110;
+                    expectedLastVintageShares = 2;
+                    expectedTotalShares = 22;
+                    expectedInvGain = 65;
+                    break;
+                case "201703":
+                    expectedBal = 42;
+                    expectedLastVintageShares = 20;
+                    expectedTotalShares = 42;
+                    expectedInvGain = -23;
+                    break;
+            }
+            AssertUsersBalances(usersFound, currentYearMonthStr, expectedBal, expectedLastVintageShares, expectedTotalShares, expectedInvGain);
+        }
+
+        private void AssertBalanceNumbers_2(List<int> usersFound, string currentYearMonthStr)
+        {
+
+            decimal expectedBal = int.MinValue, expectedLastVintageShares = int.MinValue, expectedTotalShares = int.MinValue, expectedInvGain = int.MinValue;
+
+            switch (currentYearMonthStr)
+            {
+                case "201611":
+                    expectedBal = 10;
+                    expectedLastVintageShares = expectedTotalShares = 10;
+                    expectedInvGain = 0;
+                    break;
+                case "201612":
+                    expectedBal = 30;
+                    expectedLastVintageShares = 5;
+                    expectedTotalShares = 15;
+                    expectedInvGain = 10;
+                    break;
+                case "201701":
+                    expectedBal = 60;
+                    expectedLastVintageShares = 5;
+                    expectedTotalShares = 20;
+                    expectedInvGain = 25;
+                    break;
+                case "201702":
+                    expectedBal = 60;
+                    expectedLastVintageShares = 2;
+                    expectedTotalShares = 12;
+                    expectedInvGain = 25;
+                    break;
+                case "201703":
+                    expectedBal = 32;
+                    expectedLastVintageShares = 20;
+                    expectedTotalShares = 32;
+                    expectedInvGain = -23;
+                    break;
+            }
+            AssertUsersBalances(usersFound, currentYearMonthStr, expectedBal, expectedLastVintageShares, expectedTotalShares, expectedInvGain);
+        }
+
+        private void AssertBalanceNumbers_3(List<int> usersFound, string currentYearMonthStr)
+        {
+
+            decimal expectedBal = int.MinValue, expectedLastVintageShares = int.MinValue, expectedTotalShares = int.MinValue, expectedInvGain = int.MinValue;
+
+            switch (currentYearMonthStr)
+            {
+                case "201611":
+                    expectedBal = 10;
+                    expectedLastVintageShares = expectedTotalShares = 10;
+                    expectedInvGain = 0;
+                    break;
+                case "201612":
+                    expectedBal = 30;
+                    expectedLastVintageShares = 5;
+                    expectedTotalShares = 15;
+                    expectedInvGain = 10;
+                    break;
+                case "201701":
+                    expectedBal = 60;
+                    expectedLastVintageShares = 5;
+                    expectedTotalShares = 20;
+                    expectedInvGain = 25;
+                    break;
+                case "201702":
+                    expectedBal = 60;
+                    expectedLastVintageShares = 2;
+                    expectedTotalShares = 12;
+                    expectedInvGain = 25;
+                    break;
+                case "201703":
+                    expectedBal = 27;
+                    expectedLastVintageShares = 20;
+                    expectedTotalShares = 27;
+                    expectedInvGain = -18;
+                    break;
+            }
+            AssertUsersBalances(usersFound, currentYearMonthStr, expectedBal, expectedLastVintageShares, expectedTotalShares, expectedInvGain);
+        }
+
+        private void AssertBalanceNumbers_4(List<int> usersFound, string currentYearMonthStr)
         {
 
             decimal expectedBal = int.MinValue, expectedLastVintageShares = int.MinValue, expectedTotalShares = int.MinValue, expectedInvGain = int.MinValue;
@@ -495,8 +683,7 @@ namespace gzWeb.Tests.Models
             }
         }
 
-        [Test]
-        public void SetDbInvBalanceSoldVintages_D()
+        private async Task InvBalancesExcelVintagesSelling(int caseNo)
         {
 
             ClearTrxHistory(userEmails);
@@ -510,13 +697,79 @@ namespace gzWeb.Tests.Models
             // Loop through all the months activity
             while (startYearMonthStr.BeforeEq(endYearMonthStr))
             {
-                ProcessInvBalances_D(usersFound, monthsCnt, startYearMonthStr);
+                await ProcessInvBalances_1_through_4(caseNo, usersFound, monthsCnt, startYearMonthStr);
 
-                AssertBalanceNumbers_D(usersFound, startYearMonthStr);
+                switch (caseNo)
+                {
+                    case 1:
+                        AssertBalanceNumbers_1(usersFound, startYearMonthStr);
+                        break;
+                    case 2:
+                        AssertBalanceNumbers_2(usersFound, startYearMonthStr);
+                        break;
+                    case 3:
+                        AssertBalanceNumbers_3(usersFound, startYearMonthStr);
+                        break;
+                    case 4:
+                        AssertBalanceNumbers_4(usersFound, startYearMonthStr);
+                        break;
+                }
 
                 monthsCnt++;
                 startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// 5 Vintages Nov - March 17
+        /// 
+        /// No sold vintages
+        /// 
+        /// </summary>
+        [Test]
+        public async Task SetDbInvBalanceSoldVintages_1()
+        {
+            await InvBalancesExcelVintagesSelling(1);
+        }
+
+        /// <summary>
+        /// 
+        /// 5 Vintages Nov - March 17
+        /// 
+        /// Sell Nov Vintage in Feb
+        /// 
+        /// </summary>
+        [Test]
+        public async Task SetDbInvBalanceSoldVintages_2()
+        {
+            await InvBalancesExcelVintagesSelling(2);
+        }
+
+        /// <summary>
+        /// 
+        /// 5 Vintages Nov - March 17
+        /// 
+        /// Sell Nov Vintage in Feb, 
+        /// Sell Dec Vintage in Mar
+        /// 
+        /// </summary>
+        [Test]
+        public async Task SetDbInvBalanceSoldVintages_3()
+        {
+            await InvBalancesExcelVintagesSelling(3);
+        }
+
+        /// <summary>
+        /// 
+        /// 5 Vintages Nov - March 17
+        /// 
+        /// Sell Nov, Dec Vintages in Feb 
+        /// 
+        /// </summary>
+        [Test]
+        public async Task SetDbInvBalanceSoldVintages_4() {
+            await InvBalancesExcelVintagesSelling(4);
         }
     }
 }

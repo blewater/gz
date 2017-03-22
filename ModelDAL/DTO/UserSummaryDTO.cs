@@ -31,7 +31,7 @@ namespace gzDAL.DTO
         public DateTime NextInvestmentOn { get; set; }
         public decimal LastInvestmentAmount { get; set; }
         public DateTime StatusAsOf { get; set; }
-        public IEnumerable<VintageDto> Vintages { get; set; }
+        public List<VintageDto> Vintages { get; set; }
 
         // Withdrawal eligibility props
         public int LockInDays { get; set; }

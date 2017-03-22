@@ -526,7 +526,7 @@ namespace gzWeb.Controllers
 
             try
             {
-                _custPortfolioRepo.SaveDefaultPorfolio(user.Id, gmUserId);
+                await _custPortfolioRepo.SaveDefaultPorfolio(user.Id, gmUserId);
             }
             catch (Exception exception)
             {
