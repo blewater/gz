@@ -43,7 +43,7 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        private Task<ApplicationUser> CacheUser(int userId) {
+        private Task<ApplicationUser> CacheUserAsync(int userId) {
 
                 var userQtask = _db.Users
                     .Where(u => u.Id == userId)
@@ -67,7 +67,7 @@ namespace gzDAL.Repos
         }
 
         public async Task<ApplicationUser> GetCachedUserAsync(int userId) {
-            var task = GetCachedUserAsync(CacheUser(userId));
+            var task = GetCachedUserAsync(CacheUserAsync(userId));
 
             return await task;
         }
@@ -86,14 +86,16 @@ namespace gzDAL.Repos
             try {
 
                 //--------------- Start async queries
-                var userQtask = CacheUser(userId);
                 var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
+                var userQtask = CacheUserAsync(userId);
 
-                // Cashed linq query
+                //----------- Get now the latest balance
+                var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
+                
                 var withdrawalEligibility = await _invBalanceRepo.GetWithdrawEligibilityDataAsync(userId);
 
                 //---------------- Execute SQL Function
-                var vintages = _invBalanceRepo.GetCustomerVintages(userId);
+                var vintages = await _invBalanceRepo.GetCustomerVintagesAsync(userId);
 
                 var lastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(_gzTransactionRepo.LastInvestmentAmount(userId,
                                                                                  DateTime.UtcNow
@@ -107,8 +109,6 @@ namespace gzDAL.Repos
                     _logger.Error("User with id {0} is null in GetSummaryData()", userId);
                 }
                 Assert(userRet != null);
-
-                var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
 
                 // Package all the results
                 summaryDtoRet = new UserSummaryDTO() {

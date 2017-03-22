@@ -6,7 +6,7 @@ namespace gzDAL.Repos.Interfaces
 {
     public interface IPortfolioRepository {
 
-        IEnumerable<PortfolioReturnsDTO> GetPortfolioReturns();
+        List<PortfolioReturnsDTO> GetPortfolioReturns();
 
         IList<string> GetPortfolioRetLines();
     }

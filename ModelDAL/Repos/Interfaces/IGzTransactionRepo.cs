@@ -10,8 +10,6 @@ namespace gzDAL.Repos.Interfaces
 
         decimal LastInvestmentAmount(int customerId, string yearMonthStr);
 
-        IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
-
         DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent);
 
         decimal GetWithdrawnFees(decimal liquidationAmount);

@@ -24,7 +24,6 @@ using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Integration.WebApi;
 using FluentScheduler;
 using gzWeb.Utilities;
-using NLog;
 
 [assembly: OwinStartupAttribute(typeof(gzWeb.Startup))]
 namespace gzWeb {
@@ -121,8 +120,8 @@ namespace gzWeb {
             container.Register<ApplicationUserManager>(Lifestyle.Scoped);
             container.Register<IUserStore<ApplicationUser, int>, CustomUserStore>(Lifestyle.Scoped);
             container.Register<IUserRepo, UserRepo>(Lifestyle.Scoped);
+            container.Register<IConfRepo, ConfRepo>(Lifestyle.Scoped);
             container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
-            container.Register<ICurrencyRateRepo, CurrencyRateRepo>(Lifestyle.Scoped);
             container.Register<ICustPortfolioRepo, CustPortfolioRepo>(Lifestyle.Scoped);
             container.Register<IInvBalanceRepo, InvBalanceRepo>(Lifestyle.Scoped);
             container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);

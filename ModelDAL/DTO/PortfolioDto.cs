@@ -11,7 +11,7 @@ namespace gzDAL.DTO {
         public RiskToleranceEnum Risk { get; set; }
         public float AllocatedPercent { get; set; }
         public decimal AllocatedAmount { get; set; }
-        public IEnumerable<HoldingDto> Holdings { get; set; }
+        public List<HoldingDto> Holdings { get; set; }
     }
 
     public class HoldingDto {

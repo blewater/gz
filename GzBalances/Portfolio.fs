@@ -114,10 +114,14 @@ module PortfolioTypes =
 
     let getPortfolioRiskById (portfolioId : PortfolioId) : Risk =
         match portfolioId with
-        | LowRiskPortfolioId -> Low
-        | MediumRiskPortfolioId -> Medium
-        | HighRiskPortfolioId -> High
-        | _ -> invalidArg "Portfolio Id" (sprintf "Unknown portfolio id: %d" portfolioId)
+        | LowRiskPortfolioId 
+            -> Low
+        | MediumRiskPortfolioId 
+            -> Medium
+        | HighRiskPortfolioId 
+            -> High
+        | _ 
+            -> invalidArg "Portfolio Id" (sprintf "Unknown portfolio id: %d" portfolioId)
 
     let getPortfolioIdByRisk (portfolioRisk : Risk) : PortfolioId =
         match portfolioRisk with
@@ -152,9 +156,17 @@ module DailyPortfolioShares =
                   let tradedOn = 
                     match DateTime.TryParseExact(infos.[0], "yyyy-MM-dd", null, Globalization.DateTimeStyles.None) with
                     | (true, dt) -> dt
-                    | (false, _) -> invalidArg "Yahoo Finance Api Date" (sprintf "Couldn't parse this yahoo api date %s" infos.[0])
-                  let yQuote = { Symbol = stock; TradedOn = tradedOn; ClosingPrice = float infos.[4]}
-                  yield yQuote }
+                    | (false, _) 
+                        -> invalidArg "Yahoo Finance Api Date" (sprintf "Couldn't parse this yahoo api date %s" infos.[0])
+                  let yQuote = 
+                    { 
+                        Symbol = stock; 
+                        TradedOn = tradedOn; 
+                        ClosingPrice = 
+                        float infos.[4]
+                    }
+                  yield yQuote 
+            }
         |> Seq.take count |> Seq.rev
 
     /// Update an existing row of PortfolioPrices
@@ -421,9 +433,18 @@ module CalcUserPortfolioShares =
     /// Get cash -> shares by looking at the investment cash amount and user portfolio
     let getNewCustomerShares (userPortfolioInput : UserPortfolioInput) : PortfolioPriced =
         match userPortfolioInput.Portfolio.Risk with
-        | Low -> userPortfolioInput |> priceLowRiskPortfolio
-        | Medium ->  userPortfolioInput |> priceMediumRiskPortfolio
-        | High -> userPortfolioInput |> priceHighRiskPortfolio
+        | Low 
+            -> 
+            userPortfolioInput 
+            |> priceLowRiskPortfolio
+        | Medium 
+            -> 
+            userPortfolioInput 
+            |> priceMediumRiskPortfolio
+        | High 
+            -> 
+            userPortfolioInput 
+            |> priceHighRiskPortfolio
 
 module VintageShares =
     open System
@@ -478,9 +499,12 @@ module VintageShares =
         let dbUserSharesRow = dbUserMonth |> getDbVintageSharesRow
 
         if isNull dbUserSharesRow then
-            (userPortfolioShares, tradingDay, dbUserMonth) |||> insDbVintageShares
+            (userPortfolioShares, tradingDay, dbUserMonth) 
+            |||> insDbVintageShares
+
         else
-            (userPortfolioShares, tradingDay, dbUserSharesRow) |||> updDbVintageShares
+            (userPortfolioShares, tradingDay, dbUserSharesRow) 
+            |||> updDbVintageShares
 
         dbUserMonth.Db.DataContext.SubmitChanges()
 
@@ -620,7 +644,8 @@ module InvBalance =
                 CustomerId = input.UserInputPortfolio.DbUserMonth.UserId, 
                 YearMonth = input.UserInputPortfolio.DbUserMonth.Month
             )
-        (input, newInvBalanceRow) ||> updDbInvBalance
+        (input, newInvBalanceRow) 
+        ||> updDbInvBalance
 
         input.UserInputPortfolio.DbUserMonth.Db.InvBalances.InsertOnSubmit(newInvBalanceRow)
 
@@ -629,9 +654,11 @@ module InvBalance =
         let invBalanceRow = input.UserInputPortfolio.DbUserMonth |> getInvBalance
 
         if isNull invBalanceRow then
-            input |> insDbInvBalance
+            input 
+            |> insDbInvBalance
         else
-            (input, invBalanceRow) ||> updDbInvBalance
+            (input, invBalanceRow) 
+            ||> updDbInvBalance
 
         input.UserInputPortfolio.DbUserMonth.Db.DataContext.SubmitChanges()
 
@@ -721,8 +748,14 @@ module UserTrx =
             logger.Info(sprintf "Processing investment balances for user id %d on month of %s having these financial amounts\n%A" 
                 userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance)
 
-        let dbTrxOper() = transactionWith <| fun () -> (userPortfolioInput, userFinance, invBalanceInput) |||> upsDbClearMonth
-        (3, dbTrxOper) ||> retry
+        let dbTrxOper() = 
+            transactionWith 
+            <| 
+                fun () -> 
+                    (userPortfolioInput, userFinance, invBalanceInput) 
+                    |||> upsDbClearMonth
+        (3, dbTrxOper) 
+        ||> retry
 
     /// get the portfolio market quote that's latest within the month processing
     let private findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
@@ -754,6 +787,7 @@ module UserTrx =
     /// Input type for gaming activities reporting
     let private getUserFinance (trxRow : DbGzTrx): UserFinance =
         {
+            // Get value or default to 0
             BegBalance = if trxRow.BegGmBalance.HasValue then trxRow.BegGmBalance.Value else 0m
             EndBalance = if trxRow.EndGmBalance.HasValue then trxRow.EndGmBalance.Value else 0m
             Deposits = if trxRow.Deposits.HasValue then trxRow.Deposits.Value else 0m
@@ -778,9 +812,19 @@ module UserTrx =
         |> Seq.iter (fun (trxRow : DbGzTrx) ->
                     // set input types
                     let dbUserMonth = {Db = db; UserId = trxRow.CustomerId; Month = yyyyMm}
-                    let userPortfolioInput = (dbUserMonth, trxRow, portfoliosPrices) |||> getUserPortfolioInput
-                    let userFinance = trxRow |> getUserFinance
-                    let invBalanceInput = (userPortfolioInput, userFinance) ||> getInvBalanceInput
 
-                    (userPortfolioInput, userFinance, invBalanceInput) |||> setDbProcessUserBalances
+                    let userPortfolioInput = 
+                        (dbUserMonth, trxRow, portfoliosPrices) 
+                        |||> getUserPortfolioInput
+                    
+                    let userFinance = 
+                        trxRow 
+                        |> getUserFinance
+                    
+                    let invBalanceInput = 
+                        (userPortfolioInput, userFinance) 
+                        ||> getInvBalanceInput
+
+                    (userPortfolioInput, userFinance, invBalanceInput) 
+                    |||> setDbProcessUserBalances
                 )

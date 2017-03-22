@@ -12,13 +12,13 @@ namespace gzDAL.Repos.Interfaces
         void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC);
         void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC);
 
-        Task<IEnumerable<PortfolioDto>> GetCustomerPlansAsync(int customerId);
+        Task<List<PortfolioDto>> GetCustomerPlansAsync(int customerId);
 
-        Portfolio GetCurrentCustomerPortfolio(int customerId);
+        Task<Portfolio> GetCurrentCustomerPortfolio(int customerId);
 
-        Portfolio GetNextMonthsCustomerPortfolio(int customerId);
+        Task<Portfolio> GetNextMonthsCustomerPortfolioAsync(int customerId);
 
-        Portfolio GetCustomerPortfolioForMonth(int customerId, string yearMonthStr);
-        void SaveDefaultPorfolio(int customerId, int gmUserId);
+        Task<Portfolio> GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr);
+        Task SaveDefaultPorfolio(int customerId, int gmUserId);
     }
 }

@@ -44,19 +44,22 @@ namespace gzDAL.Repos
         private readonly ICustFundShareRepo _customerFundSharesRepo;
         private readonly IGzTransactionRepo _gzTransactionRepo;
         private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IConfRepo _confRepo;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public InvBalanceRepo(
             ApplicationDbContext db,
             ICustFundShareRepo customerFundSharesRepo,
             IGzTransactionRepo gzTransactionRepo,
-            ICustPortfolioRepo custPortfolioRepo)
+            ICustPortfolioRepo custPortfolioRepo,
+            IConfRepo confRepo)
         {
 
             this._db = db;
             this._customerFundSharesRepo = customerFundSharesRepo;
             this._gzTransactionRepo = gzTransactionRepo;
             this._custPortfolioRepo = custPortfolioRepo;
+            this._confRepo = confRepo;
         }
 
         /// <summary>
@@ -190,10 +193,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        private async Task<Tuple<bool, DateTime, int>> IsWithdrawalEligible(int customerId)
-        {
+        private async Task<Tuple<bool, DateTime, int>> IsWithdrawalEligible(int customerId) {
 
-            var lockInDays = GetDbConfVintageLockInDaysValue();
+            var lockInDays = (await _confRepo.GetConfRow()).LOCK_IN_NUM_DAYS;
 
             var nowUtc = DateTime.UtcNow;
             var monthsLockCnt = lockInDays / 30;
@@ -209,32 +211,27 @@ namespace gzDAL.Repos
 
         private async Task<string> GetAndCacheOldestVintageYm(int customerId)
         {
-
             string key = "oldestVintage" + customerId;
-            var oldestVintageYm = (string)MemoryCache.Default.Get(key)
-                                  ??
-                                  await _db.InvBalances
-                                      .Where(i => i.CustomerId == customerId)
-                                      .Select(i => i.YearMonth)
-                                      .OrderBy(ym => ym)
-                                      .FirstOrDefaultAsync();
+            var oldestVintageYm = (string) 
+                MemoryCache
+                    .Default
+                    .Get(key);
 
-            // 1 day cache
-            if (oldestVintageYm != null) MemoryCache.Default.Set(key, oldestVintageYm, DateTimeOffset.UtcNow.AddDays(1));
+            if (oldestVintageYm == null) {
+                oldestVintageYm =
+                    await _db.InvBalances
+                        .Where(i => i.CustomerId == customerId)
+                        .Select(i => i.YearMonth)
+                        .OrderBy(ym => ym)
+                        .FirstOrDefaultAsync();
+            }
+
+            if (oldestVintageYm != null) {
+                MemoryCache
+                    .Default
+                    .Set(key, oldestVintageYm, DateTimeOffset.UtcNow.AddDays(1));
+            }
             return oldestVintageYm;
-        }
-
-        private int GetDbConfVintageLockInDaysValue()
-        {
-
-            var task = _db.GzConfigurations
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
-            var confRow = task.Result;
-
-            var lockInDays = confRow
-                .Select(c => c.LOCK_IN_NUM_DAYS)
-                .Single();
-            return lockInDays;
         }
 
         /// <summary>
@@ -260,14 +257,14 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public ICollection<VintageDto> GetCustomerVintages(int customerId)
+        public async Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId)
         {
 
-            var monthsLockPeriod = GetDbConfVintageLockInDaysValue() / 30;
+            var monthsLockPeriod = (await _confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
 
             var vintagesList = _db.Database
                 .SqlQuery<VintageDto>(
-                    "SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold, SellingValue," +
+                    "SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold, COALESCE(SellingValue-SoldFees, 0) As SellingValue," +
                     " SoldFees, SoldYearMonth FROM dbo.GetVintages(@CustomerId)",
                     new SqlParameter("@CustomerId", customerId))
                 .ToList();
@@ -340,7 +337,7 @@ namespace gzDAL.Repos
 
         /// <summary>
         /// 
-        /// Unit Test Supporting Version
+        /// ** Unit Test Helper **
         /// 
         /// Set the vintages market selling value on a given month
         /// 
@@ -425,28 +422,7 @@ namespace gzDAL.Repos
 
         /// <summary>
         /// 
-        /// Get the vintages with the selling value calculated if not sold
-        /// 
-        /// -- or
-        /// 
-        /// their selling value when they were sold.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId)
-        {
-
-            var customerVintages = GetCustomerVintages(customerId)
-                .ToList();
-            GetCustomerVintagesSellingValue(customerId, customerVintages);
-
-            return customerVintages;
-        }
-
-        /// <summary>
-        /// 
-        /// Unit Test Supporting Version.
+        /// ** Unit Test Helper **
         /// 
         /// Get the vintages with the selling value calculated if not sold.
         /// 
@@ -458,7 +434,7 @@ namespace gzDAL.Repos
         /// <param name="customerVintages"></param>
         /// <param name="sellOnThisYearMonth"></param>
         /// <returns></returns>
-        public ICollection<VintageDto> GetCustomerVintagesSellingValueOn(int customerId, List<VintageDto> customerVintages, string sellOnThisYearMonth)
+        public ICollection<VintageDto> GetUserVintagesSellingValueOn(int customerId, List<VintageDto> customerVintages, string sellOnThisYearMonth)
         {
 
             foreach (var dto in customerVintages
@@ -495,7 +471,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="customerVintages"></param>
         /// <returns></returns>
-        public ICollection<VintageDto> GetCustomerVintagesSellingValue(int customerId, List<VintageDto> customerVintages)
+        public List<VintageDto> GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
 
             foreach (var dto in customerVintages
@@ -517,6 +493,31 @@ namespace gzDAL.Repos
                 dto.VintageShares = vintageShares;
                 dto.SellingValue = vintageMarketPrice - fees;
             }
+
+            return customerVintages;
+        }
+
+        /// <summary>
+        /// 
+        /// ** Unit Test Helper **
+        /// 
+        /// Asks both the user vintages and calculates their selling value.
+        /// 
+        /// Get the vintages with the selling value calculated if not sold
+        /// 
+        /// -- or
+        /// 
+        /// their selling value when they were sold.
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        public async Task<List<VintageDto>> GetCustomerVintagesSellingValue(int customerId)
+        {
+
+            var customerVintages = await GetCustomerVintagesAsync(customerId);
+
+            GetCustomerVintagesSellingValueNow(customerId, customerVintages);
 
             return customerVintages;
         }
@@ -622,90 +623,7 @@ namespace gzDAL.Repos
         }
 
         #endregion Vintages
-        #region Fund Shares Selling
-
-        /// <summary>
-        /// 
-        /// Sell completely a customer's owned funds shares.
-        /// 
-        /// Supports selling shares from a previous month in present fund stock value.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="updatedDateTimeUtc">The database creation time-stamp.</param>
-        /// <param name="yearCurrent">Optional year value for selling in the past</param>
-        /// <param name="monthCurrent">Optional month value for selling in the past</param>
-        [Obsolete]
-        public bool SaveDbSellAllCustomerFundsShares(
-            int customerId,
-            DateTime updatedDateTimeUtc,
-            int yearCurrent = 0,
-            int monthCurrent = 0)
-        {
-
-            // Assume we don't sell shares
-            var soldShares = false;
-
-            if (yearCurrent == 0)
-            {
-                yearCurrent = DateTime.UtcNow.Year;
-            }
-            if (monthCurrent == 0)
-            {
-                monthCurrent = DateTime.UtcNow.Month;
-            }
-
-            if (new DateTime(yearCurrent, monthCurrent, 1) > DateTime.UtcNow)
-            {
-
-                throw new Exception("Cannot sell the customer's (id: " + customerId + ") portfolio in the future.");
-            }
-
-            var yyyyMm = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
-            var liquidatedMonth = true;
-            //_db.InvBalances
-            //.Any(b => b.YearMonth == yyyyMm
-            //          && b.CustomerId == customerId
-            //          && b.CashBalance > 0
-            //          && b.CashInvestment < 0);
-
-            if (!liquidatedMonth)
-            {
-
-                // Calculate the value of the fund shares
-                RiskToleranceEnum monthsPortfolioRisk;
-                var portfolioFundsValuesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(
-                    customerId,
-                    0,
-                    yearCurrent,
-                    monthCurrent,
-                    out monthsPortfolioRisk);
-
-                // Make sure we have shares to sell
-                if (portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesNum) > 0)
-                {
-
-                    decimal invGainLoss, monthlyBalance;
-                    GetSharesBalanceThisMonth(customerId, portfolioFundsValuesThisMonth, yearCurrent, monthCurrent,
-                        out monthlyBalance, out invGainLoss);
-
-                    SaveDbLiquidateCustomerPortfolio(
-                        portfolioFundsValuesThisMonth,
-                        customerId,
-                        yearCurrent,
-                        monthCurrent,
-                        monthlyBalance,
-                        invGainLoss,
-                        monthsPortfolioRisk,
-                        updatedDateTimeUtc);
-
-                    soldShares = true;
-                }
-            }
-
-            return soldShares;
-        }
-
+        #region Portfolio Selling
 
         /// <summary>
         /// 
@@ -785,262 +703,12 @@ namespace gzDAL.Repos
             });
         }
 
-        #endregion Selling
-
-
-        /// <summary>
-        /// Calculate financial information for a customer on a given month
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// <param name="cashToInvest">The positive cash to buy shares</param>
-        /// <param name="monthlyBalance">Out -> Monthly Cash Value useful in summary page</param>
-        /// <param name="invGainLoss">Out -> Monthly Gain or Loss in cash value Used in summary page</param>
-        /// <param name="monthsPortfolioRisk"></param>
-        /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO>
-            GetCustomerSharesBalancesForMonth(
-                int customerId,
-                int yearCurrent,
-                int monthCurrent,
-                decimal cashToInvest,
-                out decimal monthlyBalance,
-                out decimal invGainLoss,
-                out RiskToleranceEnum monthsPortfolioRisk)
-        {
-
-            // Buy if cashToInvest amount is positive otherwise if == 0 reprice portfolio
-            var fundSharesThisMonth = _customerFundSharesRepo.GetMonthlyFundSharesAfterBuyingSelling(
-                customerId,
-                cashToInvest,
-                yearCurrent,
-                monthCurrent,
-                out monthsPortfolioRisk);
-
-            GetSharesBalanceThisMonth(customerId, fundSharesThisMonth, yearCurrent, monthCurrent, out monthlyBalance, out invGainLoss);
-
-            return fundSharesThisMonth;
-        }
-
+        #endregion Portfolio Selling
 
         /// <summary>
         /// 
-        /// Calculate the customers investment shares balance this month
+        /// ** Support Seed() only **
         /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="portfolioFundsValuesThisMonth"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// <param name="customerMonthsBalance"></param>
-        /// <param name="invGainLoss"></param>
-        private void GetSharesBalanceThisMonth(
-            int customerId,
-            Dictionary<int, PortfolioFundDTO> portfolioFundsValuesThisMonth,
-            int yearCurrent,
-            int monthCurrent,
-            out decimal customerMonthsBalance,
-            out decimal invGainLoss)
-        {
-
-            string yearMonthCurrentStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
-
-            var monthlySharesValue = portfolioFundsValuesThisMonth.Sum(f => f.Value.SharesValue);
-            var newSharesVal = portfolioFundsValuesThisMonth.Sum(f => f.Value.NewSharesValue);
-            var prevMonthsSharesPricedNow = monthlySharesValue - newSharesVal;
-
-            var soldVintagesMarketAmount = _db.InvBalances
-                .Where(sv => sv.CustomerId == customerId
-                    && sv.SoldYearMonth == yearMonthCurrentStr
-                    && sv.Sold
-                    )
-                .Sum(sv => (decimal?)sv.SoldAmount) ?? 0;
-
-            var prevMonthsSharesBalance = GetPrevMonthInvestmentBalance(customerId, yearCurrent, monthCurrent);
-
-            // if portfolio is liquidated in whole or partly then invGainLoss has no meaning
-            invGainLoss = monthlySharesValue > 0
-                ? DbExpressions.RoundCustomerBalanceAmount(
-                        prevMonthsSharesPricedNow
-                      - prevMonthsSharesBalance
-                      + soldVintagesMarketAmount)
-                : 0;
-
-            customerMonthsBalance = monthlySharesValue > 0
-                ? DbExpressions.RoundCustomerBalanceAmount(monthlySharesValue)
-                : 0;
-        }
-
-        /// <summary>
-        /// Get the previous month's investment balance
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// <returns></returns>
-        private decimal GetPrevMonthInvestmentBalance(int customerId, int yearCurrent, int monthCurrent)
-        {
-
-            // Temp expressions
-            DateTime prevYearMonth = new DateTime(yearCurrent, monthCurrent, 1).AddMonths(-1);
-            var prevYearMonthStr = DbExpressions.GetStrYearMonth(prevYearMonth.Year, prevYearMonth.Month);
-
-            // Get the previous month's value
-            var prevMonthBalAmount = _db.InvBalances
-                .Where(b => b.CustomerId == customerId &&
-                            string.Compare(b.YearMonth, prevYearMonthStr, StringComparison.Ordinal) <= 0)
-                .OrderByDescending(b => b.YearMonth)
-                .Select(b => b.Balance)
-                .FirstOrDefault();
-
-            return prevMonthBalAmount;
-        }
-
-        /// <summary>
-        /// 
-        /// Save in the database customer account the monthly balances
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// <param name="cashToInvest">Positive cash amount to invest</param>
-        /// <param name="lowRiskShares"></param>
-        /// <param name="mediumRiskShares"></param>
-        /// <param name="highRiskShares"></param>
-        /// <param name="totalCashInvestments"></param>
-        /// <param name="totalSoldVintagesValue"></param>
-        /// <param name="begGmBalance"></param>
-        /// <param name="deposits"></param>
-        /// <param name="withdrawals"></param>
-        /// <param name="gamingGainLoss"></param>
-        /// <param name="endGmBalance"></param>
-        /// <param name="totalCashInvInHold"></param>
-        private void SaveDbCustomerMonthlyBalanceByCashInv(
-                int customerId,
-                int yearCurrent,
-                int monthCurrent,
-                decimal cashToInvest,
-                decimal lowRiskShares,
-                decimal mediumRiskShares,
-                decimal highRiskShares,
-                decimal begGmBalance,
-                decimal deposits,
-                decimal withdrawals,
-                decimal gamingGainLoss,
-                decimal endGmBalance,
-                decimal totalCashInvInHold,
-                decimal totalCashInvestments,
-                decimal totalSoldVintagesValue
-            )
-        {
-
-            decimal monthlyBalance, invGainLoss;
-            RiskToleranceEnum userPortfolioRiskSelection;
-            var portfolioFunds = GetCustomerSharesBalancesForMonth(
-                customerId,
-                yearCurrent,
-                monthCurrent,
-                cashToInvest,
-                out monthlyBalance,
-                out invGainLoss,
-                out userPortfolioRiskSelection);
-
-            /************ Update Monthly Balance *****************/
-
-            ConnRetryConf.TransactWithRetryStrategy(_db,
-
-                () =>
-                {
-
-                    SetDbMonthlyClearance(
-                        customerId,
-                        yearCurrent,
-                        monthCurrent,
-                        cashToInvest,
-                        userPortfolioRiskSelection,
-                        monthlyBalance,
-                        invGainLoss,
-                        lowRiskShares,
-                        mediumRiskShares,
-                        highRiskShares,
-                        begGmBalance,
-                        deposits,
-                        withdrawals,
-                        gamingGainLoss,
-                        endGmBalance,
-                        totalCashInvInHold,
-                        totalCashInvestments,
-                        totalSoldVintagesValue,
-                        portfolioFunds);
-
-                });
-        }
-
-        private void SetDbMonthlyClearance(
-                int customerId,
-                int yearCurrent,
-                int monthCurrent,
-                decimal cashToInvest,
-                RiskToleranceEnum userPortfolioRiskSelection,
-                decimal monthlyBalance,
-                decimal invGainLoss,
-                decimal lowRiskShares,
-                decimal mediumRiskShares,
-                decimal highRiskShares,
-                decimal begGmBalance,
-                decimal deposits,
-                decimal withdrawals,
-                decimal gamingGainLoss,
-                decimal endGmBalance,
-                decimal totalCashInvInHold,
-                decimal totalCashInvestments,
-                decimal totalSoldVintagesValue,
-                Dictionary<int, PortfolioFundDTO> portfolioFunds)
-        {
-
-            var updatedOnUtc = DateTime.UtcNow;
-
-            // Save the portfolio for the month
-            _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(
-                customerId,
-                userPortfolioRiskSelection,
-                yearCurrent,
-                monthCurrent,
-                updatedOnUtc);
-
-            UpsInvBalance(
-                customerId,
-                userPortfolioRiskSelection,
-                yearCurrent,
-                monthCurrent,
-                cashToInvest,
-                monthlyBalance,
-                invGainLoss,
-                lowRiskShares,
-                mediumRiskShares,
-                highRiskShares,
-                begGmBalance,
-                deposits,
-                withdrawals,
-                gamingGainLoss,
-                endGmBalance,
-                totalCashInvInHold,
-                totalCashInvestments,
-                totalSoldVintagesValue,
-                updatedOnUtc);
-
-            _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(
-                boughtShares: true,
-                customerId: customerId,
-                fundsShares: portfolioFunds,
-                year: yearCurrent,
-                month: monthCurrent,
-                updatedOnUtc: updatedOnUtc);
-        }
-
-        /// <summary>
         /// Upsert an investment balance monthly row
         /// </summary>
         /// <param name="customerId"></param>
@@ -1106,207 +774,6 @@ namespace gzDAL.Repos
                     TotalSoldVintagesValue = totalSoldVintagesValue,
                     UpdatedOnUtc = updatedOnUtc
                 });
-        }
-
-        /// <summary>
-        /// 
-        /// Process All Monthly Balances for a single customer whether they have transactions or not.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="startYearMonthStr">If null assuming -> GzTransactions.Min(t => t.YearMonthCtd)</param>
-        /// <param name="endYearMonthStr">If null assuming -> Now</param>
-        public void SaveDbCustomerAllMonthlyBalances(
-            int customerId,
-            string startYearMonthStr = null,
-            string endYearMonthStr = null)
-        {
-
-            // Prep in month parameters
-            startYearMonthStr = GetTrxMinMaxMonths(startYearMonthStr, ref endYearMonthStr);
-
-            // Loop through all the months activity
-            while (startYearMonthStr.BeforeEq(endYearMonthStr))
-            {
-
-                // TODO : Replace
-                //SaveDbCustomerMonthlyBalance(customerId, startYearMonthStr);
-
-                // month ++
-                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// Process All Monthly Customer Balances whether they have transactions or not.
-        /// 
-        /// </summary>
-        /// <param name="startYearMonthStr">If null assuming -> GzTransactions.Min(t => t.YearMonthCtd)</param>
-        /// <param name="endYearMonthStr">If null assuming -> Now</param>
-        public void SaveDbAllCustomersMonthlyBalances(string startYearMonthStr = null, string endYearMonthStr = null)
-        {
-
-            startYearMonthStr = GetTrxMinMaxMonths(startYearMonthStr, ref endYearMonthStr);
-
-            var activeCustomerIds = _gzTransactionRepo.GetActiveCustomers(startYearMonthStr, endYearMonthStr);
-
-            foreach (var customerId in activeCustomerIds)
-            {
-
-                SaveDbCustomerAllMonthlyBalances(customerId, startYearMonthStr, endYearMonthStr);
-            }
-
-        }
-
-        /// <summary>
-        /// 
-        /// Set default transaction processing months
-        /// minimum: earliest transaction month
-        /// maximum: the present month.
-        /// 
-        /// </summary>
-        /// <param name="startYearMonthStr"></param>
-        /// <param name="endYearMonthStr"></param>
-        /// <returns>earliest StartYearMonth</returns>
-        private string GetTrxMinMaxMonths(string startYearMonthStr, ref string endYearMonthStr)
-        {
-
-            if (string.IsNullOrEmpty(startYearMonthStr))
-            {
-                startYearMonthStr = _db.GzTrxs.Min(t => t.YearMonthCtd);
-            }
-            if (string.IsNullOrEmpty(endYearMonthStr))
-            {
-                endYearMonthStr = DateTime.UtcNow.ToStringYearMonth();
-            }
-            return startYearMonthStr;
-        }
-
-        /// <summary>
-        /// 
-        /// Overloaded: Process the investment and cash balance for a single customer on a single month.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="thisYearMonth"></param>
-        public void SaveDbCustomerMonthlyBalance(int customerId, string thisYearMonth)
-        {
-
-            var customerMonthlyTrx =
-                _db.GzTrxs
-                    .Where(t => t.CustomerId == customerId && t.YearMonthCtd == thisYearMonth)
-                    .GroupBy(t => t.YearMonthCtd)
-                    .SingleOrDefault();
-
-            var yearCurrent = int.Parse(thisYearMonth.Substring(0, 4));
-            var monthCurrent = int.Parse(thisYearMonth.Substring(4, 2));
-
-            // Call sibling
-            SaveDbCustomerMonthlyBalance(customerId, customerMonthlyTrx, yearCurrent, monthCurrent);
-        }
-
-        /// <summary>
-        /// 
-        /// Overloaded: Process the investment and cash balance for a single customer on a single month.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="customerMonthlyTrxs"></param>
-        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTrx> customerMonthlyTrxs)
-        {
-
-            int yearCurrent = 0, monthCurrent = 0;
-
-            // Initialize year month if needed
-            if (yearCurrent == 0 && customerMonthlyTrxs != null)
-            {
-
-                yearCurrent = int.Parse(customerMonthlyTrxs.Key.Substring(0, 4));
-
-            }
-            if (monthCurrent == 0 && customerMonthlyTrxs != null)
-            {
-
-                monthCurrent = int.Parse(customerMonthlyTrxs.Key.Substring(4, 2));
-            }
-
-            SaveDbCustomerMonthlyBalance(customerId, customerMonthlyTrxs, yearCurrent, monthCurrent);
-        }
-
-        /// <summary>
-        /// 
-        /// Overloaded: Process the investment and cash balance for a single customer on a single month.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="customerMonthlyTrxs"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        private void SaveDbCustomerMonthlyBalance(int customerId, IGrouping<string, GzTrx> customerMonthlyTrxs, int yearCurrent, int monthCurrent)
-        {
-
-            if (yearCurrent == 0 || monthCurrent == 0)
-            {
-                _logger.Error("SaveDbCustomerMonthlyBalance(): Cannot have either year or month equal to 0");
-            }
-
-            // Process
-            var monthlyCashToInvest = GetMonthlyCashToInvest(customerMonthlyTrxs);
-
-            if (monthlyCashToInvest >= 0)
-            {
-                // TODO : Replace
-                //SaveDbCustomerMonthlyBalanceByCashInv(customerId, yearCurrent, monthCurrent, monthlyCashToInvest);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// Calculate monthly aggregated cash amount to invest by examining all the 
-        /// customer monthly transactions.
-        /// 
-        /// </summary>
-        /// <param name="monthlyTrxGrouping"></param>
-        /// <returns></returns>
-        private decimal GetMonthlyCashToInvest(IGrouping<string, GzTrx> monthlyTrxGrouping)
-        {
-
-            if (monthlyTrxGrouping == null)
-            {
-                return 0;
-            }
-
-            var monthlyCashToInvest = 0M;
-
-            // These Ids throw exceptions when looked up as navigation properties in a transaction.
-            var liquidatedTypeId =
-                _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.FullCustomerFundsLiquidation)
-                    .Select(tt => tt.Id)
-                    .Single();
-
-            var liquidatedMonth = monthlyTrxGrouping
-                .Any(t => t.TypeId == liquidatedTypeId);
-
-            // don't buy stock if the account was liquidated this month
-            if (!liquidatedMonth)
-            {
-
-                var creditedPlayingLossTypeId =
-                    _db.GzTrxTypes.Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
-                        .Select(tt => tt.Id)
-                        .Single();
-
-                monthlyCashToInvest =
-                    monthlyTrxGrouping
-                        .Where(t => t.TypeId == creditedPlayingLossTypeId)
-                        .Select(t => t.Amount)
-                        .SingleOrDefault();
-
-            }
-
-            // --------------- Net amount to invest -------------------------
-            return monthlyCashToInvest;
         }
     }
 }

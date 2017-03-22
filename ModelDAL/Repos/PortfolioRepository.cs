@@ -28,7 +28,7 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PortfolioReturnsDTO> GetPortfolioReturns() {
+        public List<PortfolioReturnsDTO> GetPortfolioReturns() {
 
             var portfolioRates = new List<PortfolioReturnsDTO>();
 
