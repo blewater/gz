@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using gzDAL.ModelsUtil;
 using System.Data.Entity.Migrations;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
@@ -26,14 +27,25 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<GzConfiguration> GetConfRow() {
 
-            var cachedGzConf = await _db.GzConfigurations
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            string key = "gzConfiguration";
+            var gzConfiguration = (GzConfiguration)MemoryCache.Default.Get(key);
 
-            var gzConf = 
-                cachedGzConf.Select(c => c)
-                .Single();
-             
-            return gzConf;
+            if (gzConfiguration == null) {
+                var cachedGzConf = await _db.GzConfigurations
+                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+
+                gzConfiguration =
+                    cachedGzConf.Select(c => c)
+                        .Single();
+
+                // 1 day cache
+                MemoryCache
+                    .Default
+                    .Set(key, gzConfiguration, DateTimeOffset.UtcNow.AddDays(1));
+            }
+
+
+            return gzConfiguration;
         }
     }
 }

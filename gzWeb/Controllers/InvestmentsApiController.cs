@@ -346,9 +346,11 @@ namespace gzWeb.Controllers {
             }
 
             var invBalanceRes =
+                _invBalanceRepo
+                .GetLatestBalanceDto(
                     await
-                    _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(_invBalanceRepo.CacheLatestBalanceAsync(user.Id));
-
+                        _invBalanceRepo.GetCachedLatestBalanceAsync(userId)
+                );
 
             var model = new PerformanceDataViewModel
             {
