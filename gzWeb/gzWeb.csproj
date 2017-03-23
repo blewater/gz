@@ -1122,6 +1122,7 @@
     <Content Include="Scripts\angular-filter\angular-filter.min.js.map" />
     <Content Include="Scripts\angular-moment\angular-moment.min.js.map" />
     <Content Include="Scripts\angular-touch\angular-touch.min.js.map" />
+    <Content Include="Scripts\autobahn.min.jgz" />
     <None Include="Scripts\jquery\jquery-1.12.0.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.min.js" />
