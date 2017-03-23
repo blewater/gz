@@ -6,17 +6,20 @@ module DbUtil =
     open FSharp.Data.TypeProviders
     open System
 
+    [<Literal>]
+    let WaitBefRetryinMillis = 500 // milliseconds
+
     // Use for compile time memory schema representation
     [<Literal>]
-    let CompileTimeDbString = 
-        @"Data Source=.\SQLEXPRESS;Initial Catalog=gzDevDb;Persist Security Info=True;Integrated Security=SSPI;"
-    
+    // TODO: investigate switching to local db if compilation perf suffers
+    // let CompileTimeDbString = "Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + __SOURCE_DIRECTORY__ + @"\gzdbdev.mdf;Integrated Security=True;Connect Timeout=30"
+    let CompileTimeDbString = "Server=tcp:gzdbdev.database.windows.net,1433;Database=gzDbDev;User ID=gzDevReader;Password=Life is good wout writing8!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     let logger = LogManager.GetCurrentClassLogger()
 
 //-- Types
 
-    type DbSchema = SqlDataConnection< ConnectionString=CompileTimeDbString >
-    type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDevDb
+    type DbSchema = SqlDataConnection<ConnectionString=CompileTimeDbString >
+    type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev
     type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
     type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
     type DbFunds = DbSchema.ServiceTypes.Funds
@@ -131,7 +134,7 @@ module DbUtil =
         logger.Fatal(ex, "Database Runtime Exception:")
 
     /// Enclose db operation within a transaction
-    let private tryDbTransOperation (db : DbContext) (dbOperation : (unit -> unit)) : unit =
+    let tryDbTransOperation (db : DbContext) (dbOperation : (unit -> unit)) : unit =
         let transaction = startDbTransaction db
         try
 
@@ -149,7 +152,7 @@ module DbUtil =
             try
                 fn()
             with 
-            | _ -> System.Threading.Thread.Sleep(50); retry (times - 1) fn
+            | _ -> System.Threading.Thread.Sleep(WaitBefRetryinMillis); retry (times - 1) fn
         else
             fn()
     
@@ -157,3 +160,84 @@ module DbUtil =
     let tryDBCommit3Times (db : DbContext) (dbOperation : (unit -> unit)) : unit =
         let dbTransOperation() = (db, dbOperation) ||> tryDbTransOperation 
         retry 3 dbTransOperation
+
+/// Credit to http://www.fssnip.net/7PJ/title/Way-to-wrap-methods-to-transactions
+module Trx =
+    open System
+    open System.Threading
+    open System.Threading.Tasks
+    open System.Transactions
+
+    let logmsg act threadid transId =
+        let tidm = match String.IsNullOrEmpty threadid with | true -> "" | false -> " at thread " + threadid
+        let msg = "Transaction " + transId + " " + act + tidm
+        Console.WriteLine msg
+        //Logary.Logger.log (Logary.Logging.getCurrentLogger()) (Logary.Message.eventDebug msg) |> start
+
+    let getTransactionId() =
+        if not <| isNull Transaction.Current then
+            Transaction.Current.TransactionInformation.LocalIdentifier
+        else
+            ""
+
+    let transactionWithManualComplete<'T>() =
+        if not <| isNull (Type.GetType ("Mono.Runtime")) then
+            new Transactions.TransactionScope()
+        else
+            // Mono would fail to compilation, so we have to construct this via reflection:
+            // new Transactions.TransactionScope(Transactions.TransactionScopeAsyncFlowOption.Enabled)
+            let transactionAssembly = System.Reflection.Assembly.GetAssembly typeof<TransactionScope>
+            let asynctype = transactionAssembly.GetType "System.Transactions.TransactionScopeAsyncFlowOption"
+            let transaction = typeof<TransactionScope>.GetConstructor [|asynctype|]
+            transaction.Invoke [|1|] :?> TransactionScope
+
+    let transactionWith<'T> (func: unit -> 'T) =
+        use scope = transactionWithManualComplete()
+        let transId = getTransactionId()
+        logmsg "started" Thread.CurrentThread.Name transId
+        let res = func()
+        match box res with
+        | :? Task as task -> 
+            let commit = Action<Task>(fun a -> 
+                logmsg "completed" Thread.CurrentThread.Name transId
+                scope.Complete()
+                )
+            let commitTran1 = task.ContinueWith(commit, TaskContinuationOptions.OnlyOnRanToCompletion)
+            let commitTran2 = task.ContinueWith((fun _ -> 
+                logmsg "failed" Thread.CurrentThread.Name transId), TaskContinuationOptions.NotOnRanToCompletion)
+            res
+        | item when not <| isNull item && item.GetType().Name = "FSharpAsync`1" ->
+            let msg = "Use transactionWithAsync"
+            //Logary.Logger.log (Logary.Logging.getCurrentLogger()) (Logary.Message.eventError msg) |> start
+            failwith msg 
+        | _ -> 
+            logmsg "completed" System.Threading.Thread.CurrentThread.Name transId
+            scope.Complete()
+            res
+
+    let transactionWithAsync<'T> (func: unit -> Async<'T>) =
+        async {
+            use scope = transactionWithManualComplete()
+            let transId = getTransactionId()
+            logmsg "started" Thread.CurrentThread.Name transId
+            let! res = func()
+            logmsg "completed" Thread.CurrentThread.Name transId
+            scope.Complete()
+            return res
+        }
+
+    (*
+    let ``example usage`` =
+        transactionWith <| fun () -> 
+            Console.WriteLine "Normal source code in transaction"
+            Console.WriteLine "e.g. database operations!"
+            Console.WriteLine "Return values and "
+            Console.WriteLine "C# Task classes supported."
+
+    let ``example usage FSharpAsync`` =
+        transactionWithAsync <| fun () -> async {
+            Console.WriteLine "Async source code in transaction"
+            return "hello!"
+        }
+    exampleusageFSharpAsync |> Async.RunSynchronously;;
+    *)

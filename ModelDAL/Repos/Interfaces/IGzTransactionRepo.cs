@@ -10,29 +10,16 @@ namespace gzDAL.Repos.Interfaces
 
         decimal LastInvestmentAmount(int customerId, string yearMonthStr);
 
-        Task<decimal> GetLastInvestmentAmountAsync(int userId);
-
-        Task<decimal> GetTotalPlayerLossesAmountAsync(int userId);
-
-        IEnumerable<int> GetActiveCustomers(string startYearMonthStr, string endYearMonthStr);
-
         DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent);
 
         decimal GetWithdrawnFees(decimal liquidationAmount);
 
-        Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId);
+        void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount, string trxYearMonth, DateTime createdOnUtc);
 
-        Task<bool> GetEnabledWithdraw(int customerId);
+        void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, string trxYearMonth, DateTime createdOnUtc, decimal begGmBalance, decimal deposits, decimal withdrawals, decimal gainLoss, decimal endGmbalance);
 
-        void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount,
-            DateTime createdOnUtc);
+        void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, string trxYearMonth, DateTime createdOnUtc);
 
-        void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, DateTime createdOnUtc);
-
-        void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, DateTime createdOnUtc);
-
-        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, DateTime createdOnUtcout, out decimal lastInvestmentCredit);
-
-        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
+        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, string trxYearMonth, DateTime createdOnUtcout, out decimal lastInvestmentCredit);
     }
 }

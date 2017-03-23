@@ -80,10 +80,10 @@
         }
 
         $scope.toggleInvestmentHistory = function () {
-            $scope.investmentHistoryExpanded = !$scope.investmentHistoryExpanded;;
+            $scope.investmentHistoryExpanded = !$scope.investmentHistoryExpanded;
         };
         $scope.toggleGamingActivities = function () {
-            $scope.gamingActivitiesExpanded = !$scope.gamingActivitiesExpanded
+            $scope.gamingActivitiesExpanded = !$scope.gamingActivitiesExpanded;
         };
 
         function loadSummaryData() {

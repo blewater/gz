@@ -29,9 +29,9 @@ namespace gzDAL.Models {
         [StringLength(8)]
         public string YearMonthDay { get; set; }
 
-        public decimal? BegBalance { get; set; }
-        public decimal? EndBalance { get; set; }
-        public decimal? PlayerGainLoss { get; set; }
+        public decimal? BegGmBalance { get; set; }
+        public decimal? EndGmBalance { get; set; }
+        public decimal? GmGainLoss { get; set; }
 
         [Column("Player status")]
         [StringLength(256)]
@@ -68,9 +68,9 @@ namespace gzDAL.Models {
 
         public PlayerRevRpt() {
             Processed = 0;
-            BegBalance = 0;
-            EndBalance = 0;
-            PlayerGainLoss = 0;
+            BegGmBalance = 0;
+            EndGmBalance = 0;
+            GmGainLoss = 0;
             TotalDepositsAmount = 0;
             WithdrawsMade = 0;
             PendingWithdrawals = 0;

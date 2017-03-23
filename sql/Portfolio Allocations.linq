@@ -1,7 +1,6 @@
 <Query Kind="Program">
   <Connection>
     <ID>eac52b14-3979-444b-a13b-e212aaecf64f</ID>
-    <Persist>true</Persist>
     <Server>localhost\sqlexpress</Server>
     <Database>gzDevDb</Database>
     <ShowServer>true</ShowServer>
@@ -13,11 +12,14 @@ void Main()
 	
 	
 	var portfolioDtos = (from p in Portfolios
-						 join c in CustPortfolios on p.Id equals c.PortfolioId
-						 join b in InvBalances on
-							 new { CustomerId = c.CustomerId, YearMonth = c.YearMonth } equals
-							 new { CustomerId = b.CustomerId, YearMonth = b.YearMonth }
-						 where c.CustomerId == 8
+						  // older implementation
+						 //join c in CustPortfolios on p.Id equals c.PortfolioId
+						 //join b in InvBalances on
+							// new { CustomerId = c.CustomerId, YearMonth = c.YearMonth } equals
+							// new { CustomerId = b.CustomerId, YearMonth = b.YearMonth }
+							//where c.CustomerId == 8
+						 join b in InvBalances on p.Id equals b.PortfolioId
+						 where b.CustomerId == 8
 							   && !b.Sold
 						 group b by p
 		into g

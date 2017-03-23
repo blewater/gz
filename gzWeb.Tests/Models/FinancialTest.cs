@@ -83,27 +83,29 @@ namespace gzWeb.Tests.Models {
                 }
             }
         }
-        [Test]
-        public void SaveDailyCurrenciesRates() {
-            var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext(null));
-            var quotes = currencyRateRepo.SaveDbDailyCurrenciesRates();
 
-            Assert.IsNotNull(quotes);
+        // Obsolete
+        //[Test]
+        //public void SaveDailyCurrenciesRates() {
+        //    var currencyRateRepo = new CurrencyRateRepo(new ApplicationDbContext(null));
+        //    var quotes = currencyRateRepo.SaveDbDailyCurrenciesRates();
 
-            //Assert we have a closing price for first symbol
-            Assert.IsTrue(quotes[0].TradeDateTime.HasValue);
-        }
-        [Test]
-        public void SaveDailyFundClosingPrice() {
-            using (var db = new ApplicationDbContext(null)) {
-                var fundRepo = new FundRepo(db);
-                var quotes = fundRepo.SaveDbDailyFundClosingPrices();
+        //    Assert.IsNotNull(quotes);
 
-                Assert.IsNotNull(quotes);
+        //    //Assert we have a closing price for first symbol
+        //    Assert.IsTrue(quotes[0].TradeDateTime.HasValue);
+        //}
+        //[Test]
+        //public void SaveDailyFundClosingPrice() {
+        //    using (var db = new ApplicationDbContext(null)) {
+        //        var fundRepo = new FundRepo(db);
+        //        var quotes = fundRepo.SaveDbDailyFundClosingPrices();
 
-                //Assert we have a closing price for first symbol
-                Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
-            }
-        }
+        //        Assert.IsNotNull(quotes);
+
+        //        //Assert we have a closing price for first symbol
+        //        Assert.IsTrue(quotes[0].LastTradePrice.HasValue);
+        //    }
+        //}
     }
 }
