@@ -115,7 +115,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<Portfolio> GetCurrentCustomerPortfolio(int customerId) {
 
-            return await GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.ToStringYearMonth());
+            return await GetUserPortfolioForThisMonthOrBeforeAsync(customerId, DateTime.UtcNow.ToStringYearMonth());
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<Portfolio> GetNextMonthsCustomerPortfolioAsync(int customerId) {
 
-            return await GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.AddMonths(1).ToStringYearMonth());
+            return await GetUserPortfolioForThisMonthOrBeforeAsync(customerId, DateTime.UtcNow.AddMonths(1).ToStringYearMonth());
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="nextYearMonthStr">+1 Month from Present To be safe we have the latest</param>
         /// <returns></returns>
-        public async Task<Portfolio> GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr) {
+        public async Task<Portfolio> GetUserPortfolioForThisMonthOrBeforeAsync(int customerId, string nextYearMonthStr) {
 
             Portfolio customerMonthPortfolioReturn;
 
@@ -165,11 +165,11 @@ namespace gzDAL.Repos
                 // Cached already
                 var defaultRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
-                customerMonthPortfolioReturn = db
-                    .Portfolios
-                    .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
-                    .Result;
+                customerMonthPortfolioReturn =
+                    await db
+                        .Portfolios
+                        .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
+                        .FromCacheAsync(DateTime.UtcNow.AddHours(2));
             }
 
             return customerMonthPortfolioReturn;

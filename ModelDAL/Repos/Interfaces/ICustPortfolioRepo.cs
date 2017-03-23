@@ -18,7 +18,7 @@ namespace gzDAL.Repos.Interfaces
 
         Task<Portfolio> GetNextMonthsCustomerPortfolioAsync(int customerId);
 
-        Task<Portfolio> GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr);
+        Task<Portfolio> GetUserPortfolioForThisMonthOrBeforeAsync(int customerId, string nextYearMonthStr);
         Task SaveDefaultPorfolio(int customerId, int gmUserId);
     }
 }

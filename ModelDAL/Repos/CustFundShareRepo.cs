@@ -156,7 +156,7 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         private async Task<Portfolio> GetMonthsPortfolio(int customerId, int year, int month) {
 
-            var portfolio = await _custPortfolioRepo.GetUserPortfolioForThisMonthOrBefore(customerId,
+            var portfolio = await _custPortfolioRepo.GetUserPortfolioForThisMonthOrBeforeAsync(customerId,
                 DbExpressions.GetStrYearMonth(year, month));
 
             if (portfolio == null) {

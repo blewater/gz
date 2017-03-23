@@ -70,19 +70,20 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="db"></param>
         /// <param name="yyyyMm"></param>
+        /// <param name="db"></param>
         /// <returns></returns>
-        public Task<IEnumerable<InvBalance>> CacheLatestBalanceAsyncByMonth(int customerId, string yyyyMm)
+        public async Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm)
         {
-
-            var lastBalanceRowTask = _db.InvBalances
+            var invBalanceRow = 
+                await _db.InvBalances
                 .Where(i => i.CustomerId == customerId
                             && i.YearMonth == yyyyMm)
+                .DeferredSingleOrDefault()
                 // Cache 4 hours
                 .FromCacheAsync(DateTime.UtcNow.AddHours(4));
 
-            return lastBalanceRowTask;
+            return invBalanceRow;
         }
 
         /// <summary>
@@ -95,12 +96,12 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId)
+        public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId)
         {
 
             var currentMonth = DateTime.UtcNow.ToStringYearMonth();
 
-            return CacheLatestBalanceAsyncByMonth(customerId, currentMonth);
+            return GetCachedLatestBalanceAsyncByMonth(customerId, currentMonth);
         }
 
         /// <summary>
@@ -108,47 +109,28 @@ namespace gzDAL.Repos
         /// Call this after CacheLatestBalance() to get the results.
         /// 
         /// </summary>
-        /// <param name="lastBalanceRowTask"></param>
+        /// <param name="lastBalanceRow"></param>
         /// <returns>
         /// 1. Balance Amount of last month
         /// 2. Last updated timestamp of invBalance.
         /// </returns>
-        public async Task<InvBalAmountsRow> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask)
+        public InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow)
         {
-
-            var res = await lastBalanceRowTask;
-
-            var cachedBalanceRow = new InvBalAmountsRow();
-
-            var balRow = res.Select(b => new
+            var cachedBalanceRow = new InvBalAmountsRow
             {
-                b.Balance,
-                b.CashInvestment,
-                b.TotalCashInvInHold,
-                b.LowRiskShares,
-                b.MediumRiskShares,
-                b.HighRiskShares,
-                b.BegGmBalance,
-                b.Deposits,
-                b.Withdrawals,
-                GmGainLoss = b.GmGainLoss,
-                EndGmBalance = b.EndGmBalance,
-                b.UpdatedOnUtc
-            })
-            .SingleOrDefault();
-
-            cachedBalanceRow.Balance = balRow?.Balance ?? 0;
-            cachedBalanceRow.CashInvestment = balRow?.CashInvestment ?? 0;
-            cachedBalanceRow.TotalCashInvInHold = balRow?.TotalCashInvInHold ?? 0;
-            cachedBalanceRow.LowRiskShares = balRow?.LowRiskShares ?? 0;
-            cachedBalanceRow.MediumRiskShares = balRow?.MediumRiskShares ?? 0;
-            cachedBalanceRow.HighRiskShares = balRow?.HighRiskShares ?? 0;
-            cachedBalanceRow.BegGmBalance = balRow?.BegGmBalance ?? 0;
-            cachedBalanceRow.Deposits = balRow?.Deposits ?? 0;
-            cachedBalanceRow.Withdrawals = balRow?.Withdrawals ?? 0;
-            cachedBalanceRow.GmGainLoss = balRow?.GmGainLoss ?? 0;
-            cachedBalanceRow.EndGmBalance = balRow?.EndGmBalance ?? 0;
-            cachedBalanceRow.UpdatedOnUtc = balRow?.UpdatedOnUtc ?? DateTime.MinValue;
+                Balance = lastBalanceRow?.Balance ?? 0,
+                CashInvestment = lastBalanceRow?.CashInvestment ?? 0,
+                TotalCashInvInHold = lastBalanceRow?.TotalCashInvInHold ?? 0,
+                LowRiskShares = lastBalanceRow?.LowRiskShares ?? 0,
+                MediumRiskShares = lastBalanceRow?.MediumRiskShares ?? 0,
+                HighRiskShares = lastBalanceRow?.HighRiskShares ?? 0,
+                BegGmBalance = lastBalanceRow?.BegGmBalance ?? 0,
+                Deposits = lastBalanceRow?.Deposits ?? 0,
+                Withdrawals = lastBalanceRow?.Withdrawals ?? 0,
+                GmGainLoss = lastBalanceRow?.GmGainLoss ?? 0,
+                EndGmBalance = lastBalanceRow?.EndGmBalance ?? 0,
+                UpdatedOnUtc = lastBalanceRow?.UpdatedOnUtc ?? DateTime.MinValue
+            };
 
             return cachedBalanceRow;
         }
@@ -200,7 +182,7 @@ namespace gzDAL.Repos
             var nowUtc = DateTime.UtcNow;
             var monthsLockCnt = lockInDays / 30;
 
-            var oldestVintageYm = await GetAndCacheOldestVintageYm(customerId);
+            var oldestVintageYm = await GetAndCacheOldestVintageYmAsync(customerId);
 
             var oldestVintage = oldestVintageYm != null ? DbExpressions.GetDtYearMonthStrTo1StOfMonth(oldestVintageYm) : nowUtc;
             var eligibleWithdrawDate = oldestVintage.AddMonths(monthsLockCnt + 1); // the 1st of the 4th month
@@ -209,10 +191,10 @@ namespace gzDAL.Repos
             return Tuple.Create(okToWithdraw, eligibleWithdrawDate, lockInDays);
         }
 
-        private async Task<string> GetAndCacheOldestVintageYm(int customerId)
+        private async Task<string> GetAndCacheOldestVintageYmAsync(int customerId)
         {
             string key = "oldestVintage" + customerId;
-            var oldestVintageYm = (string) 
+            var oldestVintageYm = (string)
                 MemoryCache
                     .Default
                     .Get(key);
@@ -226,7 +208,8 @@ namespace gzDAL.Repos
                         .FirstOrDefaultAsync();
             }
 
-            if (oldestVintageYm != null) {
+            if (oldestVintageYm != null)
+            {
                 MemoryCache
                     .Default
                     .Set(key, oldestVintageYm, DateTimeOffset.UtcNow.AddDays(1));

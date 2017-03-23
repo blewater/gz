@@ -43,33 +43,15 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        private Task<ApplicationUser> CacheUserAsync(int userId) {
-
-                var userQtask = _db.Users
-                    .Where(u => u.Id == userId)
-                    .DeferredSingleOrDefault()
-                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
-
-                return userQtask;
-        }
-
-        /// <summary>
-        /// 
-        /// 
-        /// 
-        /// </summary>
-        /// <param name="userTask"></param>
-        /// <returns></returns>
-        private async Task<ApplicationUser> GetCachedUserAsync(Task<ApplicationUser> userTask) {
-
-            var userRow = await userTask;
-            return userRow;
-        }
-
         public async Task<ApplicationUser> GetCachedUserAsync(int userId) {
-            var task = GetCachedUserAsync(CacheUserAsync(userId));
 
-            return await task;
+                var userRow = 
+                    await _db.Users
+                        .Where(u => u.Id == userId)
+                        .DeferredSingleOrDefault()
+                        .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+
+                return userRow;
         }
 
         /// <summary>
@@ -85,13 +67,15 @@ namespace gzDAL.Repos
 
             try {
 
-                //--------------- Start async queries
-                var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
-                var userQtask = CacheUserAsync(userId);
+                var invBalanceRes = 
+                    _invBalanceRepo
+                        .GetLatestBalanceDto(
+                            await 
+                                _invBalanceRepo.GetCachedLatestBalanceAsync(userId)
+                        );
 
-                //----------- Get now the latest balance
-                var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
-                
+                userRet = await GetCachedUserAsync(userId);
+
                 var withdrawalEligibility = await _invBalanceRepo.GetWithdrawEligibilityDataAsync(userId);
 
                 //---------------- Execute SQL Function
@@ -104,7 +88,6 @@ namespace gzDAL.Repos
                 //-------------- Retrieve previously executed async query results
 
                 // user
-                userRet = await userQtask;
                 if (userRet == null) {
                     _logger.Error("User with id {0} is null in GetSummaryData()", userId);
                 }
