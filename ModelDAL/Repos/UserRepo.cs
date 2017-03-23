@@ -43,7 +43,7 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        private Task<ApplicationUser> CacheUser(int userId) {
+        private Task<ApplicationUser> CacheUserAsync(int userId) {
 
                 var userQtask = _db.Users
                     .Where(u => u.Id == userId)
@@ -67,7 +67,7 @@ namespace gzDAL.Repos
         }
 
         public async Task<ApplicationUser> GetCachedUserAsync(int userId) {
-            var task = GetCachedUserAsync(CacheUser(userId));
+            var task = GetCachedUserAsync(CacheUserAsync(userId));
 
             return await task;
         }
@@ -86,17 +86,21 @@ namespace gzDAL.Repos
             try {
 
                 //--------------- Start async queries
-                var userQtask = CacheUser(userId);
                 var latestBalanceTask = _invBalanceRepo.CacheLatestBalanceAsync(userId);
+                var userQtask = CacheUserAsync(userId);
 
-                //---------------- Execute SQL Functions
-                var totalPlayerLossesAmount = await _gzTransactionRepo.GetTotalPlayerLossesAmountAsync(userId);
+                //----------- Get now the latest balance
+                var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
+                
+                var withdrawalEligibility = await _invBalanceRepo.GetWithdrawEligibilityDataAsync(userId);
 
-                var vintages = _invBalanceRepo.GetCustomerVintages(userId);
+                //---------------- Execute SQL Function
+                var vintages = await _invBalanceRepo.GetCustomerVintagesAsync(userId);
 
-                var lastInvestmentAmount = await _gzTransactionRepo.GetLastInvestmentAmountAsync(userId);
-
-                var withdrawalEligibility = await _gzTransactionRepo.GetWithdrawEligibilityDataAsync(userId);
+                var lastInvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(_gzTransactionRepo.LastInvestmentAmount(userId,
+                                                                                 DateTime.UtcNow
+                                                                                         .ToStringYearMonth
+                                                                                         ()));
                 //-------------- Retrieve previously executed async query results
 
                 // user
@@ -105,9 +109,6 @@ namespace gzDAL.Repos
                     _logger.Error("User with id {0} is null in GetSummaryData()", userId);
                 }
                 Assert(userRet != null);
-
-                // balance, last update
-                var invBalanceRes = await _invBalanceRepo.GetCachedLatestBalanceTimestampAsync(latestBalanceTask);
 
                 // Package all the results
                 summaryDtoRet = new UserSummaryDTO() {
@@ -119,19 +120,17 @@ namespace gzDAL.Repos
                     BegMonthlyGmBalance = invBalanceRes.BegGmBalance,
                     MonthlyDeposits = invBalanceRes.Deposits,
                     MonthlyWithdrawals = invBalanceRes.Withdrawals,
-                    MonthlyGamingGainLoss = invBalanceRes.GamingGainLoss,
+                    MonthlyGamingGainLoss = invBalanceRes.GmGainLoss,
                     EndMonthlyGmBalance = invBalanceRes.EndGmBalance,
 
-                    // 
-                    TotalInvestments = totalPlayerLossesAmount,
-
-                    TotalInvestmentsReturns = invBalanceRes.Balance - totalPlayerLossesAmount,
+                    TotalInvestments = invBalanceRes.TotalCashInvInHold,
+                    TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
 
                     NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
                     LastInvestmentAmount = lastInvestmentAmount,
 
                     //latestBalanceUpdateDatetime
-                    StatusAsOf = invBalanceRes.UpdatedOnUtc ?? DateTime.UtcNow.AddDays(-1), 
+                    StatusAsOf = invBalanceRes.UpdatedOnUtc > DateTime.MinValue ? invBalanceRes.UpdatedOnUtc : DateTime.UtcNow.AddDays(-1), 
                     Vintages = vintages,
 
                     // Withdrawal eligibility

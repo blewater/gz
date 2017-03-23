@@ -54,10 +54,6 @@ namespace gzDAL.Conf
         /// <param name="context"></param>
         private static void AddUpdData(ApplicationDbContext context) {
 
-            context.Database.ExecuteSqlCommand("Delete GzTrxs");
-            context.Database.ExecuteSqlCommand("Delete VintageShares");
-            context.Database.ExecuteSqlCommand("Delete InvBalances");
-
             // GzConfigurations
             CreateUpdConfiguationRow(context);
 
@@ -76,7 +72,7 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // FundPrices
-            CreateUpdFundsPrices(context);
+            CreateUpdPortfoliosPrices(context);
             context.SaveChanges();
 
             // Portfolios
@@ -84,7 +80,7 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Link now a portfolio for this customer
-            var custPortfolioRepo = new CustPortfolioRepo(context);
+            var custPortfolioRepo = new CustPortfolioRepo(context, new ConfRepo(context));
             custPortfolioRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
 
             // Portfolios - Funds association table
@@ -100,7 +96,7 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Balances
-            CreateUpdInvBalances(context, custId);
+            UpsDbInvBalances(context, custId);
             context.SaveChanges();
             //CalcMonthlyBalances(context, custId);
         }
@@ -173,24 +169,6 @@ namespace gzDAL.Conf
                 PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
             };
             return newUser;
-        }
-
-        /// <summary>
-        /// Calculate the monthly balances for a customer
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="custId"></param>
-        private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
-
-            var custPortfolioRepo = new CustPortfolioRepo(context);
-            new InvBalanceRepo(
-                context, 
-                new CustFundShareRepo(
-                    context,
-                    custPortfolioRepo), 
-                new GzTransactionRepo(context), 
-                custPortfolioRepo)
-                .SaveDbCustomerAllMonthlyBalances(custId);
         }
 
         private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
@@ -274,92 +252,22 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdFundsPrices(ApplicationDbContext context) {
+        private static void CreateUpdPortfoliosPrices(ApplicationDbContext context) {
 
-            // End of 2015
-            context.FundPrices.AddOrUpdate(
-                f => new {f.FundId, f.YearMonthDay},
-
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VSGBX").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VBMFX").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "VSTCX").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                },
-                new FundPrice {
-                    ClosingPrice = 1F,
-                    FundId = context.Funds.Where(f => f.Symbol == "CFA").Select(f => f.Id).FirstOrDefault(),
-                    YearMonthDay = "20151231",
-                    UpdatedOnUTC = DateTime.UtcNow
-                }
-                );
-
-            var begDateTime = new DateTime(2016, 9, 1, 18, 1, 1);
-            var endDateTime = DateTime.UtcNow;
+            var now = DateTime.UtcNow;
+            var begDateTime = now.AddMonths(-6);
+            var endDateTime = now;
 
             while (begDateTime < endDateTime) {
 
-                context.FundPrices.AddOrUpdate(
-                    f => new { f.FundId, f.YearMonthDay },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "MUB").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VTI").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VSGBX").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VSTCX").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "CFA").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
-                    },
-                    new FundPrice {
-                        ClosingPrice = 1F,
-                        FundId = context.Funds.Where(f => f.Symbol == "VBMFX").Select(f => f.Id).FirstOrDefault(),
-                        YearMonthDay = begDateTime.ToStringYearMonth(),
-                        UpdatedOnUTC = DateTime.UtcNow
+                context.PortfolioPrices.AddOrUpdate(
+                    pf => new { pf.YearMonthDay },
+                    new PortfolioPrice() {
+                        PortfolioLowPrice = 1,
+                        PortfolioMediumPrice = 1,
+                        PortfolioHighPrice = 1,
+                        YearMonthDay = begDateTime.ToStringYearMonthDay(),
+                        UpdatedOnUtc = DateTime.UtcNow
                     }
                     );
 
@@ -452,73 +360,59 @@ namespace gzDAL.Conf
                 );
         }
 
-        private static void CreateUpdGzTransaction(ApplicationDbContext context, int custId) {
+        private static void SetDbMonthlyPlayerLossTrx(string trxYearMonthStr, GzTransactionRepo gzTrx, int custId) {
 
-            var trxRepo = new GzTransactionRepo(context);
+            var createdOnUtc =
+                new DateTime(
+                    DbExpressions.GetYear(trxYearMonthStr),
+                    DbExpressions.GetMonth(trxYearMonthStr),
+                    15,
+                    19,
+                    12,
+                    59,
+                    333,
+                    DateTimeKind.Utc);
 
-            // Use new API
-            trxRepo.SaveDbPlayingLoss(custId, 200, new DateTime(2016, 7, 31, 23, 46, 01));
-
-            // Old implementation before repo
-            context.GzTrxs.AddOrUpdate(
-                t => new { t.CustomerId, t.CreatedOnUtc },
-                // June
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201608",
-                    CreatedOnUtc = new DateTime(2016, 8, 31, 23, 47, 32),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Skip August
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201609",
-                    CreatedOnUtc = new DateTime(2016, 9, 30, 23, 47, 46),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Sept
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201610",
-                    CreatedOnUtc = new DateTime(2016, 10, 31, 23, 47, 46),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Oct
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201611",
-                    CreatedOnUtc = new DateTime(2016, 11, 30, 23, 47, 46),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                },
-                // Dec Skip Nov either won or did not play
-                new GzTrx {
-                    CustomerId = custId,
-                    YearMonthCtd = "201612",
-                    CreatedOnUtc = new DateTime(2016, 12, 31, 23, 47, 12),
-                    Amount = new decimal(200),
-                    CreditPcntApplied = 50,
-                    TypeId = context.GzTrxTypes.Where(t => t.Code == GzTransactionTypeEnum.CreditedPlayingLoss).Select(t => t.Id).FirstOrDefault(),
-                }
-                );
+            gzTrx.SaveDbPlayingLoss(
+                custId,
+                1000,
+                trxYearMonthStr,
+                createdOnUtc,
+                3000, 3000, 1000, -2000, 3000);
         }
 
-        private static void CreateUpdInvBalances(ApplicationDbContext context, int custId) {
-            var custPortfolioRepo = new CustPortfolioRepo(context);
+        private static void CreateUpdGzTransaction(ApplicationDbContext context, int custId) {
+
+            var trxRepo = new GzTransactionRepo(context, new ConfRepo(context));
+
+            var now = DateTime.UtcNow;
+            var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
+            var endYearMonthStr = now.ToStringYearMonth();
+
+            // Loop through all the months activity
+            while (startYearMonthStr.BeforeEq(endYearMonthStr)) {
+
+                SetDbMonthlyPlayerLossTrx(startYearMonthStr, trxRepo, custId);
+                // month ++
+                startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
+            }
+        }
+
+        private static void UpsDbInvBalances(ApplicationDbContext context, int custId) {
+
+            // Put fake amounts for gaming balances that are null
+            context.Database.ExecuteSqlCommand("Update InvBalances Set BegGmBalance = 3000, Deposits = 3000, Withdrawals = 1000, GmGainLoss = -2000, EndGmBalance = 3000 Where BegGmBalance is NUll OR Deposits is Null OR Withdrawals is Null OR GmGainLoss is NUll OR EndGmBalance is NUll");
+
+            var confRepo = new ConfRepo(context);
+            var custPortfolioRepo = new CustPortfolioRepo(context, confRepo);
             var invB = new InvBalanceRepo(
                 context,
                 new CustFundShareRepo(
                     context,
                     custPortfolioRepo),
-                new GzTransactionRepo(context),
-                custPortfolioRepo);
+                new GzTransactionRepo(context, confRepo),
+                custPortfolioRepo, 
+                new ConfRepo(context));
 
             var nowUtc = DateTime.UtcNow;
             var startYearMonthStr = nowUtc.AddMonths(-6).ToStringYearMonth();
@@ -540,8 +434,8 @@ namespace gzDAL.Conf
                     0m, 
                     1m, 
                     0m, 
-                    4000m, 
-                    2000m, 
+                    3000m, 
+                    3000m, 
                     1000m, 
                     -2000M, 
                     3000m, 

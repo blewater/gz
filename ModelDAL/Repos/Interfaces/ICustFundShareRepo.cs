@@ -6,14 +6,10 @@ using gzDAL.DTO;
 namespace gzDAL.Repos.Interfaces
 {
     public interface ICustFundShareRepo {
-        IEnumerable<CustFundShareDto> GetMonthsBoughtFundsValue(int customerId, string yearMonthStr);
 
-        Dictionary<int, PortfolioFundDTO> GetMonthlyFundSharesAfterBuyingSelling(
-            int customerId, 
-            decimal cashInvestmentAmount, 
-            int year, 
-            int month, 
-            out RiskToleranceEnum monthsPortfolioRisk);
+        VintageSharesDto GetVintageSharesMarketValueOn(int customerId, string vintageYearMonthStr,
+            string sellOnThisYearMonth);
+        VintageSharesDto GetVintageSharesMarketValue(int customerId, string vintageYearMonthStr);
 
         void SaveDbMonthlyCustomerFundShares(bool boughtShares, int customerId, 
             Dictionary<int, PortfolioFundDTO> fundsShares, int year, int month, DateTime updatedOnUtc);

@@ -53,7 +53,7 @@ namespace gzDAL.ModelUtil {
         /// <returns></returns>
         public static decimal RoundCustomerBalanceAmount(decimal amount) {
 
-            return Math.Round(amount - 0.1M, 0);
+            return amount >= 1 ? Math.Round(amount - 0.1M, 0) : amount;
         }
 
         /// <summary>
@@ -65,7 +65,43 @@ namespace gzDAL.ModelUtil {
         /// <returns></returns>
         public static decimal RoundGzFeesAmount(decimal amount) {
 
-            return Math.Round(amount, 0);
+            return amount >= 1 ? Math.Round(amount, 0) : amount;
+        }
+
+        /// <summary>
+        /// 
+        /// Get the year from a yyyyMm or yyyyMmDd string value i.e. 20160512 -> 2016
+        /// 
+        /// </summary>
+        /// <param name="yearMonth">Could be YyyyMm Or YyyyMmDd</param>
+        /// <returns></returns>
+        public static int GetYear(string yearMonth) {
+
+            return int.Parse(yearMonth.Substring(0, 4));
+        }
+
+        /// <summary>
+        /// 
+        /// Get the month from a yyyyMm or yyyyMmDd string value i.e. 20160512 -> 5
+        /// 
+        /// </summary>
+        /// <param name="yearMonth">Could be YyyyMm Or YyyyMmDd</param>
+        /// <returns></returns>
+        public static int GetMonth(string yearMonth) {
+
+            return int.Parse(yearMonth.Substring(4, 2));
+        }
+
+        /// <summary>
+        /// 
+        /// Get the day from a yyyyMmDd string value i.e. 20160502 -> 2
+        /// 
+        /// </summary>
+        /// <param name="yyyyMmDd">the year month day string in value format: YyyyMmDd</param>
+        /// <returns></returns>
+        public static int GetDay(string yyyyMmDd) {
+
+            return int.Parse(yyyyMmDd.Substring(6, 2));
         }
 
         /// <summary>
@@ -177,6 +213,28 @@ namespace gzDAL.ModelUtil {
 
         /// <summary>
         /// 
+        /// Convert a YYYYMM string to DateTime(yyyy, mm, day 1)
+        /// 
+        /// For example
+        /// Input: "201605" -> Output: new DateTime(2016, 5, 1)
+        /// 
+        /// </summary>
+        /// <param name="yearMonthStr"></param>
+        /// <returns>Input: "201605" -> Output: new DateTime(2016, 5, 1)</returns>
+        public static DateTime GetDtYearMonthStrTo1StOfMonth(string yearMonthStr)
+        {
+
+            var yearMonthStrToEndOfMonthDt = 
+                new DateTime(
+                    int.Parse(yearMonthStr.Substring(0, 4)),
+                    int.Parse(yearMonthStr.Substring(4, 2)),
+                    1);
+
+            return yearMonthStrToEndOfMonthDt;
+        }
+
+        /// <summary>
+        /// 
         /// Convert a YYYYMM string to DateTime(yyyy, mm, last day)
         /// 
         /// For example
@@ -187,8 +245,13 @@ namespace gzDAL.ModelUtil {
         /// <returns>Input: "201605" -> Output: new DateTime(2016, 5, 31)</returns>
         public static DateTime GetDtYearMonthStrToEndOfMonth(string yearMonthStr) {
 
-            var yearMonthStrToEndOfMonthDt = new DateTime(int.Parse(yearMonthStr.Substring(0, 4))
-                , int.Parse(yearMonthStr.Substring(4, 2)), 1).AddMonths(1).AddDays(-1);
+            var yearMonthStrToEndOfMonthDt = 
+                new DateTime(
+                    int.Parse(yearMonthStr.Substring(0, 4)),
+                    int.Parse(yearMonthStr.Substring(4, 2)), 
+                    1)
+                    .AddMonths(1)
+                    .AddDays(-1);
 
             return yearMonthStrToEndOfMonthDt;
         }

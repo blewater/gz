@@ -17,11 +17,11 @@ module DbGzTrx =
         trxRow.PlayerRevRptId <- Nullable playerRevRpt.Id
         trxRow.Amount <- amount
         trxRow.CreditPcntApplied <- Nullable creditPcntApplied
-        trxRow.BegGmBalance <- playerRevRpt.BegBalance
-        trxRow.EndGmBalance <- playerRevRpt.EndBalance
+        trxRow.BegGmBalance <- playerRevRpt.BegGmBalance
+        trxRow.EndGmBalance <- playerRevRpt.EndGmBalance
         trxRow.Deposits <- playerRevRpt.TotalDepositsAmount
         trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
-        trxRow.GainLoss <- playerRevRpt.PlayerGainLoss
+        trxRow.GmGainLoss <- playerRevRpt.GmGainLoss
 
     /// Create & Insert a GzTrxs row
     let insDbGzTrxRowValues
@@ -80,7 +80,7 @@ module DbGzTrx =
     /// Upsert a GzTrxs transaction row with the credited amount: 1 user row per month
     let private setDbGzTrxRow(db : DbContext)(yyyyMmDd :string)(playerRevRpt : DbPlayerRevRpt) =
 
-        let playerGainLoss = playerRevRpt.PlayerGainLoss.Value
+        let playerGainLoss = playerRevRpt.GmGainLoss.Value
         let yyyyMm = yyyyMmDd.Substring(0, 6) 
         let gmEmail = playerRevRpt.EmailAddress
         let gzUserId = getGzUserId db gmEmail
@@ -132,11 +132,11 @@ module DbPlayerRevRpt =
         let totalWithdrawals = row.WithdrawsMade.Value + row.PendingWithdrawals.Value
         // Formula to get player losses as negative amounts
         let gainLoss = 
-            row.EndBalance.Value
+            row.EndGmBalance.Value
             + totalWithdrawals
             - row.TotalDepositsAmount.Value 
-            - row.BegBalance.Value 
-        row.PlayerGainLoss <- Nullable gainLoss
+            - row.BegGmBalance.Value 
+        row.GmGainLoss <- Nullable gainLoss
         row.UpdatedOnUtc <- DateTime.UtcNow
         row.Processed <- int GmRptProcessStatus.GainLossRptUpd
 
@@ -149,8 +149,8 @@ module DbPlayerRevRpt =
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonthDay = yyyyMmDd 
                         && (
-                            playerDbRow.BegBalance <> Nullable 0M 
-                            || playerDbRow.EndBalance <> Nullable 0M
+                            playerDbRow.BegGmBalance <> Nullable 0M 
+                            || playerDbRow.EndGmBalance <> Nullable 0M
                             || playerDbRow.TotalDepositsAmount <> Nullable 0M
                             // Withdrawals that deduct balance but have not completed yet
                             || playerDbRow.PendingWithdrawals <> Nullable 0M
@@ -185,7 +185,7 @@ module DbPlayerRevRpt =
             (begBalanceExcelRow : BalanceExcelSchema.Row) 
             (playerRow : DbPlayerRevRpt) = 
 
-        playerRow.BegBalance <- begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
+        playerRow.BegGmBalance <- begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.BegBalanceRptUpd
@@ -195,7 +195,7 @@ module DbPlayerRevRpt =
                 (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRpt) = 
 
         // Zero out balance amounts, playerloss
-        playerRow.EndBalance <- endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
+        playerRow.EndGmBalance <- endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
         playerRow.Processed <- int GmRptProcessStatus.EndBalanceRptUpd
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -215,9 +215,9 @@ module DbPlayerRevRpt =
         playerRow.Currency <- customExcelRow.Currency.ToString()
 
         // Zero out gaming balance amounts, playerloss
-        playerRow.BegBalance <- Nullable 0m
-        playerRow.EndBalance <- Nullable 0m
-        playerRow.PlayerGainLoss <- Nullable 0m
+        playerRow.BegGmBalance <- Nullable 0m
+        playerRow.EndGmBalance <- Nullable 0m
+        playerRow.GmGainLoss <- Nullable 0m
 
         // Withdrawals that deduct balance but have not completed yet they come from the pending report
         playerRow.PendingWithdrawals <- Nullable 0m

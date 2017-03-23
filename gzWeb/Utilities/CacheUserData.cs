@@ -39,7 +39,7 @@ namespace gzWeb.Utilities {
 
                 var summaryRes = await _userRepo.GetSummaryDataAsync(userId);
 
-                _invBalanceRepo.GetCustomerVintagesSellingValue(summaryRes.Item2.Id, summaryRes.Item1.Vintages.ToList());
+                _invBalanceRepo.GetCustomerVintagesSellingValueNow(summaryRes.Item2.Id, summaryRes.Item1.Vintages.ToList());
 
                 await _custPortfolioRepo.GetCustomerPlansAsync(userId);
 

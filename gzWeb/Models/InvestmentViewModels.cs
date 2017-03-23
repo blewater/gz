@@ -28,7 +28,7 @@ namespace gzWeb.Models
         public RiskToleranceEnum Risk { get; set; }
         public float AllocatedPercent { get; set; }
         public decimal AllocatedAmount { get; set; }
-        public IEnumerable<HoldingViewModel> Holdings { get; set; }
+        public List<HoldingViewModel> Holdings { get; set; }
     }
 
     public class HoldingViewModel
@@ -80,13 +80,13 @@ namespace gzWeb.Models
         public DateTime NextInvestmentOn { get; set; }
         public decimal NextExpectedInvestment { get; set; }
         //public ReturnOnInvestmentViewModel ROI { get; set; }
-        public IEnumerable<PlanViewModel> Plans { get; set; }
+        public List<PlanViewModel> Plans { get; set; }
     }
 
     public class PerformanceDataViewModel
     {
         public decimal InvestmentsBalance { get; set; }
         public decimal NextExpectedInvestment { get; set; }
-        public IEnumerable<PlanViewModel> Plans { get; set; }
+        public List<PlanViewModel> Plans { get; set; }
     }
 }
