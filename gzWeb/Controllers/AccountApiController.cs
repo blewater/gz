@@ -26,7 +26,7 @@ namespace gzWeb.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private readonly ApplicationDbContext _dbContext;
-        private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IUserPortfolioRepo _custPortfolioRepo;
         private readonly IUserRepo _userRepo;
         private readonly ICacheUserData _cacheUserData;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -34,7 +34,7 @@ namespace gzWeb.Controllers
         public AccountApiController(
             ApplicationUserManager userManager, 
             ApplicationDbContext dbContext, 
-            ICustPortfolioRepo custPortfolioRepo,
+            IUserPortfolioRepo custPortfolioRepo,
             IUserRepo userRepo, 
             ICacheUserData cacheUserData)
                 : base(userManager)
@@ -526,7 +526,7 @@ namespace gzWeb.Controllers
 
             try
             {
-                await _custPortfolioRepo.SaveDefaultPorfolio(user.Id, gmUserId);
+                await _custPortfolioRepo.SetDbDefaultPorfolioAddGmUserId(user.Id, gmUserId);
             }
             catch (Exception exception)
             {

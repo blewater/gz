@@ -40,27 +40,33 @@ namespace gzDAL.Repos
 
     public class InvBalanceRepo : IInvBalanceRepo
     {
-        private readonly ApplicationDbContext _db;
-        private readonly ICustFundShareRepo _customerFundSharesRepo;
-        private readonly IGzTransactionRepo _gzTransactionRepo;
-        private readonly ICustPortfolioRepo _custPortfolioRepo;
-        private readonly IConfRepo _confRepo;
+        private readonly ApplicationDbContext db;
+        private readonly IUserPortfolioSharesRepo userPortfolioSharesRepo;
+        private readonly IGzTransactionRepo gzTransactionRepo;
+        private readonly IUserPortfolioRepo custPortfolioRepo;
+        private readonly IConfRepo confRepo;
+        private readonly IUserRepo userRepo;
+
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public InvBalanceRepo(
             ApplicationDbContext db,
-            ICustFundShareRepo customerFundSharesRepo,
+            IUserPortfolioSharesRepo userPortfolioSharesRepo,
             IGzTransactionRepo gzTransactionRepo,
-            ICustPortfolioRepo custPortfolioRepo,
-            IConfRepo confRepo)
+            IUserPortfolioRepo custPortfolioRepo,
+            IConfRepo confRepo,
+            IUserRepo userRepo)
         {
 
-            this._db = db;
-            this._customerFundSharesRepo = customerFundSharesRepo;
-            this._gzTransactionRepo = gzTransactionRepo;
-            this._custPortfolioRepo = custPortfolioRepo;
-            this._confRepo = confRepo;
+            this.db = db;
+            this.userPortfolioSharesRepo = userPortfolioSharesRepo;
+            this.gzTransactionRepo = gzTransactionRepo;
+            this.custPortfolioRepo = custPortfolioRepo;
+            this.confRepo = confRepo;
+            this.userRepo = userRepo;
         }
+
+        #region InvestmentSummaryQueries
 
         /// <summary>
         /// 
@@ -70,19 +76,19 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="db"></param>
         /// <param name="yyyyMm"></param>
+        /// <param name="db"></param>
         /// <returns></returns>
-        public Task<IEnumerable<InvBalance>> CacheLatestBalanceAsyncByMonth(int customerId, string yyyyMm)
-        {
+        public async Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm) {
+            var invBalanceRow =
+                await db.InvBalances
+                    .Where(i => i.CustomerId == customerId
+                                && i.YearMonth == yyyyMm)
+                    .DeferredSingleOrDefault()
+                    // Cache 4 hours
+                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
 
-            var lastBalanceRowTask = _db.InvBalances
-                .Where(i => i.CustomerId == customerId
-                            && i.YearMonth == yyyyMm)
-                // Cache 4 hours
-                .FromCacheAsync(DateTime.UtcNow.AddHours(4));
-
-            return lastBalanceRowTask;
+            return invBalanceRow;
         }
 
         /// <summary>
@@ -95,12 +101,11 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId)
-        {
+        public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId) {
 
             var currentMonth = DateTime.UtcNow.ToStringYearMonth();
 
-            return CacheLatestBalanceAsyncByMonth(customerId, currentMonth);
+            return GetCachedLatestBalanceAsyncByMonth(customerId, currentMonth);
         }
 
         /// <summary>
@@ -108,50 +113,108 @@ namespace gzDAL.Repos
         /// Call this after CacheLatestBalance() to get the results.
         /// 
         /// </summary>
-        /// <param name="lastBalanceRowTask"></param>
+        /// <param name="lastBalanceRow"></param>
         /// <returns>
         /// 1. Balance Amount of last month
         /// 2. Last updated timestamp of invBalance.
         /// </returns>
-        public async Task<InvBalAmountsRow> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask)
-        {
-
-            var res = await lastBalanceRowTask;
-
-            var cachedBalanceRow = new InvBalAmountsRow();
-
-            var balRow = res.Select(b => new
-            {
-                b.Balance,
-                b.CashInvestment,
-                b.TotalCashInvInHold,
-                b.LowRiskShares,
-                b.MediumRiskShares,
-                b.HighRiskShares,
-                b.BegGmBalance,
-                b.Deposits,
-                b.Withdrawals,
-                GmGainLoss = b.GmGainLoss,
-                EndGmBalance = b.EndGmBalance,
-                b.UpdatedOnUtc
-            })
-            .SingleOrDefault();
-
-            cachedBalanceRow.Balance = balRow?.Balance ?? 0;
-            cachedBalanceRow.CashInvestment = balRow?.CashInvestment ?? 0;
-            cachedBalanceRow.TotalCashInvInHold = balRow?.TotalCashInvInHold ?? 0;
-            cachedBalanceRow.LowRiskShares = balRow?.LowRiskShares ?? 0;
-            cachedBalanceRow.MediumRiskShares = balRow?.MediumRiskShares ?? 0;
-            cachedBalanceRow.HighRiskShares = balRow?.HighRiskShares ?? 0;
-            cachedBalanceRow.BegGmBalance = balRow?.BegGmBalance ?? 0;
-            cachedBalanceRow.Deposits = balRow?.Deposits ?? 0;
-            cachedBalanceRow.Withdrawals = balRow?.Withdrawals ?? 0;
-            cachedBalanceRow.GmGainLoss = balRow?.GmGainLoss ?? 0;
-            cachedBalanceRow.EndGmBalance = balRow?.EndGmBalance ?? 0;
-            cachedBalanceRow.UpdatedOnUtc = balRow?.UpdatedOnUtc ?? DateTime.MinValue;
+        public InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow) {
+            var cachedBalanceRow = new InvBalAmountsRow {
+                Balance = lastBalanceRow?.Balance ?? 0,
+                CashInvestment = lastBalanceRow?.CashInvestment ?? 0,
+                TotalCashInvInHold = lastBalanceRow?.TotalCashInvInHold ?? 0,
+                LowRiskShares = lastBalanceRow?.LowRiskShares ?? 0,
+                MediumRiskShares = lastBalanceRow?.MediumRiskShares ?? 0,
+                HighRiskShares = lastBalanceRow?.HighRiskShares ?? 0,
+                BegGmBalance = lastBalanceRow?.BegGmBalance ?? 0,
+                Deposits = lastBalanceRow?.Deposits ?? 0,
+                Withdrawals = lastBalanceRow?.Withdrawals ?? 0,
+                GmGainLoss = lastBalanceRow?.GmGainLoss ?? 0,
+                EndGmBalance = lastBalanceRow?.EndGmBalance ?? 0,
+                UpdatedOnUtc = lastBalanceRow?.UpdatedOnUtc ?? DateTime.MinValue
+            };
 
             return cachedBalanceRow;
         }
+
+        /// <summary>
+        /// 
+        /// Perform all the Summary SQL Queries in a optimized fashion to fill up the summary DTO object.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId) {
+
+            ApplicationUser userRet = null;
+            UserSummaryDTO summaryDtoRet = null;
+
+            try {
+
+                var invBalanceRes =
+                    GetLatestBalanceDto(
+                        await GetCachedLatestBalanceAsync(userId)
+                        );
+
+                userRet = await userRepo.GetCachedUserAsync(userId);
+
+                var withdrawalEligibility = GetWithdrawEligibilityData(userId);
+
+                //---------------- Execute SQL Function
+                var vintages = await GetCustomerVintagesAsync(userId);
+
+                var lastInvestmentAmount =
+                    DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount(userId,
+                        DateTime.UtcNow
+                            .ToStringYearMonth
+                            ()));
+                //-------------- Retrieve previously executed async query results
+
+                // user
+                if (userRet == null) {
+                    _logger.Error("User with id {0} is null in GetSummaryData()", userId);
+                }
+
+                // Package all the results
+                summaryDtoRet = new UserSummaryDTO() {
+
+                    Currency = CurrencyHelper.GetSymbol(userRet.Currency),
+                    InvestmentsBalance = invBalanceRes.Balance, // balance
+
+                    // Monthly gaming amounts
+                    BegGmBalance = invBalanceRes.BegGmBalance,
+                    Deposits = invBalanceRes.Deposits,
+                    Withdrawals = invBalanceRes.Withdrawals,
+                    GmGainLoss = invBalanceRes.GmGainLoss,
+                    EndGmBalance = invBalanceRes.EndGmBalance,
+
+                    TotalInvestments = invBalanceRes.TotalCashInvInHold,
+                    TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
+
+                    NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
+                    LastInvestmentAmount = lastInvestmentAmount,
+
+                    //latestBalanceUpdateDatetime
+                    StatusAsOf =
+                        invBalanceRes.UpdatedOnUtc > DateTime.MinValue
+                            ? invBalanceRes.UpdatedOnUtc
+                            : DateTime.UtcNow.AddDays(-1),
+                    Vintages = vintages,
+
+                    // Withdrawal eligibility
+                    LockInDays = withdrawalEligibility.LockInDays,
+                    EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
+                    OkToWithdraw = withdrawalEligibility.OkToWithdraw,
+                    Prompt = withdrawalEligibility.Prompt
+                };
+            }
+            catch (Exception ex) {
+                _logger.Error(ex, "Exception in GetSummaryData()");
+            }
+
+            return Tuple.Create(summaryDtoRet, userRet);
+        }
+
+        #endregion
 
         #region Vintages
 
@@ -162,12 +225,12 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId)
+        public WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId)
         {
 
             string prompt = "First available withdrawal on: ";
 
-            var tuple = await IsWithdrawalEligible(customerId);
+            var tuple = IsWithdrawalEligible(customerId);
             var eligibleWithdrawDate = tuple.Item2;
             var lockInDays = tuple.Item3;
             bool okToWithdraw = tuple.Item1;
@@ -193,14 +256,14 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        private async Task<Tuple<bool, DateTime, int>> IsWithdrawalEligible(int customerId) {
-
-            var lockInDays = (await _confRepo.GetConfRow()).LOCK_IN_NUM_DAYS;
+        private Tuple<bool, DateTime, int> IsWithdrawalEligible(int customerId)
+        {
+            var lockInDays = (confRepo.GetConfRow().Result).LOCK_IN_NUM_DAYS;
 
             var nowUtc = DateTime.UtcNow;
             var monthsLockCnt = lockInDays / 30;
 
-            var oldestVintageYm = await GetAndCacheOldestVintageYm(customerId);
+            var oldestVintageYm = GetAndCacheOldestVintageYm(customerId);
 
             var oldestVintage = oldestVintageYm != null ? DbExpressions.GetDtYearMonthStrTo1StOfMonth(oldestVintageYm) : nowUtc;
             var eligibleWithdrawDate = oldestVintage.AddMonths(monthsLockCnt + 1); // the 1st of the 4th month
@@ -209,45 +272,25 @@ namespace gzDAL.Repos
             return Tuple.Create(okToWithdraw, eligibleWithdrawDate, lockInDays);
         }
 
-        private async Task<string> GetAndCacheOldestVintageYm(int customerId)
+        private string GetAndCacheOldestVintageYm(int customerId)
         {
             string key = "oldestVintage" + customerId;
-            var oldestVintageYm = (string) 
+            var oldestVintageYm = (string)
                 MemoryCache
                     .Default
-                    .Get(key);
-
-            if (oldestVintageYm == null) {
-                oldestVintageYm =
-                    await _db.InvBalances
+                    .Get(key) ?? db.InvBalances
                         .Where(i => i.CustomerId == customerId)
                         .Select(i => i.YearMonth)
                         .OrderBy(ym => ym)
-                        .FirstOrDefaultAsync();
-            }
+                        .FirstOrDefault();
 
-            if (oldestVintageYm != null) {
+            if (oldestVintageYm != null)
+            {
                 MemoryCache
                     .Default
                     .Set(key, oldestVintageYm, DateTimeOffset.UtcNow.AddDays(1));
             }
             return oldestVintageYm;
-        }
-
-        /// <summary>
-        /// 
-        /// Enable or disable the withdrawal button
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
-        public async Task<bool> GetEnabledWithdraw(int customerId)
-        {
-
-            var tuple = await IsWithdrawalEligible(customerId);
-            bool okToWithdraw = tuple.Item1;
-
-            return okToWithdraw;
         }
 
         /// <summary>
@@ -260,9 +303,9 @@ namespace gzDAL.Repos
         public async Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId)
         {
 
-            var monthsLockPeriod = (await _confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
+            var monthsLockPeriod = (await confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
 
-            var vintagesList = _db.Database
+            var vintagesList = db.Database
                 .SqlQuery<VintageDto>(
                     "SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold, COALESCE(SellingValue-SoldFees, 0) As SellingValue," +
                     " SoldFees, SoldYearMonth FROM dbo.GetVintages(@CustomerId)",
@@ -299,12 +342,12 @@ namespace gzDAL.Repos
             out decimal fees)
         {
 
-            vintageSharesDto = _customerFundSharesRepo.GetVintageSharesMarketValueOn(
+            vintageSharesDto = userPortfolioSharesRepo.GetVintageSharesMarketValueOn(
                 customerId,
                 vintageYearMonthStr,
                 sellOnThisYearMonth);
 
-            fees = _gzTransactionRepo.GetWithdrawnFees(vintageSharesDto.MarketPrice);
+            fees = gzTransactionRepo.GetWithdrawnFees(vintageSharesDto.MarketPrice);
 
             return vintageSharesDto.MarketPrice;
         }
@@ -326,11 +369,11 @@ namespace gzDAL.Repos
             out decimal fees)
         {
 
-            vintageSharesDto = _customerFundSharesRepo.GetVintageSharesMarketValue(
+            vintageSharesDto = userPortfolioSharesRepo.GetVintageSharesMarketValue(
                 customerId,
                 vintageYearMonthStr);
 
-            fees = _gzTransactionRepo.GetWithdrawnFees(vintageSharesDto.MarketPrice);
+            fees = gzTransactionRepo.GetWithdrawnFees(vintageSharesDto.MarketPrice);
 
             return vintageSharesDto.MarketPrice;
         }
@@ -352,7 +395,7 @@ namespace gzDAL.Repos
         /// <param name="vintages"></param>
         /// <param name="sellOnThisYearMonth"></param>
         /// <returns>Number of vintages marked for selling</returns>
-        public int SetVintagesMarketValueOn(int customerId, IEnumerable<VintageDto> vintages, string sellOnThisYearMonth)
+        public int SetAllSelectedVintagesMarketValueOn(int customerId, IEnumerable<VintageDto> vintages, string sellOnThisYearMonth)
         {
 
             var numOfVintagesSold = 0;
@@ -394,7 +437,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
         /// <returns>Number of vintages marked for selling</returns>
-        public int SetVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages)
+        public int SetAllSelectedVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages)
         {
 
             var numOfVintagesSold = 0;
@@ -531,16 +574,20 @@ namespace gzDAL.Repos
         /// <param name="vintage"></param>
         /// <param name="soldOnUtc"></param>
         /// <param name="soldOnYearMonth"></param>
-        private void SaveDbSoldVintageInvBalance(int customerId, VintageDto vintage, DateTime soldOnUtc, string soldOnYearMonth = "")
+        private void SaveDbSellOneVintageSetInvBalance(int customerId, VintageDto vintage, DateTime soldOnUtc, string soldOnYearMonth = "")
         {
 
             try
             {
-                var vintageToBeSold = _db.InvBalances
+                var vintageToBeSold = db.InvBalances
                     .Where(b => b.Id == vintage.InvBalanceId)
                     .Select(b => b)
                     .Single();
-                vintageToBeSold.Sold = true;
+
+                // Side effect to in-parameter vintage.Sold = true
+                vintage.Sold = 
+                    vintageToBeSold.Sold = true;
+
                 vintageToBeSold.SoldAmount = vintage.MarketPrice;
                 vintageToBeSold.SoldFees = vintage.Fees;
                 vintageToBeSold.SoldOnUtc = soldOnUtc.Truncate(TimeSpan.FromSeconds(1));
@@ -551,7 +598,7 @@ namespace gzDAL.Repos
                     ? soldOnUtc.ToStringYearMonth()
                     : soldOnYearMonth;
 
-                _db.SaveChanges();
+                db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -573,7 +620,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
         /// <param name="soldOnYearMonth"></param>
-        private void SaveDbSellVintagesBalances(int customerId, ICollection<VintageDto> vintages, string soldOnYearMonth = "")
+        private void SaveDbSellAllSelectedVintages(int customerId, ICollection<VintageDto> vintages, string soldOnYearMonth = "")
         {
             var soldOnUtc = DateTime.UtcNow;
 
@@ -581,7 +628,7 @@ namespace gzDAL.Repos
             {
                 if (vintage.Selected) {
 
-                    SaveDbSoldVintageInvBalance(customerId, vintage, soldOnUtc, soldOnYearMonth);
+                    SaveDbSellOneVintageSetInvBalance(customerId, vintage, soldOnUtc, soldOnYearMonth);
                 }
             }
         }
@@ -598,7 +645,7 @@ namespace gzDAL.Repos
         /// <param name="vintages"></param>
         /// <param name="sellOnThisYearMonth"></param>
         /// <returns></returns>
-        public void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "")
+        public void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "")
         {
 
             // Set market price on it.. they may have left the browser window open 
@@ -606,16 +653,16 @@ namespace gzDAL.Repos
 
             var vintagesToBeSold = 
                 sellOnThisYearMonth.Length == 0 
-                    ? SetVintagesPresentMarketValue(customerId, vintages) 
-                    : SetVintagesMarketValueOn(customerId, vintages, sellOnThisYearMonth);
+                    ? SetAllSelectedVintagesPresentMarketValue(customerId, vintages) 
+                    : SetAllSelectedVintagesMarketValueOn(customerId, vintages, sellOnThisYearMonth);
 
             if (vintagesToBeSold > 0)
             {
-                ConnRetryConf.TransactWithRetryStrategy(_db,
+                ConnRetryConf.TransactWithRetryStrategy(db,
 
                     () =>
                     {
-                        SaveDbSellVintagesBalances(customerId, vintages, sellOnThisYearMonth);
+                        SaveDbSellAllSelectedVintages(customerId, vintages, sellOnThisYearMonth);
 
                     });
 
@@ -655,13 +702,13 @@ namespace gzDAL.Repos
             /****************** Liquidate a month ****************/
             var currentYearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
 
-            ConnRetryConf.TransactWithRetryStrategy(_db,
+            ConnRetryConf.TransactWithRetryStrategy(db,
 
             () =>
             {
 
                 // Save the portfolio for the month
-                _custPortfolioRepo.SaveDbCustMonthsPortfolioMix(
+                custPortfolioRepo.SetDbUserMonthsPortfolioMix(
                     customerId,
                     monthsPortfolioRisk,
                     yearCurrent,
@@ -671,7 +718,7 @@ namespace gzDAL.Repos
                 // Save fees transactions first and continue with reduced cash amount
                 decimal lastInvestmentCredit;
                 var remainingCashAmount =
-                        _gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
+                        gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
                             customerId,
                             newMonthlyBalance,
                             GzTransactionTypeEnum.FullCustomerFundsLiquidation, 
@@ -679,7 +726,7 @@ namespace gzDAL.Repos
                             updatedDateTimeUtc,
                             out lastInvestmentCredit);
 
-                _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
+                db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
                     new InvBalance
                     {
                         YearMonth = currentYearMonthStr,
@@ -692,13 +739,15 @@ namespace gzDAL.Repos
                         UpdatedOnUtc = updatedDateTimeUtc
                     });
 
-                _customerFundSharesRepo.SaveDbMonthlyCustomerFundShares(boughtShares: false, customerId: customerId,
-                    fundsShares: portfolioFunds,
-                    year: yearCurrent,
-                    month: monthCurrent,
-                    updatedOnUtc: updatedDateTimeUtc);
+                //userPortfolioSharesRepo.SetDbMonthlyUserPortfolioShares(
+                //    boughtShares: false, 
+                //    customerId: customerId,
+                //    fundsShares: portfolioFunds,
+                //    year: yearCurrent,
+                //    month: monthCurrent,
+                //    updatedOnUtc: updatedDateTimeUtc);
 
-                _db.Database.Log = null;
+                db.Database.Log = null;
 
             });
         }
@@ -752,7 +801,7 @@ namespace gzDAL.Repos
                 DateTime updatedOnUtc)
         {
 
-            _db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
+            db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
                 new InvBalance
                 {
                     YearMonth = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent),

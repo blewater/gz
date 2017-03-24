@@ -7,18 +7,18 @@ using gzDAL.Models;
 namespace gzDAL.Repos.Interfaces {
     public interface IInvBalanceRepo {
 
-        Task<IEnumerable<InvBalance>> CacheLatestBalanceAsync(int customerId);
-        Task<IEnumerable<InvBalance>> CacheLatestBalanceAsyncByMonth(int customerId, string yyyyMm);
-        Task<InvBalAmountsRow> GetCachedLatestBalanceTimestampAsync(Task<IEnumerable<InvBalance>> lastBalanceRowTask);
-        Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId);
-        Task<bool> GetEnabledWithdraw(int customerId);
-        int SetVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages);
+        Task<InvBalance> GetCachedLatestBalanceAsync(int customerId);
+        Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm);
+        InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow);
+        WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId);
+        Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId);
+        int SetAllSelectedVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages);
         Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId);
         Task<List<VintageDto>> GetCustomerVintagesSellingValue(int customerId);
         List<VintageDto> GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages);
         ICollection<VintageDto> GetUserVintagesSellingValueOn(int customerId, List<VintageDto> customerVintages,
             string sellOnThisYearMonth);
-        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "");
+        void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "");
         void UpsInvBalance(
             int customerId,
             RiskToleranceEnum userPortfolioRiskSelection,
