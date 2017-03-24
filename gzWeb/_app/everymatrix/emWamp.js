@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emWamp", ['$wamp', '$rootScope', '$log', 'constants', 'localStorageService', emWampFunction]);
-    function emWampFunction($wamp, $rootScope, $log, constants, localStorageService) {
+    APP.factory("emWamp", ['$wamp', '$rootScope', '$log', 'constants', 'localStorageService', 'emConCfg', 'message', '$route', 'vcRecaptchaService', emWampFunction]);
+    function emWampFunction($wamp, $rootScope, $log, constants, localStorageService, emConCfg, message, $route, vcRecaptchaService) {
 
         var _logError = function(error) {
             $log.error(error);
@@ -29,10 +29,12 @@
             return traceMsg;
         }
 
+        var apiQuotaExceeded = false;
         var _call = function (uri, parameters) {
+            if (apiQuotaExceeded === true && procedure !== '/connection#increaseRequestQuota')
+                return $q.defer().promise;
 
             var callReturn = $wamp.call(uri, [], parameters);
-
             var originalFunc = callReturn.then;
             callReturn.then = function(successCallback, failureCallback) {
                 function success(d) {
@@ -43,6 +45,17 @@
 
                 function error(e) {
                     $log.error((uri,parameters) + "Failed with error: '" + angular.toJson(e) + "'.");
+                    if (e.error == 'wamp.quota_exhausted') {
+                        apiQuotaExceeded = true;
+                        return increaseRequestQuotaChallenge().then(function (captchaResponse) {
+                            $wamp.call('/connection#increaseRequestQuota', { 'challengeResponse': captchaResponse }).then(function () {
+                                apiQuotaExceeded = false;
+                                $route.reload();
+                            }, function (error) {
+                                $log.error(error.kwargs.desc);
+                            });
+                        });
+                    }
                     if (typeof (failureCallback) === 'function')
                         failureCallback(e.kwargs);
                 }
@@ -52,8 +65,32 @@
 
             return callReturn;
         };
-
         
+        function renderChallenge() {
+            var challengeDeferred = $q.defer();
+            var challengePromise = challengeDeferred.promise;
+            var renderedChallengePromise = message.open({
+                nsType: 'modal',
+                nsSize: 'sm',
+                nsTemplate: '_app/everymatrix/challenge.html',
+                nsCtrl: 'challengeCtrl',
+                nsStatic: true,
+                nsShowClose: false
+            });
+            renderedChallengePromise.then(function (renderedChallengeResponse) {
+                challengeDeferred.resolve(renderedChallengeResponse);
+            }, function (renderedChallengeError) {
+                vcRecaptchaService.reload();
+                $log.error(renderedChallengeError);
+                challengeDeferred.reject(renderedChallengeError);
+            })
+            return challengePromise;
+        };
+
+        function increaseRequestQuotaChallenge() {
+            return renderChallenge();
+        };
+
 
         var service = {
             call: _call,
@@ -395,29 +432,53 @@
         };
 
         function _init() {
-            //if ($wamp.connection.isOpen)
-            //    return;
+            var clientId = localStorageService.get(constants.storageKeys.clientId);
+            $wamp.setClientId(clientId);
+
+            $rootScope.$on("$wamp.open", function (event, info) {
+                $wamp.call('/connection#getClientIdentity').then(function (result) {
+                    localStorageService.set(constants.storageKeys.clientId, result.kwargs.cid);
+                }, function (error) {
+                    $log.error(error.kwargs.desc);
+                });
+                $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
+                //console.log(info);
+            });
+
+            $rootScope.$on("$wamp.onchallenge", function (event, info) {
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                if (info.method === 'GoogleRecaptchaV2')
+                    return renderChallenge();
+                else {
+                    var err = 'Unknown challenge type: ' + info.method;
+                    $log.error(err);
+                    deferred.reject(err);
+                }
+                return promise;
+            });
 
             $wamp.subscribe("/sessionStateChange", function (args, kwargs, details) {
                 kwargs.initialized = $rootScope.initialized;
-                $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
+                //$rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
                 $rootScope.$broadcast(constants.events.SESSION_STATE_CHANGE, kwargs);
                 $log.trace("SESSION_STATE_CHANGE => args: " + angular.toJson(args) + ", kwargs: " + angular.toJson(kwargs) + ", details: " + angular.toJson(details));
-            }).then(function (subscription) {
-                var groupId = localStorageService.get(constants.storageKeys.clientId);
-                _call("/user#setClientIdentity", { groupID: groupId || "" }).then(function (result) {
-                    $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
-                    localStorageService.set(constants.storageKeys.clientId, result.groupID);
-                }, _logError);
-                //var groupId = localStorageService.get(constants.storageKeys.clientId);
-                //message.toastr('stored client id: ' + groupId);
-                //if (groupId !== undefined) {
-                //    _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
-                //        message.toastr('new client id: ' + result.groupID);
-                //        localStorageService.set(constants.storageKeys.clientId, result.groupID);
-                //    }, _logError);
-                //}
-            }, _logError);
+            });
+            //.then(function (subscription) {
+            //    var groupId = localStorageService.get(constants.storageKeys.clientId);
+            //    _call("/user#setClientIdentity", { groupID: groupId || "" }).then(function (result) {
+            //        $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
+            //        localStorageService.set(constants.storageKeys.clientId, result.groupID);
+            //    }, _logError);
+            //    //var groupId = localStorageService.get(constants.storageKeys.clientId);
+            //    //message.toastr('stored client id: ' + groupId);
+            //    //if (groupId !== undefined) {
+            //    //    _call("/user#setClientIdentity", { groupID: groupId }).then(function (result) {
+            //    //        message.toastr('new client id: ' + result.groupID);
+            //    //        localStorageService.set(constants.storageKeys.clientId, result.groupID);
+            //    //    }, _logError);
+            //    //}
+            //}, _logError);
 
             // -------------------------------------------------------------------
             // This event is fired when the account balance is changed.

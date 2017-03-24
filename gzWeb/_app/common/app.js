@@ -40,6 +40,11 @@ var APP = (function () {
     app.run([
         '$rootScope', '$location', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
         function ($rootScope, $location, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
+            //var nbDigest = 0;
+            //$rootScope.$watch(function () {
+            //    nbDigest++;
+            //    console.log("Digest cycles: " + nbDigest);
+            //});
 
             function hidePreloader() {
                 var preloader = document.getElementById("preloader");

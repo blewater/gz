@@ -3,6 +3,18 @@
     var ctrlId = 'playgroundCtrl';
     APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'emBanking', 'emBankingWithdraw', 'chat', '$location', 'auth', 'constants', '$timeout', 'accountManagement', ctrlFactory]);
     function ctrlFactory($scope, message, emWamp, emBanking, emBankingWithdraw, chat, $location, auth, constants, $timeout, accountManagement) {
+
+        $scope.challenge = function () {
+            var challengePromise = message.open({
+                nsType: 'modal',
+                nsSize: 'sm',
+                nsTemplate: '_app/everymatrix/challenge.html',
+                nsCtrl: 'challengeCtrl',
+                nsStatic: true,
+                nsShowClose: false
+            });
+        };
+
         // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.alert = function () {
