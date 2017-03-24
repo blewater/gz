@@ -13,8 +13,8 @@ namespace gzWeb.Contracts
 
         Task<List<VintageViewModel>> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user);
 
-        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, bool bypassQueue = false);
+        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
 
-        Task<List<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0);
+        Task<List<PlanViewModel>> GetCustomerPlansAsync(int userId, decimal nextInvestAmount = 0);
     }
 }

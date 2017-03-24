@@ -7,7 +7,5 @@ namespace gzDAL.Repos.Interfaces {
     public interface IUserRepo {
 
         Task<ApplicationUser> GetCachedUserAsync(int userId);
-        Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId);
-
     }
 }

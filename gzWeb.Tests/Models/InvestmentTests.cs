@@ -19,7 +19,7 @@ namespace gzWeb.Tests.Models
     [TestFixture]
     public class InvestmentTests : IDisposable
     {
-        private CustPortfolioRepo cpRepo;
+        private UserPortfolioRepo cpRepo;
         private GzTransactionRepo gzTrx;
         private InvBalanceRepo invBalRepo;
         private ApplicationDbContext db;
@@ -44,8 +44,9 @@ namespace gzWeb.Tests.Models
             devDbConnString = ConfigurationManager.ConnectionStrings["gzDevDb"].ConnectionString;
             var confRepo = new ConfRepo(db);
             gzTrx = new GzTransactionRepo(db, confRepo);
-            cpRepo = new CustPortfolioRepo(db, confRepo);
-            invBalRepo = new InvBalanceRepo(db, new CustFundShareRepo(db, cpRepo), gzTrx, cpRepo, confRepo);
+            var userRepo = new UserRepo(db);
+            cpRepo = new UserPortfolioRepo(db, confRepo, userRepo);
+            invBalRepo = new InvBalanceRepo(db, new UserPortfolioSharesRepo(db), gzTrx, cpRepo, confRepo, userRepo);
         }
 
         public void Dispose()
@@ -216,7 +217,7 @@ namespace gzWeb.Tests.Models
                         : RiskToleranceEnum.High;
 
             // Create loss transaction for the month
-            cpRepo.SaveDbCustMonthsPortfolioMix(
+            cpRepo.SetDbUserMonthsPortfolioMix(
                 userId,
                 monthPortfolioRisk,
                 DbExpressions.GetYear(startYearMonthStr),
@@ -417,7 +418,7 @@ namespace gzWeb.Tests.Models
                     break;
 
             }
-            invBalRepo.SaveDbSellVintages(userId, userVintages, currentYearMonthStr);
+            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, currentYearMonthStr);
         }
 
         private async Task ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)

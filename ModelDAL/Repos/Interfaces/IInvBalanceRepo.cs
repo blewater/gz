@@ -10,15 +10,15 @@ namespace gzDAL.Repos.Interfaces {
         Task<InvBalance> GetCachedLatestBalanceAsync(int customerId);
         Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm);
         InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow);
-        Task<WithdrawEligibilityDTO> GetWithdrawEligibilityDataAsync(int customerId);
-        Task<bool> GetEnabledWithdraw(int customerId);
-        int SetVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages);
+        WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId);
+        Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId);
+        int SetAllSelectedVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages);
         Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId);
         Task<List<VintageDto>> GetCustomerVintagesSellingValue(int customerId);
         List<VintageDto> GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages);
         ICollection<VintageDto> GetUserVintagesSellingValueOn(int customerId, List<VintageDto> customerVintages,
             string sellOnThisYearMonth);
-        void SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "");
+        void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "");
         void UpsInvBalance(
             int customerId,
             RiskToleranceEnum userPortfolioRiskSelection,
