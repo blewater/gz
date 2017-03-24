@@ -150,22 +150,23 @@ namespace gzDAL.Repos
 
             Portfolio customerMonthPortfolioReturn;
 
-            // userPortfolioMaxMonthSet typically comes back as the present month
-            var userPortfolioMaxMonthSet = GetCustPortfYearMonth(customerId, nextYearMonthStr);
+            // userPortfolioMaxMonthSet typically comes back as the present month or -1 
+            // if no portfolio back-end management has run yet.
+            var userPortfolioMaxMonthSet = GetUserPortfolioLastYearMonthSet(customerId, nextYearMonthStr);
 
             if (userPortfolioMaxMonthSet != null) {
 
-                customerMonthPortfolioReturn = 
+                // Don't cache portfolio. Portfolio selections occur within the current month
+                customerMonthPortfolioReturn =
                     await db.CustPortfolios
-                    .Where(p => p.YearMonth == userPortfolioMaxMonthSet && p.CustomerId == customerId)
-                    .Select(cp => cp.Portfolio)
-                    .DeferredSingleOrDefault()
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2));
+                        .Where(p => p.YearMonth == userPortfolioMaxMonthSet && p.CustomerId == customerId)
+                        .Select(cp => cp.Portfolio)
+                        .SingleOrDefaultAsync();
             }
             /**
              * Edge Case for leaky user registrations: 
              * Use default portfolio for new registered users without
-             * portfolio in their account. Cpc adds a portfolio next time 
+             * portfolio in their account. Portfolio management adds a portfolio next time 
              * it runs.
              */
             else {
@@ -227,7 +228,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<List<PortfolioDto>> GetUserPlansAsync(int userId) {
 
-            var nextMonthPortfolioId = (await 
+            var currentPortfolioId = (await 
                                             GetPresentMonthsUserPortfolioAsync(userId))
                                                 .Id;
 
@@ -298,7 +299,7 @@ namespace gzDAL.Repos
                 if (totalSum != 0) {
                     portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
                 }
-                portfolioDto.Selected = portfolioDto.Id == nextMonthPortfolioId;
+                portfolioDto.Selected = portfolioDto.Id == currentPortfolioId;
             }
 
             return portfolioDtos;
@@ -314,7 +315,7 @@ namespace gzDAL.Repos
         /// <param name="yearMonthStr">The year month YYYYMM i.e. April 2016 = 201604 for which you want to get the portfolio </param>
         /// 
         /// <returns></returns>
-        private string GetCustPortfYearMonth(int customerId, string yearMonthStr) {
+        private string GetUserPortfolioLastYearMonthSet(int customerId, string yearMonthStr) {
 
             return db.CustPortfolios
                 .Where(
