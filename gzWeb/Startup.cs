@@ -121,8 +121,8 @@ namespace gzWeb {
             container.Register<IUserStore<ApplicationUser, int>, CustomUserStore>(Lifestyle.Scoped);
             container.Register<IUserRepo, UserRepo>(Lifestyle.Scoped);
             container.Register<IConfRepo, ConfRepo>(Lifestyle.Scoped);
-            container.Register<ICustFundShareRepo, CustFundShareRepo>(Lifestyle.Scoped);
-            container.Register<ICustPortfolioRepo, CustPortfolioRepo>(Lifestyle.Scoped);
+            container.Register<IUserPortfolioSharesRepo, UserPortfolioSharesRepo>(Lifestyle.Scoped);
+            container.Register<IUserPortfolioRepo, UserPortfolioRepo>(Lifestyle.Scoped);
             container.Register<IInvBalanceRepo, InvBalanceRepo>(Lifestyle.Scoped);
             container.Register<IGzTransactionRepo, GzTransactionRepo>(Lifestyle.Scoped);
             container.Register<IEmailService, SendGridEmailService>(Lifestyle.Scoped);

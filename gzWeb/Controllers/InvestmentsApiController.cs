@@ -28,7 +28,7 @@ namespace gzWeb.Controllers {
                 ApplicationDbContext dbContext,
                 IInvBalanceRepo invBalanceRepo,
                 IGzTransactionRepo gzTransactionRepo,
-                ICustPortfolioRepo custPortfolioRepo,
+                IUserPortfolioRepo custPortfolioRepo,
                 IUserRepo userRepo,
                 IMapper mapper,
                 ApplicationUserManager userManager) : base(userManager)
@@ -53,7 +53,7 @@ namespace gzWeb.Controllers {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetSummaryData requested for [User#{0}]", userId);
             
-            var summaryRes = await _userRepo.GetSummaryDataAsync(userId);
+            var summaryRes = await _invBalanceRepo.GetSummaryDataAsync(userId);
             var user = summaryRes.Item2;
             var summaryDto = summaryRes.Item1;
 
@@ -236,42 +236,17 @@ namespace gzWeb.Controllers {
 
         /// <summary>
         /// 
-        /// Interface call fro selling vintage
+        /// Interface call for selling vintages
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
-        /// <param name="bypassQueue">True for unit tests</param>
         /// <returns></returns>
         public ICollection<VintageDto> SaveDbSellVintages(
                 int customerId,
-                ICollection<VintageDto> vintages,
-                bool bypassQueue = false)
+                ICollection<VintageDto> vintages)
         {
-
-            // Bypass the byPassQueue of IIS or Azure when in IIS Express because it slows down or hangs
-            bool isExpress = String.CompareOrdinal(Process.GetCurrentProcess().ProcessName, "iisexpress") == 0;
-
-            // TODO: check performance in Azure
-            if (isExpress) bypassQueue = true;
-            
-            if (!bypassQueue)
-            {
-                // Compatible only with IIS hosting
-                HostingEnvironment.QueueBackgroundWorkItem(
-                        ct =>
-                        _invBalanceRepo.SaveDbSellVintages(customerId, vintages));
-            }
-            else
-            {
-                _invBalanceRepo.SaveDbSellVintages(customerId, vintages);
-            }
-
-            // Presume the intended vintages were sold
-            foreach (var dto in vintages.Where(v => v.Selected))
-            {
-                dto.Sold = true;
-            }
+            _invBalanceRepo.SaveDbSellAllSelectedVintagesInTransRetry(customerId, vintages);
 
             return vintages;
         }
@@ -324,7 +299,7 @@ namespace gzWeb.Controllers {
                              return
                                      OkMsg(
                                              () =>
-                                             _custPortfolioRepo.SaveDbCustomerSelectNextMonthsPortfolio(user.Id,
+                                             _custPortfolioRepo.SetDbDefaultPortfolio(user.Id,
                                                                                                         plan.Risk));
                          });
         }
@@ -373,40 +348,33 @@ namespace gzWeb.Controllers {
         #endregion
 
         [HttpGet]
-        public IHttpActionResult GetPortfolios()
+        public async Task<IHttpActionResult> GetPortfolios()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetPortfolios requested for [User#{0}]", userId);
 
-            return OkMsg(() =>
-                         {
-                             var portfolios =
-                                     _dbContext.Portfolios
-                                               .Where(x => x.IsActive)
-                                               .Select(x => new
-                                                            {
-                                                                    x.Id,
-                                                                    x.RiskTolerance,
-                                                                    Funds =
-                                                                    x.PortFunds.Select(
-                                                                            f => new {f.Fund.HoldingName, f.Weight})
-                                                            })
-                                               .FromCacheAsync(DateTime.UtcNow.AddDays(1))
-                                               .Result;
-                             return portfolios;
-                         });
+            var portfolios =
+                await _dbContext.Portfolios
+                    .Where(x => x.IsActive)
+                    .Select(x => new {
+                        x.Id,
+                        x.RiskTolerance,
+                        Funds =
+                            x.PortFunds.Select(
+                                f => new {f.Fund.HoldingName, f.Weight})
+                    })
+                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+
+            return OkMsg(portfolios);
         }
 
         #endregion
 
         #region Methods
 
-        public async Task<List<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0)
+        public async Task<List<PlanViewModel>> GetCustomerPlansAsync(int userId, decimal nextInvestAmount = 0)
         {
-            var userId = User.Identity.GetUserId<int>();
-            Logger.Trace("GetCustomerPlansAsync requested for [User#{0}]", userId);
-
-            var portfolioDtos = await _custPortfolioRepo.GetCustomerPlansAsync(customerId);
+            var portfolioDtos = await _custPortfolioRepo.GetUserPlansAsync(userId);
             var portfolios = portfolioDtos
                     .Select(p => new PlanViewModel()
                                  {
@@ -439,7 +407,7 @@ namespace gzWeb.Controllers {
         private readonly IMapper _mapper;
         private readonly IInvBalanceRepo _invBalanceRepo;
         private readonly IGzTransactionRepo _gzTransactionRepo;
-        private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IUserPortfolioRepo _custPortfolioRepo;
         private readonly IUserRepo _userRepo;
         private readonly ApplicationDbContext _dbContext;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
