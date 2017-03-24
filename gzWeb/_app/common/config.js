@@ -39,7 +39,7 @@
     APP.config(['$wampProvider', 'emConCfg', function ($wampProvider, emConCfg) {        
         $wampProvider.init({
             transports: [
-                { 'type': 'websocket', 'url': emConCfg.webSocketApiUrl },
+                { 'type': 'websocket', 'url': emConCfg.webSocketApiUrl, 'max_retries': 3 },
                 { 'type': 'longpoll', 'url': emConCfg.fallbackApiUrl }
             ],
             url: emConCfg.websocketApiUrl,

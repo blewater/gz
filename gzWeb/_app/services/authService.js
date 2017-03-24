@@ -11,6 +11,7 @@
             firstname: "",
             lastname: "",
             currency: "",
+            gamingAccounts: [],
             gamingAccount: undefined,
             username: "",
             token: "",
@@ -59,6 +60,7 @@
             if (gamerIndex > -1)
                 factory.data.roles.splice(gamerIndex, 1);
             factory.data.isGamer = false;
+            factory.data.gamingAccounts = [];
             factory.data.gamingAccount = undefined;
             factory.data.gamingBalance = undefined;
             if (!factory.data.isInvestor) {

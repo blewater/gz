@@ -566,6 +566,24 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
 /* #endregion */
 
 
+.challenge {
+    background-color: #27A95C;
+    padding: 50px 0 30px;
+}
+.challenge label {
+    color: #ffffff;
+}
+.challenge .recaptcha-wrap > div > div { margin: 0 auto; }
+.challenge .recaptcha-wrap.text-center > div {
+    width: 100% !important;
+    text-align: center;
+}
+.challenge .recaptcha-wrap {
+    padding: 0;
+    border: none;
+    display: inline;
+}
+
 /* #region Conditional Styling */
 
 

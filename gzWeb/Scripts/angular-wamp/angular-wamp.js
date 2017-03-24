@@ -384,6 +384,15 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         connection.open();
                     }
                 },
+                setClientId: function (cid) {
+                    function constructUrl(url, cid) {
+                        return cid ? (url + "?cid=" + encodeURIComponent(cid)) : url;
+                    }
+                    angular.forEach(options.transports, function (transport) {
+                        transport.url = constructUrl(transport.url, cid);
+                    });
+                    //console.log(options);
+                },
                 setAuthId: function (authid, open) {
                     options.authid = authid;
                     if (open) {
