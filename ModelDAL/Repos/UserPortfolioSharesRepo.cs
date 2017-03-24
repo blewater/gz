@@ -5,6 +5,7 @@ using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
 using System.Runtime.Caching;
+using System.Threading.Tasks;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
@@ -13,232 +14,65 @@ using NLog;
 using Z.EntityFramework.Plus;
 
 namespace gzDAL.Repos {
-    public class CustFundShareRepo : ICustFundShareRepo {
+    class PortfolioPricesDto
+    {
+        public double ConservativePortfolioPrice;
+        public double MediumPortfolioPrice;
+        public double HighPortfolioPrice;
+        public string YearMonthDay;
+    }
 
-        private readonly ApplicationDbContext _db;
-        private readonly ICustPortfolioRepo _custPortfolioRepo;
+    public class UserPortfolioSharesRepo : IUserPortfolioSharesRepo {
+
+        private readonly ApplicationDbContext db;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        public CustFundShareRepo(ApplicationDbContext db, ICustPortfolioRepo custPortfolioRepo) {
+        public UserPortfolioSharesRepo(ApplicationDbContext db) {
 
-            this._db = db;
-            this._custPortfolioRepo = custPortfolioRepo;
-
-        }
-
-        ///  <summary>
-        ///
-        ///  Save purchased or sold funds shares to the customer's account.
-        ///
-        ///  </summary>
-        ///  <param name="db"></param>
-        ///  <param name="customerId"></param>
-        ///  <param name="fundsShares"></param>
-        ///  <param name="year"></param>
-        ///  <param name="month"></param>
-        ///  <param name="updatedOnUtc"></param>
-        /// <param name="boughtShares"></param>
-        public void SaveDbMonthlyCustomerFundShares(
-            bool boughtShares,
-            int customerId,
-            Dictionary<int, PortfolioFundDTO> fundsShares,
-            int year,
-            int month,
-            DateTime updatedOnUtc) {
-
-            var yearMonthStr = DbExpressions.GetStrYearMonth(year, month);
-            foreach (var fundShares in fundsShares) {
-
-                var custFundShare = new CustFundShare {
-                    // Key
-                    CustomerId = customerId,
-                    FundId = fundShares.Value.FundId,
-                    YearMonth = yearMonthStr,
-
-                    InvBalanceId = _db.InvBalances
-                        .Where(b => b.YearMonth == yearMonthStr
-                            && b.CustomerId == customerId)
-                        .Select(b => b.Id)
-                        .SingleOrDefault(),
-
-                    // Updated Shares Values Monthly balance
-                    // -- Buying or Selling logic
-                    SharesNum = boughtShares
-                                    ? fundShares.Value.SharesNum
-                                    : -fundShares.Value.SharesNum,
-
-                    SharesValue = boughtShares
-                                    ? fundShares.Value.SharesValue
-                                    : -fundShares.Value.SharesValue,
-
-                    // New Shares
-                    // -- Buying or Selling logic
-                    NewSharesNum = boughtShares
-                                        ? fundShares.Value.NewSharesNum
-                                        : 0,
-
-                    NewSharesValue = boughtShares
-                                        ? fundShares.Value.NewSharesValue
-                                        : 0,
-
-                    SharesFundPriceId = fundShares.Value.SharesFundPriceId,
-                    UpdatedOnUtc = updatedOnUtc
-                };
-
-                SaveDbCustFundShare(custFundShare);
-                _db.SaveChanges();
-            }
+            this.db = db;
         }
 
         /// <summary>
         /// 
-        /// Save one 1 Customer Fund Share Row
-        /// Rather than save all of them at once for a single customer, it saves row by row to get immediate error feedback
+        /// ** Unit Test Helper **
+        /// 
+        /// Calculate the value of a vintage shares on a given month in the past to support Unit testing.
         /// 
         /// </summary>
-        /// <param name="custFundShare"></param>
-        private void SaveDbCustFundShare(CustFundShare custFundShare) {
-
-            try {
-
-                _db.CustFundShares.AddOrUpdate(
-                    // Keys
-                    f => new {f.CustomerId, f.FundId, f.YearMonth},
-
-                    // Row object value
-                    custFundShare
-                );
-
-            } catch (Exception e) {
-                // TODO: log customer id, fundId
-                var msg = e.Message;
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Calculate the customer portfolio value for a given month.
-        /// Phase 1 launch assumes only 1 portfolio possession in 100%
-        /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="cashInvestmentAmount"></param>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="monthsPortfolioRisk"></param>
-        public Dictionary<int, PortfolioFundDTO> GetMonthlyFundSharesAfterBuyingSelling(
-            int customerId, 
-            decimal cashInvestmentAmount, 
-            int year, 
-            int month,
-            out RiskToleranceEnum monthsPortfolioRisk) {
-
-            Dictionary<int, PortfolioFundDTO> portfolioFundValues = null;
-
-            // If cashInvestmentAmount is 0 then it means we are repricing (0 cash) or liquidating all shares to cash
-            monthsPortfolioRisk = 0;
-            if (cashInvestmentAmount >= 0) {
-
-                var portfolio = GetMonthsPortfolio(customerId, year, month);
-                monthsPortfolioRisk = portfolio.RiskTolerance;
-
-                portfolioFundValues = GetOwnedFundSharesPortfolioWeights(customerId, portfolio.Id, cashInvestmentAmount, year, month);
-
-            }
-            else {
-                _logger.Error("GetMonthlyFundSharesAfterBuyingSelling(): cashInvestmentAmount cannot be 0");
-            }
-
-            return portfolioFundValues;
-        }
-
-        /// <summary>
-        /// Buy shares for the cashToInvest cash amount.
-        /// Difference compared to SellShares method aside from the cash amount being positive
-        /// is that we use the present month's portfolio to assign weight to the cash amount per fund.
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="portfolioId"></param>
-        /// <param name="cashToInvest">Positive amount of cash to invest by buying shares</param>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
+        /// <param name="vintageYearMonthStr"></param>
+        /// <param name="sellOnThisYearMonth"></param>
         /// <returns></returns>
-        private Dictionary<int, PortfolioFundDTO> GetOwnedFundSharesPortfolioWeights(int customerId, int portfolioId, decimal cashToInvest, int year, int month) {
+        public VintageSharesDto GetVintageSharesMarketValueOn(int customerId, string vintageYearMonthStr, string sellOnThisYearMonth)
+        {
+            var vintageShares = GetVintagePortfolioSharesDto(customerId, vintageYearMonthStr);
 
-            var portfolioFundValues = GetPortfolioSharesValue(customerId, cashToInvest, year, month, portfolioId);
+            SetPortfolioSharesValueOn(vintageShares, sellOnThisYearMonth);
 
-            return portfolioFundValues;
+            return vintageShares;
         }
 
         /// <summary>
         /// 
-        /// Get the last month's portfolio relative to the current month.
-        /// 
-        /// Log / Trace errors if not found.
+        /// Get a month's (vintage) portfolio shares.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
+        /// <param name="vintageYearMonthStr"></param>
         /// <returns></returns>
-        private Portfolio GetMonthsPortfolio(int customerId, int year, int month) {
+        private VintageSharesDto GetVintagePortfolioSharesDto(int customerId, string vintageYearMonthStr) {
 
-            var portfolio = _custPortfolioRepo.GetCustomerPortfolioForMonth(customerId,
-                DbExpressions.GetStrYearMonth(year, month));
+            var vintageShares =
+                db.InvBalances
+                    .Where(c => c.CustomerId == customerId && c.YearMonth == vintageYearMonthStr)
+                .Select(b => new VintageSharesDto {
+                    LowRiskShares = b.LowRiskShares,
+                    MediumRiskShares = b.MediumRiskShares,
+                    HighRiskShares = b.HighRiskShares
+                })
+                .SingleOrDefault();
 
-            if (portfolio == null) {
-                _logger.Error("No portfolio has been set for customer Id: {0}", customerId);
-                Trace.TraceError($"No portfolio has been set for customer Id: {customerId}");
-            }
-            return portfolio;
-        }
-
-        /// <summary>
-        /// 
-        /// Calculating this month's funds shares value in $ when
-        /// 
-        /// + : More cash is invested according to the latest portfolio weight configuration
-        /// - : Selling Shares to get cash
-        /// 0 : Move to next step
-        /// 
-        /// Then Re-price shares to this month's stock prices
-        /// 
-        /// </summary>
-        /// <param name="db"></param>
-        /// <param name="customerId"></param>
-        /// <param name="cashToInvest"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// <param name="customerPortfolioId"></param>
-        /// <returns>Dictionary of Portfolio DTO</returns>
-        private Dictionary<int, PortfolioFundDTO> GetPortfolioSharesValue(
-            int customerId, 
-            decimal cashToInvest, 
-            int yearCurrent, 
-            int monthCurrent, 
-            int customerPortfolioId) {
-
-            Dictionary<int, PortfolioFundDTO> customerShares = null;
-
-            if (cashToInvest > 0 && customerPortfolioId == 0) {
-
-                _logger.Error("GetPortfolioSharesValue(): Cannot invest new cash without a valid portfolio");
-
-            }
-            else {
-
-                // Get Customer Owned Funds
-                customerShares = GetOwnedCustomerFunds(customerId, yearCurrent, monthCurrent);
-
-                //Get Portfolio Funds Weights if buying shares
-                if (cashToInvest > 0 && customerPortfolioId > 0) {
-
-                    SetPortfolioFundWeights(customerId, customerShares, customerPortfolioId);
-                }
-
-                SetFundsSharesBalance(customerShares, yearCurrent, monthCurrent, cashToInvest);
-            }
-
-            return customerShares;
+            return vintageShares;
         }
 
         /// <summary>
@@ -247,22 +81,13 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="yearMonthStr"></param>
+        /// <param name="vintageYearMonthStr"></param>
         /// <returns></returns>
-        public VintageSharesDto GetVintageSharesMarketValue(int customerId, string yearMonthStr) {
+        public VintageSharesDto GetVintageSharesMarketValue(int customerId, string vintageYearMonthStr) {
 
-            var vintageSharesTask =
-                _db.InvBalances
-                    .Where(c => c.CustomerId == customerId && c.YearMonth == yearMonthStr)
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
-            var invBalanceRes = vintageSharesTask.Result;
+            var vintageShares = GetVintagePortfolioSharesDto(customerId, vintageYearMonthStr);
 
-            var vintageShares = invBalanceRes.Select(b => new VintageSharesDto {
-                LowRiskShares = b.LowRiskShares, MediumRiskShares = b.MediumRiskShares, HighRiskShares = b.HighRiskShares
-            })
-            .SingleOrDefault();
-
-            SetFundsSharesLatestValue(vintageShares);
+            SetPortfolioSharesLatestValue(vintageShares);
 
             return vintageShares;
         }
@@ -312,20 +137,49 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Calculate the latest funds prices of the In parameter shares collection.
+        /// ** Unit Test Helper **
+        /// 
+        /// Calculate the latest portfolio prices of the In parameter shares collection.
         /// 
         /// To be used for selling shares not for calculating balances.
         /// 
         /// </summary>
         /// <param name="vintageShares"></param>
-        private void SetFundsSharesLatestValue(VintageSharesDto vintageShares) {
+        /// <param name="sellOnThisYearMonth"></param>
+        private void SetPortfolioSharesValueOn(VintageSharesDto vintageShares, string sellOnThisYearMonth) {
+            var latestPortfoliosPrices = GetPortfolioSharePriceOn(sellOnThisYearMonth);
+
+            SetVintageMarketPricing(vintageShares, latestPortfoliosPrices);
+        }
+
+        /// <summary>
+        /// 
+        /// Set vintage market pricing by in argument portfoliosPrices
+        /// 
+        /// </summary>
+        /// <param name="vintageShares"></param>
+        /// <param name="portfoliosPricesDto"></param>
+        private void SetVintageMarketPricing(VintageSharesDto vintageShares, PortfolioPricesDto portfoliosPricesDto) {
+
+            vintageShares.MarketPrice = vintageShares.LowRiskShares*(decimal) portfoliosPricesDto.ConservativePortfolioPrice +
+                                        vintageShares.MediumRiskShares*(decimal) portfoliosPricesDto.MediumPortfolioPrice +
+                                        vintageShares.HighRiskShares*(decimal) portfoliosPricesDto.HighPortfolioPrice;
+            vintageShares.TradingDay = DbExpressions.GetDtYearMonthDay(portfoliosPricesDto.YearMonthDay);
+        }
+
+        /// <summary>
+        /// 
+        /// Calculate the latest portfolio prices of the In parameter shares collection.
+        /// 
+        /// To be used for selling shares not for calculating balances.
+        /// 
+        /// </summary>
+        /// <param name="vintageShares"></param>
+        private void SetPortfolioSharesLatestValue(VintageSharesDto vintageShares) {
 
             var latestPortfoliosPrices = GetCachedLatestPortfolioSharePrice();
 
-            vintageShares.MarketPrice = vintageShares.LowRiskShares    * (decimal) latestPortfoliosPrices.PortfolioLowPrice +
-                                  vintageShares.MediumRiskShares * (decimal) latestPortfoliosPrices.PortfolioMediumPrice +
-                                  vintageShares.HighRiskShares   * (decimal) latestPortfoliosPrices.PortfolioHighPrice;
-            vintageShares.TradingDay = DbExpressions.GetDtYearMonthDay(latestPortfoliosPrices.YearMonthDay);
+            SetVintageMarketPricing(vintageShares, latestPortfoliosPrices);
         }
 
         /// <summary>
@@ -341,7 +195,7 @@ namespace gzDAL.Repos {
 
             //Find last trade day and include +1 month when the awarding occurs
             var lastMonthDay = new DateTime(year, month, 1).AddMonths(2).AddDays(-1).ToString("yyyyMMdd");
-            var lastTradeDay = _db.FundPrices
+            var lastTradeDay = db.FundPrices
                 .Where(fp => fp.FundId == fundId
                              && string.Compare(fp.YearMonthDay, lastMonthDay, StringComparison.Ordinal) <= 0)
                 .Select(fp => fp.YearMonthDay)
@@ -349,10 +203,42 @@ namespace gzDAL.Repos {
 
             string locLastTradeDay = lastTradeDay;
             // Find latest closing price
-            fundPriceToRet = _db.FundPrices
+            fundPriceToRet = db.FundPrices
                 .Single(fp => fp.FundId == fundId && fp.YearMonthDay == locLastTradeDay);
 
             return fundPriceToRet;
+        }
+
+        /// <summary>
+        /// 
+        /// ** Unit Test Helper **
+        /// 
+        /// Gets the stored portfolio share price on a given month. Supports unit testing.
+        /// 
+        /// </summary>
+        /// <param name="onThisYearMonth"></param>
+        /// <returns></returns>
+        private PortfolioPricesDto GetPortfolioSharePriceOn(string onThisYearMonth) {
+            var onThisYearMonthDay = 
+                DbExpressions.GetStrYearEndofMonthDay
+                (
+                    int.Parse( onThisYearMonth.Substring(0, 4)), 
+                    int.Parse( onThisYearMonth.Substring(4, 2))
+                );
+            // Find latest closing price
+            var latestPortfoliosPrices =
+                db.PortfolioPrices
+                    .Where(pp => String.Compare(pp.YearMonthDay, onThisYearMonthDay, StringComparison.Ordinal) <= 0)
+                    .OrderByDescending(p => p.YearMonthDay)
+                    .Select(p => new PortfolioPricesDto {
+                        ConservativePortfolioPrice = p.PortfolioLowPrice,
+                        MediumPortfolioPrice = p.PortfolioMediumPrice,
+                        HighPortfolioPrice = p.PortfolioHighPrice,
+                        YearMonthDay = p.YearMonthDay
+                    })
+                    .First();
+
+            return latestPortfoliosPrices;
         }
 
         /// <summary>
@@ -362,17 +248,20 @@ namespace gzDAL.Repos {
         /// Cached for 2 hours.
         /// 
         /// </summary>
-        /// <param name="fundId"></param>
         /// <returns></returns>
-        private PortfolioPrice GetCachedLatestPortfolioSharePrice() {
+        private PortfolioPricesDto GetCachedLatestPortfolioSharePrice() {
 
             // Find latest closing price
-            var latestPortfoliosPrices = 
-                _db.PortfolioPrices
-                    .OrderByDescending(p => p.YearMonthDay)
-                .DeferredFirst()
-                .FromCacheAsync(DateTime.UtcNow.AddHours(2))
-                .Result;
+            var latestPortfoliosPrices =
+                db.PortfolioPrices
+                    .Where(p => p.YearMonthDay == db.PortfolioPrices.Select(pm => pm.YearMonthDay).Max())
+                    .Select(p => new PortfolioPricesDto {
+                        ConservativePortfolioPrice = p.PortfolioLowPrice,
+                        MediumPortfolioPrice = p.PortfolioMediumPrice,
+                        HighPortfolioPrice = p.PortfolioHighPrice,
+                        YearMonthDay = p.YearMonthDay
+                    })
+                    .Single();
 
             return latestPortfoliosPrices;
         }
@@ -454,7 +343,7 @@ namespace gzDAL.Repos {
         /// <returns>The funds IQueryable holding PortfolioDTOs</returns>
         private IQueryable<PortfolioFundDTO> GetPortfolioFunds(int customerId, int customerPortfolioId) {
 
-            return from pf in _db.PortFunds
+            return from pf in db.PortFunds
                    //join p in _db.CustPortfolios on pf.PortfolioId equals p.PortfolioId
                    //where p.CustomerId == customerId && p.PortfolioId == customerPortfolioId
                 where pf.PortfolioId == customerPortfolioId
@@ -480,10 +369,10 @@ namespace gzDAL.Repos {
 
             string currentYearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
             string lastFundsHoldingMonth =
-                GetFundSharesFromLastPurchase(customerId, _db, currentYearMonthStr) ?? "";
+                GetFundSharesFromLastPurchase(customerId, db, currentYearMonthStr) ?? "";
 
             var portfolioFundDtos = (
-                from c in _db.CustFundShares
+                from c in db.CustFundShares
                 where c.CustomerId == customerId
                       && c.SharesNum > 0
                       && c.YearMonth == lastFundsHoldingMonth
@@ -513,14 +402,14 @@ namespace gzDAL.Repos {
         /// <param name="portfolioFundDtos"></param>
         private void SetShareValuesBySoldVintagesOffset(int customerId, string currentYearMonthStr, Dictionary<int, PortfolioFundDTO> portfolioFundDtos) {
 
-            var soldVintageYearMonths = _db.InvBalances
+            var soldVintageYearMonths = db.InvBalances
                 .Where(sv => sv.CustomerId == customerId
                              && sv.SoldYearMonth == currentYearMonthStr)
                 .Select(sv => sv.YearMonth).ToList();
 
             if (soldVintageYearMonths.Count > 0) {
 
-                var vintageFunds = _db.CustFundShares
+                var vintageFunds = db.CustFundShares
                     .Where(c => c.CustomerId == customerId
                                 && c.SharesNum > 0
                                 && soldVintageYearMonths.Contains(c.YearMonth))
@@ -538,43 +427,6 @@ namespace gzDAL.Repos {
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// 
-        /// Get the *Purchased* (NewShares) of a month.
-        /// 
-        /// Used when selling a month's vintage.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="yearMonthStr"></param>
-        /// <returns></returns>
-        private IEnumerable<CustFundShareDto> GetMonthsBoughtFundsShares(
-            int customerId, 
-            string yearMonthStr) {
-
-            var custFundShareTask =
-                _db.CustFundShares
-                    .Where(c => c.CustomerId == customerId && c.YearMonth == yearMonthStr)
-                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
-            var custFundShareRow = custFundShareTask.Result;
-            var ownedFunds = custFundShareRow
-                    .Select(c => new CustFundShareDto() {
-                        Id = c.Id,
-                        FundId = c.FundId,
-                        CustomerId = c.CustomerId,
-                        YearMonth = c.YearMonth,
-                        SharesNum = c.SharesNum,
-                        SharesValue = c.SharesValue,
-                        NewSharesNum = c.NewSharesNum,
-                        NewSharesValue = c.NewSharesValue,
-                        SharesFundPriceId = c.SharesFundPriceId,
-                        SoldInvBalanceId = c.InvBalanceId,
-                        UpdatedOnUtc = c.UpdatedOnUtc
-                    }).ToList();
-
-            return ownedFunds;
         }
 
         /// <summary>

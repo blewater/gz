@@ -11,10 +11,10 @@ namespace gzWeb.Contracts
     {
         SummaryDataViewModel GetSummaryData(ApplicationUser user, UserSummaryDTO summaryDto);
 
-        IEnumerable<VintageViewModel> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user);
+        Task<List<VintageViewModel>> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user);
 
-        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, bool bypassQueue = false);
+        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
 
-        Task<IEnumerable<PlanViewModel>> GetCustomerPlansAsync(int customerId, decimal nextInvestAmount = 0);
+        Task<List<PlanViewModel>> GetCustomerPlansAsync(int userId, decimal nextInvestAmount = 0);
     }
 }

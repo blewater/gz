@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.Caching;
+using System.Threading.Tasks;
 using System.Web.Hosting;
 using FluentScheduler;
 using gzDAL.Models;
+using gzDAL.Repos;
 using NLog;
 using Z.EntityFramework.Plus;
 
@@ -39,7 +40,7 @@ namespace gzWeb.Utilities  {
 
                 _logger.Trace("Execute() of GlobalCacheScheduledJob.");
 
-                CacheGlobalData();
+                CacheGlobalData().Wait();
             }
         }
 
@@ -57,30 +58,21 @@ namespace gzWeb.Utilities  {
         /// Cache global database data applicable to all customers
         /// 
         /// </summary>
-        private void CacheGlobalData() {
+        private async Task CacheGlobalData() {
 
             try {
 
                 //-------- Global Caching Configuration of Single GzConfiguration Row
                 var db = new ApplicationDbContext();
-                db.GzConfigurations
 
-                    // 7 days cache
-                    .FromCacheAsync(DateTime.UtcNow.AddDays(7));
+                // Cache configuration object
+                await new ConfRepo(db).GetConfRow();
 
                 //-------- Cache Fund prices for 2 hours
-                db.FundPrices
-                    .Where(f => f.YearMonthDay == db.FundPrices.Select(d => f.YearMonthDay).Max())
-                    .Select(f => new {f.Id, f.ClosingPrice})
+                await db.PortfolioPrices
+                    .Where(p=>p.YearMonthDay == db.PortfolioPrices.Select(pm=>pm.YearMonthDay).Max())
+                    .Select(p => new { p.PortfolioLowPrice, p.PortfolioMediumPrice, p.PortfolioHighPrice, p.YearMonthDay })
                     .FromCacheAsync(DateTime.UtcNow.AddHours(2));
-
-                //-------- Cache Currencies for 2 hours
-
-                db.CurrencyRates
-                    .Where(x => x.TradeDateTime == db.CurrencyRates.Select(r => r.TradeDateTime).Max())
-                    .Select(x => new {x.FromTo, x.rate})
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2));
-
             }
             catch (Exception ex) {
                 _logger.Error(ex, "CacheGlobalData()");

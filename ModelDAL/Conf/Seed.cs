@@ -80,8 +80,8 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Link now a portfolio for this customer
-            var custPortfolioRepo = new CustPortfolioRepo(context);
-            custPortfolioRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            CreateUpdUserPortfolioSelection(context, custId);
+            context.SaveChanges();
 
             // Portfolios - Funds association table
             CreateUpdPortFunds(context);
@@ -99,6 +99,18 @@ namespace gzDAL.Conf
             UpsDbInvBalances(context, custId);
             context.SaveChanges();
             //CalcMonthlyBalances(context, custId);
+        }
+
+        private static void CreateUpdUserPortfolioSelection(ApplicationDbContext context, int custId) {
+
+            var confRepo = new ConfRepo(context);
+            var custPortfolioRepo =
+                new UserPortfolioRepo(
+                    context,
+                    confRepo,
+                    new UserRepo(context));
+
+            custPortfolioRepo.SetDbUserMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 2015, 1, new DateTime(2015, 1, 1));
         }
 
         /// <summary>
@@ -169,24 +181,6 @@ namespace gzDAL.Conf
                 PasswordHash = manager.PasswordHasher.HashPassword("gz2016!@")
             };
             return newUser;
-        }
-
-        /// <summary>
-        /// Calculate the monthly balances for a customer
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="custId"></param>
-        private static void CalcMonthlyBalances(ApplicationDbContext context, int custId) {
-
-            var custPortfolioRepo = new CustPortfolioRepo(context);
-            new InvBalanceRepo(
-                context, 
-                new CustFundShareRepo(
-                    context,
-                    custPortfolioRepo), 
-                new GzTransactionRepo(context), 
-                custPortfolioRepo)
-                .SaveDbCustomerAllMonthlyBalances(custId);
         }
 
         private static void CreateUpdCurrenciesList(ApplicationDbContext context) {
@@ -394,13 +388,14 @@ namespace gzDAL.Conf
             gzTrx.SaveDbPlayingLoss(
                 custId,
                 1000,
+                trxYearMonthStr,
                 createdOnUtc,
                 3000, 3000, 1000, -2000, 3000);
         }
 
         private static void CreateUpdGzTransaction(ApplicationDbContext context, int custId) {
 
-            var trxRepo = new GzTransactionRepo(context);
+            var trxRepo = new GzTransactionRepo(context, new ConfRepo(context));
 
             var now = DateTime.UtcNow;
             var startYearMonthStr = now.AddMonths(-6).ToStringYearMonth();
@@ -420,14 +415,18 @@ namespace gzDAL.Conf
             // Put fake amounts for gaming balances that are null
             context.Database.ExecuteSqlCommand("Update InvBalances Set BegGmBalance = 3000, Deposits = 3000, Withdrawals = 1000, GmGainLoss = -2000, EndGmBalance = 3000 Where BegGmBalance is NUll OR Deposits is Null OR Withdrawals is Null OR GmGainLoss is NUll OR EndGmBalance is NUll");
 
-            var custPortfolioRepo = new CustPortfolioRepo(context);
-            var invB = new InvBalanceRepo(
-                context,
-                new CustFundShareRepo(
+            var confRepo = new ConfRepo(context);
+            var userRepo = new UserRepo(context);
+            var custPortfolioRepo = new UserPortfolioRepo(context, confRepo, userRepo);
+            var invB = new 
+                InvBalanceRepo(
                     context,
-                    custPortfolioRepo),
-                new GzTransactionRepo(context),
-                custPortfolioRepo);
+                    new UserPortfolioSharesRepo(context),
+                    new GzTransactionRepo(context, confRepo),
+                    custPortfolioRepo, 
+                    confRepo, 
+                    userRepo
+                );
 
             var nowUtc = DateTime.UtcNow;
             var startYearMonthStr = nowUtc.AddMonths(-6).ToStringYearMonth();

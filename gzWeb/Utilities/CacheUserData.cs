@@ -14,17 +14,14 @@ namespace gzWeb.Utilities {
     /// </summary>
     public class CacheUserData : ICacheUserData {
 
-        private readonly IInvBalanceRepo _invBalanceRepo;
-        private readonly IUserRepo _userRepo;
-        private readonly ICustPortfolioRepo _custPortfolioRepo;
+        private readonly IInvBalanceRepo invBalanceRepo;
+        private readonly IUserPortfolioRepo custPortfolioRepo;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        public CacheUserData(IInvBalanceRepo invBalanceRepo, ICustPortfolioRepo custPortfolioRepo, IUserRepo userRepo) {
+        public CacheUserData(IInvBalanceRepo invBalanceRepo, IUserPortfolioRepo custPortfolioRepo) {
 
-            _invBalanceRepo = invBalanceRepo;
-            _custPortfolioRepo = custPortfolioRepo;
-            _userRepo = userRepo;
-
+            this.invBalanceRepo = invBalanceRepo;
+            this.custPortfolioRepo = custPortfolioRepo;
         }
 
         /// <summary>
@@ -37,11 +34,11 @@ namespace gzWeb.Utilities {
 
             try {
 
-                var summaryRes = await _userRepo.GetSummaryDataAsync(userId);
+                var summaryRes = await invBalanceRepo.GetSummaryDataAsync(userId);
 
-                _invBalanceRepo.GetCustomerVintagesSellingValue(summaryRes.Item2.Id, summaryRes.Item1.Vintages.ToList());
+                invBalanceRepo.GetCustomerVintagesSellingValueNow(summaryRes.Item2.Id, summaryRes.Item1.Vintages.ToList());
 
-                await _custPortfolioRepo.GetCustomerPlansAsync(userId);
+                await custPortfolioRepo.GetUserPlansAsync(userId);
 
             }
             catch (Exception ex) {
