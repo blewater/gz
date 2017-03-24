@@ -149,7 +149,6 @@
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\VintageSharesDto.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />
-    <Compile Include="DTO\CustFundShareDto.cs" />
     <Compile Include="Migrations\MigrationExtensions.cs" />
     <Compile Include="Models\CarouselEntry.cs" />
     <Compile Include="Models\VintageShares.cs" />
@@ -170,10 +169,9 @@
     <Compile Include="Repos\UserRepo.cs" />
     <Compile Include="Repos\CurrencyRateRepo.cs" />
     <Compile Include="Models\CustFundShare.cs" />
-    <Compile Include="Repos\CustFundShareRepo.cs" />
-    <Compile Include="Repos\CustomerRepo.cs" />
+    <Compile Include="Repos\UserPortfolioSharesRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
-    <Compile Include="Repos\CustPortfolioRepo.cs" />
+    <Compile Include="Repos\UserPortfolioRepo.cs" />
     <Compile Include="ModelUtil\DbExpressions.cs" />
     <Compile Include="Models\Fund.cs" />
     <Compile Include="Models\FundPrice.cs" />
@@ -187,9 +185,8 @@
     <Compile Include="Repos\Interfaces\IInvBalanceRepo.cs" />
     <Compile Include="Repos\Interfaces\IGzTransactionRepo.cs" />
     <Compile Include="Repos\Interfaces\IConfRepo.cs" />
-    <Compile Include="Repos\Interfaces\ICustPortfolioRepo.cs" />
-    <Compile Include="Repos\Interfaces\ICustomerRepo.cs" />
-    <Compile Include="Repos\Interfaces\ICustFundShareRepo.cs" />
+    <Compile Include="Repos\Interfaces\IUserPortfolioRepo.cs" />
+    <Compile Include="Repos\Interfaces\IUserPortfolioSharesRepo.cs" />
     <Compile Include="Repos\Interfaces\ICurrencyRateRepo.cs" />
     <Compile Include="Repos\InvBalanceRepo.cs" />
     <Compile Include="Models\Portfolio.cs" />

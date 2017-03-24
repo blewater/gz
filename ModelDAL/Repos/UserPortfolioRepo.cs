@@ -14,15 +14,18 @@ using Z.EntityFramework.Plus;
 
 namespace gzDAL.Repos
 {
-    public class CustPortfolioRepo : ICustPortfolioRepo
+    public class UserPortfolioRepo : IUserPortfolioRepo
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly ApplicationDbContext db;
         private readonly IConfRepo confRepo;
-        public CustPortfolioRepo(ApplicationDbContext db, IConfRepo confRepo)
+        private readonly IUserRepo userRepo;
+
+        public UserPortfolioRepo(ApplicationDbContext db, IConfRepo confRepo, IUserRepo userRepo)
         {
             this.db = db;
             this.confRepo = confRepo;
+            this.userRepo = userRepo;
         }
         /// <summary>
         /// Phase 1 Implementation
@@ -33,31 +36,31 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="riskType"></param>
         /// <param name="portfYear">i.e. 2015 the year this portfolio weight applies</param>
-        /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
+        /// <param name="portfMonth">1..12 the month this portfolio weTight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        public void SetDbUserMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (customerId <= 0) {
 
                 _logger.Error("SaveDbCustMonthsPortfolioMix(): Invalid Customer Id: {0}", customerId);
             }
 
-            this.SaveDbCustMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
+            this.SetDbUserMonthsPortfolioMix(customerId, riskType, 100, portfYear, portfMonth, UpdatedOnUTC);
         }
 
         /// <summary>
         /// 
-        /// UI Simplified Wrapper for setting the portfolio for the following month from UtcNow.
+        /// UI Simplified Wrapper for setting the portfolio for the present month (UtcNow).
         /// 
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="riskType"></param>
-        public void SaveDbCustomerSelectNextMonthsPortfolio(int customerId, RiskToleranceEnum riskType) {
+        public void SetDbDefaultPortfolio(int customerId, RiskToleranceEnum riskType) {
 
-            var nextMonth = DateTime.UtcNow.AddMonths(1);
+            var nextMonth = DateTime.UtcNow;
 
-            SaveDbCustMonthsPortfolioMix(customerId, riskType, nextMonth.Year, nextMonth.Month, DateTime.UtcNow);
+            SetDbUserMonthsPortfolioMix(customerId, riskType, nextMonth.Year, nextMonth.Month, DateTime.UtcNow);
 
         }
 
@@ -77,16 +80,16 @@ namespace gzDAL.Repos
         /// <param name="portfMonth">1..12 the month this portfolio weight applies</param>
         /// <param name="UpdatedOnUTC"></param>
         /// <returns></returns>
-        public void SaveDbCustMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
+        private void SetDbUserMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, float weight, int portfYear, int portfMonth, DateTime UpdatedOnUTC) {
 
             if (weight < 0 || weight > 100)
                 throw new Exception("Invalid percentage not within range 0..100: " + weight);
 
-            SaveDbCustMonthsPortfolioMixImpl(customerId, riskType, weight, portfYear, portfMonth, UpdatedOnUTC);
+            SetDbUserMonthsPortfolioMixAddOrUpdateInternalUse(customerId, riskType, weight, portfYear, portfMonth, UpdatedOnUTC);
             db.SaveChanges();
         }
 
-        private void SaveDbCustMonthsPortfolioMixImpl(int customerId, RiskToleranceEnum riskType, float weight,
+        private void SetDbUserMonthsPortfolioMixAddOrUpdateInternalUse(int customerId, RiskToleranceEnum riskType, float weight,
                                                       int portfYear, int portfMonth, DateTime updatedOnUtc)
         {
             db.CustPortfolios.AddOrUpdate(
@@ -115,7 +118,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<Portfolio> GetCurrentCustomerPortfolio(int customerId) {
 
-            return await GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.ToStringYearMonth());
+            return await GetUserPortfolioForThisMonthOrBeforeAsync(customerId, DateTime.UtcNow.ToStringYearMonth());
         }
 
         /// <summary>
@@ -125,9 +128,14 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<Portfolio> GetNextMonthsCustomerPortfolioAsync(int customerId) {
+        public async Task<Portfolio> GetPresentMonthsUserPortfolioAsync(int customerId) {
 
-            return await GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.AddMonths(1).ToStringYearMonth());
+            return 
+                await 
+                    GetUserPortfolioForThisMonthOrBeforeAsync(
+                        customerId, 
+                        DateTime.UtcNow.ToStringYearMonth()
+                    );
         }
 
         /// <summary>
@@ -138,26 +146,27 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="nextYearMonthStr">+1 Month from Present To be safe we have the latest</param>
         /// <returns></returns>
-        public async Task<Portfolio> GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr) {
+        public async Task<Portfolio> GetUserPortfolioForThisMonthOrBeforeAsync(int customerId, string nextYearMonthStr) {
 
             Portfolio customerMonthPortfolioReturn;
 
-            // userPortfolioMaxMonthSet typically comes back as the present month
-            var userPortfolioMaxMonthSet = GetCustPortfYearMonth(customerId, nextYearMonthStr);
+            // userPortfolioMaxMonthSet typically comes back as the present month or -1 
+            // if no portfolio back-end management has run yet.
+            var userPortfolioMaxMonthSet = GetUserPortfolioLastYearMonthSet(customerId, nextYearMonthStr);
 
             if (userPortfolioMaxMonthSet != null) {
 
-                customerMonthPortfolioReturn = 
+                // Don't cache portfolio. Portfolio selections occur within the current month
+                customerMonthPortfolioReturn =
                     await db.CustPortfolios
-                    .Where(p => p.YearMonth == userPortfolioMaxMonthSet && p.CustomerId == customerId)
-                    .Select(cp => cp.Portfolio)
-                    .DeferredSingleOrDefault()
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2));
+                        .Where(p => p.YearMonth == userPortfolioMaxMonthSet && p.CustomerId == customerId)
+                        .Select(cp => cp.Portfolio)
+                        .SingleOrDefaultAsync();
             }
             /**
              * Edge Case for leaky user registrations: 
              * Use default portfolio for new registered users without
-             * portfolio in their account. Cpc adds a portfolio next time 
+             * portfolio in their account. Portfolio management adds a portfolio next time 
              * it runs.
              */
             else {
@@ -165,19 +174,32 @@ namespace gzDAL.Repos
                 // Cached already
                 var defaultRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
-                customerMonthPortfolioReturn = db
-                    .Portfolios
-                    .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
-                    .Result;
+                customerMonthPortfolioReturn =
+                    await db
+                        .Portfolios
+                        .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
+                        .FromCacheAsync(DateTime.UtcNow.AddHours(2));
             }
 
             return customerMonthPortfolioReturn;
         }
 
-        public async Task SaveDefaultPorfolio(int customerId, int gmUserId)
+        /// <summary>
+        /// 
+        /// Set the default portfolio and add the everymatrix user id in the Gz user database table
+        /// 
+        /// To be used during user registration
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="gmUserId"></param>
+        /// <returns></returns>
+        public async Task SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId)
         {
-            var user = db.Users.SingleOrDefault(x => x.Id == customerId);
+            var user = await 
+                        userRepo
+                            .GetCachedUserAsync(customerId);
+
             if (user==null)
                 throw new InvalidOperationException("User not found.");
 
@@ -186,12 +208,15 @@ namespace gzDAL.Repos
             ConnRetryConf.TransactWithRetryStrategy(
                     db,
                     () =>
-                    {
-                        if (!user.GmCustomerId.HasValue)
-                            user.GmCustomerId = gmUserId;
-                        var now = DateTime.UtcNow;
-                        SaveDbCustMonthsPortfolioMixImpl(customerId, defaultPortfolioRisk, 100, now.Year, now.Month, now);
-                    });
+                        {
+                            // Fix Everymatrix User Id leak during registration 
+                            if (!user.GmCustomerId.HasValue)
+                            {
+                                user.GmCustomerId = gmUserId;
+                            }
+
+                            SetDbDefaultPortfolio(customerId, defaultPortfolioRisk);
+                        });
         }
 
         /// <summary>
@@ -199,12 +224,12 @@ namespace gzDAL.Repos
         /// Get all available portfolios along with customer allocations.
         /// 
         /// </summary>
-        /// <param name="customerId"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<PortfolioDto>> GetCustomerPlansAsync(int customerId) {
+        public async Task<List<PortfolioDto>> GetUserPlansAsync(int userId) {
 
-            var nextMonthPortfolioId = (await 
-                                            GetNextMonthsCustomerPortfolioAsync(customerId))
+            var currentPortfolioId = (await 
+                                            GetPresentMonthsUserPortfolioAsync(userId))
                                                 .Id;
 
             // Get gz Database Configuration
@@ -274,7 +299,7 @@ namespace gzDAL.Repos
                 if (totalSum != 0) {
                     portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
                 }
-                portfolioDto.Selected = portfolioDto.Id == nextMonthPortfolioId;
+                portfolioDto.Selected = portfolioDto.Id == currentPortfolioId;
             }
 
             return portfolioDtos;
@@ -290,7 +315,7 @@ namespace gzDAL.Repos
         /// <param name="yearMonthStr">The year month YYYYMM i.e. April 2016 = 201604 for which you want to get the portfolio </param>
         /// 
         /// <returns></returns>
-        private string GetCustPortfYearMonth(int customerId, string yearMonthStr) {
+        private string GetUserPortfolioLastYearMonthSet(int customerId, string yearMonthStr) {
 
             return db.CustPortfolios
                 .Where(

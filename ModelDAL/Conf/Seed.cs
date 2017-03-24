@@ -80,8 +80,8 @@ namespace gzDAL.Conf
             context.SaveChanges();
 
             // Link now a portfolio for this customer
-            var custPortfolioRepo = new CustPortfolioRepo(context, new ConfRepo(context));
-            custPortfolioRepo.SaveDbCustMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 100, 2015, 1, new DateTime(2015, 1, 1));
+            CreateUpdUserPortfolioSelection(context, custId);
+            context.SaveChanges();
 
             // Portfolios - Funds association table
             CreateUpdPortFunds(context);
@@ -99,6 +99,18 @@ namespace gzDAL.Conf
             UpsDbInvBalances(context, custId);
             context.SaveChanges();
             //CalcMonthlyBalances(context, custId);
+        }
+
+        private static void CreateUpdUserPortfolioSelection(ApplicationDbContext context, int custId) {
+
+            var confRepo = new ConfRepo(context);
+            var custPortfolioRepo =
+                new UserPortfolioRepo(
+                    context,
+                    confRepo,
+                    new UserRepo(context));
+
+            custPortfolioRepo.SetDbUserMonthsPortfolioMix(custId, RiskToleranceEnum.Low, 2015, 1, new DateTime(2015, 1, 1));
         }
 
         /// <summary>
@@ -404,15 +416,17 @@ namespace gzDAL.Conf
             context.Database.ExecuteSqlCommand("Update InvBalances Set BegGmBalance = 3000, Deposits = 3000, Withdrawals = 1000, GmGainLoss = -2000, EndGmBalance = 3000 Where BegGmBalance is NUll OR Deposits is Null OR Withdrawals is Null OR GmGainLoss is NUll OR EndGmBalance is NUll");
 
             var confRepo = new ConfRepo(context);
-            var custPortfolioRepo = new CustPortfolioRepo(context, confRepo);
-            var invB = new InvBalanceRepo(
-                context,
-                new CustFundShareRepo(
+            var userRepo = new UserRepo(context);
+            var custPortfolioRepo = new UserPortfolioRepo(context, confRepo, userRepo);
+            var invB = new 
+                InvBalanceRepo(
                     context,
-                    custPortfolioRepo),
-                new GzTransactionRepo(context, confRepo),
-                custPortfolioRepo, 
-                new ConfRepo(context));
+                    new UserPortfolioSharesRepo(context),
+                    new GzTransactionRepo(context, confRepo),
+                    custPortfolioRepo, 
+                    confRepo, 
+                    userRepo
+                );
 
             var nowUtc = DateTime.UtcNow;
             var startYearMonthStr = nowUtc.AddMonths(-6).ToStringYearMonth();
