@@ -48,8 +48,12 @@ namespace gzWeb.Tests
             _disposable = WebApp.Start<gzWeb.Startup>(_uri.AbsoluteUri);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) {
             _disposable.Dispose();
         }
 

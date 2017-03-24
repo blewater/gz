@@ -28,7 +28,7 @@
 /// <reference path="authInterceptor.js" />
 /// <reference path="emWamp.js" />
 
-//https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz
+//https://gz.azureedge.net/scripts/autobahn.min.js
 
 describe("emWamp service", function () {
     var emWamp;
