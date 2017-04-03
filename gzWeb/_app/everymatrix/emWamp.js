@@ -66,29 +66,35 @@
             return callReturn;
         };
         
+        var challengeIsOpen = false;
         function renderChallenge() {
             var challengeDeferred = $q.defer();
             var challengePromise = challengeDeferred.promise;
-            var renderedChallengePromise = message.open({
-                nsType: 'modal',
-                nsSize: 'sm',
-                nsTemplate: '_app/everymatrix/challenge.html',
-                nsCtrl: 'challengeCtrl',
-                nsStatic: true,
-                nsShowClose: false
-            });
-            renderedChallengePromise.then(function (renderedChallengeResponse) {
-                var bg = document.getElementById("bg");
-                bg.style.display = 'none';
+            if (!challengeIsOpen) {
+                var renderedChallengePromise = message.open({
+                    nsType: 'modal',
+                    nsSize: 'sm',
+                    nsTemplate: '_app/everymatrix/challenge.html',
+                    nsCtrl: 'challengeCtrl',
+                    nsStatic: true,
+                    nsShowClose: false
+                });
+                challengeIsOpen = true;
+                renderedChallengePromise.then(function (renderedChallengeResponse) {
+                    var bg = document.getElementById("bg");
+                    bg.style.display = 'none';
 
-                onOpen();
+                    onOpen();
 
-                challengeDeferred.resolve(renderedChallengeResponse);
-            }, function (renderedChallengeError) {
-                vcRecaptchaService.reload();
-                $log.error(renderedChallengeError);
-                challengeDeferred.reject(renderedChallengeError);
-            })
+                    challengeIsOpen = false;
+                    challengeDeferred.resolve(renderedChallengeResponse);
+                }, function (renderedChallengeError) {
+                    vcRecaptchaService.reload();
+                    $log.error(renderedChallengeError);
+                    challengeIsOpen = false;
+                    challengeDeferred.reject(renderedChallengeError);
+                })
+            }
             return challengePromise;
         };
 
