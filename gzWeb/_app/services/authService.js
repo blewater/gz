@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route) {
         var factory = {};
 
         // #region AuthData
@@ -172,9 +172,9 @@
                                 $rootScope.redirected = false;
                                 $location.path(requestUrl);
                             }
-                            else if (factory.data.isGamer)
+                            else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isGamer)
                                 $location.path(constants.routes.games.path).search({});
-                            else if (factory.data.isInvestor)
+                            else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isInvestor)
                                 $location.path(constants.routes.summary.path);
                         }
                         $rootScope.$broadcast(constants.events.AUTH_CHANGED);
@@ -240,9 +240,9 @@
             clearGamingData();
             //unwatchBalance();
             emWamp.logout();
-            //$location.path(constants.routes.home.path);
-            //$window.location.reload();
-            $window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
+            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+            $location.path(constants.routes.home.path).search({ logoutReason: reason });
+            //$window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
         }
 
         factory.logout = function (reason) {
