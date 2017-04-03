@@ -48,11 +48,13 @@ var APP = (function () {
 
             function hidePreloader() {
                 var preloader = document.getElementById("preloader");
-                preloader.className = "die";
-                setTimeout(function () {
-                    var body = document.getElementsByTagName("BODY")[0];
-                    body.removeChild(preloader);
-                }, 1000);
+                if (preloader) {
+                    preloader.className = "die";
+                    setTimeout(function () {
+                        var body = document.getElementsByTagName("BODY")[0];
+                        body.removeChild(preloader);
+                    }, 1000);
+                }
             };
 
             function showContent() {

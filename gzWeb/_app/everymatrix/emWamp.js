@@ -1,8 +1,8 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("emWamp", ['$wamp', '$rootScope', '$log', 'constants', 'localStorageService', 'emConCfg', 'message', '$route', 'vcRecaptchaService', emWampFunction]);
-    function emWampFunction($wamp, $rootScope, $log, constants, localStorageService, emConCfg, message, $route, vcRecaptchaService) {
+    APP.factory("emWamp", ['$wamp', '$rootScope', '$log', 'constants', 'localStorageService', 'emConCfg', 'message', '$route', 'vcRecaptchaService', '$q', emWampFunction]);
+    function emWampFunction($wamp, $rootScope, $log, constants, localStorageService, emConCfg, message, $route, vcRecaptchaService, $q) {
 
         var _logError = function(error) {
             $log.error(error);
@@ -31,7 +31,7 @@
 
         var apiQuotaExceeded = false;
         var _call = function (uri, parameters) {
-            if (apiQuotaExceeded === true && procedure !== '/connection#increaseRequestQuota')
+            if (apiQuotaExceeded === true && uri !== '/connection#increaseRequestQuota')
                 return $q.defer().promise;
 
             var callReturn = $wamp.call(uri, [], parameters);
@@ -78,6 +78,11 @@
                 nsShowClose: false
             });
             renderedChallengePromise.then(function (renderedChallengeResponse) {
+                var bg = document.getElementById("bg");
+                bg.style.display = 'none';
+
+                onOpen();
+
                 challengeDeferred.resolve(renderedChallengeResponse);
             }, function (renderedChallengeError) {
                 vcRecaptchaService.reload();
@@ -431,21 +436,34 @@
             // #endregion
         };
 
+        function onOpen(event, info) {
+            $wamp.call('/connection#getClientIdentity').then(function (result) {
+                localStorageService.set(constants.storageKeys.clientId, result.kwargs.cid);
+            }, function (error) {
+                $log.error(error.kwargs.desc);
+            });
+            $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
+        }
+
         function _init() {
             var clientId = localStorageService.get(constants.storageKeys.clientId);
             $wamp.setClientId(clientId);
 
-            $rootScope.$on("$wamp.open", function (event, info) {
-                $wamp.call('/connection#getClientIdentity').then(function (result) {
-                    localStorageService.set(constants.storageKeys.clientId, result.kwargs.cid);
-                }, function (error) {
-                    $log.error(error.kwargs.desc);
-                });
-                $rootScope.$broadcast(constants.events.CONNECTION_INITIATED);
-                //console.log(info);
-            });
+            $rootScope.$on("$wamp.open", onOpen);
 
             $rootScope.$on("$wamp.onchallenge", function (event, info) {
+                var preloader = document.getElementById("preloader");
+                if (preloader) {
+                    preloader.className = "die";
+                    setTimeout(function () {
+                        var body = document.getElementsByTagName("BODY")[0];
+                        body.removeChild(preloader);
+                    }, 1000);
+
+                    var bg = document.getElementById("bg");
+                    bg.style.display = 'block';
+                }
+
                 var deferred = $q.defer();
                 var promise = deferred.promise;
                 if (info.method === 'GoogleRecaptchaV2')

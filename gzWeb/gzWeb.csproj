@@ -794,6 +794,7 @@
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
+    <Content Include="Scripts\autobahn\autobahn.min.js" />
     <Content Include="_app\common\appInsightsSgnCfg.js" />
     <Content Include="_app\common\appInsightsPrdCfg.js" />
     <Content Include="_app\common\asyncLoad.min.js">
@@ -1125,6 +1126,7 @@
     <Content Include="Scripts\angular-moment\angular-moment.min.js.map" />
     <Content Include="Scripts\angular-touch\angular-touch.min.js.map" />
     <Content Include="Scripts\autobahn.min.jgz" />
+    <Content Include="Scripts\autobahn\autobahn.min.jgz" />
     <None Include="Scripts\jquery\jquery-1.12.0.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.min.js" />
