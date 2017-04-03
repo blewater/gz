@@ -284,9 +284,9 @@
     color: #007850;
     float: right;
 }
-.investments .summary .summary-box.investment-history.expanded .summary-box-foot {
+/*.investments .summary .summary-box.investment-history.expanded .summary-box-foot {
     height: 670px;
-}
+}*/
 .investments .summary .summary-box.investment-history .summary-box-foot .summary-box-btn {
     background-color: #27A95C;
     margin-top: 25px;
@@ -771,6 +771,7 @@
     padding: 10px 40px 10px 0;
     margin-bottom: 15px;
     position: relative;
+    border: 1px #CCC solid;
 }
 .investments .portfolio .portfolio-plans .plan .basic > span {
     transition: color 0.4s ease;
