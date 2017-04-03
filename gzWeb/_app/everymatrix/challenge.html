@@ -1,11 +1,11 @@
 ﻿<div class="challenge">
-    <form class="form-horizontal" name="form" ng-submit="withdraw()" role="form" novalidate>
+    <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
         <div class="text-center">
-            <label for="recaptcha">I'm human</label>
+            <label for="recaptcha">Verify you are human</label>
             <div vc-recaptcha key="reCaptchaPublicKey" name="recaptcha" class="form-control recaptcha-wrap text-center"></div>
         </div>
         <div class="text-center">
-            <button type="submit" class="btn-gz" ng-disabled="form.$invalid">Submit</button>
+            <button type="submit" class="btn-gz" ng-disabled="form.$invalid">SUBMIT</button>
         </div>
     </form>
 </div>

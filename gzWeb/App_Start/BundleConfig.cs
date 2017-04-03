@@ -78,6 +78,7 @@ namespace gzWeb {
             bundles.Add(new ScriptBundle("~/js/plugins").Include(
                 "~/Scripts/moment/moment.min.js"
                 , "~/Scripts/spin/spin.min.js"
+                //, "~/Scripts/autobahn/autobahn.min.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/angular").Include(
@@ -283,9 +284,9 @@ namespace gzWeb {
                                         , "~/_app/nsMessageService/nsMessageService.js"
             #endregion
 
-            //#region Bootstrap
+            #region Bootstrap
                                         , "~/_app/common/bootstrap.js"
-            //#endregion
+            #endregion
                                 ));
 
             #endregion
