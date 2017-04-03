@@ -12,7 +12,9 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            $scope.limitMin = 1;//$scope.accountLimits.min;
+            $scope.limitMax = $scope.accountLimits.max;
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.limitMin + " and " + $scope.limitMax + ")";
         }
 
         function init() {
