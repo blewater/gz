@@ -44,10 +44,9 @@
 
         function readLogoutReason(urlParams) {
             var logoutReason = urlParams.logoutReason;
-            if (logoutReason) {
+            if (logoutReason)
                 message.info(logoutReason);
-                $location.search('');
-            }
+                //message.toastr(logoutReason, { nsClass: 'info'});
         }
 
         $scope.watchVideo = function() {
@@ -68,13 +67,18 @@
             });
         };
 
-        $scope._init(function () {
+        function readSearchKeys() {
             var urlParams = $location.search();
             if (Object.keys(urlParams).length > 0) {
                 readResetPwdKeys(urlParams);
                 readLogoutReason(urlParams);
                 readForgotPwdEmail(urlParams);
             }
+            $location.search('');
+        }
+
+        $scope._init(function () {
+            readSearchKeys();
 
             var requestUrl = nav.getRequestUrl();
             if (requestUrl) {
@@ -89,5 +93,7 @@
             else if ($scope._authData.isGamer)
                 $location.path(constants.routes.games.path).search({});
         });
+
+        readSearchKeys();
     }
 })();
