@@ -1046,7 +1046,9 @@
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
     <Content Include="Scripts\angular-wamp\angular-wamp.js" />
-    <Content Include="Scripts\angular-wamp\angular-wamp.min.js" />
+    <Content Include="Scripts\angular-wamp\angular-wamp.min.js">
+      <DependentUpon>angular-wamp.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\angular\angular-mocks.js" />
     <Content Include="Scripts\angular-resource\angular-resource.js" />
     <Content Include="Scripts\angular-resource\angular-resource.min.js" />

@@ -10,5 +10,11 @@
     "inputFiles": [
       "_app/common/preloader.css"
     ]
+  },
+  {
+    "outputFileName": "Scripts/angular-wamp/angular-wamp.min.js",
+    "inputFiles": [
+      "Scripts/angular-wamp/angular-wamp.js"
+    ]
   }
 ]
