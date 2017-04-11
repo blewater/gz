@@ -13,7 +13,7 @@
                 <div class="col-xs-12">
                     <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
                     <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">
-                        Amount must be between {{limitMin}} and {{limitMax}}
+                        Available withdrawal amount is between {{limitMin | number : 2}} and {{limitMax | number : 2}}
                     </div>
                 </div>
             </div>
