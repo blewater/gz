@@ -14,7 +14,7 @@
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
             $scope.limitMin = 1;//$scope.accountLimits.min;
             $scope.limitMax = $scope.accountLimits.max;
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.limitMin + " and " + $scope.limitMax + ")";
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $filter('number')($scope.limitMin, 2) + " and " + $filter('number')($scope.limitMax, 2) + ")";
         }
 
         function init() {

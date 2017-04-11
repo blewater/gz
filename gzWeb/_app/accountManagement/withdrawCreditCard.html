@@ -12,12 +12,12 @@
                 </div>
                 <div class="col-xs-12">
                     <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid && canWithdraw}">
+                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">
                         Available withdrawal amount is between {{limitMin | number : 2}} and {{limitMax | number : 2}}
                     </div>
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid && !canWithdraw}">
-                        Your account balance must be at least {{limitMin | number : 2}} in order to make a withdrawal"
-                    </div>
+                    <!--<div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid && !canWithdraw}">
+                        Your account balance must be at least {{limitMin | number : 2}} in order to make a withdrawal
+                    </div>-->
                 </div>
             </div>
             <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
