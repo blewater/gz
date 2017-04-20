@@ -13,9 +13,9 @@
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
             $scope.accountLimitMax = Math.min($scope.accountLimits.max, auth.data.gamingAccounts[0].amount);
-            $scope.canWithdraw = $scope.accountLimits.min <= $scope.accountLimitMax;
+            //$scope.canWithdraw = $scope.accountLimits.min <= $scope.accountLimitMax;
             $scope.limitMin = 1;//$scope.accountLimits.min;
-            $scope.limitMax = $scope.canWithdraw ? $scope.accountLimitMax : $scope.accountLimits.max;
+            $scope.limitMax = $scope.accountLimitMax;
             $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $filter('number')($scope.limitMin, 2) + " and " + $filter('number')($scope.limitMax, 2) + ")";
         }
 
