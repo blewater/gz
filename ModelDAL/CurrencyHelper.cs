@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using NLog;
 
 namespace gzDAL
 {
@@ -17,21 +18,31 @@ namespace gzDAL
 
         public static CurrencyInfo GetSymbol(string code) { return SymbolsByCode[code]; }
 
+
         static CurrencyHelper()
         {
             SymbolsByCode = new Dictionary<string, CurrencyInfo>();
             
             foreach (var culture in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
             {
-                var region = new RegionInfo(culture.LCID);
-                if (!SymbolsByCode.ContainsKey(region.ISOCurrencySymbol))
+
+                /***
+                 * Fix for sudden April Azure RT Exception
+                 */
+                // https://blogs.msdn.microsoft.com/appserviceteam/2017/03/07/custom-cultures-coming-soon-to-azure-app-service/
+                var region = new RegionInfo(culture.Name);
+
+                if ( !SymbolsByCode.ContainsKey(region.ISOCurrencySymbol) )
                 {
-                    SymbolsByCode.Add(region.ISOCurrencySymbol, new CurrencyInfo
-                                                                {
-                                                                        ISOSymbol = region.ISOCurrencySymbol,
-                                                                        Symbol = region.CurrencySymbol,
-                                                                        NumberFormat = culture.NumberFormat
-                                                                });
+                    SymbolsByCode
+                        .Add(
+                            region.ISOCurrencySymbol, 
+                            new CurrencyInfo
+                            {
+                                ISOSymbol = region.ISOCurrencySymbol,
+                                Symbol = region.CurrencySymbol,
+                                NumberFormat = culture.NumberFormat
+                        });
                 }
             }
         }

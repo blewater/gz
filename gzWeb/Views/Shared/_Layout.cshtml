@@ -51,13 +51,14 @@
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://gz.azureedge.net/scripts/autobahn.min.js")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/plugins")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/bootstrap")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/d3")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/angular")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/modules")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/app")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit")
+
 
     <script type="text/javascript" data-remove="true">if (window.addEventListener) window.addEventListener("load", AsyncLoad.Load); else if (window.attachEvent) window.attachEvent("onload", AsyncLoad.Load); else window.onload = AsyncLoad.Load; </script>
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
