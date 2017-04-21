@@ -65,7 +65,7 @@ let processArgs (db : DbContext)(argResult : HandleShares) =
 let main argv = 
 
     // Create a database context
-    use db = DbUtil.getOpenDb dbConnectionString
+    let db = getOpenDb dbConnectionString
     argv 
     |> parseCmdArgs
     |> processArgs db

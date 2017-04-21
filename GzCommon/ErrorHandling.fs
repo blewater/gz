@@ -50,6 +50,7 @@ module ErrorHandling =
     /// Emails not allowed
     let allowedPlayerEmail (emailAddress : string) : bool =
         match emailAddress.ToLowerInvariant() with
+        | playerAddress when playerAddress.Contains("test@") -> false
         | playerAddress when playerAddress.Contains("@noemail.com") -> false
         | playerAddress when playerAddress.Contains("@everymatrix.com") -> false
         | playerAddress when playerAddress.Contains("@mailinator.com") -> false

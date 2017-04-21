@@ -36,5 +36,12 @@
                 | false, _ -> nullableDate
         else nullableDate
 
+    /// Cast excel User id to int guarding against for "totals" line
+    let getNonNullableUserId (excelUserId : string) : int =
+        match excelUserId with
+        | null -> 0
+        | userIdStr -> int userIdStr
+
+
 
 
