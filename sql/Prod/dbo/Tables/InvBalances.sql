@@ -14,7 +14,7 @@
     [BegGmBalance]           DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [Deposits]               DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [Withdrawals]            DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
-    [GamingGainLoss]         DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [GmGainLoss]             DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [EndGmBalance]           DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [PortfolioId]            INT              DEFAULT ((3)) NOT NULL,
     [LowRiskShares]          DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
@@ -22,10 +22,13 @@
     [HighRiskShares]         DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [TotalCashInvestments]   DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [TotalSoldVintagesValue] DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [TotalCashInvInHold]     DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_dbo.InvBalances] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_dbo.InvBalances_dbo.Portfolios_PortfolioId] FOREIGN KEY ([PortfolioId]) REFERENCES [dbo].[Portfolios] ([Id])
 );
+
+
 
 
 
