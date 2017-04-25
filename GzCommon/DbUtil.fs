@@ -194,12 +194,12 @@ module Trx =
     let transactionWith<'T> (func: unit -> 'T) =
         use scope = transactionWithManualComplete()
         let transId = getTransactionId()
-        logmsg "started" Thread.CurrentThread.Name transId
+        //logmsg "started" Thread.CurrentThread.Name transId
         let res = func()
         match box res with
         | :? Task as task -> 
             let commit = Action<Task>(fun a -> 
-                logmsg "completed" Thread.CurrentThread.Name transId
+                //logmsg "completed" Thread.CurrentThread.Name transId
                 scope.Complete()
                 )
             let commitTran1 = task.ContinueWith(commit, TaskContinuationOptions.OnlyOnRanToCompletion)
@@ -211,7 +211,7 @@ module Trx =
             //Logary.Logger.log (Logary.Logging.getCurrentLogger()) (Logary.Message.eventError msg) |> start
             failwith msg 
         | _ -> 
-            logmsg "completed" System.Threading.Thread.CurrentThread.Name transId
+            //logmsg "completed" System.Threading.Thread.CurrentThread.Name transId
             scope.Complete()
             res
 

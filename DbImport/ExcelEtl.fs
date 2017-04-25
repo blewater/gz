@@ -166,15 +166,15 @@ module DbPlayerRevRpt =
     /// Note: they may be multiple pending / rollback withdrawal transactions per user/month
     let private updDbRowWithdrawalsValues 
                     (withdrawalType : WithdrawalType) 
-                    (withdrawalsExcelRow : WithdrawalsExcelSchema.Row) 
+                    (withdrawalsExcelRow : WithdrawalsPendingExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
 
         let dbWithdrawalAmount = playerRow.PendingWithdrawals.Value
         if withdrawalType = Pending then
-            let newWithdrawalAmount = dbWithdrawalAmount + decimal withdrawalsExcelRow.``Debit amount``
+            let newWithdrawalAmount = dbWithdrawalAmount + decimal withdrawalsExcelRow.``Debit real amount``
             playerRow.PendingWithdrawals <- Nullable newWithdrawalAmount
         else
-            let newWithdrawalAmount = dbWithdrawalAmount - decimal withdrawalsExcelRow.``Debit amount``
+            let newWithdrawalAmount = dbWithdrawalAmount - decimal withdrawalsExcelRow.``Debit real amount``
             playerRow.PendingWithdrawals <- Nullable newWithdrawalAmount
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -204,7 +204,8 @@ module DbPlayerRevRpt =
     let private setDbRowCustomValues 
             (yearMonthDay : string) 
             (customExcelRow : CustomExcelSchema.Row) 
-            (playerRow : DbPlayerRevRpt) = 
+            (playerRow : DbPlayerRevRpt)
+            (endBalanceFilename : string option) : unit =
 
         playerRow.Username <- customExcelRow.Username
         playerRow.PlayerStatus <- customExcelRow.``Player status``
@@ -216,8 +217,13 @@ module DbPlayerRevRpt =
 
         // Zero out gaming balance amounts, playerloss
         playerRow.BegGmBalance <- Nullable 0m
-        playerRow.EndGmBalance <- Nullable 0m
         playerRow.GmGainLoss <- Nullable 0m
+
+        // During the present month -> store the latest player balance from custom Rpt and we don't need the balance file
+        // During processing a completed past month -> store the end balance excel amount.
+        match endBalanceFilename with
+        | None -> playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
+        | _ -> playerRow.EndGmBalance <- Nullable 0m
 
         // Withdrawals that deduct balance but have not completed yet they come from the pending report
         playerRow.PendingWithdrawals <- Nullable 0m
@@ -232,11 +238,12 @@ module DbPlayerRevRpt =
     let insDbNewRowCustomValues
             (db : DbContext) 
             (yearMonthDay : string) 
-            (excelRow : CustomExcelSchema.Row) = 
+            (excelRow : CustomExcelSchema.Row)
+            (endBalanceFilename : string option) : unit =
 
         let newPlayerRow = 
             new DbPlayerRevRpt(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
-        setDbRowCustomValues yearMonthDay excelRow newPlayerRow
+        setDbRowCustomValues yearMonthDay excelRow newPlayerRow endBalanceFilename
         db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
 
     /// Set withdrawal amount in a db PlayerRevRpt Row
@@ -244,9 +251,9 @@ module DbPlayerRevRpt =
                         (withdrawalType : WithdrawalType)
                         (db : DbContext)
                         (yyyyMmDd :string)
-                        (withdrawalRow : WithdrawalsExcelSchema.Row) = 
+                        (withdrawalRow : WithdrawalsPendingExcelSchema.Row) =
 
-        let gmUserId = (int) withdrawalRow.``User ID``
+        let gmUserId = (int) withdrawalRow.UserID
         logger.Info(sprintf "Importing %A withdrawal user id %d on %s/%s/%s" 
                 withdrawalType <| gmUserId <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
@@ -292,7 +299,8 @@ module DbPlayerRevRpt =
     /// Upsert excel row values in a db PlayerRevRpt Row
     let setDbCustomPlayerRow (db : DbContext) 
                         (yyyyMmDd :string) 
-                        (customExcelRow : CustomExcelSchema.Row) = 
+                        (customExcelRow : CustomExcelSchema.Row)
+                        (endBalanceFilename : string option) : unit =
 
         let gmUserId = (int) customExcelRow.``User ID``
         query { 
@@ -303,9 +311,9 @@ module DbPlayerRevRpt =
         }
         |> (fun playerDbRow -> 
             if isNull playerDbRow then 
-                insDbNewRowCustomValues db yyyyMmDd customExcelRow
+                insDbNewRowCustomValues db yyyyMmDd customExcelRow endBalanceFilename
             else 
-                setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow
+                setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow endBalanceFilename
         )
         db.DataContext.SubmitChanges()
 
@@ -341,14 +349,16 @@ module WithdrawalRpt2Db =
     /// Process all excel lines except Totals and upsert them
     let private updDbWithdrawalsExcelRptRows 
                 (db : DbContext) 
-                (withdrawalExcelFile : WithdrawalsExcelSchema) 
-                (yyyyMmDd : string) =
+                (withdrawalExcelFile : WithdrawalsPendingExcelSchema) 
+                (yyyyMmDd : string) 
+                (withdrawalType : WithdrawalType) =
 
         let currentYearMonth = yyyyMmDd.ToDateWithDay
         // Loop through all excel rows
         for excelRow in withdrawalExcelFile.Data do
-            // Skip totals line and 
-            if int excelRow.``User ID`` > 0 then
+            // Skip totals line
+            let userId = excelRow.UserID |> getNonNullableUserId
+            if userId > 0 then
                 // Assume we always has an initiated date value
                 let initiatedDt = (excelRow.Initiated |> excelObj2NullableDt WithdrawalRpt).Value
                 let initiatedCurrently = isInitiatedInCurrentMonth initiatedDt currentYearMonth
@@ -357,21 +367,19 @@ module WithdrawalRpt2Db =
                 let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
                 let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt 
 
-                let transStatus = excelRow.``Trans status``.ToString().ToLower()
-
                 // initiatedCurrently && CompletedInSameMonth are within TotalWithdrawals in Custom
-                if initiatedCurrently && not completedInSameMonth then
+                if withdrawalType = Pending && initiatedCurrently && not completedInSameMonth then
                     DbPlayerRevRpt.updDbWithdrawalsPlayerRow Pending db yyyyMmDd excelRow
 
-                else if not initiatedCurrently && completedCurrently && transStatus = "rollback" then
+                else if withdrawalType = Rollback && not initiatedCurrently && completedCurrently then
                     DbPlayerRevRpt.updDbWithdrawalsPlayerRow Rollback db yyyyMmDd excelRow
                 else
-                    logger.Warn(sprintf "\nWithdrawal row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %A, trans status: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
-                        initiatedDt yyyyMmDd completedDt transStatus initiatedCurrently completedCurrently completedInSameMonth)
+                    logger.Warn(sprintf "\nWithdrawal row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %A, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
+                        initiatedDt yyyyMmDd completedDt initiatedCurrently completedCurrently completedInSameMonth)
     
     /// Open an excel file and return its memory schema
-    let private openWithdrawalRptSchemaFile (excelFilename : string) : WithdrawalsExcelSchema =
-        let withdrawalsFileExcelSchema = new WithdrawalsExcelSchema(excelFilename)
+    let private openWithdrawalRptSchemaFile (excelFilename : string) : WithdrawalsPendingExcelSchema =
+        let withdrawalsFileExcelSchema = new WithdrawalsPendingExcelSchema(excelFilename)
         logger.Info ""
         logger.Info (sprintf "************ Processing Withdrawals Report from filename: %s " excelFilename)
         logger.Info ""
@@ -380,12 +388,20 @@ module WithdrawalRpt2Db =
     /// Process the pending withdrawal excel files: Extract each row and update database customer pending withdrawal amounts
     let updDbWithdrawalsRpt 
                 (db : DbContext) 
-                (withdrawalsRptFullPath: string) =
+                (withdrawalsRptFullPath: string) 
+                (withdrawalType : WithdrawalType) =
 
         // Open excel report file for the memory schema
-        let openFile = withdrawalsRptFullPath |> openWithdrawalRptSchemaFile
-        let withdrawalRptDtStr = withdrawalsRptFullPath |> getWithdrawalDtStr
-        updDbWithdrawalsExcelRptRows db openFile withdrawalRptDtStr
+        let openFile = 
+            withdrawalsRptFullPath 
+            |> openWithdrawalRptSchemaFile
+
+        let withdrawalRptDtStr = 
+            Some withdrawalsRptFullPath 
+                |> getWithdrawalDtStr
+
+        if withdrawalRptDtStr.IsSome then
+            updDbWithdrawalsExcelRptRows db openFile withdrawalRptDtStr.Value withdrawalType
             
 module BalanceRpt2Db =
     open NLog
@@ -445,19 +461,25 @@ module CustomRpt2Db =
     /// Process all excel lines except Totals and upsert them
     let private setDbCustomExcelRptRows 
                 (db : DbContext) (customExcelSchemaFile : CustomExcelSchema) 
-                (yyyyMmDd : string) =
+                (yyyyMmDd : string)
+                (endBalanceFilename : string option) : unit =
 
         // Loop through all excel rows
         for excelRow in customExcelSchemaFile.Data do
-            if excelRow.``Player status`` = "Active" 
-                && not <| isNull excelRow.``Email address``
-                && excelRow.``Email address`` |> allowedPlayerEmail then
+            if 
+                excelRow.``Player status`` = "Active" 
+                && 
+                    not 
+                        <| isNull excelRow.``Email address``
+                && 
+                    excelRow.``Email address`` 
+                        |> allowedPlayerEmail then
 
                 logger.Info(
                     sprintf "Processing email %s on %s/%s/%s" 
                         excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
 
-                DbPlayerRevRpt.setDbCustomPlayerRow db yyyyMmDd excelRow
+                DbPlayerRevRpt.setDbCustomPlayerRow db yyyyMmDd excelRow endBalanceFilename
     
     /// Open an excel file and console out the filename
     let private openCustomRptSchemaFile excelFilename = 
@@ -470,13 +492,14 @@ module CustomRpt2Db =
     /// Process the custom excel file: Extract each row and upsert the database PlayerRevRpt table customer rows.
     let loadCustomRpt 
             (db : DbContext) 
-            (customRptFullPath: string) =
+            (customRptFullPath: string)
+            (endBalanceFilename : string option) : unit =
 
         // Open excel report file for the memory schema
         let openFile = customRptFullPath |> openCustomRptSchemaFile
         let yyyyMmDd = customRptFullPath |> getCustomDtStr
         try 
-            setDbCustomExcelRptRows db openFile yyyyMmDd
+            setDbCustomExcelRptRows db openFile yyyyMmDd endBalanceFilename
         with _ -> 
             reraise()
 
@@ -501,18 +524,29 @@ module Etl =
     /// Move processed files to out folder except endBalanceFile which is the next month's begBalanceFile
     let private moveRptsToOutFolder 
             (inFolder : string) (outFolder :string) 
-            (customFilename : string) (begBalanceFilename : string) (withdrawalFilename : string) : unit =
+            (customFilename : string) 
+            (begBalanceFilename : string) 
+            (withdrawalsPendingFilename : string option)
+            (withdrawalsRollbackFilename : string option) : unit =
         
         (inFolder, outFolder, customFilename) |||> moveFileWithOverwrite
         // Move only the beginning balance file.
         (inFolder, outFolder, begBalanceFilename) |||> moveFileWithOverwrite
-        (inFolder, outFolder, withdrawalFilename) |||> moveFileWithOverwrite
+        match withdrawalsPendingFilename with
+        | Some withdrawalsFilename -> 
+            (inFolder, outFolder, withdrawalsFilename) |||> moveFileWithOverwrite
+        | None -> logger.Warn "No pending withdrawal filename"
+        match withdrawalsRollbackFilename with
+        | Some withdrawalsFilename -> 
+            (inFolder, outFolder, withdrawalsFilename) |||> moveFileWithOverwrite
+        | None -> logger.Warn "No rollback withdrawal filename"
 
 
     let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) : unit =
         let { 
                 customFilename = customFilename; 
-                withdrawalFilename = withdrawalFilename; 
+                withdrawalsPendingFilename = withdrawalsPendingFilename;
+                withdrawalsRollbackFilename = withdrawalsRollbackFilename;
                 begBalanceFilename = begBalanceFilename; 
                 endBalanceFilename = endBalanceFilename 
             }   = reportFilenames
@@ -520,13 +554,38 @@ module Etl =
         let customDtStr = getCustomDtStr customFilename
         logger.Debug (sprintf "Starting processing excel report files for %O" customDtStr)
 
-        (db, customFilename) ||> loadCustomRpt 
+        // Custom import
+        (db, customFilename, endBalanceFilename) 
+            |||> loadCustomRpt 
+        
+        // Beg, end balance import
         loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr
-        loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
-        (db, withdrawalFilename) ||> updDbWithdrawalsRpt
-        (db, customDtStr) ||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
+
+        // In present month there's no end balance file
+        match endBalanceFilename with
+        | Some balanceFilename -> loadBalanceRpt EndingBalance db balanceFilename customDtStr
+        | None -> logger.Warn "No ending balance file to import"
+        
+        // Pending withdrawals import
+        match withdrawalsPendingFilename with
+        | Some withdrawalFilename -> 
+                (db, withdrawalFilename, Pending) 
+                    |||> updDbWithdrawalsRpt
+        | None -> logger.Warn "No pending withdrawal file to import"
+        
+        // Rollback withdrawals import
+        match withdrawalsRollbackFilename with
+        | Some withdrawalFilename -> 
+                (db, withdrawalFilename, Rollback) 
+                    |||> updDbWithdrawalsRpt
+        | None -> logger.Warn "No rollback withdrawal file to import"
+        
+        (db, customDtStr) 
+            ||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
+
         // Finally upsert GzTrx with the balance, credit amounts
-        (db, customDtStr) ||> DbGzTrx.setDbPlayerRevRpt2GzTrx
+        (db, customDtStr) 
+            ||> DbGzTrx.setDbPlayerRevRpt2GzTrx
 
     /// <summary>
     ///
@@ -552,8 +611,17 @@ module Etl =
             |> getExcelFilenames
 
         /// Box function pointer with required parameters
-        let dbOperation() = (db, reportfileNames) ||> setDbimportExcel
-        (db, dbOperation) ||> tryDBCommit3Times
+        let dbOperation() = 
+            (db, reportfileNames) 
+                ||> setDbimportExcel
+        (db, dbOperation) 
+            ||> tryDBCommit3Times
 
-        moveRptsToOutFolder inFolder outFolder reportfileNames.customFilename reportfileNames.begBalanceFilename reportfileNames.withdrawalFilename
+        moveRptsToOutFolder 
+            inFolder 
+            outFolder 
+            reportfileNames.customFilename 
+            reportfileNames.begBalanceFilename 
+            reportfileNames.withdrawalsPendingFilename
+            reportfileNames.withdrawalsRollbackFilename
 

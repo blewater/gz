@@ -54,7 +54,7 @@
     <DocumentationFile>bin\Debug\GmEtl.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
     <OutputPath>bin\Production\</OutputPath>
-    <StartArguments>--get-shares 120</StartArguments>
+    <StartArguments>--get-shares 20</StartArguments>
   </PropertyGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '11.0'">
@@ -81,53 +81,50 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Scripts\load-references-production.fsx" />
-    <None Include="Scripts\load-project-production.fsx" />
-    <None Include="Scripts\load-references-debug.fsx" />
-    <None Include="Scripts\load-project-debug.fsx" />
-    <None Include="Script.fsx" />
+    <None Include="any\netstandard1.6\FSharp.Core.sigdata" />
+    <None Include="any\netstandard1.6\FSharp.Core.optdata" />
     <None Include="NLog.xsd" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Argu">
-      <HintPath>packages\Argu.3.7.0\lib\net40\Argu.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Argu.3.7.0\lib\net40\Argu.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Excel">
-      <HintPath>packages\ExcelProvider.0.8.1\lib\Excel.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\Excel.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ExcelProvider">
-      <HintPath>packages\ExcelProvider.0.8.1\lib\ExcelProvider.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\ExcelProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Configuration">
-      <HintPath>packages\FSharp.Configuration.0.6.4\lib\net40\FSharp.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\FSharp.Configuration.1.0.0\lib\net40\FSharp.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>packages\FSharp.Core.4.1.0\lib\net40\FSharp.Core.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\FSharp.Core.4.1.12\lib\net45\FSharp.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
-      <HintPath>packages\FSharp.Data.2.3.2\lib\net40\FSharp.Data.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data.TypeProviders">
-      <HintPath>packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>packages\ExcelProvider.0.8.1\lib\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>packages\NLog.4.4.3\lib\net45\NLog.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\NLog.4.4.6\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SharpYaml">
-      <HintPath>packages\FSharp.Configuration.0.6.4\lib\net40\SharpYaml.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\FSharp.Configuration.1.0.0\lib\net40\SharpYaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -136,7 +133,7 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ValueTuple">
-      <HintPath>packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
@@ -159,12 +156,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets" Condition="Exists('packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
