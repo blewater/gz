@@ -692,6 +692,10 @@
     <Compile Include="Migrations\201703142156373_Clear GzTrx Indices.Designer.cs">
       <DependentUpon>201703142156373_Clear GzTrx Indices.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704250855218_GetVintages_ShowAllMonths.cs" />
+    <Compile Include="Migrations\201704250855218_GetVintages_ShowAllMonths.Designer.cs">
+      <DependentUpon>201704250855218_GetVintages_ShowAllMonths.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1455,6 +1459,9 @@
     <EmbeddedResource Include="Migrations\201703142156373_Clear GzTrx Indices.resx">
       <DependentUpon>201703142156373_Clear GzTrx Indices.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704250855218_GetVintages_ShowAllMonths.resx">
+      <DependentUpon>201704250855218_GetVintages_ShowAllMonths.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModelDAL\gzDAL.csproj">
@@ -1521,5 +1528,3 @@
   <Target Name="AfterBuild">
   </Target> -->
 </Project>
-
-
