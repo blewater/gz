@@ -460,14 +460,20 @@
             $rootScope.$on("$wamp.onchallenge", function (event, info) {
                 var preloader = document.getElementById("preloader");
                 if (preloader) {
+                    var body = document.getElementsByTagName("BODY")[0];
                     preloader.className = "die";
                     setTimeout(function () {
-                        var body = document.getElementsByTagName("BODY")[0];
                         body.removeChild(preloader);
                     }, 1000);
 
-                    var bg = document.getElementById("bg");
-                    bg.style.display = 'block';
+                    var bg = document.createElement("img")
+                    bg.setAttribute("id", "bg");
+                    bg.className = "bg";
+                    bg.src = "../../Content/Images/casino-default-raw.jpg";
+                    body.appendChild(bg);
+
+                    //var bg = document.getElementById("bg");
+                    //bg.style.display = 'block';
                 }
 
                 var deferred = $q.defer();

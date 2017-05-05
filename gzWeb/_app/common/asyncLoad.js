@@ -2,6 +2,7 @@ var AsyncLoad = (function () {
     'use strict';
 
     var styles = [], scripts = [], total = 0;
+    var errors = [];
     var asyncLoad = {};
 
     // #region Styles
@@ -52,7 +53,7 @@ var AsyncLoad = (function () {
         //}
 
         s.onload = s.onreadystatechange = function () {
-            //console.log( this.readyState ); //uncomment this line to see which ready states are called.
+            console.log( this.readyState ); //uncomment this line to see which ready states are called.
             if (!r && (!this.readyState || this.readyState == 'complete')) {
                 r = true;
                 setPercent();
@@ -60,6 +61,30 @@ var AsyncLoad = (function () {
                     callback();
             }
         };
+        s.onerror = function () {
+            var body = document.getElementsByTagName("BODY")[0];
+            var preloader = document.getElementById("preloader");
+            if (preloader) {
+                preloader.className = "die";
+                setTimeout(function () {
+                    body.removeChild(preloader);
+                }, 1000);
+            }
+
+            var bg = document.createElement("img")
+            bg.setAttribute("id", "bg");
+            bg.className = "bg";
+            bg.src = "../../Content/Images/casino-default-raw.jpg";
+            body.appendChild(bg);
+
+            var loadingError = document.getElementById("loading-error");
+            loadingError.className = "loading-error";
+            loadingError.innerHTML =
+                    '<div style="line-height: 3em;font-size: 36px;">Oooops!</div>' +
+                    '<div style="line-height: 3em;font-size: 24px;">No dice for now...</div>' +
+                    '<div style="line-height: 3em;font-size: 24px;">...greenzorro apologies</div>' +
+                    '<div style="line-height: 3em;font-size: 36px;">:(</div>';
+            };
         var b = document.getElementsByTagName('BODY')[0];
         b.appendChild(s);
         //t = document.getElementsByTagName('script')[0];
@@ -88,8 +113,10 @@ var AsyncLoad = (function () {
         var count = getCount();
         var percent = Math.floor(((total - count) / total) * 100);
         var element = document.getElementById("loading-percentage");
-        element.innerHTML = '';
-        element.appendChild(document.createTextNode(percent + " %"));
+        if (element) {
+            element.innerHTML = '';
+            element.appendChild(document.createTextNode(percent + " %"));
+        }
     };
     function removeUnnecessaryScripts(attr) {
         var allScripts = document.getElementsByTagName("SCRIPT");
