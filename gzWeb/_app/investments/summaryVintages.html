@@ -22,9 +22,11 @@
             }">
                 <div class="month" ng-repeat="vintage in group" ng-class="{'sold': withdrawMode && vintage.Sold, 'locked': withdrawMode && vintage.Locked, 'selected': withdrawMode && vintage.Selected}">
                     <div ng-if="!withdrawMode" class="col-xs-6 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                    <div ng-if="!withdrawMode" class="col-xs-6 text-right">{{vintage.InvestmentAmount | isoCurrency : currency : 0}}</div>
+                    <!--<div ng-if="!withdrawMode" class="col-xs-6 text-right">{{vintage.InvestmentAmount | isoCurrency : currency : 0}}</div>-->
+                    <div ng-if="!withdrawMode" class="col-xs-6 text-right">{{vintage.InvestmentText}}</div>
                     <div ng-if="withdrawMode" class="col-xs-2 text-left">{{vintage.Date | date : 'MMMM'}}</div>
-                    <div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.InvestmentAmount | isoCurrency : currency : 0}}</div>
+                    <!--<div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.InvestmentAmount | isoCurrency : currency : 0}}</div>-->
+                    <div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.InvestmentText}}</div>
                     <div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.SellingValue | isoCurrency : currency : 0}}</div>
                     <div ng-if="withdrawMode" class="col-xs-2 text-right">
                         <gz-check-box gz-model="vintage" gz-value="Selected" gz-disabled="vintage.Sold || vintage.Locked"></gz-check-box>
