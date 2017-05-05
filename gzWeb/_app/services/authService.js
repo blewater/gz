@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message) {
         var factory = {};
 
         // #region AuthData
@@ -235,6 +235,7 @@
         function gzLogout() {
             clearInvestmentData();
             nav.clearRequestUrls();
+            message.clear();
         }
         function emLogout(reason) {
             clearGamingData();
@@ -255,7 +256,6 @@
             //var templates = $filter('toArray')(constants.templates);
             //for (var i = 0; i < templates.length; i++)
             //    $templateCache.remove(templates[i]);
-            //message.clear();
         }
         // #endregion
 
