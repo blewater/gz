@@ -110,9 +110,10 @@ module DbGzTrx =
     /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
     let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
 
+        let yyyyMm = yyyyMmDd.Substring(0, 6)
         query { 
             for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonthDay = yyyyMmDd)
+                where (playerDbRow.YearMonth = yyyyMm)
                 select playerDbRow
         }
         |> Seq.iter (fun playerDbRow -> setDbGzTrxRow db yyyyMmDd playerDbRow)
@@ -145,9 +146,10 @@ module DbPlayerRevRpt =
                         (db : DbContext)
                         (yyyyMmDd :string) =
 
+        let yyyyMm = yyyyMmDd.Substring(0, 6)
         query { 
             for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonthDay = yyyyMmDd 
+                where (playerDbRow.YearMonth = yyyyMm
                         && (
                             playerDbRow.BegGmBalance <> Nullable 0M 
                             || playerDbRow.EndGmBalance <> Nullable 0M
@@ -254,11 +256,12 @@ module DbPlayerRevRpt =
                         (withdrawalRow : WithdrawalsPendingExcelSchema.Row) =
 
         let gmUserId = (int) withdrawalRow.UserID
+        let yyyyMm = yyyyMmDd.Substring(0, 4)
         logger.Info(sprintf "Importing %A withdrawal user id %d on %s/%s/%s" 
                 withdrawalType <| gmUserId <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
             for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonthDay = yyyyMmDd && playerDbRow.UserID = gmUserId)
+                where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
                 select playerDbRow
                 exactlyOneOrDefault
         }
@@ -279,9 +282,10 @@ module DbPlayerRevRpt =
             (balanceRow : BalanceExcelSchema.Row) = 
 
         let gmUserId = (int) balanceRow.``User ID``
+        let yyyyMm = yyyyMmDd.Substring(0, 6)
         query { 
             for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonthDay = yyyyMmDd && playerDbRow.UserID = gmUserId)
+                where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
                 select playerDbRow
                 exactlyOneOrDefault
         }
@@ -303,9 +307,10 @@ module DbPlayerRevRpt =
                         (endBalanceFilename : string option) : unit =
 
         let gmUserId = (int) customExcelRow.``User ID``
+        let yyyyMm = yyyyMmDd.Substring(0, 6)
         query { 
             for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonthDay = yyyyMmDd && playerDbRow.UserID = gmUserId)
+                where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
                 select playerDbRow
                 exactlyOneOrDefault
         }
@@ -466,14 +471,14 @@ module CustomRpt2Db =
 
         // Loop through all excel rows
         for excelRow in customExcelSchemaFile.Data do
+            let isActive = excelRow.``Player status`` = "Active"
+            let emailAddress = excelRow.``Email address``
+            let okEmail =
+                match emailAddress with
+                | null -> false
+                | email -> email |> allowedPlayerEmail
             if 
-                excelRow.``Player status`` = "Active" 
-                && 
-                    not 
-                        <| isNull excelRow.``Email address``
-                && 
-                    excelRow.``Email address`` 
-                        |> allowedPlayerEmail then
+                isActive && okEmail then
 
                 logger.Info(
                     sprintf "Processing email %s on %s/%s/%s" 
@@ -523,20 +528,25 @@ module Etl =
 
     /// Move processed files to out folder except endBalanceFile which is the next month's begBalanceFile
     let private moveRptsToOutFolder 
-            (inFolder : string) (outFolder :string) 
-            (customFilename : string) 
-            (begBalanceFilename : string) 
-            (withdrawalsPendingFilename : string option)
-            (withdrawalsRollbackFilename : string option) : unit =
+            (inFolder : string) (outFolder :string)
+            (rpts : RptFilenames) : unit =
         
-        (inFolder, outFolder, customFilename) |||> moveFileWithOverwrite
-        // Move only the beginning balance file.
-        (inFolder, outFolder, begBalanceFilename) |||> moveFileWithOverwrite
-        match withdrawalsPendingFilename with
+        // Custom
+        (inFolder, outFolder, rpts.customFilename) |||> moveFileWithOverwrite
+        
+        // Move beginning balance report if end balance report is present (end of month clearance)
+        if rpts.endBalanceFilename.IsSome then
+            (inFolder, outFolder, rpts.begBalanceFilename) 
+            |||> moveFileWithOverwrite
+        
+        // Withdrawals Pending
+        match rpts.withdrawalsPendingFilename with
         | Some withdrawalsFilename -> 
             (inFolder, outFolder, withdrawalsFilename) |||> moveFileWithOverwrite
         | None -> logger.Warn "No pending withdrawal filename"
-        match withdrawalsRollbackFilename with
+        
+        // Withdrawals Rollback
+        match rpts.withdrawalsRollbackFilename with
         | Some withdrawalsFilename -> 
             (inFolder, outFolder, withdrawalsFilename) |||> moveFileWithOverwrite
         | None -> logger.Warn "No rollback withdrawal filename"
@@ -610,7 +620,7 @@ module Etl =
             { isProd = isProd ; folderName = inFolder } 
             |> getExcelFilenames
 
-        /// Box function pointer with required parameters
+        /// Try 3 times to upload reports
         let dbOperation() = 
             (db, reportfileNames) 
                 ||> setDbimportExcel
@@ -620,8 +630,5 @@ module Etl =
         moveRptsToOutFolder 
             inFolder 
             outFolder 
-            reportfileNames.customFilename 
-            reportfileNames.begBalanceFilename 
-            reportfileNames.withdrawalsPendingFilename
-            reportfileNames.withdrawalsRollbackFilename
+            reportfileNames
 

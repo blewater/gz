@@ -7,7 +7,7 @@ module ExcelSchemas =
 
     // LGA Reports...Player Balances
     type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
-    type CustomExcelSchema = ExcelFile< "Custom Prod 20160930.xlsx" >
+    type CustomExcelSchema = ExcelFile< "Custom Prod 20170505.xlsx" >
     // Transactions Rpt: Withdrawal Type + Initiated + Pending + Rollback
     type WithdrawalsPendingExcelSchema = ExcelFile< "WithdrawalsPending prod 20160930.xlsx" >
     // Transactions Rpt: Withdrawal Type + Completed + Rollback
@@ -25,6 +25,10 @@ module ExcelSchemas =
     type WithdrawalType =
     | Pending
     | Rollback
+
+    let WithdrawalTypeString = function 
+        | Pending -> "Pending"
+        | Rollback -> "Rollback"
 
     let logger = LogManager.GetCurrentClassLogger()    
 
