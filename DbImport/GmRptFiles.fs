@@ -258,14 +258,17 @@ module GmRptFiles =
 
 //--------------------- Validation Rules
 
+    
+
     /// Enforce same day
-    let private sameDayValidation (customDate : DateTime) (withdrawalPendingDate : DateTime option) : Unit =
-        match withdrawalPendingDate with
+    let private sameDayValidation (withdrawalType : WithdrawalType)(customDate : DateTime) (withdrawalDate : DateTime option) : Unit =
+        let withdrawalTypeStr = WithdrawalTypeString withdrawalType
+        match withdrawalDate with
         | Some withdrawalDate -> 
-            if customDate <> withdrawalDate  then
-                failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with Withdrawal Date: %s." <| customDate.ToString("yyyy-MMM-dd") <| withdrawalDate.ToString("yyyy-MMM-dd"))
+            if customDate <> withdrawalDate then
+                failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with %s Withdrawal Date: %s." <| withdrawalTypeStr <| customDate.ToString("yyyy-MMM-dd") <| withdrawalDate.ToString("yyyy-MMM-dd"))
         | None -> 
-            logger.Warn "No pending withdrawals excel file"
+            logger.Warn (sprintf "No %s withdrawals excel file" <| withdrawalTypeStr )
             
 //        if customDate <> withdrawalPendingDate then
 //            failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with Withdrawal Date: %s." <| customDate.ToString("yyyy-MMM-dd") <| withdrawalPendingDate.ToString("yyyy-MMM-dd"))
@@ -300,13 +303,13 @@ module GmRptFiles =
                     )
 
     /// Check for the existence of required report files for a month by checking matching dates etc
-    let areExcelFilenamesValid (rptDates : RptDates) : ExcelDatesValid =
-        let { customDate = customDate ; begBalanceDate = begBalanceDate ; endBalanceDate = endBalanceDate ; withdrawalsPendingDate = withdrawalPendingDate } = rptDates
+    let areExcelFilenamesValid (rDates : RptDates) : ExcelDatesValid =
 
-        sameDayValidation customDate withdrawalPendingDate
+        sameDayValidation Pending rDates.customDate rDates.withdrawalsPendingDate
+        sameDayValidation Rollback rDates.customDate rDates.withdrawalsRollbackDate
 
-        begBalance1stDay customDate begBalanceDate
+        begBalance1stDay rDates.customDate rDates.begBalanceDate
 
-        endBalanceDateValidation begBalanceDate endBalanceDate
+        endBalanceDateValidation rDates.begBalanceDate rDates.endBalanceDate
         // if no exception occurs to this point:
-        { Valid = true; DayToProcess = customDate.ToYyyyMmDd } 
+        { Valid = true; DayToProcess = rDates.customDate.ToYyyyMmDd } 
