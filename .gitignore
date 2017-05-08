@@ -31,6 +31,9 @@ Gm2Gz/[Bb]in/
 CustPortfolioCalcLib/[Bb]in/
 CpcDataServices/[Bb]in/
 
+# F#
+paket.exe
+
 # Visual Studio 2015 cache/options directory
 .vs/
 

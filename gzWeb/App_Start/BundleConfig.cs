@@ -78,6 +78,7 @@ namespace gzWeb {
             bundles.Add(new ScriptBundle("~/js/plugins").Include(
                 "~/Scripts/moment/moment.min.js"
                 , "~/Scripts/spin/spin.min.js"
+                //, "~/Scripts/autobahn/autobahn.min.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/angular").Include(
@@ -99,7 +100,7 @@ namespace gzWeb {
                 , "~/Scripts/angular-match-media/match-media.js"
                 , "~/Scripts/angular-local-storage/angular-local-storage.min.js"
                 , "~/Scripts/angular-fullscreen/angular-fullscreen.js"
-                , "~/Scripts/angular-wamp/angular-wamp.min.js"
+                , "~/Scripts/angular-wamp/angular-wamp.js"
                 , "~/Scripts/angular-autocomplete/ngAutocomplete.js"
                 , "~/Scripts/angular-recaptcha/angular-recaptcha.min.js"
                 , "~/Scripts/angular-iso-currency/isoCurrency.min.js"
@@ -143,6 +144,7 @@ namespace gzWeb {
                                         , "~/_app/everymatrix/emBanking.js"
                                         , "~/_app/everymatrix/emBankingWithdraw.js"
                                         , "~/_app/everymatrix/emResponsibleGaming.js"
+                                        , "~/_app/everymatrix/challengeCtrl.js"
             #endregion
 
             #region Controllers
@@ -282,9 +284,9 @@ namespace gzWeb {
                                         , "~/_app/nsMessageService/nsMessageService.js"
             #endregion
 
-            //#region Bootstrap
+            #region Bootstrap
                                         , "~/_app/common/bootstrap.js"
-            //#endregion
+            #endregion
                                 ));
 
             #endregion
