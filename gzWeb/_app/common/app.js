@@ -40,14 +40,21 @@ var APP = (function () {
     app.run([
         '$rootScope', '$location', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
         function ($rootScope, $location, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
+            //var nbDigest = 0;
+            //$rootScope.$watch(function () {
+            //    nbDigest++;
+            //    console.log("Digest cycles: " + nbDigest);
+            //});
 
             function hidePreloader() {
                 var preloader = document.getElementById("preloader");
-                preloader.className = "die";
-                setTimeout(function () {
-                    var body = document.getElementsByTagName("BODY")[0];
-                    body.removeChild(preloader);
-                }, 1000);
+                if (preloader) {
+                    preloader.className = "die";
+                    setTimeout(function () {
+                        var body = document.getElementsByTagName("BODY")[0];
+                        body.removeChild(preloader);
+                    }, 1000);
+                }
             };
 
             function showContent() {

@@ -698,7 +698,7 @@ namespace gzWeb.Controllers
         {
             var host = Request.RequestUri.Host;
             if (host == "localhost")
-                host = "www.greenzorro.com";
+                host = "greenzorro.azurewebsites.net";
             var appKey = "ReCaptchaSiteKey@" + host;
             var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings[appKey];
             return reCaptchaSiteKey;

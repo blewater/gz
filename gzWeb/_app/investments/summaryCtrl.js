@@ -1,10 +1,11 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'summaryCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'message', '$location', 'constants', '$filter', '$sce', ctrlFactory]);
-    function ctrlFactory($scope, $controller, api, message, $location, constants, $filter, $sce) {
+    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'message', '$location', 'constants', '$filter', '$sce', 'iso4217', ctrlFactory]);
+    function ctrlFactory($scope, $controller, api, message, $location, constants, $filter, $sce, iso4217) {
         $controller('authCtrl', { $scope: $scope });
 
+        $scope.spinnerWhite = constants.spinners.sm_abs_white;
         var sellingValuesFetched = false;
 
         $scope.openVintages = function (title, vintages, withdrawMode) {
@@ -16,8 +17,8 @@
                 nsParams: {
                     vintages: vintages,
                     withdrawMode: withdrawMode,
-                    currency: $scope.currency
-                    //model: $scope.model
+                    currency: $scope.currency,
+                    //getInvestmentText: $scope.getInvestmentText
                 }
             });
         };
@@ -28,10 +29,12 @@
 
         $scope.withdraw = function () {
             if (!sellingValuesFetched) {
-                api.call(function() {
+                $scope.fetchingSellingValues = true;
+                api.call(function () {
                     return api.getVintagesWithSellingValues($scope.vintages);
                 }, function (getVintagesRsponse) {
                     sellingValuesFetched = true;
+                    $scope.fetchingSellingValues = false;
                     $scope.vintages = processVintages(getVintagesRsponse.Result);
                     withdrawVintages();
                 });
@@ -41,7 +44,8 @@
         };
 
         function withdrawVintages() {
-            var promise = $scope.openVintages('Available funds for withdrawal', $scope.vintages, true);
+            var withdrawableVintages = $filter('omit')($scope.vintages, function (v) { return v.InvestmentAmount === 0; });
+            var promise = $scope.openVintages('Available funds for withdrawal', withdrawableVintages, true);
             promise.then(function (updatedVintages) {
                 api.call(function () {
                     return api.withdrawVintages(updatedVintages);
@@ -68,11 +72,20 @@
             $location.path(constants.routes.games.path).search({});
         };
 
+        $scope.getInvestmentText = function(investmentAmount) {
+            if (investmentAmount === 0)
+                return "N/A";
+            else if (investmentAmount > 0 && investmentAmount < 1)
+                return iso4217.getCurrencyByCode($scope.currency).symbol + "<1";
+            else
+                return $filter('isoCurrency')(investmentAmount, $scope.currency, 0);
+        }
         function processVintages(vintages) {
             var mappedVintages = $filter('map')(vintages, function (v) {
                 v.Year = parseInt(v.YearMonthStr.slice(0, 4));
                 v.Month = parseInt(v.YearMonthStr.slice(-2));
                 v.Date = new Date(v.Year, v.Month - 1);
+                v.InvestmentText = $scope.getInvestmentText(v.InvestmentAmount);
                 return v;
             });
             var ordered = $filter('orderBy')(mappedVintages, 'Date', true);
@@ -105,6 +118,17 @@
                     $filter('ordinalDate')(startOfMonth, 'MMMM d') +
                     (todayDate === 1 ? '' : (' - ' + $filter('ordinalDate')(utcNow, 'd')));
                 $scope.model.OkToWithdraw = false;
+
+                $scope.model.InvestmentsBalance = Math.round($scope.model.InvestmentsBalance);
+                $scope.model.TotalInvestments = Math.round($scope.model.TotalInvestments);
+                $scope.model.TotalInvestmentsReturns = $scope.model.InvestmentsBalance - $scope.model.TotalInvestments;
+
+                $scope.model.BegGmBalance = Math.round($scope.model.BegGmBalance);
+                $scope.model.Deposits = Math.round($scope.model.Deposits);
+                $scope.model.Withdrawals = Math.round($scope.model.Withdrawals);
+                $scope.model.EndGmBalance = Math.round($scope.model.EndGmBalance);
+                $scope.model.GmGainLoss = $scope.model.EndGmBalance - $scope.model.BegGmBalance - $scope.model.Deposits + $scope.model.Withdrawals;
+
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
         }
