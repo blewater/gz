@@ -73,13 +73,10 @@
     <None Include="Scripts\load-references-debug.fsx" />
     <None Include="Scripts\load-project-debug.fsx" />
     <Compile Include="ErrorHandling.fs" />
-    <None Include="any\netstandard1.6\FSharp.Core.sigdata" />
-    <None Include="any\netstandard1.6\FSharp.Core.optdata" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
-      <HintPath>$(SolutionDir)packages\FSharp.Core.4.1.12\lib\net45\FSharp.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.1.17\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
@@ -91,8 +88,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>$(SolutionDir)packages\NLog.4.4.6\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\NLog.4.4.8\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -114,4 +110,3 @@
   </Target>
   -->
 </Project>
-
