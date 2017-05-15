@@ -517,24 +517,24 @@ namespace gzDAL.Repos
         public List<VintageDto> GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
 
-            foreach (var dto in customerVintages
-                .Where(v => v.SellingValue == 0 && !v.Locked))
+            foreach (var dto in customerVintages)
             {
+                if (dto.SellingValue == 0 && dto.InvestmentAmount != 0 && !dto.Locked) {
+                    // out var declarations
+                    VintageSharesDto vintageShares;
+                    decimal fees;
 
-                // out var declarations
-                VintageSharesDto vintageShares;
-                decimal fees;
-
-                // Call to calculate latest selling price
-                decimal vintageMarketPrice = GetVintageValuePricedNow(
+                    // Call to calculate latest selling price
+                    decimal vintageMarketPrice = GetVintageValuePricedNow(
                         customerId,
                         dto.YearMonthStr,
                         out vintageShares,
                         out fees);
 
-                // Save the selling price and shares
-                dto.VintageShares = vintageShares;
-                dto.SellingValue = vintageMarketPrice - fees;
+                    // Save the selling price and shares
+                    dto.VintageShares = vintageShares;
+                    dto.SellingValue = vintageMarketPrice - fees;
+                }
             }
 
             return customerVintages;
