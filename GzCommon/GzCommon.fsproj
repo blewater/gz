@@ -88,7 +88,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.8\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\GzBatch\packages\NLog.4.4.9\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -97,8 +97,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple">
-      <HintPath>$(SolutionDir)packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
