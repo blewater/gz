@@ -136,6 +136,9 @@ module DailyPortfolioShares =
     open GzDb.DbUtil
     open PortfolioTypes
 
+    //http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22VTI%22)&env=store://datatables.org/alltableswithkeys
+    //http://download.finance.yahoo.com/d/quotes.csv?s=YHOO,GOOG,AAPL&f=sl1d1t1c1ohgv&e=.csv&columns='symbol,price,date,time,change,col1,high,low,col2
+
     // URL of a service that generates price data
     [<Literal>]
     let YahooFinanceUrl = "http://ichart.finance.yahoo.com/table.csv?s="
