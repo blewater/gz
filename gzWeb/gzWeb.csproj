@@ -27,7 +27,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
     <ApplicationInsightsResourceId>/subscriptions/500c96ff-15a2-4861-8a33-8872bdcb6b58/resourcegroups/2ndSub_All_BizSpark_RG/providers/microsoft.insights/components/greenzorrodev</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/500c96ff-15a2-4861-8a33-8872bdcb6b58/resourceGroups/2ndSub_All_BizSpark_RG/providers/microsoft.insights/components/greenzorrodev</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
