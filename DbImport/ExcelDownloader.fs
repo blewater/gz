@@ -2,7 +2,14 @@
 
 module ExcelDownloader =
 
+    open FSharp.Configuration
+
+//    type Settings = AppSettings< "app.config" >
+
+//    open FSharp.Configuration.IniFileProvider.Parser
     open canopy
+
+//    let s = Settings
     
     let executingDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
     configuration.chromeDir <- executingDir
