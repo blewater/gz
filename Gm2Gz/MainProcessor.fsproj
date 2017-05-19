@@ -89,12 +89,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Excel">
-      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\Excel.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\ExcelProvider.0.8.2\lib\Excel.dll</HintPath>
     </Reference>
     <Reference Include="ExcelProvider">
-      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\ExcelProvider.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\ExcelProvider.0.8.2\lib\ExcelProvider.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Configuration">
       <HintPath>..\GzBatch\packages\FSharp.Configuration.1.1.0\lib\net46\FSharp.Configuration.dll</HintPath>
@@ -111,8 +109,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\ExcelProvider.0.8.2\lib\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
