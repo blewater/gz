@@ -133,6 +133,18 @@
         $scope.hideChat = function() {
             chat.hide();
         };
+        $scope.minChat = function () {
+            chat.min();
+        };
+        $scope.maxChat = function () {
+            chat.max();
+        };
+        $scope.isMinChat = function () {
+            message.modal(chat.isMin());
+        };
+        $scope.isMaxChat = function () {
+            message.modal(chat.isMax());
+        };
 
         $scope.url = function () {
             var url = $location.protocol() + "://" + $location.host() + ":" + $location.port();

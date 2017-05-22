@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('message', ['$rootScope', '$compile', '$q', serviceFactory]);
-    function serviceFactory($rootScope, $compile, $q) {
+    APP.factory('message', ['$rootScope', '$compile', '$q', 'chat', serviceFactory]);
+    function serviceFactory($rootScope, $compile, $q, chat) {
         clear();
 
         var bodyElement = angular.element(document.querySelector('body'));
@@ -90,6 +90,7 @@
             return open(angular.extend(defaults, options));
         }
         function notify(msg, options) {
+            chat.min();
             var defaults = {
                 nsType: 'notification',
                 nsClass: 'default',
@@ -98,6 +99,7 @@
             return open(angular.extend(defaults, options));
         }
         function toastr(msg, options) {
+            chat.min();
             var defaults = {
                 nsType: 'toastr',
                 nsClass: 'default',
