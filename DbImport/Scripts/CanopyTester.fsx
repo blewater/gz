@@ -14,16 +14,11 @@
 #r "../../GzBatch/packages/System.ValueTuple.4.3.1/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
 #r "../../GzBatch/packages/FSharp.Configuration.1.1.0/lib/net46/FSharp.Configuration.dll"
-//open FSharp.Configuration
-
-//type Settings = AppSettings< @"d:\sc\gz\dbimport\app.config" >
 open canopy
 open System.IO
 open System
 open GzCommon
 open Microsoft.FSharp.Collections
-
-//Settings.
 
 let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"

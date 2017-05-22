@@ -659,13 +659,13 @@ module UserTrx =
         monthLateQuote
         
     /// Input type for portfolio processing
-    let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPricesMap) =
+    let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPrices) =
         { 
             DbUserMonth = dbUserMonth;
             VintagesSold = dbUserMonth |> InvBalance.getSoldVintages;
             Portfolio = dbUserMonth |> UserPortfolio.getUserPortfolioDetail;
             CashToInvest = trxRow.Amount;
-            PortfoliosPrices = (portfoliosPricesMap, dbUserMonth.Month) ||> findNearestPortfolioPrice
+            PortfoliosPrices = portfoliosPricesMap
         }
 
     /// Input type for gaming activities reporting
@@ -681,9 +681,14 @@ module UserTrx =
         }
 
     /// Main entry to process credit losses for the month and put forth balance amounts from gaming activities
-    let processGzTrx(db : DbContext)(yyyyMmDd : string)(portfoliosPrices : PortfoliosPricesMap) =
+    let processGzTrx(db : DbContext)(yyyyMmDd : string)(portfoliosPricesMap : PortfoliosPricesMap) =
 
         let yyyyMm = yyyyMmDd.Substring(0, 6)
+        
+        let latestInMonthPortfoliosPrices = 
+            (portfoliosPricesMap, yyyyMm) 
+                ||> findNearestPortfolioPrice
+
         query { 
             for trxRow in db.GzTrxs do
                 where (
@@ -698,7 +703,7 @@ module UserTrx =
                     let dbUserMonth = {Db = db; UserId = trxRow.CustomerId; Month = yyyyMm}
 
                     let userPortfolioInput = 
-                        (dbUserMonth, trxRow, portfoliosPrices) 
+                        (dbUserMonth, trxRow, latestInMonthPortfoliosPrices) 
                         |||> getUserPortfolioInput
                     
                     let userFinance = 
