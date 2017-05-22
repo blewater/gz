@@ -267,7 +267,10 @@ let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     let thirdWindow = browser.WindowHandles |> Seq.find(fun w -> w <> sndWindow && w <> baseWindow)
     closeSwitchWindow thirdWindow
     // Download Report
-    click "#ShowProductBalance1_btnSaveas"
+    try 
+        click "#ShowProductBalance1_btnSaveas"
+    with
+    | :? OpenQA.Selenium.WebDriverTimeoutException -> printfn "Absorbing timeout exception"
     
     // Return to base window
     closeSwitchWindow baseWindow
