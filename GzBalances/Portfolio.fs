@@ -1,179 +1,54 @@
 ﻿namespace GzBalances
 
-module PortfolioTypes =
-    open System
-    open GzDb.DbUtil
-
-    type Risk = Low | Medium | High
-
-    type PortfolioId = int
-
-    type Shares = decimal
-
-    type Money = decimal
-
-    type Portfolio = {
-        PortfolioId : PortfolioId;
-        Risk : Risk
-    }
-
-    [<Literal>]
-    let LowRiskPortfolioId = 1
-    [<Literal>]
-    let MediumRiskPortfolioId = 3
-    [<Literal>]
-    let HighRiskPortfolioId = 5
-    [<Literal>]
-    let LowRiskArrayIndex = 0
-    [<Literal>]
-    let MediumRiskArrayIndex = 1
-    [<Literal>]
-    let HighRiskArrayIndex = 2
-
-    /// Input monthly argument for calculating portfolio
-    type PortfolioShares = {
-        SharesLowRisk : Shares;
-        SharesMediumRisk : Shares;
-        SharesHighRisk : Shares;
-    } with 
-        static member (-) (soldShares, owned : PortfolioShares) =
-            {
-                SharesLowRisk = owned.SharesLowRisk - soldShares.SharesLowRisk; 
-                SharesMediumRisk = owned.SharesMediumRisk - soldShares.SharesMediumRisk; 
-                SharesHighRisk = owned.SharesHighRisk - soldShares.SharesHighRisk;
-            }
-        static member (+) (owned, soldShares : PortfolioShares) =
-            {
-                SharesLowRisk = owned.SharesLowRisk + soldShares.SharesLowRisk; 
-                SharesMediumRisk = owned.SharesMediumRisk + soldShares.SharesMediumRisk; 
-                SharesHighRisk = owned.SharesHighRisk + soldShares.SharesHighRisk;
-            }
-
-    type PortfolioPriced = {
-        PortfolioShares : PortfolioShares;
-        Worth : Money
-    }
-
-    type VintagesSold = {
-        PortfolioShares : PortfolioShares; 
-        BoughtAt : Money; 
-        SoldAt : Money 
-    }
-
-    type PortfolioSharePrice = {
-        PortfolioId : PortfolioId;
-        Price : float;
-        TradedOn : DateTime;
-    }
-
-    type PortfoliosPrices = {
-        PortfolioLowRiskPrice : PortfolioSharePrice;
-        PortfolioMediumRiskPrice : PortfolioSharePrice;
-        PortfolioHighRiskPrice : PortfolioSharePrice;
-    }
-
-    type PortfoliosPricesMap = Map<string, PortfoliosPrices>
-
-    type DbUserMonth = {
-        Db : DbContext;
-        UserId : int;
-        Month : string;
-    }
-
-    type UserPortfolioShares = {
-        PrevPortfolioShares : PortfolioPriced;
-        NewPortfolioShares : PortfolioPriced
-    }
-
-    type UserPortfolioInput = {
-        DbUserMonth : DbUserMonth;
-        VintagesSold : VintagesSold;
-        Portfolio : Portfolio;
-        CashToInvest : Money;
-        PortfoliosPrices : PortfoliosPrices
-    }
-
-    type UserFinance = {
-        BegBalance : Money;
-        Deposits : Money;
-        Withdrawals : Money;
-        GainLoss : Money;
-        EndBalance : Money;
-        AmountToBuyStock : Money;
-    }
-
-    type FundQuote = { Symbol : string; TradedOn : DateTime; ClosingPrice : float }
-    type PortfolioWeight = float32
-    type PortfolioFundRecord = {PortfolioId : PortfolioId; PortfolioWeight : PortfolioWeight; Fund : FundQuote}
-
-    /// Convert .net dictionary to map 
-    let inline toMap kvps =
-        kvps
-        |> Seq.map (|KeyValue|)
-        |> Map.ofSeq
-
-    let getPortfolioRiskById (portfolioId : PortfolioId) : Risk =
-        match portfolioId with
-        | LowRiskPortfolioId 
-            -> Low
-        | MediumRiskPortfolioId 
-            -> Medium
-        | HighRiskPortfolioId 
-            -> High
-        | _ 
-            -> invalidArg "Portfolio Id" (sprintf "Unknown portfolio id: %d" portfolioId)
-
-    let getPortfolioIdByRisk (portfolioRisk : Risk) : PortfolioId =
-        match portfolioRisk with
-        | Low -> LowRiskPortfolioId
-        | Medium -> MediumRiskPortfolioId
-        | High -> HighRiskPortfolioId
-
 module DailyPortfolioShares =
     open System
     open System.Net
     open GzCommon
     open GzDb.DbUtil
     open PortfolioTypes
+    open GzCommon.ErrorHandling
+    open FSharp.Data
+
+    type Funds = CsvProvider<"quotes.csv", HasHeaders=false, Schema = "TradedOn (Date),Symbol (string),ClosedPrice (float)">
 
     //http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22VTI%22)&env=store://datatables.org/alltableswithkeys
-    //http://download.finance.yahoo.com/d/quotes.csv?s=YHOO,GOOG,AAPL&f=sl1d1t1c1ohgv&e=.csv&columns='symbol,price,date,time,change,col1,high,low,col2
+    //http://finance.yahoo.com/d/quotes.csv?s=MUB,VSGBX,VTI,VBMFX,VSTCX,CFA&f=d1sp
 
     // URL of a service that generates price data
     [<Literal>]
-    let YahooFinanceUrl = "http://ichart.finance.yahoo.com/table.csv?s="
+    let YahooFinanceUrl = "http://download.finance.yahoo.com/d/quotes.csv?s="
 
-    /// Returns prices (as YQ type) of a given stock for a 
-    /// specified number of days on ascending order of trading time
-    let getStockPrices stock count =
-        // Download the data and split it into lines
-        let wc = new WebClient()
-        let data = wc.DownloadString(YahooFinanceUrl + stock)
-        let dataLines = 
-            data.Split([| '\n' |], StringSplitOptions.RemoveEmptyEntries) 
+    let getLatestStockPrice (funds : string) : Map<string, FundQuote> =
 
-        // Parse lines of the CSV file and take specified
-        // number of days using in the oldest to newest order
-        seq { for line in dataLines |> Seq.skip 1 do
-                  let infos = line.Split(',')
-                  let tradedOn = 
-                    match DateTime.TryParseExact(infos.[0], "yyyy-MM-dd", null, Globalization.DateTimeStyles.None) with
-                    | (true, dt) -> dt
-                    | (false, _) 
-                        -> invalidArg "Yahoo Finance Api Date" (sprintf "Couldn't parse this yahoo api date %s" infos.[0])
-                  let yQuote = 
+        let urlLoad = YahooFinanceUrl + funds + "&f=d1sp"
+        let tradedFunds = Funds.Load(urlLoad)
+
+        // Save to map for easy reference
+        [ 
+            for row in tradedFunds.Rows do
+                let tradedOn = row.TradedOn
+                let symbol = row.Symbol
+                let closedPrice = row.ClosedPrice
+                let yQuote = 
                     { 
-                        Symbol = stock; 
-                        TradedOn = tradedOn; 
-                        ClosingPrice = 
-                        float infos.[4]
+                        Symbol = symbol;
+                        TradedOn = tradedOn
+                        ClosingPrice = closedPrice
                     }
-                  yield yQuote 
-            }
-        |> Seq.take count |> Seq.rev
+                yield (symbol, yQuote)
+        ]
+        |> Map.ofList
+
+    let getSymbolPrice (symbol : string)(symbolPrices : Map<string, FundQuote>) : float =
+        let fundQuote = symbolPrices.[symbol]
+        fundQuote.ClosingPrice
+
+    let getSymbolTradeDay (symbol : string)(symbolPrices : Map<string, FundQuote>) : DateTime =
+        let fundQuote = symbolPrices.[symbol]
+        fundQuote.TradedOn
 
     /// Update an existing row of PortfolioPrices
-    let private updDbPortfolioPrice
+    let updDbPortfolioPrice
                 (dbPortfolioPrices : DbPortfolioPrices)
                 (portfolioPrices : PortfoliosPrices) =
 
@@ -183,7 +58,7 @@ module DailyPortfolioShares =
         dbPortfolioPrices.UpdatedOnUtc <- DateTime.UtcNow
 
     /// insert a new portfolio price for a trading day and price
-    let private insDbNewRowPortfolioPrice (db : DbContext)(portfolioPrices : PortfoliosPrices) =
+    let insDbNewRowPortfolioPrice (db : DbContext)(portfolioPrices : PortfoliosPrices) =
         let newPortfolioPriceRow = new DbPortfolioPrices(
                                         YearMonthDay = portfolioPrices.PortfolioLowRiskPrice.TradedOn.ToYyyyMmDd
                                     )
@@ -192,7 +67,7 @@ module DailyPortfolioShares =
 
         db.PortfolioPrices.InsertOnSubmit(newPortfolioPriceRow)
         
-    let private getPortfolioPriceList (db : DbContext)(tradingDay : string) : DbPortfolioPrices =
+    let getPortfolioPriceList (db : DbContext)(tradingDay : string) : DbPortfolioPrices =
         query {
             for row in db.PortfolioPrices do
             where (row.YearMonthDay = tradingDay)
@@ -201,7 +76,7 @@ module DailyPortfolioShares =
         }
 
     /// Insert the portfolio prices for a trading day if not existing already
-    let private setDbAskToSavePortfolioPrices(db : DbContext)(portfoliosPrices : PortfoliosPrices) : unit =
+    let setDbAskToSavePortfolioPrices(db : DbContext)(portfoliosPrices : PortfoliosPrices) : unit =
 
         // Any portfolio risk type trading day is the same
         let portfolioPricesRow = (db, portfoliosPrices.PortfolioLowRiskPrice.TradedOn.ToYyyyMmDd) ||> getPortfolioPriceList
@@ -224,7 +99,7 @@ module DailyPortfolioShares =
         portfoliosPrices
 
     /// Cast an array of 3 risk portfolios to PortfoliosPrices
-    let private portfolioPricesArrToType(portfolioPricesArr : PortfolioSharePrice[]) : PortfoliosPrices =
+    let portfolioPricesArrToType(portfolioPricesArr : PortfolioSharePrice[]) : PortfoliosPrices =
 
         // Low : 0, Medium, High
         (portfolioPricesArr.Length = 3, "Incoming Portfolio prices array is not 3 (Low, Medium, High)")
@@ -238,7 +113,7 @@ module DailyPortfolioShares =
         portfoliosPrices
 
     /// Get the portfolio funds weighted
-    let private pFundsQry (db : DbContext) =
+    let pFundsQry (db : DbContext) =
             query { 
                 for f in db.Funds do
                 join fp in db.PortFunds on (f.Id = fp.FundId)
@@ -273,44 +148,50 @@ module DailyPortfolioShares =
                         PortfolioHighRiskPrice    PortfolioId 5
                                                   Price 38.8670005
                                                   TradedOn 2/14/2017 0:00*)
-    let private getPortfoliosPrices (takeNdays: int) 
-                            (dbFundsWithPortfolioFunds : (DbFunds * DbPortfolioFunds) Linq.IQueryable)
-                            : PortfoliosPricesMap =
+    let getPortfoliosPrices (dbFundsWithPortfolioFunds : (DbFunds * DbPortfolioFunds) Linq.IQueryable) : PortfoliosPricesMap =
 
         let portfolioPrices =
+            let fundTradedPrices =
+                dbFundsWithPortfolioFunds
+                |> Seq.map(fun (f : DbFunds, fp : DbPortfolioFunds) -> f.Symbol)
+                |> String.concat ","
+                |> getLatestStockPrice
             dbFundsWithPortfolioFunds
-            |> Seq.collect(fun (f : DbFunds, fp : DbPortfolioFunds) -> 
-                takeNdays 
-                |> getStockPrices f.Symbol
-                |> Seq.map(fun(quote : FundQuote) -> 
-                    let portfolioFundRec = {PortfolioId = fp.PortfolioId; PortfolioWeight = fp.Weight; Fund = quote}
-                    portfolioFundRec)
-                )
-                |> Seq.groupBy(fun (portfolioFundRec : PortfolioFundRecord) -> portfolioFundRec.Fund.TradedOn)
-                |> Seq.map(fun (tradedOnKey : DateTime, spfr : PortfolioFundRecord seq) -> 
-                    let gpfr = spfr |> Seq.groupBy (fun pfr -> pfr.PortfolioId)
-                    let pricedPortfoliosGroup = 
-                        gpfr
-                        |> Seq.map (fun (p, spsf) ->
-                            let price = 
-                                spsf 
-                                |> Seq.sumBy (fun pfr -> pfr.Fund.ClosingPrice * float pfr.PortfolioWeight / 100.0) 
-                            let topPortfolioFundRecord = spsf |> Seq.head
-                            { PortfolioId = p; Price = price; TradedOn = topPortfolioFundRecord.Fund.TradedOn }
-                        )
-                    (tradedOnKey.ToYyyyMmDd, pricedPortfoliosGroup 
-                                                |> Seq.toArray
-                                                |> portfolioPricesArrToType)
-                )
-                |> Map
-        portfolioPrices 
-        // portfolioPrices |> Seq.iter(fun i -> printfn "%A" i)
+            |> Seq.map(fun (f : DbFunds, fp : DbPortfolioFunds) -> 
+                let portfolioFundRec = {
+                    PortfolioId = fp.PortfolioId; 
+                    PortfolioWeight = fp.Weight; 
+                    Fund = fundTradedPrices.[f.Symbol]
+                }
+                portfolioFundRec
+               )
+//            |> ~~ (printfn "%A")
+            |> Seq.groupBy(fun (portfolioFundRec : PortfolioFundRecord) -> portfolioFundRec.Fund.TradedOn)
+//            |> ~~ (printfn "%A")
+            |> Seq.map(fun (tradedOnKey : DateTime, spfr : PortfolioFundRecord seq) -> 
+                let gpfr = spfr |> Seq.groupBy (fun pfr -> pfr.PortfolioId)
+                let pricedPortfoliosGroup = 
+                    gpfr
+                    |> Seq.map (fun (p, spsf) ->
+                        let price = 
+                            spsf 
+                            |> Seq.sumBy (fun pfr -> pfr.Fund.ClosingPrice * float pfr.PortfolioWeight / 100.0) 
+                        let topPortfolioFundRecord = spsf |> Seq.head
+                        { PortfolioId = p; Price = price; TradedOn = topPortfolioFundRecord.Fund.TradedOn }
+                    )
+                (tradedOnKey.ToYyyyMmDd, pricedPortfoliosGroup 
+                                            |> Seq.toArray
+                                            |> portfolioPricesArrToType)
+            )
+            |> Map
+//        portfolioPrices |> Seq.iter(fun i -> printfn "%A" i)
+        portfolioPrices
 
     /// Ask & Store portfolio shares
-    let storeShares (db : DbContext)(takeNdays : int) : PortfoliosPricesMap =
+    let storeShares (db : DbContext): PortfoliosPricesMap =
         db
         |> pFundsQry
-        |> getPortfoliosPrices takeNdays
+        |> getPortfoliosPrices
         |> setDbPortfoliosPrices db
 
 module UserPortfolio =
