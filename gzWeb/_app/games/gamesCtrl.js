@@ -483,6 +483,7 @@
         $scope.inited = false;
 
         $scope._init(function () {
+            window.appInsights.trackEvent("GAMES");
             readParams();
             loadCarouselSlides();
             loadGameVendors();

@@ -38,11 +38,14 @@
             $location.path(constants.routes.home.path);
         }
         $scope.backToGames = function () {
+            window.appInsights.trackEvent("GOTO GAMES", { from: "HEADER" });
             $location.path(constants.routes.games.path).search({});
         };
         $scope.toInvestments = function () {
-            if ($scope._authData.isInvestor)
+            if ($scope._authData.isInvestor) {
+                window.appInsights.trackEvent("GOTO INVESTMENT", { from: "HEADER" });
                 $location.path(constants.routes.summary.path);
+            }
             else {
                 message.open({
                     nsType: 'modal',

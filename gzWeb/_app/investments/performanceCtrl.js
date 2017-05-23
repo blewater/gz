@@ -25,6 +25,7 @@
         }
 
         $scope._init(function () {
+            window.appInsights.trackEvent("INVESTMENT PERFORMANCE");
             loadPerformanceData();
             loadAuthData();
             $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
