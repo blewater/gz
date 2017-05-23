@@ -12,6 +12,7 @@
         };
 
         $scope.selectPlan = function (plan) {
+            window.appInsights.trackEvent("SELECT PORTFOLIO (" + plan.Title + ")");
             api.call(function () {
                 return api.setPlanSelection(plan);
             }, function (response) {
@@ -23,8 +24,7 @@
 
                 message.success('Your selection was registered successfully!', { nsType: 'toastr' });
             }, {
-                loadingFn: function (flag) { plan.selecting = flag; },
-                errorFn: function(error) { message.success(error); }
+                loadingFn: function (flag) { plan.selecting = flag; }
             });
         }
 
@@ -43,6 +43,7 @@
         }
 
         $scope._init(function () {
+            window.appInsights.trackEvent("INVESTMENT PORTFOLIO");
             loadPortfolioData();
             loadAuthData();
             $scope.$on(constants.events.ACCOUNT_BALANCE_CHANGED, loadAuthData);
