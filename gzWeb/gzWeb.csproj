@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -712,6 +712,7 @@
     <Compile Include="Utilities\GlobalCacheScheduledJob.cs" />
     <Compile Include="Utilities\GlobalScheduledJobsRegistry.cs" />
     <Compile Include="Utilities\ICacheUserData.cs" />
+    <Compile Include="Utilities\NLogExceptionLogger.cs" />
     <Compile Include="Utilities\OkWithMessageResult.cs" />
     <Compile Include="Utilities\Response.cs" />
   </ItemGroup>
@@ -808,6 +809,8 @@
     <Content Include="_app\common\preloader.min.css">
       <DependentUpon>preloader.css</DependentUpon>
     </Content>
+    <Content Include="_app\common\apiError.html" />
+    <Content Include="_app\common\apiErrorCtrl.js" />
     <Content Include="_app\directives\gzAuthAccess.js" />
     <Content Include="_app\directives\gzCheckBox.html" />
     <Content Include="_app\directives\gzCheckBox.js" />

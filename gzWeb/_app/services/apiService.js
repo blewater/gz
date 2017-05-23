@@ -1,9 +1,8 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('api', ['$http', '$rootScope', serviceFactory]);
-
-    function serviceFactory($http, $rootScope) {
+    APP.factory('api', ['$http', '$rootScope', 'message', serviceFactory]);
+    function serviceFactory($http, $rootScope, message) {
         var factory = {};
 
         // #region Urls
@@ -41,7 +40,12 @@
                 }
             }).error(function (error) {
                 //console.log(error);
-                //message.error(error);
+                message.modal("Ooops...", {
+                    nsSize: 'md',
+                    nsTemplate: '_app/common/apiError.html',
+                    nsCtrl: 'apiErrorCtrl',
+                    nsTitleShout: false
+                });
                 ctx.errorFn(error);
             }).finally(function () {
                 ctx.loadingFn(false);
