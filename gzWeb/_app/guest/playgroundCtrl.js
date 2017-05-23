@@ -17,6 +17,12 @@
 
         // #region Messages
         var m = 1, n = 1, t = 1;
+        $scope.modal = function () {
+            message.modal('Title', {
+                nsSize: 'lg',
+                nsBody: '<pre><code>' + 'This is the <b>body</b> <br/> of the message' + '</code></pre>'
+            })
+        };
         $scope.alert = function () {
             message.alert('Alert ' + m++);
         };
