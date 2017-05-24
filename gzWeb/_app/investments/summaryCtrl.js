@@ -24,6 +24,7 @@
         };
 
         $scope.showAllVintages = function () {
+            window.appInsights.trackEvent("OPEN SHOW VINTAGES");
             $scope.openVintages('Vintages history', $scope.vintages, false);
         };
 
@@ -44,10 +45,12 @@
         };
 
         function withdrawVintages() {
+            window.appInsights.trackEvent("OPEN WITHDRAW VINTAGES");
             var withdrawableVintages = $filter('omit')($scope.vintages, function (v) { return v.InvestmentAmount === 0; });
             var promise = $scope.openVintages('Available funds for withdrawal', withdrawableVintages, true);
             promise.then(function (updatedVintages) {
                 api.call(function () {
+                    window.appInsights.trackEvent("ACTUAL WITHDRAW VINTAGES");
                     return api.withdrawVintages(updatedVintages);
                 }, function (withdrawResponse) {
                     $scope.vintages = processVintages(withdrawResponse.Result);
@@ -69,6 +72,7 @@
         }
 
         $scope.backToGames = function() {
+            window.appInsights.trackEvent("GOTO GAMES", { from: "SUMMARY" });
             $location.path(constants.routes.games.path).search({});
         };
 
@@ -96,6 +100,7 @@
             $scope.investmentHistoryExpanded = !$scope.investmentHistoryExpanded;
         };
         $scope.toggleGamingActivities = function () {
+            window.appInsights.trackEvent("INVESTMENT " + ($scope.gamingActivitiesExpanded ? "CLOSE" : "OPEN") + " GAMING ACTIVITIES");
             $scope.gamingActivitiesExpanded = !$scope.gamingActivitiesExpanded;
         };
 
@@ -138,6 +143,7 @@
         }
 
         $scope._init(function() {
+            window.appInsights.trackEvent("INVESTMENT SUMMARY");
             loadSummaryData();
             loadAuthData();
         });

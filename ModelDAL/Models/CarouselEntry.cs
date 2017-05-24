@@ -38,7 +38,7 @@ namespace gzDAL.Models
         [Required]
         public CarouselActionType ActionType { get; set; }
         
-        [ MaxLength(255)]
+        [MaxLength(255)]
         public string BackgroundImageUrl { get; set; }
 
         [Required]

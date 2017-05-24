@@ -17,6 +17,12 @@
 
         // #region Messages
         var m = 1, n = 1, t = 1;
+        $scope.modal = function () {
+            message.modal('Title', {
+                nsSize: 'lg',
+                nsBody: '<pre><code>' + 'This is the <b>body</b> <br/> of the message' + '</code></pre>'
+            })
+        };
         $scope.alert = function () {
             message.alert('Alert ' + m++);
         };
@@ -132,6 +138,18 @@
         };
         $scope.hideChat = function() {
             chat.hide();
+        };
+        $scope.minChat = function () {
+            chat.min();
+        };
+        $scope.maxChat = function () {
+            chat.max();
+        };
+        $scope.isMinChat = function () {
+            message.modal(chat.isMin());
+        };
+        $scope.isMaxChat = function () {
+            message.modal(chat.isMax());
         };
 
         $scope.url = function () {

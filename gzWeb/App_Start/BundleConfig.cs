@@ -135,6 +135,7 @@ namespace gzWeb {
                                         , "~/_app/common/headerCtrl.js"
                                         , "~/_app/common/footerCtrl.js"
                                         , "~/_app/common/footerMenu.js"
+                                        , "~/_app/common/apiErrorCtrl.js"
             #endregion
 
             #region EveryMatrix

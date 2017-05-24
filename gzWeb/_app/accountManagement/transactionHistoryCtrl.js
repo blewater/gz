@@ -14,7 +14,7 @@
         function getDate(trx) {
             return $filter('date')(moment.utc(trx.time).toDate(), 'dd/MM/yy HH:mm');
         }
-        function getAmount(amount, currency) {
+        function getAmountText(amount, currency) {
             return $filter('isoCurrency')(amount, currency, 2);
         }
         function getStatus(trx) {
@@ -28,7 +28,8 @@
             display: 'Deposit',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return getAmount(trx.debit.amount, trx.debit.currency); },
+            getAmount: function (trx) { return trx.debit.amount; },
+            getAmountText: function (trx) { return getAmountText(trx.debit.amount, trx.debit.currency); },
             getDescription: function (trx) { return trx.debit.name; },
             getStatus: getStatus
         };
@@ -40,7 +41,8 @@
             display: 'Withdraw',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return getAmount(trx.credit.amount, trx.credit.currency); },
+            getAmount: function (trx) { return trx.credit.amount; },
+            getAmountText: function (trx) { return getAmountText(trx.credit.amount, trx.credit.currency); },
             getDescription: function (trx) { return trx.credit.name; },
             getStatus: getStatus
         };
@@ -52,7 +54,8 @@
             display: 'Transfer',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return getAmount(trx.credit.amount, trx.credit.currency); },
+            getAmount: function (trx) { return trx.credit.amount; },
+            getAmountText: function (trx) { return getAmountText(trx.credit.amount, trx.credit.currency); },
             getDescription: function (trx) { return trx.debit.name; },
             getStatus: getStatus
         };
@@ -64,26 +67,29 @@
             display: 'Buddy Transfer',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return getAmount(trx.credit.amount, trx.credit.currency); },
-            getDescription: function(trx) { return trx.debit.name; },
+            getAmount: function (trx) { return trx.credit.amount; },
+            getAmountText: function (trx) { return getAmountText(trx.credit.amount, trx.credit.currency); },
+            getDescription: function (trx) { return trx.debit.name; },
             getStatus: getStatus
         };
         // #endregion
 
-        // #region BuddyTransfer
+        // #region GamingTransfer
         var gamblingTransfer = {
             name: 'Gambling',
             display: 'Gambling',
             getId: getId,
             getDate: getDate,
             getAmount: function (trx) {
+                return trx.credit === undefined ? trx.debit.amount : trx.credit.amount;
+            },
+            getAmountText: function (trx) {
                 var currency = trx.credit === undefined ? trx.debit.currency : trx.credit.currency;
                 return (trx.credit === undefined
                             ? "-" + getAmount(trx.debit.amount, trx.debit.currency)
-                            : getAmount(trx.credit.amount, trx.credit.currency)
+                            : getAmountText(trx.credit.amount, trx.credit.currency)
                     ) + " / " +
                     $filter('isoCurrency')(trx.balance, currency, 2);
-
             },
             getDescription: function(trx) {
                 return (trx.credit === undefined
@@ -142,13 +148,15 @@
                     $scope.pageIndex = response.currentPageIndex;
                     $scope.transactions = [];//response.transactions;
                     for (var i = 0; i < response.transactions.length; i++) {
-                        $scope.transactions.push({
-                            id: $scope.type.getId(response.transactions[i]),
-                            date: $scope.type.getDate(response.transactions[i]),
-                            amount: $scope.type.getAmount(response.transactions[i]),
-                            description: $scope.type.getDescription(response.transactions[i]),
-                            status: $scope.type.getStatus(response.transactions[i])
-                        });
+                        if ($scope.type.getAmount(response.transactions[i]) > 0) {
+                            $scope.transactions.push({
+                                id: $scope.type.getId(response.transactions[i]),
+                                date: $scope.type.getDate(response.transactions[i]),
+                                amount: $scope.type.getAmountText(response.transactions[i]),
+                                description: $scope.type.getDescription(response.transactions[i]),
+                                status: $scope.type.getStatus(response.transactions[i])
+                            });
+                        }
                     }
                     $scope.totalRecordCount = response.totalRecordCount;
                     $scope.totalPageCount = response.totalPageCount;

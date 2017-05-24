@@ -24,6 +24,7 @@ using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Integration.WebApi;
 using FluentScheduler;
 using gzWeb.Utilities;
+using System.Web.Http.ExceptionHandling;
 
 [assembly: OwinStartupAttribute(typeof(gzWeb.Startup))]
 namespace gzWeb {
@@ -77,7 +78,9 @@ namespace gzWeb {
             });
 
             var config = new HttpConfiguration();
-            
+
+            config.Services.Add(typeof(IExceptionLogger), new NLogExceptionLogger());
+
             var container = InitializeSimpleInjector(app, config, mapperConfiguration);
 
             //DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
