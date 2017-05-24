@@ -7,19 +7,49 @@
 
         var service = {
             show: show,
-            hide: hide
+            hide: hide,
+            isMin: isMin,
+            isMax: isMax,
+            min: min,
+            max: max
         };
         return service;
 
         function show() {
-            if ($('.zopim').length > 0)
-                $('.zopim:first-of-type').fadeIn(_duration);
+            if ($('.zopim').length > 0 && $('.zopim:nth-of-type(1)').is(':hidden') && $('.zopim:nth-of-type(2)').is(':hidden')) {
+                $('.zopim:nth-of-type(1)').fadeIn(_duration);
+            }
             else
                 init();
         }
         function hide() {
             $('.zopim').fadeOut(_duration);
         }
+
+        function isMin() {
+            return $('.zopim').length > 0 && $('.zopim:nth-of-type(1)').is(':visible') && $('.zopim:nth-of-type(2)').is(':hidden');
+        }
+        function isMax() {
+            return $('.zopim').length > 0 && $('.zopim:nth-of-type(1)').is(':hidden') && $('.zopim:nth-of-type(2)').is(':visible');
+        }
+        function min() {
+            toggle(true);
+        }
+        function max() {
+            toggle(false);
+        }
+        function toggle(min) {
+            if ($('.zopim').length > 0) {
+                if (min) {
+                    $('.zopim:nth-of-type(1)').show();
+                    $('.zopim:nth-of-type(2)').hide();
+                }
+                else {
+                    $('.zopim:nth-of-type(1)').hide();
+                    $('.zopim:nth-of-type(2)').show();
+                }
+            }        }
+
 
         function _onLoad() {
             //show();
