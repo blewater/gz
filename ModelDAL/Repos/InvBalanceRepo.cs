@@ -177,6 +177,8 @@ namespace gzDAL.Repos
                 // Package all the results
                 summaryDtoRet = new UserSummaryDTO() {
 
+                    Vintages = vintages,
+
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
                     InvestmentsBalance = invBalanceRes.Balance, // balance
 
