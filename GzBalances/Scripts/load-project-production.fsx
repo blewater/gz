@@ -2,4 +2,5 @@
 #I __SOURCE_DIRECTORY__
 #load "load-references-production.fsx"
 #load "../AssemblyInfo.fs"
+      "../PortfolioTypes.fs"
       "../Portfolio.fs"
