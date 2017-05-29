@@ -3,7 +3,7 @@
 module ExcelDownloader =
 
     open canopy
-    
+
     let executingDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
     configuration.chromeDir <- executingDir
 
