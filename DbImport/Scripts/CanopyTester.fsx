@@ -7,17 +7,18 @@
 #r "System.Transactions.dll"
 #r "System.Xml.Linq.dll"
 #r "System.Drawing.dll"
+#r "System.Configuration.dll"
 #r "../packages/Selenium.WebDriver/lib/net40/WebDriver.dll"
 #r "../../GzBatch/packages/Selenium.Support.3.4.0/lib/net40/WebDriver.Support.dll"
 #r "../packages/canopy/lib/canopy.dll"
-#r "../../GzBatch/packages/System.ValueTuple.4.3.0/lib/netstandard1.0/System.ValueTuple.dll"
+#r "../../GzBatch/packages/System.ValueTuple.4.3.1/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
-
+#r "../../GzBatch/packages/FSharp.Configuration.1.1.0/lib/net46/FSharp.Configuration.dll"
 open canopy
 open System.IO
 open System
-open Microsoft.FSharp.Collections
 open GzCommon
+open Microsoft.FSharp.Collections
 
 let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"
@@ -261,7 +262,10 @@ let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     let thirdWindow = browser.WindowHandles |> Seq.find(fun w -> w <> sndWindow && w <> baseWindow)
     closeSwitchWindow thirdWindow
     // Download Report
-    click "#ShowProductBalance1_btnSaveas"
+    try 
+        click "#ShowProductBalance1_btnSaveas"
+    with
+    | :? OpenQA.Selenium.WebDriverTimeoutException -> printfn "Absorbing timeout exception"
     
     // Return to base window
     closeSwitchWindow baseWindow
@@ -310,10 +314,11 @@ let uiAutomationDownloading (dayToProcess : DateTime) : DownloadedReports =
     let isPendingWithdrawalRptDown = uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess
     let isRollbackWithdrawalRptDown = uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess
     // Complete end of the month processing with End of Balance Report
-    let isEndBalanceRptDown = 
-        match DateTime.UtcNow.Day with
-        | 1 -> uiAutomatedEndBalanceRpt dayToProcess
-        | _ -> false
+    let isEndBalanceRptDown = uiAutomatedEndBalanceRpt dayToProcess
+    //let isEndBalanceRptDown = 
+    //    match DateTime.UtcNow.Day with
+    //    | 1 -> uiAutomatedEndBalanceRpt dayToProcess
+    //    | _ -> false
     quit ()
     { WithdrawalPendingDownloaded = isPendingWithdrawalRptDown;  WithdrawalRollbackDownloaded = isRollbackWithdrawalRptDown; EndBalaceDownloaded = isEndBalanceRptDown }
 

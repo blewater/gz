@@ -177,6 +177,8 @@ namespace gzDAL.Repos
                 // Package all the results
                 summaryDtoRet = new UserSummaryDTO() {
 
+                    Vintages = vintages,
+
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
                     InvestmentsBalance = invBalanceRes.Balance, // balance
 
@@ -194,11 +196,7 @@ namespace gzDAL.Repos
                     LastInvestmentAmount = lastInvestmentAmount,
 
                     //latestBalanceUpdateDatetime
-                    StatusAsOf =
-                        invBalanceRes.UpdatedOnUtc > DateTime.MinValue
-                            ? invBalanceRes.UpdatedOnUtc
-                            : DateTime.UtcNow.AddDays(-1),
-                    Vintages = vintages,
+                    StatusAsOf = GetLastUpdatedMidnight(invBalanceRes.UpdatedOnUtc),
 
                     // Withdrawal eligibility
                     LockInDays = withdrawalEligibility.LockInDays,
@@ -212,6 +210,27 @@ namespace gzDAL.Repos
             }
 
             return Tuple.Create(summaryDtoRet, userRet);
+        }
+
+        /// <summary>
+        /// 
+        /// Get last updated timestamp reflecting the excel everymatrix numbers update.
+        /// -1 Day @ 23:59 of invBalance UpdatedOn timestamp.
+        /// 
+        /// </summary>
+        /// <param name="invBalanceUpdatedTimestamp"></param>
+        /// <returns></returns>
+        private static DateTime GetLastUpdatedMidnight(DateTime invBalanceUpdatedTimestamp) {
+
+            DateTime lastUpdateDate;
+            if (invBalanceUpdatedTimestamp > DateTime.MinValue) {
+                lastUpdateDate = invBalanceUpdatedTimestamp.AddDays(-1);
+                lastUpdateDate = new DateTime(lastUpdateDate.Year, lastUpdateDate.Month, lastUpdateDate.Day, 23, 59, 59);
+            }
+            else {
+                lastUpdateDate = DateTime.Today;
+            }
+            return lastUpdateDate;
         }
 
         #endregion

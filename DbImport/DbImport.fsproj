@@ -80,21 +80,24 @@
     <None Include="WithdrawalsPending prod 20160930.xlsx" />
     <Compile Include="ExcelDownloader.fs" />
     <None Include="Custom Prod 20170505.xlsx" />
+    <Content Include="app.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="canopy">
-      <HintPath>..\GzBatch\packages\canopy.1.3.0\lib\canopy.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\canopy.1.3.1\lib\canopy.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Excel">
-      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\Excel.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\Excel.dll</HintPath>
     </Reference>
     <Reference Include="ExcelProvider">
-      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\ExcelProvider.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ExcelProvider.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.1.17\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\FSharp.Core.4.1.17\lib\net45\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
@@ -105,12 +108,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.1\lib\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.8\lib\net45\NLog.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\NLog.4.4.9\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -120,15 +122,15 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple">
-      <HintPath>$(SolutionDir)packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebDriver">
-      <HintPath>..\GzBatch\packages\Selenium.WebDriver.3.4.0\lib\net40\WebDriver.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Selenium.WebDriver.3.4.0\lib\net40\WebDriver.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver.Support">
-      <HintPath>..\GzBatch\packages\Selenium.Support.3.4.0\lib\net40\WebDriver.Support.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Selenium.Support.3.4.0\lib\net40\WebDriver.Support.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -154,3 +156,4 @@
   </Target>
   -->
 </Project>
+

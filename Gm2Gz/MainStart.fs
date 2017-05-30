@@ -57,9 +57,12 @@ let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.Portfol
 
 let processArgs (db : DbContext)(argResult : HandleShares) =
     match argResult with
-        | StoreOnlyShares days -> (db, days) ||> DailyPortfolioShares.storeShares |> ignore
-        | GetShares days -> (db, days) ||> DailyPortfolioShares.storeShares
-                            |> processGm2Gz db
+        | StoreOnlyShares days -> 
+            DailyPortfolioShares.storeShares db
+            |> ignore
+        | GetShares days -> 
+            DailyPortfolioShares.storeShares db
+            |> processGm2Gz db
 
 [<EntryPoint>]
 let main argv = 
