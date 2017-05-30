@@ -29,7 +29,7 @@ let downloadFolderName = @"d:\download\"
 let inRptFolderName = @"d:\sc\gz\inRpt\"
 
 let downloadedCustomFilter = "values*.xlsx"
-let downloadedBalanceFilter = "byBalance*.xlsx"
+let downloadedBalanceFilter = "byBalance*.xlsx*"
 let downloadedWithdrawalsFilter = "trans*.xlsx"
 
 let customRptFilenamePrefix = "Custom Prod "
@@ -240,7 +240,10 @@ let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) 
 
     display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
-let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
+let rec uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
+
+    let downloadingFailure = true
+
     // LGA reports
     click "#nav > li:nth-child(5) > a"
     // Player balances
@@ -262,14 +265,32 @@ let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     let thirdWindow = browser.WindowHandles |> Seq.find(fun w -> w <> sndWindow && w <> baseWindow)
     closeSwitchWindow thirdWindow
     // Download Report
-    try 
-        click "#ShowProductBalance1_btnSaveas"
-    with
-    | :? OpenQA.Selenium.WebDriverTimeoutException -> printfn "Absorbing timeout exception"
-    
+
+    let downloadedBalanceReport =
+        try 
+            click "#ShowProductBalance1_btnSaveas"
+            let downloadedBalanceRpt = lastDownloadedRpt downloadedBalanceFilter downloadFolderName
+            // Check for incomplete download if last file entry is "bybalance.xlsx.crdownload"
+            not <| downloadedBalanceRpt.Name.EndsWith("crdownload")
+        with
+        | :? OpenQA.Selenium.WebDriverTimeoutException 
+            ->  printfn "Absorbed WebDriverTimeoutException during the Balance download"; 
+                false
+        | _ -> false
+
     // Return to base window
     closeSwitchWindow baseWindow
-    true
+    downloadedBalanceReport
+
+/// Retry function call till we get a true result
+let rec retryTillTrue (fn:(unit -> bool)) = 
+    let isSuccessfulResult = 
+        try
+            fn()
+        with 
+        | _ -> false
+    if not isSuccessfulResult then
+        retryTillTrue fn
 
 let moveDownloadedRptToInRptFolder 
         (everymatrixDwnFileMask : string) // "bybalance.xlsx" --or "values.xlsx" --or "transx.xlsx
@@ -299,7 +320,6 @@ type DownloadedReports =
         {
             WithdrawalPendingDownloaded : bool;
             WithdrawalRollbackDownloaded : bool;
-            EndBalaceDownloaded : bool;
         }
 
 /// UI Web Automate with Everymatrix reporting site and download reports    
@@ -314,13 +334,11 @@ let uiAutomationDownloading (dayToProcess : DateTime) : DownloadedReports =
     let isPendingWithdrawalRptDown = uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess
     let isRollbackWithdrawalRptDown = uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess
     // Complete end of the month processing with End of Balance Report
-    let isEndBalanceRptDown = uiAutomatedEndBalanceRpt dayToProcess
-    //let isEndBalanceRptDown = 
-    //    match DateTime.UtcNow.Day with
-    //    | 1 -> uiAutomatedEndBalanceRpt dayToProcess
-    //    | _ -> false
+
+    let balanceRptDownloader() = uiAutomatedEndBalanceRpt dayToProcess
+    retryTillTrue balanceRptDownloader
     quit ()
-    { WithdrawalPendingDownloaded = isPendingWithdrawalRptDown;  WithdrawalRollbackDownloaded = isRollbackWithdrawalRptDown; EndBalaceDownloaded = isEndBalanceRptDown }
+    { WithdrawalPendingDownloaded = isPendingWithdrawalRptDown;  WithdrawalRollbackDownloaded = isRollbackWithdrawalRptDown }
 
 let downloadedReports = uiAutomationDownloading dayToProcess
 
@@ -334,5 +352,4 @@ if downloadedReports.WithdrawalRollbackDownloaded then
     moveDownloadedRptToInRptFolder downloadedWithdrawalsFilter withdrawalsRollbackRptFilenamePrefix dayToProcess
 
 // End balance
-if downloadedReports.EndBalaceDownloaded then
-    moveDownloadedRptToInRptFolder downloadedBalanceFilter endBalanceRptFilenamePrefix DateTime.UtcNow
+moveDownloadedRptToInRptFolder downloadedBalanceFilter endBalanceRptFilenamePrefix DateTime.UtcNow
