@@ -536,7 +536,7 @@ module Etl =
         
         // Move beginning balance report if end balance report is present (end of month clearance)
         if rpts.endBalanceFilename.IsSome then
-            (inFolder, outFolder, rpts.begBalanceFilename) 
+            (inFolder, outFolder, rpts.endBalanceFilename.Value) 
             |||> moveFileWithOverwrite
         
         // Withdrawals Pending
