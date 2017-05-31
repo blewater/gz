@@ -283,14 +283,15 @@ let rec uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     downloadedBalanceReport
 
 /// Retry function call till we get a true result
-let rec retryTillTrue (fn:(unit -> bool)) = 
-    let isSuccessfulResult = 
-        try
-            fn()
-        with 
-        | _ -> false
-    if not isSuccessfulResult then
-        retryTillTrue fn
+let rec retryTillTrue (times: int)(fn:(unit -> bool)) = 
+    if times > 0 then
+        let isSuccessfulResult = 
+            try
+                fn()
+            with 
+            | _ -> false
+        if not isSuccessfulResult then
+            retryTillTrue (times-1) fn
 
 let moveDownloadedRptToInRptFolder 
         (everymatrixDwnFileMask : string) // "bybalance.xlsx" --or "values.xlsx" --or "transx.xlsx
@@ -336,7 +337,7 @@ let uiAutomationDownloading (dayToProcess : DateTime) : DownloadedReports =
     // Complete end of the month processing with End of Balance Report
 
     let balanceRptDownloader() = uiAutomatedEndBalanceRpt dayToProcess
-    retryTillTrue balanceRptDownloader
+    retryTillTrue 5 balanceRptDownloader
     quit ()
     { WithdrawalPendingDownloaded = isPendingWithdrawalRptDown;  WithdrawalRollbackDownloaded = isRollbackWithdrawalRptDown }
 
