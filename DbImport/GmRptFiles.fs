@@ -8,9 +8,9 @@ module GmRptFiles =
     open ExcelSchemas
     
     type InRptFolder = { isProd : bool; folderName : string }
-    type RptFilenames = { customFilename : string; withdrawalsPendingFilename : string option; withdrawalsRollbackFilename : string option; begBalanceFilename : string; endBalanceFilename : string option}
-    type RptStrDates = { customDtStr : string; withdrawalsPendingDtStr : string option; withdrawalsRollbackDtStr : string option; begBalanceDtStr : string; endBalanceDtStr : string option}
-    type RptDates = { customDate : DateTime; withdrawalsPendingDate : DateTime option; withdrawalsRollbackDate : DateTime option; begBalanceDate : DateTime; endBalanceDate : DateTime option}
+    type RptFilenames = { customFilename : string; withdrawalsPendingFilename : string option; withdrawalsRollbackFilename : string option; begBalanceFilename : string; endBalanceFilename : string}
+    type RptStrDates = { customDtStr : string; withdrawalsPendingDtStr : string option; withdrawalsRollbackDtStr : string option; begBalanceDtStr : string; endBalanceDtStr : string}
+    type RptDates = { customDate : DateTime; withdrawalsPendingDate : DateTime option; withdrawalsRollbackDate : DateTime option; begBalanceDate : DateTime; endBalanceDate : DateTime}
     type ExcelDatesValid = { Valid : bool; DayToProcess : string }
 
     let private folderTryF (isProd : bool) f domainException =
@@ -71,10 +71,10 @@ module GmRptFiles =
         folderTryF inRptFolder.isProd readDir Missing1stBalanceReport
 
     /// Get the 2nd balance filename
-    let private getNxtBalanceRptExcelDirList (inRptFolder : InRptFolder) : string option = 
+    let private getNxtBalanceRptExcelDirList (inRptFolder : InRptFolder) : string = 
         let readDir () = 
             (inRptFolder, "Balance ", 1) 
-            |||> getEarliestOptionalExcelFilename
+            |||> getEarliestExcelFile
 
         folderTryF inRptFolder.isProd readDir Missing2ndBalanceReport
 
@@ -124,7 +124,7 @@ module GmRptFiles =
     let getBegBalanceFilename (inRptFolder : InRptFolder) : string = 
         getMinBalanceRptExcelDirList inRptFolder
 
-    let getEndBalanceFilename (inRptFolder : InRptFolder) : string option= 
+    let getEndBalanceFilename (inRptFolder : InRptFolder) : string= 
         getNxtBalanceRptExcelDirList inRptFolder
        
     let private getRptFilenames(inRptFolder : InRptFolder) : RptFilenames = 
@@ -163,9 +163,9 @@ module GmRptFiles =
     let getBegBalanceDtStr (begBalanceFilename : string) : string = 
         begBalanceFilename |> validateDateOnExcelFilename
 
-    let getEndBalanceDtStr (endBalanceFilename : string option) : string option = 
+    let getEndBalanceDtStr (endBalanceFilename : string) : string = 
         endBalanceFilename 
-            |> getOptionalFilenameDateValidation
+            |> validateDateOnExcelFilename
 
     let private excelFilenames2DatesStr(excelFiles : RptFilenames) : RptStrDates = 
         { 
@@ -200,9 +200,8 @@ module GmRptFiles =
     let getBegBalanceDate (begBalanceDtStr : string) : DateTime = 
         begBalanceDtStr.ToDateWithDay
 
-    let getEndBalanceDate (endBalanceDtStr : string option) : DateTime option = 
-        endBalanceDtStr
-            |> getOptionalDtFromFilename
+    let getEndBalanceDate (endBalanceDtStr : string) : DateTime = 
+        endBalanceDtStr.ToDateWithDay
 
     let private excelDatesStr2Dt(excelDatesStr : RptStrDates) : RptDates = 
         { 
@@ -250,10 +249,9 @@ module GmRptFiles =
                     |> matchBalanceRptDatesWithTitle) then 
             failWithLogInvalidArg "[Begin_BalanceRptDatesNotMathingTitle]" (sprintf "The beginning balance excel report filename: %s does not match its contents." excelFiles.begBalanceFilename)
 
-        if excelFiles.endBalanceFilename.IsSome then
-            if not (excelFiles.endBalanceFilename.Value
-                        |> matchBalanceRptDatesWithTitle) then 
-                failWithLogInvalidArg "[Ending_BalanceRptDatesNotMathingTitle]" (sprintf "The ending balance excel report filename: %s does not match its contents." excelFiles.endBalanceFilename.Value)
+        if not (excelFiles.endBalanceFilename
+                    |> matchBalanceRptDatesWithTitle) then 
+            failWithLogInvalidArg "[Ending_BalanceRptDatesNotMathingTitle]" (sprintf "The ending balance excel report filename: %s does not match its contents." excelFiles.endBalanceFilename)
         excelFiles
 
 //--------------------- Validation Rules
@@ -279,28 +277,17 @@ module GmRptFiles =
             failWithLogInvalidArg "[BegBalanceDateMismatch]" (sprintf "Custom date %s mismatch or begBalance Report on first of month : %s." <| customDate.ToString("yyyy-MMM-dd") <| begBalanceDate.ToString("yyyy-MMM-dd"))
 
     /// Enforce endBalance on 1st of next month (if next month is in the past) or enforce endBalanceDate is downloaded today
-    let private endBalanceDateValidation (begBalanceDate : DateTime) (endBalanceDateOption : DateTime option) : Unit =
+    let private endBalanceDateValidation (begBalanceDate : DateTime) (endBalanceDate : DateTime) : Unit =
 
-        let nowMidnightUtc = DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
-        let processingWithinMonth = nowMidnightUtc.Month = begBalanceDate.Month && nowMidnightUtc.Year = begBalanceDate.Year
+        let nextMonth = begBalanceDate.AddMonths 1
 
-        if not processingWithinMonth && endBalanceDateOption.IsNone then
-            failWithLogInvalidArg "[EndBalanceMissing]" (sprintf "Processing the past month of %s at %s and the end balance file missing!" 
-                <| begBalanceDate.ToString("yyyy-MMM-dd") 
-                <| nowMidnightUtc.ToString("yyyy-MMM-dd"))
-
-        elif not processingWithinMonth then
-
-            let nextMonth = begBalanceDate.AddMonths 1
-            let endBalanceDate = endBalanceDateOption.Value
-
-            if nextMonth <> endBalanceDate then
-                failWithLogInvalidArg "[EndBalanceDateMismatch]" 
-                    (
-                        sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" 
-                            <| endBalanceDate.ToString("yyyy-MMM-dd") 
-                            <| begBalanceDate.ToString("yyyy-MMM-dd")
-                    )
+        if nextMonth <> endBalanceDate then
+            failWithLogInvalidArg "[EndBalanceDateMismatch]" 
+                (
+                    sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" 
+                        <| endBalanceDate.ToString("yyyy-MMM-dd") 
+                        <| begBalanceDate.ToString("yyyy-MMM-dd")
+                )
 
     /// Check for the existence of required report files for a month by checking matching dates etc
     let areExcelFilenamesValid (rDates : RptDates) : ExcelDatesValid =

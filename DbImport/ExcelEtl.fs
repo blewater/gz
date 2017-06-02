@@ -206,8 +206,7 @@ module DbPlayerRevRpt =
     let private setDbRowCustomValues 
             (yearMonthDay : string) 
             (customExcelRow : CustomExcelSchema.Row) 
-            (playerRow : DbPlayerRevRpt)
-            (endBalanceFilename : string option) : unit =
+            (playerRow : DbPlayerRevRpt) : unit =
 
         playerRow.Username <- customExcelRow.Username
         playerRow.PlayerStatus <- customExcelRow.``Player status``
@@ -221,11 +220,8 @@ module DbPlayerRevRpt =
         playerRow.BegGmBalance <- Nullable 0m
         playerRow.GmGainLoss <- Nullable 0m
 
-        // During the present month -> store the latest player balance from custom Rpt and we don't need the balance file
-        // During processing a completed past month -> store the end balance excel amount.
-        match endBalanceFilename with
-        | None -> playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
-        | _ -> playerRow.EndGmBalance <- Nullable 0m
+        // Zero this now in case the subsequent balance file misses an entry for this player due to 0 balance
+        playerRow.EndGmBalance <- Nullable 0m
 
         // Withdrawals that deduct balance but have not completed yet they come from the pending report
         playerRow.PendingWithdrawals <- Nullable 0m
@@ -240,12 +236,11 @@ module DbPlayerRevRpt =
     let insDbNewRowCustomValues
             (db : DbContext) 
             (yearMonthDay : string) 
-            (excelRow : CustomExcelSchema.Row)
-            (endBalanceFilename : string option) : unit =
+            (excelRow : CustomExcelSchema.Row) : unit =
 
         let newPlayerRow = 
             new DbPlayerRevRpt(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
-        setDbRowCustomValues yearMonthDay excelRow newPlayerRow endBalanceFilename
+        setDbRowCustomValues yearMonthDay excelRow newPlayerRow
         db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
 
     /// Set withdrawal amount in a db PlayerRevRpt Row
@@ -303,8 +298,7 @@ module DbPlayerRevRpt =
     /// Upsert excel row values in a db PlayerRevRpt Row
     let setDbCustomPlayerRow (db : DbContext) 
                         (yyyyMmDd :string) 
-                        (customExcelRow : CustomExcelSchema.Row)
-                        (endBalanceFilename : string option) : unit =
+                        (customExcelRow : CustomExcelSchema.Row) : unit =
 
         let gmUserId = (int) customExcelRow.``User ID``
         let yyyyMm = yyyyMmDd.Substring(0, 6)
@@ -316,9 +310,9 @@ module DbPlayerRevRpt =
         }
         |> (fun playerDbRow -> 
             if isNull playerDbRow then 
-                insDbNewRowCustomValues db yyyyMmDd customExcelRow endBalanceFilename
+                insDbNewRowCustomValues db yyyyMmDd customExcelRow
             else 
-                setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow endBalanceFilename
+                setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow
         )
         db.DataContext.SubmitChanges()
 
@@ -448,6 +442,8 @@ module BalanceRpt2Db =
                 (balanceRptFullPath: string) 
                 (customYyyyMmDd : string ) =
 
+        // TODO: Check that the passed in Balance filename matches the type
+
         //Curry with balance Type
         let balanceTypedOpenSchema = openBalanceRptSchemaFile balanceType
         // Open excel report file for the memory schema
@@ -466,8 +462,7 @@ module CustomRpt2Db =
     /// Process all excel lines except Totals and upsert them
     let private setDbCustomExcelRptRows 
                 (db : DbContext) (customExcelSchemaFile : CustomExcelSchema) 
-                (yyyyMmDd : string)
-                (endBalanceFilename : string option) : unit =
+                (yyyyMmDd : string) : unit =
 
         // Loop through all excel rows
         for excelRow in customExcelSchemaFile.Data do
@@ -484,7 +479,7 @@ module CustomRpt2Db =
                     sprintf "Processing email %s on %s/%s/%s" 
                         excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
 
-                DbPlayerRevRpt.setDbCustomPlayerRow db yyyyMmDd excelRow endBalanceFilename
+                DbPlayerRevRpt.setDbCustomPlayerRow db yyyyMmDd excelRow
     
     /// Open an excel file and console out the filename
     let private openCustomRptSchemaFile excelFilename = 
@@ -497,18 +492,18 @@ module CustomRpt2Db =
     /// Process the custom excel file: Extract each row and upsert the database PlayerRevRpt table customer rows.
     let loadCustomRpt 
             (db : DbContext) 
-            (customRptFullPath: string)
-            (endBalanceFilename : string option) : unit =
+            (customRptFullPath: string) : unit =
 
         // Open excel report file for the memory schema
         let openFile = customRptFullPath |> openCustomRptSchemaFile
         let yyyyMmDd = customRptFullPath |> getCustomDtStr
         try 
-            setDbCustomExcelRptRows db openFile yyyyMmDd endBalanceFilename
+            setDbCustomExcelRptRows db openFile yyyyMmDd
         with _ -> 
             reraise()
 
-module Etl = 
+module Etl =
+    open System 
     open System.IO
     open GzDb.DbUtil
     open NLog
@@ -530,14 +525,26 @@ module Etl =
     let private moveRptsToOutFolder 
             (inFolder : string) (outFolder :string)
             (rpts : RptFilenames) : unit =
+
+
+        let fileDates = 
+            rpts 
+            |> GmRptFiles.getExcelDtStr 
+            |> GmRptFiles.getExcelDates
         
         // Custom
         (inFolder, outFolder, rpts.customFilename) |||> moveFileWithOverwrite
         
         // Move beginning balance report if end balance report is present (end of month clearance)
-        if rpts.endBalanceFilename.IsSome then
-            (inFolder, outFolder, rpts.endBalanceFilename.Value) 
-            |||> moveFileWithOverwrite
+        let nowMidnightUtc = DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+        let processingWithinMonth = nowMidnightUtc.Month = fileDates.begBalanceDate.Month && nowMidnightUtc.Year = fileDates.begBalanceDate.Year
+
+        if processingWithinMonth then
+            (inFolder, outFolder, rpts.endBalanceFilename)
+                |||> moveFileWithOverwrite
+        else
+            (inFolder, outFolder, rpts.begBalanceFilename)
+                |||> moveFileWithOverwrite
         
         // Withdrawals Pending
         match rpts.withdrawalsPendingFilename with
@@ -565,16 +572,14 @@ module Etl =
         logger.Debug (sprintf "Starting processing excel report files for %O" customDtStr)
 
         // Custom import
-        (db, customFilename, endBalanceFilename) 
-            |||> loadCustomRpt 
+        (db, customFilename) 
+            ||> loadCustomRpt 
         
         // Beg, end balance import
         loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr
 
         // In present month there's no end balance file
-        match endBalanceFilename with
-        | Some balanceFilename -> loadBalanceRpt EndingBalance db balanceFilename customDtStr
-        | None -> logger.Warn "No ending balance file to import"
+        loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
         
         // Pending withdrawals import
         match withdrawalsPendingFilename with
