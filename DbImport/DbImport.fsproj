@@ -77,6 +77,7 @@
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
+    <None Include="Scripts\load-project-debug.fsx" />
     <None Include="WithdrawalsPending prod 20160930.xlsx" />
     <Compile Include="ExcelDownloader.fs" />
     <None Include="Custom Prod 20170505.xlsx" />
@@ -156,4 +157,3 @@
   </Target>
   -->
 </Project>
-
