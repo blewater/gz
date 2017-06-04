@@ -226,6 +226,11 @@ module DbPlayerRevRpt =
         // Withdrawals that deduct balance but have not completed yet they come from the pending report
         playerRow.PendingWithdrawals <- Nullable 0m
 
+        playerRow.Mobile <- customExcelRow.Mobile
+        playerRow.Phone <- customExcelRow.Phone |> excelObjNullableString
+        playerRow.City <- customExcelRow.City
+        playerRow.Country <- customExcelRow.Country
+
         //Non-excel content
         playerRow.YearMonth <- yearMonthDay.Substring(0, 6)
         playerRow.YearMonthDay <- yearMonthDay
