@@ -67,13 +67,16 @@ module GmRptFiles =
     
     /// Get first balance filename
     let private getMinBalanceRptExcelDirList (inRptFolder : InRptFolder) : string = 
-        let readDir () = getEarliestExcelFile inRptFolder "Balance " 0
+        let readDir () = 
+            (inRptFolder, "Balance ", 0)  (** 0 for Beginning Balance **)
+            |||> getEarliestExcelFile
+
         folderTryF inRptFolder.isProd readDir Missing1stBalanceReport
 
     /// Get the 2nd balance filename
     let private getNxtBalanceRptExcelDirList (inRptFolder : InRptFolder) : string = 
         let readDir () = 
-            (inRptFolder, "Balance ", 1) 
+            (inRptFolder, "Balance ", 1)  (** 1 for EndBalance **)
             |||> getEarliestExcelFile
 
         folderTryF inRptFolder.isProd readDir Missing2ndBalanceReport

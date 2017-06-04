@@ -12,7 +12,7 @@ let logger = LogManager.GetCurrentClassLogger()
 #if DEBUG && !PRODUCTION
 
 let isProd = false
-let dbConnectionString = Settings.ConnectionStrings.GzDevDb
+let dbConnectionString = Settings.ConnectionStrings.GzDbDev
 
 logger.Warn(sprintf "Development db: %s" dbConnectionString)
 
