@@ -24,9 +24,9 @@ let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"
 let everymatrixSecureToken = "3DFEC757D808494"
 
-let downloadFolderName = @"d:\download\"
+let downloadFolderName = @"\download\"
 
-let inRptFolderName = @"d:\sc\gz\inRpt\"
+let inRptFolderName = @"\sc\gz\inRpt\"
 
 let downloadedCustomFilter = "values*.xlsx"
 let downloadedBalanceFilter = "byBalance*.xlsx*"
@@ -124,11 +124,11 @@ let createNewCustomMonthRpt (dayToProcess : DateTime) : unit =
     // registered by
     uncheck "#cbxDisplayColumns_16"
     // Country
-    uncheck "#cbxDisplayColumns_21"
+    check "#cbxDisplayColumns_21"
     // Postcode
     uncheck "#cbxDisplayColumns_22"
     // City
-    uncheck "#cbxDisplayColumns_23"
+    check "#cbxDisplayColumns_23"
     // Preferred language
     uncheck "#cbxDisplayColumns_25"
     // Connected IP address
@@ -149,6 +149,12 @@ let createNewCustomMonthRpt (dayToProcess : DateTime) : unit =
     check "#cbxDisplayColumns_39"
     // user payment methods
     uncheck "#cbxDisplayColumns_41"
+    // mobile
+    check "#cbxDisplayColumns_42"
+    // phone
+    check "#cbxDisplayColumns_43"
+    // Real Balance
+    uncheck "#cbxDisplayColumns_54"
     // Suspended balance
     uncheck "#cbxDisplayColumns_55"
     // check Currency
@@ -289,7 +295,7 @@ let rec retryTillTrue (times: int)(fn:(unit -> bool)) =
             try
                 fn()
             with 
-            | _ -> false
+                ex -> printfn "In try %d when downloading the balance report exception occured\n %s" times ex.Message; false
         if not isSuccessfulResult then
             retryTillTrue (times-1) fn
 
@@ -328,7 +334,10 @@ let uiAutomationDownloading (dayToProcess : DateTime) : DownloadedReports =
     let projDir = Path.Combine(__SOURCE_DIRECTORY__, "..")
     canopy.configuration.chromeDir <- projDir
     start chrome
-    pinToMonitor 3
+    match screen.monitorCount with
+    | m when m >= 3 -> pinToMonitor 3
+    | m when m = 2 -> pinToMonitor 2
+    | _ -> ()
 
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
     uiAutomateDownloadedCustomRpt dayToProcess
@@ -336,7 +345,8 @@ let uiAutomationDownloading (dayToProcess : DateTime) : DownloadedReports =
     let isRollbackWithdrawalRptDown = uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess
     // Complete end of the month processing with End of Balance Report
 
-    let balanceRptDownloader() = uiAutomatedEndBalanceRpt dayToProcess
+    // It appears that the balance report date counts as the midnight; not inclusive of that day as of 23:59
+    let balanceRptDownloader() = uiAutomatedEndBalanceRpt DateTime.Today
     retryTillTrue 5 balanceRptDownloader
     quit ()
     { WithdrawalPendingDownloaded = isPendingWithdrawalRptDown;  WithdrawalRollbackDownloaded = isRollbackWithdrawalRptDown }
