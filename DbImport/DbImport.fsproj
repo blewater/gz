@@ -80,10 +80,10 @@
     <None Include="Scripts\load-project-debug.fsx" />
     <None Include="WithdrawalsPending prod 20160930.xlsx" />
     <Compile Include="ExcelDownloader.fs" />
-    <None Include="Custom Prod 20170505.xlsx" />
     <Content Include="app.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Custom Prod 20170601.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="canopy">
