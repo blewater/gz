@@ -19,6 +19,7 @@ open System.IO
 open System
 open GzCommon
 open Microsoft.FSharp.Collections
+open System.Diagnostics
 
 let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"
@@ -37,7 +38,7 @@ let endBalanceRptFilenamePrefix = "Balance Prod "
 let withdrawalsPendingRptFilenamePrefix = "withdrawalsPending Prod "
 let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
 
-let dayToProcess = DateTime.UtcNow.AddDays(-1.0)
+let dayToProcess = DateTime.Today.AddDays(-1.0)
 let yyyyMmDdString (date : DateTime) = 
       date.Year.ToString() 
     + date.Month.ToString("00") 
@@ -246,7 +247,8 @@ let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) 
 
     display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
-let rec uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
+/// dayToProcess is interpreted @ 23:59 in the report
+let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
 
     let downloadingFailure = true
 
@@ -254,8 +256,12 @@ let rec uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     click "#nav > li:nth-child(5) > a"
     // Player balances
     click "#nav > li:nth-child(5) > ul > li > a"
+
+    // Bizarre report issue: post with date before doesn't work
+
     // date
-    "#txtStartDate" << dayToProcess.Day.ToString("00") + "/" + dayToProcess.Month.ToString("00") + "/" + dayToProcess.Year.ToString()
+    let dateToStrVal = dayToProcess.ToDdMmYYYYSlashed
+    "#txtStartDate" << dateToStrVal
 
     click "#btnShowReport"
 
@@ -346,7 +352,7 @@ let uiAutomationDownloading (dayToProcess : DateTime) : DownloadedReports =
     // Complete end of the month processing with End of Balance Report
 
     // It appears that the balance report date counts as the midnight; not inclusive of that day as of 23:59
-    let balanceRptDownloader() = uiAutomatedEndBalanceRpt DateTime.Today
+    let balanceRptDownloader() = uiAutomatedEndBalanceRpt <| dayToProcess
     retryTillTrue 5 balanceRptDownloader
     quit ()
     { WithdrawalPendingDownloaded = isPendingWithdrawalRptDown;  WithdrawalRollbackDownloaded = isRollbackWithdrawalRptDown }
