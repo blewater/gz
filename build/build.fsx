@@ -63,7 +63,7 @@ open System.Net
 open System.Management.Automation
 open FSharp.Data
 open FSharp.Text.RegexProvider
-
+open Fake.IO.FileSystem.Shell
 open Fake
 open Fake.Git
 open Fake.ZipHelper
@@ -282,22 +282,20 @@ Target "OpenResultInBrowser" (fun _ ->
 )
 Target "SwapStageLive" (fun _ ->
 
+    // az webapp deployment slot swap -n "greenzorro" -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production
     (**** run a powershell script by providing the script filename without extension .ps1 *)
-    let runPowershellScript (ps1FileName : string) : unit =
-        PowerShell.Create()
-            .AddScript(__SOURCE_DIRECTORY__ @@ ps1FileName+ ".ps1")
-            .Invoke()
-            |> Seq.iter (printfn "%O")            
-          
-//            let p = new Diagnostics.Process();              
-//            p.StartInfo.FileName <- "cmd.exe";
-//            p.StartInfo.Arguments <- ("/c powershell -ExecutionPolicy Unrestricted .\\" + ps1FileName + ".ps1")
-//            p.StartInfo.RedirectStandardOutput <- true
-//            p.StartInfo.UseShellExecute <- false
-//            p.Start() |> ignore
-//            printfn "Processing"
-//            printfn "%A" (p.StandardOutput.ReadToEnd())
-//            printfn "Finished"
+    //"az webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
+    let rec runSwap (times : int) =
+        let azlogin (times : int) =
+            match Shell.Exec("az", "login") with
+            | 0 when times > 0 -> runSwap (times - 1)
+            | loginSt when times = 0 -> failwithf "az login failed with status %d and cannot proceed" loginSt
+
+        let retCode = Shell.Exec("az", "webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production")
+        match (retCode, times) with
+        | (0, _) -> printfn "Swap succeeded"
+        | (retCode, 0) -> printfn "Azure swap failed after login with error code: %d. Trying az login" retCode
+        | (_, times)   -> azlogin times
 
     if stageIsUpdated then
         trace "Stage was updated with a new build and is cleared to swap with live:"
@@ -310,7 +308,7 @@ Target "SwapStageLive" (fun _ ->
         not productionUpToDate && getUserInput "Are you sure you want to swap stage with production (Y/N)?"
         |> userReply2Bool
     if proceedSwap then
-        runPowershellScript "SwapStageLive"
+        runSwap 1
 )
 
 // Dependencies
