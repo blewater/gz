@@ -38,8 +38,8 @@ var APP = (function () {
     app.id = id;
 
     app.run([
-        '$rootScope', '$location', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav',
-        function ($rootScope, $location, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav) {
+        '$rootScope', '$location', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav', '$window',
+        function ($rootScope, $location, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav, $window) {
             //var nbDigest = 0;
             //$rootScope.$watch(function () {
             //    nbDigest++;
@@ -53,6 +53,7 @@ var APP = (function () {
                     setTimeout(function () {
                         var body = document.getElementsByTagName("BODY")[0];
                         body.removeChild(preloader);
+                        //setBodyRestHeight();
                     }, 1000);
                 }
             };
@@ -68,6 +69,20 @@ var APP = (function () {
                 headerNav.className += " navbar-fixed-top";
             };
 
+            function setBodyRestHeight() {
+                var content = document.getElementById("body-content");
+                var rest = document.getElementById("body-rest");
+                var setHeight = function () {
+                    var h = window.innerHeight - content.clientHeight;
+                    if (h < 0)
+                        h = 0;
+                    rest.style.height = h + 'px';
+                };
+                angular.element($window).bind('resize', setHeight);
+                $rootScope.$on('$routeChangeSuccess', setHeight);
+                $timeout(setHeight);
+            };
+
             function loadWebFonts() {
                 WebFont.load({
                     google: {
@@ -77,18 +92,18 @@ var APP = (function () {
                         $rootScope.fontsLoaded = true;
                     }
                 });
-            }
+            };
 
-            function reveal () {
+            function reveal() {
                 hidePreloader();
                 showContent();
                 loadWebFonts();
-            }
+            };
 
             function defaultBeforeSend(xhr, json) {
                 var authData = localStorageService.get(constants.storageKeys.authData);
                 if (authData)
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + authData.token);
+                    xhr.setRequestHeader('Authorization', 'Bearer ' +authData.token);
             };
 
             function onInitCallback() {
@@ -140,12 +155,12 @@ var APP = (function () {
                 reveal();
 
                 $rootScope.$broadcast(constants.events.ON_AFTER_INIT);
-            }
+            };
 
             function onInit() {
                 helpers.ui.compile({ selector: '#footer', templateUrl: '_app/common/footer.html', controllerId: 'footerCtrl' });
                 helpers.ui.compile({ selector: '#header', templateUrl: '_app/common/header.html', controllerId: 'headerCtrl', callback: onInitCallback });
-            }
+            };
 
             function run() {
                 $rootScope.$on(constants.events.ON_INIT, onInit);
@@ -156,7 +171,7 @@ var APP = (function () {
                 $rootScope.mobile = helpers.ui.isMobile();
                 localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
                 auth.init();
-            }
+            };
 
             run();
         }
