@@ -6,12 +6,26 @@ module GmRptFiles =
     open System.Text.RegularExpressions
     open GzCommon
     open ExcelSchemas
+    open FSharp.Data.Runtime.WorldBank
     
     type InRptFolder = { isProd : bool; folderName : string }
     type RptFilenames = { customFilename : string; withdrawalsPendingFilename : string option; withdrawalsRollbackFilename : string option; begBalanceFilename : string; endBalanceFilename : string}
     type RptStrDates = { customDtStr : string; withdrawalsPendingDtStr : string option; withdrawalsRollbackDtStr : string option; begBalanceDtStr : string; endBalanceDtStr : string}
     type RptDates = { customDate : DateTime; withdrawalsPendingDate : DateTime option; withdrawalsRollbackDate : DateTime option; begBalanceDate : DateTime; endBalanceDate : DateTime}
     type ExcelDatesValid = { Valid : bool; DayToProcess : string }
+
+    type DirectoryListIndex =
+        | FirstAsc
+        | LastAsc
+
+    [<Literal>]
+    let CustomFileListPrefix = "Custom "
+    [<Literal>]
+    let WithdrawalPendingFileListPrefix = "withdrawalsPending "
+    [<Literal>]
+    let WithdrawalRollbackFileListPrefix = "withdrawalsRollback "
+    [<Literal>]
+    let BalanceFileListPrefix = "Balance "
 
     let private folderTryF (isProd : bool) f domainException =
         let logInfo = "isProd", isProd
@@ -31,7 +45,7 @@ module GmRptFiles =
         else
             failWithLogInvalidArg "[MissingDateInFilename]" (sprintf "No date in filename of %s." filename)
 
-    let private getExcelSortedFileList (inRptFolder : InRptFolder) (filenameMask : string) : string list=
+    let private getExcelSortedAscFileList (inRptFolder : InRptFolder) (filenameMask : string) : string list=
         // Deconstruct
         let { isProd = isProd; folderName = folderName} = inRptFolder
 
@@ -41,43 +55,49 @@ module GmRptFiles =
             |> Array.toList 
             |> List.sort
     
-    let private getEarliestExcelFile (inRptFolder : InRptFolder) (filenameMask : string) (topListIndex : int): string =
+    let private getFolderFilenameByMaskIndex (inRptFolder : InRptFolder) (filenameMask : string) (dirListIndex : DirectoryListIndex): string =
         let sortedExcelList = 
             (inRptFolder, filenameMask) 
-                ||> getExcelSortedFileList
+                ||> getExcelSortedAscFileList
 
         if sortedExcelList.Length > 0 then
-            sortedExcelList.Item topListIndex
+            match dirListIndex with
+            | FirstAsc -> sortedExcelList.Item 0
+            | LastAsc -> sortedExcelList.Item (sortedExcelList.Length - 1)
         elif sortedExcelList.Length = 0 then
             failWithLogInvalidArg "[EmptyReportFolder]" (sprintf "No excel file within in report folder %s for filename maks %s." inRptFolder.folderName filenameMask)
         else
-            failWithLogInvalidArg "[Mismatched index of requested file]" (sprintf "No excel file for requested index: %d within in report folder: %s for filename mask: %s." topListIndex inRptFolder.folderName filenameMask)
+            failWithLogInvalidArg "[Mismatched index of requested file]" (sprintf "No excel file for requested index: %A within in report folder: %s for filename mask: %s." dirListIndex inRptFolder.folderName filenameMask)
     
-    let private getEarliestOptionalExcelFilename (inRptFolder : InRptFolder) (filenameMask : string) (topListIndex : int): string option=
-        let sortedExcelList = (inRptFolder, filenameMask) ||> getExcelSortedFileList
-        if sortedExcelList.Length >= topListIndex + 1 then
-            Some <| sortedExcelList.Item topListIndex
+    let private getOptionalExcelFilenameByIndex (inRptFolder : InRptFolder) (filenameMask : string) (dirListIndex : DirectoryListIndex): string option=
+        
+        let sortedExcelList = (inRptFolder, filenameMask) ||> getExcelSortedAscFileList
+
+        if sortedExcelList.Length > 0 then
+            match dirListIndex with
+            | FirstAsc -> Some <| sortedExcelList.Item 0
+            | LastAsc -> Some <| sortedExcelList.Item (sortedExcelList.Length - 1)
         else
             None
     
     /// Get the custom excel rpt filename
-    let private getMinCustomExcelRptFilename (inRptFolder : InRptFolder) : string =
-        let readDir () = getEarliestExcelFile inRptFolder "Custom " 0
+    let private getLatestCustomExcelRptFilename (inRptFolder : InRptFolder) : string =
+        let readDir () = getFolderFilenameByMaskIndex inRptFolder CustomFileListPrefix LastAsc
         folderTryF inRptFolder.isProd readDir MissingCustomReport
     
     /// Get first balance filename
     let private getMinBalanceRptExcelDirList (inRptFolder : InRptFolder) : string = 
         let readDir () = 
-            (inRptFolder, "Balance ", 0)  (** 0 for Beginning Balance **)
-            |||> getEarliestExcelFile
+            (inRptFolder, BalanceFileListPrefix, FirstAsc)  (** TopAsc for Beginning Balance **)
+            |||> getFolderFilenameByMaskIndex
 
         folderTryF inRptFolder.isProd readDir Missing1stBalanceReport
 
     /// Get the 2nd balance filename
     let private getNxtBalanceRptExcelDirList (inRptFolder : InRptFolder) : string = 
         let readDir () = 
-            (inRptFolder, "Balance ", 1)  (** 1 for EndBalance **)
-            |||> getEarliestExcelFile
+            (inRptFolder, BalanceFileListPrefix, LastAsc)  (** LastAsc for EndBalance **)
+            |||> getFolderFilenameByMaskIndex
 
         folderTryF inRptFolder.isProd readDir Missing2ndBalanceReport
 
@@ -96,15 +116,15 @@ module GmRptFiles =
         else 
             None
 
-    /// Read the directory() trying to find a filename match for the in param fname mask matching the customRpt title date
+    /// Read the directory() trying to find a filename match for the in param rptFilenameStartingMask
     let private getOptionalExcelRptFilenameInSyncWithCustomDate
                     (rptFilenameStartingMask : string)
                     (inRptFolder : InRptFolder)
                     (customFilename : string) : string option =
 
         let readDir () = 
-            (inRptFolder, rptFilenameStartingMask, 0) 
-                |||> getEarliestOptionalExcelFilename
+            (inRptFolder, rptFilenameStartingMask, FirstAsc) 
+                |||> getOptionalExcelFilenameByIndex
                 |>  function
                     | Some filename -> getFilteredExcelFilename filename customFilename
                     | _ -> None
@@ -114,14 +134,14 @@ module GmRptFiles =
  //-------- public Excel Filename functions
 
     let getCustomFilename (inRptFolder : InRptFolder) : string = 
-        getMinCustomExcelRptFilename inRptFolder
+        getLatestCustomExcelRptFilename inRptFolder
 
     let getWithdrawalPendingFilename (inRptFolder : InRptFolder)(customFilename : string) : string option= 
-        ("withdrawalsPending ", inRptFolder, customFilename) 
+        (WithdrawalPendingFileListPrefix , inRptFolder, customFilename) 
             |||> getOptionalExcelRptFilenameInSyncWithCustomDate 
 
     let getWithdrawalsRollbackFilename (inRptFolder : InRptFolder)(customFilename : string) : string option= 
-        ("withdrawalsRollback ", inRptFolder, customFilename) 
+        (WithdrawalRollbackFileListPrefix, inRptFolder, customFilename) 
             |||> getOptionalExcelRptFilenameInSyncWithCustomDate 
 
     let getBegBalanceFilename (inRptFolder : InRptFolder) : string = 
@@ -282,15 +302,17 @@ module GmRptFiles =
     /// Enforce endBalance on 1st of next month (if next month is in the past) or enforce endBalanceDate is downloaded today
     let private endBalanceDateValidation (begBalanceDate : DateTime) (endBalanceDate : DateTime) : Unit =
 
-        let nextMonth = begBalanceDate.AddMonths 1
+        if begBalanceDate.Month <> endBalanceDate.Month then
 
-        if nextMonth <> endBalanceDate then
-            failWithLogInvalidArg "[EndBalanceDateMismatch]" 
-                (
-                    sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" 
-                        <| endBalanceDate.ToString("yyyy-MMM-dd") 
-                        <| begBalanceDate.ToString("yyyy-MMM-dd")
-                )
+            let nextMonth = begBalanceDate.AddMonths 1
+
+            if nextMonth <> endBalanceDate then
+                failWithLogInvalidArg "[EndBalanceDateMismatch]" 
+                    (
+                        sprintf "End balance date: %s is not 1 month greater than begin balance date: %s !" 
+                            <| endBalanceDate.ToString("yyyy-MMM-dd") 
+                            <| begBalanceDate.ToString("yyyy-MMM-dd")
+                    )
 
     /// Check for the existence of required report files for a month by checking matching dates etc
     let areExcelFilenamesValid (rDates : RptDates) : ExcelDatesValid =
