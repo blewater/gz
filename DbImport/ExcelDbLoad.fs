@@ -4,6 +4,7 @@ module DbGzTrx =
     open System
     open NLog
     open GzDb.DbUtil
+    open GzCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -22,6 +23,8 @@ module DbGzTrx =
         trxRow.Deposits <- playerRevRpt.TotalDepositsAmount
         trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
         trxRow.GmGainLoss <- playerRevRpt.GmGainLoss
+        trxRow.CashBonusAmount <- if playerRevRpt.CashBonusAmount.HasValue then playerRevRpt.CashBonusAmount.Value else 0M
+        trxRow.Vendor2UserDeposits <- if playerRevRpt.Vendor2UserDeposits.HasValue then playerRevRpt.Vendor2UserDeposits.Value else 0M
 
     /// Create & Insert a GzTrxs row
     let insDbGzTrxRowValues
@@ -81,7 +84,7 @@ module DbGzTrx =
     let private setDbGzTrxRow(db : DbContext)(yyyyMmDd :string)(playerRevRpt : DbPlayerRevRpt) =
 
         let playerGainLoss = playerRevRpt.GmGainLoss.Value
-        let yyyyMm = yyyyMmDd.Substring(0, 6) 
+        let yyyyMm = yyyyMmDd.ToYyyyMm
         let gmEmail = playerRevRpt.EmailAddress
         let gzUserId = getGzUserId db gmEmail
 
@@ -110,7 +113,7 @@ module DbGzTrx =
     /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
     let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
 
-        let yyyyMm = yyyyMmDd.Substring(0, 6)
+        let yyyyMm = yyyyMmDd.ToYyyyMm
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm)
@@ -136,7 +139,6 @@ module DbPlayerRevRpt =
             row.EndGmBalance.Value
             + totalWithdrawals
             - row.TotalDepositsAmount.Value 
-            - row.Vendor2UserDeposits.Value
             - row.BegGmBalance.Value 
         row.GmGainLoss <- Nullable gainLoss
         row.UpdatedOnUtc <- DateTime.UtcNow
@@ -147,19 +149,19 @@ module DbPlayerRevRpt =
                         (db : DbContext)
                         (yyyyMmDd :string) =
 
-        let yyyyMm = yyyyMmDd.Substring(0, 6)
+        let yyyyMm = yyyyMmDd.ToYyyyMm
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm
                         && (
+                            // GmGainLoss is calculated
                             playerDbRow.BegGmBalance <> Nullable 0M 
                             || playerDbRow.EndGmBalance <> Nullable 0M
                             || playerDbRow.TotalDepositsAmount <> Nullable 0M
                             || playerDbRow.Vendor2UserDeposits <> Nullable 0m
-                            // Withdrawals that deduct balance but have not completed yet
                             || playerDbRow.PendingWithdrawals <> Nullable 0M
-                            // Completed Withdrawals like TotalDepositsAmount is for Deposits
                             || playerDbRow.WithdrawsMade <> Nullable 0M
+                            || playerDbRow.CashBonusAmount <> Nullable 0M
                         ))
                 select playerDbRow
         }
@@ -174,10 +176,14 @@ module DbPlayerRevRpt =
 
         let dbVendor2UserCashBonusAmount = playerRow.CashBonusAmount.Value
         let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
+        let dbDeposits = playerRow.TotalDepositsAmount.Value
         match vendor2UserAmountType with
         | V2UDeposit ->
+            (* Vendor2User Deposits are tracked separatedly and added to TotatDeposits *)
             let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal vendor2UserExcelRow.``Debit real amount``
             playerRow.Vendor2UserDeposits <- Nullable newV2UDepositAmount
+            let newDeposits = dbDeposits + decimal vendor2UserExcelRow.``Debit real amount``
+            playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UCashBonus ->
             let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal vendor2UserExcelRow.``Debit real amount``
             playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
@@ -192,6 +198,7 @@ module DbPlayerRevRpt =
                     (withdrawalsExcelRow : WithdrawalsPendingExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
 
+        (* Pending withdrawals is tracked separatedly from total withdrawals *)
         let dbWithdrawalAmount = playerRow.PendingWithdrawals.Value
         if withdrawalType = Pending then
             let newWithdrawalAmount = dbWithdrawalAmount + decimal withdrawalsExcelRow.``Debit real amount``
@@ -257,7 +264,7 @@ module DbPlayerRevRpt =
         playerRow.Country <- customExcelRow.Country
 
         //Non-excel content
-        playerRow.YearMonth <- yearMonthDay.Substring(0, 6)
+        playerRow.YearMonth <- yearMonthDay.ToYyyyMm
         playerRow.YearMonthDay <- yearMonthDay
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.CustomRptUpd
@@ -281,7 +288,7 @@ module DbPlayerRevRpt =
                         (withdrawalRow : WithdrawalsPendingExcelSchema.Row) =
 
         let gmUserId = (int) withdrawalRow.UserID
-        let yyyyMm = yyyyMmDd.Substring(0, 4)
+        let yyyyMm = yyyyMmDd.ToYyyyMm
         logger.Info(sprintf "Importing %A withdrawal user id %d on %s/%s/%s" 
                 withdrawalType <| gmUserId <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
@@ -307,7 +314,7 @@ module DbPlayerRevRpt =
             (balanceRow : BalanceExcelSchema.Row) = 
 
         let gmUserId = (int) balanceRow.``User ID``
-        let yyyyMm = yyyyMmDd.Substring(0, 6)
+        let yyyyMm = yyyyMmDd.ToYyyyMm
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
@@ -333,7 +340,7 @@ module DbPlayerRevRpt =
                         (vendor2UserRow : Vendor2UserExcelSchema.Row) =
 
         let gmUserId = (int) vendor2UserRow.UserID
-        let yyyyMm = yyyyMmDd.Substring(0, 4)
+        let yyyyMm = yyyyMmDd.ToYyyyMm
         logger.Info(sprintf "Importing vendor2User user id %d on %s/%s/%s" 
                 gmUserId <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
@@ -357,7 +364,7 @@ module DbPlayerRevRpt =
                         (customExcelRow : CustomExcelSchema.Row) : unit =
 
         let gmUserId = (int) customExcelRow.``User ID``
-        let yyyyMm = yyyyMmDd.Substring(0, 6)
+        let yyyyMm = yyyyMmDd.ToYyyyMm
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)

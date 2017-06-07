@@ -46,15 +46,15 @@ module GmRptFiles =
         | LastAsc
 
     [<Literal>]
-    let CustomFileListPrefix = "Custom "
+    let CustomFileListPrefix = "Custom"
     [<Literal>]
-    let Vendor2UserFileListPrefix = "Vendor2User Prod 20170606 "
+    let Vendor2UserFileListPrefix = "Vendor2User"
     [<Literal>]
-    let WithdrawalPendingFileListPrefix = "withdrawalsPending "
+    let WithdrawalPendingFileListPrefix = "withdrawalsPending"
     [<Literal>]
-    let WithdrawalRollbackFileListPrefix = "withdrawalsRollback "
+    let WithdrawalRollbackFileListPrefix = "withdrawalsRollback"
     [<Literal>]
-    let BalanceFileListPrefix = "Balance "
+    let BalanceFileListPrefix = "Balance"
 
     let private folderTryF (isProd : bool) f domainException =
         let logInfo = "isProd", isProd
@@ -78,7 +78,7 @@ module GmRptFiles =
         // Deconstruct
         let { isProd = isProd; folderName = folderName} = inRptFolder
 
-        let fileMask = if isProd then filenameMask + "Prod*.xlsx" else filenameMask + "Stage*.xlsx"
+        let fileMask = if isProd then filenameMask + " Prod*.xlsx" else filenameMask + " Stage*.xlsx"
 
         Directory.GetFiles(folderName, fileMask) 
             |> Array.toList 
@@ -152,7 +152,7 @@ module GmRptFiles =
                     (customFilename : CustomFilenameType) : string option =
 
         let readDir () = 
-            (inRptFolder, rptFilenameStartingMask, FirstAsc) 
+            (inRptFolder, rptFilenameStartingMask, LastAsc) 
                 |||> getOptionalExcelFilenameByIndex
                 |>  function
                     | Some filename -> getFilteredExcelFilename filename customFilename
@@ -231,7 +231,7 @@ module GmRptFiles =
     let private excelFilenames2DatesStr(excelFiles : RptFilenames) : RptStrDates = 
         { 
             customDtStr = getCustomDtStr excelFiles.customFilename;
-            Vendor2UserDtStr = getVendor2UserDtStr excelFiles.withdrawalsPendingFilename; 
+            Vendor2UserDtStr = getVendor2UserDtStr excelFiles.Vendor2UserFilename; 
             withdrawalsPendingDtStr = getWithdrawalDtStr excelFiles.withdrawalsPendingFilename; 
             withdrawalsRollbackDtStr = getWithdrawalDtStr excelFiles.withdrawalsRollbackFilename; 
             begBalanceDtStr = getBegBalanceDtStr excelFiles.begBalanceFilename;
@@ -299,7 +299,7 @@ module GmRptFiles =
             let vendor2UserExcel = new Vendor2UserExcelSchema(vendor2UserFilename)
 
             // Keep the first data row
-            let vendor2UserAmounts = vendor2UserExcel.Data |> Seq.skip 1 |> Seq.truncate 2
+            let vendor2UserAmounts = vendor2UserExcel.Data |> Seq.truncate 2
             let len = vendor2UserAmounts |> Seq.length 
             if len <= 1 then
                 true // header + total line only-> empty balance file
@@ -332,7 +332,7 @@ module GmRptFiles =
         let balanceFileExcelSchema = new BalanceExcelSchema(excelFilename)
 
         // Keep the first data row
-        let balances = balanceFileExcelSchema.Data |> Seq.skip 1 |> Seq.truncate 2
+        let balances = balanceFileExcelSchema.Data |> Seq.truncate 2
         let len = balances |> Seq.length 
         if len <= 1 then
             true // header + total line only-> empty balance file
@@ -374,7 +374,7 @@ module GmRptFiles =
             if customDate <> withdrawalDate then
                 failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date %s mismatch with Withdrawal Rollback Date: %s." <| customDate.ToString("yyyy-MMM-dd") <| withdrawalDate.ToString("yyyy-MMM-dd"))
         | None -> 
-            logger.Warn "No Pending withdrawals excel file to validate"
+            logger.Warn "No Rollback withdrawals excel file to validate"
             
     let private sameDayCustomVendor2UserValidation (customDate : DateTime) (vendor2UserDate : Vendor2UserDateType) : Unit =
         match vendor2UserDate with

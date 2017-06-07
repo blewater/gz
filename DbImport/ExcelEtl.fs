@@ -139,6 +139,8 @@ module Vendor2UserRpt2Db =
 
         if vendor2UserRptDtStr.IsSome then
             updDbVendor2UserExcelRptRows db openFile vendor2UserRptDtStr.Value
+
+open Vendor2UserRpt2Db
             
 module CustomRpt2Db =
     open NLog
@@ -256,6 +258,7 @@ module Etl =
     let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) : unit =
         let { 
                 customFilename = customFilename; 
+                Vendor2UserFilename = Vendor2UserFilename;
                 withdrawalsPendingFilename = withdrawalsPendingFilename;
                 withdrawalsRollbackFilename = withdrawalsRollbackFilename;
                 begBalanceFilename = begBalanceFilename; 
@@ -268,6 +271,13 @@ module Etl =
         // Custom import
         (db, customFilename) 
             ||> loadCustomRpt 
+        
+        // Pending withdrawals import
+        match Vendor2UserFilename with
+        | Some vendor2UserFilename -> 
+                (db, vendor2UserFilename) 
+                    ||> updDbVendor2UserRpt
+        | None -> logger.Warn "No Vendor2User file to import."
         
         // Beg, end balance import
         loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr

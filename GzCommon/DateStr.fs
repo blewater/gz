@@ -60,3 +60,7 @@ module DateStr =
     type String with
         member this.ToDateOn1st = 
             (this + "01").ToDateWithDay
+
+    type String with
+        member this.ToYyyyMm =
+            this.Substring(0, 6)

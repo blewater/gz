@@ -25,9 +25,10 @@ let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"
 let everymatrixSecureToken = "3DFEC757D808494"
 
-let downloadFolderName = @"\download\"
+let drive = System.IO.Path.GetPathRoot  __SOURCE_DIRECTORY__
+let downloadFolderName = Path.Combine (drive, @"download\")
 
-let inRptFolderName = @"\sc\gz\inRpt\"
+let inRptFolderName = Path.Combine (drive, @"sc\gz\inRpt\")
 
 let downloadedCustomFilter = "values*.xlsx"
 let downloadedBalanceFilter = "byBalance*.xlsx*"
@@ -308,6 +309,9 @@ let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     let downloadedBalanceReport =
         try 
             click "#ShowProductBalance1_btnSaveas"
+
+            // Sleep 2 seconds to allow for the file to download
+            Threading.Thread.Sleep(2000)
             let downloadedBalanceRpt = lastDownloadedRpt downloadedBalanceFilter downloadFolderName
             // Check for incomplete download if last file entry is "bybalance.xlsx.crdownload"
             not <| downloadedBalanceRpt.Name.EndsWith("crdownload")
@@ -394,7 +398,7 @@ let uiAutomationDownloading (dayToProcess : DateTime) =
     // Balance: report date counts as day + 23:59
     let balanceRptDownloader() = uiAutomatedEndBalanceRpt <| dayToProcess
     retryTillTrue 5 balanceRptDownloader
-    moveDownloadedRptToInRptFolder downloadedBalanceFilter endBalanceRptFilenamePrefix DateTime.UtcNow
+    moveDownloadedRptToInRptFolder downloadedBalanceFilter endBalanceRptFilenamePrefix (dayToProcess.AddDays(1.0))
 
     quit ()
 
