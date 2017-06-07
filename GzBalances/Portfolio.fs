@@ -518,6 +518,8 @@ module InvBalance =
         invBalanceRow.Withdrawals <- input.UserFinance.Withdrawals
         invBalanceRow.GmGainLoss <- input.UserFinance.GainLoss
         invBalanceRow.EndGmBalance <- input.UserFinance.EndBalance
+        invBalanceRow.Vendor2UserDeposits <- input.UserFinance.Vendor2UserDeposits
+        invBalanceRow.CashBonusAmount <- input.UserFinance.CashBonus
 
         invBalanceRow.UpdatedOnUTC <- DateTime.UtcNow
 
@@ -678,6 +680,8 @@ module UserTrx =
             Withdrawals = if trxRow.Withdrawals.HasValue then trxRow.Withdrawals.Value else 0m
             GainLoss = if trxRow.GmGainLoss.HasValue then trxRow.GmGainLoss.Value else 0m
             AmountToBuyStock = trxRow.Amount
+            Vendor2UserDeposits = trxRow.Vendor2UserDeposits
+            CashBonus = trxRow.CashBonusAmount
         }
 
     /// Main entry to process credit losses for the month and put forth balance amounts from gaming activities

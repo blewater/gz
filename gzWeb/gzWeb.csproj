@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44300</IISExpressSSLPort>
+    <IISExpressSSLPort>44377</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -688,6 +688,14 @@
     <Compile Include="Migrations\201704250855218_GetVintages_ShowAllMonths.cs" />
     <Compile Include="Migrations\201704250855218_GetVintages_ShowAllMonths.Designer.cs">
       <DependentUpon>201704250855218_GetVintages_ShowAllMonths.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706041654516_Vendor2User.cs" />
+    <Compile Include="Migrations\201706041654516_Vendor2User.Designer.cs">
+      <DependentUpon>201706041654516_Vendor2User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706070852188_GzTrx_Vendor2User.cs" />
+    <Compile Include="Migrations\201706070852188_GzTrx_Vendor2User.Designer.cs">
+      <DependentUpon>201706070852188_GzTrx_Vendor2User.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1463,6 +1471,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704250855218_GetVintages_ShowAllMonths.resx">
       <DependentUpon>201704250855218_GetVintages_ShowAllMonths.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706041654516_Vendor2User.resx">
+      <DependentUpon>201706041654516_Vendor2User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706070852188_GzTrx_Vendor2User.resx">
+      <DependentUpon>201706070852188_GzTrx_Vendor2User.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

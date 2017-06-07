@@ -100,6 +100,8 @@ module PortfolioTypes =
         GainLoss : Money;
         EndBalance : Money;
         AmountToBuyStock : Money;
+        Vendor2UserDeposits : Money;
+        CashBonus : Money;
     }
 
     type FundQuote = { Symbol : string; TradedOn : DateTime; ClosingPrice : float }
