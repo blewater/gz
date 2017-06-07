@@ -104,7 +104,8 @@ namespace gzWeb.Controllers {
                     EndGmBalance = summaryDto.EndGmBalance,
                     Deposits = summaryDto.Deposits,
                     GmGainLoss = summaryDto.GmGainLoss,
-                    Withdrawals = summaryDto.Withdrawals
+                    Withdrawals = summaryDto.Withdrawals,
+                    CashBonus = summaryDto.CashBonus
             };
 
             foreach (var vm in summaryDvm.Vintages)

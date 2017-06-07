@@ -19,6 +19,7 @@ namespace gzDAL.DTO
         public decimal Withdrawals { get; set; }
         public decimal GmGainLoss { get; set; }
         public decimal EndGmBalance { get; set; }
+        public decimal CashBonus { get; set; }
 
         /// <summary>
         /// Total monthly player losses summed up
