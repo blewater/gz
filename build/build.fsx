@@ -63,7 +63,7 @@ open System.Net
 open System.Management.Automation
 open FSharp.Data
 open FSharp.Text.RegexProvider
-open Fake.IO.FileSystem.Shell
+//open Fake.IO.FileSystem.Shell
 open Fake
 open Fake.Git
 open Fake.ZipHelper
