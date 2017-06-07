@@ -65,38 +65,38 @@
                 data: data,
                 headers: { "Content-Type": "application/x-www-form-urlencoded" }
             });
-        }
+        };
 
         factory.register = function (parameters) {
             return $http.post('/api/Account/Register', parameters);
-        }
+        };
 
         factory.revokeRegistration = function () {
             return $http.post('/api/Account/RevokeRegistration');
-        }
+        };
 
         factory.finalizeRegistration = function (userId) {
             return $http.post('/api/Account/FinalizeRegistration?gmUserId=' + userId);
-        }
+        };
 
         factory.forgotPassword = function (email) {
             return $http.post('/api/Account/ForgotPassword', { Email: email });
-        }
+        };
 
         factory.resetPassword = function (parameters) {
             return $http.post('/api/Account/ResetPassword', parameters);
-        }
+        };
 
         factory.changePassword = function (parameters) {
             return $http.post('/api/Account/ChangePassword', parameters);
-        }
+        };
 
         factory.getDeploymentInfo = function () {
             return $http.get('/api/Account/GetDeploymentInfo');
-        }
+        };
         factory.cacheUserData = function () {
             return $http.post('/api/Account/CacheUserData');
-        }
+        };
         // #endregion
 
         // #region Investments
@@ -108,14 +108,14 @@
         };
         factory.withdrawVintages = function (vintages) {
             return $http.post(urls.investments + 'withdrawVintages', vintages);
-        }
+        };
 
         factory.getPortfolioData = function () {
             return $http.get(urls.investments + 'getPortfolioData');
         };
         factory.setPlanSelection = function (plan) {
             return $http.post(urls.investments + 'setPlanSelection', plan);
-        }
+        };
 
         factory.getPerformanceData = function () {
             return $http.get(urls.investments + 'getPerformanceData');

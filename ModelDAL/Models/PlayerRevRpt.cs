@@ -49,6 +49,22 @@ namespace gzDAL.Models {
         [Column("Total deposits amount")]
         public decimal? TotalDepositsAmount { get; set; }
 
+        public decimal? CashBonusAmount { get; set; }
+
+        public decimal? Vendor2UserDeposits { get; set; }
+
+        [StringLength(30)]
+        public string Phone { get; set; }
+
+        [StringLength(30)]
+        public string Mobile { get; set; }
+
+        [StringLength(80)]
+        public string City { get; set; }
+
+        [StringLength(80)]
+        public string Country { get; set; }
+
         [Column("PendingWithdrawals")]
         public decimal? PendingWithdrawals { get; set; }
 
@@ -74,6 +90,8 @@ namespace gzDAL.Models {
             TotalDepositsAmount = 0;
             WithdrawsMade = 0;
             PendingWithdrawals = 0;
+            CashBonusAmount = 0;
+            Vendor2UserDeposits = 0;
             CreatedOnUtc = DateTime.UtcNow;
             UpdatedOnUtc = DateTime.UtcNow;
         }

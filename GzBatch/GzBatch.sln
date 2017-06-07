@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzCommon", "..\GzCommon\GzCommon.fsproj", "{D118702E-4B38-4BCF-9184-DAA324C5D160}"
 EndProject
@@ -12,9 +12,6 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MainProcessor", "..\Gm2Gz\MainProcessor.fsproj", "{15A3E41A-1268-44BE-9C1A-743AA2172D55}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Production|Any CPU = Production|Any CPU

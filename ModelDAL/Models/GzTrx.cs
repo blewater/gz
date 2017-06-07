@@ -71,6 +71,14 @@ namespace gzDAL.Models {
         [DefaultValue(0)]
         public decimal? GmGainLoss { get; set; }
 
+        [DefaultValue(0)]
+        [Required]
+        public decimal CashBonusAmount { get; set; }
+
+        [DefaultValue(0)]
+        [Required]
+        public decimal Vendor2UserDeposits { get; set; }
+
         /// <summary>
         /// 
         /// Reference PlayerRevRpt as the source of player balance amounts
