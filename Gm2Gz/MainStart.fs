@@ -12,7 +12,7 @@ let logger = LogManager.GetCurrentClassLogger()
 #if DEBUG && !PRODUCTION
 
 let isProd = false
-let dbConnectionString = Settings.ConnectionStrings.GzDbDev
+let dbConnectionString = Settings.ConnectionStrings.GzDevDb
 
 logger.Warn(sprintf "Development db: %s" dbConnectionString)
 
@@ -38,6 +38,7 @@ let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.Portfol
         let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
                                     |> GmRptFiles.getExcelFilenames
                                     |> GmRptFiles.balanceRptDateMatchTitles
+                                    |> GmRptFiles.vendor2UserRptContentMatch
                                     |> GmRptFiles.getExcelDtStr
                                     |> GmRptFiles.getExcelDates 
                                     |> GmRptFiles.areExcelFilenamesValid
