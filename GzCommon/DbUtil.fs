@@ -33,10 +33,11 @@ module DbUtil =
     /// PlayerRevRpt update status
     type GmRptProcessStatus =
         | CustomRptUpd = 1
-        | BegBalanceRptUpd = 2
-        | EndBalanceRptUpd = 3
-        | WithdrawsRptUpd = 4
-        | GainLossRptUpd = 5
+        | Vendor2UserUpd = 2
+        | BegBalanceRptUpd = 3
+        | EndBalanceRptUpd = 4
+        | WithdrawsRptUpd = 5
+        | GainLossRptUpd = 6
             
     type GzTransactionType =
         /// <summary>

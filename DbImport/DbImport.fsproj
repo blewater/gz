@@ -67,6 +67,8 @@
     <Compile Include="ExcelSchemas.fs" />
     <Compile Include="GmRptFiles.fs" />
     <Compile Include="ExcelUtil.fs" />
+    <Compile Include="ExcelDbLoad.fs" />
+    <Compile Include="ExcelEtlWithdrawals.fs" />
     <Compile Include="ExcelEtl.fs" />
     <Content Include="packages.config" />
     <None Include="openexchangerates.json">
@@ -84,6 +86,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Custom Prod 20170601.xlsx" />
+    <None Include="Vendor2User Prod 20170606.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="canopy">
