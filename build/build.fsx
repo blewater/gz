@@ -292,6 +292,7 @@ Target "SwapStageLive" (fun _ ->
             | loginSt when loginSt <> 0 && times = 0 -> failwithf "az login failed with status %d and cannot proceed" loginSt
             | _ -> printf "Success login to Azure"
 
+        printfn "az.bat webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
         let retCode = Shell.Exec("az.bat", "webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production")
         match (retCode, times) with
         | (0, _) -> printfn "Swap succeeded"
