@@ -17,15 +17,11 @@ namespace gzDAL.Models {
     /// </summary>
     public class GzConfiguration {
 
-        private int id = 1;
         /// <summary>
         /// Forced by Entity Framework to have a key 
         /// </summary>
         [Key]
-        public int Id {
-            get { return id; }
-            set { id = value; }
-        }
+        public int Id { get; set; } = 1;
 
         /// <summary>
         /// Number of days to enforce lock In Period before caching out portfolio funds 

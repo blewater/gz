@@ -128,6 +128,7 @@ module DbPlayerRevRpt =
     open ExcelSchemas
     open GzCommon
     open ExcelUtil
+    open System.Diagnostics
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -215,7 +216,10 @@ module DbPlayerRevRpt =
             (begBalanceExcelRow : BalanceExcelSchema.Row) 
             (playerRow : DbPlayerRevRpt) = 
 
-        playerRow.BegGmBalance <- begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
+        let newBegBalance = begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
+        let begBalanceAmount = playerRow.BegGmBalance.Value 
+        Trace.Assert(newBegBalance.Value = begBalanceAmount)
+        playerRow.BegGmBalance <- newBegBalance
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.BegBalanceRptUpd
@@ -224,8 +228,10 @@ module DbPlayerRevRpt =
     let private updDbRowEndBalanceValues 
                 (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRpt) = 
 
+        let endBalanceAmount = endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
+        Trace.Assert( playerRow.EndGmBalance.Value = endBalanceAmount.Value )
         // Zero out balance amounts, playerloss
-        playerRow.EndGmBalance <- endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
+        playerRow.EndGmBalance <- endBalanceAmount
         //Non-excel content
         playerRow.Processed <- int GmRptProcessStatus.EndBalanceRptUpd
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -249,11 +255,12 @@ module DbPlayerRevRpt =
         playerRow.CashBonusAmount <- Nullable 0m
 
         // Zero out gaming balance amounts, playerloss
-        playerRow.BegGmBalance <- Nullable 0m
+        if yearMonthDay.Substring(6, 2) = "01" then
+            playerRow.BegGmBalance <- playerRow.BegGmBalance
+
         playerRow.GmGainLoss <- Nullable 0m
 
-        // Zero this now in case the subsequent balance file misses an entry for this player due to 0 balance
-        playerRow.EndGmBalance <- Nullable 0m
+        playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
 
         // Withdrawals that deduct balance but have not completed yet they come from the pending report
         playerRow.PendingWithdrawals <- Nullable 0m

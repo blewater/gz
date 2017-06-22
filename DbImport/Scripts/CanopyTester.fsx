@@ -13,13 +13,15 @@
 #r "../packages/canopy/lib/canopy.dll"
 #r "../../GzBatch/packages/System.ValueTuple.4.3.1/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
-#r "../../GzBatch/packages/FSharp.Configuration.1.1.0/lib/net46/FSharp.Configuration.dll"
 open canopy
 open System.IO
 open System
 open GzCommon
 open Microsoft.FSharp.Collections
-open System.Diagnostics
+
+(*** How long to wait from pressing a save-excel button to grab it ***)
+[<Literal>]
+let Wait_For_File_Download_Ms = 2000 // 2 Seconds
 
 let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"
@@ -31,7 +33,7 @@ let downloadFolderName = Path.Combine (drive, @"download\")
 let inRptFolderName = Path.Combine (drive, @"sc\gz\inRpt\")
 
 let downloadedCustomFilter = "values*.xlsx"
-let downloadedBalanceFilter = "byBalance*.xlsx*"
+let downloadedBalanceFilter = "byBalance*.xlsx"
 let downloadedWithdrawalsFilter = "trans*.xlsx"
 let downloadedVendor2UserFilter = "trans*.xlsx"
 
@@ -42,14 +44,10 @@ let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
 let vendor2UserRptFilenamePrefix = "Vendor2User Prod "
 
 let dayToProcess = DateTime.Today.AddDays(-1.0)
-let yyyyMmDdString (date : DateTime) = 
-      date.Year.ToString() 
-    + date.Month.ToString("00") 
-    + date.Day.ToString("00")
 
 let rptFilename (rptFilenamePrefix : string)(filenameDatePostfix : DateTime) : string =
     rptFilenamePrefix
-    + (filenameDatePostfix |> yyyyMmDdString)
+    + filenameDatePostfix.ToYyyyMmDd
     + ".xlsx"
 
 let lastDownloadedRpt (rptFilter : string)(downloadFolderName : string) : FileInfo = 
@@ -158,7 +156,7 @@ let createNewCustomMonthRpt (dayToProcess : DateTime) : unit =
     // phone
     check "#cbxDisplayColumns_43"
     // Real Balance
-    uncheck "#cbxDisplayColumns_54"
+    check "#cbxDisplayColumns_54"
     // Suspended balance
     uncheck "#cbxDisplayColumns_55"
     // check Currency
@@ -181,6 +179,7 @@ let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
         createNewCustomMonthRpt dayToProcess
     "#ddlReport" << "GreenZorro.com " + monthToFind
     click "#BtnToExcel"
+    Threading.Thread.Sleep(Wait_For_File_Download_Ms)
 
     /// Enter transactions report and set it to withdrawals mode
 let uiAutomatedEnterTransactionsReport() = 
@@ -203,6 +202,7 @@ let display2SavedRpt (elemSelector : string) : bool =
         dataFound then
         
         click "#btnSaveAsExcel"
+        Threading.Thread.Sleep(Wait_For_File_Download_Ms)
     dataFound
 
     /// Set the transaction report to the full month withdrawal dates
@@ -309,9 +309,9 @@ let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     let downloadedBalanceReport =
         try 
             click "#ShowProductBalance1_btnSaveas"
-
             // Sleep 2 seconds to allow for the file to download
-            Threading.Thread.Sleep(2000)
+            Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+
             let downloadedBalanceRpt = lastDownloadedRpt downloadedBalanceFilter downloadFolderName
             // Check for incomplete download if last file entry is "bybalance.xlsx.crdownload"
             not <| downloadedBalanceRpt.Name.EndsWith("crdownload")
@@ -359,12 +359,6 @@ let moveDownloadedRptToInRptFolder
     let downloadedCorrectRptFilename = downloadFolderName + correctRptFilename
     overwriteRenameFile (downloadedRpt.FullName) downloadedCorrectRptFilename
     overwriteMoveFile downloadedCorrectRptFilename finalDestinationRptName
-
-type DownloadedReports =
-        {
-            WithdrawalPendingDownloaded : bool;
-            WithdrawalRollbackDownloaded : bool;
-        }
 
 /// UI Web Automate with Everymatrix reporting site and download reports    
 let uiAutomationDownloading (dayToProcess : DateTime) =
