@@ -28,6 +28,11 @@ module DateStr =
             let prev = this.AddMonths(-1)
             prev.ToYyyyMm
 
+    /// to String of format: "dd/mm/yyyy"
+    type DateTime with
+        member this.ToDdMmYYYYSlashed = 
+            this.Day.ToString("00") + "/" + this.Month.ToString("00") + "/" + this.Year.ToString()
+
     type String with
         member this.ToDateWithDay = 
             match DateTime.TryParseExact(this, "yyyyMMdd", null, Globalization.DateTimeStyles.None) with
@@ -55,3 +60,7 @@ module DateStr =
     type String with
         member this.ToDateOn1st = 
             (this + "01").ToDateWithDay
+
+    type String with
+        member this.ToYyyyMm =
+            this.Substring(0, 6)

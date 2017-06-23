@@ -9,12 +9,13 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>GmFsTests</RootNamespace>
     <AssemblyName>GmFsTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <Name>GmFsTests</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -75,78 +76,39 @@
     <Content Include="connectionStrings.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ActiveUp.Net.Common">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.Dns">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Dns.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.Groupware">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Groupware.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.Imap4">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Imap4.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.Mail">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Mail.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.Nntp">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Nntp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.OpenPGP">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.OpenPGP.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.Pop3">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Pop3.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.Smtp">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.Smtp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ActiveUp.Net.WhoIs">
-      <HintPath>$(SolutionDir)packages\MailSystem.NET.2.0.1\lib\ActiveUp.Net.WhoIs.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Configuration">
-      <HintPath>$(SolutionDir)packages\FSharp.Configuration.0.6.4\lib\net40\FSharp.Configuration.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>packages\FSharp.Configuration.1.2.0\lib\net46\FSharp.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>$(SolutionDir)packages\FSharp.Core.4.0.1.5\lib\net40\FSharp.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>packages\FSharp.Core.4.2.1\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="FsUnit.NUnit">
-      <HintPath>$(SolutionDir)packages\FsUnit.2.3.2\lib\net45\FsUnit.NUnit.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>packages\FsUnit.3.0.0\lib\net45\FsUnit.NUnit.dll</HintPath>
+    </Reference>
+    <Reference Include="MailKit">
+      <HintPath>packages\MailKit.1.16.1\lib\net451\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>packages\MimeKit.1.16.1\lib\net451\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="NHamcrest">
-      <HintPath>$(SolutionDir)packages\FsUnit.2.3.2\lib\net45\NHamcrest.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>$(SolutionDir)packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="OpenPop">
-      <HintPath>$(SolutionDir)packages\OpenPop.NET.2.0.6.1120\lib\net40\OpenPop.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="SharpYaml">
-      <HintPath>$(SolutionDir)packages\FSharp.Configuration.0.6.4\lib\net40\SharpYaml.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>packages\FSharp.Configuration.1.2.0\lib\net46\SharpYaml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>packages\FSharp.Configuration.1.2.0\lib\net46\System.ValueTuple.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="..\Gm2Gz\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets" Condition="Exists('..\Gm2Gz\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -157,5 +119,3 @@
   </Target>
   -->
 </Project>
-
-

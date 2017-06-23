@@ -22,6 +22,12 @@
     | CustomRpt
     | WithdrawalRpt
 
+    let excelObjNullableString (excelObjStr : obj) : string =
+        if not <| isNull excelObjStr then
+            excelObjStr.ToString()
+        else
+            null
+
     /// Convert DateTime object expression to DateTime Nullable
     let excelObj2NullableDt (dateMask : DateMask) (excelObjDt : obj) : DateTime Nullable = 
         let dateMaskStr = 
