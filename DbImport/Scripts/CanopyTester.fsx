@@ -13,39 +13,41 @@
 #r "../packages/canopy/lib/canopy.dll"
 #r "../../GzBatch/packages/System.ValueTuple.4.3.1/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
-#r "../../GzBatch/packages/FSharp.Configuration.1.1.0/lib/net46/FSharp.Configuration.dll"
 open canopy
 open System.IO
 open System
 open GzCommon
 open Microsoft.FSharp.Collections
 
+(*** How long to wait from pressing a save-excel button to grab it ***)
+[<Literal>]
+let Wait_For_File_Download_Ms = 2000 // 2 Seconds
+
 let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"
 let everymatrixSecureToken = "3DFEC757D808494"
 
-let downloadFolderName = @"d:\download\"
+let drive = System.IO.Path.GetPathRoot  __SOURCE_DIRECTORY__
+let downloadFolderName = Path.Combine (drive, @"download\")
 
-let inRptFolderName = @"d:\sc\gz\inRpt\"
+let inRptFolderName = Path.Combine (drive, @"sc\gz\inRpt\")
 
 let downloadedCustomFilter = "values*.xlsx"
 let downloadedBalanceFilter = "byBalance*.xlsx"
 let downloadedWithdrawalsFilter = "trans*.xlsx"
+let downloadedVendor2UserFilter = "trans*.xlsx"
 
 let customRptFilenamePrefix = "Custom Prod "
 let endBalanceRptFilenamePrefix = "Balance Prod "
 let withdrawalsPendingRptFilenamePrefix = "withdrawalsPending Prod "
 let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
+let vendor2UserRptFilenamePrefix = "Vendor2User Prod "
 
-let dayToProcess = DateTime.UtcNow.AddDays(-1.0)
-let yyyyMmDdString (date : DateTime) = 
-      date.Year.ToString() 
-    + date.Month.ToString("00") 
-    + date.Day.ToString("00")
+let dayToProcess = DateTime.Today.AddDays(-1.0)
 
 let rptFilename (rptFilenamePrefix : string)(filenameDatePostfix : DateTime) : string =
     rptFilenamePrefix
-    + (filenameDatePostfix |> yyyyMmDdString)
+    + filenameDatePostfix.ToYyyyMmDd
     + ".xlsx"
 
 let lastDownloadedRpt (rptFilter : string)(downloadFolderName : string) : FileInfo = 
@@ -124,11 +126,11 @@ let createNewCustomMonthRpt (dayToProcess : DateTime) : unit =
     // registered by
     uncheck "#cbxDisplayColumns_16"
     // Country
-    uncheck "#cbxDisplayColumns_21"
+    check "#cbxDisplayColumns_21"
     // Postcode
     uncheck "#cbxDisplayColumns_22"
     // City
-    uncheck "#cbxDisplayColumns_23"
+    check "#cbxDisplayColumns_23"
     // Preferred language
     uncheck "#cbxDisplayColumns_25"
     // Connected IP address
@@ -149,6 +151,12 @@ let createNewCustomMonthRpt (dayToProcess : DateTime) : unit =
     check "#cbxDisplayColumns_39"
     // user payment methods
     uncheck "#cbxDisplayColumns_41"
+    // mobile
+    check "#cbxDisplayColumns_42"
+    // phone
+    check "#cbxDisplayColumns_43"
+    // Real Balance
+    check "#cbxDisplayColumns_54"
     // Suspended balance
     uncheck "#cbxDisplayColumns_55"
     // check Currency
@@ -171,17 +179,16 @@ let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
         createNewCustomMonthRpt dayToProcess
     "#ddlReport" << "GreenZorro.com " + monthToFind
     click "#BtnToExcel"
+    Threading.Thread.Sleep(Wait_For_File_Download_Ms)
 
     /// Enter transactions report and set it to withdrawals mode
-let uiAutomatedEnterWithdrawalReport() = 
+let uiAutomatedEnterTransactionsReport() = 
     // Activity
     click "#nav > li:nth-child(1) > a"
     // Transaction
     click "#nav > li:nth-child(1) > ul > li:nth-child(3) > a"
-    // Withdrawals
-    check "#chkTransType_1"
 
-    /// Withdrawals Reports: Press show and if there's data download it
+/// Withdrawals Reports: Press show and if there's data download it
 let display2SavedRpt (elemSelector : string) : bool =
 
     click "#btnShowReport"
@@ -189,25 +196,29 @@ let display2SavedRpt (elemSelector : string) : bool =
     let dataFound : bool =  
         match fastTextFromCSS elemSelector with
         | [] -> true
-        | h::t -> not (h = "no data")
+        | h::t -> h <> "no data"
 
     if 
         dataFound then
         
         click "#btnSaveAsExcel"
+        Threading.Thread.Sleep(Wait_For_File_Download_Ms)
     dataFound
 
     /// Set the transaction report to the full month withdrawal dates
-let setWithdrawalDates (withdrawalDateToSet : DateTime) : unit =
+let setTransactionsDates (withdrawalDateToSet : DateTime) : unit =
     "#txtStartDate" << "01/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
     "#txtEndDate" << withdrawalDateToSet.Day.ToString("00") + "/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
 
     /// Withdrawals: Initiated + Pending + Rollback
 let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
-    uiAutomatedEnterWithdrawalReport()
+    uiAutomatedEnterTransactionsReport()
 
-    setWithdrawalDates withdrawalDateToSet
+    setTransactionsDates withdrawalDateToSet
+
+    // Withdrawals
+    check "#chkTransType_1"
 
     // Initiated
     click "#rblDataPeriodType_0"
@@ -219,14 +230,20 @@ let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) :
     // Rollback
     check "#cbxTransStatus_6"
 
+    // Vendor2User
+    uncheck "#chkTransType_4"
+
     display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Withdrawals: Completed + Rollback
 let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
-    uiAutomatedEnterWithdrawalReport()
+    uiAutomatedEnterTransactionsReport()
 
-    setWithdrawalDates withdrawalDateToSet
+    setTransactionsDates withdrawalDateToSet
+
+    // Withdrawals
+    check "#chkTransType_1"
 
     // Completed
     click "#rblDataPeriodType_1"
@@ -238,15 +255,41 @@ let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) 
     // Rollback
     check "#cbxTransStatus_6"
 
+    // Vendor2User
+    uncheck "#chkTransType_4"
+
     display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
+/// Vendor2User deposits, cash bonus
+let uiAutomateDownloadedVendor2UserRpt (dayToProcess : DateTime) : bool =
+    
+    uiAutomatedEnterTransactionsReport()
+
+    setTransactionsDates dayToProcess
+
+    // Withdrawals
+    uncheck "#chkTransType_1"
+
+    // Vendor2User
+    check "#chkTransType_4"
+
+    display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+/// dayToProcess is interpreted @ 23:59 in the report
 let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
+
+    let downloadingFailure = true
+
     // LGA reports
     click "#nav > li:nth-child(5) > a"
     // Player balances
     click "#nav > li:nth-child(5) > ul > li > a"
+
+    // Bizarre report issue: post with date before doesn't work
+
     // date
-    "#txtStartDate" << dayToProcess.Day.ToString("00") + "/" + dayToProcess.Month.ToString("00") + "/" + dayToProcess.Year.ToString()
+    let dateToStrVal = dayToProcess.ToDdMmYYYYSlashed
+    "#txtStartDate" << dateToStrVal
 
     click "#btnShowReport"
 
@@ -262,14 +305,36 @@ let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
     let thirdWindow = browser.WindowHandles |> Seq.find(fun w -> w <> sndWindow && w <> baseWindow)
     closeSwitchWindow thirdWindow
     // Download Report
-    try 
-        click "#ShowProductBalance1_btnSaveas"
-    with
-    | :? OpenQA.Selenium.WebDriverTimeoutException -> printfn "Absorbing timeout exception"
-    
+
+    let downloadedBalanceReport =
+        try 
+            click "#ShowProductBalance1_btnSaveas"
+            // Sleep 2 seconds to allow for the file to download
+            Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+
+            let downloadedBalanceRpt = lastDownloadedRpt downloadedBalanceFilter downloadFolderName
+            // Check for incomplete download if last file entry is "bybalance.xlsx.crdownload"
+            not <| downloadedBalanceRpt.Name.EndsWith("crdownload")
+        with
+        | :? OpenQA.Selenium.WebDriverTimeoutException 
+            ->  printfn "Absorbed WebDriverTimeoutException during the Balance download"; 
+                false
+        | _ -> false
+
     // Return to base window
     closeSwitchWindow baseWindow
-    true
+    downloadedBalanceReport
+
+/// Retry function call till we get a true result
+let rec retryTillTrue (times: int)(fn:(unit -> bool)) = 
+    if times > 0 then
+        let isSuccessfulResult = 
+            try
+                fn()
+            with 
+                ex -> printfn "In try %d when downloading the balance report exception occured\n %s" times ex.Message; false
+        if not isSuccessfulResult then
+            retryTillTrue (times-1) fn
 
 let moveDownloadedRptToInRptFolder 
         (everymatrixDwnFileMask : string) // "bybalance.xlsx" --or "values.xlsx" --or "transx.xlsx
@@ -295,44 +360,40 @@ let moveDownloadedRptToInRptFolder
     overwriteRenameFile (downloadedRpt.FullName) downloadedCorrectRptFilename
     overwriteMoveFile downloadedCorrectRptFilename finalDestinationRptName
 
-type DownloadedReports =
-        {
-            WithdrawalPendingDownloaded : bool;
-            WithdrawalRollbackDownloaded : bool;
-            EndBalaceDownloaded : bool;
-        }
-
 /// UI Web Automate with Everymatrix reporting site and download reports    
-let uiAutomationDownloading (dayToProcess : DateTime) : DownloadedReports =
+let uiAutomationDownloading (dayToProcess : DateTime) =
     let projDir = Path.Combine(__SOURCE_DIRECTORY__, "..")
     canopy.configuration.chromeDir <- projDir
     start chrome
-    pinToMonitor 3
+    match screen.monitorCount with
+    | m when m >= 3 -> pinToMonitor 3
+    | m when m = 2 -> pinToMonitor 2
+    | _ -> ()
 
+    // Login
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
+    
+    // Custom
     uiAutomateDownloadedCustomRpt dayToProcess
-    let isPendingWithdrawalRptDown = uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess
-    let isRollbackWithdrawalRptDown = uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess
-    // Complete end of the month processing with End of Balance Report
-    let isEndBalanceRptDown = uiAutomatedEndBalanceRpt dayToProcess
-    //let isEndBalanceRptDown = 
-    //    match DateTime.UtcNow.Day with
-    //    | 1 -> uiAutomatedEndBalanceRpt dayToProcess
-    //    | _ -> false
+    moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess
+
+    // Vendor2User
+    if uiAutomateDownloadedVendor2UserRpt dayToProcess then
+        moveDownloadedRptToInRptFolder downloadedVendor2UserFilter vendor2UserRptFilenamePrefix dayToProcess
+
+    // Withdrawals: Pending
+    if uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess then
+        moveDownloadedRptToInRptFolder downloadedWithdrawalsFilter withdrawalsPendingRptFilenamePrefix dayToProcess
+
+    // Withdrawals: Rollback
+    if uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess then
+        moveDownloadedRptToInRptFolder downloadedWithdrawalsFilter withdrawalsRollbackRptFilenamePrefix dayToProcess
+
+    // Balance: report date counts as day + 23:59
+    let balanceRptDownloader() = uiAutomatedEndBalanceRpt <| dayToProcess
+    retryTillTrue 5 balanceRptDownloader
+    moveDownloadedRptToInRptFolder downloadedBalanceFilter endBalanceRptFilenamePrefix (dayToProcess.AddDays(1.0))
+
     quit ()
-    { WithdrawalPendingDownloaded = isPendingWithdrawalRptDown;  WithdrawalRollbackDownloaded = isRollbackWithdrawalRptDown; EndBalaceDownloaded = isEndBalanceRptDown }
 
-let downloadedReports = uiAutomationDownloading dayToProcess
-
-// Custom
-moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess
-
-if downloadedReports.WithdrawalPendingDownloaded then
-    moveDownloadedRptToInRptFolder downloadedWithdrawalsFilter withdrawalsPendingRptFilenamePrefix dayToProcess
-
-if downloadedReports.WithdrawalRollbackDownloaded then
-    moveDownloadedRptToInRptFolder downloadedWithdrawalsFilter withdrawalsRollbackRptFilenamePrefix dayToProcess
-
-// End balance
-if downloadedReports.EndBalaceDownloaded then
-    moveDownloadedRptToInRptFolder downloadedBalanceFilter endBalanceRptFilenamePrefix DateTime.UtcNow
+uiAutomationDownloading dayToProcess

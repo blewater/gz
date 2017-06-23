@@ -11,8 +11,7 @@ module DbUtil =
 
     // Use for compile time memory schema representation
     [<Literal>]
-    // TODO: investigate switching to local db if compilation perf suffers
-    // let CompileTimeDbString = "Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + __SOURCE_DIRECTORY__ + @"\gzdbdev.mdf;Integrated Security=True;Connect Timeout=30"
+    // let CompileTimeDbString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=gzDbDev;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True"
     let CompileTimeDbString = "Server=tcp:gzdbdev.database.windows.net,1433;Database=gzDbDev;User ID=gzDevReader;Password=Life is good wout writing8!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -33,10 +32,11 @@ module DbUtil =
     /// PlayerRevRpt update status
     type GmRptProcessStatus =
         | CustomRptUpd = 1
-        | BegBalanceRptUpd = 2
-        | EndBalanceRptUpd = 3
-        | WithdrawsRptUpd = 4
-        | GainLossRptUpd = 5
+        | Vendor2UserUpd = 2
+        | BegBalanceRptUpd = 3
+        | EndBalanceRptUpd = 4
+        | WithdrawsRptUpd = 5
+        | GainLossRptUpd = 6
             
     type GzTransactionType =
         /// <summary>
@@ -150,6 +150,8 @@ module DbUtil =
     let rec retry times fn = 
         if times > 0 then
             try
+                if times < 3 then
+                    logger.Info (sprintf "** DbUtil remaining efforts: %d" times)
                 fn()
             with 
             | _ -> System.Threading.Thread.Sleep(WaitBefRetryinMillis); retry (times - 1) fn

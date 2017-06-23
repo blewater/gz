@@ -1,9 +1,11 @@
 ﻿open NLog
 open System
+open System.IO
 open FSharp.Configuration
 open GzBalances
 open GzDb
 open DbImport
+open ExcelSchemas
 open ArgumentsProcessor
 
 type Settings = AppSettings< "app.config" >
@@ -24,11 +26,15 @@ let dbConnectionString = Settings.ConnectionStrings.GzProdDb
 logger.Warn(sprintf "PRODUCTION db: %s" dbConnectionString)
 #endif
 
-let inRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelInFolder)
-let outRptFolder = String.Concat(Settings.BaseFolder, Settings.ExcelOutFolder)
+let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
+let inRptFolder = Path.Combine([| drive ; Settings.BaseFolder; Settings.ExcelInFolder |])
+let outRptFolder = Path.Combine([| drive ; Settings.BaseFolder; Settings.ExcelOutFolder |])
 let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
-let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
+let processGm2Gz 
+        (db : DbContext)
+        (balanceFilesUsage : BalanceFilesUsageType)
+        (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
     try
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
         logger.Info("----------------------------")
@@ -38,6 +44,7 @@ let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.Portfol
         let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
                                     |> GmRptFiles.getExcelFilenames
                                     |> GmRptFiles.balanceRptDateMatchTitles
+                                    |> GmRptFiles.vendor2UserRptContentMatch
                                     |> GmRptFiles.getExcelDtStr
                                     |> GmRptFiles.getExcelDates 
                                     |> GmRptFiles.areExcelFilenamesValid
@@ -55,23 +62,64 @@ let processGm2Gz (db : DbContext)(marketPortfolioShares : PortfolioTypes.Portfol
     with ex ->
         logger.Fatal(ex, "Runtime Exception at main")
 
-let processArgs (db : DbContext)(argResult : HandleShares) =
-    match argResult with
-        | StoreOnlyShares days -> 
-            DailyPortfolioShares.storeShares db
-            |> ignore
-        | GetShares days -> 
-            DailyPortfolioShares.storeShares db
-            |> processGm2Gz db
+/// Choose next biz processing steps based on args
+let processArgs (db : DbContext)(balanceFilesUsageArg : BalanceFilesUsageType) =
+    DailyPortfolioShares.storeShares db
+    |> processGm2Gz db balanceFilesUsageArg
+
+/// Canopy related and excel downloading 
+let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
+    let everymatrixPortalArgs  : ExcelSchemas.EverymatrixPortalArgsType = {
+        EmailReportsUser = Settings.ReportsEmailUser;
+        EmailReportsPwd = Settings.ReportsEmailPwd;
+        EverymatrixPortalUri = Settings.EverymatrixProdPortalUri;
+        EverymatrixUsername = Settings.EverymatrixProdUsername;
+        EverymatrixPassword = Settings.EverymatrixProdPassword;
+        EverymatrixToken = Settings.EverymatrixProdToken;
+    }
+
+    let reportsFolders : ExcelSchemas.ReportsFoldersType = {
+        BaseFolder = Settings.BaseFolder;
+        ExcelInFolder = Settings.ExcelInFolder;
+        ExcelOutFolder = Settings.ExcelOutFolder;
+        reportsDownloadFolder = Settings.ReportsDownloadFolder;
+    }
+
+    let reportsFilesArgs : ExcelSchemas.ReportsFilesArgsType = {
+            DownloadedCustomFilter = Settings.DownloadedCustomFilter;
+            DownloadedBalanceFilter = Settings.DownloadedBalanceFilter;
+            DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
+            DownloadedVendor2UserFilter = Settings.DownloadedVendor2UserFilter;
+            CustomRptFilenamePrefix = Settings.CustomRptFilenamePrefix;
+            EndBalanceRptFilenamePrefix = Settings.EndBalanceRptFilenamePrefix;
+            WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
+            WithdrawalsRollbackRptFilenamePrefix = Settings.WithdrawalsRollbackRptFilenamePrefix;
+            Vendor2UserRptFilenamePrefix = Settings.Vendor2UserRptFilenamePrefix;
+            Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
+        }
+
+    let everymatrixReportsArgs : ExcelSchemas.EverymatriReportsArgsType = {
+        EverymatrixPortalArgs = everymatrixPortalArgs;
+        ReportsFoldersArgs = reportsFolders;
+        ReportsFilesArgs = reportsFilesArgs;
+    }
+    everymatrixReportsArgs
+    
 
 [<EntryPoint>]
 let main argv = 
 
     // Create a database context
     let db = getOpenDb dbConnectionString
-    argv 
-    |> parseCmdArgs
-    |> processArgs db
+
+    let balanceFilesUsageArg = 
+        argv |> parseCmdArgs
+
+    let dwLoader = ExcelDownloader(downloadArgs, balanceFilesUsageArg)
+    dwLoader.SaveReportsToInputFolder()
+
+    // Main database processing 
+    processArgs db balanceFilesUsageArg
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore

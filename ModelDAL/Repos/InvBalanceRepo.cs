@@ -35,6 +35,7 @@ namespace gzDAL.Repos
         public decimal Withdrawals { get; set; }
         public decimal GmGainLoss { get; set; }
         public decimal EndGmBalance { get; set; }
+        public decimal CashBonus { get; set; }
         public DateTime UpdatedOnUtc { get; set; }
     }
 
@@ -131,6 +132,7 @@ namespace gzDAL.Repos
                 Withdrawals = lastBalanceRow?.Withdrawals ?? 0,
                 GmGainLoss = lastBalanceRow?.GmGainLoss ?? 0,
                 EndGmBalance = lastBalanceRow?.EndGmBalance ?? 0,
+                CashBonus = lastBalanceRow?.CashBonusAmount ?? 0,
                 UpdatedOnUtc = lastBalanceRow?.UpdatedOnUtc ?? DateTime.MinValue
             };
 
@@ -188,6 +190,7 @@ namespace gzDAL.Repos
                     Withdrawals = invBalanceRes.Withdrawals,
                     GmGainLoss = invBalanceRes.GmGainLoss,
                     EndGmBalance = invBalanceRes.EndGmBalance,
+                    CashBonus = invBalanceRes.CashBonus,
 
                     TotalInvestments = invBalanceRes.TotalCashInvInHold,
                     TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
