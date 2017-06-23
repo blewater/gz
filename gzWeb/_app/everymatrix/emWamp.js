@@ -457,6 +457,11 @@
 
             $rootScope.$on("$wamp.open", onOpen);
 
+            //$rootScope.$on("$wamp.close", function (event, info) {
+            //    var c = $wamp.connection;
+            //    var s = c.session;
+            //});
+
             $rootScope.$on("$wamp.onchallenge", function (event, info) {
                 var preloader = document.getElementById("preloader");
                 if (preloader) {

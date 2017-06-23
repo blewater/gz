@@ -180,12 +180,13 @@
                         $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                     }
                     else {
-                        emLogout();
+                        factory.logout();
+                        //emLogout();
                     }
                 });
             }
-            else {
-                factory.logout(args.desc);
+            else if (args.code > 0) {
+                factory.onLogout(args.desc);
             }
         });
 
@@ -232,30 +233,24 @@
         // #endregion
 
         // #region Logout
-        function gzLogout() {
+        factory.logout = function () {
+            if (factory.data.isGamer)
+                emWamp.logout();
+            else
+                factory.onLogout();
+        };
+
+        factory.onLogout = function (reason) {
             clearInvestmentData();
             nav.clearRequestUrls();
             message.clear();
-        }
-        function emLogout(reason) {
+
             clearGamingData();
-            //unwatchBalance();
-            emWamp.logout();
             $rootScope.$broadcast(constants.events.AUTH_CHANGED);
-            $location.path(constants.routes.home.path).search({ logoutReason: reason });
-            //$window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
-        }
-
-        factory.logout = function (reason) {
-            gzLogout();
-            emLogout(reason);
+            //$location.path(constants.routes.home.path).search({ logoutReason: reason });
             window.appInsights.trackEvent("LOGOUT");
-            //$rootScope.$broadcast(constants.events.AUTH_CHANGED);
+            $window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
 
-            // TODO
-            //var templates = $filter('toArray')(constants.templates);
-            //for (var i = 0; i < templates.length; i++)
-            //    $templateCache.remove(templates[i]);
         }
         // #endregion
 
@@ -273,7 +268,7 @@
             return q.promise;
         }
 
-        function emLogin(usernameOrEmail, password, captcha) {
+        function emLogin(usernameOrEmail, password, captcha, widgetId) {
             var q = $q.defer();
             var params = {
                 usernameOrEmail: usernameOrEmail,
@@ -283,7 +278,7 @@
             if (captcha) {
                 params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey)
                 params.captchaChallenge = "";
-                params.captchaResponse = vcRecaptchaService.getResponse();
+                params.captchaResponse = vcRecaptchaService.getResponse(widgetId);
             }
 
             emWamp.login(params).then(function (emLoginResult) {
@@ -296,9 +291,9 @@
             return q.promise;
         }
 
-        factory.login = function (usernameOrEmail, password, captcha) {
+        factory.login = function (usernameOrEmail, password, captcha, widgetId) {
             var q = $q.defer();
-            emLogin(usernameOrEmail, password, captcha).then(function(emLoginResult) {
+            emLogin(usernameOrEmail, password, captcha, widgetId).then(function (emLoginResult) {
                 window.appInsights.setAuthenticatedUserContext(usernameOrEmail);
                 window.appInsights.trackEvent("LOGIN");
                 if (emLoginResult.hasToEnterCaptcha)
@@ -447,7 +442,7 @@
         // #region ForgotPassword
         factory.forgotPassword = function (email) {
             var q = $q.defer();
-            api.forgotPassword(email).then(function (gzResetKey) {
+            api.forgotPassword(email, widgetId).then(function (gzResetKey) {
                 var changePwdUrl = $location.protocol() + "://" + $location.host();
                 if ($location.port() > 0)
                     changePwdUrl += ":" + $location.port();
@@ -466,7 +461,7 @@
                     changePwdURL: changePwdUrl,
                     captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
                     captchaChallenge: "",
-                    captchaResponse: vcRecaptchaService.getResponse()
+                    captchaResponse: vcRecaptchaService.getResponse(widgetId)
                 }).then(function (result) {
                     q.resolve(true);
                 }, function (error) {
@@ -503,14 +498,14 @@
         // #endregion
 
         // #region ChangePassword
-        factory.changePassword = function (oldPassword, newPassword, confirmPassword) {
+        factory.changePassword = function (oldPassword, newPassword, confirmPassword, widgetId) {
             var q = $q.defer();
             emWamp.changePassword({
                 oldPassword: oldPassword,
                 newPassword: newPassword,
                 captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
                 captchaChallenge: "",
-                captchaResponse: vcRecaptchaService.getResponse()
+                captchaResponse: vcRecaptchaService.getResponse(widgetId)
             }).then(function (emChangeResult) {
                 api.changePassword({
                     OldPassword: oldPassword,

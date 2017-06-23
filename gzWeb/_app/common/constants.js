@@ -228,7 +228,9 @@
             debug: 'gz_debug',
             randomSuffix: 'gz_randomSuffix',
             authData: 'gz_authData',
-            clientId: 'gz_$client_id$',
+            clientId: 'gz_clientId',
+            lastFailureTime: 'gz_lastFailureTime',
+            //language: 'gz_language',
             reCaptchaPublicKey: 'gz_reCaptchaPublicKey'
         },
         events: {

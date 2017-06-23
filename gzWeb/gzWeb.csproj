@@ -822,6 +822,7 @@
     <Content Include="_app\directives\gzThirdPartyIframe.js" />
     <Content Include="_app\everymatrix\challenge.html" />
     <Content Include="_app\everymatrix\challengeCtrl.js" />
+    <Content Include="_app\everymatrix\emWamp.js" />
     <Content Include="_app\guest\explainerVideo.html" />
     <Content Include="_app\account\forgotPassword.html" />
     <Content Include="_app\account\forgotPasswordCtrl.js" />
@@ -1108,7 +1109,7 @@
     <Content Include="_app\everymatrix\emBankingWithdraw.js" />
     <Content Include="_app\everymatrix\emCasino.js" />
     <Content Include="_app\everymatrix\emResponsibleGaming.js" />
-    <Content Include="_app\everymatrix\emWamp.js" />
+    <Content Include="_app\everymatrix\emWamp_NEW.js" />
     <Content Include="_app\everymatrix\emWamp.test.js" />
     <Content Include="_app\services\helpersService.js" />
     <Content Include="_app\nsMessageService\nsConfirmCtrl.js" />
@@ -1127,7 +1128,6 @@
     <Content Include="Scripts\angular-moment\angular-moment.min.js.map" />
     <Content Include="Scripts\angular-touch\angular-touch.min.js.map" />
     <Content Include="Scripts\autobahn.min.jgz" />
-    <Content Include="Scripts\autobahn\autobahn.min.jgz" />
     <None Include="Scripts\jquery\jquery-1.12.0.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.js" />
     <Content Include="Scripts\jquery\jquery-1.12.0.min.js" />
