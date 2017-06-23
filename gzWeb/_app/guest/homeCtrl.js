@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'homeCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', 'nav', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, message, constants, nav) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', 'nav', '$timeout', 'localStorageService', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, message, constants, nav, $timeout, localStorageService) {
         $controller('authCtrl', { $scope: $scope });
 
         function readForgotPwdEmail(urlParams) {
@@ -49,6 +49,19 @@
                 //message.toastr(logoutReason, { nsClass: 'info'});
         }
 
+        function readAffiliateMarker(urlParams) {
+            var btag = urlParams.btag;
+            if (btag) {
+                var now = new Date();
+                localStorageService.set(constants.storageKeys.btagMarker, btag);
+                localStorageService.set(constants.storageKeys.btagTime, now.getTime());
+                $timeout(function () {
+                    localStorageService.remove(constants.storageKeys.btagMarker);
+                    localStorageService.remove(constants.storageKeys.btagTime);
+                }, constants.keepBtagAliveTime);
+            }
+        }
+
         $scope.watchVideo = function() {
             message.open({
                 nsType: 'modal',
@@ -73,6 +86,7 @@
                 readResetPwdKeys(urlParams);
                 readLogoutReason(urlParams);
                 readForgotPwdEmail(urlParams);
+                readAffiliateMarker(urlParams);
             }
             $location.search('');
         }
