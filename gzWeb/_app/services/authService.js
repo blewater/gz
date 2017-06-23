@@ -322,6 +322,16 @@
         // #endregion
 
         // #region Register
+        function getBtag() {
+            var btag = localStorageService.get(constants.storageKeys.btagMarker);
+            var btagTime = localStorageService.get(constants.storageKeys.btagTime);
+            var now = new Date();
+            if (btag && btagTime && btagTime <= now.getTime() + constants.keepBtagAliveTime)
+                return btag;
+
+            clear();
+            return "";
+        };
         function emRegister(parameters) {
             return emWamp.register({
                 username: parameters.username,
@@ -347,7 +357,8 @@
                 emailVerificationURL: parameters.emailVerificationURL,
                 securityQuestion: parameters.securityQuestion,
                 securityAnswer: parameters.securityAnswer,
-                iovationBlackbox: iovation.getBlackbox()
+                iovationBlackbox: iovation.getBlackbox(),
+                affiliateMarker: getBtag()
             });
         }
 
