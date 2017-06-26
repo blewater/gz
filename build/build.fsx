@@ -286,18 +286,26 @@ Target "SwapStageLive" (fun _ ->
     (**** run a powershell script by providing the script filename without extension .ps1 *)
     //"az webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
     let rec runSwap (times : int) =
-        let azlogin (times : int) =
-            match Shell.Exec("az.bat", "login") with
-            | loginSt when loginSt <> 0 && times <> 0 -> runSwap (times - 1)
-            | loginSt when loginSt <> 0 && times = 0 -> failwithf "az login failed with status %d and cannot proceed" loginSt
-            | _ -> printf "Success login to Azure"
+        // Set defaults
+        let azSetDefSubCmd() = Shell.Exec("az.bat", "account set -s \"Greenzorro 2nd Subscription\"")
+        let printSubSuccess() = printfn "Success in setting the default subscription."
 
-        printfn "az.bat webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
-        let retCode = Shell.Exec("az.bat", "webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production")
+        let azSetSubscription (times : int) =
+            match azSetDefSubCmd() with
+            | retCode when retCode <> 0 && times <> 0 -> runSwap (times - 1)
+            | retCode when retCode <> 0 && times = 0 -> failwithf "Setting the default subscription failed with error code %d and cannot proceed" retCode
+            | _ -> printSubSuccess()
+
+        printfn "az account set -s \"Greenzorro 2nd Subscription\""
+        let retCode = azSetDefSubCmd()
         match (retCode, times) with
-        | (0, _) -> printfn "Swap succeeded"
-        | (retCode, 0) -> printfn "Azure swap failed after login with error code: %d. Trying az login" retCode
-        | (_, times)   -> azlogin times
+        | (0, _) -> printSubSuccess()
+        | (retCode, 0) -> printfn "Setting the default subscription failed with error code: %d. Trying az login" retCode
+        | (_, times)   -> azSetSubscription times
+        printfn "az.bat webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
+        match Shell.Exec("az.bat", "webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production") with
+        | 0 -> printfn "Swap succeeded"
+        | retCode -> printfn "Azure swap failed after login with error code: %d. Trying az login" retCode
 
     if stageIsUpdated then
         trace "Stage was updated with a new build and is cleared to swap with live:"
