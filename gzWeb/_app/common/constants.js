@@ -212,6 +212,7 @@
         categories: categories,
         roles: roles,
         carouselActionTypes: actionTypes,
+        keepBtagAliveTime: 1296000000, // 15 days
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
@@ -228,8 +229,12 @@
             debug: 'gz_debug',
             randomSuffix: 'gz_randomSuffix',
             authData: 'gz_authData',
-            clientId: 'gz_$client_id$',
-            reCaptchaPublicKey: 'gz_reCaptchaPublicKey'
+            clientId: 'gz_clientId',
+            lastFailureTime: 'gz_lastFailureTime',
+            //language: 'gz_language',
+            reCaptchaPublicKey: 'gz_reCaptchaPublicKey',
+            btagMarker: 'gz_btagMarker',
+            btagTime: 'gz_btagTime',
         },
         events: {
             ON_INIT: 'onInit',

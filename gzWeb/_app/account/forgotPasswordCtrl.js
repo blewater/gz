@@ -6,6 +6,10 @@
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
+        var _widgetId = undefined;
+        $scope.setWidgetId = function (widgetId) {
+            _widgetId = widgetId;
+        };
 
         //$scope.emailValidOnce = false;
         //var unregisterIsEmailValidWatch = $scope.$watch(function(){
@@ -18,7 +22,8 @@
         //});
 
         $scope.model = {
-            email: null
+            email: null,
+            recaptcha: undefined
         };
 
         $scope.backToLogin = function () {
@@ -38,7 +43,7 @@
 
         function sendInstructions() {
             $scope.waiting = true;
-            auth.forgotPassword($scope.model.email).then(sendCallback, sendCallback);
+            auth.forgotPassword($scope.model.email, _widgetId).then(sendCallback, sendCallback);
         }
         function sendCallback() {
             $scope.waiting = false;

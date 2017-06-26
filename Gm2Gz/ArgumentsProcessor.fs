@@ -1,42 +1,27 @@
 ﻿module ArgumentsProcessor
 
 open Argu
-
-    /// Any value of other than 0 or 1 proceeds with the remaining processing
-    type HandleShares =
-        | GetShares of int // 0 or 1 only
-        | StoreOnlyShares of int // Values of >= 2
+open DbImport
+open ExcelSchemas
 
     type Gm2GzArguments =
-        | Get_Shares of days:int
-        | Store_Only_Shares of days:int
+        | Balance_Files_Usage of BalanceFilesUsageType
     with
         interface IArgParserTemplate with
             member s.Usage =
                 match s with
-                | Get_Shares _ -> "specify number of days to store and continue processing 0 - 300."
-                | Store_Only_Shares _ -> "specify number of days to store shares 1 - 300 and halt further processing."
+                | Balance_Files_Usage _ -> "specify \"skipbalancefiles\" for replacing both balance amounts (beg & end) with the custom report balance numbers, \"skipendbalancefile\" for replacing the end balance amounts or \"usebothbalancefiles\" for using both balance files."
     
     [<Literal>]
     let DefNumOfTradeDays = 22 // Roughly a month
 
-    let parseCmdArgs (argv : string[]) : HandleShares=
+    let parseCmdArgs (argv : string[]) : BalanceFilesUsageType =
         try 
-            let parseDays (d :int)  = 
-                if d < 0 || d > 300 then 
-                    failwith (sprintf "invalid days [0-300] number. Instead given %d." d)
-                else d
             let parser = ArgumentParser.Create<Gm2GzArguments>(programName = "Gm2Gz.exe")
             let results = parser.Parse(argv)
-            if results.Contains(<@ Get_Shares @>) then
-                results.GetResult(<@ Get_Shares @>) 
-                |> parseDays
-                |> GetShares
-            elif results.Contains(<@ Store_Only_Shares @>) then
-                results.GetResult(<@ Store_Only_Shares @>) 
-                |> parseDays
-                |> StoreOnlyShares
+            if not <| results.Contains(<@ Balance_Files_Usage @>) then
+                failwith "Please provide a runtime value for the --Balance-Files-Usage argument."
             else
-                GetShares(DefNumOfTradeDays)
+                results.GetResult(<@ Balance_Files_Usage @>)
         with _ -> 
             reraise()

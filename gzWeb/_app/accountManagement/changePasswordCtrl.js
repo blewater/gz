@@ -6,11 +6,16 @@
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
+        var _widgetId = undefined;
+        $scope.setWidgetId = function (widgetId) {
+            _widgetId = widgetId;
+        };
 
         $scope.model = {
             oldPassword: undefined,
             newPassword: undefined,
-            confirmPassword: undefined
+            confirmPassword: undefined,
+            recaptcha: undefined
         }
         
         // #region Password
@@ -65,7 +70,7 @@
         };
         function change(){
             $scope.waiting = true;
-            auth.changePassword($scope.model.oldPassword, $scope.model.newPassword, $scope.model.confirmPassword).then(function (result) {
+            auth.changePassword($scope.model.oldPassword, $scope.model.newPassword, $scope.model.confirmPassword, _widgetId).then(function (result) {
                 window.appInsights.trackEvent("CHANGE PASSWORD");
                 $scope.waiting = false;
                 message.success("Your password has been changed successfully!", { nsType: 'toastr' });

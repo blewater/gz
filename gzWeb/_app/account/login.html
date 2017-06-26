@@ -41,7 +41,7 @@
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="model.showCaptcha">
                 <div class="form-group">
-                    <div vc-recaptcha key="reCaptchaPublicKey" class="recaptcha-wrap"></div>
+                    <div vc-recaptcha key="reCaptchaPublicKey" name="recaptcha" class="recaptcha-wrap" ng-model="model.recaptcha" on-create="setWidgetId(widgetId)"></div>
                 </div>
             </div>
 

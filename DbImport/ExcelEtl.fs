@@ -227,15 +227,19 @@ module Etl =
         (inFolder, outFolder, rpts.customFilename) |||> moveFileWithOverwrite
         
         // Move beginning balance report if end balance report is present (end of month clearance)
-        let nowMidnightUtc = DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
-        let processingWithinMonth = nowMidnightUtc.Month = fileDates.begBalanceDate.Month && nowMidnightUtc.Year = fileDates.begBalanceDate.Year
+        let midnightUtc = DateTime.UtcNow.Date
+        let processingBalancesWithinMonth = 
+            match fileDates.begBalanceDate with
+            | Some balanceDt -> midnightUtc.Month = balanceDt.Month && midnightUtc.Year = balanceDt.Year
+            | None -> false
 
-        if processingWithinMonth then
-            (inFolder, outFolder, rpts.endBalanceFilename)
-                |||> moveFileWithOverwrite
-        else
-            (inFolder, outFolder, rpts.begBalanceFilename)
-                |||> moveFileWithOverwrite
+        if rpts.begBalanceFilename.IsSome then
+            if processingBalancesWithinMonth && rpts.endBalanceFilename.IsSome then
+                (inFolder, outFolder, rpts.endBalanceFilename.Value)
+                    |||> moveFileWithOverwrite
+            elif not processingBalancesWithinMonth then
+                (inFolder, outFolder, rpts.begBalanceFilename.Value)
+                    |||> moveFileWithOverwrite
         
         // Vendor2User
         match rpts.Vendor2UserFilename with
@@ -280,10 +284,12 @@ module Etl =
         | None -> logger.Warn "No Vendor2User file to import."
         
         // Beg, end balance import
-        loadBalanceRpt BeginingBalance db begBalanceFilename customDtStr
+        if begBalanceFilename.IsSome then
+            loadBalanceRpt BeginingBalance db begBalanceFilename.Value customDtStr
 
         // In present month there's no end balance file
-        loadBalanceRpt EndingBalance db endBalanceFilename customDtStr
+        if endBalanceFilename.IsSome then
+            loadBalanceRpt EndingBalance db endBalanceFilename.Value customDtStr
         
         // Pending withdrawals import
         match withdrawalsPendingFilename with

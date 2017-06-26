@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'playgroundCtrl';
-    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'emBanking', 'emBankingWithdraw', 'chat', '$location', 'auth', 'constants', '$timeout', 'accountManagement', ctrlFactory]);
-    function ctrlFactory($scope, message, emWamp, emBanking, emBankingWithdraw, chat, $location, auth, constants, $timeout, accountManagement) {
+    APP.controller(ctrlId, ['$scope', 'message', 'emWamp', 'emBanking', 'emBankingWithdraw', 'chat', '$location', 'auth', 'constants', '$timeout', 'accountManagement', 'localStorageService', ctrlFactory]);
+    function ctrlFactory($scope, message, emWamp, emBanking, emBankingWithdraw, chat, $location, auth, constants, $timeout, accountManagement, localStorageService) {
 
         $scope.challenge = function () {
             var challengePromise = message.open({
@@ -168,6 +168,25 @@
         $scope.currentRoute = function() {
             if ($location.path() === constants.routes.home.path)
                 $location.path(constants.routes.games.path).search({});
+        }
+        $scope.setBtag = function () {
+            var btag = "12345678";
+            var now = new Date();
+            localStorageService.set(constants.storageKeys.btagMarker, btag);
+            localStorageService.set(constants.storageKeys.btagTime, now.getTime());
+            $timeout(function () {
+                localStorageService.remove(constants.storageKeys.btagMarker);
+                localStorageService.remove(constants.storageKeys.btagTime);
+            }, constants.keepBtagAliveTime);
+        }
+        $scope.getBtag = function () {
+            var btag = localStorageService.get(constants.storageKeys.btagMarker);
+            var btagTime = localStorageService.get(constants.storageKeys.btagTime);
+            var now = new Date();
+            if (btag && btagTime && btagTime <= now.getTime() + constants.keepBtagAliveTime)
+                message.toastr(btag);
+            localStorageService.remove(constants.storageKeys.btagMarker);
+            localStorageService.remove(constants.storageKeys.btagTime);
         }
         // #endregion
 
