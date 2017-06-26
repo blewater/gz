@@ -322,6 +322,10 @@
         // #endregion
 
         // #region Register
+        function clearBtags() {
+            localStorageService.remove(constants.storageKeys.btagMarker);
+            localStorageService.remove(constants.storageKeys.btagTime);
+        };
         function getBtag() {
             var btag = localStorageService.get(constants.storageKeys.btagMarker);
             var btagTime = localStorageService.get(constants.storageKeys.btagTime);
@@ -329,7 +333,7 @@
             if (btag && btagTime && btagTime <= now.getTime() + constants.keepBtagAliveTime)
                 return btag;
 
-            clear();
+            clearBtags();
             return "";
         };
         function emRegister(parameters) {
@@ -414,6 +418,7 @@
                     logStepSucceeded("gzLogin", user);
                     emRegister(parameters).then(function (emRegisterResult) {
                         logStepSucceeded("emRegister", user);
+                        clearBtags();
                         emLogin(parameters.username, parameters.password).then(function (emLoginResult) {
                             logStepSucceeded("emLogin", user);
                             emWamp.getSessionInfo().then(function (sessionInfo) {

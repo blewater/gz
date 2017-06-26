@@ -55,10 +55,6 @@
                 var now = new Date();
                 localStorageService.set(constants.storageKeys.btagMarker, btag);
                 localStorageService.set(constants.storageKeys.btagTime, now.getTime());
-                $timeout(function () {
-                    localStorageService.remove(constants.storageKeys.btagMarker);
-                    localStorageService.remove(constants.storageKeys.btagTime);
-                }, constants.keepBtagAliveTime);
             }
         }
 

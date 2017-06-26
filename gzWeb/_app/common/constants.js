@@ -212,7 +212,7 @@
         categories: categories,
         roles: roles,
         carouselActionTypes: actionTypes,
-        keepBtagAliveTime: 300000, // 5 minutes
+        keepBtagAliveTime: 1296000000, // 15 days
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
