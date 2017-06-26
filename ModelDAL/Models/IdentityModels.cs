@@ -175,6 +175,7 @@ namespace gzDAL.Models
         public DbSet<PlayerRevRpt> PlayerRevRpt { get; set; }
         public DbSet<PortfolioPrice> PortfolioPrices { get; set; }
         public DbSet<VintageShares> VintageShares { get; set; }
+        public DbSet<PlayerRevLastMonth> PlayerRevLastMonth { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

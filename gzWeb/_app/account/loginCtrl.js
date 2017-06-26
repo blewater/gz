@@ -6,6 +6,10 @@
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
+        var _widgetId = undefined;
+        $scope.setWidgetId = function (widgetId) {
+            _widgetId = widgetId;
+        };
         $scope.waiting = false;
         $scope.responseMsg = null;
 
@@ -14,9 +18,10 @@
         };
 
         $scope.model = {
-            usernameOrEmail: null,
-            password: null,
-            showCaptcha: false
+            usernameOrEmail: undefined,
+            password: undefined,
+            showCaptcha: false,
+            recaptcha: undefined
         };
 
         $scope.submit = function () {
@@ -28,7 +33,7 @@
             $scope.waiting = true;
             $scope.errorMsg = "";
 
-            auth.login($scope.model.usernameOrEmail, $scope.model.password, $scope.model.showCaptcha).then(function (response) {
+            auth.login($scope.model.usernameOrEmail, $scope.model.password, $scope.model.showCaptcha, _widgetId).then(function (response) {
                 if (response.enterCaptcha) {
                     $scope.waiting = false;
                     $scope.model.showCaptcha = true;

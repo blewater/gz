@@ -7,7 +7,6 @@ namespace gzWeb.Controllers
 {
     public class BaseApiController : ApiController
     {
-
         public BaseApiController(ApplicationUserManager userManager)
         {
             UserManager = userManager;

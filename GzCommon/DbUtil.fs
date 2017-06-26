@@ -150,6 +150,8 @@ module DbUtil =
     let rec retry times fn = 
         if times > 0 then
             try
+                if times < 3 then
+                    logger.Info (sprintf "** DbUtil remaining efforts: %d" times)
                 fn()
             with 
             | _ -> System.Threading.Thread.Sleep(WaitBefRetryinMillis); retry (times - 1) fn

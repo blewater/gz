@@ -61,7 +61,7 @@ var AsyncLoad = (function () {
                     callback();
             }
         };
-        s.onerror = function () {
+        s.onerror = function (err) {
             var body = document.getElementsByTagName("BODY")[0];
             var preloader = document.getElementById("preloader");
             if (preloader) {
@@ -80,7 +80,7 @@ var AsyncLoad = (function () {
             var loadingError = document.getElementById("loading-error");
             loadingError.className = "loading-error";
             loadingError.innerHTML =
-                    '<div style="line-height: 3em;font-size: 36px;">Oooops!</div>' +
+                    //'<div style="line-height: 3em;font-size: 36px;">Oooops!</div>' +
                     '<div style="line-height: 3em;font-size: 24px;">No dice for now...</div>' +
                     '<div style="line-height: 3em;font-size: 24px;">...greenzorro apologies</div>' +
                     '<div style="line-height: 3em;font-size: 36px;">:(</div>';
