@@ -5,9 +5,9 @@
     function serviceFactory($rootScope, $compile, $q, chat) {
         clear();
 
-        var bodyElement = angular.element(document.querySelector('body'));
-        var messagesElement = $compile('<ns-messages ns-modals="nsModals" ns-notifications="nsNotifications" ns-toastrs="nsToastrs"></ns-messages>')($rootScope);
-        bodyElement.prepend(messagesElement);
+        //var bodyElement = angular.element(document.querySelector('body'));
+        //var messagesElement = $compile('<ns-messages ns-modals="nsModals" ns-notifications="nsNotifications" ns-toastrs="nsToastrs"></ns-messages>')($rootScope);
+        //bodyElement.prepend(messagesElement);
 
         var services = {
             clear: clear,
@@ -41,6 +41,7 @@
          *      nsType: 'modal' || 'notification' || 'toastr' (message box type - 'modal')
          *      nsIn: 'show' || 'enter-up' || 'enter-down' || 'enter-left' || 'enter-right' || 'slide-up-on' || 'slide-down-on' || 'slide-left-on' || 'slide-right-on' (modals opening transition - 'enter-up')
          *      nsOut: 'hide' || 'leave-down' || 'leave-up' || 'leave-right' || 'leave-left' || 'slide-down-off' || 'slide-up-off' || 'slide-right-off' || 'slide-left-off' (modals closing transition - 'leave-down')
+         *      nsRoute: string (route - '')
          *      nsTitle: string (title of the message - '')
          *      nsTitleShout: boolean (should title be emphatic - false)
          *      nsBody: string (plain text as message body, in use when no template is being specified - '')

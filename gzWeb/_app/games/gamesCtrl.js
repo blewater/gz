@@ -1,10 +1,9 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gamesCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', '$log', 'api', '$q', '$rootScope', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers, $log, api, $q, $rootScope) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$timeout', '$interval', '$filter', 'emCasino', 'constants', 'iso4217', 'helpers', '$log', 'api', '$q', '$rootScope', 'modals', 'accountManagement', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $timeout, $interval, $filter, emCasino, constants, iso4217, helpers, $log, api, $q, $rootScope, modals, accountManagement) {
         $controller('authCtrl', { $scope: $scope });
-
 
         // #region Variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
@@ -337,6 +336,9 @@
             selectedCategoryName = params.category || "";
             selectedVendorName = params.vendor || "";
             $scope.searchByNameTerm = params.name || "";
+
+            if (params.open)
+                modals.open(params.open);
         };
         function getCarouselUrl(carouselEntry) {
             switch (carouselEntry.ActionType) {
@@ -441,7 +443,8 @@
             $scope.gameCategories = [];
             emCasino.getGameCategories().then(function (getCategoriesResult) {
                 for (i = 0; i < getCategoriesResult.categories.length; i++)
-                    addCategory(categories[getCategoriesResult.categories[i]]);
+                    if (categories[getCategoriesResult.categories[i]])
+                        addCategory(categories[getCategoriesResult.categories[i]]);
                 addCategory(categories.ALLGAMES);
                 deferred.resolve(true);
             }, logError);
