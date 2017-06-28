@@ -275,6 +275,7 @@ namespace gzWeb {
                                         , "~/_app/services/chatService.js"
                                         , "~/_app/services/navService.js"
                                         , "~/_app/services/iovationService.js"
+                                        , "~/_app/services/modalsService.js"
             #endregion
 
             #region nsMessageService

@@ -186,8 +186,33 @@
     };
     // #endregion
 
+    // #region Modals Routes
+    routes.modal = {
+        path: '/:key',
+        redirectTo: function (routeParams, path, search) {
+            switch (routeParams.key) {
+                case 'login':
+                case 'signup':
+                case 'forgot-password':
+                    return routes.home.path + "?open=" + routeParams.key;
+                case 'deposit':
+                case 'withdraw':
+                case 'pending-withdrawals':
+                case 'transaction-history':
+                case 'bonuses':
+                case 'responsible-gaming':
+                case 'my-profile':
+                case 'change-password':
+                    return routes.games.path + "?open=" + routeParams.key;
+                default:
+                    return routes.home.path;
+            }
+        }
+    };
+    // #endregion
+
     // #region All
-    var all = [];
+    var allRoutes = [];
     for (var key in routes) {
         if (routes[key].roles === undefined)
             routes[key].roles = [roles.guest];
@@ -195,9 +220,9 @@
             routes[key].category = categories.wandering;
         if (routes[key].reloadOnSearch === undefined)
             routes[key].reloadOnSearch = true;
-        all.push(routes[key]);
+        allRoutes.push(routes[key]);
     }
-    routes.all = all;
+    routes.all = allRoutes;
     // #endregion
     // #endregion
 

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'homeCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', 'nav', '$timeout', 'localStorageService', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, message, constants, nav, $timeout, localStorageService) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', 'nav', '$timeout', 'localStorageService', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, message, constants, nav, $timeout, localStorageService, modals) {
         $controller('authCtrl', { $scope: $scope });
 
         function readForgotPwdEmail(urlParams) {
@@ -66,25 +66,33 @@
             });
         }
 
-        $scope.signup = function() {
-            message.open({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '_app/account/registerAccount.html',
-                nsCtrl: 'registerAccountCtrl',
-                nsStatic: true
-            });
+        $scope.signup = function () {
+            modals.register(message.open);
         };
+
+        function readModals(urlParams) {
+            var btag = urlParams.btag;
+            if (btag) {
+                var now = new Date();
+                localStorageService.set(constants.storageKeys.btagMarker, btag);
+                localStorageService.set(constants.storageKeys.btagTime, now.getTime());
+            }
+        }
+
 
         function readSearchKeys() {
             var urlParams = $location.search();
             if (Object.keys(urlParams).length > 0) {
-                readResetPwdKeys(urlParams);
-                readLogoutReason(urlParams);
-                readForgotPwdEmail(urlParams);
-                readAffiliateMarker(urlParams);
+                if (urlParams.open)
+                    modals.open(urlParams.open);
+                else {
+                    readResetPwdKeys(urlParams);
+                    readLogoutReason(urlParams);
+                    readForgotPwdEmail(urlParams);
+                    readAffiliateMarker(urlParams);
+                    $location.search('');
+                }
             }
-            $location.search('');
         }
 
         $scope._init(function () {
@@ -92,18 +100,14 @@
 
             var requestUrl = nav.getRequestUrl();
             if (requestUrl) {
-                message.open({
-                    nsType: 'modal',
-                    nsSize: '600px',
-                    nsTemplate: '_app/account/login.html',
-                    nsCtrl: 'loginCtrl',
-                    nsStatic: true
-                });
+                modals.login(message.open);
+                //var loginPromise = modals.login(message.open);
+                //loginPromise.then(function () {
+                //    $location.path(requestUrl);
+                //});
             }
             else if ($scope._authData.isGamer)
                 $location.path(constants.routes.games.path).search({});
         });
-
-        readSearchKeys();
     }
 })();
