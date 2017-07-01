@@ -13,6 +13,8 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.Everym
     static let logger = LogManager.GetCurrentClassLogger()
 
     let Wait_For_File_Download_Ms = reportsArgs.ReportsFilesArgs.Wait_For_File_Download_MS
+    [<Literal>]
+    let ScheduledRptEmailRecipient = "hostmaster@greenzorro.com"
 
     let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
     let downloadFolderName = Path.Combine (drive, reportsArgs.ReportsFoldersArgs.reportsDownloadFolder)
@@ -73,24 +75,53 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.Everym
         let rptWindow = getOtherWindow everymatrixAppWindow
         closeSwitchWindow rptWindow
 
+    /// Remove the last month's scheduled email report
+    let removeScheduledEmailCustomReport() : unit =
+        // Misc
+        click "#nav > li:nth-child(4) > a"
+        // Email Report
+        click "#nav > li:nth-child(4) > ul > li:nth-child(2) > a"
+        // List email report
+        click "#nav > li:nth-child(4) > ul > li:nth-child(2) > ul > li:nth-child(1) > a"
+        // Remove last report entry
+        // click "#gvList > tbody > tr:nth-last-child(1) > td:nth-last-child(1) > a"
+        element ScheduledRptEmailRecipient
+        |> parent 
+        |> elementWithin "td:nth-last-child(1) > a" 
+        |> click
+        acceptAlert()
+    
+    /// Enter from the Main Menu to custom reports
+    let enterCustomReports() =
+        // Activity
+        click "#nav > li:nth-child(1) > a"
+        // Customized Report
+        click "#nav > li:nth-child(1) > ul > li:nth-child(8) > a"
+        // Launch custom report page
+        click "#nav > li:nth-child(1) > ul > li:nth-child(8) > ul > li:nth-child(1) > a"
+
     /// Create a monthly custom rpt
-    let createNewCustomMonthRpt (dayToProcess : DateTime) : unit = 
+    let createNewCustomMonthRpt () : unit = 
+        let today = DateTime.UtcNow
+
+        enterCustomReports()
+
         click "#hyNewReport"
-        "#txtReportName" << dayToProcess.ToYyyyMm
+        "#txtReportName" << today.ToYyyyMm
         click "#btnSave"
         "#ddlContionPropertyName" << "ProductActivityDateRange"
         "#txtStartDate" << 
             "01/" 
-            + dayToProcess.Month.ToString("00") 
+            + today.Month.ToString("00") 
             + "/" 
-            + dayToProcess.Year.ToString("00")
+            + today.Year.ToString("00")
         "#txtEndDate" << 
-            DateTime.DaysInMonth(dayToProcess.Year, dayToProcess.Month)
+            DateTime.DaysInMonth(today.Year, today.Month)
                 .ToString("00") 
                 + "/" 
-                + dayToProcess.Month.ToString("00") 
+                + today.Month.ToString("00") 
                 + "/" 
-                + dayToProcess.Year.ToString("00")
+                + today.Year.ToString("00")
         click "#btnAddCondtions"
         // brand
         uncheck "#cbxDisplayColumns_0"
@@ -139,22 +170,27 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.Everym
 
         click "#btnSaveSelectedColumns"
         click "#Button1"
+        // Mail/Ftp report
+        click "#btnEmailReport"
+        let baseWindow = browser.CurrentWindowHandle
+        switchToOtherWindow baseWindow
+        // Monthly
+        "#txtReceivers" << ScheduledRptEmailRecipient
+        // scheduled time
+        "#txtSentTime" << "0400"
+        click "#btnSave"
+        browser.Close()
+        switchToWindow baseWindow
 
-    /// Download the monthly custom report
-    //let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
-    //    // Activity
-    //    click "#nav > li:nth-child(1) > a"
-    //    // Customized Report
-    //    click "#nav > li:nth-child(1) > ul > li:nth-child(8) > a"
-    //    // Launch custom report page
-    //    click "#nav > li:nth-child(1) > ul > li:nth-child(8) > ul > li:nth-child(1) > a"
-    //    let monthToFind = dayToProcess.ToYyyyMm
-    //    let foundMonthIndex = (element "#ddlReport").Text.LastIndexOf(monthToFind)
-    //    if foundMonthIndex = -1 then
-    //        createNewCustomMonthRpt dayToProcess
-    //    "#ddlReport" << "GreenZorro.com " + monthToFind
-    //    click "#BtnToExcel"
-    //    Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+    /// Check on present if the custom report exists
+    let monthlyCustomReportExists() : bool =
+
+        let thisMonth = DateTime.UtcNow.ToYyyyMm
+        enterCustomReports()
+        let foundMonthIndex = (element "#ddlReport").Text.LastIndexOf(thisMonth)
+        match foundMonthIndex with
+        | -1 -> false
+        | _ -> true
 
         /// Enter transactions report and set it to withdrawals mode
     let uiAutomatedEnterTransactionsReport() = 
@@ -362,6 +398,9 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.Everym
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
         // Custom
+        if not <| monthlyCustomReportExists() then
+            removeScheduledEmailCustomReport()
+            createNewCustomMonthRpt()
         //uiAutomateDownloadedCustomRpt dayToProcess
         //moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess
 
