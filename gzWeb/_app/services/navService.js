@@ -18,7 +18,10 @@
             if (url) {
                 if (requestUrl)
                     previousRequestUrl = requestUrl;
-                requestUrl = url;
+
+                var paramKey = 'open=';
+                var openIndex = url.indexOf(paramKey);
+                requestUrl = openIndex === -1 ? url : ('/' + url.substring(openIndex + paramKey.length));
             }
         };
         function getRequestUrl() {
