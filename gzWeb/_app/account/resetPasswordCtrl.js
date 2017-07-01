@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "resetPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', '$location', '$log', ctrlFactory]);
-    function ctrlFactory($scope, constants, emWamp, auth, message, $location, $log) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emWamp', 'auth', 'message', '$location', '$log', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, constants, emWamp, auth, message, $location, $log, modals) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -62,13 +62,7 @@
         // #endregion
 
         $scope.forgotPassword = function () {
-            $scope.nsNext({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '_app/account/forgotPassword.html',
-                nsCtrl: 'forgotPasswordCtrl',
-                nsStatic: true
-            });
+            modals.forgotPassword($scope.nsNext);
         };
         
         $scope.submit = function () {
