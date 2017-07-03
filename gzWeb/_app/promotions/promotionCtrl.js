@@ -48,13 +48,7 @@
             if ($scope.isLoggedIn)
                 signUpCallback();
             else {
-                var signUpPromise = message.open({
-                    nsType: 'modal',
-                    nsSize: '600px',
-                    nsTemplate: '_app/account/registerAccount.html',
-                    nsCtrl: 'registerAccountCtrl',
-                    nsStatic: true
-                });
+                var signUpPromise = modals.register(message.open);
                 signUpPromise.then(signUpCallback);
             }
         }

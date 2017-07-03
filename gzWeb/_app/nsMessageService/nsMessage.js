@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', '$window', 'message', '$rootScope', nsMessage]);
+    APP.directive('nsMessage', ['helpers', '$timeout', '$interval', '$controller', '$compile', '$templateRequest', '$window', 'message', '$rootScope', '$location', nsMessage]);
 
-    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest, $window, message, $rootScope) {
+    function nsMessage(helpers, $timeout, $interval, $controller, $compile, $templateRequest, $window, message, $rootScope, $location) {
         return {
             restrict: 'E',
             replace: true,
@@ -206,6 +206,9 @@
                         if (newValue < oldValue)
                             autoClose();
                     });
+
+                    if (scope.nsOptions.nsRoute)
+                        $location.search({ open: scope.nsOptions.nsRoute });
                     
                     scope.nsOptions.nsActive = true;
                     autoClose();
@@ -324,6 +327,8 @@
                         $nextMsgBody.addClass('msg-preparing');
 
                     scope.nsOptions.nsActive = false;
+                    $location.search({ open: null });
+
                     closePromise = $timeout(function () {
                         //cancelInterval();
 

@@ -23,6 +23,9 @@ open Microsoft.FSharp.Collections
 [<Literal>]
 let Wait_For_File_Download_Ms = 2000 // 2 Seconds
 
+[<Literal>]
+let ScheduledRptEmailRecipient = "hostmaster@greenzorro.com"
+
 let everymatrixUsername = "admin"
 let everymatrixPassword = "MoneyLine8!"
 let everymatrixSecureToken = "3DFEC757D808494"
@@ -98,10 +101,22 @@ let uiAutomateLoginEverymatrixReports
     let rptWindow = getOtherWindow everymatrixAppWindow
     closeSwitchWindow rptWindow
 
+/// Enter from the Main Menu to custom reports
+let enterCustomReports() =
+    // Activity
+    click "#nav > li:nth-child(1) > a"
+    // Customized Report
+    click "#nav > li:nth-child(1) > ul > li:nth-child(8) > a"
+    // Launch custom report page
+    click "#nav > li:nth-child(1) > ul > li:nth-child(8) > ul > li:nth-child(1) > a"
+
 /// Create a monthly custom rpt
-let createNewCustomMonthRpt (dayToProcess : DateTime) : unit = 
+let createNewCustomMonthRpt () : unit = 
+    let today = DateTime.UtcNow
+
+    enterCustomReports()
     click "#hyNewReport"
-    "#txtReportName" << dayToProcess.ToYyyyMm
+    "#txtReportName" << today.ToYyyyMm
     click "#btnSave"
     "#ddlContionPropertyName" << "ProductActivityDateRange"
     "#txtStartDate" << 
@@ -110,7 +125,7 @@ let createNewCustomMonthRpt (dayToProcess : DateTime) : unit =
         + "/" 
         + dayToProcess.Year.ToString("00")
     "#txtEndDate" << 
-        DateTime.DaysInMonth(dayToProcess.Year, dayToProcess.Month)
+        DateTime.DaysInMonth(today.Year, today.Month)
             .ToString("00") 
             + "/" 
             + dayToProcess.Month.ToString("00") 
@@ -164,19 +179,52 @@ let createNewCustomMonthRpt (dayToProcess : DateTime) : unit =
 
     click "#btnSaveSelectedColumns"
     click "#Button1"
+    // Mail/Ftp report
+    click "#btnEmailReport"
+    let baseWindow = browser.CurrentWindowHandle
+    switchToOtherWindow baseWindow
+    // Monthly
+    "#txtReceivers" << ScheduledRptEmailRecipient
+    // scheduled time
+    "#txtSentTime" << "0400"
+    click "#btnSave"
+    browser.Close()
+    switchToWindow baseWindow
 
+/// Check on present if the custom report exists
+let monthlyCustomReportExists() : bool =
+
+    let thisMonth = DateTime.UtcNow.ToYyyyMm
+    enterCustomReports()
+    let foundMonthIndex = (element "#ddlReport").Text.LastIndexOf(thisMonth)
+    match foundMonthIndex with
+    | -1 -> false
+    | _ -> true
+
+/// Remove the last month's scheduled email report
+let removeScheduledEmailCustomReport() : unit =
+    // Misc
+    click "#nav > li:nth-child(4) > a"
+    // Email Report
+    click "#nav > li:nth-child(4) > ul > li:nth-child(2) > a"
+    // List email report
+    click "#nav > li:nth-child(4) > ul > li:nth-child(2) > ul > li:nth-child(1) > a"
+    // Remove last report entry
+    // click "#gvList > tbody > tr:nth-last-child(1) > td:nth-last-child(1) > a"
+    element ScheduledRptEmailRecipient 
+    |> parent 
+    |> elementWithin "td:nth-last-child(1) > a" 
+    |> click
+    acceptAlert()
+    
 /// Download the monthly custom report
 let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
-    // Activity
-    click "#nav > li:nth-child(1) > a"
-    // Customized Report
-    click "#nav > li:nth-child(1) > ul > li:nth-child(8) > a"
-    // Launch custom report page
-    click "#nav > li:nth-child(1) > ul > li:nth-child(8) > ul > li:nth-child(1) > a"
+
+    if not <| monthlyCustomReportExists() then
+        removeScheduledEmailCustomReport()
+        createNewCustomMonthRpt()
+
     let monthToFind = dayToProcess.ToYyyyMm
-    let foundMonthIndex = (element "#ddlReport").Text.LastIndexOf(monthToFind)
-    if foundMonthIndex = -1 then
-        createNewCustomMonthRpt dayToProcess
     "#ddlReport" << "GreenZorro.com " + monthToFind
     click "#BtnToExcel"
     Threading.Thread.Sleep(Wait_For_File_Download_Ms)
@@ -372,7 +420,7 @@ let uiAutomationDownloading (dayToProcess : DateTime) =
 
     // Login
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
-    
+
     // Custom
     uiAutomateDownloadedCustomRpt dayToProcess
     moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess

@@ -1,9 +1,9 @@
 ﻿(function() {
     "use strict";
 
-    APP.factory("accountManagement", ['$compile', '$controller', '$templateRequest', '$filter', 'helpers', 'auth', 'message', 'emBanking', serviceFactory]);
+    APP.factory("accountManagement", ['$compile', '$controller', '$templateRequest', '$filter', 'helpers', 'auth', 'message', 'emBanking', '$location', serviceFactory]);
 
-    function serviceFactory($compile, $controller, $templateRequest, $filter, helpers, auth, message, emBanking) {
+    function serviceFactory($compile, $controller, $templateRequest, $filter, helpers, auth, message, emBanking, $location) {
 
         var _elementId = 'state-content';
 
@@ -20,7 +20,8 @@
             imgXs: '../../Content/Images/plus_icon_green.svg',
             iconMenu: 'fa-plus-square',
             action: _attachContent,
-            showInMenu: true
+            showInMenu: true,
+            route: 'deposit'
         };
         _states.deposit = {
             key: 'deposit',
@@ -45,7 +46,8 @@
             imgXs: '../../Content/Images/minus_icon_dgrey.svg',
             iconMenu: 'fa-minus-square',
             showInMenu: true,
-            action: _attachContent
+            action: _attachContent,
+            route: 'withdraw'
         };
         _states.withdraw = {
             key: 'withdraw',
@@ -66,7 +68,8 @@
             title: 'Pending Withdrawals',
             icon: 'fa-clock-o',
             showInMenu: true,
-            action: _attachContent
+            action: _attachContent,
+            route: 'pending-withdrawals'
         };
         _states.transactionHistory = {
             key: 'transactionHistory',
@@ -75,7 +78,8 @@
             title: 'Transaction History',
             icon: 'fa-exchange',
             showInMenu: true,
-            action: _attachContent
+            action: _attachContent,
+            route: 'transaction-history'
         };
         _states.bonuses = {
             key: 'bonuses',
@@ -84,7 +88,8 @@
             title: 'Bonuses',
             icon: 'fa-gift',
             showInMenu: true,
-            action: _attachContent
+            action: _attachContent,
+            route: 'bonuses'
         };
         _states.responsibleGaming = {
             key: 'responsibleGaming',
@@ -93,7 +98,8 @@
             title: 'Responsible Gaming',
             icon: 'fa-ban',
             showInMenu: true,
-            action: _attachContent
+            action: _attachContent,
+            route: 'responsible-gaming'
         };
         _states.myProfile = {
             key: 'myProfile',
@@ -102,7 +108,8 @@
             title: 'My Profile',
             icon: 'fa-user',
             showInMenu: true,
-            action: _attachContent
+            action: _attachContent,
+            route: 'my-profile'
         };
         _states.changePassword = {
             key: 'changePassword',
@@ -111,7 +118,8 @@
             title: 'Change Password',
             icon: 'fa-lock',
             showInMenu: true,
-            action: _attachContent
+            action: _attachContent,
+            route: 'change-password'
         };
         _states.logout = {
             key: 'logout',
@@ -132,6 +140,7 @@
 
         // #region Attach Content
         function _attachContent(state, scope, params, callback) {
+            $location.search({ open: state.route });
             helpers.ui.compile({
                 selector: '#' + _elementId,
                 templateUrl: state.tpl,
@@ -153,6 +162,7 @@
                 nsTemplate: '_app/accountManagement/accountManagement.html',
                 nsCtrl: 'accountManagementCtrl',
                 nsStatic: true,
+                nsRoute: state.route,
                 nsParams: { state: state }
             });
         };

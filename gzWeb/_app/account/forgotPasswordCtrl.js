@@ -1,8 +1,8 @@
 ﻿(function () {
     "use strict";
     var ctrlId = "forgotPasswordCtrl";
-    APP.controller(ctrlId, ['$scope', 'constants', 'vcRecaptchaService', 'emWamp', 'auth', 'message', '$location', 'localStorageService', ctrlFactory]);
-    function ctrlFactory($scope, constants, vcRecaptchaService, emWamp, auth, message, $location, localStorageService) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'vcRecaptchaService', 'emWamp', 'auth', 'message', '$location', 'localStorageService', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, constants, vcRecaptchaService, emWamp, auth, message, $location, localStorageService, modals) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         $scope.reCaptchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
@@ -27,13 +27,7 @@
         };
 
         $scope.backToLogin = function () {
-            $scope.nsBack({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '_app/account/login.html',
-                nsCtrl: 'loginCtrl',
-                nsStatic: true,
-            });
+            modals.login($scope.nsBack);
         };
         
         $scope.submit = function () {

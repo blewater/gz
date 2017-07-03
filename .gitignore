@@ -244,3 +244,4 @@ gzWeb/logs/
 build/.fake/
 build/.azSession
 GmFsTests/bin/
+.vscode/launch.json

@@ -122,7 +122,7 @@ var APP = (function () {
                 $rootScope.$on('$routeChangeStart', function (event, next, current) {
                     $rootScope.loading = true;
                     $rootScope.mobileMenuExpanded = false;
-                    if (next && !auth.authorize(next.roles))
+                    if (next && !next.redirectTo && !auth.authorize(next.roles))
                         $location.path(constants.routes.home.path);
                 });
 
@@ -147,8 +147,8 @@ var APP = (function () {
                 $rootScope.initialized = true;
 
                 if (!auth.authorize($route.current.$$route.roles)) {
-                    nav.setRequestUrl($location.$$path);
-                    $location.path(constants.routes.home.path);
+                    nav.setRequestUrl($location.$$url);
+                    $location.path(constants.routes.home.path).search({});
                     $rootScope.redirected = true;
                 }
 
