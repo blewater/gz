@@ -10,8 +10,10 @@
                 title: routes[i].title,
                 reloadOnSearch: routes[i].reloadOnSearch,
                 category: routes[i].category,
-                roles: routes[i].roles
+                roles: routes[i].roles,
+                redirectTo: routes[i].redirectTo
             });
+
         $routeProvider.otherwise({ redirectTo: '/' });
 
         $locationProvider.html5Mode(constants.html5Mode).hashPrefix();

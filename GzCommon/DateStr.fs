@@ -28,6 +28,11 @@ module DateStr =
             let prev = this.AddMonths(-1)
             prev.ToYyyyMm
 
+    let isTodayLastMonthDay() =
+        let today = DateTime.UtcNow.Date
+        let daysThisMonth = DateTime.DaysInMonth(today.Year, today.Month)
+        if today.Day = daysThisMonth then true else false
+
     /// to String of format: "dd/mm/yyyy"
     type DateTime with
         member this.ToDdMmYYYYSlashed = 

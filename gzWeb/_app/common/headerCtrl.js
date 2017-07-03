@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', 'footerMenu', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', 'footerMenu', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu, modals) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -62,34 +62,13 @@
         };
 
         $scope.login = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '_app/account/login.html',
-                nsCtrl: 'loginCtrl',
-                nsStatic: true
-            });
+            modals.login(message.open);
         };
         $scope.signup = function () {
-            message.open({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '_app/account/registerAccount.html',
-                nsCtrl: 'registerAccountCtrl',
-                nsStatic: true
-            });
+            modals.register(message.open);
         };
         $scope.logout = function () {
             auth.logout();
-        };
-        $scope.changePassword = function() {
-            message.open({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '_app/account/changePassword.html',
-                nsCtrl: 'changePasswordCtrl',
-                nsStatic: true,
-            });
         };
 
         $scope.deposit = function () {

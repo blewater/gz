@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerAccountCtrl';
-    APP.controller(ctrlId, ["$scope", "$filter", "emWamp", "$timeout", "$log", ctrlFactory]);
-    function ctrlFactory($scope, $filter, emWamp, $timeout, $log) {
+    APP.controller(ctrlId, ['$scope', '$filter', 'emWamp', '$timeout', '$log', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, $filter, emWamp, $timeout, $log, modals) {
         $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#fff', position: 'absolute', top: '50%', right: 0 };
         $scope.model = {
             email: null,
@@ -133,13 +133,7 @@
         // #endregion
         
         $scope.backToLogin = function () {
-            $scope.nsBack({
-                nsType: 'modal',
-                nsSize: '600px',
-                nsTemplate: '_app/account/login.html',
-                nsCtrl: 'loginCtrl',
-                nsStatic: true,
-            });
+            modals.login($scope.nsBack);
         };
         $scope.submit = function () {
             if ($scope.form.$valid)

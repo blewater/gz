@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'authCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, constants, auth) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', 'constants', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, constants, auth) {
         function loadAuthData() {
             $scope._authData = auth.data;
         }
@@ -14,19 +14,19 @@
                     initCallback();
             }
 
-            if ($scope.initialized)
+            if ($rootScope.initialized)
                 callback();
             else {
                 var unregisterAfterInit = $scope.$on(constants.events.ON_AFTER_INIT, function () {
-                    if ($scope.redirected) {
+                    unregisterAfterInit();
+                    if ($rootScope.redirected) {
                         var unregisterRedirected = $scope.$on(constants.events.REDIRECTED, function () {
-                            callback();
                             unregisterRedirected();
+                            callback();
                         });
                     }
                     else
                         callback();
-                    unregisterAfterInit();
                 });
             }
         }
