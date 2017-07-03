@@ -652,13 +652,12 @@ module UserTrx =
             |> Map.filter(fun key _ -> key < nextMonth)
             |> Seq.maxBy(fun kvp -> kvp.Key)
             |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
-        let boxedGetmonthLateQuote() = portfoliosPrices |> getMonthLateQuote
-        let monthLateQuote = tryF boxedGetmonthLateQuote NoCurrentMarketQuote (sprintf "Couldn't find a portfolio market quote within %s" month)
+        
+        let lateQuote = 
+            portfoliosPrices 
+            |> getMonthLateQuote
 
-        // assert quote is within the month
-        (monthLateQuote.PortfolioHighRiskPrice.TradedOn.Month = Int32.Parse(month.Substring(4, 2)), "Found a portfolio market quote not within the processing month: " + month)
-        ||> traceExc
-        monthLateQuote
+        lateQuote
         
     /// Input type for portfolio processing
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPrices) =
