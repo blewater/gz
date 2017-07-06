@@ -164,10 +164,10 @@ module DailyPortfolioShares =
                     Fund = fundTradedPrices.[f.Symbol]
                 }
                 portfolioFundRec
-               )
-//            |> ~~ (printfn "%A")
+                )
+    //            |> ~~ (printfn "%A")
             |> Seq.groupBy(fun (portfolioFundRec : PortfolioFundRecord) -> portfolioFundRec.Fund.TradedOn)
-//            |> ~~ (printfn "%A")
+    //            |> ~~ (printfn "%A")
             |> Seq.map(fun (tradedOnKey : DateTime, spfr : PortfolioFundRecord seq) -> 
                 let gpfr = spfr |> Seq.groupBy (fun pfr -> pfr.PortfolioId)
                 let pricedPortfoliosGroup = 
@@ -184,7 +184,16 @@ module DailyPortfolioShares =
                                             |> portfolioPricesArrToType)
             )
             |> Map
-//        portfolioPrices |> Seq.iter(fun i -> printfn "%A" i)
+        portfolioPrices 
+            |> Seq.iter(fun pp -> 
+                Diagnostics.Trace.Assert(
+                    pp.Value.PortfolioLowRiskPrice.Price > 10.0 &&
+                    pp.Value.PortfolioMediumRiskPrice.Price > 10.0 &&
+                    pp.Value.PortfolioHighRiskPrice.Price > 10.0,
+                    "Portfolio Prices are artificially low check the portfolio calculations"
+                )
+               )
+                
         portfolioPrices
 
     /// Ask & Store portfolio shares
