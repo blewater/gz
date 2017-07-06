@@ -49,9 +49,9 @@
 //Runs build for dev site using the develop branch.
 //
 // Fake.exe "target=Build" --> starts the Build target and runs the dependency Clean
-// Fake.exe Build --> starts the Build target and runs the dependency Clean
-// Fake.exe Build --single-target --> starts only the Build target and runs no dependencies
-// Fake.exe Build -st --> starts only the Build target and runs no dependencies
+// Fake.exe "Build" --> starts the Build target and runs the dependency Clean
+// Fake.exe "Build" --single-target --> starts only the Build target and runs no dependencies
+// Fake.exe "Build" -st --> starts only the Build target and runs no dependencies
 // Fake.exe --> starts the Deploy target (and runs the dependencies Clean and Build)
 //***********************************************************************
 #r @"packages/FAKE/tools/FakeLib.dll"
@@ -64,7 +64,6 @@ open System.Net
 open System.Management.Automation
 open FSharp.Data
 open FSharp.Text.RegexProvider
-//open Fake.IO.FileSystem.Shell
 open Fake
 open Fake.Git
 open Fake.ZipHelper
@@ -130,7 +129,7 @@ let exec (exe : string)(options : string) : int =
     | Some exe -> Shell.Exec(exe, options)
     | _ -> -1
 
-Target "InitAzureBuildMode" (fun _ ->
+Target "AzLoginToGzSub" (fun _ ->
     let azLoginCmdStr = "login --service-principal -u http://letsencrypt -p /uYrUHAxgZxgAxSpfmlNGhMv1rvgeYsvnnQ1HqN25z8= --tenant \"66fc0b37-5dcf-41d8-a6df-9899e2d07d89\""
     let azLogin() = exec "az.cmd" azLoginCmdStr
     let printLoginSuccess() = printfn "Success in loging in with SP."
@@ -139,7 +138,7 @@ Target "InitAzureBuildMode" (fun _ ->
     let printSubSuccess() = printfn "Success in setting the default subscription."
 
     // Step 0: Login
-    printAzCmd azLoginCmdStr
+    printAzCmd <| azLoginCmdStr.Substring(0, 48)
     match azLogin() with
     | 0 -> printLoginSuccess()
     | retCode -> printfn "Login failed with status %d and cannot proceed!" retCode
@@ -148,7 +147,8 @@ Target "InitAzureBuildMode" (fun _ ->
     match azSetDefSubCmd() with
     | 0 -> printSubSuccess()
     | retCode -> printfn "Setting the default subscription failed with error code: %d. Try az login" retCode
-
+)
+Target "InitAzureBuildMode" (fun _ ->
     match mode with
     | "dev" -> trace "Running in dev mode"
     | "prod" -> trace  "Running in prod mode"
@@ -340,7 +340,8 @@ Target "SwapStageLive" (fun _ ->
 )
 
 // Dependencies
-"InitAzureBuildMode"
+"AzLoginToGzSub"
+  ==> "InitAzureBuildMode"
   ==> "CheckoutDevelop"
   =?> ("PullDevelop", mode = "prod")
   =?> ("MergeMaster", mode = "prod")
