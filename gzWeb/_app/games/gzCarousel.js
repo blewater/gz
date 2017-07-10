@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.directive('gzCarousel', ['helpers', '$timeout', '$window', '$log', directiveFactory]);
+    APP.directive('gzCarousel', ['helpers', '$timeout', '$window', '$log', 'message', directiveFactory]);
 
-    function directiveFactory(helpers, $timeout, $window, $log) {
+    function directiveFactory(helpers, $timeout, $window, $log, message) {
         return {
             restrict: 'E',
             scope: {
@@ -28,6 +28,7 @@
 
                 var DELAY = 10000;
                 var timeoutPromise = undefined;
+                var watchingVideo = false;
                 $scope.currentIndex = 0;
                 checkShowControlsAndIndicators();
 
@@ -58,12 +59,20 @@
                     setSlide(index);
                 }
 
-                $scope.onHover = function () {
+                function pause() {
                     if (angular.isDefined(timeoutPromise))
                         $timeout.cancel(timeoutPromise);
                 };
-                $scope.onLeave = function () {
+                function resume() {
                     autoplay($scope.currentIndex);
+                }
+
+                $scope.onHover = function () {
+                    pause();
+                };
+                $scope.onLeave = function () {
+                    if (!watchingVideo)
+                        resume();
                 };
 
                 $scope.calcMarginLeft = function (index) {
@@ -88,10 +97,26 @@
                         unregisterCollectionWatch();
                     }
                 });
+                $scope.watchVideo = function (url) {
+                    watchingVideo = true;
+                    pause();
+                    var videoPromise = message.open({
+                        nsType: 'modal',
+                        nsSize: '800px',
+                        nsTemplate: '_app/games/carouselVideo.html',
+                        nsCtrl: 'carouselVideoCtrl',
+                        nsParams: { url: url },
+                        nsStatic: true
+                    });
+                    videoPromise.then(function () {
+                        watchingVideo = false;
+                        resume();
+                    });
+                }
+
 
                 $scope.$on("$destroy", function (event) {
-                    if (angular.isDefined(timeoutPromise))
-                        $timeout.cancel(timeoutPromise);
+                    pause();
                 });
 
                 function checkShowControlsAndIndicators() {
