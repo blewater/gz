@@ -5,7 +5,8 @@
     var actionTypes = {
         url: 0,
         page: 1,
-        game: 2
+        game: 2,
+        video: 3
     }
     // #endregion
 

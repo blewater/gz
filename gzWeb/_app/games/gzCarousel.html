@@ -8,7 +8,8 @@
             <div class="gz-slide-title text-shadow-dark">{{slide.title}}</div>
             <div class="gz-slide-subtitle text-shadow-dark">{{slide.subtitle}}</div>
             <div class="gz-slide-action">
-                <a class="gz-slide-action-btn" ng-href="{{slide.url}}">{{slide.action}}</a>
+                <a ng-if="!slide.isVideo" class="gz-slide-action-btn" ng-href="{{slide.url}}">{{slide.action}}</a>
+                <a ng-if="slide.isVideo" class="gz-slide-action-btn" ng-click="watchVideo(slide.url)">{{slide.action}}</a>
             </div>
         </div>
     </div>
