@@ -836,6 +836,8 @@
     <Content Include="_app\everymatrix\challenge.html" />
     <Content Include="_app\everymatrix\challengeCtrl.js" />
     <Content Include="_app\everymatrix\emWamp.js" />
+    <Content Include="_app\games\carouselVideo.html" />
+    <Content Include="_app\games\carouselVideoCtrl.js" />
     <Content Include="_app\guest\explainerVideo.html" />
     <Content Include="_app\account\forgotPassword.html" />
     <Content Include="_app\account\forgotPasswordCtrl.js" />
