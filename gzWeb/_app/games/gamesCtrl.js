@@ -342,6 +342,8 @@
         };
         function getCarouselUrl(carouselEntry) {
             switch (carouselEntry.ActionType) {
+                case constants.carouselActionTypes.video:
+                    return carouselEntry.ActionUrl;
                 case constants.carouselActionTypes.page:
                     return '/promotions/' + carouselEntry.ActionUrl;
                 case constants.carouselActionTypes.game:
@@ -360,7 +362,8 @@
                     subtitle: carouselEntry.SubTitle,
                     action: carouselEntry.ActionText,
                     url: getCarouselUrl(carouselEntry),
-                    bg: carouselEntry.BackgroundImageUrl
+                    bg: carouselEntry.BackgroundImageUrl,
+                    isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
                 };
             }
             else if (carouselEntry.ActionType === constants.carouselActionTypes.game) {
@@ -377,7 +380,8 @@
                         subtitle: carouselEntry.SubTitle,
                         action: carouselEntry.ActionText,
                         url: getCarouselUrl(carouselEntry),
-                        bg: gameResult.games[0] ? gameResult.games[0].backgroundImage : '../../Content/Images/casino-default.jpg'
+                        bg: gameResult.games[0] ? gameResult.games[0].backgroundImage : '../../Content/Images/casino-default.jpg',
+                        isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
                     });
                 }, function (error) {
                     $log.error(error);
