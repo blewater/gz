@@ -240,17 +240,20 @@
                 factory.onLogout();
         };
 
-        factory.onLogout = function (reason) {
+        function setLogout() {
             clearInvestmentData();
             nav.clearRequestUrls();
             message.clear();
 
             clearGamingData();
             $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+        };
+        factory.onLogout = function (reason) {
+            setLogout();
+
             //$location.path(constants.routes.home.path).search({ logoutReason: reason });
             window.appInsights.trackEvent("LOGOUT");
             $window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
-
         }
         // #endregion
 
@@ -569,6 +572,10 @@
             api.call(function () {
                 return api.getDeploymentInfo();
             }, function (response) {
+                //var lastVersion = localStorageService.get(constants.storageKeys.version);
+                //if (lastVersion !== response.Result.Version)
+                //    factory.setLogout();
+
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
                 localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
@@ -578,7 +585,7 @@
                 if (factory.data.username.length > 0) {
                     emWamp.getSessionInfo().then(function (sessionInfo) {
                         if (!sessionInfo.isAuthenticated)
-                            factory.logout();
+                            factory.setLogout();
                     });
                 }
                 unregisterConnectionInitiated();
