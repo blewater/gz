@@ -51,6 +51,9 @@
         $scope.info = function () {
             message.info('Info');
         };
+        $scope.errorObj = function () {
+            message.error({});
+        };
         // #endregion
 
         // #region Account
