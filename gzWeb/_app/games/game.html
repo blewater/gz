@@ -1,6 +1,6 @@
 ﻿<div class="clearfix games">
     <div class="game-play">
-        <img class="game-bg center-screen responsive-size" src="{{game.backgroundImage}}" alt="Background" />
+        <img class="game-bg center-screen responsive-size" src="{{game.backgroundImage}}" cs-fallback-src="{{defaultImg}}" alt="Background" />
         <div ng-hide="gameLaunchData==null" class="game-frame" fullscreen="isFullscreen" only-watched-property>
             <iframe ng-src="{{gameUrl}}" width="{{getGameWidth()}}" height="{{getGameHeight()}}"
                     ng-style="{

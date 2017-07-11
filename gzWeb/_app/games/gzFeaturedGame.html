@@ -1,5 +1,5 @@
 ﻿<div class="featured-game" ng-class="{'featured-large': gzGame.rank === 1, 'featured-small': gzGame.rank > 1}">
-    <img class="featured-bg img-responsive" src="{{gzGame.backgroundImage}}" cs-fallback-src="../../Content/Images/casino-default.jpg" />
+    <img class="featured-bg img-responsive" src="{{gzGame.backgroundImage}}" cs-fallback-src="{{defaultImg}}" />
     <img class="featured-logo added" src="{{gzGame.logo}}" />
     <div class="featured-name text-shadow-dark">{{gzGame.name}}</div>
     <div class="featured-info text-shadow-dark">{{gzGame.info}}</div>
