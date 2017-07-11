@@ -239,6 +239,7 @@
         roles: roles,
         carouselActionTypes: actionTypes,
         keepBtagAliveTime: 1296000000, // 15 days
+        defaultImg: '../../Content/Images/casino-default.jpg',
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
