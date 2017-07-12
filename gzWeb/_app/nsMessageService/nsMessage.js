@@ -295,6 +295,7 @@
                 };
                 scope.showClose = function () {
                     return scope.nsOptions.nsShowClose;
+                    //return !scope.isModal || scope.nsOptions.nsShowClose;
                 };
                 scope.showExpandCollapse = function () {
                     return scope.isNotification;
