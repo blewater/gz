@@ -51,6 +51,9 @@
         $scope.info = function () {
             message.info('Info');
         };
+        $scope.errorObj = function () {
+            message.error({});
+        };
         // #endregion
 
         // #region Account
@@ -204,5 +207,12 @@
                 $scope.result = error;
             });
         }
+
+        function init() {
+            var inDebugMode = localStorageService.get(constants.storageKeys.debug);
+            if (!inDebugMode)
+                $location.path(constants.routes.home.path);
+        }
+        init();
     }
 })();

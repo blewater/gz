@@ -164,10 +164,10 @@ module DailyPortfolioShares =
                     Fund = fundTradedPrices.[f.Symbol]
                 }
                 portfolioFundRec
-               )
-//            |> ~~ (printfn "%A")
+                )
+    //            |> ~~ (printfn "%A")
             |> Seq.groupBy(fun (portfolioFundRec : PortfolioFundRecord) -> portfolioFundRec.Fund.TradedOn)
-//            |> ~~ (printfn "%A")
+    //            |> ~~ (printfn "%A")
             |> Seq.map(fun (tradedOnKey : DateTime, spfr : PortfolioFundRecord seq) -> 
                 let gpfr = spfr |> Seq.groupBy (fun pfr -> pfr.PortfolioId)
                 let pricedPortfoliosGroup = 
@@ -184,7 +184,16 @@ module DailyPortfolioShares =
                                             |> portfolioPricesArrToType)
             )
             |> Map
-//        portfolioPrices |> Seq.iter(fun i -> printfn "%A" i)
+        portfolioPrices 
+            |> Seq.iter(fun pp -> 
+                Diagnostics.Trace.Assert(
+                    pp.Value.PortfolioLowRiskPrice.Price > 10.0 &&
+                    pp.Value.PortfolioMediumRiskPrice.Price > 10.0 &&
+                    pp.Value.PortfolioHighRiskPrice.Price > 10.0,
+                    "Portfolio Prices are artificially low check the portfolio calculations"
+                )
+               )
+                
         portfolioPrices
 
     /// Ask & Store portfolio shares
@@ -652,13 +661,12 @@ module UserTrx =
             |> Map.filter(fun key _ -> key < nextMonth)
             |> Seq.maxBy(fun kvp -> kvp.Key)
             |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
-        let boxedGetmonthLateQuote() = portfoliosPrices |> getMonthLateQuote
-        let monthLateQuote = tryF boxedGetmonthLateQuote NoCurrentMarketQuote (sprintf "Couldn't find a portfolio market quote within %s" month)
+        
+        let lateQuote = 
+            portfoliosPrices 
+            |> getMonthLateQuote
 
-        // assert quote is within the month
-        (monthLateQuote.PortfolioHighRiskPrice.TradedOn.Month = Int32.Parse(month.Substring(4, 2)), "Found a portfolio market quote not within the processing month: " + month)
-        ||> traceExc
-        monthLateQuote
+        lateQuote
         
     /// Input type for portfolio processing
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPrices) =

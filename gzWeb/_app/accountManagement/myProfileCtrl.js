@@ -261,13 +261,13 @@
         $scope.submit = function () {
             if ($scope.form.$valid) {
                 $scope.waiting = true;
-                var dateOfBirth = moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]);
+                var dateOfBirth = moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]).format('YYYY-MM-DD');
                 var gender = $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender;
                 var parameters = {
                     gender: gender,
                     title: $scope.model.title,
                     firstname: $scope.model.firstname,
-                    surname: $scope.model.lastname,
+                    surname: $scope.model.surname,
                     birthDate: dateOfBirth,
                     mobilePrefix: $scope.model.phonePrefix,
                     mobile: $scope.model.phoneNumber,
@@ -284,7 +284,7 @@
                     message.success("Your profile has been updated successfully!", { nsType: 'toastr' });
                 }, function (error) {
                     $scope.waiting = false;
-                    message.error(error);
+                    message.error(error.desc);
                 });
             }
         };

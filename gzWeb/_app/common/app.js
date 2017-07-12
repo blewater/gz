@@ -169,6 +169,7 @@ var APP = (function () {
                 $rootScope.initialized = false;
                 $rootScope.redirected = false;
                 $rootScope.mobile = helpers.ui.isMobile();
+                $rootScope.defaultImg = constants.defaultImg;
                 localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
                 auth.init();
             };

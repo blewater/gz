@@ -252,6 +252,7 @@ namespace gzWeb {
                                         , "~/_app/games/gzFeaturedGame.js"
                                         , "~/_app/games/gzFeaturedGames.js"
                                         , "~/_app/games/gzCarousel.js"
+                                        , "~/_app/games/carouselVideoCtrl.js"
             #endregion
 
             #region Promotions
