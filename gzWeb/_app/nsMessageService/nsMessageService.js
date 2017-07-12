@@ -73,9 +73,11 @@
             });
 
             if (options.nsType === 'toastr')
-                $rootScope.nsToastrs.splice(0, 0, options);
+                //$rootScope.nsToastrs.splice(0, 0, options);
+                $rootScope.nsToastrs.push(options);
             else if (options.nsType === 'notification')
-                $rootScope.nsNotifications.splice(0, 0, options);
+                //$rootScope.nsNotifications.splice(0, 0, options);
+                $rootScope.nsNotifications.push(options);
             else
                 $rootScope.nsModals.push(options);
 
