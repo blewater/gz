@@ -5,7 +5,8 @@
     var actionTypes = {
         url: 0,
         page: 1,
-        game: 2
+        game: 2,
+        video: 3
     }
     // #endregion
 
@@ -238,6 +239,7 @@
         roles: roles,
         carouselActionTypes: actionTypes,
         keepBtagAliveTime: 1296000000, // 15 days
+        defaultImg: '../../Content/Images/casino-default.jpg',
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },

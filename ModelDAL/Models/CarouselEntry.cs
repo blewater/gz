@@ -9,7 +9,8 @@ namespace gzDAL.Models
     {
         Url,
         Page,
-        Game
+        Game,
+        Video
     }
 
 

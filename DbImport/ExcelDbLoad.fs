@@ -254,13 +254,13 @@ module DbPlayerRevRpt =
         playerRow.Vendor2UserDeposits <- Nullable 0m
         playerRow.CashBonusAmount <- Nullable 0m
 
-        // Zero out gaming balance amounts, playerloss
         if yearMonthDay.Substring(6, 2) = "01" then
-            playerRow.BegGmBalance <- playerRow.BegGmBalance
-
-        playerRow.GmGainLoss <- Nullable 0m
+            playerRow.BegGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
 
         playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
+
+        // Zero out gaming playerloss before later processing it after excel files import
+        playerRow.GmGainLoss <- Nullable 0m
 
         // Withdrawals that deduct balance but have not completed yet they come from the pending report
         playerRow.PendingWithdrawals <- Nullable 0m

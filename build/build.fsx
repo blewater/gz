@@ -49,9 +49,9 @@
 //Runs build for dev site using the develop branch.
 //
 // Fake.exe "target=Build" --> starts the Build target and runs the dependency Clean
-// Fake.exe Build --> starts the Build target and runs the dependency Clean
-// Fake.exe Build --single-target --> starts only the Build target and runs no dependencies
-// Fake.exe Build -st --> starts only the Build target and runs no dependencies
+// Fake.exe "Build" --> starts the Build target and runs the dependency Clean
+// Fake.exe "Build" --single-target --> starts only the Build target and runs no dependencies
+// Fake.exe "Build" -st --> starts only the Build target and runs no dependencies
 // Fake.exe --> starts the Deploy target (and runs the dependencies Clean and Build)
 //***********************************************************************
 #r @"packages/FAKE/tools/FakeLib.dll"
@@ -59,11 +59,11 @@
 #r @"packages\FSharp.Text.RegexProvider\lib\net40\FSharp.Text.RegexProvider.dll"
 #r @"packages\System.Management.Automation.dll\lib\net40\System.Management.Automation.dll"
 open System
+open System.IO
 open System.Net
 open System.Management.Automation
 open FSharp.Data
 open FSharp.Text.RegexProvider
-//open Fake.IO.FileSystem.Shell
 open Fake
 open Fake.Git
 open Fake.ZipHelper
@@ -116,9 +116,39 @@ let gzWebProj = baseDir @@ @"gzWeb\gzWeb.csproj"
 
 // Following contains Azure password and it's git-ignored
 let gzWebDevPublishProfile = __SOURCE_DIRECTORY__ @@ "greenzorroDev.pubxml"
-
 (*-------------------  End of property declarations   ---------------------------------*)
-Target "IsModeParamOk" (fun _ ->
+let printAzCmd (cmdStr : string) = printfn "%s" ("az " + cmdStr)
+let findExecutableInPath (exe:String) =
+    Environment.GetEnvironmentVariable("PATH").Split([| Path.PathSeparator |])
+    |> Seq.append ["."]
+    |> Seq.map (fun p -> p @@ exe)
+    |> Seq.tryFind (File.Exists)
+
+let exec (exe : string)(options : string) : int =
+    match (findExecutableInPath exe) with
+    | Some exe -> Shell.Exec(exe, options)
+    | _ -> -1
+
+Target "AzLoginToGzSub" (fun _ ->
+    let azLoginCmdStr = "login --service-principal -u http://letsencrypt -p /uYrUHAxgZxgAxSpfmlNGhMv1rvgeYsvnnQ1HqN25z8= --tenant \"66fc0b37-5dcf-41d8-a6df-9899e2d07d89\""
+    let azLogin() = exec "az.cmd" azLoginCmdStr
+    let printLoginSuccess() = printfn "Success in loging in with SP."
+    let azSetDefSubCmdStr = "account set -s \"Greenzorro 2nd Subscription\""
+    let azSetDefSubCmd() = exec "az.bat" azSetDefSubCmdStr
+    let printSubSuccess() = printfn "Success in setting the default subscription."
+
+    // Step 0: Login
+    printAzCmd <| azLoginCmdStr.Substring(0, 48)
+    match azLogin() with
+    | 0 -> printLoginSuccess()
+    | retCode -> printfn "Login failed with status %d and cannot proceed!" retCode
+    // Step 1: Set default subscription
+    printAzCmd azSetDefSubCmdStr
+    match azSetDefSubCmd() with
+    | 0 -> printSubSuccess()
+    | retCode -> printfn "Setting the default subscription failed with error code: %d. Try az login" retCode
+)
+Target "InitAzureBuildMode" (fun _ ->
     match mode with
     | "dev" -> trace "Running in dev mode"
     | "prod" -> trace  "Running in prod mode"
@@ -285,29 +315,12 @@ Target "SwapStageLive" (fun _ ->
     // "az webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
     let rec runSwap (times : int) =
         // Set Cmd defaults
-        let azLoginCmdStr = "login --service-principal -u http://letsencrypt -p /uYrUHAxgZxgAxSpfmlNGhMv1rvgeYsvnnQ1HqN25z8= --tenant \"66fc0b37-5dcf-41d8-a6df-9899e2d07d89\""
-        let azLogin() = Shell.Exec("az.bat", azLoginCmdStr)
-        let printLoginSuccess() = printfn "Success in loging in with SP."
-        let azSetDefSubCmdStr = "account set -s \"Greenzorro 2nd Subscription\""
-        let azSetDefSubCmd() = Shell.Exec("az.bat", azSetDefSubCmdStr)
-        let printSubSuccess() = printfn "Success in setting the default subscription."
         let azSwapCmdStr = "webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
-        let azSwapCmd() = Shell.Exec("az.bat", azSwapCmdStr)
+        let azSwapCmd() = exec "az.bat" azSwapCmdStr
         let printSwapSuccess() = printfn "Success in swap stage with production."
-        let printCmd (cmdStr : string) = printfn "%s" ("az " + cmdStr)
 
-        // Step 0: Login
-        printCmd azLoginCmdStr
-        match azLogin() with
-        | 0 -> printLoginSuccess()
-        | retCode -> printfn "Login failed with status %d and cannot proceed!" retCode
-        // Step 1: Set default subscription
-        printCmd azSetDefSubCmdStr
-        match azSetDefSubCmd() with
-        | 0 -> printSubSuccess()
-        | retCode -> printfn "Setting the default subscription failed with error code: %d. Try az login" retCode
-        // Step 2: Swap
-        printCmd azSwapCmdStr
+        // Swap
+        printAzCmd azSwapCmdStr
         match azSwapCmd() with
         | 0 -> printSwapSuccess()
         | retCode -> printfn "Azure swap failed with error code: %d." retCode
@@ -327,7 +340,8 @@ Target "SwapStageLive" (fun _ ->
 )
 
 // Dependencies
-"IsModeParamOk"
+"AzLoginToGzSub"
+  ==> "InitAzureBuildMode"
   ==> "CheckoutDevelop"
   =?> ("PullDevelop", mode = "prod")
   =?> ("MergeMaster", mode = "prod")
