@@ -574,7 +574,7 @@
             }, function (response) {
                 //var lastVersion = localStorageService.get(constants.storageKeys.version);
                 //if (lastVersion !== response.Result.Version)
-                //    factory.setLogout();
+                //    setLogout();
 
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
@@ -585,11 +585,13 @@
                 if (factory.data.username.length > 0) {
                     emWamp.getSessionInfo().then(function (sessionInfo) {
                         if (!sessionInfo.isAuthenticated)
-                            factory.setLogout();
+                            setLogout();
+                        $rootScope.$broadcast(constants.events.ON_INIT);
                     });
                 }
+                else
+                    $rootScope.$broadcast(constants.events.ON_INIT);
                 unregisterConnectionInitiated();
-                $rootScope.$broadcast(constants.events.ON_INIT);
             });
 
             emWamp.init();
