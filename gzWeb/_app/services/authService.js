@@ -459,9 +459,9 @@
         // #endregion
 
         // #region ForgotPassword
-        factory.forgotPassword = function (email) {
+        factory.forgotPassword = function (email, widgetId) {
             var q = $q.defer();
-            api.forgotPassword(email, widgetId).then(function (gzResetKey) {
+            api.forgotPassword(email).then(function (gzResetKey) {
                 var changePwdUrl = $location.protocol() + "://" + $location.host();
                 if ($location.port() > 0)
                     changePwdUrl += ":" + $location.port();
