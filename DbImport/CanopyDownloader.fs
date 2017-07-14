@@ -272,11 +272,14 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.Everym
         display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Vendor2User deposits, cash bonus
-    let uiAutomateDownloadedVendor2UserRpt (dayToProcess : DateTime) : bool =
+    let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
     
         uiAutomatedEnterTransactionsReport()
 
         setTransactionsDates dayToProcess
+
+        // Deposit
+        check "#chkTransType_0"
 
         // Withdrawals
         uncheck "#chkTransType_1"
@@ -405,10 +408,10 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.Everym
         //moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess
 
         // Vendor2User
-        if uiAutomateDownloadedVendor2UserRpt dayToProcess then
+        if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
             moveDownloadedRptToInRptFolder 
-                rptFilesArgs.DownloadedVendor2UserFilter 
-                rptFilesArgs.Vendor2UserRptFilenamePrefix 
+                rptFilesArgs.downloadedDepositsFilter 
+                rptFilesArgs.depositsRptFilenamePrefix 
                 dayToProcess
 
         // Withdrawals: Pending

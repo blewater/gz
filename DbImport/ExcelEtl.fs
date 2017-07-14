@@ -48,7 +48,7 @@ module BalanceRpt2Db =
         let openFile = balanceRptFullPath |> balanceTypedOpenSchema
         importBalanceExcelRptRows balanceType db openFile customYyyyMmDd
 
-module Vendor2UserRpt2Db =
+module DepositsRpt2Db =
     open NLog
     open System
     open NLog
@@ -60,7 +60,7 @@ module Vendor2UserRpt2Db =
 
     let logger = LogManager.GetCurrentClassLogger()
 
-    /// Withdrawal performed in current processing month
+    /// Deposits performed in current processing month
     let private isInitiatedInCurrentMonth(initiatedDate : DateTime)(currentYm : DateTime) : bool =
         currentYm.Month = initiatedDate.Month && currentYm.Year = initiatedDate.Year
 
@@ -70,27 +70,29 @@ module Vendor2UserRpt2Db =
         else 
             thisDate.Month = completedDt.Value.Month && thisDate.Year = completedDt.Value.Year
 
-    /// Withdrawal completion performed within current processing month
+    /// Deposits completion performed within current processing month
     let private isCompletedInCurrentMonth (completedDt : DateTime Nullable)(currentYm : DateTime) : bool =
         completedEqThisDateMonth completedDt currentYm
 
-    /// Withdrawal initiated & completed in the reported month
+    /// Deposits initiated & completed in the reported month
     let private isCompletedInSameMonth (completedDt : DateTime Nullable)(initiatedDate : DateTime) : bool =
         completedEqThisDateMonth completedDt initiatedDate
 
-    let private debit2Vendor2UserType (excelDebitDesc : string) : Vendor2UserAmountType =
+    let private debit2DepositsType (excelDebitDesc : string) : DepositsAmountType =
         if excelDebitDesc.Contains "BonusGranted" then
             V2UCashBonus
 
         elif excelDebitDesc.Contains "Main (System)" then
             V2UDeposit
+        elif excelDebitDesc.Contains "Ordinary" then
+            Deposit
         else
-            failwithf "Unknown Vendor2User debit description: %s." excelDebitDesc
+            failwithf "Unknown Deposits debit description: %s." excelDebitDesc
 
     /// Process all excel lines except Totals and upsert them
-    let private updDbVendor2UserExcelRptRows 
+    let private updDbDepositsExcelRptRows 
                 (db : DbContext) 
-                (vendor2UserExcelFile : Vendor2UserExcelSchema) 
+                (vendor2UserExcelFile : DepositsExcelSchema) 
                 (yyyyMmDd : string) : Unit =
 
         let currentYearMonth = yyyyMmDd.ToDateWithDay
@@ -107,40 +109,40 @@ module Vendor2UserRpt2Db =
                 let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
                 let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
                 
-                let vendor2UserAmountType = debit2Vendor2UserType excelRow.Debit
+                let depositsAmountType = debit2DepositsType excelRow.Debit
 
                 // initiatedCurrently && CompletedInSameMonth are within TotalWithdrawals in Custom
                 if initiatedCurrently && completedInSameMonth && completedCurrently then
-                    DbPlayerRevRpt.updDbVendor2UserPlayerRow vendor2UserAmountType db yyyyMmDd excelRow
+                    DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
 
                 else
                     logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %A, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
                         initiatedDt yyyyMmDd completedDt initiatedCurrently completedCurrently completedInSameMonth)
     
     /// Open an Vendor2User excel file and console out the filename
-    let private openVendor2UserRptSchemaFile excelFilename = 
-        let vendor2UserExcelSchemaFile = Vendor2UserExcelSchema(excelFilename)
+    let private openDepositsRptSchemaFile excelFilename = 
+        let DepositsExcelSchemaFile = DepositsExcelSchema(excelFilename)
         logger.Info ""
-        logger.Info (sprintf "************ Processing Vendor2User Report %s excel file" excelFilename)
+        logger.Info (sprintf "************ Processing Deposits Report %s excel file" excelFilename)
         logger.Info ""
-        vendor2UserExcelSchemaFile
+        DepositsExcelSchemaFile
     
-    /// Process the pending withdrawal excel files: Extract each row and update database customer pending withdrawal amounts
-    let updDbVendor2UserRpt (db : DbContext)(vendor2UserRptFullPath: string) =
+    /// Process the deposits (normal, vendor2user, cashbonus) excel file: Extract each row and upsert database deposits amounts
+    let updDbDepositsRpt (db : DbContext)(depositsRptFullPath: string) =
 
         // Open excel report file for the memory schema
         let openFile = 
-            vendor2UserRptFullPath
-            |> openVendor2UserRptSchemaFile
+            depositsRptFullPath
+            |> openDepositsRptSchemaFile
 
-        let vendor2UserRptDtStr = 
-            Some vendor2UserRptFullPath 
+        let depositsRptDtStr = 
+            Some depositsRptFullPath 
                 |> getVendor2UserDtStr
 
-        if vendor2UserRptDtStr.IsSome then
-            updDbVendor2UserExcelRptRows db openFile vendor2UserRptDtStr.Value
+        if depositsRptDtStr.IsSome then
+            updDbDepositsExcelRptRows db openFile depositsRptDtStr.Value
 
-open Vendor2UserRpt2Db
+open DepositsRpt2Db
             
 module CustomRpt2Db =
     open NLog
@@ -242,7 +244,7 @@ module Etl =
                     |||> moveFileWithOverwrite
         
         // Vendor2User
-        match rpts.Vendor2UserFilename with
+        match rpts.DepositsFilename with
         | Some excelFilename -> 
             (inFolder, outFolder, excelFilename) |||> moveFileWithOverwrite
         | None -> logger.Warn "No Vendor2User file to move."
@@ -262,7 +264,7 @@ module Etl =
     let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) : unit =
         let { 
                 customFilename = customFilename; 
-                Vendor2UserFilename = Vendor2UserFilename;
+                DepositsFilename = depositsFilename;
                 withdrawalsPendingFilename = withdrawalsPendingFilename;
                 withdrawalsRollbackFilename = withdrawalsRollbackFilename;
                 begBalanceFilename = begBalanceFilename; 
@@ -277,11 +279,11 @@ module Etl =
             ||> loadCustomRpt 
         
         // Pending withdrawals import
-        match Vendor2UserFilename with
-        | Some vendor2UserFilename -> 
-                (db, vendor2UserFilename) 
-                    ||> updDbVendor2UserRpt
-        | None -> logger.Warn "No Vendor2User file to import."
+        match depositsFilename with
+        | Some depositsFilename -> 
+                (db, depositsFilename) 
+                    ||> updDbDepositsRpt
+        | None -> logger.Warn "No Deposits file to import."
         
         // Beg, end balance import
         if begBalanceFilename.IsSome then

@@ -169,28 +169,31 @@ module DbPlayerRevRpt =
         |> Seq.iter setDbPlayerGainLoss
         db.DataContext.SubmitChanges()
 
-    /// Update the vendor2User amounts
-    let private updDbRowVendor2UserValues 
-                    (vendor2UserAmountType : Vendor2UserAmountType)
-                    (vendor2UserExcelRow : Vendor2UserExcelSchema.Row) 
+    /// Update the deposits amounts
+    let private updDbRowDepositsValues 
+                    (depositsAmountType : DepositsAmountType)
+                    (depositsExcelRow : DepositsExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
 
         let dbVendor2UserCashBonusAmount = playerRow.CashBonusAmount.Value
         let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
         let dbDeposits = playerRow.TotalDepositsAmount.Value
-        match vendor2UserAmountType with
+        match depositsAmountType with
+        | Deposit ->
+            let newDeposits = dbDeposits + decimal depositsExcelRow.``Debit real amount``
+            playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UDeposit ->
             (* Vendor2User Deposits are tracked separatedly and added to TotatDeposits *)
-            let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal vendor2UserExcelRow.``Debit real amount``
+            let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal depositsExcelRow.``Debit real amount``
             playerRow.Vendor2UserDeposits <- Nullable newV2UDepositAmount
-            let newDeposits = dbDeposits + decimal vendor2UserExcelRow.``Debit real amount``
+            let newDeposits = dbDeposits + decimal depositsExcelRow.``Debit real amount``
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UCashBonus ->
-            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal vendor2UserExcelRow.``Debit real amount``
+            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal depositsExcelRow.``Debit real amount``
             playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
-        playerRow.Processed <- int GmRptProcessStatus.Vendor2UserUpd
+        playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
 
     /// Update the withdrawal amount with an addition for pending withdrawal amounts or deducting rollback withdrawal amounts
     /// Note: they may be multiple pending / rollback withdrawal transactions per user/month
@@ -246,7 +249,7 @@ module DbPlayerRevRpt =
         playerRow.PlayerStatus <- customExcelRow.``Player status``
         if not <| isNull customExcelRow.``Block reason`` then playerRow.BlockReason <- customExcelRow.``Block reason``.ToString()
         playerRow.EmailAddress <- customExcelRow.``Email address``
-        playerRow.TotalDepositsAmount <- customExcelRow.``Total deposits amount`` |> float2NullableDecimal
+        playerRow.TotalDepositsAmount <- Nullable 0m
         playerRow.WithdrawsMade <- customExcelRow.``Withdraws made`` |> float2NullableDecimal
         playerRow.Currency <- customExcelRow.Currency.ToString()
 
@@ -339,17 +342,17 @@ module DbPlayerRevRpt =
         )
         db.DataContext.SubmitChanges()
 
-    /// Set Vendor2User deposit Cash bonus amount in a db PlayerRevRpt Row
-    let updDbVendor2UserPlayerRow 
-                        (vendor2UserAmountType : Vendor2UserAmountType)
+    /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
+    let updDbDepositsPlayerRow 
+                        (vendor2UserAmountType : DepositsAmountType)
                         (db : DbContext)
                         (yyyyMmDd :string)
-                        (vendor2UserRow : Vendor2UserExcelSchema.Row) =
+                        (depositsExcelRow : DepositsExcelSchema.Row) =
 
-        let gmUserId = (int) vendor2UserRow.UserID
+        let gmUserId = (int) depositsExcelRow.UserID
         let yyyyMm = yyyyMmDd.ToYyyyMm
-        logger.Info(sprintf "Importing vendor2User user id %d on %s/%s/%s" 
-                gmUserId <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+        logger.Info(sprintf "Importing deposits user id %d for deposit type %s on %s/%s/%s" 
+                gmUserId <| depositsExcelRow.Debit <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
@@ -358,10 +361,10 @@ module DbPlayerRevRpt =
         }
         |> (fun playerDbRow -> 
             if isNull playerDbRow then 
-                let warningMsg = sprintf "Couldn't find user Id %d from vendor2User excel in the PlayerRevRpt table." gmUserId
+                let warningMsg = sprintf "Couldn't find user Id %d from deposits excel in the PlayerRevRpt table." gmUserId
                 logger.Warn warningMsg
             else
-                updDbRowVendor2UserValues vendor2UserAmountType vendor2UserRow playerDbRow
+                updDbRowDepositsValues vendor2UserAmountType depositsExcelRow playerDbRow
         )
         db.DataContext.SubmitChanges()
 
