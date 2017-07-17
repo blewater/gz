@@ -170,6 +170,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountApiControllerTests.cs" />
     <Compile Include="Controllers\InvestmentsApiControllerTest.cs" />
+    <Compile Include="Helpers\EmailSender.cs" />
     <Compile Include="Helpers\FundsTest.cs" />
     <Compile Include="Models\FinancialTest.cs" />
     <Compile Include="Models\SeedTest.cs" />
