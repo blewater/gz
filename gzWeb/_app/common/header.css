@@ -532,6 +532,21 @@ header .switch .divider {
     .navbar-brand {
         padding: 7px 15px;
     }
+
+    header .switch { width: 100%; }
+    header .switch .on, header .switch .off { font-size: 11px; }
+    header .switch a:nth-of-type(1) { float: left; width: 50%; }
+    header .switch a:nth-of-type(2) { float: right; width: 50%; }
+    header .switch .divider { display: none; }
+    .user-info .dropdown-menu {
+        display: block;
+        position: relative;
+        border: none;
+        box-shadow: none;
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    .user-info .dropdown-menu > li.fullname { text-align: center; }
 }
 
 @media (max-width: 1199px) {
