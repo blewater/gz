@@ -18,7 +18,7 @@
         <div class="col-lg-push-12" ng-class="{'pull-right':lg}">
             <div ng-if="lg" ng-include src="'login-signup.html'"></div>
             <div gz-authorize="gamer,investor" class="user-info">
-                <span class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                <span ng-if="!xs" class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="{{xs}}"
                       ng-mouseover="avatarHovered = true;" ng-mouseleave="avatarHovered = false;">
                     <span class="user-initials img-circle">
                         <span class="user-initials-text">{{initials}}</span>
@@ -71,6 +71,9 @@
                     </li>
                 </ul>
                 <ul gz-authorize="investor" ng-show="routeData.investing" ng-class="{'text-center':!lg}">
+                    <li ng-if="hasGamingBalance" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
+                        {{currency}} {{gamingBalance | number : 2}}
+                    </li>
                     <li ng-repeat="route in routes.investment">
                         <a ng-href="{{route.path}}" ng-class="getClass(route.path)">{{route.title}}</a>
                     </li>

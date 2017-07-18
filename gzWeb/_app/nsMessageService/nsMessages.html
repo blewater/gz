@@ -1,20 +1,20 @@
 ﻿<div id="ns-msgs">
     <div id="ns-modals">
-        <ns-message ng-repeat="modal in nsModals track by $index"
+        <ns-message ng-repeat="modal in nsModals"
                     ns-options="modal"
                     ns-count="nsModals.length"
                     ns-index="$index">
         </ns-message>
     </div>
     <div id="ns-notifications">
-        <ns-message ng-repeat="notification in nsNotifications track by $index"
+        <ns-message ng-repeat="notification in nsNotifications"
                     ns-options="notification"
                     ns-count="nsNotifications.length"
                     ns-index="$index">
         </ns-message>
     </div>
     <div id="ns-toastrs" ng-style="{ 'bottom': getToastrsBottom() }" >
-        <ns-message ng-repeat="toastr in nsToastrs track by $index"
+        <ns-message ng-repeat="toastr in nsToastrs"
                     ns-options="toastr"
                     ns-count="nsToastrs.length"
                     ns-index="$index">
