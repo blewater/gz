@@ -135,7 +135,8 @@
                         name: c.name + " (" + c.phonePrefix + ")"
                     };
                 });
-                $scope.onCountrySelected($scope.currentIpCountry);
+                if ($scope.model.country)
+                    $scope.onCountrySelected($scope.model.country.code);
                 $scope.loadingCountries = false;
             }, function(error) {
                 $log.error(error.desc);
