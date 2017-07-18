@@ -828,7 +828,7 @@
     display: block;
     background: none;
     transition: all 0.4s ease-out;
-    font-size: 11px;
+    font-size: 14px;
     margin: 0;
     height: 0;
 }
@@ -1004,6 +1004,7 @@
     .investments .portfolio .portfolio-plans .plan .title { font-size: 13px; }
     .investments .portfolio .portfolio-plans .plan .balance { font-size: 16px; }
     .investments .portfolio .portfolio-plans .plan .selection button { font-size: 12px; }
+    .investments .portfolio .portfolio-plans .plan .details { font-size: 11px; }
 }
 
 @media (max-width: 396px) {
