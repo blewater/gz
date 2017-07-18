@@ -131,8 +131,8 @@
         }
 
         $scope.openFullscreen = function () {
-            chat.hide();
             $scope.isFullscreen = true;
+            chat.hide();
         }
         $scope.exitFullscreen = function () {
             chat.show();
@@ -164,7 +164,7 @@
         };
 
         $scope.getGameTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameHeight - 70) / 2) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? ($rootScope.mobile ? '70px' : '0') : 'calc(50% - ' + (($scope.gameHeight - 70) / 2) + 'px)';
         };
         $scope.getGameRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';
