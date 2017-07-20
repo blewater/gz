@@ -356,17 +356,7 @@
             }
         }
         function constructCarouselSlide(carouselEntry) {
-            if (carouselEntry.BackgroundImageUrl) {
-                return {
-                    title: carouselEntry.Title,
-                    subtitle: carouselEntry.SubTitle,
-                    action: carouselEntry.ActionText,
-                    url: getCarouselUrl(carouselEntry),
-                    bg: carouselEntry.BackgroundImageUrl,
-                    isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
-                };
-            }
-            else if (carouselEntry.ActionType === constants.carouselActionTypes.game) {
+            if (carouselEntry.ActionType === constants.carouselActionTypes.game && !carouselEntry.BackgroundImageUrl) {
                 var deferred = $q.defer();
                 emCasino.getGames({
                     filterBySlug: [carouselEntry.ActionUrl],
@@ -387,6 +377,16 @@
                     $log.error(error);
                 });
                 return deferred.promise;
+            }
+            else {
+                return {
+                    title: carouselEntry.Title,
+                    subtitle: carouselEntry.SubTitle,
+                    action: carouselEntry.ActionText,
+                    url: getCarouselUrl(carouselEntry),
+                    bg: carouselEntry.BackgroundImageUrl || $rootScope.defaultImg,
+                    isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
+                };
             }
         }
         function loadCarouselSlides() {
