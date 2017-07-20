@@ -50,8 +50,8 @@
                     <div class="row">
                         <div class="title col-xs-12" ng-class="{'text-center': xs}">
                             <span>{{category.title}}</span>
-
-                            <span class="sorting pull-right">
+                            <br ng-show="xs" />
+                            <span class="sorting" ng-class="{'pull-right': !xs}">
                                 Sort by
                                 <!--<span>
                                     <button class="btn-gz" ng-class="{'btn-gz-alt': category.sorting.by === 'alpha' && category.sorting.order === 'asc'}" uib-tooltip="Alphabetically - Ascending" tooltip-class="sorting-tooltip">
