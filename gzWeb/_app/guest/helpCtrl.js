@@ -124,72 +124,72 @@
 			        { Q: "For what reasons can I be excluded from a promotion?", A: "Some of the promotions will be eligible only for customers from certain countries or that are using specific payment methods. There may also be restrictions based on previous misuse of our promotions. For any assistance, please contact Customer Support Team by mail at help@greenzorro.com or via Live Chat." },
                 ]
             },
-            {
-                name: 'Sports Section',
-                items: [
-			        { Q: "Which software provider do you use?", A: "Our Sportsbook and Virtual Sports, desktop and mobile, is provided by EveryMatrix, an award winning sportsbook platform." },
-			        {
-			            Q: "What are the minimum and maximum stakes allowed?",
-			            A: "<div>Maximum stakes vary according to the event. If you try to place a bet greater than the maximum limit, you will receive a message telling you the maximum amount that you are permitted to bet on that selection. Below are the minimum stake limitations, depending on the currency used:</div>" +
-                            "<br/>" +
-                            "<table class=\"table table-striped\">" +
-                                "<thead>" +
-                                    "<tr>" +
-                                        "<th>Min. Stake</th>" +
-                                        "<th>Currency</th>" +
-                                    "</tr>" +
-                                "</thead>" +
-                                "<tbody>" +
-                                    "<tr>" +
-                                        "<td>0.1</td>" +
-                                        "<td>GEL</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>0.25</td>" +
-                                        "<td>CHF, EUR, GBP, LVL, USD</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>0.5</td>" +
-                                        "<td>AUD, BGN, BRL, CAD, NZD, SGD, TRY</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>1</td>" +
-                                        "<td>CNY, DKK, HKD, HRK, ILS, LTL, MXN, MYR, NOK, PLN, RON, SEK, ZAR</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>5</td>" +
-                                        "<td>CZK</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>10</td>" +
-                                        "<td>INR, JPY, PHP, RUB, THB, VEF</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>50</td>" +
-                                        "<td>HUF</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>500</td>" +
-                                        "<td>KRW</td>" +
-                                    "</tr>" +
-                                    "<tr>" +
-                                        "<td>1000</td>" +
-                                        "<td>IDR</td>" +
-                                    "</tr>" +
-                                "<tbody>" +
-                            "</table>"
-			            },
-			        { Q: "What are single bets and multiple bets?", A: "Single bets involve just one selection; a multiple bet requires more than one. The more selections you link together in a multiple (e.g. all the home teams in a round of the Premier League), the more you can win – but of course it is much harder!" },
-			        { Q: "How many selections can a multiple bet contain?", A: "The maximum number of selections we allow in a multiple bet is 20." },
-			        { Q: "How does handicap betting work?", A: "For detailed explanations of handicap betting (1x2 with Handicap and Asian Handicaps), visit the Betting Explanation section here." },
-			        { Q: "What happens if a match is postponed?", A: "Check the rules for that sport. Some sports require the match to be played on the same day for bets to stand, bets in other sports may remain open until the match is completed or officially abandoned." },
-			        { Q: "Why has my winning bet not been paid yet?", A: "We require official results to be declared before markets can be settled. Sometimes online sources such as live score sites can be incorrect so settlement may be delayed until results can be confirmed." },
-			        { Q: "I’ve changed my mind, can I cancel my bet?", A: "No. Once you have confirmed your bet and it has been accepted by our server, bets cannot be cancelled." },
-			        { Q: "Where can I find a record of my bets?", A: "Your betting and transaction histories can be found under 'My Sportbetting Account' when logged into the website." },
-			        { Q: "Why are winnings calculated differently on UK odds?", A: "Winnings will always be calculated using European Odds. Please note that despite displaying the odds with only 2 decimals after the decimal separator, when winnings are calculated we use the exact value of the odds - which might have more than 2 decimals -, without rounding to 2 decimals only." },
-			        { Q: "Betting is becoming addictive for me, what can I do?", A: "Betting with us should be an enjoyable pastime for everyone, but for a small minority of people, it can become addictive and create problems. Information regarding gambling addiction can be found via Responsible Gambling." },
-                ]
-            },
+            //{
+            //    name: 'Sports Section',
+            //    items: [
+			//        { Q: "Which software provider do you use?", A: "Our Sportsbook and Virtual Sports, desktop and mobile, is provided by EveryMatrix, an award winning sportsbook platform." },
+			//        {
+			//            Q: "What are the minimum and maximum stakes allowed?",
+			//            A: "<div>Maximum stakes vary according to the event. If you try to place a bet greater than the maximum limit, you will receive a message telling you the maximum amount that you are permitted to bet on that selection. Below are the minimum stake limitations, depending on the currency used:</div>" +
+            //                "<br/>" +
+            //                "<table class=\"table table-striped\">" +
+            //                    "<thead>" +
+            //                        "<tr>" +
+            //                            "<th>Min. Stake</th>" +
+            //                            "<th>Currency</th>" +
+            //                        "</tr>" +
+            //                    "</thead>" +
+            //                    "<tbody>" +
+            //                        "<tr>" +
+            //                            "<td>0.1</td>" +
+            //                            "<td>GEL</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>0.25</td>" +
+            //                            "<td>CHF, EUR, GBP, LVL, USD</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>0.5</td>" +
+            //                            "<td>AUD, BGN, BRL, CAD, NZD, SGD, TRY</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>1</td>" +
+            //                            "<td>CNY, DKK, HKD, HRK, ILS, LTL, MXN, MYR, NOK, PLN, RON, SEK, ZAR</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>5</td>" +
+            //                            "<td>CZK</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>10</td>" +
+            //                            "<td>INR, JPY, PHP, RUB, THB, VEF</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>50</td>" +
+            //                            "<td>HUF</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>500</td>" +
+            //                            "<td>KRW</td>" +
+            //                        "</tr>" +
+            //                        "<tr>" +
+            //                            "<td>1000</td>" +
+            //                            "<td>IDR</td>" +
+            //                        "</tr>" +
+            //                    "<tbody>" +
+            //                "</table>"
+			//            },
+			//        { Q: "What are single bets and multiple bets?", A: "Single bets involve just one selection; a multiple bet requires more than one. The more selections you link together in a multiple (e.g. all the home teams in a round of the Premier League), the more you can win – but of course it is much harder!" },
+			//        { Q: "How many selections can a multiple bet contain?", A: "The maximum number of selections we allow in a multiple bet is 20." },
+			//        { Q: "How does handicap betting work?", A: "For detailed explanations of handicap betting (1x2 with Handicap and Asian Handicaps), visit the Betting Explanation section here." },
+			//        { Q: "What happens if a match is postponed?", A: "Check the rules for that sport. Some sports require the match to be played on the same day for bets to stand, bets in other sports may remain open until the match is completed or officially abandoned." },
+			//        { Q: "Why has my winning bet not been paid yet?", A: "We require official results to be declared before markets can be settled. Sometimes online sources such as live score sites can be incorrect so settlement may be delayed until results can be confirmed." },
+			//        { Q: "I’ve changed my mind, can I cancel my bet?", A: "No. Once you have confirmed your bet and it has been accepted by our server, bets cannot be cancelled." },
+			//        { Q: "Where can I find a record of my bets?", A: "Your betting and transaction histories can be found under 'My Sportbetting Account' when logged into the website." },
+			//        { Q: "Why are winnings calculated differently on UK odds?", A: "Winnings will always be calculated using European Odds. Please note that despite displaying the odds with only 2 decimals after the decimal separator, when winnings are calculated we use the exact value of the odds - which might have more than 2 decimals -, without rounding to 2 decimals only." },
+			//        { Q: "Betting is becoming addictive for me, what can I do?", A: "Betting with us should be an enjoyable pastime for everyone, but for a small minority of people, it can become addictive and create problems. Information regarding gambling addiction can be found via Responsible Gambling." },
+            //    ]
+            //},
             {
                 name: 'Casino Section',
                 items: [
