@@ -3,7 +3,7 @@
         <div class="container">
             <div class="footer-menu cl-effect text-center">
                 <div ng-repeat-start="item in menu" ng-class="getClass(item.route.path)" ng-if="item.when()">
-                    <a ng-if="item.route" ng-href="{{item.route.path}}">{{item.route.title}}</a>
+                    <a ng-if="item.route" ng-href="{{item.route.path}}" ng-attr-target="{{item.inNewTab ? '_blank' : undefined}}">{{item.route.title}}</a>
                     <a ng-if="item.subroutes">{{item.title}}</a>
                     <ul ng-if="item.subroutes" class="dropdown-menu">
                         <li ng-repeat="subroute in item.subroutes">
