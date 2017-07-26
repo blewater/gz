@@ -761,6 +761,7 @@
     max-height: 100% !important;
     height: 100% !important;
     width: 100% !important;
+    overflow-y: auto;
 }
 #ns-msgs .msg.msg-modal.msg-mobile .msg-close {
     background-color: #27A95C !important;
