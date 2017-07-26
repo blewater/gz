@@ -589,7 +589,7 @@ namespace gzDAL.Repos
 
         /// <summary>
         /// 
-        /// Update custFundShares with sold values for a sold vintage
+        /// Update InvBalances with sold values for a sold vintage
         /// 
         /// </summary>
         /// <param name="customerId"></param>

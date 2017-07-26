@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44300</IISExpressSSLPort>
+    <IISExpressSSLPort>44377</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -701,6 +701,10 @@
     <Compile Include="Migrations\201706121514592_PlayerRevLastMonth.cs" />
     <Compile Include="Migrations\201706121514592_PlayerRevLastMonth.Designer.cs">
       <DependentUpon>201706121514592_PlayerRevLastMonth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707261636153_Awarded_Vintage_Bonus.cs" />
+    <Compile Include="Migrations\201707261636153_Awarded_Vintage_Bonus.Designer.cs">
+      <DependentUpon>201707261636153_Awarded_Vintage_Bonus.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1488,6 +1492,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706121514592_PlayerRevLastMonth.resx">
       <DependentUpon>201706121514592_PlayerRevLastMonth.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707261636153_Awarded_Vintage_Bonus.resx">
+      <DependentUpon>201707261636153_Awarded_Vintage_Bonus.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
