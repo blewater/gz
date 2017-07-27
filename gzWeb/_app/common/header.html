@@ -18,7 +18,7 @@
         <div class="col-lg-push-12" ng-class="{'pull-right':lg}">
             <div ng-if="lg" ng-include src="'login-signup.html'"></div>
             <div gz-authorize="gamer,investor" class="user-info">
-                <span ng-if="!xs" class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="{{xs}}"
+                <span ng-if="lg" class="user-avatar dropdown-toggle" id="user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="{{xs}}"
                       ng-mouseover="avatarHovered = true;" ng-mouseleave="avatarHovered = false;">
                     <span class="user-initials img-circle">
                         <span class="user-initials-text">{{initials}}</span>
@@ -54,7 +54,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
-                    <li ng-if="hasGamingBalance" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
+                    <li ng-if="hasGamingBalance && lg" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
                         {{currency}} {{gamingBalance | number : 2}}
                     </li>
                     <li ng-class="{'text-center': sm || md}">
@@ -71,7 +71,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="investor" ng-show="routeData.investing" ng-class="{'text-center':!lg}">
-                    <li ng-if="hasGamingBalance" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
+                    <li ng-if="hasGamingBalance && lg" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
                         {{currency}} {{gamingBalance | number : 2}}
                     </li>
                     <li ng-repeat="route in routes.investment">
@@ -111,6 +111,9 @@
                         <span class="version">beta</span>
                     </h2>
                 </a>
+                <span ng-if="hasGamingBalance && !lg" class="gaming-balance outer-gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
+                    {{currency}} {{gamingBalance | number : 2}}
+                </span>
                 <button type="button" class="navbar-toggle collapsed" ng-class="{'collapsed': !mobileMenuExpanded}" ng-click="expandCollapseMobileMenu()">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar icon-top-bar"></span>

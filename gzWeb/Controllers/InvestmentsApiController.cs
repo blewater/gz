@@ -138,7 +138,13 @@ namespace gzWeb.Controllers {
 
             var userVintages = GetVintagesSellingValuesByUser(user, vintages);
 
-            return OkMsg(() => userVintages);
+            var viewModel = new VintagesWithSellingValuesViewModel
+            {
+                Vintages = userVintages,
+                WithdrawnAmount = 100
+            };
+
+            return OkMsg(() => viewModel);
         }
 
         /// <summary>

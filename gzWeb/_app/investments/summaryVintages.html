@@ -35,9 +35,13 @@
             </div>
         </div>
 
+        <div ng-if="withdrawMode && alreadyWithdrawn" class="row">
+            <div class="col-xs-9 text-left total">Total amount withdrawn</div>
+            <div class="col-xs-3 text-right total amount">{{alreadyWithdrawn | isoCurrency : currency : 0}}</div>
+        </div>
         <div ng-if="withdrawMode" class="row">
-            <div class="col-xs-6 text-left total">Total amount to be withdrawn</div>
-            <div class="col-xs-6 text-right total amount">{{totalGain() | isoCurrency : currency : 0}}</div>
+            <div class="col-xs-9 text-left total">Total amount to be withdrawn</div>
+            <div class="col-xs-3 text-right total amount">{{totalGain() | isoCurrency : currency : 0}}</div>
         </div>
 
         <div ng-if="withdrawMode" class="row">
