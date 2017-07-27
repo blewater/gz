@@ -580,20 +580,21 @@ namespace gzDAL.Repos
         public (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFeesAmount) GetSoldVintagesAmounts(int userId) {
 
             var soldAmounts =
-
                 db.InvBalances
-                    .Where(i => i.CustomerId == 9 && i.Sold)
+                    .Where(i => i.CustomerId == 8 && i.Sold)
                     .Select(i =>
-                        Tuple.Create(
-                            i.SoldAmount.Value,
-                            i.SoldFees.Value
-                        )
+                        new
+                        {
+                            SoldAmount = i.SoldAmount.Value,
+                            SoldFees = i.SoldFees.Value
+                        }
                     )
                     .AsEnumerable()
-                    .Aggregate((0m, 0m), (acc, nextAmounts) => 
-                        (acc.Item1 
-                        + (nextAmounts.Item1 - nextAmounts.Item2) // Total Sold Amount - Fees = Net Proceeds
-                        , acc.Item2 + nextAmounts.Item2)); // Fees
+                    .Aggregate(
+                        (0m, 0m), (acc, nextAmounts) =>
+                            (acc.Item1 + (nextAmounts.SoldAmount - nextAmounts.SoldFees) // Total Sold Amount - Fees = Net Proceeds
+                            , acc.Item2 + nextAmounts.SoldFees));
+
 
             return soldAmounts;
         }
