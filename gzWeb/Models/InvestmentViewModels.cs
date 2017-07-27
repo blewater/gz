@@ -4,6 +4,12 @@ using gzDAL.Models;
 
 namespace gzWeb.Models
 {
+    public class VintagesWithSellingValuesViewModel
+    {
+        public IList<VintageViewModel> Vintages { get; set; }
+        public decimal WithdrawnAmount { get; set; }
+    }
+
     public class VintageViewModel
     {
         public int InvBalanceId { get; set; }

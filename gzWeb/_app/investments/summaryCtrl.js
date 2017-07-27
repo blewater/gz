@@ -8,7 +8,7 @@
         $scope.spinnerWhite = constants.spinners.sm_abs_white;
         var sellingValuesFetched = false;
 
-        $scope.openVintages = function (title, vintages, withdrawMode) {
+        $scope.openVintages = function (title, vintages, withdrawMode, alreadyWithdrawn) {
             return message.modal(title, {
                 nsSize: '700px',
                 nsTemplate: '_app/investments/summaryVintages.html',
@@ -18,6 +18,7 @@
                     vintages: vintages,
                     withdrawMode: withdrawMode,
                     currency: $scope.currency,
+                    alreadyWithdrawn: alreadyWithdrawn
                     //getInvestmentText: $scope.getInvestmentText
                 }
             });
@@ -33,10 +34,11 @@
                 $scope.fetchingSellingValues = true;
                 api.call(function () {
                     return api.getVintagesWithSellingValues($scope.vintages);
-                }, function (getVintagesRsponse) {
+                }, function (getVintagesResponse) {
                     sellingValuesFetched = true;
                     $scope.fetchingSellingValues = false;
-                    $scope.vintages = processVintages(getVintagesRsponse.Result);
+                    $scope.vintages = processVintages(getVintagesResponse.Result.Vintages);
+                    $scope.alreadyWithdrawn = getVintagesResponse.Result.WithdrawnAmount;
                     withdrawVintages();
                 });
             }
@@ -47,7 +49,7 @@
         function withdrawVintages() {
             window.appInsights.trackEvent("OPEN WITHDRAW VINTAGES");
             var withdrawableVintages = $filter('omit')($scope.vintages, function (v) { return v.InvestmentAmount === 0; });
-            var promise = $scope.openVintages('Available funds for withdrawal', withdrawableVintages, true);
+            var promise = $scope.openVintages('Available funds for withdrawal', withdrawableVintages, true, $scope.alreadyWithdrawn);
             promise.then(function (updatedVintages) {
                 api.call(function () {
                     window.appInsights.trackEvent("ACTUAL WITHDRAW VINTAGES");
