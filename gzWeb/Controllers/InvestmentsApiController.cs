@@ -136,12 +136,12 @@ namespace gzWeb.Controllers {
                 return OkMsg(new object(), "User not found!");
             }
 
-            var userVintages = GetVintagesSellingValuesByUser(user, vintages);
+            var vintagesWithSoldAmounts = GetVintagesSellingValuesByUser(user, vintages);
 
             var viewModel = new VintagesWithSellingValuesViewModel
             {
-                Vintages = userVintages,
-                WithdrawnAmount = 100
+                Vintages = vintagesWithSoldAmounts.vintagesVm,
+                WithdrawnAmount = vintagesWithSoldAmounts.totalVintagesSoldAmounts.totalSoldVintagesNetProceeds
             };
 
             return OkMsg(() => viewModel);
@@ -196,23 +196,24 @@ namespace gzWeb.Controllers {
         /// 
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="vintagesVM"></param>
+        /// <param name="vintagesVm"></param>
         /// <returns></returns>
-        public List<VintageViewModel> GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVM)
+        private (List<VintageViewModel> vintagesVm, (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFees) totalVintagesSoldAmounts) 
+            GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVm)
         {
-            var vintageDtos = vintagesVM
+            var vintageDtos = vintagesVm
                     .Select(t => mapper.Map<VintageViewModel, VintageDto>(t))
                     .ToList();
 
-            var retValue = 
+            var vintagesWithPastSoldAmounts = 
                 invBalanceRepo
                 .GetCustomerVintagesSellingValueNow(user.Id, vintageDtos);
 
-            var vintagesValuedAtPresentValue = retValue.vintagesDtos;
+            var vintagesValuedAtPresentValueDto = vintagesWithPastSoldAmounts.vintagesDtos;
 
-            var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValue);
+            var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValueDto);
 
-            return vintagesVmRet;
+            return (vintagesVmRet, vintagesWithPastSoldAmounts.totalVintagesSoldAmounts);
         }
 
         /// <summary>
