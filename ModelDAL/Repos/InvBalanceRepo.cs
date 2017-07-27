@@ -80,7 +80,8 @@ namespace gzDAL.Repos
         /// <param name="yyyyMm"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public async Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm) {
+        public async Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm)
+        {
             var invBalanceRow =
                 await db.InvBalances
                     .Where(i => i.CustomerId == customerId
@@ -102,7 +103,8 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId) {
+        public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId)
+        {
 
             var currentMonth = DateTime.UtcNow.ToStringYearMonth();
 
@@ -119,8 +121,10 @@ namespace gzDAL.Repos
         /// 1. Balance Amount of last month
         /// 2. Last updated timestamp of invBalance.
         /// </returns>
-        public InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow) {
-            var cachedBalanceRow = new InvBalAmountsRow {
+        public InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow)
+        {
+            var cachedBalanceRow = new InvBalAmountsRow
+            {
                 Balance = lastBalanceRow?.Balance ?? 0,
                 CashInvestment = lastBalanceRow?.CashInvestment ?? 0,
                 TotalCashInvInHold = lastBalanceRow?.TotalCashInvInHold ?? 0,
@@ -145,12 +149,14 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId) {
+        public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId)
+        {
 
             ApplicationUser userRet = null;
             UserSummaryDTO summaryDtoRet = null;
 
-            try {
+            try
+            {
 
                 var invBalanceRes =
                     GetLatestBalanceDto(
@@ -172,12 +178,14 @@ namespace gzDAL.Repos
                 //-------------- Retrieve previously executed async query results
 
                 // user
-                if (userRet == null) {
+                if (userRet == null)
+                {
                     _logger.Error("User with id {0} is null in GetSummaryData()", userId);
                 }
 
                 // Package all the results
-                summaryDtoRet = new UserSummaryDTO() {
+                summaryDtoRet = new UserSummaryDTO()
+                {
 
                     Vintages = vintages,
 
@@ -208,7 +216,8 @@ namespace gzDAL.Repos
                     Prompt = withdrawalEligibility.Prompt
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.Error(ex, "Exception in GetSummaryData()");
             }
 
@@ -223,14 +232,17 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="invBalanceUpdatedTimestamp"></param>
         /// <returns></returns>
-        private static DateTime GetLastUpdatedMidnight(DateTime invBalanceUpdatedTimestamp) {
+        private static DateTime GetLastUpdatedMidnight(DateTime invBalanceUpdatedTimestamp)
+        {
 
             DateTime lastUpdateDate;
-            if (invBalanceUpdatedTimestamp > DateTime.MinValue) {
+            if (invBalanceUpdatedTimestamp > DateTime.MinValue)
+            {
                 lastUpdateDate = invBalanceUpdatedTimestamp.AddDays(-1);
                 lastUpdateDate = new DateTime(lastUpdateDate.Year, lastUpdateDate.Month, lastUpdateDate.Day, 23, 59, 59);
             }
-            else {
+            else
+            {
                 lastUpdateDate = DateTime.Today;
             }
             return lastUpdateDate;
@@ -536,12 +548,14 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="customerVintages"></param>
         /// <returns></returns>
-        public List<VintageDto> GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
+        public (List<VintageDto> vintagesDtos, (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFeesAmount) totalVintagesSoldAmounts) 
+            GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
 
             foreach (var dto in customerVintages)
             {
-                if (dto.SellingValue == 0 && dto.InvestmentAmount != 0 && !dto.Locked) {
+                if (dto.SellingValue == 0 && dto.InvestmentAmount != 0 && !dto.Locked)
+                {
                     // out var declarations
                     VintageSharesDto vintageShares;
                     decimal fees;
@@ -558,8 +572,30 @@ namespace gzDAL.Repos
                     dto.SellingValue = vintageMarketPrice - fees;
                 }
             }
+            var soldAmounts = GetSoldVintagesAmounts(customerId);
 
-            return customerVintages;
+            return (customerVintages, soldAmounts);
+        }
+
+        public (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFeesAmount) GetSoldVintagesAmounts(int userId) {
+
+            var soldAmounts =
+
+                db.InvBalances
+                    .Where(i => i.CustomerId == 9 && i.Sold)
+                    .Select(i =>
+                        Tuple.Create(
+                            i.SoldAmount.Value,
+                            i.SoldFees.Value
+                        )
+                    )
+                    .AsEnumerable()
+                    .Aggregate((0m, 0m), (acc, nextAmounts) => 
+                        (acc.Item1 
+                        + (nextAmounts.Item1 - nextAmounts.Item2) // Total Sold Amount - Fees = Net Proceeds
+                        , acc.Item2 + nextAmounts.Item2)); // Fees
+
+            return soldAmounts;
         }
 
         /// <summary>
@@ -577,7 +613,7 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<List<VintageDto>> GetCustomerVintagesSellingValue(int customerId)
+        public async Task<List<VintageDto>> GetCustomerVintagesSellingValueUnitTestHelper(int customerId)
         {
 
             var customerVintages = await GetCustomerVintagesAsync(customerId);
@@ -607,7 +643,7 @@ namespace gzDAL.Repos
                     .Single();
 
                 // Side effect to in-parameter vintage.Sold = true
-                vintage.Sold = 
+                vintage.Sold =
                     vintageToBeSold.Sold = true;
 
                 vintageToBeSold.SoldAmount = vintage.MarketPrice;
@@ -648,7 +684,8 @@ namespace gzDAL.Repos
 
             foreach (var vintage in vintages)
             {
-                if (vintage.Selected) {
+                if (vintage.Selected)
+                {
 
                     SaveDbSellOneVintageSetInvBalance(customerId, vintage, soldOnUtc, soldOnYearMonth);
                 }
@@ -673,9 +710,9 @@ namespace gzDAL.Repos
             // Set market price on it.. they may have left the browser window open 
             // for a long time (stock market-wise) before hitting withdraw
 
-            var vintagesToBeSold = 
-                sellOnThisYearMonth.Length == 0 
-                    ? SetAllSelectedVintagesPresentMarketValue(customerId, vintages) 
+            var vintagesToBeSold =
+                sellOnThisYearMonth.Length == 0
+                    ? SetAllSelectedVintagesPresentMarketValue(customerId, vintages)
                     : SetAllSelectedVintagesMarketValueOn(customerId, vintages, sellOnThisYearMonth);
 
             if (vintagesToBeSold > 0)
@@ -743,7 +780,7 @@ namespace gzDAL.Repos
                         gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
                             customerId,
                             newMonthlyBalance,
-                            GzTransactionTypeEnum.FullCustomerFundsLiquidation, 
+                            GzTransactionTypeEnum.FullCustomerFundsLiquidation,
                             currentYearMonthStr,
                             updatedDateTimeUtc,
                             out lastInvestmentCredit);
