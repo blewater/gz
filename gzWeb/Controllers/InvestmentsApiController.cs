@@ -177,7 +177,7 @@ namespace gzWeb.Controllers {
 
             var vintagesValuedAtPresentValue = 
                 await invBalanceRepo
-                    .GetCustomerVintagesSellingValue(user.Id);
+                    .GetCustomerVintagesSellingValueUnitTestHelper(user.Id);
 
             var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValue);
 
@@ -198,8 +198,11 @@ namespace gzWeb.Controllers {
                     .Select(t => mapper.Map<VintageViewModel, VintageDto>(t))
                     .ToList();
 
-            var vintagesValuedAtPresentValue = invBalanceRepo
-                    .GetCustomerVintagesSellingValueNow(user.Id, vintageDtos);
+            var retValue = 
+                invBalanceRepo
+                .GetCustomerVintagesSellingValueNow(user.Id, vintageDtos);
+
+            var vintagesValuedAtPresentValue = retValue.vintagesDtos;
 
             var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValue);
 
