@@ -39,6 +39,33 @@ namespace gzDAL.Repos
         public DateTime UpdatedOnUtc { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// Return type for user vintages along with past cashed withdrawn vintages
+    /// 
+    /// </summary>
+    public class VintagesWithSellingValues
+    {
+        public List<VintageDto> VintagesDtos { get; set; }
+        public SoldVintagesAmounts SoldVintagesAmounts { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// Return type for past vintages cashed withdrawn amounts
+    /// 
+    /// </summary>
+    public class SoldVintagesAmounts
+    {
+        public decimal TotalSoldVintagesNetProceeds { get; set; }
+        public decimal TotalSoldVintagesFeesAmount { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// Main repository class of this file for the InvestmentBalances entity
+    /// 
+    /// </summary>
     public class InvBalanceRepo : IInvBalanceRepo
     {
         private readonly ApplicationDbContext db;
@@ -548,8 +575,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="customerVintages"></param>
         /// <returns></returns>
-        public (List<VintageDto> vintagesDtos, (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFeesAmount) totalVintagesSoldAmounts) 
-            GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
+        public VintagesWithSellingValues GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
 
             foreach (var dto in customerVintages)
@@ -574,10 +600,20 @@ namespace gzDAL.Repos
             }
             var soldAmounts = GetSoldVintagesAmounts(customerId);
 
-            return (customerVintages, soldAmounts);
+            return new VintagesWithSellingValues() {
+                VintagesDtos = customerVintages,
+                SoldVintagesAmounts = soldAmounts
+            };
         }
 
-        public (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFeesAmount) GetSoldVintagesAmounts(int userId) {
+        /// <summary>
+        /// 
+        /// Query the net proceeds and fees from past "cashed" withdrawn vintages
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public SoldVintagesAmounts GetSoldVintagesAmounts(int userId) {
 
             var soldAmounts =
                 db.InvBalances
@@ -591,12 +627,16 @@ namespace gzDAL.Repos
                     )
                     .AsEnumerable()
                     .Aggregate(
-                        (0m, 0m), (acc, nextAmounts) =>
-                            (acc.Item1 + (nextAmounts.SoldAmount - nextAmounts.SoldFees) // Total Sold Amount - Fees = Net Proceeds
+                        Tuple.Create(0m, 0m), (acc, nextAmounts) =>
+                            Tuple.Create(acc.Item1 + (nextAmounts.SoldAmount - nextAmounts.SoldFees) // Total Sold Amount - Fees = Net Proceeds
                             , acc.Item2 + nextAmounts.SoldFees));
 
+            var soldAmountsRet = new SoldVintagesAmounts() {
+                TotalSoldVintagesNetProceeds = soldAmounts.Item1,
+                TotalSoldVintagesFeesAmount = soldAmounts.Item2
+            };
 
-            return soldAmounts;
+            return soldAmountsRet;
         }
 
         /// <summary>

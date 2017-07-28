@@ -11,6 +11,7 @@ using gzDAL.Conf;
 using gzDAL.DTO;
 using gzDAL.Models;
 using gzDAL.ModelUtil;
+using gzDAL.Repos;
 using gzDAL.Repos.Interfaces;
 using gzWeb.Contracts;
 using gzWeb.Models;
@@ -138,13 +139,7 @@ namespace gzWeb.Controllers {
 
             var vintagesWithSoldAmounts = GetVintagesSellingValuesByUser(user, vintages);
 
-            var viewModel = new VintagesWithSellingValuesViewModel
-            {
-                Vintages = vintagesWithSoldAmounts.vintagesVm,
-                WithdrawnAmount = vintagesWithSoldAmounts.totalVintagesSoldAmounts.totalSoldVintagesNetProceeds
-            };
-
-            return OkMsg(() => viewModel);
+            return OkMsg( () => vintagesWithSoldAmounts );
         }
 
         /// <summary>
@@ -198,8 +193,7 @@ namespace gzWeb.Controllers {
         /// <param name="user"></param>
         /// <param name="vintagesVm"></param>
         /// <returns></returns>
-        private (List<VintageViewModel> vintagesVm, (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFees) totalVintagesSoldAmounts) 
-            GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVm)
+        private VintagesWithSellingValuesViewModel GetVintagesSellingValuesByUser(ApplicationUser user, IList<VintageViewModel> vintagesVm)
         {
             var vintageDtos = vintagesVm
                     .Select(t => mapper.Map<VintageViewModel, VintageDto>(t))
@@ -208,12 +202,16 @@ namespace gzWeb.Controllers {
             var vintagesWithPastSoldAmounts = 
                 invBalanceRepo
                 .GetCustomerVintagesSellingValueNow(user.Id, vintageDtos);
-
-            var vintagesValuedAtPresentValueDto = vintagesWithPastSoldAmounts.vintagesDtos;
+            
+            var vintagesValuedAtPresentValueDto = vintagesWithPastSoldAmounts.VintagesDtos;
 
             var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValueDto);
 
-            return (vintagesVmRet, vintagesWithPastSoldAmounts.totalVintagesSoldAmounts);
+            return new VintagesWithSellingValuesViewModel() {
+                Vintages = vintagesVmRet,
+                WithdrawnAmount = vintagesWithPastSoldAmounts.SoldVintagesAmounts.TotalSoldVintagesNetProceeds,
+                WithdrawnFeesAmount = vintagesWithPastSoldAmounts.SoldVintagesAmounts.TotalSoldVintagesFeesAmount
+            };
         }
 
         /// <summary>
