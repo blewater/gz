@@ -15,8 +15,8 @@ namespace gzDAL.Repos.Interfaces {
         Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId);
         /// ** Unit Test Helper **
         Task<List<VintageDto>> GetCustomerVintagesSellingValueUnitTestHelper(int customerId);
-        (List<VintageDto> vintagesDtos, (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFeesAmount) totalVintagesSoldAmounts) GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages);
-        (decimal totalSoldVintagesNetProceeds, decimal totalSoldVintagesFeesAmount) GetSoldVintagesAmounts(int userId);
+        VintagesWithSellingValues GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages);
+        SoldVintagesAmounts GetSoldVintagesAmounts(int userId);
         ICollection<VintageDto> GetUserVintagesSellingValueOn(int customerId, List<VintageDto> customerVintages,
             string sellOnThisYearMonth);
         void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "");
