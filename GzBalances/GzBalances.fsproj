@@ -68,6 +68,7 @@
     <Compile Include="PortfolioTypes.fs" />
     <None Include="Script.fsx" />
     <Compile Include="Portfolio.fs" />
+    <Compile Include="WithdrawnVintageBonusGen.fs" />
     <None Include="Scripts\load-references-debug.fsx" />
     <None Include="Scripts\load-project-debug.fsx" />
     <None Include="Scripts\load-references-release.fsx" />
@@ -76,10 +77,12 @@
     <None Include="Scripts\load-project-production.fsx" />
     <Content Include="packages.config" />
     <None Include="quotes.csv" />
+    <None Include="everymatrix_deposits.csv" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.1\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.2\lib\net45\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
@@ -87,7 +90,8 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\GzBatch\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

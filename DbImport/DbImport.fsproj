@@ -88,7 +88,8 @@
       <HintPath>..\GzBatch\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="canopy">
-      <HintPath>..\GzBatch\packages\canopy.1.4.5\lib\canopy.dll</HintPath>
+      <HintPath>..\GzBatch\packages\canopy.1.5.0\lib\canopy.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Excel">
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\Excel.dll</HintPath>
@@ -97,7 +98,8 @@
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ExcelProvider.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.1\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.2\lib\net45\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
@@ -111,14 +113,17 @@
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\GzBatch\packages\MailKit.1.16.1\lib\net451\MailKit.dll</HintPath>
+      <HintPath>..\GzBatch\packages\MailKit.1.16.2\lib\net451\MailKit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\GzBatch\packages\MimeKit.1.16.1\lib\net451\MimeKit.dll</HintPath>
+      <HintPath>..\GzBatch\packages\MimeKit.1.16.2\lib\net451\MimeKit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\GzBatch\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -154,7 +159,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\GzBatch\packages\Selenium.Chrome.WebDriver.2.29\build\Selenium.Chrome.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GzBatch\packages\Selenium.Chrome.WebDriver.2.29\build\Selenium.Chrome.WebDriver.targets'))" />
+    <Error Condition="!Exists('..\GzBatch\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GzBatch\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets'))" />
   </Target>
+  <Import Project="..\GzBatch\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets" Condition="Exists('..\GzBatch\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
