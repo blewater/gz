@@ -206,6 +206,8 @@ module Etl =
     open CustomRpt2Db
     open BalanceRpt2Db
     open WithdrawalRpt2Db
+    open DbPlayerRevRpt
+
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -344,8 +346,12 @@ module Etl =
         (db, dbOperation) 
             ||> tryDBCommit3Times
 
+        // Archive / move excel files
         moveRptsToOutFolder 
             inFolder 
             outFolder 
             reportfileNames
+
+        // Update null gmCustomerids
+        setDbGmCustomerId db
 
