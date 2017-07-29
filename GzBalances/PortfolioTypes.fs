@@ -12,6 +12,8 @@ module PortfolioTypes =
 
     type Money = decimal
 
+    type YyyyMm = string
+
     type Portfolio = {
         PortfolioId : PortfolioId;
         Risk : Risk

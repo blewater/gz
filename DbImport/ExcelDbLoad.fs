@@ -388,3 +388,25 @@ module DbPlayerRevRpt =
                 setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow
         )
         db.DataContext.SubmitChanges()
+
+    /// Update all null everymatrix customer ids to excel table
+    let setDbGmCustomerId(db : DbContext) =
+
+        query { 
+            for user in db.AspNetUsers do
+                where (not <| user.GmCustomerId.HasValue )
+                select user
+        }
+        |> Seq.iter (fun user -> 
+            query { 
+                for gmUser in db.PlayerRevRpt do
+                    where (gmUser.EmailAddress = user.Email)
+                    select gmUser.UserID
+                    distinct
+                    exactlyOne
+            } 
+            |> (fun gmUserId ->
+                user.GmCustomerId <- Nullable gmUserId
+            )
+        )
+        db.DataContext.SubmitChanges()
