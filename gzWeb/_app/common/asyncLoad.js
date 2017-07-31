@@ -82,7 +82,7 @@ var AsyncLoad = (function () {
             loadingError.innerHTML =
                     //'<div style="line-height: 3em;font-size: 36px;">Oooops!</div>' +
                     '<div style="line-height: 3em;font-size: 24px;">No dice for now...</div>' +
-                    '<div style="line-height: 3em;font-size: 24px;">...greenzorro apologies</div>' +
+                    '<div style="line-height: 3em;font-size: 24px;">...greenzorro apologizes</div>' +
                     '<div style="line-height: 3em;font-size: 36px;">:(</div>';
             };
         var b = document.getElementsByTagName('BODY')[0];
