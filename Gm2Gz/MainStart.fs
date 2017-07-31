@@ -44,7 +44,7 @@ let processGm2Gz
         let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
                                     |> GmRptFiles.getExcelFilenames
                                     |> GmRptFiles.balanceRptDateMatchTitles
-                                    |> GmRptFiles.vendor2UserRptContentMatch
+                                    |> GmRptFiles.depositsRptContentMatch
                                     |> GmRptFiles.getExcelDtStr
                                     |> GmRptFiles.getExcelDates 
                                     |> GmRptFiles.areExcelFilenamesValid
@@ -89,12 +89,12 @@ let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
             DownloadedCustomFilter = Settings.DownloadedCustomFilter;
             DownloadedBalanceFilter = Settings.DownloadedBalanceFilter;
             DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
-            DownloadedVendor2UserFilter = Settings.DownloadedVendor2UserFilter;
+            downloadedDepositsFilter = Settings.DownloadedDepositsFilter;
             CustomRptFilenamePrefix = Settings.CustomRptFilenamePrefix;
             EndBalanceRptFilenamePrefix = Settings.EndBalanceRptFilenamePrefix;
             WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
             WithdrawalsRollbackRptFilenamePrefix = Settings.WithdrawalsRollbackRptFilenamePrefix;
-            Vendor2UserRptFilenamePrefix = Settings.Vendor2UserRptFilenamePrefix;
+            depositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
             Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
         }
 

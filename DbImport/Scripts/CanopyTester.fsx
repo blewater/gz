@@ -38,13 +38,13 @@ let inRptFolderName = Path.Combine (drive, @"sc\gz\inRpt\")
 let downloadedCustomFilter = "values*.xlsx"
 let downloadedBalanceFilter = "byBalance*.xlsx"
 let downloadedWithdrawalsFilter = "trans*.xlsx"
-let downloadedVendor2UserFilter = "trans*.xlsx"
+let downloadedDepositsFilter = "trans*.xlsx"
 
 let customRptFilenamePrefix = "Custom Prod "
 let endBalanceRptFilenamePrefix = "Balance Prod "
 let withdrawalsPendingRptFilenamePrefix = "withdrawalsPending Prod "
 let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
-let vendor2UserRptFilenamePrefix = "Vendor2User Prod "
+let depositsRptFilenamePrefix = "Deposits Prod "
 
 let dayToProcess = DateTime.Today.AddDays(-1.0)
 
@@ -309,11 +309,14 @@ let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) 
     display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
 /// Vendor2User deposits, cash bonus
-let uiAutomateDownloadedVendor2UserRpt (dayToProcess : DateTime) : bool =
+let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
     
     uiAutomatedEnterTransactionsReport()
 
     setTransactionsDates dayToProcess
+
+    // Deposit
+    check "#chkTransType_0"
 
     // Withdrawals
     uncheck "#chkTransType_1"
@@ -426,8 +429,8 @@ let uiAutomationDownloading (dayToProcess : DateTime) =
     moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess
 
     // Vendor2User
-    if uiAutomateDownloadedVendor2UserRpt dayToProcess then
-        moveDownloadedRptToInRptFolder downloadedVendor2UserFilter vendor2UserRptFilenamePrefix dayToProcess
+    if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
+        moveDownloadedRptToInRptFolder downloadedDepositsFilter depositsRptFilenamePrefix dayToProcess
 
     // Withdrawals: Pending
     if uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess then
