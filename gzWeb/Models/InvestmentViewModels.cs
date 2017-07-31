@@ -8,6 +8,7 @@ namespace gzWeb.Models
     {
         public IList<VintageViewModel> Vintages { get; set; }
         public decimal WithdrawnAmount { get; set; }
+        public decimal WithdrawnFeesAmount { get; set; }
     }
 
     public class VintageViewModel
