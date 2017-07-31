@@ -83,7 +83,50 @@
 			        { Q: "I used my credit/debit card to deposit, can I request a withdrawal by any other mean?", A: "Our policy is to return the original deposit amount back to the card that is used for deposit and extra winning can be returned via other method. If the card does not accept withdrawal, your winning can be paid out via bank transfer but we might need you to provide some documentation." },
 			        { Q: "Why can’t I choose by which method I want to get paid?", A: "Due to anti money laundering laws, it is our policy to ensure the money is going back to the original source that made the deposit when possible." },
 			        { Q: "Do you charge any withdrawal fees?", A: "Once login, please click the withdrawal button and the fee will be displayed next to the methods that are available to you for withdrawal." },
-			        { Q: "How long do withdrawals take to process?", A: "Once login, please click the withdrawal button and the processing time will be displayed next to the methods that are available to you for withdrawal." },
+			        //{ Q: "How long do withdrawals take to process?", A: "Once login, please click the withdrawal button and the processing time will be displayed next to the methods that are available to you for withdrawal." },
+                    {
+                        Q: "How long do withdrawals take?",
+                        A: "<div>Withdrawals to Credit/Debit cards typically take 2-5 days, once executed, while withdrawals via Bank Transfer (Trustly) take 3-5 days, once executed. Withdrawals to e-wallets (e.g. Skrill and Neteller) are instantly processed, once executed.</div>" +
+                            "<br/>" +
+                            "<table class=\"table table-striped\">" +
+                                "<thead>" +
+                                    "<tr>" +
+                                        "<th>Payment method</th>" +
+                                        "<th>Processing time</th>" +
+                                    "</tr>" +
+                                "</thead>" +
+                                "<tbody>" +
+                                    "<tr>" +
+                                        "<td>Credit/Debit Card</td>" +
+                                        "<td>2-5 days</td>" +
+                                    "</tr>" +
+                                    "<tr>" +
+                                        "<td>Trustly (Bank Transfer)</td>" +
+                                        "<td>3-5 days</td>" +
+                                    "</tr>" +
+                                    "<tr>" +
+                                        "<td>Skrill</td>" +
+                                        "<td>Instant</td>" +
+                                    "</tr>" +
+                                    "<tr>" +
+                                        "<td>Neteller</td>" +
+                                        "<td>Instant</td>" +
+                                    "</tr>" +
+                                    "<tr>" +
+                                        "<td>Paysafecard</td>" +
+                                        "<td>Instant</td>" +
+                                    "</tr>" +
+                                    "<tr>" +
+                                        "<td>Entercash</td>" +
+                                        "<td>Instant</td>" +
+                                    "</tr>" +
+                                    "<tr>" +
+                                        "<td>Ecopayz</td>" +
+                                        "<td>Instant</td>" +
+                                    "</tr>" +
+                                "<tbody>" +
+                            "</table>"
+                    },
 			        { Q: "Why is it that a withdrawal to my card takes days while a deposit is immediate?", A: "We have a number of controls and checks that take place before any withdrawal is processed and withdrawals will be processed immediately once verifications are complete. These checks are part of our ongoing commitment to maintaining the security of our customers’ funds. Any other delays will be due to the restrictions imposed by the payment providers." },
 			        { Q: "Can I make a withdrawal from my account and have it sent to someone else?", A: "No, this is deemed as a third party transaction and will not be permitted in any circumstance." },
 			        { Q: "What is your withdrawal policy?", A: "Our policy is to ensure the money is going back to the original source that made the deposit when possible." },
