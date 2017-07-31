@@ -526,6 +526,15 @@
 .guest .about .about-bottom { padding-top: 50px; }
 
 
+.guest .about .about-team {
+	background-color: white;
+    padding-top: 60px;
+    padding-bottom: 50px;
+    margin-bottom: -20px;
+}
+
+
+
 /**************** MD ********************/
 @media (min-width: 992px) and (max-width: 1199px) {
     .guest .about .about-middle .laptop { bottom: -189px; }    
