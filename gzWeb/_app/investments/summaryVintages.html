@@ -29,7 +29,7 @@
                     <div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.InvestmentText}}</div>
                     <div ng-if="withdrawMode" class="col-xs-4 text-right">{{vintage.SellingValue | isoCurrency : currency : 0}}</div>
                     <div ng-if="withdrawMode" class="col-xs-2 text-right">
-                        <gz-check-box gz-model="vintage" gz-value="Selected" gz-disabled="vintage.Sold || vintage.Locked"></gz-check-box>
+                        <gz-check-box gz-model="vintage" gz-value="Selected" gz-disabled="vintage.Sold || vintage.Locked" gz-check="calcTotalGainsAndFees()" gz-uncheck="calcTotalGainsAndFees()"></gz-check-box>
                     </div>
                 </div>
             </div>
@@ -40,8 +40,13 @@
             <div class="col-xs-3 text-right total amount">{{alreadyWithdrawn | isoCurrency : currency : 0}}</div>
         </div>
         <div ng-if="withdrawMode" class="row">
-            <div class="col-xs-9 text-left total">Total amount to be withdrawn</div>
-            <div class="col-xs-3 text-right total amount">{{totalGain() | isoCurrency : currency : 0}}</div>
+            <div class="col-xs-9 text-left total">
+                <span>Total amount to be withdrawn</span>
+                <span class="info">
+                    <img src="../../Content/Images/Investment Icons/info.png" tooltip-class="summary-tooltip" uib-tooltip-html="totalFeesTooltip" />
+                </span>
+            </div>
+            <div class="col-xs-3 text-right total amount">{{totalGain | isoCurrency : currency : 0}}</div>
         </div>
 
         <div ng-if="withdrawMode" class="row">
@@ -50,7 +55,7 @@
                 <div class="withdraw-msg">
                     <i class="fa fa-exclamation-triangle"></i>
                     <span>Each vintage can be withdrawn post 3 months since initial investment</span>
-                    <!--<span>{{model.Prompt}} {{model.EligibleWithdrawDate  | ordinalDate : 'd MMM yy'}}</span>-->
+                    <!--<span>{{model.Prompt}} {{model.EligibleWithdrawDate | ordinalDate : 'd MMM yy'}}</span>-->
                 </div>
             </div>
         </div>

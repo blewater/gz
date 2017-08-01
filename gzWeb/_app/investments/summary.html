@@ -143,6 +143,20 @@
                             </div>
                             <div class="expansion-content">
                                 <div class="gaming-activities-date">{{model.GamingActivitiesRange}}</div>
+                                <div class="date">
+                                    <div class="date-icon">
+                                        <img src="../../Content/Images/Investment Icons/calendar_green.svg" />
+                                    </div>
+                                    <div class="date-details">
+                                        <div class="date-label">Status as of:</div>
+                                        <div class="date-data text-emphasis">
+                                            <span class="date-datetime">
+                                                <span class="date-datevalue">{{model.StatusAsOfLocalDate}}</span>
+                                                <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="amount starting-balance">
                                     <div class="amount-label">Starting balance</div>
                                     <div class="amount-value">{{model.BegGmBalance | isoCurrency : currency : 0}}</div>
