@@ -17,8 +17,16 @@
     [GmGainLoss]            DECIMAL (29, 16) NULL,
     [Player status]         NVARCHAR (256)   NULL,
     [Block reason]          NVARCHAR (256)   NULL,
+    [CashBonusAmount]       DECIMAL (29, 16) NULL,
+    [Vendor2UserDeposits]   DECIMAL (29, 16) NULL,
+    [Phone]                 NVARCHAR (30)    NULL,
+    [Mobile]                NVARCHAR (30)    NULL,
+    [City]                  NVARCHAR (80)    NULL,
+    [Country]               NVARCHAR (80)    NULL,
     CONSTRAINT [PK_dbo.PlayerRevRpt] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

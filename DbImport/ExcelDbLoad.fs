@@ -4,7 +4,7 @@ module DbGzTrx =
     open System
     open NLog
     open GzDb.DbUtil
-    open GzCommon
+    open GzBatchCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -126,7 +126,7 @@ module DbPlayerRevRpt =
     open NLog
     open GzDb.DbUtil
     open ExcelSchemas
-    open GzCommon
+    open GzBatchCommon
     open ExcelUtil
     open System.Diagnostics
 
@@ -386,5 +386,31 @@ module DbPlayerRevRpt =
                 insDbNewRowCustomValues db yyyyMmDd customExcelRow
             else 
                 setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow
+        )
+        db.DataContext.SubmitChanges()
+
+    /// Update all null everymatrix customer ids from the playerRevRpt (excel reports table)
+    let setDbGmCustomerId(db : DbContext) =
+
+        query { 
+            for user in db.AspNetUsers do
+                // SQL friendly syntax.. not HasValue would not translate to SQL
+                where (user.GmCustomerId.HasValue = false)
+                select user
+        }
+        |> Seq.iter (fun user -> 
+            query { 
+                for gmUser in db.PlayerRevRpt do
+                    where (gmUser.EmailAddress = user.Email)
+                    select (user, gmUser.UserID)
+                    distinct
+                    exactlyOneOrDefault
+            } 
+            |> (fun (user, gmUserId) ->
+                match gmUserId with
+                | 0 -> logger.Warn(sprintf "Please delete user %s in AspNetUsers Table. Found a null GmCustomerId: %d" user.Email gmUserId)
+                | _ -> user.GmCustomerId <- Nullable gmUserId;
+                        logger.Warn(sprintf "Updated the GmUserId for user %s in AspNetUsers Table. Found this GmCustomerId: %d" user.Email gmUserId)
+            )
         )
         db.DataContext.SubmitChanges()

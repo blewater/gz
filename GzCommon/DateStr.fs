@@ -1,4 +1,4 @@
-﻿namespace GzCommon
+﻿namespace GzBatchCommon
 
 [<AutoOpen>]
 module DateStr =
@@ -31,7 +31,7 @@ module DateStr =
     let isTodayLastMonthDay() =
         let today = DateTime.UtcNow.Date
         let daysThisMonth = DateTime.DaysInMonth(today.Year, today.Month)
-        if today.Day = daysThisMonth then true else false
+        today.Day = daysThisMonth
 
     /// to String of format: "dd/mm/yyyy"
     type DateTime with

@@ -249,6 +249,7 @@
 
 .categories .category .title .sorting {
     font-size: 12px;
+    position: relative;
 }
 .categories .category .title .sorting button.btn-gz {
     margin: 0;
@@ -260,6 +261,10 @@
     width: auto;
     height: 36px;
 }
+.categories .category .title .sorting .gz-select i {
+    right: 10px;
+}
+
 
 .tooltip.sorting-tooltip .tooltip-inner {
     color: #fff;
@@ -421,6 +426,9 @@
     .categories .category .game a .game-info .game-play:before {
         font-size: 16px;
         line-height: 30px;
+    }
+    .categories .category .title .sorting .gz-select i {
+        top: -10px;
     }
 }
 

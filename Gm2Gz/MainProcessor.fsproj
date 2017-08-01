@@ -103,7 +103,8 @@
       <HintPath>..\GzBatch\packages\FSharp.Configuration.1.3.0\lib\net45\FSharp.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.1\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.2\lib\net45\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
@@ -118,7 +119,8 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\GzBatch\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -142,8 +144,8 @@
       <Project>{906609cb-1aa2-4596-8584-94c2ccc23274}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\GzCommon\GzCommon.fsproj">
-      <Name>GzCommon</Name>
+    <ProjectReference Include="..\GzCommon\GzBatchCommon.fsproj">
+      <Name>GzBatchCommon</Name>
       <Project>{d118702e-4b38-4bcf-9184-daa324c5d160}</Project>
       <Private>True</Private>
     </ProjectReference>

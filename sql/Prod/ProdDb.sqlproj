@@ -106,6 +106,9 @@
     <Build Include="dbo\Tables\CustPortfoliosShares.sql" />
     <Build Include="dbo\Tables\UserPortfoliosShares.sql" />
     <Build Include="dbo\Tables\VintageShares.sql" />
+    <Build Include="Security\gzProdDbUser_1.sql" />
+    <Build Include="Security\RoleMemberships_1.sql" />
+    <Build Include="Security\RoleMemberships_2.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gzAdminUser.sql" />

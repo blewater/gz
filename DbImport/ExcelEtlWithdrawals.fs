@@ -3,7 +3,7 @@ namespace DbImport
 module WithdrawalRpt2Db =
     open System
     open NLog
-    open GzCommon
+    open GzBatchCommon
     open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
