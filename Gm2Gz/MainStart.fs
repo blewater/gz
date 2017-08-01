@@ -31,42 +31,6 @@ let inRptFolder = Path.Combine([| drive ; Settings.BaseFolder; Settings.ExcelInF
 let outRptFolder = Path.Combine([| drive ; Settings.BaseFolder; Settings.ExcelOutFolder |])
 let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
-let processGm2Gz 
-        (db : DbContext)
-        (balanceFilesUsage : BalanceFilesUsageType)
-        (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
-    try
-        logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
-        logger.Info("----------------------------")
-
-        logger.Info("Validating Gm excel rpt files")
-        
-        let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
-                                    |> GmRptFiles.getExcelFilenames
-                                    |> GmRptFiles.balanceRptDateMatchTitles
-                                    |> GmRptFiles.depositsRptContentMatch
-                                    |> GmRptFiles.getExcelDtStr
-                                    |> GmRptFiles.getExcelDates 
-                                    |> GmRptFiles.areExcelFilenamesValid
-        if not rptFilesOkToProcess.Valid then
-            exit 1
-
-        // Extract & Load Daily Everymatrix Report
-        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
-
-        (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) |||> UserTrx.processGzTrx
-
-        logger.Info("----------------------------")
-        logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
-
-    with ex ->
-        logger.Fatal(ex, "Runtime Exception at main")
-
-/// Choose next biz processing steps based on args
-let processArgs (db : DbContext)(balanceFilesUsageArg : BalanceFilesUsageType) =
-    DailyPortfolioShares.storeShares db
-    |> processGm2Gz db balanceFilesUsageArg
-
 /// Canopy related and excel downloading 
 let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
     let everymatrixPortalArgs  : ExcelSchemas.EverymatrixPortalArgsType = {
@@ -104,7 +68,45 @@ let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
         ReportsFilesArgs = reportsFilesArgs;
     }
     everymatrixReportsArgs
-    
+
+let gmReports2InvBalanceUpdate 
+        (db : DbContext)
+        (balanceFilesUsage : BalanceFilesUsageType)
+        (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
+    try
+        logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
+        logger.Info("----------------------------")
+
+        logger.Info("Validating Gm excel rpt files")
+        
+        let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
+                                    |> GmRptFiles.getExcelFilenames
+                                    |> GmRptFiles.balanceRptDateMatchTitles
+                                    |> GmRptFiles.depositsRptContentMatch
+                                    |> GmRptFiles.getExcelDtStr
+                                    |> GmRptFiles.getExcelDates 
+                                    |> GmRptFiles.areExcelFilenamesValid
+        if not rptFilesOkToProcess.Valid then
+            exit 1
+
+        // Extract & Load Daily Everymatrix Report
+        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
+
+        (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) 
+        |||> UserTrx.processGzTrx
+
+
+
+        logger.Info("----------------------------")
+        logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
+
+    with ex ->
+        logger.Fatal(ex, "Runtime Exception at main")
+
+/// Choose next biz processing steps based on args
+let portfolioSharesPrelude2MainProcessing (db : DbContext)(balanceFilesUsageArg : BalanceFilesUsageType) =
+    DailyPortfolioShares.storeShares db
+    |> gmReports2InvBalanceUpdate db balanceFilesUsageArg
 
 [<EntryPoint>]
 let main argv = 
@@ -119,7 +121,7 @@ let main argv =
     dwLoader.SaveReportsToInputFolder()
 
     // Main database processing 
-    processArgs db balanceFilesUsageArg
+    portfolioSharesPrelude2MainProcessing db balanceFilesUsageArg
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore

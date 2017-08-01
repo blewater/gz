@@ -389,24 +389,27 @@ module DbPlayerRevRpt =
         )
         db.DataContext.SubmitChanges()
 
-    /// Update all null everymatrix customer ids to excel table
+    /// Update all null everymatrix customer ids from the playerRevRpt (excel reports table)
     let setDbGmCustomerId(db : DbContext) =
 
         query { 
             for user in db.AspNetUsers do
-                where (not <| user.GmCustomerId.HasValue )
+                where (user.GmCustomerId.HasValue = false)
                 select user
         }
         |> Seq.iter (fun user -> 
             query { 
                 for gmUser in db.PlayerRevRpt do
                     where (gmUser.EmailAddress = user.Email)
-                    select gmUser.UserID
+                    select (user, gmUser.UserID)
                     distinct
-                    exactlyOne
+                    exactlyOneOrDefault
             } 
-            |> (fun gmUserId ->
-                user.GmCustomerId <- Nullable gmUserId
+            |> (fun (user, gmUserId) ->
+                match gmUserId with
+                | 0 -> logger.Warn(sprintf "Please delete user %s in AspNetUsers Table. Found a null GmCustomerId: %d" user.Email gmUserId)
+                | _ -> user.GmCustomerId <- Nullable gmUserId;
+                        logger.Warn(sprintf "Updated the GmUserId for user %s in AspNetUsers Table. Found this GmCustomerId: %d" user.Email gmUserId)
             )
         )
         db.DataContext.SubmitChanges()

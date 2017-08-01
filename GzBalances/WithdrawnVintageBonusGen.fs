@@ -8,6 +8,8 @@ module WithdrawnVintageBonusGen =
     open GzDb.DbUtil
     open GzCommon
     open PortfolioTypes
+    open System.Net.Mail
+    open System.Net
 
     type VintageDeposits = CsvProvider<"everymatrix_deposits.csv", ";", HasHeaders=false>
 
@@ -28,21 +30,20 @@ module WithdrawnVintageBonusGen =
 
     /// award deposit bonus for withdrawn vintages
     let updDbRewSoldVintages
+            //(downloadArgs : ExcelSchemas.EverymatriReportsArgsType)
             (db : DbContext)
             (yyyyMm :string) =
 
-        let csvDeposits = new VintageDeposits()
-        let w = new System.IO.StringWriter()
+        let csvInMemory = new StringWriter()
 
         db 
         |> withdrawnVintages
         |> Seq.sortBy (fun (i, u) -> i.CustomerId, i.SoldYearMonth)
         |> Seq.iter (fun (invb, u) -> 
-            let depLine = sprintf "%d,CasinoWallet;%s;%M;%s" u.GmCustomerId.Value u.Currency (invb.SoldAmount.Value - invb.SoldFees.Value) u.Email
-            w.WriteLine(depLine)
+            let depLine = sprintf "%d,CasinoWallet;%s;%M;vintage month %s cash for %s" u.GmCustomerId.Value u.Currency (invb.SoldAmount.Value - invb.SoldFees.Value) invb.YearMonth u.Email
+            csvInMemory.WriteLine(depLine)
             logger.Info (depLine)
 
             invb.AwardedSoldAmount <- true
         )
         db.DataContext.SubmitChanges()
-

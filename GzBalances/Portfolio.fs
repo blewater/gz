@@ -23,20 +23,28 @@ module DailyPortfolioShares =
         let urlLoad = YahooFinanceUrl + funds + "&f=d1sp"
         let tradedFunds = Funds.Load(urlLoad)
 
+        (* Fix for incosistent dates: set all to latest reported by Yahoo financed *)
+        let maxDate : DateTime = 
+            tradedFunds.Rows 
+            |> Seq.maxBy (fun (f) -> f.TradedOn)
+            |> fun (r) -> r.TradedOn
+
         // Save to map for easy reference
-        [ 
-            for row in tradedFunds.Rows do
-                let tradedOn = row.TradedOn
-                let symbol = row.Symbol
-                let closedPrice = row.ClosedPrice
-                let yQuote = 
-                    { 
-                        Symbol = symbol;
-                        TradedOn = tradedOn
-                        ClosingPrice = closedPrice
-                    }
-                yield (symbol, yQuote)
-        ]
+        let tradedFundsList : (Symbol * FundQuote) list =
+            [ 
+                for row in tradedFunds.Rows do
+                    let symbol = row.Symbol
+                    let closedPrice = row.ClosedPrice
+                    let yQuote = 
+                        { 
+                            Symbol = symbol;
+                            TradedOn = maxDate
+                            ClosingPrice = closedPrice
+                        }
+                    yield (symbol, yQuote)
+            ]
+
+        tradedFundsList
         |> Map.ofList
 
     let getSymbolPrice (symbol : string)(symbolPrices : Map<string, FundQuote>) : float =
@@ -156,18 +164,24 @@ module DailyPortfolioShares =
                 |> Seq.map(fun (f : DbFunds, fp : DbPortfolioFunds) -> f.Symbol)
                 |> String.concat ","
                 |> getLatestStockPrice
+            //printfn "%A" fundTradedPrices
+
             dbFundsWithPortfolioFunds
-            |> Seq.map(fun (f : DbFunds, fp : DbPortfolioFunds) -> 
-                let portfolioFundRec = {
-                    PortfolioId = fp.PortfolioId; 
-                    PortfolioWeight = fp.Weight; 
-                    Fund = fundTradedPrices.[f.Symbol]
-                }
-                portfolioFundRec
-                )
-    //            |> ~~ (printfn "%A")
-            |> Seq.groupBy(fun (portfolioFundRec : PortfolioFundRecord) -> portfolioFundRec.Fund.TradedOn)
-    //            |> ~~ (printfn "%A")
+            |> Seq.map(
+                fun (f : DbFunds, fp : DbPortfolioFunds) -> 
+                    let portfolioFundRec = {
+                        PortfolioId = fp.PortfolioId; 
+                        PortfolioWeight = fp.Weight; 
+                        Fund = fundTradedPrices.[f.Symbol]
+                    }
+//                    printfn "%A" portfolioFundRec
+                    portfolioFundRec
+               )
+//               |> ~~ (printfn "%A")
+            |> Seq.groupBy(
+                fun (portfolioFundRec : PortfolioFundRecord) -> 
+                    portfolioFundRec.Fund.TradedOn)
+//              |> ~~ (printfn "%A")
             |> Seq.map(fun (tradedOnKey : DateTime, spfr : PortfolioFundRecord seq) -> 
                 let gpfr = spfr |> Seq.groupBy (fun pfr -> pfr.PortfolioId)
                 let pricedPortfoliosGroup = 

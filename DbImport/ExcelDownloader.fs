@@ -20,8 +20,8 @@ type ExcelDownloader(reportsArgs : ExcelSchemas.EverymatriReportsArgsType, balan
     let DownloadReports(dayToProcess : DateTime)(destCustomRptName : string) : unit =
         logger.Info (sprintf "Download parameters: %A" reportsArgs)
         logger.Info (sprintf "Downloading Custom Report: %s" destCustomRptName)
-        let gmailClient = EmailAccess(dayToProcess, destCustomRptName, reportsArgs.EverymatrixPortalArgs.EmailReportsUser, reportsArgs.EverymatrixPortalArgs.EmailReportsPwd)
-        let messageCount = gmailClient.DownloadCustomReport()
+        let gmailClient = EmailAccess(dayToProcess, reportsArgs.EverymatrixPortalArgs.EmailReportsUser, reportsArgs.EverymatrixPortalArgs.EmailReportsPwd)
+        let messageCount = gmailClient.DownloadCustomReport(destCustomRptName)
         logger.Info (sprintf "Found %d message(s), found custom report? %b." messageCount.TotalReportMessages messageCount.FoundDaysReport)
 
         logger.Info "*** Downloading Rest of reports ***"
