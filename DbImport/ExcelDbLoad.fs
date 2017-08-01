@@ -4,7 +4,7 @@ module DbGzTrx =
     open System
     open NLog
     open GzDb.DbUtil
-    open GzCommon
+    open GzBatchCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -126,7 +126,7 @@ module DbPlayerRevRpt =
     open NLog
     open GzDb.DbUtil
     open ExcelSchemas
-    open GzCommon
+    open GzBatchCommon
     open ExcelUtil
     open System.Diagnostics
 
@@ -394,6 +394,7 @@ module DbPlayerRevRpt =
 
         query { 
             for user in db.AspNetUsers do
+                // SQL friendly syntax.. not HasValue would not translate to SQL
                 where (user.GmCustomerId.HasValue = false)
                 select user
         }

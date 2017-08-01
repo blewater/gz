@@ -11,16 +11,14 @@
 
 open System
 open System.Net
-open GzCommon
+open GzBatchCommon
 open GzDb.DbUtil
-open GzCommon.ErrorHandling
+open GzBatchCommon.ErrorHandling
 open GzBalances.PortfolioTypes
 open NLog
 open FSharp.Data
 
-type Stocks = CsvProvider<"quotes.csv">
-type Funds = CsvProvider<"quotes.csv", HasHeaders=false>
-//type Funds = CsvProvider<"quotes.csv", Separators=",", HasHeaders=false, Schema = "TradedOn (Date),Symbol (string),ClosedPrice (float)">
+type Funds = CsvProvider<"quotes.csv", Separators=",", HasHeaders=false, Schema = "TradedOn (Date),Symbol (string),ClosedPrice (float)">
 
 let dbConnectionString = "Server=tcp:gzdbprod.database.windows.net,1433;Database=gzDbProd;User ID=gzProdDbUser;Password=#2!97q7#2BN@Mx5TfK2Y;Encrypt=True;MultipleActiveResultSets=False;TrustServerCertificate=True;Connection Timeout=60;";;
 let logger = LogManager.GetCurrentClassLogger()

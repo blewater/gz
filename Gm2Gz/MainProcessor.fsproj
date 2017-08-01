@@ -144,8 +144,8 @@
       <Project>{906609cb-1aa2-4596-8584-94c2ccc23274}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\GzCommon\GzCommon.fsproj">
-      <Name>GzCommon</Name>
+    <ProjectReference Include="..\GzCommon\GzBatchCommon.fsproj">
+      <Name>GzBatchCommon</Name>
       <Project>{d118702e-4b38-4bcf-9184-daa324c5d160}</Project>
       <Private>True</Private>
     </ProjectReference>
