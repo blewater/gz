@@ -12,7 +12,12 @@
             //Maestro: "Maestro",
             //MasterCard: "MasterCard",
             MoneyMatrixCreditCard: "MoneyMatrix_CreditCard",
-            MoneyMatrixTrustly: "MoneyMatrix_Trustly"
+            MoneyMatrixTrustly: "MoneyMatrix_Trustly"//,
+            //MoneyMatrixSkrill: "MoneyMatrix_Skrill",
+            //MoneyMatrixNeteller: "MoneyMatrix_Neteller",
+            //MoneyMatrixPaySafeCard: "MoneyMatrix_PaySafeCard",
+            //MoneyMatrixEnterCash: "MoneyMatrix_EnterCash",
+            //MoneyMatrixEcoPayz: "MoneyMatrix_EcoPayz"
         };
 
         //// #region Payment Methods Fields

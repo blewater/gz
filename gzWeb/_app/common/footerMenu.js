@@ -25,7 +25,8 @@
                     ],
                     when: function () { return true; }
                 },
-                { route: constants.routes.promotions, when: function () { return true; } }
+                { route: constants.routes.promotions, when: function () { return true; } },
+                { route: { path: "https://affiliates.greenzorro.com/", title: "Affiliates" }, when: function () { return true; }, inNewTab: true }
             ];
         }
 

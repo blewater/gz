@@ -5,7 +5,7 @@ open FSharp.Configuration
 open GzBalances
 open GzDb
 open DbImport
-open ExcelSchemas
+open GzBatchCommon
 open ArgumentsProcessor
 
 type Settings = AppSettings< "app.config" >
@@ -31,9 +31,47 @@ let inRptFolder = Path.Combine([| drive ; Settings.BaseFolder; Settings.ExcelInF
 let outRptFolder = Path.Combine([| drive ; Settings.BaseFolder; Settings.ExcelOutFolder |])
 let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
-let processGm2Gz 
+/// Canopy related and excel downloading 
+let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
+    let everymatrixPortalArgs  : ConfigArgs.EverymatrixPortalArgsType = {
+        EmailReportsUser = Settings.ReportsEmailUser;
+        EmailReportsPwd = Settings.ReportsEmailPwd;
+        EverymatrixPortalUri = Settings.EverymatrixProdPortalUri;
+        EverymatrixUsername = Settings.EverymatrixProdUsername;
+        EverymatrixPassword = Settings.EverymatrixProdPassword;
+        EverymatrixToken = Settings.EverymatrixProdToken;
+    }
+
+    let reportsFolders : ConfigArgs.ReportsFoldersType = {
+        BaseFolder = Settings.BaseFolder;
+        ExcelInFolder = Settings.ExcelInFolder;
+        ExcelOutFolder = Settings.ExcelOutFolder;
+        reportsDownloadFolder = Settings.ReportsDownloadFolder;
+    }
+
+    let reportsFilesArgs : ConfigArgs.ReportsFilesArgsType = {
+            DownloadedCustomFilter = Settings.DownloadedCustomFilter;
+            DownloadedBalanceFilter = Settings.DownloadedBalanceFilter;
+            DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
+            downloadedDepositsFilter = Settings.DownloadedDepositsFilter;
+            CustomRptFilenamePrefix = Settings.CustomRptFilenamePrefix;
+            EndBalanceRptFilenamePrefix = Settings.EndBalanceRptFilenamePrefix;
+            WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
+            WithdrawalsRollbackRptFilenamePrefix = Settings.WithdrawalsRollbackRptFilenamePrefix;
+            depositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
+            Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
+        }
+
+    let everymatrixReportsArgs : ConfigArgs.EverymatriReportsArgsType = {
+        EverymatrixPortalArgs = everymatrixPortalArgs;
+        ReportsFoldersArgs = reportsFolders;
+        ReportsFilesArgs = reportsFilesArgs;
+    }
+    everymatrixReportsArgs
+
+let gmReports2InvBalanceUpdate 
         (db : DbContext)
-        (balanceFilesUsage : BalanceFilesUsageType)
+        (balanceFilesUsage : ConfigArgs.BalanceFilesUsageType)
         (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
     try
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
@@ -54,7 +92,10 @@ let processGm2Gz
         // Extract & Load Daily Everymatrix Report
         Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
 
-        (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) |||> UserTrx.processGzTrx
+        (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) 
+        |||> UserTrx.processGzTrx
+
+
 
         logger.Info("----------------------------")
         logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
@@ -63,48 +104,9 @@ let processGm2Gz
         logger.Fatal(ex, "Runtime Exception at main")
 
 /// Choose next biz processing steps based on args
-let processArgs (db : DbContext)(balanceFilesUsageArg : BalanceFilesUsageType) =
+let portfolioSharesPrelude2MainProcessing (db : DbContext)(balanceFilesUsageArg : ConfigArgs.BalanceFilesUsageType) =
     DailyPortfolioShares.storeShares db
-    |> processGm2Gz db balanceFilesUsageArg
-
-/// Canopy related and excel downloading 
-let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
-    let everymatrixPortalArgs  : ExcelSchemas.EverymatrixPortalArgsType = {
-        EmailReportsUser = Settings.ReportsEmailUser;
-        EmailReportsPwd = Settings.ReportsEmailPwd;
-        EverymatrixPortalUri = Settings.EverymatrixProdPortalUri;
-        EverymatrixUsername = Settings.EverymatrixProdUsername;
-        EverymatrixPassword = Settings.EverymatrixProdPassword;
-        EverymatrixToken = Settings.EverymatrixProdToken;
-    }
-
-    let reportsFolders : ExcelSchemas.ReportsFoldersType = {
-        BaseFolder = Settings.BaseFolder;
-        ExcelInFolder = Settings.ExcelInFolder;
-        ExcelOutFolder = Settings.ExcelOutFolder;
-        reportsDownloadFolder = Settings.ReportsDownloadFolder;
-    }
-
-    let reportsFilesArgs : ExcelSchemas.ReportsFilesArgsType = {
-            DownloadedCustomFilter = Settings.DownloadedCustomFilter;
-            DownloadedBalanceFilter = Settings.DownloadedBalanceFilter;
-            DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
-            downloadedDepositsFilter = Settings.DownloadedDepositsFilter;
-            CustomRptFilenamePrefix = Settings.CustomRptFilenamePrefix;
-            EndBalanceRptFilenamePrefix = Settings.EndBalanceRptFilenamePrefix;
-            WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
-            WithdrawalsRollbackRptFilenamePrefix = Settings.WithdrawalsRollbackRptFilenamePrefix;
-            depositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
-            Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
-        }
-
-    let everymatrixReportsArgs : ExcelSchemas.EverymatriReportsArgsType = {
-        EverymatrixPortalArgs = everymatrixPortalArgs;
-        ReportsFoldersArgs = reportsFolders;
-        ReportsFilesArgs = reportsFilesArgs;
-    }
-    everymatrixReportsArgs
-    
+    |> gmReports2InvBalanceUpdate db balanceFilesUsageArg
 
 [<EntryPoint>]
 let main argv = 
@@ -119,7 +121,7 @@ let main argv =
     dwLoader.SaveReportsToInputFolder()
 
     // Main database processing 
-    processArgs db balanceFilesUsageArg
+    portfolioSharesPrelude2MainProcessing db balanceFilesUsageArg
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore

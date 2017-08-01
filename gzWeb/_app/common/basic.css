@@ -599,6 +599,18 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     display: inline;
 }
 
+
+/*@media (min-width: 992px) {
+    .col-md-5th {
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        float: left;
+        width: 20%;
+    }
+}*/
+
 /* #region Conditional Styling */
 
 

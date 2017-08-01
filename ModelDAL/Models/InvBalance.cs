@@ -149,6 +149,11 @@ namespace gzDAL.Models {
         public bool Sold { get; set; }
 
         /// <summary>
+        /// Whether a bonus transaction has been awarded
+        /// </summary>
+        public bool AwardedSoldAmount { get; set; }
+
+        /// <summary>
         /// On which month this vintage (month's shares) was sold
         /// </summary>
         [Index("IDX_InvBalance_Cust_SoldYM_Sold", Order = 3)]

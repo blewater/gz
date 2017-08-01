@@ -12,6 +12,8 @@ module PortfolioTypes =
 
     type Money = decimal
 
+    type YyyyMm = string
+
     type Portfolio = {
         PortfolioId : PortfolioId;
         Risk : Risk
@@ -104,7 +106,8 @@ module PortfolioTypes =
         CashBonus : Money;
     }
 
-    type FundQuote = { Symbol : string; TradedOn : DateTime; ClosingPrice : float }
+    type Symbol = string
+    type FundQuote = { Symbol : Symbol; TradedOn : DateTime; ClosingPrice : float }
     type PortfolioWeight = float32
     type PortfolioFundRecord = {PortfolioId : PortfolioId; PortfolioWeight : PortfolioWeight; Fund : FundQuote}
 
