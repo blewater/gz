@@ -5,7 +5,7 @@ open FSharp.Configuration
 open GzBalances
 open GzDb
 open DbImport
-open ExcelSchemas
+open GzBatchCommon
 open ArgumentsProcessor
 
 type Settings = AppSettings< "app.config" >
@@ -32,8 +32,8 @@ let outRptFolder = Path.Combine([| drive ; Settings.BaseFolder; Settings.ExcelOu
 let currencyRatesUrl = Settings.CurrencyRatesUrl.ToString()
 
 /// Canopy related and excel downloading 
-let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
-    let everymatrixPortalArgs  : ExcelSchemas.EverymatrixPortalArgsType = {
+let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
+    let everymatrixPortalArgs  : ConfigArgs.EverymatrixPortalArgsType = {
         EmailReportsUser = Settings.ReportsEmailUser;
         EmailReportsPwd = Settings.ReportsEmailPwd;
         EverymatrixPortalUri = Settings.EverymatrixProdPortalUri;
@@ -42,14 +42,14 @@ let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
         EverymatrixToken = Settings.EverymatrixProdToken;
     }
 
-    let reportsFolders : ExcelSchemas.ReportsFoldersType = {
+    let reportsFolders : ConfigArgs.ReportsFoldersType = {
         BaseFolder = Settings.BaseFolder;
         ExcelInFolder = Settings.ExcelInFolder;
         ExcelOutFolder = Settings.ExcelOutFolder;
         reportsDownloadFolder = Settings.ReportsDownloadFolder;
     }
 
-    let reportsFilesArgs : ExcelSchemas.ReportsFilesArgsType = {
+    let reportsFilesArgs : ConfigArgs.ReportsFilesArgsType = {
             DownloadedCustomFilter = Settings.DownloadedCustomFilter;
             DownloadedBalanceFilter = Settings.DownloadedBalanceFilter;
             DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
@@ -62,7 +62,7 @@ let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
             Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
         }
 
-    let everymatrixReportsArgs : ExcelSchemas.EverymatriReportsArgsType = {
+    let everymatrixReportsArgs : ConfigArgs.EverymatriReportsArgsType = {
         EverymatrixPortalArgs = everymatrixPortalArgs;
         ReportsFoldersArgs = reportsFolders;
         ReportsFilesArgs = reportsFilesArgs;
@@ -71,7 +71,7 @@ let downloadArgs : ExcelSchemas.EverymatriReportsArgsType =
 
 let gmReports2InvBalanceUpdate 
         (db : DbContext)
-        (balanceFilesUsage : BalanceFilesUsageType)
+        (balanceFilesUsage : ConfigArgs.BalanceFilesUsageType)
         (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
     try
         logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
@@ -104,7 +104,7 @@ let gmReports2InvBalanceUpdate
         logger.Fatal(ex, "Runtime Exception at main")
 
 /// Choose next biz processing steps based on args
-let portfolioSharesPrelude2MainProcessing (db : DbContext)(balanceFilesUsageArg : BalanceFilesUsageType) =
+let portfolioSharesPrelude2MainProcessing (db : DbContext)(balanceFilesUsageArg : ConfigArgs.BalanceFilesUsageType) =
     DailyPortfolioShares.storeShares db
     |> gmReports2InvBalanceUpdate db balanceFilesUsageArg
 

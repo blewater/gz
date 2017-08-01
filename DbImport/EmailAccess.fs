@@ -2,7 +2,7 @@
 
 open System
 open System.IO
-open GzCommon
+open GzBatchCommon
 open MailKit
 open MimeKit
 open MailKit.Net.Imap
@@ -114,24 +114,24 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
         smtpClient.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
         smtpClient.Authenticate(gmailUser, gmailPassword)
 
-        let msg = new MimeMessage()
-        msg.From.Add(new MailboxAddress ("Admin", "admin@greenzorro.com"))
+        let msg = MimeMessage()
+        msg.From.Add(MailboxAddress ("Admin", "admin@greenzorro.com"))
         //msg.To.Add(new MailboxAddress ("Antonis", "antonis.voerakos@greenzorro.com"))
-        msg.To.Add(new MailboxAddress ("Mario", "mario.karagiorgas@greenzorro.com"))
+        msg.To.Add(MailboxAddress ("Mario", "mario.karagiorgas@greenzorro.com"))
         msg.Subject <- sprintf "%s Withdrawn Vintages Cash Bonus csv file" <| DateTime.UtcNow.AddDays(-1.0).ToString("ddd d/MMM/yy")
-        let body = new TextPart ("plain")
+        let body = TextPart ("plain")
         body.Text <- csvContent
 
         // create an image attachment for the file located at path
-        let attachment = new MimePart ("text", "csv")
-        attachment.ContentObject <- new ContentObject (File.OpenRead (csvFilenamePath), ContentEncoding.Default)
-        attachment.ContentDisposition <- new ContentDisposition (ContentDisposition.Attachment)
+        let attachment = MimePart ("text", "csv")
+        attachment.ContentObject <- ContentObject (File.OpenRead (csvFilenamePath), ContentEncoding.Default)
+        attachment.ContentDisposition <- ContentDisposition (ContentDisposition.Attachment)
         attachment.ContentTransferEncoding <- ContentEncoding.Base64
         attachment.FileName <- Path.GetFileName (csvFilenamePath)
 
         // now create the multipart/mixed container to hold the message text and the
         // csv attachment
-        let multipart = new Multipart ("mixed")
+        let multipart = Multipart ("mixed")
         multipart.Add (body)
         multipart.Add (attachment)
 

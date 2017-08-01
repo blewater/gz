@@ -3,10 +3,10 @@
 module DailyPortfolioShares =
     open System
     open System.Net
-    open GzCommon
+    open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
-    open GzCommon.ErrorHandling
+    open GzBatchCommon.ErrorHandling
     open FSharp.Data
 
     type Funds = CsvProvider<"quotes.csv", HasHeaders=false, Schema = "TradedOn (Date),Symbol (string),ClosedPrice (float)">
@@ -355,7 +355,7 @@ module CalcUserPortfolioShares =
 
 module VintageShares =
     open System
-    open GzCommon
+    open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
         
@@ -457,7 +457,7 @@ module VintageShares =
 
 module InvBalance =
     open System
-    open GzCommon
+    open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
 
@@ -623,7 +623,7 @@ module InvBalance =
         }
 
 module UserTrx =
-    open GzCommon
+    open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
     open InvBalance

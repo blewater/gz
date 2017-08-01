@@ -2,12 +2,13 @@
 
 open System
 open System.IO
-open GzCommon
+open GzBatchCommon
+open ConfigArgs
 open canopy
 open ExcelSchemas
 open NLog
 
-type ExcelDownloader(reportsArgs : ExcelSchemas.EverymatriReportsArgsType, balanceFilesArg : BalanceFilesUsageType) =
+type ExcelDownloader(reportsArgs : EverymatriReportsArgsType, balanceFilesArg : BalanceFilesUsageType) =
 
     static let logger = LogManager.GetCurrentClassLogger()
 
@@ -17,7 +18,7 @@ type ExcelDownloader(reportsArgs : ExcelSchemas.EverymatriReportsArgsType, balan
         let destCustomRptName = Path.Combine([| drive; reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder; customRptName |])
         destCustomRptName
 
-    let DownloadReports(dayToProcess : DateTime)(destCustomRptName : string) : unit =
+    let downloadReports(dayToProcess : DateTime)(destCustomRptName : string) : unit =
         logger.Info (sprintf "Download parameters: %A" reportsArgs)
         logger.Info (sprintf "Downloading Custom Report: %s" destCustomRptName)
         let gmailClient = EmailAccess(dayToProcess, reportsArgs.EverymatrixPortalArgs.EmailReportsUser, reportsArgs.EverymatrixPortalArgs.EmailReportsPwd)
@@ -31,5 +32,5 @@ type ExcelDownloader(reportsArgs : ExcelSchemas.EverymatriReportsArgsType, balan
     member this.SaveReportsToInputFolder() =
 
         let dayToProcess = DateTime.UtcNow.Date.AddDays(-1.0)
-        DownloadReports dayToProcess (customReportFilenameWithInputPath dayToProcess)
+        downloadReports dayToProcess (customReportFilenameWithInputPath dayToProcess)
 

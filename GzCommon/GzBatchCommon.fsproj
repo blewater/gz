@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>GzCommon</Name>
+    <Name>GzBatchCommon</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -74,6 +74,7 @@
     <None Include="Scripts\load-project-debug.fsx" />
     <Compile Include="ErrorHandling.fs" />
     <Compile Include="gzUtils.fs" />
+    <Compile Include="ConfigArgs.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

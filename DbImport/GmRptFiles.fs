@@ -4,7 +4,7 @@ module GmRptFiles =
     open System
     open System.IO
     open System.Text.RegularExpressions
-    open GzCommon
+    open GzBatchCommon
     open ExcelSchemas
 
     type FolderNameType = string

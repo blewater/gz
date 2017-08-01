@@ -6,10 +6,11 @@ module WithdrawnVintageBonusGen =
     open FSharp.Data
     open NLog
     open GzDb.DbUtil
-    open GzCommon
+    open GzBatchCommon
     open PortfolioTypes
     open System.Net.Mail
     open System.Net
+    open ConfigArgs
 
     type VintageDeposits = CsvProvider<"everymatrix_deposits.csv", ";", HasHeaders=false>
 
@@ -30,7 +31,7 @@ module WithdrawnVintageBonusGen =
 
     /// award deposit bonus for withdrawn vintages
     let updDbRewSoldVintages
-            //(downloadArgs : ExcelSchemas.EverymatriReportsArgsType)
+            (downloadArgs : EverymatriReportsArgsType)
             (db : DbContext)
             (yyyyMm :string) =
 

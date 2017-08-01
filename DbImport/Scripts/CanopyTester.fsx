@@ -16,7 +16,7 @@
 open canopy
 open System.IO
 open System
-open GzCommon
+open GzBatchCommon
 open Microsoft.FSharp.Collections
 
 (*** How long to wait from pressing a save-excel button to grab it ***)

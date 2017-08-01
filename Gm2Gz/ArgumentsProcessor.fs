@@ -2,10 +2,10 @@
 
 open Argu
 open DbImport
-open ExcelSchemas
+open GzBatchCommon
 
     type Gm2GzArguments =
-        | Balance_Files_Usage of BalanceFilesUsageType
+        | Balance_Files_Usage of ConfigArgs.BalanceFilesUsageType
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -15,7 +15,7 @@ open ExcelSchemas
     [<Literal>]
     let DefNumOfTradeDays = 22 // Roughly a month
 
-    let parseCmdArgs (argv : string[]) : BalanceFilesUsageType =
+    let parseCmdArgs (argv : string[]) : ConfigArgs.BalanceFilesUsageType =
         try 
             let parser = ArgumentParser.Create<Gm2GzArguments>(programName = "Gm2Gz.exe")
             let results = parser.Parse(argv)
