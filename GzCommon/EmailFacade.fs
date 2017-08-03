@@ -1,8 +1,7 @@
-﻿namespace DbImport
+﻿namespace GzBatchCommon
 
 open System
 open System.IO
-open GzBatchCommon
 open MailKit
 open MimeKit
 open MailKit.Net.Imap
