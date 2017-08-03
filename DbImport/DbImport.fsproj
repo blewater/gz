@@ -74,7 +74,6 @@
     <None Include="openexchangerates.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="EmailAccess.fs" />
     <Compile Include="CanopyDownloader.fs" />
     <Compile Include="ExcelDownloader.fs" />
     <None Include="Scripts\CanopyTester.fsx" />
@@ -111,14 +110,6 @@
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="MailKit">
-      <HintPath>..\GzBatch\packages\MailKit.1.16.2\lib\net451\MailKit.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MimeKit">
-      <HintPath>..\GzBatch\packages\MimeKit.1.16.2\lib\net451\MimeKit.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">

@@ -31,20 +31,33 @@ module WithdrawnVintageBonusGen =
 
     /// award deposit bonus for withdrawn vintages
     let updDbRewSoldVintages
-            (downloadArgs : EverymatriReportsArgsType)
+            (adminEmailUserArgs : EverymatrixPortalArgsType)
+            (folder : ReportsFoldersType)
             (db : DbContext)
-            (yyyyMm :string) =
+            (dayToProcess : DateTime) =
 
-        let csvInMemory = new StringWriter()
+        use depositsInMem = new StringWriter()
+        let depositsCsvFilename = Path.Combine(folder.BaseFolder, folder.ExcelInFolder, "Vintage Deposits for yyyyMmDd.csv")
+        use depositsCsv = new StreamWriter(depositsCsvFilename)
+        let yyyyMmDd = dayToProcess.ToYyyyMmDd
 
         db 
         |> withdrawnVintages
         |> Seq.sortBy (fun (i, u) -> i.CustomerId, i.SoldYearMonth)
         |> Seq.iter (fun (invb, u) -> 
             let depLine = sprintf "%d,CasinoWallet;%s;%M;vintage month %s cash for %s" u.GmCustomerId.Value u.Currency (invb.SoldAmount.Value - invb.SoldFees.Value) invb.YearMonth u.Email
-            csvInMemory.WriteLine(depLine)
+
+            depositsInMem.WriteLine(depLine)
+            depositsCsv.WriteLine(depLine)
             logger.Info (depLine)
 
             invb.AwardedSoldAmount <- true
         )
+        depositsCsv.Close()
+        
+        // Email deposits
+        let gmailClient = EmailAccess(dayToProcess, adminEmailUserArgs.EmailReportsUser, adminEmailUserArgs.EmailReportsPwd)
+        (depositsInMem.ToString(), depositsCsvFilename) 
+            ||> gmailClient.SendWithdrawnVintagesCashBonusCsv
+
         db.DataContext.SubmitChanges()

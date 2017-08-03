@@ -140,7 +140,7 @@ module DbPlayerRevRpt =
             row.EndGmBalance.Value
             + totalWithdrawals
             - row.TotalDepositsAmount.Value 
-            - row.BegGmBalance.Value 
+            - if row.BegGmBalance.HasValue then row.BegGmBalance.Value else 0m
         row.GmGainLoss <- Nullable gainLoss
         row.UpdatedOnUtc <- DateTime.UtcNow
         row.Processed <- int GmRptProcessStatus.GainLossRptUpd
@@ -259,6 +259,10 @@ module DbPlayerRevRpt =
 
         if yearMonthDay.Substring(6, 2) = "01" then
             playerRow.BegGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
+
+        // If null it means it's a new user so beg balance should be zero
+        if playerRow.BegGmBalance.HasValue = false then
+            playerRow.BegGmBalance <- Nullable 0m
 
         playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
 
