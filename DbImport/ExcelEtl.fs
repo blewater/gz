@@ -111,8 +111,11 @@ module DepositsRpt2Db =
                 
                 let depositsAmountType = debit2DepositsType excelRow.Debit
 
-                // initiatedCurrently && CompletedInSameMonth are within TotalWithdrawals in Custom
-                if initiatedCurrently && completedInSameMonth && completedCurrently then
+                let dateLogMsg = sprintf "Deposit initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" (initiatedDt.ToYyyyMmDd) (completedDt.Value.ToYyyyMmDd) completedCurrently completedInSameMonth
+                logger.Debug dateLogMsg
+
+                // less restrictive than withdrawals... completed in current processing month?
+                if completedCurrently then
                     DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
 
                 else
