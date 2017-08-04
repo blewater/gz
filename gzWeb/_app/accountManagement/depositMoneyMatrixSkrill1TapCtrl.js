@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'depositMoneyMatrixPaySafeCardCtrl';
+    var ctrlId = 'depositMoneyMatrixSkrill1TapCtrl';
     APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', ctrlFactory]);
     function ctrlFactory($scope, $q, iso4217, auth) {
         $scope.model = {

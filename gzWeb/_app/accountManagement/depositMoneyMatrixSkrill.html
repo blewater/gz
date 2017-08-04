@@ -1,23 +1,78 @@
-﻿<div class="deposit-trustly">
+﻿<div class="deposit-skrill">
     <div>{{model.selectedCreditCard.name}}</div>
 
-    <div class="col-xs-12">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12">
-                    <input type="number" placeholder="{{amountPlaceholder}}" id="amount" name="amount" class="form-control" autocomplete="off" ng-model="model.amount" required autofocus
-                           ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
-                           min="{{accountLimits.min}}" max="{{accountLimits.max}}"
-                           ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
-                </div>
-                <div class="col-xs-12">
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}</div>
+    <div ng-if="thereAreExistingAccounts">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div>Select an account</div>
+                <div ng-if="!canAddNewAccount" class="max-number-of-cards">
+                    Note: You have exceeded the maximum number of accounts you are allowed to register. If you want to register a new one, please <a href="mailto:help@greenzorro.com">contact us</a>.
                 </div>
             </div>
-            <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <gz-select gz-model="model.selectedAccount" gz-collection="existingAccountss" gz-prompt="--select account--" gz-loading="loadingAccounts"
+                                   gz-id="id" gz-display="name" gz-change="onAccountSelected(id)">
+                        </gz-select>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="model.selectedAccount"></gz-field-ok>
+            </div>
         </div>
     </div>
+
+    <div ng-if="thereAreExistingAccounts && canAddNewAccount" class="col-xs-12">
+        <div class="form-group">
+            <div class="text-center">-- OR --</div>
+        </div>
+    </div>
+
+    <div>
+        <div class="col-xs-12" ng-if="thereAreExistingAccounts && canAddNewAccount">
+            <div class="form-group">
+                <div>Register a new account</div>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="accountRegex" placeholder="account email" id="accountEmail" name="accountEmail" class="form-control" ng-model="model.accountEmail"
+                               ng-class="{ 'empty': !model.accountEmail, 'danger' : form.accountEmail.$invalid && !form.accountEmail.$pristine }"
+                               ng-disabled="model.existingAccount || !canAddNewAccount">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.accountEmail.$pristine && form.accountEmail.$invalid}">Invalid account email</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.accountEmail.$valid"></gz-field-ok>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="number" placeholder="{{amountPlaceholder}}" id="amount" name="amount" class="form-control" autocomplete="off" ng-model="model.amount" required autofocus
+                               ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
+                               min="{{accountLimits.min}}" max="{{accountLimits.max}}"
+                               ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
+                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
+            </div>
+        </div>
+    </div>
+
 
     <!--<div class="col-xs-12 hidden">
         <div class="form-group">
