@@ -178,18 +178,21 @@ module DbPlayerRevRpt =
         let dbVendor2UserCashBonusAmount = playerRow.CashBonusAmount.Value
         let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
         let dbDeposits = playerRow.TotalDepositsAmount.Value
+
+        // Update currency to correct value if not already from balance files
+        playerRow.Currency <- depositsExcelRow.``Credit real currency``
         match depositsAmountType with
         | Deposit ->
-            let newDeposits = dbDeposits + decimal depositsExcelRow.``Debit real amount``
+            let newDeposits = dbDeposits + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UDeposit ->
             (* Vendor2User Deposits are tracked separatedly and added to TotatDeposits *)
-            let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal depositsExcelRow.``Debit real amount``
+            let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.Vendor2UserDeposits <- Nullable newV2UDepositAmount
             let newDeposits = dbDeposits + decimal depositsExcelRow.``Debit real amount``
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UCashBonus ->
-            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal depositsExcelRow.``Debit real amount``
+            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -219,22 +222,20 @@ module DbPlayerRevRpt =
             (begBalanceExcelRow : BalanceExcelSchema.Row) 
             (playerRow : DbPlayerRevRpt) = 
 
-        let newBegBalance = begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
-        let begBalanceAmount = playerRow.BegGmBalance.Value 
-        Trace.Assert(newBegBalance.Value = begBalanceAmount)
-        playerRow.BegGmBalance <- newBegBalance
+        playerRow.Currency <- begBalanceExcelRow.Currency
+        playerRow.BegGmBalance <- begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.BegBalanceRptUpd
     
     /// Update ending balance amount of the selected month
     let private updDbRowEndBalanceValues 
-                (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRpt) = 
+                (endBalanceExcelRow : BalanceExcelSchema.Row)
+                (playerRow : DbPlayerRevRpt) = 
 
-        let endBalanceAmount = endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
-        Trace.Assert( playerRow.EndGmBalance.Value = endBalanceAmount.Value )
+        playerRow.Currency <- endBalanceExcelRow.Currency
         // Zero out balance amounts, playerloss
-        playerRow.EndGmBalance <- endBalanceAmount
+        playerRow.EndGmBalance <- endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
         playerRow.Processed <- int GmRptProcessStatus.EndBalanceRptUpd
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -251,7 +252,6 @@ module DbPlayerRevRpt =
         playerRow.EmailAddress <- customExcelRow.``Email address``
         playerRow.TotalDepositsAmount <- Nullable 0m
         playerRow.WithdrawsMade <- customExcelRow.``Withdraws made`` |> float2NullableDecimal
-        playerRow.Currency <- customExcelRow.Currency.ToString()
 
         // Zero out gaming deposit cashBonus
         playerRow.Vendor2UserDeposits <- Nullable 0m
