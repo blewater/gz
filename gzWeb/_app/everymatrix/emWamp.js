@@ -93,7 +93,7 @@
                     $log.error(renderedChallengeError);
                     challengeIsOpen = false;
                     challengeDeferred.reject(renderedChallengeError);
-                })
+                });
             }
             return challengePromise;
         };

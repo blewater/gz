@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -816,18 +816,22 @@
     <Content Include="_app\accountManagement\depositMoneyMatrixPaySafeCard.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixNeteller.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixPaySafeCardCtrl.js" />
+    <Content Include="_app\accountManagement\depositMoneyMatrixSkrill1Tap.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrill.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixNetellerCtrl.js" />
+    <Content Include="_app\accountManagement\depositMoneyMatrixSkrill1TapCtrl.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrillCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixNeteller.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixPaySafeCard.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixEnterCash.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixEcoPayz.html" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrill1Tap.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrill.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixNetellerCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixPaySafeCardCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixEnterCashCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixEcoPayzCtrl.js" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrill1TapCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrillCtrl.js" />
     <Content Include="_app\common\appInsightsSgnCfg.js" />
     <Content Include="_app\common\appInsightsPrdCfg.js" />
