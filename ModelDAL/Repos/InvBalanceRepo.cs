@@ -132,10 +132,15 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId)
         {
+            var now = DateTime.UtcNow;
+            string monthToAskInvBalance = 
+                now.Day == 1 
+                ? 
+                now.AddMonths(-1).ToStringYearMonth() 
+                : 
+                now.ToStringYearMonth();
 
-            var currentMonth = DateTime.UtcNow.ToStringYearMonth();
-
-            return GetCachedLatestBalanceAsyncByMonth(customerId, currentMonth);
+            return GetCachedLatestBalanceAsyncByMonth(customerId, monthToAskInvBalance);
         }
 
         /// <summary>

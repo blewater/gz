@@ -4,7 +4,7 @@ module BalanceRpt2Db =
     open NLog
     open GzDb.DbUtil
     open ExcelSchemas
-    open GzCommon
+    open GzBatchCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -52,7 +52,7 @@ module DepositsRpt2Db =
     open NLog
     open System
     open NLog
-    open GzCommon
+    open GzBatchCommon
     open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
@@ -121,11 +121,11 @@ module DepositsRpt2Db =
     
     /// Open an Vendor2User excel file and console out the filename
     let private openDepositsRptSchemaFile excelFilename = 
-        let DepositsExcelSchemaFile = DepositsExcelSchema(excelFilename)
+        let depositsExcelSchemaFile = DepositsExcelSchema(excelFilename)
         logger.Info ""
         logger.Info (sprintf "************ Processing Deposits Report %s excel file" excelFilename)
         logger.Info ""
-        DepositsExcelSchemaFile
+        depositsExcelSchemaFile
     
     /// Process the deposits (normal, vendor2user, cashbonus) excel file: Extract each row and upsert database deposits amounts
     let updDbDepositsRpt (db : DbContext)(depositsRptFullPath: string) =
@@ -149,7 +149,7 @@ module CustomRpt2Db =
     open GzDb.DbUtil
     open ExcelSchemas
     open GmRptFiles
-    open GzCommon
+    open GzBatchCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -206,6 +206,8 @@ module Etl =
     open CustomRpt2Db
     open BalanceRpt2Db
     open WithdrawalRpt2Db
+    open DbPlayerRevRpt
+
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -344,8 +346,12 @@ module Etl =
         (db, dbOperation) 
             ||> tryDBCommit3Times
 
+        // Archive / move excel files
         moveRptsToOutFolder 
             inFolder 
             outFolder 
             reportfileNames
+
+        // Update null gmCustomerids
+        setDbGmCustomerId db
 

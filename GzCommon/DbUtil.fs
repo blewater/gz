@@ -11,7 +11,6 @@ module DbUtil =
 
     // Use for compile time memory schema representation
     [<Literal>]
-    // let CompileTimeDbString = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=gzDbDev;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True"
     let CompileTimeDbString = "Server=tcp:gzdbdev.database.windows.net,1433;Database=gzDbDev;User ID=gzDevReader;Password=Life is good wout writing8!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     let logger = LogManager.GetCurrentClassLogger()
 

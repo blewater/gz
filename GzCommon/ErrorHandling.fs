@@ -1,4 +1,4 @@
-﻿namespace GzCommon
+﻿namespace GzBatchCommon
 
 [<AutoOpen>]
 module ErrorHandling =

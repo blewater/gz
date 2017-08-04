@@ -3,12 +3,13 @@
 open canopy
 open System.IO
 open System
-open GzCommon
+open GzBatchCommon
 open ExcelSchemas
+open ConfigArgs
 open Microsoft.FSharp.Collections
 open NLog
 
-type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.EverymatriReportsArgsType) =
+type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsType) =
 
     static let logger = LogManager.GetCurrentClassLogger()
 
@@ -385,7 +386,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : ExcelSchemas.Everym
 
     /// UI Web Automate with Everymatrix reporting site and download reports    
     let uiAutomationDownloading (dayToProcess : DateTime)
-                (reportsArgs : ExcelSchemas.EverymatriReportsArgsType)
+                (reportsArgs : EverymatriReportsArgsType)
                 (balanceFilesArg : BalanceFilesUsageType) =
 
         let portalArgs = reportsArgs.EverymatrixPortalArgs
