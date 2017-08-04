@@ -4,7 +4,7 @@ module DbGzTrx =
     open System
     open NLog
     open GzDb.DbUtil
-    open GzCommon
+    open GzBatchCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -126,7 +126,7 @@ module DbPlayerRevRpt =
     open NLog
     open GzDb.DbUtil
     open ExcelSchemas
-    open GzCommon
+    open GzBatchCommon
     open ExcelUtil
     open System.Diagnostics
 
@@ -140,7 +140,7 @@ module DbPlayerRevRpt =
             row.EndGmBalance.Value
             + totalWithdrawals
             - row.TotalDepositsAmount.Value 
-            - row.BegGmBalance.Value 
+            - if row.BegGmBalance.HasValue then row.BegGmBalance.Value else 0m
         row.GmGainLoss <- Nullable gainLoss
         row.UpdatedOnUtc <- DateTime.UtcNow
         row.Processed <- int GmRptProcessStatus.GainLossRptUpd
@@ -178,18 +178,21 @@ module DbPlayerRevRpt =
         let dbVendor2UserCashBonusAmount = playerRow.CashBonusAmount.Value
         let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
         let dbDeposits = playerRow.TotalDepositsAmount.Value
+
+        // Update currency to correct value if not already from balance files
+        playerRow.Currency <- depositsExcelRow.``Credit real currency``
         match depositsAmountType with
         | Deposit ->
-            let newDeposits = dbDeposits + decimal depositsExcelRow.``Debit real amount``
+            let newDeposits = dbDeposits + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UDeposit ->
             (* Vendor2User Deposits are tracked separatedly and added to TotatDeposits *)
-            let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal depositsExcelRow.``Debit real amount``
+            let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.Vendor2UserDeposits <- Nullable newV2UDepositAmount
             let newDeposits = dbDeposits + decimal depositsExcelRow.``Debit real amount``
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UCashBonus ->
-            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal depositsExcelRow.``Debit real amount``
+            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -219,22 +222,20 @@ module DbPlayerRevRpt =
             (begBalanceExcelRow : BalanceExcelSchema.Row) 
             (playerRow : DbPlayerRevRpt) = 
 
-        let newBegBalance = begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
-        let begBalanceAmount = playerRow.BegGmBalance.Value 
-        Trace.Assert(newBegBalance.Value = begBalanceAmount)
-        playerRow.BegGmBalance <- newBegBalance
+        playerRow.Currency <- begBalanceExcelRow.Currency
+        playerRow.BegGmBalance <- begBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.BegBalanceRptUpd
     
     /// Update ending balance amount of the selected month
     let private updDbRowEndBalanceValues 
-                (endBalanceExcelRow : BalanceExcelSchema.Row) (playerRow : DbPlayerRevRpt) = 
+                (endBalanceExcelRow : BalanceExcelSchema.Row)
+                (playerRow : DbPlayerRevRpt) = 
 
-        let endBalanceAmount = endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
-        Trace.Assert( playerRow.EndGmBalance.Value = endBalanceAmount.Value )
+        playerRow.Currency <- endBalanceExcelRow.Currency
         // Zero out balance amounts, playerloss
-        playerRow.EndGmBalance <- endBalanceAmount
+        playerRow.EndGmBalance <- endBalanceExcelRow.``Account balance`` |> float2NullableDecimal
         //Non-excel content
         playerRow.Processed <- int GmRptProcessStatus.EndBalanceRptUpd
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -251,7 +252,6 @@ module DbPlayerRevRpt =
         playerRow.EmailAddress <- customExcelRow.``Email address``
         playerRow.TotalDepositsAmount <- Nullable 0m
         playerRow.WithdrawsMade <- customExcelRow.``Withdraws made`` |> float2NullableDecimal
-        playerRow.Currency <- customExcelRow.Currency.ToString()
 
         // Zero out gaming deposit cashBonus
         playerRow.Vendor2UserDeposits <- Nullable 0m
@@ -259,6 +259,10 @@ module DbPlayerRevRpt =
 
         if yearMonthDay.Substring(6, 2) = "01" then
             playerRow.BegGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
+
+        // If null it means it's a new user so beg balance should be zero
+        if playerRow.BegGmBalance.HasValue = false then
+            playerRow.BegGmBalance <- Nullable 0m
 
         playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
 
@@ -386,5 +390,31 @@ module DbPlayerRevRpt =
                 insDbNewRowCustomValues db yyyyMmDd customExcelRow
             else 
                 setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow
+        )
+        db.DataContext.SubmitChanges()
+
+    /// Update all null everymatrix customer ids from the playerRevRpt (excel reports table)
+    let setDbGmCustomerId(db : DbContext) =
+
+        query { 
+            for user in db.AspNetUsers do
+                // SQL friendly syntax.. not HasValue would not translate to SQL
+                where (user.GmCustomerId.HasValue = false)
+                select user
+        }
+        |> Seq.iter (fun user -> 
+            query { 
+                for gmUser in db.PlayerRevRpt do
+                    where (gmUser.EmailAddress = user.Email)
+                    select (user, gmUser.UserID)
+                    distinct
+                    exactlyOneOrDefault
+            } 
+            |> (fun (user, gmUserId) ->
+                match gmUserId with
+                | 0 -> logger.Warn(sprintf "Please delete user %s in AspNetUsers Table. Found a null GmCustomerId: %d" user.Email gmUserId)
+                | _ -> user.GmCustomerId <- Nullable gmUserId;
+                        logger.Warn(sprintf "Updated the GmUserId for user %s in AspNetUsers Table. Found this GmCustomerId: %d" user.Email gmUserId)
+            )
         )
         db.DataContext.SubmitChanges()

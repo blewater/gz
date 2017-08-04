@@ -19,7 +19,6 @@
 	                FROM dbo.InvBalances
 	                WHERE 
 		                CustomerId = @CustomerId
-		                AND CashInvestment > 0
 	                ORDER BY YearMonth DESC
 	                RETURN
                 END;

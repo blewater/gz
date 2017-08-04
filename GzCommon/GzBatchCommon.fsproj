@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>GzCommon</Name>
+    <Name>GzBatchCommon</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -74,10 +74,16 @@
     <None Include="Scripts\load-project-debug.fsx" />
     <Compile Include="ErrorHandling.fs" />
     <Compile Include="gzUtils.fs" />
+    <Compile Include="ConfigArgs.fs" />
+    <Compile Include="EmailFacade.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\GzBatch\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.1\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.2\lib\net45\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
       <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
@@ -87,15 +93,23 @@
       <HintPath>$(SolutionDir)packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MailKit">
+      <HintPath>..\GzBatch\packages\MailKit.1.16.2\lib\net451\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\GzBatch\packages\MimeKit.1.16.2\lib\net451\MimeKit.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\GzBatch\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple">
       <HintPath>$(SolutionDir)packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>

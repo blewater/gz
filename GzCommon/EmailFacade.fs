@@ -1,16 +1,17 @@
-﻿namespace DbImport
+﻿namespace GzBatchCommon
 
 open System
 open System.IO
-open GzCommon
 open MailKit
 open MimeKit
 open MailKit.Net.Imap
 open NLog
+open MailKit.Net.Smtp
+open MailKit.Security
 
 type MessagesCount = { CurrentIndex : int ; TotalReportMessages : int ; FoundDaysReport : bool }
 
-type EmailAccess(dayToProcess : DateTime, destCustomRptName : string, gmailUser: string, gmailPassword : string) =
+type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : string) =
 
     static let logger = LogManager.GetCurrentClassLogger()
 
@@ -30,17 +31,7 @@ type EmailAccess(dayToProcess : DateTime, destCustomRptName : string, gmailUser:
         messagePart.Message.WriteTo(fs)
         fs.Flush()
 
-    let findAttachment (isFound : bool)(attachment : MimeEntity): bool =
-        if attachment.ContentType.Name = todaysFileTitle then
-            match attachment with
-            | :? MimePart as f -> mimePart2Disk f destCustomRptName // @"d:\sc\gz\inRpt\" + "Custom Prod 20170616.xlsx"
-            | :? MessagePart as f -> msgPart2Disk f destCustomRptName
-            | _ -> printfn "Unknown attachment type %s %s"  attachment.ContentType.Name attachment.ContentType.MimeType
-            true
-        else
-            isFound // if found once iterating through it sticks
-
-    let saveUsefulAttachment(message : MimeMessage)(yyyyMm : string) : bool = 
+    let saveUsefulAttachment (destCustomRptName : string)(message : MimeMessage)(yyyyMm : string) : bool = 
         let from = 
             (
                 message.From.Mailboxes 
@@ -51,6 +42,16 @@ type EmailAccess(dayToProcess : DateTime, destCustomRptName : string, gmailUser:
 
         if from.EndsWith("everymatrix.com") && todaysFileTitle.LastIndexOf(subject.Substring(subject.Length - 10, 10)) <> -1 then
             
+            let findAttachment (isFound : bool)(attachment : MimeEntity): bool =
+                if attachment.ContentType.Name = todaysFileTitle then
+                    match attachment with
+                    | :? MimePart as f -> mimePart2Disk f destCustomRptName // @"d:\sc\gz\inRpt\" + "Custom Prod 20170616.xlsx"
+                    | :? MessagePart as f -> msgPart2Disk f destCustomRptName
+                    | _ -> printfn "Unknown attachment type %s %s"  attachment.ContentType.Name attachment.ContentType.MimeType
+                    true
+                else
+                    isFound // if found once iterating through it sticks
+
             Seq.fold findAttachment false message.Attachments
             
         else
@@ -59,10 +60,10 @@ type EmailAccess(dayToProcess : DateTime, destCustomRptName : string, gmailUser:
     let messageMarkedForDeletion (folder : IMailFolder)(messageIdx : int) : unit = 
         folder.AddFlags(messageIdx, MessageFlags.Deleted, true)
 
-    let messageTasks (inbox : IMailFolder)(yyyyMm : string)(index : int) : bool =
+    let messageTasks (inbox : IMailFolder)(destCustomRptName : string)(yyyyMm : string)(index : int) : bool =
         let message = inbox.GetMessage(index)
         
-        let foundUsefulAttachment = saveUsefulAttachment message yyyyMm
+        let foundUsefulAttachment = saveUsefulAttachment destCustomRptName message yyyyMm
         if not foundUsefulAttachment then
             messageMarkedForDeletion inbox index
         foundUsefulAttachment
@@ -78,7 +79,7 @@ type EmailAccess(dayToProcess : DateTime, destCustomRptName : string, gmailUser:
         ignore ( inbox.Open(FolderAccess.ReadWrite) )
         inbox
 
-    member this.DownloadCustomReport() : MessagesCount =
+    member this.DownloadCustomReport(destCustomRptName : string) : MessagesCount =
 
         use client = new ImapClient()
         let inbox = initInbox client
@@ -90,7 +91,7 @@ type EmailAccess(dayToProcess : DateTime, destCustomRptName : string, gmailUser:
             if index = 0 then
                 { currentCounts with CurrentIndex = 0 }
             else 
-                let foundReport = messageTasks inbox yyyyMm (index - 1)
+                let foundReport = messageTasks inbox destCustomRptName yyyyMm (index - 1)
                 let newMsgCount = { 
                     CurrentIndex = index - 1; 
                     TotalReportMessages = currentCounts.TotalReportMessages + 1;
@@ -105,3 +106,36 @@ type EmailAccess(dayToProcess : DateTime, destCustomRptName : string, gmailUser:
                     FoundDaysReport = false 
                 }
         msgCount
+
+    member this.SendWithdrawnVintagesCashBonusCsv(csvContent : string)(csvFilenamePath : string) =
+
+        use smtpClient = new SmtpClient()
+        smtpClient.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
+        smtpClient.Authenticate(gmailUser, gmailPassword)
+
+        let msg = MimeMessage()
+        msg.From.Add(MailboxAddress ("Admin", "admin@greenzorro.com"))
+        //msg.To.Add(new MailboxAddress ("Antonis", "antonis.voerakos@greenzorro.com"))
+        msg.To.Add(MailboxAddress ("Mario", "mario.karagiorgas@greenzorro.com"))
+        msg.Subject <- sprintf "%s Withdrawn Vintages Cash Bonus csv file" <| DateTime.UtcNow.AddDays(-1.0).ToString("ddd d/MMM/yy")
+        let body = TextPart ("plain")
+        body.Text <- csvContent
+
+        // create an image attachment for the file located at path
+        let attachment = MimePart ("text", "csv")
+        attachment.ContentObject <- ContentObject (File.OpenRead (csvFilenamePath), ContentEncoding.Default)
+        attachment.ContentDisposition <- ContentDisposition (ContentDisposition.Attachment)
+        attachment.ContentTransferEncoding <- ContentEncoding.Base64
+        attachment.FileName <- Path.GetFileName (csvFilenamePath)
+
+        // now create the multipart/mixed container to hold the message text and the
+        // csv attachment
+        let multipart = Multipart ("mixed")
+        multipart.Add (body)
+        multipart.Add (attachment)
+
+        // now set the multipart/mixed as the message body
+        msg.Body <- multipart
+
+        smtpClient.Send(msg)
+        smtpClient.Disconnect(true)
