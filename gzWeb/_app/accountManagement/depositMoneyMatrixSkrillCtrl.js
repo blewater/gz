@@ -1,14 +1,40 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositMoneyMatrixSkrillCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217, auth) {
+    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', 'emBanking', ctrlFactory]);
+    function ctrlFactory($scope, $q, iso4217, auth, emBanking) {
         $scope.model = {
+            selectedAccount: undefined,
+            accountEmail: undefined,
             amount: undefined,
             bonusCode: undefined
         };
 
+        $scope.onAccountSelected = function (accountId) {
+            var account = $filter('where')($scope.existingAccounts, { 'id': accountId })[0];
+            $scope.model.existingAccount = account;
+            if (account) {
+                $scope.model.accountEmail = account.name;
+                angular.element('#amount').focus();
+            } else {
+                $scope.model.accountEmail = undefined;
+                angular.element('#accountEmail').focus();
+            }
+        };
+
         function loadCreditCardInfo() {
+            if ($scope.paymentMethodCfg.monitoringScriptUrl) {
+                $.get($scope.paymentMethodCfg.monitoringScriptUrl, undefined, angular.noop, "script").fail(function () {
+                    message.error('Cannot load provided MonitoringScriptUrl');
+                });
+            }
+
+            $scope.existingAccounts = $scope.paymentMethodCfg.fields.payCardID.options;
+            $scope.maximumPayCards = $scope.paymentMethodCfg.fields.payCardID.maximumPayCards;
+            $scope.thereAreExistingAccounts = $scope.existingAccounts.length > 0;
+            $scope.canAddNewAccount = $scope.existingAccounts.length < $scope.maximumPayCards;
+            $scope.accountRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.SkrillEmailAddress.regularExpression;
+
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
@@ -20,23 +46,32 @@
             //fetchApplicableBonuses();
         };
 
-        function getFields() {
-            return {
+        function getFields(options) {
+            var fields = {
                 gamingAccountID: $scope.gamingAccount.id,
                 currency: $scope.currency,
                 amount: $scope.model.amount,
+                MonitoringSessionId: window.MMM !== undefined ? window.MMM.getSession() : null,
                 bonusCode: $scope.model.bonusCode
-            };
+            }
+            if (options.id)
+                fields.payCardID = options.id;
+            else
+                fields.SkrillEmailAddress = options.email;
+            return fields;
         }
 
         $scope.readFields = function () {
             var q = $q.defer();
-            q.resolve(getFields());
+            q.resolve(getFields({
+                id: $scope.model.existingAccount ? $scope.model.existingAccount.id : undefined,
+                email: $scope.model.accountEmail
+            }));
             return q.promise;
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Do you want to deposit the amount of " + prepareData.creditAmount + " using Trustly?";
+            return "Do you want to deposit the amount of " + prepareData.creditAmount + " using " + $scope.selectedMethod.name + "?";
         };
 
         init();
