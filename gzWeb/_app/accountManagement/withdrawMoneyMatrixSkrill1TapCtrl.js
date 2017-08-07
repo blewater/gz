@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'withdrawMoneyMatrixTrustly1TapCtrl';
+    var ctrlId = 'withdrawMoneyMatrixSkrill1TapCtrl';
     APP.controller(ctrlId, ['$scope', '$q', 'iso4217', ctrlFactory]);
     function ctrlFactory($scope, $q, iso4217) {
         $scope.model = {

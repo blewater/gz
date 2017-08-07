@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'withdrawMoneyMatrixTrustlyCtrl';
+    var ctrlId = 'withdrawFieldsCtrl';
     APP.controller(ctrlId, ['$scope', '$q', 'iso4217', '$filter', ctrlFactory]);
     function ctrlFactory($scope, $q, iso4217, $filter) {
         $scope.model = {
@@ -12,8 +12,9 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
+            $scope.accountLimitMax = Math.min($scope.accountLimits.max, $scope.gamingAccount.amount);
             $scope.limitMin = 1;//$scope.accountLimits.min;
-            $scope.limitMax = $scope.accountLimits.max;
+            $scope.limitMax = $scope.accountLimitMax;
             $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $filter('number')($scope.limitMin, 2) + " and " + $filter('number')($scope.limitMax, 2) + ")";
         }
 
@@ -35,10 +36,6 @@
             q.resolve(getFields());
             return q.promise;
         }
-
-        $scope.readConfirmMessage = function (prepareData) {
-            return "Do you want to withdraw the amount of " + prepareData.debitAmount + " using Trustly?";
-        };
 
         init();
     }
