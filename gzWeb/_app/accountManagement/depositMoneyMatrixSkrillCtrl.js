@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositMoneyMatrixSkrillCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', 'emBanking', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217, auth, emBanking) {
+    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, $q, iso4217, auth, emBanking, $filter) {
         $scope.model = {
             selectedAccount: undefined,
             accountEmail: undefined,

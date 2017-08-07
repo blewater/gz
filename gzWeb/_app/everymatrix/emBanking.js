@@ -14,10 +14,13 @@
             MoneyMatrixCreditCard: "MoneyMatrix_CreditCard",
             MoneyMatrixTrustly: "MoneyMatrix_Trustly",
             MoneyMatrixSkrill: "MoneyMatrix_Skrill",
-            //MoneyMatrixSkrill1Tap: "MoneyMatrix_Skrill_1Tap",
+            MoneyMatrixSkrill1Tap: "MoneyMatrix_Skrill_1Tap",
+            //MoneyMatrixEnterCash: "MoneyMatrix_EnterCash",
+            //MoneyMatrixEuteller: "MoneyMatrix_Euteller",
             //MoneyMatrixNeteller: "MoneyMatrix_Neteller",
             //MoneyMatrixPaySafeCard: "MoneyMatrix_PaySafeCard",
-            //MoneyMatrixEnterCash: "MoneyMatrix_EnterCash",
+            //MoneyMatrixAdyenSepa: "",
+            //MoneyMatrixZimpler: "MoneyMatrix_Zimpler",
             //MoneyMatrixEcoPayz: "MoneyMatrix_EcoPayz"
         };
 

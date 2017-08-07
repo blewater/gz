@@ -17,7 +17,16 @@
             //Maestro: "Maestro",
             //MasterCard: "MasterCard",
             MoneyMatrixCreditCard: "MoneyMatrix_CreditCard",
-            MoneyMatrixTrustly: "MoneyMatrix_Trustly"
+            MoneyMatrixTrustly: "MoneyMatrix_Trustly",
+            MoneyMatrixSkrill: "MoneyMatrix_Skrill",
+            MoneyMatrixSkrill1Tap: "MoneyMatrix_Skrill_1Tap",
+            //MoneyMatrixEnterCash: "MoneyMatrix_EnterCash",
+            //MoneyMatrixEuteller: "MoneyMatrix_Euteller",
+            //MoneyMatrixNeteller: "MoneyMatrix_Neteller",
+            //MoneyMatrixPaySafeCard: "MoneyMatrix_PaySafeCard",
+            //MoneyMatrixAdyenSepa: "",
+            //MoneyMatrixZimpler: "MoneyMatrix_Zimpler",
+            //MoneyMatrixEcoPayz: "MoneyMatrix_EcoPayz"
         };
 
         _service.PaymentMethodCode = _supportedPaymentMethodCodes;

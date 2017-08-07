@@ -1,13 +1,12 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'depositMoneyMatrixSkrill1TapCtrl';
+    var ctrlId = 'registerDepositMoneyMatrixSkrillCtrl';
     APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
     function ctrlFactory($scope, $q, iso4217, auth, emBanking, $filter) {
         $scope.model = {
             selectedAccount: undefined,
             accountEmail: undefined,
             amount: undefined,
-            reset: undefined,
             bonusCode: undefined
         };
 
@@ -16,13 +15,9 @@
             $scope.model.existingAccount = account;
             if (account) {
                 $scope.model.accountEmail = account.name;
-                $scope.accountLimitMax = account.displaySpecificFields.SkrillOneTapMaxAmount;
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
                 angular.element('#amount').focus();
             } else {
                 $scope.model.accountEmail = undefined;
-                $scope.accountLimitMax = $scope.accountLimits.max;
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
                 angular.element('#accountEmail').focus();
             }
         };
@@ -43,8 +38,7 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
-            $scope.accountLimitMax = $scope.accountLimits.max;
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
         }
 
         function init() {
@@ -58,7 +52,6 @@
                 currency: $scope.currency,
                 amount: $scope.model.amount,
                 MonitoringSessionId: window.MMM !== undefined ? window.MMM.getSession() : null,
-                SkrillReSetupOneTap: $scope.model.reset,
                 bonusCode: $scope.model.bonusCode
             }
             if (options.id)
