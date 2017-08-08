@@ -39,6 +39,10 @@
                             $scope.gameWidth = windowWidth;
                             $scope.gameHeight = windowHeight;
                         }
+                        else if ($scope.game.width === 0 && $scope.game.height === 0) {
+                            $scope.gameWidth = windowWidth * 0.7;
+                            $scope.gameHeight = windowHeight * 0.7;
+                        }
                         else {
                             var windowAspect = windowWidth / windowHeight;
                             var gameAspect = $scope.game.width / $scope.game.height;
