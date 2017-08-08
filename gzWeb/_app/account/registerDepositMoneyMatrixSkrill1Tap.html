@@ -1,9 +1,9 @@
 ﻿<div class="deposit-skrill-onetap">
-    <div ng-if="thereAreExistingAccounts">
+    <div ng-if="thereAreExistingPayCards">
         <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
             <div class="form-group">
                 <div>Select an account</div>
-                <div ng-if="!canAddNewAccount" class="max-number-of-cards">
+                <div ng-if="!canAddNewPayCard" class="max-number-of-cards">
                     Note: You have exceeded the maximum number of accounts you are allowed to register. If you want to register a new one, please <a href="mailto:help@greenzorro.com">contact us</a>.
                 </div>
             </div>
@@ -13,24 +13,24 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-12">
-                        <gz-select gz-model="model.selectedAccount" gz-collection="existingAccounts" gz-prompt="--select account--" gz-loading="loadingAccounts"
-                                   gz-id="id" gz-display="name" gz-change="onAccountSelected(id)">
+                        <gz-select gz-model="model.selectedPayCard" gz-collection="existingPayCards" gz-prompt="--select account--" gz-loading="loadingPayCards"
+                                   gz-id="id" gz-display="name" gz-change="onPayCardSelected(id)">
                         </gz-select>
                     </div>
                 </div>
-                <gz-field-ok gz-when="model.selectedAccount"></gz-field-ok>
+                <gz-field-ok gz-when="model.selectedPayCard"></gz-field-ok>
             </div>
         </div>
     </div>
 
-    <div ng-if="thereAreExistingAccounts && canAddNewAccount" class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+    <div ng-if="thereAreExistingPayCards && canAddNewPayCard" class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
         <div class="form-group">
             <div class="text-center">-- OR --</div>
         </div>
     </div>
 
     <div>
-        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="thereAreExistingAccounts && canAddNewAccount">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="thereAreExistingPayCards && canAddNewPayCard">
             <div class="form-group">
                 <div>Register a new account</div>
             </div>
@@ -42,7 +42,7 @@
                     <div class="col-xs-12">
                         <input type="text" ng-pattern="accountRegex" placeholder="account email" id="accountEmail" name="accountEmail" class="form-control" ng-model="model.accountEmail"
                                ng-class="{ 'empty': !model.accountEmail, 'danger' : form.accountEmail.$invalid && !form.accountEmail.$pristine }"
-                               ng-disabled="model.existingAccount || !canAddNewAccount">
+                               ng-disabled="model.selectedPayCard || !canAddNewPayCard">
                     </div>
                     <div class="col-xs-12">
                         <div class="help-block" ng-class="{'show': !form.accountEmail.$pristine && form.accountEmail.$invalid}">Invalid account email</div>
