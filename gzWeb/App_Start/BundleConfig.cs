@@ -209,7 +209,9 @@ namespace gzWeb {
                                         , "~/_app/account/registerDepositCreditCardCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixCreditCardCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixTrustlyCtrl.js"
-			#endregion
+                                        , "~/_app/account/registerDepositMoneyMatrixSkrillCtrl.js"
+                                        , "~/_app/account/registerDepositMoneyMatrixSkrill1TapCtrl.js"
+            #endregion
 
             #region Account Management
                                         , "~/_app/accountManagement/accountManagementCtrl.js"
@@ -229,15 +231,16 @@ namespace gzWeb {
 
                                         , "~/_app/accountManagement/withdrawPaymentMethodsCtrl.js"
                                         , "~/_app/accountManagement/withdrawCtrl.js"
-                                        , "~/_app/accountManagement/withdrawCreditCardCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixCreditCardCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixTrustlyCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixSkrillCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixSkrill1TapCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixNetellerCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixPaySafeCardCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixEnterCashCtrl.js"
-                                        , "~/_app/accountManagement/withdrawMoneyMatrixEcoPayzCtrl.js"
+                                        , "~/_app/accountManagement/withdrawFieldsCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawCreditCardCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixCreditCardCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixTrustlyCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixSkrillCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixSkrill1TapCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixNetellerCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixPaySafeCardCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixEnterCashCtrl.js"
+                                        //, "~/_app/accountManagement/withdrawMoneyMatrixEcoPayzCtrl.js"
 
                                         , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
                                         , "~/_app/accountManagement/transactionHistoryCtrl.js"
