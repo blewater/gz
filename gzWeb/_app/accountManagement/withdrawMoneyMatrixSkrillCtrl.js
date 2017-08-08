@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'withdrawMoneyMatrixTrustlyCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217) {
+    var ctrlId = 'withdrawMoneyMatrixSkrillCtrl';
+    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, $q, iso4217, $filter) {
         $scope.model = {
             amount: undefined,
         };
@@ -37,7 +37,7 @@
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Do you want to withdraw the amount of " + prepareData.debitAmount + " using Trustly?";
+            return "Do you want to withdraw the amount of " + prepareData.debitAmount + " using " + $scope.selectedMethod.name + "?";
         };
 
         init();

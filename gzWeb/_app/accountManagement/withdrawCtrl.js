@@ -9,17 +9,20 @@
         // #endregion
 
         // #region payment methods fields
-        var creditCardFields = { templateUrl: '/_app/accountManagement/withdrawCreditCard.html', ctrlId: 'withdrawCreditCardCtrl' }
-        var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
-        var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' }
+        //var creditCardFields = { templateUrl: '/_app/accountManagement/withdrawCreditCard.html', ctrlId: 'withdrawCreditCardCtrl' }
+        //var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
+        //var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' }
+        //var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixSkrill.html', ctrlId: 'withdrawMoneyMatrixSkrillCtrl' }
+        var withdrawFields = { templateUrl: '/_app/accountManagement/withdrawFields.html', ctrlId: 'withdrawFieldsCtrl' }
         var paymentMethodsFields = [];
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
         function getPaymentMethodFields(paymentMethodCode) {
-            return paymentMethodsFields[paymentMethodCode];
+            return withdrawFields;// paymentMethodsFields[paymentMethodCode];
         };
         // #endregion
 
@@ -183,18 +186,16 @@
         };
         // #endregion
 
-        //$scope.getMethodName = function (method) {
-        //    switch (method.code) {
-        //        case emBankingWithdraw.PaymentMethodCode.VISA:
-        //        case emBankingWithdraw.PaymentMethodCode.Maestro:
-        //        case emBankingWithdraw.PaymentMethodCode.MasterCard:
-        //        case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
-        //            return method.name;
-        //        case emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly:
-        //            return "Trustly";
-        //        default:
-        //            return method.name;
-        //    }
-        //};
+        $scope.readConfirmMessage = function (prepareData) {
+            return "Do you want to withdraw the amount of " + prepareData.debitAmount + getConfirmMessageSuffix() + "?";
+        };
+        function getConfirmMessageSuffix(prepareData) {
+            switch ($scope.selectedMethod.code) {
+                case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
+                    return " to " + prepareData.creditTo;
+                default:
+                    return " using " + $scope.selectedMethod.name;
+            }
+        };
     }
 })();
