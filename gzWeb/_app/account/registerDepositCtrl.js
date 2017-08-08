@@ -48,9 +48,9 @@
         var moneyMatrixTrustlyFields = { templateUrl: '_app/account/registerDepositMoneyMatrixTrustly.html', ctrlId: 'registerDepositMoneyMatrixTrustlyCtrl' }
         var moneyMatrixSkrillFields = { templateUrl: '/_app/account/registerDepositMoneyMatrixSkrill.html', ctrlId: 'registerDepositMoneyMatrixSkrillCtrl' }
         var moneyMatrixSkrill1TapFields = { templateUrl: '/_app/account/registerDepositMoneyMatrixSkrill1Tap.html', ctrlId: 'registerDepositMoneyMatrixSkrill1TapCtrl' }
+        var moneyMatrixEnterCashFields = { templateUrl: '/_app/account/registerDepositMoneyMatrixEnterCash.html', ctrlId: 'registerDepositMoneyMatrixEnterCashCtrl' }
         //var moneyMatrixNetellerFields = { templateUrl: '/_app/account/registerDepositMoneyMatrixNeteller.html', ctrlId: 'registerDepositMoneyMatrixNetellerCtrl' }
         //var moneyMatrixPaySafeCardFields = { templateUrl: '/_app/account/registerDepositMoneyMatrixPaySafeCard.html', ctrlId: 'registerDepositMoneyMatrixPaySafeCardCtrl' }
-        //var moneyMatrixEnterCashFields = { templateUrl: '/_app/account/registerDepositMoneyMatrixEnterCash.html', ctrlId: 'registerDepositMoneyMatrixEnterCashCtrl' }
         //var moneyMatrixEcoPayzFields = { templateUrl: '/_app/account/registerDepositMoneyMatrixEcoPayz.html', ctrlId: 'registerDepositMoneyMatrixEcoPayzCtrl' }
         var paymentMethodsFields = [];
         paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
@@ -60,9 +60,9 @@
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap] = moneyMatrixSkrill1TapFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixNeteller] = moneyMatrixNetellerFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixPaySafeCard] = moneyMatrixPaySafeCardFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEcoPayz] = moneyMatrixEcoPayzFields;
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
@@ -199,22 +199,6 @@
             });
         };
         // #endregion
-
-        $scope.getMethodName = function (method) {
-            switch (method.code) {
-                case emBanking.PaymentMethodCode.VISA:
-                case emBanking.PaymentMethodCode.Maestro:
-                case emBanking.PaymentMethodCode.MasterCard:
-                case emBanking.PaymentMethodCode.MoneyMatrixCreditCard:
-                case emBanking.PaymentMethodCode.MoneyMatrixSkrill:
-                case emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap:
-                    return method.name;
-                case emBanking.PaymentMethodCode.MoneyMatrixTrustly:
-                    return "Trustly";
-                default:
-                    return method.name;
-            }
-        };
 
         // #region backToPaymentMethods
         $scope.backToPaymentMethods = function () {

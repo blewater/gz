@@ -372,7 +372,8 @@
     display: inline-block;
 }
 .investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content .amount .amount-value {
-    font-size: 17px;
+    /*font-size: 17px;*/
+    font-size: 14px;
     color: #007850;
     float: right;
 }
