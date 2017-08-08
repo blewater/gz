@@ -186,10 +186,12 @@ module DbPlayerRevRpt =
             let newDeposits = dbDeposits + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UDeposit ->
-            (* Vendor2User Deposits are tracked separatedly and added to TotatDeposits *)
-            let newV2UDepositAmount = dbVendor2UserDepositsAmount + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
-            playerRow.Vendor2UserDeposits <- Nullable newV2UDepositAmount
-            let newDeposits = dbDeposits + decimal depositsExcelRow.``Debit real amount``
+            (* Track Vendor2User Deposits separatedly and add to TotatDeposits too *)
+            let newV2uSingleDepositAmount = decimal depositsExcelRow.``Credit real  amount``
+            let newV2uTotalDepositAmount = dbVendor2UserDepositsAmount + newV2uSingleDepositAmount // in players native currency
+            playerRow.Vendor2UserDeposits <- Nullable newV2uTotalDepositAmount
+            // Add to total deposits too
+            let newDeposits = dbDeposits + newV2uSingleDepositAmount
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UCashBonus ->
             let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal depositsExcelRow.``Credit real  amount`` // in players native currency

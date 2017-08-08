@@ -52,7 +52,16 @@
                 case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
                     return method.payCard.name;
                 case emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly:
-                    return method.withdrawDesc || "Trustly";
+                case emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill:
+                case emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill1Tap:
+                //case emBankingWithdraw.PaymentMethodCode.MoneyMatrixEnterCash:
+                //case emBankingWithdraw.PaymentMethodCode.MoneyMatrixEuteller:
+                //case emBankingWithdraw.PaymentMethodCode.MoneyMatrixNeteller:
+                //case emBankingWithdraw.PaymentMethodCode.MoneyMatrixPaySafeCard:
+                //case emBankingWithdraw.PaymentMethodCode.MoneyMatrixAdyenSepa:
+                //case emBankingWithdraw.PaymentMethodCode.MoneyMatrixZimpler:
+                //case emBankingWithdraw.PaymentMethodCode.MoneyMatrixEcoPayz:
+                    return method.withdrawDesc || method.payCard.name;
                 default:
                     return method.code;
             }

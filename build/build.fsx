@@ -316,7 +316,7 @@ Target "SwapStageLive" (fun _ ->
     let rec runSwap (times : int) =
         // Set Cmd defaults
         let azSwapCmdStr = "webapp deployment slot swap -n greenzorro -g 2ndSub_All_BizSpark_RG --slot sgn --target-slot Production"
-        let azSwapCmd() = exec "az.bat" azSwapCmdStr
+        let azSwapCmd() = exec "az.cmd" azSwapCmdStr
         let printSwapSuccess() = printfn "Success in swap stage with production."
 
         // Swap
@@ -333,7 +333,7 @@ Target "SwapStageLive" (fun _ ->
         trace "Stage and production do not appear to have the latest git source version built.\nCheck build status"
     
     let proceedSwap = 
-        not productionUpToDate && getUserInput "Are you sure you want to swap stage with production (Y/N)?"
+        not productionUpToDate && getUserInput "Do you want to swap stage with production (Y/N)?"
         |> userReply2Bool
     if proceedSwap then
         runSwap 1
