@@ -28,6 +28,8 @@
                     if (!$scope.paymentMethods) {
                         emBanking.getSupportedPaymentMethods(sessionInfo.userCountry, sessionInfo.currency).then(function(paymentMethods) {
                             $scope.paymentMethods = paymentMethods;
+                            for (var i = 0; i < $scope.paymentMethods.length; i++)
+                                $scope.paymentMethods[i].displayName = emBanking.getPaymentMethodDisplayName($scope.paymentMethods[i]);
                             $scope.initializing = false;
                         }, function (error) {
                             $log.error(error.desc);

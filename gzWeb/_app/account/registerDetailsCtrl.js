@@ -183,7 +183,7 @@
             var foundCurrencies = $filter('filter')(currencies, { code: country.currency });
             $scope.model.currency = foundCurrencies.length > 0
                 ? foundCurrencies[0]
-                : $filter('filter')(currencies, { code: 'USD' })[0];
+                : $filter('filter')(currencies, { code: 'EUR' })[0];
         }
 
         function init() {
