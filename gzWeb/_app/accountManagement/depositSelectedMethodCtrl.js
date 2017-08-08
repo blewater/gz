@@ -1,68 +1,79 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'depositCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, iso4217) {
+    var ctrlId = 'depositSelectedMethodCtrl';
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'iso4217', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, iso4217, $filter) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
         // #endregion
 
-        // #region payment methods fields
-        var creditCardFields = { templateUrl: '/_app/accountManagement/depositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
-        var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixCreditCard.html', ctrlId: 'depositMoneyMatrixCreditCardCtrl' }
-        var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixTrustly.html', ctrlId: 'depositMoneyMatrixTrustlyCtrl' }
-        var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill.html', ctrlId: 'depositMoneyMatrixSkrillCtrl' }
-        var moneyMatrixSkrill1TapFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill1Tap.html', ctrlId: 'depositMoneyMatrixSkrill1TapCtrl' }
-        var moneyMatrixEnterCashFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEnterCash.html', ctrlId: 'depositMoneyMatrixEnterCashCtrl' }
-        //var moneyMatrixNetellerFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixNeteller.html', ctrlId: 'depositMoneyMatrixNetellerCtrl' }
-        //var moneyMatrixPaySafeCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixPaySafeCard.html', ctrlId: 'depositMoneyMatrixPaySafeCardCtrl' }
-        //var moneyMatrixEcoPayzFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEcoPayz.html', ctrlId: 'depositMoneyMatrixEcoPayzCtrl' }
-        var paymentMethodsFields = [];
-        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap] = moneyMatrixSkrill1TapFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixNeteller] = moneyMatrixNetellerFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixPaySafeCard] = moneyMatrixPaySafeCardFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEcoPayz] = moneyMatrixEcoPayzFields;
-        function getPaymentMethodFields(paymentMethodCode) {
-            return paymentMethodsFields[paymentMethodCode];
-        };
-        // #endregion
-
         // #region init
         function init() {
-            getPaymentMethodCfg();
-        };
-
-        function getPaymentMethodCfg() {
-             $scope.initializing = true;
+            $scope.initializing = true;
             emBanking.getPaymentMethodCfg($scope.selectedMethod.code).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
-                attachFields($scope.paymentMethodCfg.paymentMethodCode);
+
+                $scope.existingPayCards = $scope.paymentMethodCfg.fields.payCardID.options;
+                $scope.maximumPayCards = $scope.paymentMethodCfg.fields.payCardID.maximumPayCards;
+                $scope.thereAreExistingPayCards = $scope.existingPayCards.length > 0;
+                $scope.canAddNewPayCard = $scope.existingPayCards.length < $scope.maximumPayCards;
+
+                $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
+                $scope.currency = $scope.gamingAccount.currency;
+                $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+
+                $scope.model = {
+                    selectedPayCard: undefined,
+                    amount: undefined,
+                    bonusCode: undefined
+                };
+
+                customInit($scope.selectedMethod);
+
                 $scope.initializing = false;
             }, function (error) {
                 message.error(error.desc);
                 $scope.initializing = false;
             });
+        };
 
-        }
+        function customInit(method) {
+            if (method.code === emBanking.PaymentMethodCode.MoneyMatrixTrustly)
+                method.displayName = "Trustly";
+            else if (method.code === emBanking.PaymentMethodCode.MoneyMatrixEnterCash)
+                method.displayName = "EnterCash";
+            else 
+                method.displayName = method.name;
 
-        function attachFields(paymentMethodCode) {
-            $timeout(function () {
-                var paymentMethodFields = getPaymentMethodFields(paymentMethodCode);
-                helpers.ui.compile({
-                    selector: '#paymentMethodFields',
-                    templateUrl: paymentMethodFields.templateUrl,
-                    controllerId: paymentMethodFields.ctrlId,
-                    scope: $scope
-                });
-            });
+            if (method.code === emBanking.PaymentMethodCode.MoneyMatrixSkrill)
+                $scope.model.payCardName = undefined;
+
+            switch (method.code) {
+                case emBanking.PaymentMethodCode.VISA:
+                    break;
+                case emBanking.PaymentMethodCode.Maestro:
+                    break;
+                case emBanking.PaymentMethodCode.MasterCard:
+                    break;
+                case emBanking.PaymentMethodCode.MoneyMatrixCreditCard:
+                    break;
+                case emBanking.PaymentMethodCode.MoneyMatrixSkrill:
+                    break;
+                case emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap:
+                    break;
+                case emBanking.PaymentMethodCode.MoneyMatrixTrustly:
+                    method.displayName = "Trustly";
+                    break;
+                case emBanking.PaymentMethodCode.MoneyMatrixEnterCash:
+                    method.displayName = "EnterCash";
+                    break;
+                default:
+                    $scope.model.payCardName = undefined;
+                    method.displayName = method.name;
+                    break;
+            }
         }
 
         init();

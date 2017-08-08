@@ -20,13 +20,27 @@
             MoneyMatrixTrustly: "MoneyMatrix_Trustly",
             MoneyMatrixSkrill: "MoneyMatrix_Skrill",
             MoneyMatrixSkrill1Tap: "MoneyMatrix_Skrill_1Tap",
-            //MoneyMatrixEnterCash: "MoneyMatrix_EnterCash",
+            MoneyMatrixEnterCash: "MoneyMatrix_EnterCash",
             //MoneyMatrixEuteller: "MoneyMatrix_Euteller",
             //MoneyMatrixNeteller: "MoneyMatrix_Neteller",
             //MoneyMatrixPaySafeCard: "MoneyMatrix_PaySafeCard",
             //MoneyMatrixAdyenSepa: "",
             //MoneyMatrixZimpler: "MoneyMatrix_Zimpler",
             //MoneyMatrixEcoPayz: "MoneyMatrix_EcoPayz"
+        };
+        _service.getPaymentMethodDisplayName = function (method) {
+            switch (method.code) {
+                case _supportedPaymentMethodCodes.MoneyMatrixCreditCard:
+                case _supportedPaymentMethodCodes.MoneyMatrixSkrill:
+                case _supportedPaymentMethodCodes.MoneyMatrixSkrill1Tap:
+                    return method.name;
+                case _supportedPaymentMethodCodes.MoneyMatrixTrustly:
+                    return "Trustly";
+                case _supportedPaymentMethodCodes.MoneyMatrixEnterCash:
+                    return "EnterCash";
+                default:
+                    return method.name;
+            }
         };
 
         _service.PaymentMethodCode = _supportedPaymentMethodCodes;

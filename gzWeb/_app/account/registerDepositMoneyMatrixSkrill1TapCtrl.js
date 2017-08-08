@@ -4,19 +4,18 @@
     APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
     function ctrlFactory($scope, $q, iso4217, auth, emBanking, $filter) {
         $scope.model = {
-            selectedAccount: undefined,
+            selectedPayCard: undefined,
             accountEmail: undefined,
             amount: undefined,
             reset: undefined,
             bonusCode: undefined
         };
 
-        $scope.onAccountSelected = function (accountId) {
-            var account = $filter('where')($scope.existingAccounts, { 'id': accountId })[0];
-            $scope.model.existingAccount = account;
-            if (account) {
-                $scope.model.accountEmail = account.name;
-                $scope.accountLimitMax = account.displaySpecificFields.SkrillOneTapMaxAmount;
+        $scope.onPayCardSelected = function (accountId) {
+            $scope.model.selectedPayCard = $filter('where')($scope.existingPayCards, { 'id': accountId })[0];
+            if ($scope.model.selectedPayCard) {
+                $scope.model.accountEmail = $scope.model.selectedPayCard.name;
+                $scope.accountLimitMax = $scope.model.selectedPayCard.displaySpecificFields.SkrillOneTapMaxAmount;
                 $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
                 angular.element('#amount').focus();
             } else {
@@ -34,10 +33,10 @@
                 });
             }
 
-            $scope.existingAccounts = $scope.paymentMethodCfg.fields.payCardID.options;
+            $scope.existingPayCards = $scope.paymentMethodCfg.fields.payCardID.options;
             $scope.maximumPayCards = $scope.paymentMethodCfg.fields.payCardID.maximumPayCards;
-            $scope.thereAreExistingAccounts = $scope.existingAccounts.length > 0;
-            $scope.canAddNewAccount = $scope.existingAccounts.length < $scope.maximumPayCards;
+            $scope.thereAreExistingPayCards = $scope.existingPayCards.length > 0;
+            $scope.canAddNewPayCard = $scope.existingPayCards.length < $scope.maximumPayCards;
             $scope.accountRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.SkrillEmailAddress.regularExpression;
 
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
@@ -71,7 +70,7 @@
         $scope.readFields = function () {
             var q = $q.defer();
             q.resolve(getFields({
-                id: $scope.model.existingAccount ? $scope.model.existingAccount.id : undefined,
+                id: $scope.model.selectedPayCard ? $scope.model.selectedPayCard.id : undefined,
                 email: $scope.model.accountEmail
             }));
             return q.promise;

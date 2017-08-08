@@ -3,10 +3,10 @@
 
     <div ng-if="initializing" class="initializing-spinner" us-spinner="spinnerWhite"></div>
     <div ng-if="!initializing">
-        <div class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by $index" ng-class="{'single':paymentMethods.length === 1}">
+        <div ng-show="paymentMethods.length > 0" class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by $index" ng-class="{'single':paymentMethods.length === 1}">
             <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
-            <div>{{method.descr}}</div>
-            <!--<div ng-repeat="d in method.descr">{{d}}</div>-->
+            <div>{{method.displayName}}</div>
         </div>
+        <div ng-show="paymentMethods.length === 0" class="single">You have to make a deposit first in order to make a withdrawal</div>
     </div>
 </div>
