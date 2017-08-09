@@ -93,7 +93,7 @@ module GmRptFiles =
             | FirstAsc -> sortedExcelList.Item 0
             | LastAsc -> sortedExcelList.Item (sortedExcelList.Length - 1)
         elif sortedExcelList.Length = 0 then
-            failWithLogInvalidArg "[EmptyReportFolder]" (sprintf "No excel file within in report folder %s for filename maks %s." inRptFolder.folderName filenameMask)
+            failWithLogInvalidArg "[EmptyReportFolder]" (sprintf "No excel file within in report folder %s for filename mask %s." inRptFolder.folderName filenameMask)
         else
             failWithLogInvalidArg "[Mismatched index of requested file]" (sprintf "No excel file for requested index: %A within in report folder: %s for filename mask: %s." dirListIndex inRptFolder.folderName filenameMask)
     

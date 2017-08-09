@@ -50,6 +50,9 @@ module WithdrawalRpt2Db =
                 let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
                 let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt 
 
+                let dateLogMsg = sprintf "Withdrawal initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" (initiatedDt.ToYyyyMmDd) (completedDt.Value.ToYyyyMmDd) completedCurrently
+                logger.Debug dateLogMsg
+
                 // initiatedCurrently && CompletedInSameMonth are within TotalWithdrawals in Custom
                 if withdrawalType = Pending && initiatedCurrently && not completedInSameMonth then
                     DbPlayerRevRpt.updDbWithdrawalsPlayerRow Pending db yyyyMmDd excelRow

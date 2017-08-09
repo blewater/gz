@@ -25,10 +25,13 @@
     [TotalCashInvInHold]     DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [CashBonusAmount]        DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
     [Vendor2UserDeposits]    DECIMAL (29, 16) DEFAULT ((0)) NOT NULL,
+    [AwardedSoldAmount]      BIT              DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_dbo.InvBalances] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_dbo.InvBalances_dbo.Portfolios_PortfolioId] FOREIGN KEY ([PortfolioId]) REFERENCES [dbo].[Portfolios] ([Id])
 );
+
+
 
 
 
