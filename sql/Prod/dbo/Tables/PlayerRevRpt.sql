@@ -9,7 +9,7 @@
     [Email address]         NVARCHAR (256)   NOT NULL,
     [Total deposits amount] DECIMAL (29, 16) NULL,
     [Withdraws made]        DECIMAL (29, 16) NULL,
-    [Currency]              CHAR (3)         NOT NULL,
+    [Currency]              CHAR (3)         NULL,
     [Processed]             INT              NOT NULL,
     [CreatedOnUtc]          DATETIME         NOT NULL,
     [UpdatedOnUtc]          DATETIME         NOT NULL,
@@ -25,6 +25,8 @@
     [Country]               NVARCHAR (80)    NULL,
     CONSTRAINT [PK_dbo.PlayerRevRpt] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
