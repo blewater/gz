@@ -309,7 +309,7 @@ module GmRptFiles =
                 depositsAmounts
                 |> Seq.tryFindIndex(fun (excelRow) ->
                     let depositsExcelTransType = excelRow.``Trans type``
-                    depositsExcelTransType = "Vendor2User"
+                    (depositsExcelTransType = "Vendor2User" || depositsExcelTransType = "Deposit")
                 )   
                 |> function
                     | None -> false // this is not a Deposits excel file

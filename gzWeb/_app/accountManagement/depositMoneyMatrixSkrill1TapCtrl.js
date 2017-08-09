@@ -29,7 +29,7 @@
         function loadCreditCardInfo() {
             if ($scope.paymentMethodCfg.monitoringScriptUrl) {
                 $.get($scope.paymentMethodCfg.monitoringScriptUrl, undefined, angular.noop, "script").fail(function () {
-                    message.error('Cannot load provided MonitoringScriptUrl');
+                    message.autoCloseError('Cannot load provided MonitoringScriptUrl');
                 });
             }
 

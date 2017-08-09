@@ -26,6 +26,7 @@ module ExcelSchemas =
     type WithdrawalType =
     | Pending
     | Rollback
+    | Completed
 
     type DepositsAmountType =
     | V2UDeposit    // Vendor2User Deposit
@@ -35,3 +36,4 @@ module ExcelSchemas =
     let WithdrawalTypeString = function 
         | Pending -> "Pending"
         | Rollback -> "Rollback"
+        | Completed -> "Completed"
