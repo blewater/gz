@@ -16,11 +16,11 @@
             //            $scope.paymentMethods[i].descr = getMethodDescr($scope.paymentMethods[i]);
             //        $scope.initializing = false;
             //    }, function (error) {
-            //        message.error(error.desc);
+            //        message.autoCloseError(error.desc);
             //        $scope.initializing = false;
             //    });
             //}, function (error) {
-            //    message.error(error.desc);
+            //    message.autoCloseError(error.desc);
             //    $scope.initializing = false;
             //});
 
@@ -31,7 +31,7 @@
                     $scope.paymentMethods[i].displayName = emBankingWithdraw.getPaymentMethodDisplayName($scope.paymentMethods[i]);
                 $scope.initializing = false;
             }, function (error) {
-                message.error(error.desc);
+                message.autoCloseError(error.desc);
                 $scope.initializing = false;
             });
         }

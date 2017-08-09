@@ -16,6 +16,7 @@
             notify: notify,
             toastr: toastr,
             error: error,
+            autoCloseError: autoCloseError,
             success: success,
             warning: warning,
             info: info,
@@ -134,6 +135,9 @@
                 nsIconClass: 'fa-times'
             };
             return notify(msg, angular.extend(defaults, options));
+        }
+        function autoCloseError(msg) {
+            return error(msg, { nsType: 'toastr', nsAutoCloseDelay: 20000 })
         }
         function success(msg, options) {
             var defaults = {
