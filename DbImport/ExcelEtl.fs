@@ -106,12 +106,13 @@ module DepositsRpt2Db =
                 let initiatedCurrently = isInitiatedInCurrentMonth initiatedDt currentYearMonth
 
                 let completedDt = excelRow.Completed |> excelObj2NullableDt WithdrawalRpt
+                let completedYyyyMmDd = if completedDt.HasValue then completedDt.Value.ToYyyyMmDd else "Null"
                 let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
                 let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
                 
                 let depositsAmountType = debit2DepositsType excelRow.Debit
 
-                let dateLogMsg = sprintf "Deposit initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" (initiatedDt.ToYyyyMmDd) (completedDt.Value.ToYyyyMmDd) completedCurrently completedInSameMonth
+                let dateLogMsg = sprintf "Deposit initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
                 logger.Debug dateLogMsg
 
                 // less restrictive than withdrawals... completed in current processing month?
@@ -119,8 +120,8 @@ module DepositsRpt2Db =
                     DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
 
                 else
-                    logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %A, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
-                        initiatedDt yyyyMmDd completedDt initiatedCurrently completedCurrently completedInSameMonth)
+                    logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
+                        initiatedDt yyyyMmDd completedYyyyMmDd initiatedCurrently completedCurrently completedInSameMonth)
     
     /// Open an Vendor2User excel file and console out the filename
     let private openDepositsRptSchemaFile excelFilename = 

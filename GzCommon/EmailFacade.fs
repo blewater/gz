@@ -107,7 +107,7 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
                 }
         msgCount
 
-    member this.SendWithdrawnVintagesCashBonusCsv(csvContent : string)(csvFilenamePath : string) =
+    member this.SendWithdrawnVintagesCashBonusCsv(csvContent : string)(csvFilenamePath : string)(processedDay : DateTime) =
 
         use smtpClient = new SmtpClient()
         smtpClient.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
@@ -115,11 +115,11 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
 
         let msg = MimeMessage()
         msg.From.Add(MailboxAddress ("Admin", "admin@greenzorro.com"))
-        //msg.To.Add(new MailboxAddress ("Antonis", "antonis.voerakos@greenzorro.com"))
+        msg.To.Add(new MailboxAddress ("Antonis", "antonis.voerakos@greenzorro.com"))
         msg.To.Add(MailboxAddress ("Mario", "mario.karagiorgas@greenzorro.com"))
-        msg.Subject <- sprintf "%s Withdrawn Vintages Cash Bonus csv file" <| DateTime.UtcNow.AddDays(-1.0).ToString("ddd d/MMM/yy")
+        msg.Subject <- sprintf "Withdrawn Vintages Csv for %s" <| processedDay.ToString("ddd d MMM yyyy")
         let body = TextPart ("plain")
-        body.Text <- csvContent
+        body.Text <- "Please upload this file in Gammatrix.com Banking...Vendors...System....Manual deposit...Process batch"
 
         // create an image attachment for the file located at path
         let attachment = MimePart ("text", "csv")
