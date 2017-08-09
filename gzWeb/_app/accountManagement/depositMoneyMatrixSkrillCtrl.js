@@ -24,7 +24,7 @@
         function loadCreditCardInfo() {
             if ($scope.paymentMethodCfg.monitoringScriptUrl) {
                 $.get($scope.paymentMethodCfg.monitoringScriptUrl, undefined, angular.noop, "script").fail(function () {
-                    message.error('Cannot load provided MonitoringScriptUrl');
+                    message.autoCloseError('Cannot load provided MonitoringScriptUrl');
                 });
             }
 
@@ -87,7 +87,7 @@
         //        $scope.applicableBonuses = result.bonuses;
         //    }, function (error) {
         //        $scope.fetchingBonuses = false;
-        //        message.error(error.desc);
+        //        message.autoCloseError(error.desc);
         //    });
         //}
     }

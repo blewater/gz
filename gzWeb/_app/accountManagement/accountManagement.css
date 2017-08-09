@@ -271,6 +271,20 @@
 
 /* #region Pending Withdrawals */
 .auth.mgmt-modal .pending-withdrawals { }
+.auth.mgmt-modal .pending-withdrawals td.rollback-col {
+    padding: 0;
+    width: 40px;
+}
+.auth.mgmt-modal .pending-withdrawals td.rollback-col .btn-gz {
+    padding: 0 10px;
+    margin: 1px;
+    width: 38px;
+    display: block;
+}
+.auth.mgmt-modal .pending-withdrawals td.rollback-col .btn-gz.not-allowed {
+    cursor: not-allowed;
+}
+
 @media (max-width: 767px){
     .auth.mgmt-modal .pending-withdrawals .table-container { overflow-x: auto; }
 }
