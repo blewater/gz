@@ -14,6 +14,7 @@
                     <th>DATE</th>
                     <th>AMOUNT</th>
                     <th>DESCRIPTION</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody class="bg-light-grey">
@@ -22,6 +23,16 @@
                     <td class="text-center">{{getDate(pw)}}</td>
                     <td class="text-right">{{getAmount(pw)}}</td>
                     <td class="text-center">{{getDescription(pw)}}</td>
+                    <td class="text-center rollback-col" ng-mouseenter="pw.hovered = true" ng-mouseleave="pw.hovered = false">
+                        <button type="button" class="btn-gz btn-gz-alt" ng-class="{'not-allowed':!pw.isRollbackAllowed || pw.cancelling}" ng-click="!pw.isRollbackAllowed || pw.cancelling || rollback(pw, $index)">
+                            <span ng-if="pw.cancelling && !pw.hovered" us-spinner="spinnerWhite"></span>
+                            <span ng-if="pw.cancelling && pw.hovered" us-spinner="spinnerGreen"></span>
+                            <span ng-show="!pw.cancelling">
+                                <i ng-show="pw.isRollbackAllowed" class="fa fa-undo" title="Rollback"></i>
+                                <i ng-show="!pw.isRollbackAllowed" class="fa fa-ban" title="Rollback not allowed"></i>
+                            </span>
+                        </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
