@@ -46,7 +46,7 @@
                         </div>
                     </div>
                     <div class="col-xs-12">
-                        <div class="help-block" ng-class="{'show': cardNumberFocused === true && cardNumberValidity === false}">Card Number is invalid</div>
+                        <div class="help-block" ng-class="{'show': cardNumberFocused === true && cardNumberValidity === false}">Card Number is invalid.</div>
                     </div>
                 </div>
                 <gz-field-ok gz-when="cardNumberValidity === true"></gz-field-ok>
@@ -68,7 +68,7 @@
                         <!--<input type="hidden" name="cardToken" ng-model="model.cardToken" />-->
                     </div>
                     <div class="col-xs-12">
-                        <div class="help-block" ng-class="{'show': !form.cardHolderName.$pristine && form.cardHolderName.$error.required}">Card Holder Name is required</div>
+                        <div class="help-block" ng-class="{'show': !form.cardHolderName.$pristine && form.cardHolderName.$error.required}">Card Holder Name is required.</div>
                     </div>
                 </div>
                 <gz-field-ok gz-when="form.cardHolderName.$valid"></gz-field-ok>
@@ -98,8 +98,8 @@
                         </div>
                     </div>
                     <div class="col-xs-12">
-                        <div class="help-block" ng-class="{'show': (!form.cardExpiryMonth.$pristine && form.cardExpiryMonth.$error.required) || (!form.cardExpiryYear.$pristine && form.cardExpiryYear.$error.required)}">Card Expiry Date is required</div>
-                        <div class="help-block" ng-class="{'show': cardSecurityNumberFocused === true && cardSecurityNumberValidity === false}">Card Security Number is invalid</div>
+                        <div class="help-block" ng-class="{'show': (!form.cardExpiryMonth.$pristine && form.cardExpiryMonth.$error.required) || (!form.cardExpiryYear.$pristine && form.cardExpiryYear.$error.required)}">Card Expiry Date is required.</div>
+                        <div class="help-block" ng-class="{'show': cardSecurityNumberFocused === true && cardSecurityNumberValidity === false}">Card Security Number is invalid.</div>
                     </div>
                 </div>
                 <gz-field-ok gz-when="form.cardExpiryMonth.$valid && form.cardExpiryYear.$valid && cardSecurityNumberValidity"></gz-field-ok>
@@ -123,8 +123,8 @@
                         <!--uib-tooltip-html="{{accountLimits.min}} + '&le;' + ' x ' + '&le;' + {{accountLimits.max}}"-->
                     </div>
                     <div class="col-xs-12">
-                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
-                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}</div>
+                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required.</div>
+                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}.</div>
                     </div>
                 </div>
                 <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
