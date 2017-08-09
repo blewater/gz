@@ -16,11 +16,11 @@
                         $scope.paymentMethods[i].displayName = emBanking.getPaymentMethodDisplayName($scope.paymentMethods[i]);
                     $scope.initializing = false;
                 }, function (error) {
-                    message.error(error.desc);
+                    message.autoCloseError(error.desc);
                     $scope.initializing = false;
                 });
             }, function (error) {
-                message.error(error.desc);
+                message.autoCloseError(error.desc);
                 $scope.initializing = false;
             });
         }

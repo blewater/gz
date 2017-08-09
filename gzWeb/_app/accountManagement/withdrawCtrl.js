@@ -38,7 +38,7 @@
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
                 $scope.initializing = false;
             }, function (error) {
-                message.error(error.desc);
+                message.autoCloseError(error.desc);
                 $scope.initializing = false;
             });
 
@@ -106,7 +106,7 @@
                                         } else if (transactionResult.status === "incomplete") {
                                             appInsightsTrackEvent('TRANSACTION INCOMPLETE');
                                             $scope.waiting = false;
-                                            message.error("Transaction is not completed!");
+                                            message.autoCloseError("Transaction is not completed!");
                                         } else if (transactionResult.status === "pending") {
                                             appInsightsTrackEvent('TRANSACTION PENDING');
                                             $scope.waiting = false;
@@ -117,10 +117,10 @@
                                         } else if (transactionResult.status === "error") {
                                             appInsightsTrackEvent('TRANSACTION ERROR');
                                             $scope.waiting = false;
-                                            message.error(transactionResult.error);
+                                            message.autoCloseError(transactionResult.error);
                                         }
                                     }, function (error) {
-                                        message.error(error.desc);
+                                        message.autoCloseError(error.desc);
                                     });
                                 } else if (confirmResult.status === "redirection") {
                                     appInsightsTrackEvent('CONFIRM REDIRECTION');
@@ -144,7 +144,7 @@
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
                                         $scope.waiting = false;
-                                        message.error(thirdPartyPromiseError);
+                                        message.autoCloseError(thirdPartyPromiseError);
                                     });
                                 } else {
                                     appInsightsTrackEvent('CONFIRM ERROR');
@@ -152,7 +152,7 @@
                                 }
                             }, function (error) {
                                 $scope.waiting = false;
-                                message.error(error.desc);
+                                message.autoCloseError(error.desc);
                                 appInsightsTrackEvent('CONFIRM FAILED');
                             });
                         }, function () {
@@ -170,17 +170,17 @@
                     } else {
                         // TODO: log error ???
                         $scope.waiting = false;
-                        message.error("Unexpected payment method prepare status");
+                        message.autoCloseError("Unexpected payment method prepare status");
                         appInsightsTrackEvent('PREPARE FAILED');
                     }
                 }, function (error) {
                     $scope.waiting = false;
-                    message.error(error.desc);
+                    message.autoCloseError(error.desc);
                     window.appInsights.trackEvent("WITHDRAW", { status: "PREPARE ERROR" });
                 });
             }, function (error) {
                 $scope.waiting = false;
-                message.error(error.desc);
+                message.autoCloseError(error.desc);
                 window.appInsights.trackEvent("WITHDRAW", { status: "READ FIELDS ERROR" });
             });
         };
