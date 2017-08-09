@@ -9,8 +9,8 @@
                            ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
                 </div>
                 <div class="col-xs-12">
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}</div>
+                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required.</div>
+                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}.</div>
                 </div>
             </div>
             <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>

@@ -264,6 +264,9 @@ button.btn-gz.btn-gz-alt {
     color: #f2f2f2;
     border: 1px solid #f2f2f2;
 }
+button.btn-gz.btn-gz-alt:disabled {
+    cursor: not-allowed;
+}
 button.btn-gz.btn-gz-alt:hover{
     background: #fff;
     color: #27A95C;

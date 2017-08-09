@@ -47,7 +47,7 @@
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
                 $scope.initializing = false;
             }, function (error) {
-                message.error(error.desc);
+                message.autoCloseError(error.desc);
                 $scope.initializing = false;
             });
 
@@ -136,7 +136,7 @@
                                         }
                                     }, function (error) {
                                         $scope.waiting = false;
-                                        message.error(error.desc);
+                                        message.autoCloseError(error.desc);
                                         init();
                                     });
                                 } else if (confirmResult.status === "redirection") {
@@ -162,7 +162,7 @@
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
                                         $scope.waiting = false;
-                                        message.error(thirdPartyPromiseError);
+                                        message.autoCloseError(thirdPartyPromiseError);
                                         init();
                                     });
                                 } else if (confirmResult.status === "instructions") {
@@ -174,7 +174,7 @@
                                 }
                             }, function (error) {
                                 $scope.waiting = false;
-                                message.error(error.desc);
+                                message.autoCloseError(error.desc);
                                 appInsightsTrackEvent('CONFIRM FAILED');
                                 init();
                             });
@@ -193,19 +193,19 @@
                     } else {
                         // TODO: log error ???
                         $scope.waiting = false;
-                        message.error("Unexpected payment method prepare status");
+                        message.autoCloseError("Unexpected payment method prepare status");
                         appInsightsTrackEvent('PREPARE FAILED');
                         init();
                     }
                 }, function (error) {
                     $scope.waiting = false;
-                    message.error(error.desc);
+                    message.autoCloseError(error.desc);
                     window.appInsights.trackEvent("DEPOSIT", { status: "PREPARE ERROR" });
                     init();
                 });
             }, function (error) {
                 $scope.waiting = false;
-                message.error(error);
+                message.autoCloseError(error);
                 window.appInsights.trackEvent("DEPOSIT", { status: "READ FIELDS ERROR" });
                 init();
             });

@@ -53,7 +53,7 @@
                 $scope.applicableBonuses = result.bonuses;
             }, function (error) {
                 $scope.fetchingBonuses = false;
-                message.error(error.desc);
+                message.autoCloseError(error.desc);
             });
         }
     }
