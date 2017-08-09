@@ -93,11 +93,11 @@
         function embedCDE() {
             var sdkUrl = $scope.paymentMethodCfg.secureFormScriptUrl;
             if (sdkUrl.indexOf('CardTokenization') === -1) {
-                message.error('Wrong SecureFormScriptUrl');
+                message.autoCloseError('Wrong SecureFormScriptUrl');
                 return;
             }
             $.get(sdkUrl, undefined, initializePaymentForm, "script").fail(function () {
-                message.error('Cannot load provided SecureFormScriptUrl');
+                message.autoCloseError('Cannot load provided SecureFormScriptUrl');
             });
         }
 
@@ -130,7 +130,7 @@
                 }
             });
             $scope.paymentForm.on('error', function (event, errorData) {
-                message.error('Cannot load PaymentForm: ' + errorData.ResponseMessage);
+                message.autoCloseError('Cannot load PaymentForm: ' + errorData.ResponseMessage);
             });
             $scope.paymentForm.fields['card-number'].on('status', function (evt, data) {
                 //var cssLink = document.createElement("link")
@@ -247,7 +247,7 @@
                 $scope.applicableBonuses = result.bonuses;
             }, function (error) {
                 $scope.fetchingBonuses = false;
-                message.error(error.desc);
+                message.autoCloseError(error.desc);
             });
         }
     }
