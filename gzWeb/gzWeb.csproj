@@ -813,6 +813,8 @@
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
     <Content Include="Scripts\autobahn\autobahn.min.js" />
+    <Content Include="_app\account\receiptCtrl.js" />
+    <Content Include="_app\account\receipt.html" />
     <Content Include="_app\accountManagement\depositCtrl.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixEnterCash.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixEnterCashCtrl.js" />
