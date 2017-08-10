@@ -1,7 +1,6 @@
 namespace DbImport
 
 module ExcelSchemas =
-    open System
     open FSharp.ExcelProvider
 
     // LGA Reports...Player Balances

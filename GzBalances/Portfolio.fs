@@ -2,7 +2,6 @@
 
 module DailyPortfolioShares =
     open System
-    open System.Net
     open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
@@ -220,7 +219,6 @@ module DailyPortfolioShares =
 module UserPortfolio =
     open System
     open GzDb
-    open GzDb.DbUtil
     open PortfolioTypes
         
     (*** Default Portfolio for new Users ***)
@@ -298,7 +296,6 @@ module UserPortfolio =
         userPortfolioInput.DbUserMonth.Db.DataContext.SubmitChanges()
 
 module CalcUserPortfolioShares =
-    open GzDb
     open PortfolioTypes
         
     let private priceLowRiskPortfolio (userPortfolioInput : UserPortfolioInput) : PortfolioPriced =

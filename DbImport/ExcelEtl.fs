@@ -51,7 +51,6 @@ module BalanceRpt2Db =
 module DepositsRpt2Db =
     open NLog
     open System
-    open NLog
     open GzBatchCommon
     open GzDb.DbUtil
     open ExcelSchemas
@@ -78,6 +77,7 @@ module DepositsRpt2Db =
     let private isCompletedInSameMonth (completedDt : DateTime Nullable)(initiatedDate : DateTime) : bool =
         completedEqThisDateMonth completedDt initiatedDate
 
+    /// Separate between Deposits, V2U and BonusGranted
     let private debit2DepositsType (excelDebitDesc : string) : DepositsAmountType =
         if excelDebitDesc.Contains "BonusGranted" then
             V2UCashBonus
@@ -112,7 +112,7 @@ module DepositsRpt2Db =
                 
                 let depositsAmountType = debit2DepositsType excelRow.Debit
 
-                let dateLogMsg = sprintf "Deposit initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
+                let dateLogMsg = sprintf "Deposit for email %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" excelRow.Email (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
                 logger.Debug dateLogMsg
 
                 // less restrictive than withdrawals... completed in current processing month?

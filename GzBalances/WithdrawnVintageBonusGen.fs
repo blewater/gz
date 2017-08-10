@@ -7,9 +7,6 @@ module WithdrawnVintageBonusGen =
     open NLog
     open GzDb.DbUtil
     open GzBatchCommon
-    open PortfolioTypes
-    open System.Net.Mail
-    open System.Net
     open ConfigArgs
 
     type VintageDeposits = CsvProvider<"everymatrix_deposits.csv", ";", HasHeaders=false>

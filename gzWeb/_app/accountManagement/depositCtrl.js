@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, iso4217) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'iso4217', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, iso4217, modals) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -75,6 +75,37 @@
             }
         };
 
+        function sendTransactionReceipt(pid, appInsightsTrackEvent) {
+            emBanking.getTransactionInfo(pid).then(function (transactionResult) {
+                modals.receipt($scope.selectedMethod.displayName, transactionResult).then(function (response) {
+                    emBanking.sendReceiptEmail($scope.pid, "<div>" + response + "</div>");
+                    $scope.waiting = false;
+                    if (transactionResult.status === "success") {
+                        appInsightsTrackEvent('TRANSACTION SUCCESS');
+                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                        $scope.nsOk(true);
+                        //init();
+                        if ($location.path() === constants.routes.home.path)
+                            $location.path(constants.routes.games.path).search({});
+                    } else if (transactionResult.status === "incomplete") {
+                        appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                    } else if (transactionResult.status === "pending") {
+                        appInsightsTrackEvent('TRANSACTION PENDING');
+                        $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
+                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                        });
+                    } else if (transactionResult.status === "error") {
+                        appInsightsTrackEvent('TRANSACTION ERROR');
+                        init();
+                    }
+                });
+            }, function (error) {
+                $scope.waiting = false;
+                message.autoCloseError(error.desc);
+                init();
+            });
+        }
+
         function deposit() {
             $scope.waiting = true;
             window.appInsights.trackEvent("DEPOSIT", { status: "READ FIELDS" });
@@ -105,40 +136,7 @@
                                 appInsightsTrackEvent('CONFIRM');
                                 if (confirmResult.status === "success") {
                                     appInsightsTrackEvent('GET TRANSACTION INFO');
-                                    emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
-                                        if (transactionResult.status === "success") {
-                                            appInsightsTrackEvent('TRANSACTION SUCCESS');
-                                            var msg = "You have made the deposit successfully!";
-                                            message.success(msg, { nsType: 'toastr' });
-                                            emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
-                                            $scope.waiting = false;
-                                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                                            $scope.nsOk(true);
-                                            if ($location.path() === constants.routes.home.path)
-                                                $location.path(constants.routes.games.path).search({});
-                                        } else if (transactionResult.status === "incomplete") {
-                                            appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-                                            $scope.waiting = false;
-                                            $log.error("show transaction is not completed");
-                                            // TODO: show transaction is not completed
-                                        } else if (transactionResult.status === "pending") {
-                                            appInsightsTrackEvent('TRANSACTION PENDING');
-                                            $scope.waiting = false;
-                                            $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
-                                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                                            });
-                                        } else if (transactionResult.status === "error") {
-                                            appInsightsTrackEvent('TRANSACTION ERROR');
-                                            $scope.waiting = false;
-                                            $log.error("show error");
-                                            init();
-                                            // TODO: show error
-                                        }
-                                    }, function (error) {
-                                        $scope.waiting = false;
-                                        message.autoCloseError(error.desc);
-                                        init();
-                                    });
+                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent);
                                 } else if (confirmResult.status === "redirection") {
                                     appInsightsTrackEvent('CONFIRM REDIRECTION');
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
@@ -153,12 +151,7 @@
                                         nsShowClose: false
                                     });
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
-                                        appInsightsTrackEvent('TRANSACTION SUCCESS');
-                                        var msg = "You have made the deposit successfully!";
-                                        message.success(msg, { nsType: 'toastr' });
-                                        emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
-                                        $scope.waiting = false;
-                                        $scope.nsOk(true);
+                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent);
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
                                         $scope.waiting = false;

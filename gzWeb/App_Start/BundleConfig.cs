@@ -212,6 +212,7 @@ namespace gzWeb {
                                         , "~/_app/account/registerDepositMoneyMatrixSkrillCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixSkrill1TapCtrl.js"
                                         , "~/_app/account/registerDepositMoneyMatrixEnterCashCtrl.js"
+                                        , "~/_app/account/receiptCtrl.js"
             #endregion
 
             #region Account Management
