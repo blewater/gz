@@ -44,7 +44,8 @@
             open: open,
             login: login,
             register: register,
-            forgotPassword: forgotPassword
+            forgotPassword: forgotPassword,
+            receipt: receipt
         };
         return service;
 
@@ -71,6 +72,21 @@
         };
         function forgotPassword(method) {
             return method(_modals.forgotPassword);
+        };
+        function receipt(paymentMethod, transactionInfo, isCredit) {
+            return message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '_app/account/receipt.html',
+                nsCtrl: 'receiptCtrl',
+                nsShowClose: false,
+                nsStatic: true,
+                nsParams: {
+                    paymentMethod: paymentMethod,
+                    isDebit: !isCredit,
+                    transactionInfo: transactionInfo
+                }
+            });
         };
     };
 })();

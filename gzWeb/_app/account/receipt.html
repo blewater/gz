@@ -1,0 +1,85 @@
+﻿<div class="auth receipt">
+    <div class="row heading">
+        <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center">
+            <h4>{{title}}</h4>
+        </div>
+    </div>
+    <div class="row content bg-gz">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+            <div class="logo-icon text-center">
+                <img src="/Content/Images/logo.svg">
+            </div>
+        </div>
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+            <div class="row text-center">
+                Transaction Details
+            </div>
+            <br />
+            <div class="row">
+                <small>Payment method</small>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <strong>{{paymentMethod}}</strong>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <small>Transaction Id</small>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <strong>{{transactionId}}</strong>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <small>Time</small>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <strong>{{time}}</strong>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <small>Status of transaction</small>
+            </div>
+            <div class="row text-capitalize">
+                <div class="col-xs-12">
+                    <strong>{{status}}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="status === 'success' && amount">
+            <br />
+            <div class="row">
+                <small>Amount</small>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <strong>{{amount}}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-if="status === 'error'">
+            <br />
+            <div class="row">
+                <small>Error description</small>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <strong>{{desc}}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+            <br />
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <button type="button" class="btn-gz" ng-click="nsOk(title)">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
