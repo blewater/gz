@@ -127,6 +127,41 @@
                 nsStatic: true,
             });
         };
+        $scope.receipt = function () {
+            var promise = message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '_app/account/receipt.html',
+                nsCtrl: 'receiptCtrl',
+                nsStatic: true,
+                nsParams: {
+                    isDebit: true,
+                    transactionInfo: {
+                        status: 'pending',
+                        desc: 'This is a quite long description for the error that just occured!',
+                        transactionID: '1536859',
+                        time: '2013-10-06T09:09:48.327',
+                        debit: {
+                            currency: 'EUR',
+                            amount: 12,
+                            name: 'Skrill'
+                        },
+                        credit: {
+                            currency: 'EUR',
+                            amount: 15,
+                            name: 'Credit Name'
+                        },
+                        fess: {
+                            currency: 'EUR',
+                            amount: 1
+                        }
+                    }
+                }
+            });
+            promise.then(function (response) {
+                alert(response);
+            });
+        };
         $scope.logout = function () {
             auth.logout();
         };
