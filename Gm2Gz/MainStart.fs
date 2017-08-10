@@ -104,9 +104,8 @@ let gmReports2InvBalanceUpdate
         logger.Fatal(ex, "Runtime Exception at main")
 
 /// Choose next biz processing steps based on args
-let portfolioSharesPrelude2MainProcessing (db : DbContext)(balanceFilesUsageArg : ConfigArgs.BalanceFilesUsageType) =
+let portfolioSharesPrelude2MainProcessing (db : DbContext) =
     DailyPortfolioShares.storeShares db
-    |> gmReports2InvBalanceUpdate db balanceFilesUsageArg
 
 [<EntryPoint>]
 let main argv = 
@@ -117,11 +116,18 @@ let main argv =
     let balanceFilesUsageArg = 
         argv |> parseCmdArgs
 
+    // Download reports
     let dwLoader = ExcelDownloader(downloadArgs, balanceFilesUsageArg)
     dwLoader.SaveReportsToInputFolder()
 
     // Main database processing 
-    portfolioSharesPrelude2MainProcessing db balanceFilesUsageArg
+    gmReports2InvBalanceUpdate 
+        db 
+        balanceFilesUsageArg 
+        <| portfolioSharesPrelude2MainProcessing db
+
+    // Vintage withdrawal bonus
+    WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
 
     printfn "Press Enter to finish..."
     Console.ReadLine() |> ignore

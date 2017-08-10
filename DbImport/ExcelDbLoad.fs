@@ -208,13 +208,18 @@ module DbPlayerRevRpt =
                     (playerRow : DbPlayerRevRpt) = 
 
         (* Pending withdrawals is tracked separatedly from total withdrawals *)
-        let dbWithdrawalAmount = playerRow.PendingWithdrawals.Value
-        if withdrawalType = Pending then
-            let newWithdrawalAmount = dbWithdrawalAmount + decimal withdrawalsExcelRow.``Debit real amount``
-            playerRow.PendingWithdrawals <- Nullable newWithdrawalAmount
-        else
-            let newWithdrawalAmount = dbWithdrawalAmount - decimal withdrawalsExcelRow.``Debit real amount``
-            playerRow.PendingWithdrawals <- Nullable newWithdrawalAmount
+        let dbPendingWithdrawalAmount = playerRow.PendingWithdrawals.Value
+        let dbWithdrawalAmount = playerRow.WithdrawsMade.Value
+        match withdrawalType with
+        | Pending ->
+            let newPendingWithdrawalAmount = dbPendingWithdrawalAmount + decimal withdrawalsExcelRow.``Credit real  amount``
+            playerRow.PendingWithdrawals <- Nullable newPendingWithdrawalAmount
+        | Completed ->
+            let newWithdrawalAmount = dbWithdrawalAmount + decimal withdrawalsExcelRow.``Credit real  amount``
+            playerRow.WithdrawsMade <- Nullable newWithdrawalAmount
+        | Rollback ->
+            let newRemainingWithdrawalAmount = dbPendingWithdrawalAmount - decimal withdrawalsExcelRow.``Credit real  amount``
+            playerRow.PendingWithdrawals <- Nullable newRemainingWithdrawalAmount
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.WithdrawsRptUpd
@@ -253,7 +258,7 @@ module DbPlayerRevRpt =
         if not <| isNull customExcelRow.``Block reason`` then playerRow.BlockReason <- customExcelRow.``Block reason``.ToString()
         playerRow.EmailAddress <- customExcelRow.``Email address``
         playerRow.TotalDepositsAmount <- Nullable 0m
-        playerRow.WithdrawsMade <- customExcelRow.``Withdraws made`` |> float2NullableDecimal
+        playerRow.WithdrawsMade <- Nullable 0m
 
         // Zero out gaming deposit cashBonus
         playerRow.Vendor2UserDeposits <- Nullable 0m
@@ -301,12 +306,13 @@ module DbPlayerRevRpt =
                         (withdrawalType : WithdrawalType)
                         (db : DbContext)
                         (yyyyMmDd :string)
+                        (playerEmail : string)
                         (withdrawalRow : WithdrawalsPendingExcelSchema.Row) =
 
         let gmUserId = (int) withdrawalRow.UserID
         let yyyyMm = yyyyMmDd.ToYyyyMm
-        logger.Info(sprintf "Importing %A withdrawal user id %d on %s/%s/%s" 
-                withdrawalType <| gmUserId <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+        logger.Info(sprintf "Importing %A withdrawal user id %s on %s/%s/%s" 
+                withdrawalType <| playerEmail <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
@@ -315,12 +321,12 @@ module DbPlayerRevRpt =
         }
         |> (fun playerDbRow -> 
             if isNull playerDbRow then 
-                let warningMsg = sprintf "Couldn't find user Id %d from %A withdrawals excel in the PlayerRevRpt table." <| gmUserId <| withdrawalType
+                let warningMsg = sprintf "Couldn't find user %s from %A withdrawals excel file in the PlayerRevRpt table." <| playerEmail <| withdrawalType
                 logger.Warn warningMsg
             else
                 updDbRowWithdrawalsValues withdrawalType withdrawalRow playerDbRow
+                db.DataContext.SubmitChanges()
         )
-        db.DataContext.SubmitChanges()
 
     /// Set beginning or ending amount in a db PlayerRevRpt Row
     let updDbBalances 
@@ -357,8 +363,8 @@ module DbPlayerRevRpt =
 
         let gmUserId = (int) depositsExcelRow.UserID
         let yyyyMm = yyyyMmDd.ToYyyyMm
-        logger.Info(sprintf "Importing deposits user id %d for deposit type %s on %s/%s/%s" 
-                gmUserId <| depositsExcelRow.Debit <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+        logger.Info(sprintf "Importing deposits user %s for deposit type %s on %s/%s/%s" 
+                depositsExcelRow.Email <| depositsExcelRow.Debit <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
@@ -367,12 +373,12 @@ module DbPlayerRevRpt =
         }
         |> (fun playerDbRow -> 
             if isNull playerDbRow then 
-                let warningMsg = sprintf "Couldn't find user Id %d from deposits excel in the PlayerRevRpt table." gmUserId
+                let warningMsg = sprintf "Couldn't find user %s from deposits excel in the PlayerRevRpt table." depositsExcelRow.Email
                 logger.Warn warningMsg
             else
                 updDbRowDepositsValues vendor2UserAmountType depositsExcelRow playerDbRow
+                db.DataContext.SubmitChanges()
         )
-        db.DataContext.SubmitChanges()
 
     /// Upsert excel row values in a db PlayerRevRpt Row
     let setDbCustomPlayerRow (db : DbContext) 

@@ -222,7 +222,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         "#txtStartDate" << "01/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
         "#txtEndDate" << withdrawalDateToSet.Day.ToString("00") + "/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
 
-        /// Withdrawals: Initiated + Pending + Rollback
+        /// Pending + Completed Withdrawals: Initiated + Pending + Success
     let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
         uiAutomatedEnterTransactionsReport()
@@ -238,9 +238,9 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Pending
         check "#cbxTransStatus_3"
         // Success
-        uncheck "#cbxTransStatus_2"
+        check "#cbxTransStatus_2"
         // Rollback
-        check "#cbxTransStatus_6"
+        uncheck "#cbxTransStatus_6"
 
         // Vendor2User
         uncheck "#chkTransType_4"
