@@ -47,21 +47,48 @@ module WithdrawalRpt2Db =
                 let initiatedCurrently = isInitiatedInCurrentMonth initiatedDt currentYearMonth
 
                 let completedDt = excelRow.Completed |> excelObj2NullableDt WithdrawalRpt
+                let completedYyyyMmDd = if completedDt.HasValue then completedDt.Value.ToYyyyMmDd else "Null"
                 let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
-                let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt 
+                let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
+                
+                let rollbackNote = excelRow.``Last note``.IndexOf("Rollback") <> -1
 
-                let dateLogMsg = sprintf "Withdrawal initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" (initiatedDt.ToYyyyMmDd) (completedDt.Value.ToYyyyMmDd) completedCurrently
+                let dateLogMsg = 
+                    sprintf "Withdrawal for email: %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b, rollbackNote: %b" 
+                        excelRow.Email
+                        (initiatedDt.ToYyyyMmDd) 
+                        completedYyyyMmDd 
+                        completedCurrently 
+                        completedInSameMonth 
+                        rollbackNote
                 logger.Debug dateLogMsg
 
-                // initiatedCurrently && CompletedInSameMonth are within TotalWithdrawals in Custom
-                if withdrawalType = Pending && initiatedCurrently && not completedInSameMonth then
-                    DbPlayerRevRpt.updDbWithdrawalsPlayerRow Pending db yyyyMmDd excelRow
+                // initiatedCurrently && not CompletedInSameMonth are true pending
+                if withdrawalType = Pending && initiatedCurrently && not completedInSameMonth && not rollbackNote then
+                    DbPlayerRevRpt.updDbWithdrawalsPlayerRow Pending db yyyyMmDd excelRow.Email excelRow
 
-                else if withdrawalType = Rollback && not initiatedCurrently && completedCurrently then
-                    DbPlayerRevRpt.updDbWithdrawalsPlayerRow Rollback db yyyyMmDd excelRow
+                // initiatedCurrently && CompletedInSameMonth are Completed Withdrawals and we track in the user currency
+                elif withdrawalType = Pending && initiatedCurrently && completedInSameMonth && not rollbackNote then
+                    DbPlayerRevRpt.updDbWithdrawalsPlayerRow Completed db yyyyMmDd excelRow.Email excelRow
+
+                elif withdrawalType = Rollback && not initiatedCurrently && completedCurrently then
+                    DbPlayerRevRpt.updDbWithdrawalsPlayerRow Rollback db yyyyMmDd excelRow.Email excelRow
+
+                elif withdrawalType = Rollback && initiatedCurrently && completedCurrently then
+                    logger.Warn(sprintf "\nIgnoring rollback withdrawal because it's initiated and completed in the same month for email: %s Initiated: %s, CompletedDt: %s, amount: %f, last note: %s" 
+                        excelRow.Email 
+                        initiatedDt.ToYyyyMmDd 
+                        completedYyyyMmDd
+                        excelRow.``Credit real  amount``
+                        excelRow.``Last note``)
                 else
-                    logger.Warn(sprintf "\nWithdrawal row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %A, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
-                        initiatedDt yyyyMmDd completedDt initiatedCurrently completedCurrently completedInSameMonth)
+                    logger.Warn(sprintf "\nUnknown withdrawal for email: %s it's not imported! Type %s, Initiated: %s, CurrentDt: %s, CompletedDt: %s, rollbackNote: %s" 
+                        excelRow.Email 
+                        (WithdrawalTypeString withdrawalType)
+                        initiatedDt.ToYyyyMmDd
+                        yyyyMmDd 
+                        completedYyyyMmDd
+                        excelRow.``Last note``)
     
     /// Open an excel file and return its memory schema
     let private openWithdrawalRptSchemaFile (excelFilename : string) : WithdrawalsPendingExcelSchema =
