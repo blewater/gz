@@ -128,7 +128,6 @@ module DbPlayerRevRpt =
     open ExcelSchemas
     open GzBatchCommon
     open ExcelUtil
-    open System.Diagnostics
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -171,7 +170,7 @@ module DbPlayerRevRpt =
 
     /// Update the deposits amounts
     let private updDbRowDepositsValues 
-                    (depositsAmountType : DepositsAmountType)
+                    (depositType : DepositsAmountType)
                     (depositsExcelRow : DepositsExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
 
@@ -181,7 +180,7 @@ module DbPlayerRevRpt =
 
         // Update currency to correct value if not already from balance files
         playerRow.Currency <- depositsExcelRow.``Credit real currency``
-        match depositsAmountType with
+        match depositType with
         | Deposit ->
             let newDeposits = dbDeposits + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
             playerRow.TotalDepositsAmount <- Nullable newDeposits
@@ -311,7 +310,7 @@ module DbPlayerRevRpt =
 
         let gmUserId = (int) withdrawalRow.UserID
         let yyyyMm = yyyyMmDd.ToYyyyMm
-        logger.Info(sprintf "Importing %A withdrawal user id %s on %s/%s/%s" 
+        logger.Info(sprintf "Importing %A withdrawal user %s on %s/%s/%s" 
                 withdrawalType <| playerEmail <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
         query { 
             for playerDbRow in db.PlayerRevRpt do
@@ -356,15 +355,15 @@ module DbPlayerRevRpt =
 
     /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
     let updDbDepositsPlayerRow 
-                        (vendor2UserAmountType : DepositsAmountType)
+                        (depositType : DepositsAmountType)
                         (db : DbContext)
                         (yyyyMmDd :string)
                         (depositsExcelRow : DepositsExcelSchema.Row) =
 
         let gmUserId = (int) depositsExcelRow.UserID
         let yyyyMm = yyyyMmDd.ToYyyyMm
-        logger.Info(sprintf "Importing deposits user %s for deposit type %s on %s/%s/%s" 
-                depositsExcelRow.Email <| depositsExcelRow.Debit <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+        logger.Info(sprintf "Importing deposits user %s amount %f currency %s deposit type %s on %s" 
+                depositsExcelRow.Username <| depositsExcelRow.``Credit real  amount`` <| depositsExcelRow.``Credit real currency`` <| depositsExcelRow.Debit <| yyyyMmDd)
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
@@ -376,7 +375,7 @@ module DbPlayerRevRpt =
                 let warningMsg = sprintf "Couldn't find user %s from deposits excel in the PlayerRevRpt table." depositsExcelRow.Email
                 logger.Warn warningMsg
             else
-                updDbRowDepositsValues vendor2UserAmountType depositsExcelRow playerDbRow
+                updDbRowDepositsValues depositType depositsExcelRow playerDbRow
                 db.DataContext.SubmitChanges()
         )
 

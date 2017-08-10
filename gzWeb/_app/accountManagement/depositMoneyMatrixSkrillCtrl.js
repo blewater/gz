@@ -38,6 +38,7 @@
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
             $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            $scope.extraValidityCheck = true;
         }
 
         function init() {
