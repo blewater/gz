@@ -168,7 +168,8 @@
 }
 
 .investments .summary .summary-box .date {
-    margin: 0 auto;
+    /*margin: 0 auto;*/
+    text-align: center;
     width: 100%;
     height: 50px;
     padding-top: 5px;
@@ -178,10 +179,17 @@
 .investments .summary .summary-box .date-icon {
     display: inline-block;
     width: 40px;
+    height: 40px;
 }
 .investments .summary .summary-box .date-icon img {
-    vertical-align: sub;
+    /*vertical-align: sub;*/
+    height: 40px;
+    margin-top: -25px;
 }
+.investments .summary .summary-box.expected-amount .date-icon img {
+    margin-top: -15px;
+}
+
 .investments .summary .summary-box .date-details {
     display: inline-block;
     margin-left: 10px;
