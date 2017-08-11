@@ -320,9 +320,13 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     -ms-appearance: none;
     -o-appearance: none;
     appearance: none;
+    outline:none;
     cursor: pointer;
     color: #a5a5a5;
     background-color: #ffffff;
+}
+.gz-select select.form-control::-ms-expand {
+    display: none;
 }
 .gz-select i {
     position: absolute;
@@ -331,6 +335,7 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     top: 0;
     color: #27A95C;
     font-weight: bold;
+    line-height: 48px !important;
 }
 
 /*.gz-select::after {
