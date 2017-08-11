@@ -116,6 +116,7 @@
             $location.search({});
             if ($scope.playForFun)
                 $location.search('funMode', true);
+            $location.replace();
             loadGame();
             setClock();
         });
