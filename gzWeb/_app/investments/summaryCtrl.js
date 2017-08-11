@@ -106,6 +106,11 @@
             $scope.gamingActivitiesExpanded = !$scope.gamingActivitiesExpanded;
         };
 
+        function round(amount, decimals) {
+            var pow = Math.pow(10, decimals);
+            return Math.round(amount * pow) / pow;
+        }
+
         function loadSummaryData() {
             api.call(function () {
                 return api.getSummaryData();
@@ -130,12 +135,12 @@
                 $scope.model.TotalInvestments = Math.round($scope.model.TotalInvestments);
                 $scope.model.TotalInvestmentsReturns = $scope.model.InvestmentsBalance - $scope.model.TotalInvestments;
 
-                $scope.model.BegGmBalance = Math.round($scope.model.BegGmBalance);
-                $scope.model.Deposits = Math.round($scope.model.Deposits);
-                $scope.model.Withdrawals = Math.round($scope.model.Withdrawals);
-                $scope.model.EndGmBalance = Math.round($scope.model.EndGmBalance);
-                $scope.model.GmGainLoss = $scope.model.EndGmBalance - $scope.model.BegGmBalance - $scope.model.Deposits + $scope.model.Withdrawals;
-                $scope.model.CashBonus = Math.round($scope.model.CashBonus);
+                $scope.model.BegGmBalance = round($scope.model.BegGmBalance, 1);
+                $scope.model.Deposits = round($scope.model.Deposits, 1);
+                $scope.model.Withdrawals = round($scope.model.Withdrawals, 1);
+                $scope.model.EndGmBalance = round($scope.model.EndGmBalance, 1);
+                $scope.model.GmGainLoss = round($scope.model.EndGmBalance - $scope.model.BegGmBalance - $scope.model.Deposits + $scope.model.Withdrawals, 1);
+                $scope.model.CashBonus = round($scope.model.CashBonus, 1);
 
                 $scope.vintages = processVintages($scope.model.Vintages);
             });            
