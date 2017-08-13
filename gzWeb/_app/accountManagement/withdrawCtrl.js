@@ -218,7 +218,7 @@
         // #endregion
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Do you want to withdraw the amount of " + prepareData.debitAmount + getConfirmMessageSuffix() + "?";
+            return "Do you want to withdraw the amount of " + prepareData.debitAmount + getConfirmMessageSuffix(prepareData) + "?";
         };
         function getConfirmMessageSuffix(prepareData) {
             switch ($scope.selectedMethod.code) {
