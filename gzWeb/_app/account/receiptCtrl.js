@@ -27,8 +27,9 @@
             $scope.time = moment.utc($scope.transactionInfo.time).toDate().toLocaleString();
             $scope.desc = $scope.transactionInfo.desc;
             var amountInfo = $scope.isDebit ? $scope.transactionInfo.debit : $scope.transactionInfo.credit;
-            $scope.amount = iso4217.getCurrencyByCode(amountInfo.currency).symbol + " " + amountInfo.amount;
-            $scope.paymentMethod = $scope.paymentMethod;//amountInfo.name;
+            if (amountInfo)
+                $scope.amount = iso4217.getCurrencyByCode(amountInfo.currency).symbol + " " + amountInfo.amount;
+            $scope.paymentMethod = $scope.paymentMethod;
         }
 
         init();

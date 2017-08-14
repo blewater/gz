@@ -335,7 +335,7 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     top: 0;
     color: #27A95C;
     font-weight: bold;
-    line-height: 48px !important;
+    /*line-height: 48px !important;*/
 }
 
 /*.gz-select::after {
