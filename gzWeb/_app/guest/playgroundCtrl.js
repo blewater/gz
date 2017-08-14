@@ -135,26 +135,27 @@
                 nsCtrl: 'receiptCtrl',
                 nsStatic: true,
                 nsParams: {
+                    paymentMethod: 'Trustly',
                     isDebit: true,
                     transactionInfo: {
                         status: 'pending',
                         desc: 'This is a quite long description for the error that just occured!',
                         transactionID: '1536859',
                         time: '2013-10-06T09:09:48.327',
-                        debit: {
-                            currency: 'EUR',
-                            amount: 12,
-                            name: 'Skrill'
-                        },
-                        credit: {
-                            currency: 'EUR',
-                            amount: 15,
-                            name: 'Credit Name'
-                        },
-                        fess: {
-                            currency: 'EUR',
-                            amount: 1
-                        }
+                        //debit: {
+                        //    currency: 'EUR',
+                        //    amount: 12,
+                        //    name: 'Skrill'
+                        //},
+                        //credit: {
+                        //    currency: 'EUR',
+                        //    amount: 15,
+                        //    name: 'Credit Name'
+                        //},
+                        //fess: {
+                        //    currency: 'EUR',
+                        //    amount: 1
+                        //}
                     }
                 }
             });
