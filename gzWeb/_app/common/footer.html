@@ -87,10 +87,16 @@
                 </div>
                 <div class="footer-payment-method footer-trustly">
                     <img
-                        ng-class="{'grayscale':!skrill_hovering}"
-                        ng-mouseenter="skrill_hovering=true"
-                        ng-mouseleave="skrill_hovering=false"
+                        ng-class="{'grayscale':!trustly_hovering}"
+                        ng-mouseenter="trustly_hovering=true"
+                        ng-mouseleave="trustly_hovering=false"
                         class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly">
+                </div>
+                <div class="footer-payment-method footer-skrill">
+                    <img ng-class="{'grayscale':!skrill_hovering}"
+                         ng-mouseenter="skrill_hovering=true"
+                         ng-mouseleave="skrill_hovering=false"
+                         class="img-responsive grayscale" src="../../Content/Images/payment methods/skrill.svg" alt="Skrill">
                 </div>
             </div>
 
