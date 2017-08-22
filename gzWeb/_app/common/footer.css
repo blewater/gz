@@ -153,13 +153,21 @@ footer .footer-payment-methods .footer-payment-method.footer-maestro img{
     padding: 8px 10px;
 }
 
+footer .footer-gproviders {
+    margin-bottom: 15px;
+}
+
+.gprovider {
+    border-radius: 4px;
+    padding: 5px;
+    height: 50px;
+    width: auto;
+}
+
 /*footer .footer-payment-methods img {
     border-radius: 4px;
     padding: 5px;
 }*/
-
-
-
 
 footer .footer-licenses {
     margin-bottom: 15px;
