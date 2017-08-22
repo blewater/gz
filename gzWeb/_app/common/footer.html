@@ -44,16 +44,32 @@
 
             <div class="footer-payment-methods text-center" ng-show="routeData.gaming || routeData.wandering">
                 <div class="footer-payment-method footer-visa">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/visa.svg" alt="Visa">
+                    <img 
+                         ng-class="{'grayscale':!vshovering}"
+                         ng-mouseenter="vshovering=true"
+                         ng-mouseleave="vshovering=false"
+                         class="img-responsive grayscale" src="../../Content/Images/payment methods/visa.svg" alt="Visa">
                 </div>
                 <div class="footer-payment-method footer-mastercard">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/mastercard.svg" alt="Master Card">
+                    <img 
+                         ng-class="{'grayscale':!mshovering}"
+                         ng-mouseenter="mshovering=true"
+                         ng-mouseleave="mshovering=false"
+                         class="img-responsive grayscale" src="../../Content/Images/payment methods/mastercard.svg" alt="Master Card">
                 </div>
                 <div class="footer-payment-method footer-maestro">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
+                    <img 
+                         ng-class="{'grayscale':!mahovering}"
+                         ng-mouseenter="mahovering=true"
+                         ng-mouseleave="mahovering=false"
+                         class="img-responsive grayscale" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
                 </div>
                 <div class="footer-payment-method footer-trustly">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly">
+                    <img 
+                         ng-class="{'grayscale':!skhovering}"
+                         ng-mouseenter="skhovering=true"
+                         ng-mouseleave="skhovering=false"
+                         class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly">
                 </div>
             </div>
 
@@ -68,6 +84,9 @@
                         </div>
                         <div ng-show="routeData.investing || routeData.wandering">
                             <p>The investment offering on this site is not operated nor offered by EveryMatrix N.V or EveryMatrix Ltd. Please access the investment section in order to see specific Terms and conditions provided by Greenzorro Limited, a company incorporated under the laws of United Kingdom, bearing company registration number 10401612 and having its registered address at 80-83 Long Lane, London, EC1A 9ET, UK.</p>
+                        </div>
+                        <div class="text-center" ng-show="routeData.gaming || routeData.wandering">
+                            <p>Gambling can be addictive.</p>
                         </div>
                     </div>
                 </div>
