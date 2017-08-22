@@ -775,6 +775,7 @@
     <Content Include="Content\Images\investments.svg" />
     <Content Include="Content\Images\invest_main.svg" />
     <Content Include="Content\Images\king.png" />
+    <Content Include="Content\Images\leander.png" />
     <Content Include="Content\Images\login.png" />
     <Content Include="Content\Images\losses_returned.svg" />
     <Content Include="Content\Images\mac.png" />
@@ -783,12 +784,14 @@
     <Content Include="Content\Images\minus_icon_dgrey.svg" />
     <Content Include="Content\Images\minus_icon.svg" />
     <Content Include="Content\Images\neteller-logo-219x80.gif" />
+    <Content Include="Content\Images\netent.png" />
     <Content Include="Content\Images\nikos.jpg" />
     <Content Include="Content\Images\nikos.png" />
     <Content Include="Content\Images\payment methods\skrill.svg" />
     <Content Include="Content\Images\payoutrates.svg" />
     <Content Include="Content\Images\play.png" />
     <Content Include="Content\Images\play.svg" />
+    <Content Include="Content\Images\playson.png" />
     <Content Include="Content\Images\plus_icon_green.svg" />
     <Content Include="Content\Images\plus_icon.svg" />
     <Content Include="Content\Images\receive.svg" />
@@ -803,6 +806,7 @@
     <Content Include="Content\Images\spades.svg" />
     <Content Include="Content\Images\sum.png" />
     <Content Include="Content\Images\sum.svg" />
+    <Content Include="Content\Images\worldmatch.png" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.css" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.min.css" />
     <Content Include="Content\Styles\bootstrap\bootstrap.css" />
