@@ -25,6 +25,27 @@
     </div>
     <div class="second">
         <div class="container">
+            <div class="footer-gproviders text-center" ng-show="routeData.gaming || routeData.wandering">
+                <img ng-class="{'grayscale':!netent_hovering}"
+                     ng-mouseenter="netent_hovering=true"
+                     ng-mouseleave="netent_hovering=false"
+                     class="gprovider grayscale" src="../../Content/Images/netent.png" alt="NetEnt">
+                <img
+                    ng-class="{'grayscale':!leander_hovering}"
+                    ng-mouseenter="leander_hovering=true"
+                    ng-mouseleave="leander_hovering=false"
+                    class="gprovider grayscale" src="../../Content/Images/leander.png" alt="Leander">
+                <img
+                    ng-class="{'grayscale':!playson_hovering}"
+                    ng-mouseenter="playson_hovering=true"
+                    ng-mouseleave="playson_hovering=false"
+                    class="gprovider grayscale" src="../../Content/Images/playson.png" alt="Playson">
+                <img
+                    ng-class="{'grayscale':!wmatch_hovering}"
+                    ng-mouseenter="wmatch_hovering=true"
+                    ng-mouseleave="wmatch_hovering=false"
+                    class="gprovider grayscale" src="../../Content/Images/worldmatch.png" alt="WorldMatch">
+            </div>
             <div class="footer-licenses text-center" ng-show="routeData.gaming || routeData.wandering">
                 <a class="license mga" href="https://www.authorisation.mga.org.mt/verification.aspx?lang=en&company=6d9bcc8f-2ec5-49d3-90c6-58f0dde5d820" target="_blank">
                     <img src="../../Content/Images/mga.png" alt="EveryMatrix Limited - Licensed">
@@ -44,16 +65,38 @@
 
             <div class="footer-payment-methods text-center" ng-show="routeData.gaming || routeData.wandering">
                 <div class="footer-payment-method footer-visa">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/visa.svg" alt="Visa">
+                    <img
+                        ng-class="{'grayscale':!visa_hovering}"
+                        ng-mouseenter="visa_hovering=true"
+                        ng-mouseleave="visa_hovering=false"
+                        class="img-responsive grayscale" src="../../Content/Images/payment methods/visa.svg" alt="Visa">
                 </div>
                 <div class="footer-payment-method footer-mastercard">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/mastercard.svg" alt="Master Card">
+                    <img
+                        ng-class="{'grayscale':!master_hovering}"
+                        ng-mouseenter="master_hovering=true"
+                        ng-mouseleave="master_hovering=false"
+                        class="img-responsive grayscale" src="../../Content/Images/payment methods/mastercard.svg" alt="Master Card">
                 </div>
                 <div class="footer-payment-method footer-maestro">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
+                    <img
+                        ng-class="{'grayscale':!maestro_hovering}"
+                        ng-mouseenter="maestro_hovering=true"
+                        ng-mouseleave="maestro_hovering=false"
+                        class="img-responsive grayscale" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
                 </div>
                 <div class="footer-payment-method footer-trustly">
-                    <img class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly">
+                    <img
+                        ng-class="{'grayscale':!trustly_hovering}"
+                        ng-mouseenter="trustly_hovering=true"
+                        ng-mouseleave="trustly_hovering=false"
+                        class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly">
+                </div>
+                <div class="footer-payment-method footer-skrill">
+                    <img ng-class="{'grayscale':!skrill_hovering}"
+                         ng-mouseenter="skrill_hovering=true"
+                         ng-mouseleave="skrill_hovering=false"
+                         class="img-responsive grayscale" src="../../Content/Images/payment methods/skrill.svg" alt="Skrill">
                 </div>
             </div>
 
@@ -69,10 +112,13 @@
                         <div ng-show="routeData.investing || routeData.wandering">
                             <p>The investment offering on this site is not operated nor offered by EveryMatrix N.V or EveryMatrix Ltd. Please access the investment section in order to see specific Terms and conditions provided by Greenzorro Limited, a company incorporated under the laws of United Kingdom, bearing company registration number 10401612 and having its registered address at 80-83 Long Lane, London, EC1A 9ET, UK.</p>
                         </div>
+                        <div class="text-center" ng-show="routeData.gaming || routeData.wandering">
+                            <p>Gambling can be addictive.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <hr class="copyright-hr" />
+            <hr class="copyright-hr"/>
             <div class="copyright text-center">
                 &copy; {{copyrightYears}} | greenzorro limited | All rights reserved
             </div>
@@ -82,7 +128,7 @@
                 <span>Registered in England & Wales</span>
             </div>
             <div ng-show="inDebugMode" class="debug-info text-center clearfix">
-                <br />
+                <br/>
                 <span>{{version}}</span>
             </div>
         </div>
