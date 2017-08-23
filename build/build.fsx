@@ -14,7 +14,7 @@
 //    -> checkout develop
 //    -> build 
 //    ->    if build fails open azure deployment result page
-//    -> deploy to dev site https://www.greenzorrodev.azurewebsites.net
+//    -> deploy to dev site https://greenzorrodev.azurewebsites.net
 //    -> open stage site in browser
 //    ->      --or if the build fails open azure deployment status page 
 //prod 
@@ -23,7 +23,7 @@
 //    -> merge with develop [unique step in this mode]
 //    -> build 
 //    ->    if buld fails open azure deployment result page
-//    -> deploy to stage site https://www.greenzorro-sgn.azurewebsites.net
+//    -> deploy to stage site https://greenzorro-sgn.azurewebsites.net
 //    -> open stage site in browser if new "develop"" branch changes resulted in stage build
 //        -- or open production site in browser if production is uptodate 
 //    -> prompt user to deploy to production, if there's a new stage build
@@ -337,6 +337,9 @@ Target "SwapStageLive" (fun _ ->
         |> userReply2Bool
     if proceedSwap then
         runSwap 1
+    // finally load the live landing page
+    Diagnostics.Process.Start ProdGzUrl
+    |> ignore
 )
 
 // Dependencies
