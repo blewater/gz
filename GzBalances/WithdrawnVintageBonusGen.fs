@@ -76,4 +76,6 @@ module WithdrawnVintageBonusGen =
         let depositsCsvStrContent = depositsInMem.ToString()
         depositsInMem.Close()
 
-        sendCashBonusCsvToAdmins db adminEmailUserArgs folder dayToProcess depositsCsvStrContent
+        match depositsCsvStrContent.Length with
+        | 0 -> logger.Warn "No withdrawn vintages today."
+        | _ -> sendCashBonusCsvToAdmins db adminEmailUserArgs folder dayToProcess depositsCsvStrContent
