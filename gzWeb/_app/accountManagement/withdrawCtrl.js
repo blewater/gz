@@ -10,19 +10,21 @@
 
         // #region payment methods fields
         //var creditCardFields = { templateUrl: '/_app/accountManagement/withdrawCreditCard.html', ctrlId: 'withdrawCreditCardCtrl' }
-        //var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
-        //var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' }
-        //var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixSkrill.html', ctrlId: 'withdrawMoneyMatrixSkrillCtrl' }
+        var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
+        var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' }
+        var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixSkrill.html', ctrlId: 'withdrawMoneyMatrixSkrillCtrl' }
+        var moneyMatrixEnterCashFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixEnterCash.html', ctrlId: 'withdrawMoneyMatrixEnterCashCtrl' }
         var withdrawFields = { templateUrl: '/_app/accountManagement/withdrawFields.html', ctrlId: 'withdrawFieldsCtrl' }
         var paymentMethodsFields = [];
         //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
         //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardFields;
         //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
         function getPaymentMethodFields(paymentMethodCode) {
-            return withdrawFields;// paymentMethodsFields[paymentMethodCode];
+            return paymentMethodsFields[paymentMethodCode];
         };
         // #endregion
 
@@ -35,26 +37,47 @@
             $scope.initializing = true;
             emBankingWithdraw.getPaymentMethodCfg($scope.selectedMethod.code, $scope.selectedMethod.payCard ? $scope.selectedMethod.payCard.id : null).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
+                //if ($scope.paymentMethodCfg.fields.payCardID.options.length === 0)
+                //    attachRegistrationFields($scope.paymentMethodCfg.paymentMethodCode);
+                //attachWithdrawFields();
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
                 $scope.initializing = false;
             }, function (error) {
                 message.autoCloseError(error.desc);
                 $scope.initializing = false;
             });
-
         }
 
         function attachFields(paymentMethodCode) {
-            $timeout(function () {
-                var paymentMethodFields = getPaymentMethodFields(paymentMethodCode);
-                helpers.ui.compile({
-                    selector: '#paymentMethodFields',
-                    templateUrl: paymentMethodFields.templateUrl,
-                    controllerId: paymentMethodFields.ctrlId,
-                    scope: $scope
-                });
+            var paymentMethodFields = getPaymentMethodFields(paymentMethodCode);
+            helpers.ui.compile({
+                selector: '#withdrawFields',
+                templateUrl: paymentMethodFields.templateUrl,
+                controllerId: paymentMethodFields.ctrlId,
+                scope: $scope
             });
         }
+        //function attachWithdrawFields() {
+        //    $timeout(function () {
+        //        helpers.ui.compile({
+        //            selector: '#withdrawFields',
+        //            templateUrl: withdrawFields.templateUrl,
+        //            controllerId: withdrawFields.ctrlId,
+        //            scope: $scope
+        //        });
+        //    });
+        //}
+        //function attachRegistrationFields(paymentMethodCode) {
+        //    $timeout(function () {
+        //        var paymentMethodFields = getPaymentMethodFields(paymentMethodCode);
+        //        helpers.ui.compile({
+        //            selector: '#registrationFields',
+        //            templateUrl: paymentMethodFields.templateUrl,
+        //            controllerId: paymentMethodFields.ctrlId,
+        //            scope: $scope
+        //        });
+        //    });
+        //}
 
         init();
         // #endregion
