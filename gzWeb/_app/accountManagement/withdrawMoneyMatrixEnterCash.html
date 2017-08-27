@@ -1,23 +1,53 @@
-﻿<div class="withdraw-trustly">
+﻿<div class="withdraw-entercash">
     <div>{{model.selectedCreditCard.name}}</div>
 
-    <div class="col-xs-12">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-12">
-                    <input type="number" placeholder="{{amountPlaceholder}}" id="amount" name="amount" class="form-control" autocomplete="off" ng-model="model.amount" required autofocus
-                           ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
-                           min="{{limitMin}}" max="{{limitMax}}"
-                           ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
-                </div>
-                <div class="col-xs-12">
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required</div>
-                    <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">
-                        Available withdrawal amount is between {{limitMin | number : 2}} and {{limitMax | number : 2}}
+    {{form.$invalid}}
+    <div ng-if="!payCardID">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="accountNumberRegex" placeholder="account number" id="accountNumber" name="accountNumber" class="form-control" ng-model="model.accountNumber" required
+                               ng-class="{ 'empty': !model.accountNumber, 'danger' : form.accountNumber.$invalid && !form.accountNumber.$pristine }">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.accountNumber.$pristine && form.accountNumber.$invalid}">Invalid account number.</div>
                     </div>
                 </div>
+                <gz-field-ok gz-when="form.accountNumber.$valid"></gz-field-ok>
             </div>
-            <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="bankIdRegex" placeholder="bank id" id="bankId" name="bankId" class="form-control" ng-model="model.bankId" required
+                               ng-class="{ 'empty': !model.bankId, 'danger' : form.bankId.$invalid && !form.bankId.$pristine }">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.bankId.$pristine && form.bankId.$invalid}">Invalid bank id.</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.bankId.$valid"></gz-field-ok>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="ownerNameRegex" placeholder="owner name" id="ownerName" name="ownerName" class="form-control" ng-model="model.ownerName" required
+                               ng-class="{ 'empty': !model.ownerName, 'danger' : form.ownerName.$invalid && !form.ownerName.$pristine }">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.ownerName.$pristine && form.ownerName.$invalid}">Invalid owner name.</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.ownerName.$valid"></gz-field-ok>
+            </div>
         </div>
     </div>
+
+    <div ng-include="'_app/accountManagement/withdrawFields.html'"></div>
 </div>

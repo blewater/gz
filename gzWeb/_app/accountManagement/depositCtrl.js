@@ -9,7 +9,7 @@
         // #endregion
 
         // #region payment methods fields
-        var creditCardFields = { templateUrl: '/_app/accountManagement/depositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
+        //var creditCardFields = { templateUrl: '/_app/accountManagement/depositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
         var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixCreditCard.html', ctrlId: 'depositMoneyMatrixCreditCardCtrl' }
         var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixTrustly.html', ctrlId: 'depositMoneyMatrixTrustlyCtrl' }
         var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill.html', ctrlId: 'depositMoneyMatrixSkrillCtrl' }
@@ -19,9 +19,9 @@
         //var moneyMatrixPaySafeCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixPaySafeCard.html', ctrlId: 'depositMoneyMatrixPaySafeCardCtrl' }
         //var moneyMatrixEcoPayzFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEcoPayz.html', ctrlId: 'depositMoneyMatrixEcoPayzCtrl' }
         var paymentMethodsFields = [];
-        paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardFields;
+        //paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
+        //paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
+        //paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
