@@ -302,6 +302,7 @@
                 if (emLoginResult.hasToEnterCaptcha)
                     q.resolve({ enterCaptcha: true });
                 else {
+                    message.clear();
                     factory.gzLogin(usernameOrEmail, password).then(function () {
                         api.cacheUserData();
                         q.resolve({ emLogin: true, gzLogin: true });
