@@ -29,18 +29,21 @@
             //MoneyMatrixEcoPayz: "MoneyMatrix_EcoPayz"
         };
         _service.getPaymentMethodDisplayName = function (method) {
-            switch (method.code) {
-                case _supportedPaymentMethodCodes.MoneyMatrixCreditCard:
-                case _supportedPaymentMethodCodes.MoneyMatrixSkrill:
-                case _supportedPaymentMethodCodes.MoneyMatrixSkrill1Tap:
-                    return method.name;
-                case _supportedPaymentMethodCodes.MoneyMatrixTrustly:
-                    return "Trustly";
-                case _supportedPaymentMethodCodes.MoneyMatrixEnterCash:
-                    return "EnterCash";
-                default:
-                    return method.name;
-            }
+            if (method.payCard)
+                return method.payCard.name;
+            else 
+                switch (method.code) {
+                    case _supportedPaymentMethodCodes.MoneyMatrixCreditCard:
+                    case _supportedPaymentMethodCodes.MoneyMatrixSkrill:
+                    case _supportedPaymentMethodCodes.MoneyMatrixSkrill1Tap:
+                        return method.name;
+                    case _supportedPaymentMethodCodes.MoneyMatrixTrustly:
+                        return "Trustly";
+                    case _supportedPaymentMethodCodes.MoneyMatrixEnterCash:
+                        return "EnterCash";
+                    default:
+                        return method.name;
+                }
         };
 
         _service.PaymentMethodCode = _supportedPaymentMethodCodes;
@@ -52,9 +55,9 @@
                 includeAll: includeAll
             });
         };
-        _service.getSupportedPaymentMethods = function (currency, includeAll) {
+        _service.getSupportedPaymentMethods = function (currency) {
             var q = $q.defer();
-            emWamp.call("/user/withdraw#getPaymentMethods", { currency: currency, includeAll: includeAll }).then(function (result) {
+            emWamp.call("/user/withdraw#getPaymentMethods", { currency: currency, includeAll: true }).then(function (result) {
                 var supportedPaymentMethodCodesList = $filter('toArray')(_supportedPaymentMethodCodes);
                 var paymentMethods = $filter('filter')(result.paymentMethods, function (value, index, array) {
                     return supportedPaymentMethodCodesList.indexOf(value.code) > -1;
