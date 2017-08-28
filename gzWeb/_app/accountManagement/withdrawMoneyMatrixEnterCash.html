@@ -1,7 +1,6 @@
 ﻿<div class="withdraw-entercash">
     <div>{{model.selectedCreditCard.name}}</div>
 
-    {{form.$invalid}}
     <div ng-if="!payCardID">
         <div class="col-xs-12">
             <div class="form-group">
@@ -49,5 +48,5 @@
         </div>
     </div>
 
-    <div ng-include="'_app/accountManagement/withdrawFields.html'"></div>
+    <div ng-include="'_app/accountManagement/withdrawAmountField.html'"></div>
 </div>
