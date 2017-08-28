@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <input type="number" placeholder="{{amountPlaceholder}}" id="amount" name="amount" class="form-control" autocomplete="off" ng-model="model.amount" required autofocus
-                       ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
+                       ng-class="{ 'empty': !model.amount, 'danger' : (form.amount.$invalid && !form.amount.$pristine) || (limitMin >= limitMax) }"
                        min="{{limitMin}}" max="{{limitMax}}"
                        ng-focus="amountFocused = true;" ng-blur="amountFocused = false;"
                        ng-disabled="limitMin >= limitMax">
@@ -14,7 +14,7 @@
                     Available withdrawal amount is between {{limitMin | number : 2}} and {{limitMax | number : 2}}.
                 </div>
                 <div class="help-block" ng-class="{'show': limitMin >= limitMax}">
-                    You account balance is below the least amount you can withdraw.
+                    Your account balance is below the least amount you can withdraw.
                 </div>
             </div>
         </div>
