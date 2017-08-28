@@ -50,7 +50,7 @@
 
         $scope.readConfirmMessage = function (prepareData) {
             var confirmMessage = angular.isFunction($scope.getSpecificConfirmMessage)
-                ? getSpecificConfirmMessage(prepareData)
+                ? $scope.getSpecificConfirmMessage(prepareData)
                 : "Do you want to withdraw the amount of " + prepareData.debitAmount + " using " + $scope.selectedMethod.name + "?";
             return confirmMessage;
         };
