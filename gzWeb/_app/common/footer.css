@@ -152,6 +152,7 @@ footer .footer-payment-methods .footer-enter-cash {
 footer .footer-payment-methods .footer-enter-cash img {
     height: 100%;
     margin-top: 5px;
+    margin-left: 10px;
 }
 
 footer .footer-gproviders {
