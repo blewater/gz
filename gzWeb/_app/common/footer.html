@@ -64,39 +64,45 @@
             </div>
 
             <div class="footer-payment-methods text-center" ng-show="routeData.gaming || routeData.wandering">
-                <div class="footer-payment-method footer-visa">
+                <div class="footer-payment-method">
                     <img
                         ng-class="{'grayscale':!visa_hovering}"
                         ng-mouseenter="visa_hovering=true"
                         ng-mouseleave="visa_hovering=false"
                         class="img-responsive grayscale" src="../../Content/Images/payment methods/visa.svg" alt="Visa">
                 </div>
-                <div class="footer-payment-method footer-mastercard">
+                <div class="footer-payment-method">
                     <img
                         ng-class="{'grayscale':!master_hovering}"
                         ng-mouseenter="master_hovering=true"
                         ng-mouseleave="master_hovering=false"
                         class="img-responsive grayscale" src="../../Content/Images/payment methods/mastercard.svg" alt="Master Card">
                 </div>
-                <div class="footer-payment-method footer-maestro">
+                <div class="footer-payment-method">
                     <img
                         ng-class="{'grayscale':!maestro_hovering}"
                         ng-mouseenter="maestro_hovering=true"
                         ng-mouseleave="maestro_hovering=false"
                         class="img-responsive grayscale" src="../../Content/Images/payment methods/maestro.svg" alt="Maestro">
                 </div>
-                <div class="footer-payment-method footer-trustly">
+                <div class="footer-payment-method">
                     <img
                         ng-class="{'grayscale':!trustly_hovering}"
                         ng-mouseenter="trustly_hovering=true"
                         ng-mouseleave="trustly_hovering=false"
                         class="img-responsive grayscale" src="../../Content/Images/payment methods/trustly.svg" alt="Trustly">
                 </div>
-                <div class="footer-payment-method footer-skrill">
+                <div class="footer-payment-method">
                     <img ng-class="{'grayscale':!skrill_hovering}"
                          ng-mouseenter="skrill_hovering=true"
                          ng-mouseleave="skrill_hovering=false"
                          class="img-responsive grayscale" src="../../Content/Images/payment methods/skrill.svg" alt="Skrill">
+                </div>
+                <div class="footer-enter-cash">
+                    <img ng-class="{'grayscale':!ecash_hovering}"
+                         ng-mouseenter="ecash_hovering=true"
+                         ng-mouseleave="ecash_hovering=false"
+                         class="img-responsive grayscale" src="../../Content/Images/payment methods/entercash.png" alt="EnterCash">
                 </div>
             </div>
 
