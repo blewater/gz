@@ -136,21 +136,22 @@ footer .footer-payment-methods {
     margin-bottom: 10px;
 }
 footer .footer-payment-methods .footer-payment-method {
-    margin: 0 6px;
     height: 40px;
     display: inline-block;
 }
 footer .footer-payment-methods .footer-payment-method img {
     height: 100%;
+    padding: 10px 10px;
 }
-footer .footer-payment-methods .footer-payment-method.footer-visa img,
-footer .footer-payment-methods .footer-payment-method.footer-skrill img,
-footer .footer-payment-methods .footer-payment-method.footer-trustly img {
-        padding: 10px 10px;
-    }
-footer .footer-payment-methods .footer-payment-method.footer-mastercard img,
-footer .footer-payment-methods .footer-payment-method.footer-maestro img{
-    padding: 8px 10px;
+
+footer .footer-payment-methods .footer-enter-cash {
+    height: 50px;
+    display: inline-block;
+}
+
+footer .footer-payment-methods .footer-enter-cash img {
+    height: 100%;
+    margin-top: 5px;
 }
 
 footer .footer-gproviders {
