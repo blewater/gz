@@ -23,8 +23,8 @@
     var categories = {
         wandering: 'wandering',
         gaming: 'gaming',
-        investing: 'investing',
-    }
+        investing: 'investing'
+    };
     // #endregion
 
     // #region Routes
@@ -249,7 +249,7 @@
             sm_abs_white: { radius: 5, width: 2, length: 4, color: '#fff', position: 'absolute', top: '50%' },
             xs_rel_white: { radius: 4, width: 2, length: 3, color: '#fff', position: 'relative', top: '0' },
             xs_rel_green: { radius: 4, width: 2, length: 3, color: '#27A95C', position: 'relative', top: '0' },
-            xs_abs_green: { radius: 4, width: 2, length: 3, color: '#27A95C', position: 'absolute', top: '50%' },
+            xs_abs_green: { radius: 4, width: 2, length: 3, color: '#27A95C', position: 'absolute', top: '50%' }
         },
         storageKeys: {
             version: 'gz_version',
@@ -261,7 +261,7 @@
             //language: 'gz_language',
             reCaptchaPublicKey: 'gz_reCaptchaPublicKey',
             btagMarker: 'gz_btagMarker',
-            btagTime: 'gz_btagTime',
+            btagTime: 'gz_btagTime'
         },
         events: {
             ON_INIT: 'onInit',
