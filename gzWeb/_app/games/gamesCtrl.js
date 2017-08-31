@@ -16,7 +16,7 @@
         $scope.pagingTypes = {
             row: { key: 'row', size: pageSize, recursive: false },
             less: { key: 'less', size: 3 * pageSize - 1, recursive: false },
-            all: { key: 'all', size: 3 * pageSize - 1, recursive: true },
+            all: { key: 'all', size: 3 * pageSize - 1, recursive: true }
         }
         //$scope.sortingByTypes = ['Alphabetically', 'Popularity'];
         //$scope.sortingOrderTypes = ['Ascending', 'Descending'];
@@ -134,7 +134,7 @@
             //getLastPlayedGames();
             //getMostPlayedGames();
             //getJackpots();
-        };
+        }
         // #endregion
 
 
@@ -339,7 +339,7 @@
 
             if (params.open)
                 modals.open(params.open);
-        };
+        }
         function getCarouselUrl(carouselEntry) {
             switch (carouselEntry.ActionType) {
                 case constants.carouselActionTypes.video:
@@ -405,7 +405,7 @@
                     $scope.carouselSlides = x;
                 });
             });
-        };
+        }
         function loadGameVendors() {
             $scope.loadingVendors = true;
             emCasino.getGameVendors().then(function (getGameVendorsResult) {
@@ -420,7 +420,7 @@
                 }
                 $scope.vendors = getGameVendorsResult.vendors;
             }, logError);
-        };
+        }
         function addCategory(category) {
             if (category.include) {
                 var isSelected = selectedCategoryName === category.name.toLowerCase();
@@ -441,7 +441,7 @@
                 if (isSelected)
                     $scope.selectedCategory = gameCategory;
             }
-        };
+        }
         function loadCategories() {
             var deferred = $q.defer();
             $scope.gameCategories = [];
@@ -453,7 +453,7 @@
                 deferred.resolve(true);
             }, logError);
             return deferred.promise;
-        };
+        }
 
         function loadCustomCategory(categoriesEntry) {
             var deferred = $q.defer();
@@ -502,7 +502,7 @@
 
         function logError(error) {
             $log.error(error);
-        };
+        }
         // #endregion
     }
 })();

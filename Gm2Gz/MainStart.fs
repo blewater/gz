@@ -73,35 +73,32 @@ let gmReports2InvBalanceUpdate
         (db : DbContext)
         (balanceFilesUsage : ConfigArgs.BalanceFilesUsageType)
         (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
-    try
-        logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
-        logger.Info("----------------------------")
 
-        logger.Info("Validating Gm excel rpt files")
+    logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
+    logger.Info("----------------------------")
+
+    logger.Info("Validating Gm excel rpt files")
         
-        let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
-                                    |> GmRptFiles.getExcelFilenames
-                                    |> GmRptFiles.balanceRptDateMatchTitles
-                                    |> GmRptFiles.depositsRptContentMatch
-                                    |> GmRptFiles.getExcelDtStr
-                                    |> GmRptFiles.getExcelDates 
-                                    |> GmRptFiles.areExcelFilenamesValid
-        if not rptFilesOkToProcess.Valid then
-            exit 1
+    let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
+                                |> GmRptFiles.getExcelFilenames
+                                |> GmRptFiles.balanceRptDateMatchTitles
+                                |> GmRptFiles.depositsRptContentMatch
+                                |> GmRptFiles.getExcelDtStr
+                                |> GmRptFiles.getExcelDates 
+                                |> GmRptFiles.areExcelFilenamesValid
+    if not rptFilesOkToProcess.Valid then
+        exit 1
 
-        // Extract & Load Daily Everymatrix Report
-        Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
+    // Extract & Load Daily Everymatrix Report
+    Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
 
-        (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) 
-        |||> UserTrx.processGzTrx
+    (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) 
+    |||> UserTrx.processGzTrx
 
 
 
-        logger.Info("----------------------------")
-        logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
-
-    with ex ->
-        logger.Fatal(ex, "Runtime Exception at main")
+    logger.Info("----------------------------")
+    logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
 
 /// Choose next biz processing steps based on args
 let portfolioSharesPrelude2MainProcessing (db : DbContext) =
@@ -110,28 +107,34 @@ let portfolioSharesPrelude2MainProcessing (db : DbContext) =
 [<EntryPoint>]
 let main argv = 
 
-    // Create a database context
-    let db = getOpenDb dbConnectionString
+    try 
+        // Create a database context
+        let db = getOpenDb dbConnectionString
 
-    let balanceFilesUsageArg = 
-        argv |> parseCmdArgs
+        let balanceFilesUsageArg = 
+            argv |> parseCmdArgs
 
-    // Download reports
-    let dwLoader = ExcelDownloader(downloadArgs, balanceFilesUsageArg)
-    dwLoader.SaveReportsToInputFolder()
+        // Download reports
+        let dwLoader = ExcelDownloader(downloadArgs, balanceFilesUsageArg)
+        dwLoader.SaveReportsToInputFolder()
 
-    // Main database processing 
-    gmReports2InvBalanceUpdate 
-        db 
-        balanceFilesUsageArg 
-        <| portfolioSharesPrelude2MainProcessing db
+        // Main database processing 
+        gmReports2InvBalanceUpdate 
+            db 
+            balanceFilesUsageArg 
+            <| portfolioSharesPrelude2MainProcessing db
 
-    // Vintage withdrawal bonus
-    WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
+        // Vintage withdrawal bonus
+        WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
 
-    printfn "Press Enter to finish..."
-    Console.ReadLine() |> ignore
-    0
+        printfn "Press Enter to finish..."
+        Console.ReadLine() |> ignore
+        0
+    with ex ->
+        logger.Fatal(ex, "1 or more runtime exceptions at GzBatch")
+        1
+
+
 (*****
 * Notes
 * http://stackoverflow.com/questions/22608584/how-to-project-transform-an-array-of-fileinfo-to-a-list-of-strings-with-fsharp/22608949#22608949

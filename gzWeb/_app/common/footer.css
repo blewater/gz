@@ -1,4 +1,4 @@
-﻿@charset "utf-8";
+﻿/*CssLint not allowed here @charset "utf-8";*/
 
 
 .non-footer {
@@ -39,7 +39,7 @@ footer a {
     text-align: center;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
-    -ms-transition: all 0.5s ease;
+    /*css lint not known css prop -ms-transition: all 0.5s ease;*/
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     position: relative;
@@ -126,9 +126,9 @@ footer .company-registration br.company-registration-separator {
     display: none;
 }
 
-.footer .license-disclaimer {
+/*.footer .license-disclaimer {
 
-}
+}*/
 
 
 footer .footer-payment-methods {
@@ -136,28 +136,31 @@ footer .footer-payment-methods {
     margin-bottom: 10px;
 }
 footer .footer-payment-methods .footer-payment-method {
-    margin: 0 6px;
     height: 40px;
     display: inline-block;
 }
 footer .footer-payment-methods .footer-payment-method img {
     height: 100%;
+    padding: 10px 10px;
 }
-footer .footer-payment-methods .footer-payment-method.footer-visa img,
-footer .footer-payment-methods .footer-payment-method.footer-skrill img,
-footer .footer-payment-methods .footer-payment-method.footer-trustly img {
-        padding: 10px 10px;
-    }
-footer .footer-payment-methods .footer-payment-method.footer-mastercard img,
-footer .footer-payment-methods .footer-payment-method.footer-maestro img{
-    padding: 8px 10px;
+
+footer .footer-payment-methods .footer-enter-cash {
+    height: 50px;
+    display: inline-block;
+}
+
+footer .footer-payment-methods .footer-enter-cash img {
+    height: 100%;
+    margin-top: 5px;
+    margin-left: 10px;
 }
 
 footer .footer-gproviders {
     margin-bottom: 15px;
 }
 
-.gprovider {
+footer .gprovider {
+    /* csslint not known property name -ms-border-radius: 4px;*/
     border-radius: 4px;
     padding: 5px;
     height: 50px;

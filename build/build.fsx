@@ -14,7 +14,7 @@
 //    -> checkout develop
 //    -> build 
 //    ->    if build fails open azure deployment result page
-//    -> deploy to dev site https://www.greenzorrodev.azurewebsites.net
+//    -> deploy to dev site https://greenzorrodev.azurewebsites.net
 //    -> open stage site in browser
 //    ->      --or if the build fails open azure deployment status page 
 //prod 
@@ -23,7 +23,7 @@
 //    -> merge with develop [unique step in this mode]
 //    -> build 
 //    ->    if buld fails open azure deployment result page
-//    -> deploy to stage site https://www.greenzorro-sgn.azurewebsites.net
+//    -> deploy to stage site https://greenzorro-sgn.azurewebsites.net
 //    -> open stage site in browser if new "develop"" branch changes resulted in stage build
 //        -- or open production site in browser if production is uptodate 
 //    -> prompt user to deploy to production, if there's a new stage build
@@ -211,21 +211,24 @@ let getDeployedSha (htmlResp : string) : string =
     let htmlSha = GitShaRegex().TypedMatch(htmlResp).SHA.Value
     htmlSha
 
+let siteSha (url : string) = 
+    url
+    |> getHtml 
+    |> getDeployedSha
+
+let getDevSha() =
+    siteSha DevDeploymentApiInfo
+let getStageSha() = 
+    siteSha StageDeploymentApiInfo
+let getProdSha() = 
+    siteSha ProdDeploymentApiInfo
+
 /// Diagnostic target
 /// fake DisplaySha -st
 Target "DisplaySha" (fun _ ->
-    let devSha = 
-        DevDeploymentApiInfo
-        |> getHtml 
-        |> getDeployedSha
-    let sgnSha = 
-        StageDeploymentApiInfo
-        |> getHtml 
-        |> getDeployedSha
-    let prodSha = 
-        ProdDeploymentApiInfo
-        |> getHtml 
-        |> getDeployedSha
+    let devSha = getDevSha()
+    let sgnSha = getStageSha()
+    let prodSha = getProdSha()
     checkoutBranch GitRepo "develop"
     let devGitSha = getSHA1 GitRepo "HEAD"
     checkoutBranch GitRepo "master"
@@ -237,12 +240,18 @@ Target "DisplaySha" (fun _ ->
     tracefn "The git master Sha1 hash is %s" masterSha
     checkoutBranch GitRepo "develop"
 )
-let userReply2Bool (userAns : string) : bool=
-    match userAns.Trim() with
-    | "Y" | "y" | "Υ" | "υ" -> true
-    | "N" | "n" | "Ν" | "ν" -> false
-    | null -> trace "Null answer"; false
-    | _ -> tracefn "Unknown response %s" userAns; false
+let rec userReply2Bool (userAns : string) : bool=
+    match userAns with
+    | "Y" | "y" | "Υ" | "y" | "υ" -> true
+    | "N" | "n" | "Ν" | "n" | "ν" -> false
+    | null -> 
+        trace "Null answer. "; 
+        getUserInput "Please try again: " 
+            |> userReply2Bool
+    | _ -> 
+        tracefn "unknown response %s. " userAns; 
+        getUserInput "Please try again: " 
+            |> userReply2Bool
 
 Target "OpenResultInBrowser" (fun _ ->
 
@@ -257,10 +266,8 @@ Target "OpenResultInBrowser" (fun _ ->
         trace "Http getting the freshly built home page. Azure may take a while to answer..."
         let htmlStageOrDevSha = 
             match mode with
-                | "dev" -> DevDeploymentApiInfo
-                | _ -> StageDeploymentApiInfo
-            |> getHtml 
-            |> getDeployedSha
+                | "dev" -> getDevSha()
+                | _ -> getStageSha()
 
         let gitSha = getSHA1 GitRepo "HEAD"
 
@@ -279,7 +286,7 @@ Target "OpenResultInBrowser" (fun _ ->
             if 
                 mode = "prod" 
             then
-                let prodHtmlSha = ProdGzUrl |> getHtml |> getDeployedSha
+                let prodHtmlSha = getProdSha()
 
                 if 
                     gitSha = prodHtmlSha 
@@ -290,9 +297,11 @@ Target "OpenResultInBrowser" (fun _ ->
                     |> ignore
                     true
                 else
-                    trace "Sha1 tags do not match with either Stage or Production so the build failed. Opening azure deployment page in browser..."
+                    // prod
+                    trace "Sha1 tags do not match with either Stage or Production. Likely no change since last stage -> prod swap --Or the build failed. Opening azure deployment page in browser..."
                     false
             else
+                // dev
                 trace "Sha1 tags do not match so the build failed. Opening azure deployment page in browser..."
                 false
 
@@ -337,6 +346,9 @@ Target "SwapStageLive" (fun _ ->
         |> userReply2Bool
     if proceedSwap then
         runSwap 1
+    // finally load the live landing page
+    Diagnostics.Process.Start ProdGzUrl
+    |> ignore
 )
 
 // Dependencies
