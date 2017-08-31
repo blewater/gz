@@ -46,5 +46,9 @@ module ConfigArgs =
     | SkipEndBalanceFile = 2
     | UseBothBalanceFiles = 3
 
-    
+    type UserEmailProcOnlyType = string option
 
+    type CmdArgs = {
+        BalanceFilesUsage : BalanceFilesUsageType;
+        UserEmailProcAlone : UserEmailProcOnlyType;
+    }

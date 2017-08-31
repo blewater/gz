@@ -110,15 +110,33 @@ module DbGzTrx =
             )
             db.DataContext.SubmitChanges()
 
-    /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
-    let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
+    /// Read all 
+    let getDbPlayerMonthlyRows
+        (db : DbContext)
+        (yyyyMm : string)
+        (emailToProcAlone : string option) : Linq.IQueryable<DbSchema.ServiceTypes.PlayerRevRpt>=
 
-        let yyyyMm = yyyyMmDd.ToYyyyMm
-        query { 
-            for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonth = yyyyMm)
-                select playerDbRow
-        }
+        match emailToProcAlone with
+        | Some singleEmailUser ->
+            query {
+                for playerDbRow in db.PlayerRevRpt do
+                    where (playerDbRow.YearMonth = yyyyMm && playerDbRow.EmailAddress = singleEmailUser)
+                    select playerDbRow
+            }
+        | None ->
+            query {
+                for playerDbRow in db.PlayerRevRpt do
+                    where (playerDbRow.YearMonth = yyyyMm)
+                    select playerDbRow
+            }
+
+    /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
+    let setDbPlayerRevRpt2GzTrx 
+        (db : DbContext)
+        (yyyyMmDd : string) 
+        (emailToProcAlone : string option) =
+
+        getDbPlayerMonthlyRows db yyyyMmDd.ToYyyyMm emailToProcAlone
         |> Seq.iter (fun playerDbRow -> setDbGzTrxRow db yyyyMmDd playerDbRow)
 
 module DbPlayerRevRpt =
@@ -131,8 +149,10 @@ module DbPlayerRevRpt =
 
     let logger = LogManager.GetCurrentClassLogger()
 
-    /// Updated db player Gain Loss
-    let private setDbPlayerGainLoss (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
+    /// Update the player gaming amounts
+    let private setDbPlayerGainLossValues
+        (row : DbSchema.ServiceTypes.PlayerRevRpt) =
+
         let totalWithdrawals = row.WithdrawsMade.Value + row.PendingWithdrawals.Value
         // Formula to get player losses as negative amounts
         let gainLoss = 
@@ -143,11 +163,25 @@ module DbPlayerRevRpt =
         row.GmGainLoss <- Nullable gainLoss
         row.UpdatedOnUtc <- DateTime.UtcNow
         row.Processed <- int GmRptProcessStatus.GainLossRptUpd
+        
+    /// Update db player Gain Loss
+    let private setDbPlayerGainLoss 
+        (emailToProcAlone: string option) 
+        (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
+
+        // Normal processing
+        if emailToProcAlone.IsNone then
+            setDbPlayerGainLossValues row
+
+        elif emailToProcAlone.IsSome && emailToProcAlone.Value = row.EmailAddress then
+            setDbPlayerGainLossValues row
+        // Skip the case of emailToProcAlone.IsSome && emailToProcAlone.Value <> row.EmailAddress
 
     /// Query non zero balance affecting amounts and update the player GainLoss
     let setDbMonthyGainLossAmounts
                         (db : DbContext)
-                        (yyyyMmDd :string) =
+                        (yyyyMmDd :string)
+                        (emailToProcAlone : string option) = 
 
         let yyyyMm = yyyyMmDd.ToYyyyMm
         query { 
@@ -165,7 +199,8 @@ module DbPlayerRevRpt =
                         ))
                 select playerDbRow
         }
-        |> Seq.iter setDbPlayerGainLoss
+                    // append dbRow param here as 2nd setDbPlayerGainLos() arg
+        |> Seq.iter (setDbPlayerGainLoss emailToProcAlone)
         db.DataContext.SubmitChanges()
 
     /// Update the deposits amounts
