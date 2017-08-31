@@ -8,23 +8,41 @@ module BalanceRpt2Db =
 
     let logger = LogManager.GetCurrentClassLogger()
 
+
+    let importBalanceExcelRptRow 
+                (balanceType : BalanceType)
+                (db : DbContext) 
+                (excelRow : BalanceExcelSchema.Row) 
+                (yyyyMmDd : string) =
+
+        logger.Info(
+            sprintf "Processing balance email %s on %s/%s/%s" 
+                excelRow.Email <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+
+        DbPlayerRevRpt.updDbBalances balanceType db yyyyMmDd excelRow
+
     /// Process all excel lines except Totals and upsert them
     let importBalanceExcelRptRows 
                 (balanceType : BalanceType)
                 (db : DbContext) 
                 (balanceExcelFile : BalanceExcelSchema) 
-                (yyyyMmDd : string) =
+                (yyyyMmDd : string) 
+                (emailToProcAlone : string option) =
 
         // Loop through all excel rows
         for excelRow in balanceExcelFile.Data do
             // Skip totals line & test emails
             if excelRow.``User ID`` > 0.0 && excelRow.Email |> allowedPlayerEmail then
-                logger.Info(
-                    sprintf "Processing balance email %s on %s/%s/%s" 
-                        excelRow.Email <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+                
+                // Normal all user processing case
+                if emailToProcAlone.IsNone then
+                    importBalanceExcelRptRow balanceType db excelRow yyyyMmDd
+                
+                elif emailToProcAlone.IsSome && emailToProcAlone.Value = excelRow.Email then
+                    importBalanceExcelRptRow balanceType db excelRow yyyyMmDd
+                
+                // Skipping emailToProcAlone.IsSome && emailToProcAlone.Value <> excelRow.Email
 
-                DbPlayerRevRpt.updDbBalances balanceType db yyyyMmDd excelRow
-    
     /// Open an excel file and return its memory schema
     let private openBalanceRptSchemaFile (balanceType : BalanceType) (excelFilename : string) : BalanceExcelSchema =
         let balanceFileExcelSchema = new BalanceExcelSchema(excelFilename)
@@ -38,7 +56,8 @@ module BalanceRpt2Db =
                 (balanceType : BalanceType)
                 (db : DbContext) 
                 (balanceRptFullPath: string) 
-                (customYyyyMmDd : string ) =
+                (customYyyyMmDd : string ) 
+                (emailToProcAlone : string option)=
 
         // TODO: Check that the passed in Balance filename matches the type
 
@@ -46,7 +65,7 @@ module BalanceRpt2Db =
         let balanceTypedOpenSchema = openBalanceRptSchemaFile balanceType
         // Open excel report file for the memory schema
         let openFile = balanceRptFullPath |> balanceTypedOpenSchema
-        importBalanceExcelRptRows balanceType db openFile customYyyyMmDd
+        importBalanceExcelRptRows balanceType db openFile customYyyyMmDd emailToProcAlone
 
 module DepositsRpt2Db =
     open NLog
@@ -89,39 +108,54 @@ module DepositsRpt2Db =
         else
             failwithf "Unknown Deposits debit description: %s." excelDebitDesc
 
+    /// Process (upload to database) a single excel deposit
+    let private updDbDepositsExcelRptRow
+                (db : DbContext) 
+                (excelRow : DepositsExcelSchema.Row) 
+                (yyyyMmDd : string) =
+
+        let currentYearMonth = yyyyMmDd.ToDateWithDay
+        // Assume we always has an initiated date value
+        let initiatedDt = (excelRow.Initiated |> excelObj2NullableDt WithdrawalRpt).Value
+        let initiatedCurrently = isInitiatedInCurrentMonth initiatedDt currentYearMonth
+
+        let completedDt = excelRow.Completed |> excelObj2NullableDt WithdrawalRpt
+        let completedYyyyMmDd = if completedDt.HasValue then completedDt.Value.ToYyyyMmDd else "Null"
+        let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
+        let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
+                
+        let depositsAmountType = debit2DepositsType excelRow.Debit
+
+        let dateLogMsg = sprintf "Deposit for email %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" excelRow.Email (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
+        logger.Debug dateLogMsg
+
+        // less restrictive than withdrawals... completed in current processing month?
+        if completedCurrently then
+            DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
+
+        else
+            logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
+                initiatedDt yyyyMmDd completedYyyyMmDd initiatedCurrently completedCurrently completedInSameMonth)
+
     /// Process all excel lines except Totals and upsert them
     let private updDbDepositsExcelRptRows 
                 (db : DbContext) 
                 (vendor2UserExcelFile : DepositsExcelSchema) 
-                (yyyyMmDd : string) : Unit =
+                (yyyyMmDd : string) 
+                (emailToProcAlone: string option) : Unit =
 
-        let currentYearMonth = yyyyMmDd.ToDateWithDay
         // Loop through all excel rows
         for excelRow in vendor2UserExcelFile.Data do
             // Skip totals line
             let userId = excelRow.UserID |> getNonNullableUserId
             if userId > 0 then
-                // Assume we always has an initiated date value
-                let initiatedDt = (excelRow.Initiated |> excelObj2NullableDt WithdrawalRpt).Value
-                let initiatedCurrently = isInitiatedInCurrentMonth initiatedDt currentYearMonth
-
-                let completedDt = excelRow.Completed |> excelObj2NullableDt WithdrawalRpt
-                let completedYyyyMmDd = if completedDt.HasValue then completedDt.Value.ToYyyyMmDd else "Null"
-                let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
-                let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
+                let excelUserEmail = excelRow.Email
                 
-                let depositsAmountType = debit2DepositsType excelRow.Debit
-
-                let dateLogMsg = sprintf "Deposit for email %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" excelRow.Email (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
-                logger.Debug dateLogMsg
-
-                // less restrictive than withdrawals... completed in current processing month?
-                if completedCurrently then
-                    DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
-
-                else
-                    logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
-                        initiatedDt yyyyMmDd completedYyyyMmDd initiatedCurrently completedCurrently completedInSameMonth)
+                if emailToProcAlone.IsNone then
+                    updDbDepositsExcelRptRow db excelRow yyyyMmDd
+                
+                elif emailToProcAlone.IsSome && emailToProcAlone.Value = excelUserEmail then 
+                    updDbDepositsExcelRptRow db excelRow yyyyMmDd
     
     /// Open an Vendor2User excel file and console out the filename
     let private openDepositsRptSchemaFile excelFilename = 
@@ -132,7 +166,10 @@ module DepositsRpt2Db =
         depositsExcelSchemaFile
     
     /// Process the deposits (normal, vendor2user, cashbonus) excel file: Extract each row and upsert database deposits amounts
-    let updDbDepositsRpt (db : DbContext)(depositsRptFullPath: string) =
+    let updDbDepositsRpt 
+        (db : DbContext)
+        (depositsRptFullPath: string) 
+        (emailToProcAlone: string option) =
 
         // Open excel report file for the memory schema
         let openFile = 
@@ -144,7 +181,7 @@ module DepositsRpt2Db =
                 |> getVendor2UserDtStr
 
         if depositsRptDtStr.IsSome then
-            updDbDepositsExcelRptRows db openFile depositsRptDtStr.Value
+            updDbDepositsExcelRptRows db openFile depositsRptDtStr.Value emailToProcAlone
 
 open DepositsRpt2Db
             
@@ -157,28 +194,42 @@ module CustomRpt2Db =
 
     let logger = LogManager.GetCurrentClassLogger()
 
+
+    /// Process a single custom user row
+    let procCustomUser (db : DbContext) (yyyyMmDd : string) (excelRow : CustomExcelSchema.Row) =
+        logger.Info(
+            sprintf "Processing email %s on %s/%s/%s" 
+                excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+
+        DbPlayerRevRpt.setDbCustomPlayerRow db yyyyMmDd excelRow
+
     /// Process all excel lines except Totals and upsert them
     let private setDbCustomExcelRptRows 
                 (db : DbContext) (customExcelSchemaFile : CustomExcelSchema) 
-                (yyyyMmDd : string) : unit =
+                (yyyyMmDd : string) 
+                (emailToProcAlone: string option) : unit =
 
         // Loop through all excel rows
         for excelRow in customExcelSchemaFile.Data do
             let isActive = excelRow.``Player status`` = "Active"
-            let emailAddress = excelRow.``Email address``
+            let excelEmailAddress = excelRow.``Email address``
             let okEmail =
-                match emailAddress with
+                match excelEmailAddress with
                 | null -> false
                 | email -> email |> allowedPlayerEmail
             if 
                 isActive && okEmail then
 
-                logger.Info(
-                    sprintf "Processing email %s on %s/%s/%s" 
-                        excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
-
-                DbPlayerRevRpt.setDbCustomPlayerRow db yyyyMmDd excelRow
+                // Normal all users processing mode
+                if emailToProcAlone.IsNone then
+                    procCustomUser db yyyyMmDd excelRow
     
+                // single user processing
+                elif emailToProcAlone.IsSome && emailToProcAlone.Value = excelEmailAddress then
+                    procCustomUser db yyyyMmDd excelRow
+                
+                // Skipping emailToProcAlone.IsSome && emailToProcAlone.Value <> excelRow.Email
+
     /// Open an excel file and console out the filename
     let private openCustomRptSchemaFile excelFilename = 
         let customExcelSchemaFile = new CustomExcelSchema(excelFilename)
@@ -190,13 +241,14 @@ module CustomRpt2Db =
     /// Process the custom excel file: Extract each row and upsert the database PlayerRevRpt table customer rows.
     let loadCustomRpt 
             (db : DbContext) 
-            (customRptFullPath: string) : unit =
+            (customRptFullPath: string) 
+            (emailToProcOnly: string option) : unit =
 
         // Open excel report file for the memory schema
         let openFile = customRptFullPath |> openCustomRptSchemaFile
         let yyyyMmDd = customRptFullPath |> getCustomDtStr
         try 
-            setDbCustomExcelRptRows db openFile yyyyMmDd
+            setDbCustomExcelRptRows db openFile yyyyMmDd emailToProcOnly
         with _ -> 
             reraise()
 
@@ -267,7 +319,7 @@ module Etl =
             (inFolder, outFolder, withdrawalsFilename) |||> moveFileWithOverwrite
         | None -> logger.Warn "No Rollback withdrawal file to move."
 
-    let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames) : unit =
+    let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames)(emailToProcAlone : string option) : unit =
         let { 
                 customFilename = customFilename; 
                 DepositsFilename = depositsFilename;
@@ -278,47 +330,50 @@ module Etl =
             }   = reportFilenames
 
         let customDtStr = getCustomDtStr customFilename
-        logger.Debug (sprintf "Starting processing excel report files for %O" customDtStr)
+        match emailToProcAlone with
+        | None -> logger.Debug (sprintf "Starting processing excel report files for %s" customDtStr)
+        | Some singleUserEmail -> 
+            logger.Warn("**************************************************************************")
+            logger.Warn(sprintf "*** Starting processing excel report files in single user mode for %s. ***" singleUserEmail)
+            logger.Warn("**************************************************************************")
 
         // Custom import
-        (db, customFilename) 
-            ||> loadCustomRpt 
+        (db, customFilename, emailToProcAlone) 
+            |||> loadCustomRpt 
         
         // Pending withdrawals import
         match depositsFilename with
         | Some depositsFilename -> 
-                (db, depositsFilename) 
-                    ||> updDbDepositsRpt
+                (db, depositsFilename, emailToProcAlone) 
+                    |||> updDbDepositsRpt
         | None -> logger.Warn "No Deposits file to import."
         
         // Beg, end balance import
         if begBalanceFilename.IsSome then
-            loadBalanceRpt BeginingBalance db begBalanceFilename.Value customDtStr
+            loadBalanceRpt BeginingBalance db begBalanceFilename.Value customDtStr emailToProcAlone
 
         // In present month there's no end balance file
         if endBalanceFilename.IsSome then
-            loadBalanceRpt EndingBalance db endBalanceFilename.Value customDtStr
+            loadBalanceRpt EndingBalance db endBalanceFilename.Value customDtStr emailToProcAlone
         
         // Pending withdrawals import
         match withdrawalsPendingFilename with
         | Some withdrawalFilename -> 
-                (db, withdrawalFilename, Pending) 
-                    |||> updDbWithdrawalsRpt
+            updDbWithdrawalsRpt db withdrawalFilename Pending emailToProcAlone
         | None -> logger.Warn "No pending withdrawal file to import."
         
         // Rollback withdrawals import
         match withdrawalsRollbackFilename with
         | Some withdrawalFilename -> 
-                (db, withdrawalFilename, Rollback) 
-                    |||> updDbWithdrawalsRpt
+                updDbWithdrawalsRpt db withdrawalFilename Rollback emailToProcAlone
         | None -> logger.Warn "No rollback withdrawal file to import."
         
-        (db, customDtStr) 
-            ||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
+        (db, customDtStr, emailToProcAlone) 
+            |||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
 
         // Finally upsert GzTrx with the balance, credit amounts
-        (db, customDtStr) 
-            ||> DbGzTrx.setDbPlayerRevRpt2GzTrx
+        (db, customDtStr, emailToProcAlone)
+            |||> DbGzTrx.setDbPlayerRevRpt2GzTrx
 
     /// <summary>
     ///
@@ -334,7 +389,8 @@ module Etl =
             (isProd : bool) 
             (db : DbContext) 
             (inFolder : string)
-            (outFolder : string) =
+            (outFolder : string) 
+            (emailToProcAlone : string option) =
         
         //------------ Read filenames
         logger.Info (sprintf "Reading the %s folder" inFolder)
@@ -345,8 +401,8 @@ module Etl =
 
         /// Try 3 times to upload reports
         let dbOperation() = 
-            (db, reportfileNames) 
-                ||> setDbimportExcel
+            (db, reportfileNames, emailToProcAlone) 
+                |||> setDbimportExcel
         (db, dbOperation) 
             ||> tryDBCommit3Times
 
