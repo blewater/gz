@@ -747,6 +747,7 @@
     <Content Include="Content\Images\18plus_invert_transparent.png" />
     <Content Include="Content\Images\18plus_transparent.png" />
     <Content Include="Content\Images\casino-default.jpg" />
+    <Content Include="Content\Images\casino-default.png" />
     <Content Include="Content\Images\costs.svg" />
     <Content Include="Content\Images\curacao.png" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
