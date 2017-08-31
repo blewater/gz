@@ -56,7 +56,7 @@ var APP = (function () {
                         //setBodyRestHeight();
                     }, 1000);
                 }
-            };
+            }
 
             function showContent() {
                 var content = document.getElementById("body-content");
@@ -67,7 +67,7 @@ var APP = (function () {
 
                 var headerNav = document.getElementById("header-nav");
                 headerNav.className += " navbar-fixed-top";
-            };
+            }
 
             function setBodyRestHeight() {
                 var content = document.getElementById("body-content");
@@ -81,7 +81,7 @@ var APP = (function () {
                 angular.element($window).bind('resize', setHeight);
                 $rootScope.$on('$routeChangeSuccess', setHeight);
                 $timeout(setHeight);
-            };
+            }
 
             function loadWebFonts() {
                 WebFont.load({
@@ -92,19 +92,19 @@ var APP = (function () {
                         $rootScope.fontsLoaded = true;
                     }
                 });
-            };
+            }
 
             function reveal() {
                 hidePreloader();
                 showContent();
                 loadWebFonts();
-            };
+            }
 
             function defaultBeforeSend(xhr, json) {
                 var authData = localStorageService.get(constants.storageKeys.authData);
                 if (authData)
                     xhr.setRequestHeader('Authorization', 'Bearer ' +authData.token);
-            };
+            }
 
             function onInitCallback() {
                 function setRouteData(route) {
@@ -137,7 +137,7 @@ var APP = (function () {
                         }
                         document.title = title;
                     });
-                };
+                }
                 onRouteChangeSuccess();
                 $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
 
@@ -155,12 +155,12 @@ var APP = (function () {
                 reveal();
 
                 $rootScope.$broadcast(constants.events.ON_AFTER_INIT);
-            };
+            }
 
             function onInit() {
                 helpers.ui.compile({ selector: '#footer', templateUrl: '_app/common/footer.html', controllerId: 'footerCtrl' });
                 helpers.ui.compile({ selector: '#header', templateUrl: '_app/common/header.html', controllerId: 'headerCtrl', callback: onInitCallback });
-            };
+            }
 
             function run() {
                 $rootScope.$on(constants.events.ON_INIT, onInit);
@@ -172,7 +172,7 @@ var APP = (function () {
                 $rootScope.defaultImg = constants.defaultImg;
                 localStorageService.set(constants.storageKeys.randomSuffix, Math.random());
                 auth.init();
-            };
+            }
 
             run();
         }

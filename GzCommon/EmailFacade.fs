@@ -115,7 +115,7 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
 
         let msg = MimeMessage()
         msg.From.Add(MailboxAddress ("Admin", "admin@greenzorro.com"))
-        msg.To.Add(new MailboxAddress ("Antonis", "antonis.voerakos@greenzorro.com"))
+        msg.To.Add(MailboxAddress ("Antonis", "antonis.voerakos@greenzorro.com"))
         msg.To.Add(MailboxAddress ("Mario", "mario.karagiorgas@greenzorro.com"))
         msg.Subject <- sprintf "Withdrawn Vintages Csv for %s" <| processedDay.ToString("ddd d MMM yyyy")
         let body = TextPart ("plain")
