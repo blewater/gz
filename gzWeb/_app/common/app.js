@@ -142,9 +142,18 @@ var APP = (function () {
                 $rootScope.$on('$routeChangeSuccess', onRouteChangeSuccess);
 
                 helpers.ui.watchScreenSize($rootScope);
-                helpers.ui.watchWindowScroll($rootScope);
+                helpers.ui.watchWindowScroll($rootScope, function () {
+                    if ($rootScope.scrolled)
+                        $('.zopim').addClass('scrolled');
+                    else
+                        $('.zopim').removeClass('scrolled');
+                });
                 chat.show();
                 $rootScope.initialized = true;
+
+                $rootScope.backToTop = function () {
+                    $("html, body").animate({ scrollTop: 0 });
+                };
 
                 if (!auth.authorize($route.current.$$route.roles)) {
                     nav.setRequestUrl($location.$$url);
