@@ -143,7 +143,7 @@ var APP = (function () {
 
                 helpers.ui.watchScreenSize($rootScope);
                 helpers.ui.watchWindowScroll($rootScope, function () {
-                    if ($rootScope.scrolled)
+                    if (!$rootScope.mobile && $rootScope.scrolled)
                         $('.zopim').addClass('scrolled');
                     else
                         $('.zopim').removeClass('scrolled');
