@@ -48,7 +48,15 @@ module ConfigArgs =
 
     type UserEmailProcOnlyType = string option
 
+    type ProcessingModeType =
+    | ExcelDownloading
+    | ExcelUploading
+    | FullExcelProcessing
+    | AwardStock
+    | FullProcessing
+
     type CmdArgs = {
         BalanceFilesUsage : BalanceFilesUsageType;
         UserEmailProcAlone : UserEmailProcOnlyType;
+        ProcessingMode : ProcessingModeType;
     }

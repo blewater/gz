@@ -28,6 +28,13 @@ module DbUtil =
     type DbInvBalances = DbSchema.ServiceTypes.InvBalances
     type DbCustoPortfolios = DbSchema.ServiceTypes.CustPortfolios
 
+    type Currency = string
+
+    type TrxAmount = {
+        Amount : decimal;
+        Currency : Currency;
+    }
+
     /// PlayerRevRpt update status
     type GmRptProcessStatus =
         | CustomRptUpd = 1
