@@ -126,12 +126,11 @@ let main argv =
 
         // Vintage withdrawal bonus
         WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
-
-        printfn "Press Enter to finish..."
-        Console.ReadLine() |> ignore
         0
     with ex ->
         logger.Fatal(ex, "1 or more runtime exceptions at GzBatch")
+        printfn "Press Enter to finish..."
+        Console.ReadLine() |> ignore
         1
 
 

@@ -333,9 +333,9 @@ module Etl =
         match emailToProcAlone with
         | None -> logger.Debug (sprintf "Starting processing excel report files for %s" customDtStr)
         | Some singleUserEmail -> 
-            logger.Warn("**************************************************************************")
-            logger.Warn(sprintf "*** Starting processing excel report files in single user mode for %s. ***" singleUserEmail)
-            logger.Warn("**************************************************************************")
+            logger.Warn("********************************************************")
+            logger.Warn(sprintf "Processing excel files in single user mode for %s." singleUserEmail)
+            logger.Warn("********************************************************")
 
         // Custom import
         (db, customFilename, emailToProcAlone) 
