@@ -48,8 +48,8 @@
                     $('.zopim:nth-of-type(1)').hide();
                     $('.zopim:nth-of-type(2)').show();
                 }
-            }        }
-
+            }
+        }
 
         function _onLoad() {
             //show();
