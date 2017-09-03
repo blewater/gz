@@ -474,7 +474,7 @@
                     var bg = document.createElement("img")
                     bg.setAttribute("id", "bg");
                     bg.className = "bg";
-                    bg.src = "../../Content/Images/casino-default-raw.jpg";
+                    bg.src = "../../Content/Images/casino-default.png";
                     body.appendChild(bg);
 
                     //var bg = document.getElementById("bg");

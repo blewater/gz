@@ -196,12 +196,14 @@
                 scope.size = screenSize.get();
             });
         }
-        function watchWindowScroll(scope) {
+        function watchWindowScroll(scope, onScroll) {
             scope.scrolled = false;
             scope.scrollOffset = 0;
             angular.element($window).bind("scroll", function () {
                 scope.scrolled = this.pageYOffset > 0;
                 scope.scrollOffset = this.pageYOffset;
+                if (angular.isFunction(onScroll))
+                    onScroll();
                 scope.$apply();
             });
         }

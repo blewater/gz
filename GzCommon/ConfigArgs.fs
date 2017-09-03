@@ -46,5 +46,17 @@ module ConfigArgs =
     | SkipEndBalanceFile = 2
     | UseBothBalanceFiles = 3
 
-    
+    type UserEmailProcOnlyType = string option
 
+    type ProcessingModeType =
+    | ExcelDownloading
+    | ExcelUploading
+    | FullExcelProcessing
+    | AwardStock
+    | FullProcessing
+
+    type CmdArgs = {
+        BalanceFilesUsage : BalanceFilesUsageType;
+        UserEmailProcAlone : UserEmailProcOnlyType;
+        ProcessingMode : ProcessingModeType;
+    }

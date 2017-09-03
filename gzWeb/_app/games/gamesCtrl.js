@@ -370,7 +370,7 @@
                         subtitle: carouselEntry.SubTitle,
                         action: carouselEntry.ActionText,
                         url: getCarouselUrl(carouselEntry),
-                        bg: gameResult.games[0] ? gameResult.games[0].backgroundImage : $rootScope.defaultImg, //'../../Content/Images/casino-default.jpg',
+                        bg: gameResult.games[0] ? gameResult.games[0].backgroundImage : $rootScope.defaultImg, //'../../Content/Images/casino-default.png',
                         isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
                     });
                 }, function (error) {

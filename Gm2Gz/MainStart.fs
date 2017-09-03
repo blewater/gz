@@ -71,7 +71,7 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
 
 let gmReports2InvBalanceUpdate 
         (db : DbContext)
-        (balanceFilesUsage : ConfigArgs.BalanceFilesUsageType)
+        (emailToProcAlone : string option)
         (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
 
     logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
@@ -90,7 +90,7 @@ let gmReports2InvBalanceUpdate
         exit 1
 
     // Extract & Load Daily Everymatrix Report
-    Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder
+    Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder emailToProcAlone
 
     (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) 
     |||> UserTrx.processGzTrx
@@ -111,27 +111,26 @@ let main argv =
         // Create a database context
         let db = getOpenDb dbConnectionString
 
-        let balanceFilesUsageArg = 
+        let cmdArgs = 
             argv |> parseCmdArgs
 
         // Download reports
-        let dwLoader = ExcelDownloader(downloadArgs, balanceFilesUsageArg)
+        let dwLoader = ExcelDownloader(downloadArgs, cmdArgs.BalanceFilesUsage)
         dwLoader.SaveReportsToInputFolder()
 
         // Main database processing 
         gmReports2InvBalanceUpdate 
             db 
-            balanceFilesUsageArg 
+            cmdArgs.UserEmailProcAlone
             <| portfolioSharesPrelude2MainProcessing db
 
         // Vintage withdrawal bonus
         WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
-
-        printfn "Press Enter to finish..."
-        Console.ReadLine() |> ignore
         0
     with ex ->
         logger.Fatal(ex, "1 or more runtime exceptions at GzBatch")
+        printfn "Press Enter to finish..."
+        Console.ReadLine() |> ignore
         1
 
 
