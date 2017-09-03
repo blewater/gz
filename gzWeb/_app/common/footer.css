@@ -144,7 +144,11 @@ footer .footer-payment-methods .footer-payment-method img {
     padding: 10px 10px;
 }
 
-footer .footer-payment-methods .footer-enter-cash {
+footer .footer-payment-methods .footer-payment-method.footer-entercash img {
+    padding: 5px;
+}
+
+/*footer .footer-payment-methods .footer-enter-cash {
     height: 50px;
     display: inline-block;
 }
@@ -153,7 +157,8 @@ footer .footer-payment-methods .footer-enter-cash img {
     height: 100%;
     margin-top: 5px;
     margin-left: 10px;
-}
+    padding: 5px;
+}*/
 
 footer .footer-gproviders {
     margin-bottom: 15px;

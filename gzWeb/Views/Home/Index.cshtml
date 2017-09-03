@@ -4,6 +4,10 @@
 
 <div id="loading" ng-show="loading" us-spinner="{ radius: 15, width: 6, length: 12, color: '#248734', position: 'fixed' }"></div>
 
+<div ng-if="!mobile" class="back-to-top" ng-class="{'disappear':!scrolled}" ng-click="backToTop()">
+    <i class="fa fa-long-arrow-up"></i>&nbsp;<span>Top</span>
+</div>
+
 <div class="clearfix view-container">
     <div ng-view autoscroll></div>
 </div>

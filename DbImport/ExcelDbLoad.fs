@@ -110,15 +110,33 @@ module DbGzTrx =
             )
             db.DataContext.SubmitChanges()
 
-    /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
-    let setDbPlayerRevRpt2GzTrx (db : DbContext)(yyyyMmDd : string) =
+    /// Read all 
+    let getDbPlayerMonthlyRows
+        (db : DbContext)
+        (yyyyMm : string)
+        (emailToProcAlone : string option) : Linq.IQueryable<DbSchema.ServiceTypes.PlayerRevRpt>=
 
-        let yyyyMm = yyyyMmDd.ToYyyyMm
-        query { 
-            for playerDbRow in db.PlayerRevRpt do
-                where (playerDbRow.YearMonth = yyyyMm)
-                select playerDbRow
-        }
+        match emailToProcAlone with
+        | Some singleEmailUser ->
+            query {
+                for playerDbRow in db.PlayerRevRpt do
+                    where (playerDbRow.YearMonth = yyyyMm && playerDbRow.EmailAddress = singleEmailUser)
+                    select playerDbRow
+            }
+        | None ->
+            query {
+                for playerDbRow in db.PlayerRevRpt do
+                    where (playerDbRow.YearMonth = yyyyMm)
+                    select playerDbRow
+            }
+
+    /// Read all the playerRevRpt latest monthly row and Upsert them as monthly GzTrxs transaction rows
+    let setDbPlayerRevRpt2GzTrx 
+        (db : DbContext)
+        (yyyyMmDd : string) 
+        (emailToProcAlone : string option) =
+
+        getDbPlayerMonthlyRows db yyyyMmDd.ToYyyyMm emailToProcAlone
         |> Seq.iter (fun playerDbRow -> setDbGzTrxRow db yyyyMmDd playerDbRow)
 
 module DbPlayerRevRpt =
@@ -131,8 +149,10 @@ module DbPlayerRevRpt =
 
     let logger = LogManager.GetCurrentClassLogger()
 
-    /// Updated db player Gain Loss
-    let private setDbPlayerGainLoss (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
+    /// Update the player gaming amounts
+    let private setDbPlayerGainLossValues
+        (row : DbSchema.ServiceTypes.PlayerRevRpt) =
+
         let totalWithdrawals = row.WithdrawsMade.Value + row.PendingWithdrawals.Value
         // Formula to get player losses as negative amounts
         let gainLoss = 
@@ -143,11 +163,25 @@ module DbPlayerRevRpt =
         row.GmGainLoss <- Nullable gainLoss
         row.UpdatedOnUtc <- DateTime.UtcNow
         row.Processed <- int GmRptProcessStatus.GainLossRptUpd
+        
+    /// Update db player Gain Loss
+    let private setDbPlayerGainLoss 
+        (emailToProcAlone: string option) 
+        (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
+
+        // Normal processing
+        if emailToProcAlone.IsNone then
+            setDbPlayerGainLossValues row
+
+        elif emailToProcAlone.IsSome && emailToProcAlone.Value = row.EmailAddress then
+            setDbPlayerGainLossValues row
+        // Skip the case of emailToProcAlone.IsSome && emailToProcAlone.Value <> row.EmailAddress
 
     /// Query non zero balance affecting amounts and update the player GainLoss
     let setDbMonthyGainLossAmounts
                         (db : DbContext)
-                        (yyyyMmDd :string) =
+                        (yyyyMmDd :string)
+                        (emailToProcAlone : string option) = 
 
         let yyyyMm = yyyyMmDd.ToYyyyMm
         query { 
@@ -165,8 +199,34 @@ module DbPlayerRevRpt =
                         ))
                 select playerDbRow
         }
-        |> Seq.iter setDbPlayerGainLoss
+                    // append dbRow param here as 2nd setDbPlayerGainLos() arg
+        |> Seq.iter (setDbPlayerGainLoss emailToProcAlone)
         db.DataContext.SubmitChanges()
+
+    /// get deposits in the user currency
+    let getDepositAmountInUserCurrency
+                (excelRow : DepositsExcelSchema.Row)
+                (userCurrency : Currency) =
+
+        let debitCurrency = excelRow.``Debit real currency``
+        let creditCurrency = excelRow.``Credit real currency``
+        let trxAmount : TrxAmount =
+            if userCurrency = debitCurrency then
+                { 
+                    Amount = decimal excelRow.``Debit real amount``;
+                    Currency = excelRow.``Debit real currency``
+                }
+            elif userCurrency = creditCurrency then
+                { 
+                    Amount = decimal excelRow.``Credit real  amount``;
+                    Currency = excelRow.``Credit real currency``
+                }
+            else
+                failwithf 
+                    "Deposit amount not in user currency %s but in (debit %s, credit %s) currency but for %s" userCurrency debitCurrency creditCurrency excelRow.``Trans type``
+        logger.Info(sprintf "Importing deposit for user %s amount %f currency %s type %s initiated on %s" 
+                excelRow.Username <| trxAmount.Amount <| trxAmount.Currency <| excelRow.Debit <| excelRow.Initiated)
+        trxAmount.Amount
 
     /// Update the deposits amounts
     let private updDbRowDepositsValues 
@@ -178,26 +238,51 @@ module DbPlayerRevRpt =
         let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
         let dbDeposits = playerRow.TotalDepositsAmount.Value
 
-        // Update currency to correct value if not already from balance files
-        playerRow.Currency <- depositsExcelRow.``Credit real currency``
+        let thisDepositAmount = getDepositAmountInUserCurrency depositsExcelRow playerRow.Currency
         match depositType with
         | Deposit ->
-            let newDeposits = dbDeposits + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
+            let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UDeposit ->
             (* Track Vendor2User Deposits separatedly and add to TotatDeposits too *)
-            let newV2uSingleDepositAmount = decimal depositsExcelRow.``Credit real  amount``
+            let newV2uSingleDepositAmount = thisDepositAmount
             let newV2uTotalDepositAmount = dbVendor2UserDepositsAmount + newV2uSingleDepositAmount // in players native currency
             playerRow.Vendor2UserDeposits <- Nullable newV2uTotalDepositAmount
             // Add to total deposits too
             let newDeposits = dbDeposits + newV2uSingleDepositAmount
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UCashBonus ->
-            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + decimal depositsExcelRow.``Credit real  amount`` // in players native currency
+            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + thisDepositAmount // in players native currency
             playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
+
+    /// get withdrawals in the user currency or fail if not possible
+    let getWithdrawalAmountInUserCurrency
+                (excelRow : WithdrawalsPendingExcelSchema.Row)
+                (userCurrency : Currency) =
+
+        let debitCurrency = excelRow.``Debit real currency``
+        let creditCurrency = excelRow.``Credit real currency``
+        let trxAmount : TrxAmount =
+            if userCurrency = debitCurrency then
+                { 
+                    Amount = decimal excelRow.``Debit real amount``;
+                    Currency = excelRow.``Debit real currency``
+                }
+            elif userCurrency = creditCurrency then
+                { 
+                    Amount = decimal excelRow.``Credit real  amount``;
+                    Currency = excelRow.``Credit real currency``
+                }
+            else
+                failwithf 
+                    "Withdrawal amount not in user currency %s but in (debit %s, credit %s) currency but for %s" userCurrency debitCurrency creditCurrency excelRow.``Trans type``
+        logger.Info(sprintf "Importing withdrawal for user %s amount %f currency %s type %s initiated on %s" 
+                excelRow.Username <| trxAmount.Amount <| trxAmount.Currency <| excelRow.Debit <| excelRow.Initiated)
+
+        trxAmount.Amount
 
     /// Update the withdrawal amount with an addition for pending withdrawal amounts or deducting rollback withdrawal amounts
     /// Note: they may be multiple pending / rollback withdrawal transactions per user/month
@@ -209,15 +294,17 @@ module DbPlayerRevRpt =
         (* Pending withdrawals is tracked separatedly from total withdrawals *)
         let dbPendingWithdrawalAmount = playerRow.PendingWithdrawals.Value
         let dbWithdrawalAmount = playerRow.WithdrawsMade.Value
+
+        let thisWithdrawalAmount = getWithdrawalAmountInUserCurrency withdrawalsExcelRow playerRow.Currency
         match withdrawalType with
         | Pending ->
-            let newPendingWithdrawalAmount = dbPendingWithdrawalAmount + decimal withdrawalsExcelRow.``Credit real  amount``
+            let newPendingWithdrawalAmount = dbPendingWithdrawalAmount + thisWithdrawalAmount
             playerRow.PendingWithdrawals <- Nullable newPendingWithdrawalAmount
         | Completed ->
-            let newWithdrawalAmount = dbWithdrawalAmount + decimal withdrawalsExcelRow.``Credit real  amount``
+            let newWithdrawalAmount = dbWithdrawalAmount + thisWithdrawalAmount
             playerRow.WithdrawsMade <- Nullable newWithdrawalAmount
         | Rollback ->
-            let newRemainingWithdrawalAmount = dbPendingWithdrawalAmount - decimal withdrawalsExcelRow.``Credit real  amount``
+            let newRemainingWithdrawalAmount = dbPendingWithdrawalAmount - thisWithdrawalAmount
             playerRow.PendingWithdrawals <- Nullable newRemainingWithdrawalAmount
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
@@ -256,6 +343,7 @@ module DbPlayerRevRpt =
         playerRow.PlayerStatus <- customExcelRow.``Player status``
         if not <| isNull customExcelRow.``Block reason`` then playerRow.BlockReason <- customExcelRow.``Block reason``.ToString()
         playerRow.EmailAddress <- customExcelRow.``Email address``
+        playerRow.Currency <- customExcelRow.Currency
         playerRow.TotalDepositsAmount <- Nullable 0m
         playerRow.WithdrawsMade <- Nullable 0m
 
@@ -362,8 +450,6 @@ module DbPlayerRevRpt =
 
         let gmUserId = (int) depositsExcelRow.UserID
         let yyyyMm = yyyyMmDd.ToYyyyMm
-        logger.Info(sprintf "Importing deposits user %s amount %f currency %s deposit type %s on %s" 
-                depositsExcelRow.Username <| depositsExcelRow.``Credit real  amount`` <| depositsExcelRow.``Credit real currency`` <| depositsExcelRow.Debit <| yyyyMmDd)
         query { 
             for playerDbRow in db.PlayerRevRpt do
                 where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
