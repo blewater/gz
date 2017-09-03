@@ -78,7 +78,7 @@ namespace gzWeb {
             bundles.Add(new ScriptBundle("~/js/plugins").Include(
                 "~/Scripts/moment/moment.min.js"
                 , "~/Scripts/spin/spin.min.js"
-                //, "~/Scripts/autobahn/autobahn.min.js"
+                , "~/Scripts/autobahn/autobahn.min.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/angular").Include(
