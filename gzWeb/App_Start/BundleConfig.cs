@@ -13,31 +13,18 @@ namespace gzWeb
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            const string gzStaticCdnUrl = "https://gz.azureedge.net{0}?v={1}";
 
-            const string gzStaticCdnUrl = "gz.azureedge.net";
-
-            // Prefer cdn from local files
 #if DEBUG
-            bundles.UseCdn = false;
+            // Debug cdn paths
+            //BundleTable.EnableOptimizations = true;
+            bundles.UseCdn = false; // true;
 #else
             // Possibility to Override Cdn use in www.greenzorro.com
             bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);;
 #endif
 
             #region Styles
-            //var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
-            //bundles.Add(new StyleBundle("~/css/bootstrap", bootstrapCdnPath)
-            //    .Include(
-            //        "~/Content/Styles/bootstrap/bootstrap.css", new CssRewriteUrlTransform()
-            //    ).Include(
-            //        "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
-            //    ));
-            //https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css
-            //var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
-            //bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
-            //    "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
-            //));
-
             //bundles.Add(new StyleBundle("~/css/preloader").Include(
             //    "~/_app/common/preloader.css"
             //));
@@ -51,7 +38,7 @@ namespace gzWeb
             CreateCssBundleCdn(
                 bundles,
                 "~/css/bootstrap-theme",
-                "~/Content/Styles/bootstrap/bootstrap-theme.min.css", 
+                "~/Content/Styles/bootstrap/bootstrap-theme.min.css",
                 "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css");
 
             CreateCssBundleCdn(
@@ -60,23 +47,24 @@ namespace gzWeb
                 "~/Content/Styles/font-awesome/font-awesome.min.css",
                 "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 
-            bundles.Add(new StyleBundle("~/css/app")
-                //.Include("~/Content/Styles/bootstrap/bootstrap.min.css", CssImageRelPathFixer)
-                //.Include("~/Content/Styles/bootstrap/bootstrap-theme.min.css", CssImageRelPathFixer)
-                //.Include("~/Content/Styles/font-awesome/font-awesome.min.css", CssImageRelPathFixer)
-                .Include(
-                            "~/_app/common/basic.css"
-                            , "~/_app/common/header.css"
-                            , "~/_app/common/footer.css"
-                            , "~/_app/guest/guest.css"
-                            , "~/_app/account/auth.css"
-                            , "~/_app/investments/investments.css"
-                            , "~/_app/games/games.css"
-                            , "~/_app/games/carousel.css"
-                            , "~/_app/promotions/promotions.css"
-                            , "~/_app/accountManagement/accountManagement.css"
-                            , "~/_app/nsMessageService/nsMessages.css"
-            ));
+            CreateCssBundleCdn(
+                bundles,
+                "~/css/app",
+                new string[] {
+                    "~/_app/common/basic.css"
+                    , "~/_app/common/header.css"
+                    , "~/_app/common/footer.css"
+                    , "~/_app/guest/guest.css"
+                    , "~/_app/account/auth.css"
+                    , "~/_app/investments/investments.css"
+                    , "~/_app/games/games.css"
+                    , "~/_app/games/carousel.css"
+                    , "~/_app/promotions/promotions.css"
+                    , "~/_app/accountManagement/accountManagement.css"
+                    , "~/_app/nsMessageService/nsMessages.css"
+                },
+                gzStaticCdnUrl);
+
             #endregion
 
             #region Scripts
@@ -357,8 +345,14 @@ namespace gzWeb
                     cssLocalPath, CssImageRelPathFixer
                 );
             bundles.Add(cssBundle);
-            var boostrapThemeCssBundleHash = GetBundleHash(bundles, bundleKeyRelPath);
-            cssBundle.CdnPath = cssCdnPath + "?v=" + boostrapThemeCssBundleHash;
+            /**
+             * Said that creating the hash
+             * before setting the CdnPath
+             * results in different value and throwin off browser caching.
+             * Observation has indicated this bug is fixed in system.web.optiomization.
+             */
+            var cssCdnPathssBundleHash = GetBundleHash(bundles, bundleKeyRelPath);
+            cssBundle.CdnPath = cssCdnPath + "?v=" + cssCdnPathssBundleHash;
         }
 
         private static void CreateCssBundleCdn(
@@ -373,8 +367,9 @@ namespace gzWeb
                     cssLocalPaths
                 );
             bundles.Add(cssBundle);
-            var boostrapThemeCssBundleHash = GetBundleHash(bundles, bundleKeyRelPath);
-            cssBundle.CdnPath = cssCdnPath + "?v=" + boostrapThemeCssBundleHash;
+            var cssBundleHash = GetBundleHash(bundles, bundleKeyRelPath);
+            var bundleKeyCleanRelPath = bundleKeyRelPath.Substring(1, bundleKeyRelPath.Length - 1);
+            cssBundle.CdnPath = string.Format(cssCdnPath, bundleKeyCleanRelPath, cssBundleHash);
         }
 
         /// <summary>
