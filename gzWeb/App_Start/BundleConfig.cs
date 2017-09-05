@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Configuration;
 using System.Globalization;
+using System.Web;
 using System.Web.Optimization;
 
-namespace gzWeb {
-    public class BundleConfig {
+namespace gzWeb
+{
+    public class BundleConfig
+    {
+        private static readonly CssRewriteUrlTransform CssImageRelPathFixer = new CssRewriteUrlTransform();
+
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
-        public static void RegisterBundles(BundleCollection bundles) {
+        public static void RegisterBundles(BundleCollection bundles)
+        {
+
+            const string gzStaticCdnUrl = "gz.azureedge.net";
 
             // Prefer cdn from local files
-            bundles.UseCdn = true;
+#if DEBUG
+            bundles.UseCdn = false;
+#else
+            // Possibility to Override Cdn use in www.greenzorro.com
+            bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);;
+#endif
 
             #region Styles
             //var bootstrapCdnPath = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
@@ -19,7 +32,7 @@ namespace gzWeb {
             //    ).Include(
             //        "~/Content/Styles/bootstrap/bootstrap-theme.css", new CssRewriteUrlTransform()
             //    ));
-
+            //https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css
             //var faCdnPath = "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
             //bundles.Add(new StyleBundle("~/css/fa", faCdnPath).Include(
             //    "~/Content/Styles/font-awesome/font-awesome.css", new CssRewriteUrlTransform()
@@ -29,21 +42,40 @@ namespace gzWeb {
             //    "~/_app/common/preloader.css"
             //));
 
-            bundles.Add(new StyleBundle("~/css/app").Include(
-                "~/Content/Styles/bootstrap/bootstrap.min.css", new CssRewriteUrlTransform()).Include(
-                "~/Content/Styles/bootstrap/bootstrap-theme.min.css", new CssRewriteUrlTransform()).Include(
-                "~/Content/Styles/font-awesome/font-awesome.min.css", new CssRewriteUrlTransform()).Include(
-                "~/_app/common/basic.css"
-                , "~/_app/common/header.css"
-                , "~/_app/common/footer.css"
-                , "~/_app/guest/guest.css"
-                , "~/_app/account/auth.css"
-                , "~/_app/investments/investments.css"
-                , "~/_app/games/games.css"
-                , "~/_app/games/carousel.css"
-                , "~/_app/promotions/promotions.css"
-                , "~/_app/accountManagement/accountManagement.css"
-                , "~/_app/nsMessageService/nsMessages.css"
+            CreateCssBundleCdn(
+                bundles,
+                "~/css/bootstrap",
+                "~/Content/Styles/bootstrap/bootstrap.css",
+                "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+
+            CreateCssBundleCdn(
+                bundles,
+                "~/css/bootstrap-theme",
+                "~/Content/Styles/bootstrap/bootstrap-theme.min.css", 
+                "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css");
+
+            CreateCssBundleCdn(
+                bundles,
+                "~/css/fa",
+                "~/Content/Styles/font-awesome/font-awesome.min.css",
+                "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+
+            bundles.Add(new StyleBundle("~/css/app")
+                //.Include("~/Content/Styles/bootstrap/bootstrap.min.css", CssImageRelPathFixer)
+                //.Include("~/Content/Styles/bootstrap/bootstrap-theme.min.css", CssImageRelPathFixer)
+                //.Include("~/Content/Styles/font-awesome/font-awesome.min.css", CssImageRelPathFixer)
+                .Include(
+                            "~/_app/common/basic.css"
+                            , "~/_app/common/header.css"
+                            , "~/_app/common/footer.css"
+                            , "~/_app/guest/guest.css"
+                            , "~/_app/account/auth.css"
+                            , "~/_app/investments/investments.css"
+                            , "~/_app/games/games.css"
+                            , "~/_app/games/carousel.css"
+                            , "~/_app/promotions/promotions.css"
+                            , "~/_app/accountManagement/accountManagement.css"
+                            , "~/_app/nsMessageService/nsMessages.css"
             ));
             #endregion
 
@@ -68,7 +100,7 @@ namespace gzWeb {
 
             bundles.Add(new ScriptBundle("~/js/bootstrap").Include(
                 "~/Scripts/bootstrap/bootstrap.js"
-                //, "~/Scripts/respond/respond.js"
+            //, "~/Scripts/respond/respond.js"
             ));
 
             bundles.Add(new ScriptBundle("~/js/d3").Include(
@@ -120,7 +152,7 @@ namespace gzWeb {
             var appInsightsEnvironmentKey = string.IsNullOrEmpty(appInsightsEnvironmentKeySetting)
                 ? "Dev"
                 : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(appInsightsEnvironmentKeySetting);
-                //: (appInsightsEnvironmentKeySetting.First().ToString().ToUpperInvariant() + appInsightsEnvironmentKeySetting.Substring(1).ToLowerInvariant());
+            //: (appInsightsEnvironmentKeySetting.First().ToString().ToUpperInvariant() + appInsightsEnvironmentKeySetting.Substring(1).ToLowerInvariant());
             var appInsightsCfg = $"~/_app/common/appInsights{appInsightsEnvironmentKey}Cfg.js";
 
             bundles.Add(new ScriptBundle("~/js/app")
@@ -312,5 +344,66 @@ namespace gzWeb {
 
             #endregion
         }
+
+        private static void CreateCssBundleCdn(
+            BundleCollection bundles, 
+            string bundleKeyRelPath,
+            string cssLocalPath,
+            string cssCdnPath
+            )
+        {
+            var cssBundle = new StyleBundle(bundleKeyRelPath)
+                .Include(
+                    cssLocalPath, CssImageRelPathFixer
+                );
+            bundles.Add(cssBundle);
+            var boostrapThemeCssBundleHash = GetBundleHash(bundles, bundleKeyRelPath);
+            cssBundle.CdnPath = cssCdnPath + "?v=" + boostrapThemeCssBundleHash;
+        }
+
+        private static void CreateCssBundleCdn(
+            BundleCollection bundles,
+            string bundleKeyRelPath,
+            string[] cssLocalPaths,
+            string cssCdnPath
+        )
+        {
+            var cssBundle = new StyleBundle(bundleKeyRelPath)
+                .Include(
+                    cssLocalPaths
+                );
+            bundles.Add(cssBundle);
+            var boostrapThemeCssBundleHash = GetBundleHash(bundles, bundleKeyRelPath);
+            cssBundle.CdnPath = cssCdnPath + "?v=" + boostrapThemeCssBundleHash;
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/questions/35543576/mvc-5-bundling-and-azure-cdn-query-string?rq=1
+        /// </summary>
+        /// <param name="bundles"></param>
+        /// <param name="bundlePath"></param>
+        /// <returns></returns>
+        private static string GetBundleHash(BundleCollection bundles, string bundlePath)
+        {
+
+            //Need the context to generate response
+            var bundleContext = new BundleContext(new HttpContextWrapper(HttpContext.Current), BundleTable.Bundles, bundlePath);
+
+            //Bundle class has the method we need to get a BundleResponse
+            Bundle bundle = BundleTable.Bundles.GetBundleFor(bundlePath);
+            var bundleResponse = bundle.GenerateBundleResponse(bundleContext);
+
+            //BundleResponse has the method we need to call, but its marked as
+            //internal and therefor is not available for public consumption.
+            //To bypass this, reflect on it and manually invoke the method
+            var bundleReflection = bundleResponse.GetType();
+
+            var method = bundleReflection.GetMethod("GetContentHashCode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            //contentHash is whats appended to your url (url?###-###...)
+            var contentHash = method.Invoke(bundleResponse, null);
+            return contentHash.ToString();
+        }
+
     }
 }
