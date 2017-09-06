@@ -38,14 +38,28 @@
         return service;
 
         // #region reflection
+        function getPropertyByString(o, s) {
+            s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+            s = s.replace(/^\./, '');           // strip a leading dot
+            var a = s.split('.');
+            for (var i = 0, n = a.length; i < n; ++i) {
+                var k = a[i];
+                if (k in o) {
+                    o = o[k];
+                } else {
+                    return;
+                }
+            }
+            return o;
+        }
         function hasValue(variable) {
             return variable !== undefined && variable != null;
         }
         function getProperty(model, name) {
-            return hasValue(model) && hasValue(name) ? model[name] : undefined;
+            return hasValue(model) && hasValue(name) ? getPropertyByString(model, name) : undefined;
         }
         function getPropertyOrSelf(model, name) {
-            return hasValue(model) && hasValue(name) ? getProperty(model, name) : model;
+            return hasValue(model) && hasValue(name) ? getPropertyByString(model, name) : model;
         }
         // #endregion
 
