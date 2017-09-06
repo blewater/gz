@@ -29,9 +29,9 @@
             //MoneyMatrixEcoPayz: "MoneyMatrix_EcoPayz"
         };
         _service.getPaymentMethodDisplayName = function (method) {
-            if (method.payCard)
-                return method.payCard.name;
-            else 
+            //if (method.payCard)
+            //    return method.payCard.name;
+            //else {
                 switch (method.code) {
                     case _supportedPaymentMethodCodes.MoneyMatrixCreditCard:
                     case _supportedPaymentMethodCodes.MoneyMatrixSkrill:
@@ -44,6 +44,7 @@
                     default:
                         return method.name;
                 }
+            //}
         };
 
         _service.PaymentMethodCode = _supportedPaymentMethodCodes;

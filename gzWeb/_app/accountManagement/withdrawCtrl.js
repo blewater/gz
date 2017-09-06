@@ -6,6 +6,10 @@
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
+        $scope.selected = {
+            group: undefined,
+            method: undefined
+        };
         // #endregion
 
         // #region payment methods fields
@@ -30,16 +34,24 @@
 
         // #region init
         function init() {
-            getPaymentMethodCfg();
+            $scope.selected.group = $scope.selectedMethodGroup;
+            if ($scope.selected.group.length === 1) {
+                $scope.selected.method = $scope.selected.group[0];
+                getPaymentMethodCfg();
+            }
+        };
+
+        $scope.onPayCardSelected = function () {
+            if ($scope.selected.method)
+                getPaymentMethodCfg();
+            else
+                angular.element('#withdrawFields').contents().remove();
         };
 
         function getPaymentMethodCfg() {
             $scope.initializing = true;
-            emBankingWithdraw.getPaymentMethodCfg($scope.selectedMethod.code, $scope.selectedMethod.payCard ? $scope.selectedMethod.payCard.id : null).then(function (paymentMethodCfgResult) {
+            emBankingWithdraw.getPaymentMethodCfg($scope.selected.method.code, $scope.selected.method.payCard ? $scope.selected.method.payCard.id : null).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
-                //if ($scope.paymentMethodCfg.fields.payCardID.options.length === 0)
-                //    attachRegistrationFields($scope.paymentMethodCfg.paymentMethodCode);
-                //attachWithdrawFields();
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
                 $scope.initializing = false;
             }, function (error) {
@@ -57,27 +69,6 @@
                 scope: $scope
             });
         }
-        //function attachWithdrawFields() {
-        //    $timeout(function () {
-        //        helpers.ui.compile({
-        //            selector: '#withdrawFields',
-        //            templateUrl: withdrawFields.templateUrl,
-        //            controllerId: withdrawFields.ctrlId,
-        //            scope: $scope
-        //        });
-        //    });
-        //}
-        //function attachRegistrationFields(paymentMethodCode) {
-        //    $timeout(function () {
-        //        var paymentMethodFields = getPaymentMethodFields(paymentMethodCode);
-        //        helpers.ui.compile({
-        //            selector: '#registrationFields',
-        //            templateUrl: paymentMethodFields.templateUrl,
-        //            controllerId: paymentMethodFields.ctrlId,
-        //            scope: $scope
-        //        });
-        //    });
-        //}
 
         init();
         // #endregion
@@ -124,7 +115,7 @@
             window.appInsights.trackEvent("WITHDRAW", { status: "READ FIELDS" });
             $scope.readFields().then(function (fields) {
                 window.appInsights.trackEvent("WITHDRAW", { status: "PREPARE" });
-                emBankingWithdraw.prepare($scope.selectedMethod.code, fields).then(function (prepareResult) {
+                emBankingWithdraw.prepare($scope.selected.method.code, fields).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
 
                     var prepareData = {
@@ -194,6 +185,7 @@
                                         var msg = "You have made the withdrawal successfully!";
                                         message.success(msg, { nsType: 'toastr' });
                                         $scope.waiting = false;
+                                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                                         $scope.nsOk(true);
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
@@ -244,11 +236,11 @@
             return "Do you want to withdraw the amount of " + prepareData.debitAmount + getConfirmMessageSuffix(prepareData) + "?";
         };
         function getConfirmMessageSuffix(prepareData) {
-            switch ($scope.selectedMethod.code) {
+            switch ($scope.selected.method.code) {
                 case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
                     return " to " + prepareData.creditTo;
                 default:
-                    return " using " + $scope.selectedMethod.name;
+                    return " using " + $scope.selected.method.name;
             }
         };
     }
