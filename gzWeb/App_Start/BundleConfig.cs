@@ -348,7 +348,7 @@ namespace gzWeb
             /**
              * Said that creating the hash
              * before setting the CdnPath
-             * results in different value and throwin off browser caching.
+             * results in different value and throwing off browser caching.
              * Observation has indicated this bug is fixed in system.web.optiomization.
              */
             var cssCdnPathssBundleHash = GetBundleHash(bundles, bundleKeyRelPath);
