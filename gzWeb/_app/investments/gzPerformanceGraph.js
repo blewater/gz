@@ -66,15 +66,15 @@
                     x.domain(d3.extent(data, function (d) { return d.x; }));
                     y.domain(d3.extent(data, function (d) { return d.y.amount; }));
                 }
-                $scope.getYear = function() {
-                    return Math.round($scope.year * 2) / 2;
-                }
-                $scope.getProjectedValue = function() {
-                    return Math.round($scope.projectedValue);
-                }
-                $scope.getProfit = function() {
-                    return Math.round($scope.profit);
-                }
+                //$scope.getYear = function() {
+                //    return Math.round($scope.year * 2) / 2;
+                //}
+                //$scope.getProjectedValue = function() {
+                //    return Math.round($scope.projectedValue);
+                //}
+                //$scope.getProfit = function() {
+                //    return Math.round($scope.profit);
+                //}
 
                 $scope.selectPlan = function (plan) {
                     var index = $scope.plans.indexOf(plan);
@@ -127,8 +127,9 @@
                     $timeout(function () {
                         computeData();
 
+                        $scope.year = Math.round($scope.year * 2) / 2;
                         var projection = project($scope.plan.returnRate, $scope.year, $scope.monthlyContribution);
-                        $scope.projectedValue = projection.amount;
+                        $scope.projectedValue = Math.round(projection.amount);
                         $scope.profit = projection.profit;
 
                         var x_ = x($scope.year);

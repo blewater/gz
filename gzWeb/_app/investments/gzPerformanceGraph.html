@@ -17,7 +17,7 @@
         <div class="value years">
             <span class="value-label hidden-xs">Years:</span>
             <span class="value-data">
-                {{getYear() | number : 1}}
+                {{year | number : 1}}
                 <span class="value-spinners">
                     <img class="value-spinner up-spinner" src="../../Content/Images/Investment Icons/up_arrow.svg" ng-click="increaseYear()" />
                     <img class="value-spinner down-spinner" src="../../Content/Images/Investment Icons/down_arrow.svg" ng-click="decreaseYear()" />
@@ -30,7 +30,7 @@
         <div class="value projected-value">
             <img class="pull-left" src="../../Content/Images/Investment Icons/white_arrow.svg" />
             <span class="value-label hidden-xs">Projected Value:</span>
-            <span class="value-data value-bold">{{getProjectedValue() | isoCurrency : gzCurrency : 0}}</span>
+            <span class="value-data value-bold">{{projectedValue | isoCurrency : gzCurrency : 0}}</span>
         </div>
     </div>
 </div>
