@@ -477,19 +477,28 @@
     border-left-color: #f2f2f2;
 }*/
 
-
+.auth .payment-method {
+    text-align: center;
+}
+.auth .payment-method .method-icon {
+    display: block;
+}
 .auth .payment-method .method-icon img {
-    height: 26px;
+    /*height: 26px;*/
+    height: 54px;
     margin-bottom: 10px;
 }
 .auth .payment-method .method-name {
-    margin-left: 10px;
-    font-size: 18px;
+    /*margin-left: 10px;
+    font-size: 18px;*/
+    font-size: 24px;
+    display: block;
 }
 .auth .payment-method .method-info {
     margin-left: 10px;
     font-size: 16px;
 }
+
 
 .auth .payment-method .tooltip.payment-method-tooltip {
     margin-left: 0;
