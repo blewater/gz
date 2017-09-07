@@ -1239,6 +1239,14 @@
     stroke: rgba(39, 169, 92, 0.4);
 }
 
+@media (min-width: 768px) and (max-width: 991px) {
+    .investments .performance .values .value .value-label {
+        font-size: 13px;
+    }
+    .investments .performance .values .value .value-data {
+        font-size: 26px;
+    }
+}
 
 @media (max-width: 767px) {
     .investments .performance .title {
