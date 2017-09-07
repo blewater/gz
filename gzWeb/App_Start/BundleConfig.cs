@@ -25,9 +25,9 @@ namespace gzWeb
 #endif
 
             #region Styles
-            //bundles.Add(new StyleBundle("~/css/preloader").Include(
-            //    "~/_app/common/preloader.css"
-            //));
+            bundles.Add(new StyleBundle("~/css/preloader").Include(
+                "~/_app/common/preloader.css"
+            ));
 
             CreateCssBundleCdn(
                 bundles,
