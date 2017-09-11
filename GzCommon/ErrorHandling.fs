@@ -53,10 +53,11 @@ module ErrorHandling =
         | playerAddress when playerAddress.Contains("test@") -> false
         | playerAddress when playerAddress.Contains("@noemail.com") -> false
         | playerAddress when playerAddress.Contains("@everymatrix.com") -> false
-        | playerAddress when playerAddress.Contains("@mailinator.com") -> false
-        | playerAddress when playerAddress.Contains("@sharklasers.com") -> false
+        //| playerAddress when playerAddress.Contains("@mailinator.com") -> false
+        //| playerAddress when playerAddress.Contains("@sharklasers.com") -> false
         | playerAddress when playerAddress.Contains("@asdasd") -> false
         | playerAddress when playerAddress.Contains("@test.gr") -> false
+        | playerAddress when playerAddress.Contains("test1@yopmail") -> false
         | _ -> true
 
 
