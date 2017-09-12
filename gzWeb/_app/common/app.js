@@ -67,6 +67,9 @@ var APP = (function () {
 
                 var headerNav = document.getElementById("header-nav");
                 headerNav.className += " navbar-fixed-top";
+
+                var backToTop = document.getElementById("back-to-top");
+                backToTop.style.display = "block";
             }
 
             function setBodyRestHeight() {
@@ -103,7 +106,7 @@ var APP = (function () {
             function defaultBeforeSend(xhr, json) {
                 var authData = localStorageService.get(constants.storageKeys.authData);
                 if (authData)
-                    xhr.setRequestHeader('Authorization', 'Bearer ' +authData.token);
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + authData.token);
             }
 
             function onInitCallback() {
@@ -167,6 +170,8 @@ var APP = (function () {
             }
 
             function onInit() {
+                if ($route.current.$$route.originalPath === constants.routes.home.path && auth.data.isGamer)
+                    $location.path(constants.routes.games.path).search({});
                 helpers.ui.compile({ selector: '#footer', templateUrl: '_app/common/footer.html', controllerId: 'footerCtrl' });
                 helpers.ui.compile({ selector: '#header', templateUrl: '_app/common/header.html', controllerId: 'headerCtrl', callback: onInitCallback });
             }
