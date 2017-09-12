@@ -53,12 +53,12 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
             DownloadedCustomFilter = Settings.DownloadedCustomFilter;
             DownloadedBalanceFilter = Settings.DownloadedBalanceFilter;
             DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
-            downloadedDepositsFilter = Settings.DownloadedDepositsFilter;
+            DownloadedDepositsFilter = Settings.DownloadedDepositsFilter;
             CustomRptFilenamePrefix = Settings.CustomRptFilenamePrefix;
             EndBalanceRptFilenamePrefix = Settings.EndBalanceRptFilenamePrefix;
             WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
             WithdrawalsRollbackRptFilenamePrefix = Settings.WithdrawalsRollbackRptFilenamePrefix;
-            depositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
+            DepositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
             Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
         }
 
