@@ -193,7 +193,15 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         | -1 -> false
         | _ -> true
 
-        /// Enter transactions report and set it to withdrawals mode
+    /// Download the monthly custom report
+    let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
+
+        let monthToFind = dayToProcess.ToYyyyMm
+        "#ddlReport" << "GreenZorro.com " + monthToFind
+        click "#BtnToExcel"
+        Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+
+    /// Enter transactions report and set it to withdrawals mode
     let uiAutomatedEnterTransactionsReport() = 
         // Activity
         click "#nav > li:nth-child(1) > a"
@@ -385,7 +393,9 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         | _ -> ()
 
     /// UI Web Automate with Everymatrix reporting site and download reports    
-    let uiAutomationDownloading (dayToProcess : DateTime)
+    let uiAutomationDownloading 
+                (downloadCustomRpt : bool)
+                (dayToProcess : DateTime)
                 (reportsArgs : EverymatriReportsArgsType)
                 (balanceFilesArg : BalanceFilesUsageType) =
 
@@ -405,14 +415,19 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         if not <| monthlyCustomReportExists() then
             removeScheduledEmailCustomReport()
             createNewCustomMonthRpt()
-        //uiAutomateDownloadedCustomRpt dayToProcess
-        //moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess
+        
+        if downloadCustomRpt then
+            uiAutomateDownloadedCustomRpt dayToProcess
+            moveDownloadedRptToInRptFolder 
+                rptFilesArgs.DownloadedCustomFilter 
+                rptFilesArgs.CustomRptFilenamePrefix
+                dayToProcess
 
         // Vendor2User
         if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
             moveDownloadedRptToInRptFolder 
-                rptFilesArgs.downloadedDepositsFilter 
-                rptFilesArgs.depositsRptFilenamePrefix 
+                rptFilesArgs.DownloadedDepositsFilter
+                rptFilesArgs.DepositsRptFilenamePrefix 
                 dayToProcess
 
         // Withdrawals: Pending
@@ -440,5 +455,8 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
         quit ()
 
-    member this.DownloadReports(balanceFilesArg : BalanceFilesUsageType) : unit =
-        uiAutomationDownloading dayToProcess reportsArgs balanceFilesArg
+    member this.DownloadReports
+            (balanceFilesArg : BalanceFilesUsageType)
+            (downloadCustomRpt : bool) : unit =
+
+        uiAutomationDownloading downloadCustomRpt dayToProcess reportsArgs balanceFilesArg
