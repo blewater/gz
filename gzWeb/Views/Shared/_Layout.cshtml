@@ -25,7 +25,7 @@
         </style>*@
     @Styles.Render("~/css/preloader")
 
-    @if (Request.Url.AbsoluteUri.Contains("greenzorro.com"))
+    @if (Request.Url != null && Request.Url.Host=="greenzorro.com")
     {
         <script>
             (function (h, o, t, j, a, r) {
