@@ -27,7 +27,9 @@ type ExcelDownloader(reportsArgs : EverymatriReportsArgsType, balanceFilesArg : 
 
         logger.Info "*** Downloading Rest of reports ***"
         let webDownloader = CanopyDownloader(dayToProcess, reportsArgs)
-        webDownloader.DownloadReports(balanceFilesArg)
+        webDownloader.DownloadReports 
+            balanceFilesArg
+            (not messageCount.FoundDaysReport)
 
     member this.SaveReportsToInputFolder() =
 
