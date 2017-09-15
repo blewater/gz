@@ -24,7 +24,7 @@
 //    -> build 
 //    ->    if buld fails open azure deployment result page
 //    -> deploy to stage site https://greenzorro-sgn.azurewebsites.net
-//    -> open stage site in browser if new "develop"" branch changes resulted in stage build
+//    -> open stage site in browser if new "develop" branch changes resulted in stage build
 //        -- or open production site in browser if production is uptodate 
 //    -> prompt user to deploy to production, if there's a new stage build
 //    ** Note **  check now result of stage build before answering Y
@@ -49,10 +49,17 @@
 //Runs build for dev site using the develop branch.
 //
 // Fake.exe "target=Build" --> starts the Build target and runs the dependency Clean
+//
 // Fake.exe "Build" --> starts the Build target and runs the dependency Clean
+//
 // Fake.exe "Build" --single-target --> starts only the Build target and runs no dependencies
+//
 // Fake.exe "Build" -st --> starts only the Build target and runs no dependencies
+//
 // Fake.exe --> starts the Deploy target (and runs the dependencies Clean and Build)
+//
+// Fake.exe -ev devbranch "Cdnopt" --> uses Cdnopt branch instead of develop to merge with master.
+//
 //***********************************************************************
 #r @"packages/FAKE/tools/FakeLib.dll"
 #r @"packages/Fake.Azure.WebApps/lib/net451/Fake.Azure.WebApps.dll"
@@ -68,6 +75,7 @@ open Fake
 open Fake.Git
 open Fake.ZipHelper
 open Fake.Azure.WebApps
+open Fake.EnvironmentHelper
 
 type GitShaRegex = Regex< @"Sha\.(?<SHA>\w+)" >
 
@@ -114,6 +122,12 @@ let projectName = "gzWeb.csproj"
 let baseDir = __SOURCE_DIRECTORY__ @@ @"..\"
 let gzWebProj = baseDir @@ @"gzWeb\gzWeb.csproj"
 
+let envDevelopBranch = Environment.GetEnvironmentVariable "devbranch"
+let developBranch =
+    match envDevelopBranch with
+    | null -> "develop"
+    | _ -> envDevelopBranch
+
 // Following contains Azure password and it's git-ignored
 let gzWebDevPublishProfile = __SOURCE_DIRECTORY__ @@ "greenzorroDev.pubxml"
 (*-------------------  End of property declarations   ---------------------------------*)
@@ -155,13 +169,13 @@ Target "InitAzureBuildMode" (fun _ ->
     | _ -> failwithf "Unknown mode %s passed in" mode
 )
 Target "CheckoutDevelop" (fun _ ->
-    checkoutBranch GitRepo "develop"
+    checkoutBranch GitRepo developBranch
 )
 Target "EndWithDevelop" (fun _ ->
-    checkoutBranch GitRepo "develop"
+    checkoutBranch GitRepo developBranch
 )
 Target "PullDevelop" (fun _ ->
-    pull GitRepo "origin" "develop"
+    pull GitRepo "origin" developBranch
     trace "pulled develop..."
 )
 Target "MergeMaster" (fun _ ->
@@ -170,9 +184,9 @@ Target "MergeMaster" (fun _ ->
 
     // Attempt to merge with master
     try
-        merge GitRepo NoFastForwardFlag "develop"
+        merge GitRepo NoFastForwardFlag developBranch
     with
-        ex -> checkoutBranch GitRepo "develop"; trace "Can't merge with master.\nNeed to checkin your local changes below:" ; raise ex
+        ex -> checkoutBranch GitRepo developBranch; trace "Can't merge with master.\nNeed to checkin your local changes below:" ; raise ex
     trace "merging with develop"
 )
 
@@ -229,7 +243,7 @@ Target "DisplaySha" (fun _ ->
     let devSha = getDevSha()
     let sgnSha = getStageSha()
     let prodSha = getProdSha()
-    checkoutBranch GitRepo "develop"
+    checkoutBranch GitRepo developBranch
     let devGitSha = getSHA1 GitRepo "HEAD"
     checkoutBranch GitRepo "master"
     let masterSha = getSHA1 GitRepo "HEAD"
@@ -238,7 +252,7 @@ Target "DisplaySha" (fun _ ->
     tracefn "The sgn Azure Sha1 hash is %s, latest deployed to Stage? %b" sgnSha (sgnSha = masterSha)
     tracefn "The prod Azure Sha1 hash is %s, latest deployed to Prod? %b" prodSha (prodSha = masterSha)
     tracefn "The git master Sha1 hash is %s" masterSha
-    checkoutBranch GitRepo "develop"
+    checkoutBranch GitRepo developBranch
 )
 let rec userReply2Bool (userAns : string) : bool=
     match userAns with
