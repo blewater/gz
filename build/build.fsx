@@ -49,10 +49,17 @@
 //Runs build for dev site using the develop branch.
 //
 // Fake.exe "target=Build" --> starts the Build target and runs the dependency Clean
+//
 // Fake.exe "Build" --> starts the Build target and runs the dependency Clean
+//
 // Fake.exe "Build" --single-target --> starts only the Build target and runs no dependencies
+//
 // Fake.exe "Build" -st --> starts only the Build target and runs no dependencies
+//
 // Fake.exe --> starts the Deploy target (and runs the dependencies Clean and Build)
+//
+// Fake.exe -ev devbranch "Cdnopt" --> uses Cdnopt branch instead of develop to merge with master.
+//
 //***********************************************************************
 #r @"packages/FAKE/tools/FakeLib.dll"
 #r @"packages/Fake.Azure.WebApps/lib/net451/Fake.Azure.WebApps.dll"
