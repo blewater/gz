@@ -29,11 +29,16 @@ namespace gzWeb
 #endif
 
             #region Styles
-            CreateBundleOutOfSingleCss(
-                bundles
-                , "~/css/preloader"
-                , "~/_app/common/preloader.min.css"
-                , useEmbeddedImagePathFixer: false);
+
+            // Temporarily don't load this from Cdn till we get the latest css to the cdn
+            bundles.Add(new StyleBundle("~/css/preloader").Include(
+                "~/_app/common/preloader.min.css"
+            ));
+            //CreateBundleOutOfSingleCss(
+            //    bundles
+            //    , "~/css/preloader"
+            //    , "~/_app/common/preloader.css"
+            //    , useEmbeddedImagePathFixer: false);
 
             CreateBundleOutOfSingleCss(
                 bundles
