@@ -26,10 +26,12 @@
                 $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#27A95C', position: 'absolute', top: '50%' };
 
                 $scope.getId = function (item) {
-                    return item && helpers.reflection.hasValue($scope.gzId) ? item[$scope.gzId] : item;
+                    return helpers.reflection.getPropertyOrSelf(item, $scope.gzId);
+                    //return item && helpers.reflection.hasValue($scope.gzId) ? item[$scope.gzId] : item;
                 };
                 $scope.getDisplay = function (item) {
-                    return item && helpers.reflection.hasValue($scope.gzDisplay) ? item[$scope.gzDisplay] : item;
+                    return helpers.reflection.getPropertyOrSelf(item, $scope.gzDisplay);
+                    //return item && helpers.reflection.hasValue($scope.gzDisplay) ? item[$scope.gzDisplay] : item;
                 };
                 $scope.onSelectionChange = function () {
                     $scope.gzChange({ id: helpers.reflection.hasValue($scope.gzModel) ? $scope.getId($scope.gzModel) : undefined });
