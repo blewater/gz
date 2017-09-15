@@ -341,13 +341,6 @@ module Etl =
         (db, customFilename, emailToProcAlone) 
             |||> loadCustomRpt 
         
-        // Pending withdrawals import
-        match depositsFilename with
-        | Some depositsFilename -> 
-                (db, depositsFilename, emailToProcAlone) 
-                    |||> updDbDepositsRpt
-        | None -> logger.Warn "No Deposits file to import."
-        
         // Beg, end balance import
         if begBalanceFilename.IsSome then
             loadBalanceRpt BeginingBalance db begBalanceFilename.Value customDtStr emailToProcAlone
@@ -355,6 +348,13 @@ module Etl =
         // In present month there's no end balance file
         if endBalanceFilename.IsSome then
             loadBalanceRpt EndingBalance db endBalanceFilename.Value customDtStr emailToProcAlone
+        
+        // Deposits import
+        match depositsFilename with
+        | Some depositsFilename -> 
+                (db, depositsFilename, emailToProcAlone) 
+                    |||> updDbDepositsRpt
+        | None -> logger.Warn "No Deposits file to import."
         
         // Pending withdrawals import
         match withdrawalsPendingFilename with
