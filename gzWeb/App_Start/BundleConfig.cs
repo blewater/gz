@@ -21,9 +21,10 @@ namespace gzWeb
         {
 #if DEBUG
             // Debug cdn paths
-            BundleTable.EnableOptimizations = true;
-            bundles.UseCdn = true; // false; // true;
+            BundleTable.EnableOptimizations = true; // false;
+            bundles.UseCdn = true; // false;
 #else
+            BundleTable.EnableOptimizations = true;
             // Possibility to Override Cdn use in www.greenzorro.com
             bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);;
 #endif
