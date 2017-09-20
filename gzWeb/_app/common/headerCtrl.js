@@ -5,7 +5,7 @@
     function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu, modals) {
         $controller('authCtrl', { $scope: $scope });
 
-        var imgDir = "../../Content/Images/";
+        var imgDir = "https://gz.azureedge.net/Content/Images/";
         $scope.gamesImgOff = imgDir + "games_green.svg";
         $scope.gamesImgOn = imgDir + "games_white.svg";
         $scope.investmentsImgOff = imgDir + "diagram_green.svg";
