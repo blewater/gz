@@ -5,7 +5,7 @@
     function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu, modals) {
         $controller('authCtrl', { $scope: $scope });
 
-        var imgDir = "../../Content/Images/";
+        var imgDir = "https://gz.azureedge.net/Content/Images/";
         $scope.gamesImgOff = imgDir + "games_green.svg";
         $scope.gamesImgOn = imgDir + "games_white.svg";
         $scope.investmentsImgOff = imgDir + "diagram_green.svg";
@@ -14,7 +14,7 @@
         $scope.accountManagementStates = accountManagement.states.menu;
         $scope.gotoState = function (state) {
             if (state.key === accountManagement.states.logout.key)
-                auth.logout()
+                auth.logout();
             else
                 accountManagement.open(state);
         };
@@ -29,14 +29,13 @@
                 constants.routes.portfolio,
                 constants.routes.performance
             ]
-        }
+        };
         $scope.getClass = function (path) {
             return $location.path() === path ? 'focus' : '';
-        }
-
+        };
         $scope.gotoHome = function () {
             $location.path(constants.routes.home.path);
-        }
+        };
         $scope.backToGames = function () {
             window.appInsights.trackEvent("GOTO GAMES", { from: "HEADER" });
             $location.path(constants.routes.games.path).search({});
@@ -104,13 +103,12 @@
         }
         
         $scope.expandCollapseMobileMenu = function(){
-            $rootScope.mobileMenuExpanded = !$rootScope.mobileMenuExpanded
+            $rootScope.mobileMenuExpanded = !$rootScope.mobileMenuExpanded;
             if ($rootScope.mobileMenuExpanded)
-                chat.hide()
+                chat.hide();
             else
-                chat.show()
-        }
-
+                chat.show();
+        };
         $scope._init(function () {
             loadAuthData();
             $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
