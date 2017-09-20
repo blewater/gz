@@ -20,9 +20,8 @@ namespace gzWeb
         public static void RegisterBundles(BundleCollection bundles)
         {
 #if DEBUG
-            // Debug cdn paths
-            BundleTable.EnableOptimizations = true; // false;
-            bundles.UseCdn = true; // false;
+            BundleTable.EnableOptimizations = false;
+            bundles.UseCdn = false;
 #else
             BundleTable.EnableOptimizations = true;
             // Possibility to Override Cdn use in www.greenzorro.com
