@@ -20,25 +20,20 @@ namespace gzWeb
         public static void RegisterBundles(BundleCollection bundles)
         {
 #if DEBUG
-            // Debug cdn paths
-            BundleTable.EnableOptimizations = true;
-            bundles.UseCdn = true; // false; // true;
+            BundleTable.EnableOptimizations = false;
+            bundles.UseCdn = false;
 #else
+            BundleTable.EnableOptimizations = true;
             // Possibility to Override Cdn use in www.greenzorro.com
             bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);;
 #endif
 
             #region Styles
-
-            // Temporarily don't load this from Cdn till we get the latest css to the cdn
-            bundles.Add(new StyleBundle("~/css/preloader").Include(
-                "~/_app/common/preloader.min.css"
-            ));
-            //CreateBundleOutOfSingleCss(
-            //    bundles
-            //    , "~/css/preloader"
-            //    , "~/_app/common/preloader.css"
-            //    , useEmbeddedImagePathFixer: false);
+            CreateBundleOutOfSingleCss(
+                bundles
+                , "~/css/preloader"
+                , "~/_app/common/preloader.min.css"
+                , useEmbeddedImagePathFixer: false);
 
             CreateBundleOutOfSingleCss(
                 bundles
