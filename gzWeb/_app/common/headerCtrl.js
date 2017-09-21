@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', 'footerMenu', 'modals', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu, modals) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', 'footerMenu', 'modals', 'helpers', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu, modals, helpers) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -65,6 +65,7 @@
             modals.login(message.open);
         };
         $scope.signup = function () {
+            helpers.utils.ga(constants.gaKeys.signup);
             modals.register(message.open);
         };
         $scope.logout = function () {
@@ -72,9 +73,11 @@
         };
 
         $scope.deposit = function () {
+            helpers.utils.ga(constants.gaKeys.deposit);
             accountManagement.open(accountManagement.states.depositPaymentMethods);
         };
         $scope.withdraw = function () {
+            helpers.utils.ga(constants.gaKeys.withdraw);
             accountManagement.open(accountManagement.states.withdrawPaymentMethods);
         };
 

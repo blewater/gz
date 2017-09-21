@@ -66,6 +66,7 @@
         };
 
         $scope.signup = function () {
+            //helpers.utils.ga(constants.gaKeys.signup);
             modals.register($scope.nsNext);
             //$scope.nsNext({
             //    nsType: 'modal',

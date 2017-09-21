@@ -255,6 +255,7 @@
             version: 'gz_version',
             debug: 'gz_debug',
             randomSuffix: 'gz_randomSuffix',
+            //live: 'gz_live',
             authData: 'gz_authData',
             clientId: 'gz_clientId',
             lastFailureTime: 'gz_lastFailureTime',
@@ -262,6 +263,12 @@
             reCaptchaPublicKey: 'gz_reCaptchaPublicKey',
             btagMarker: 'gz_btagMarker',
             btagTime: 'gz_btagTime'
+        },
+        gaKeys: {
+            signupAndPlay: 'SignupandPlay',
+            signup: 'Signup',
+            deposit: 'Deposit',
+            withdraw: 'Withdraw',
         },
         events: {
             ON_INIT: 'onInit',

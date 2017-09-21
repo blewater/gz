@@ -580,6 +580,7 @@
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
                 localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
+                //localStorageService.set(constants.storageKeys.live, response.Result.Live);
             });
 
             var unregisterConnectionInitiated = $rootScope.$on(constants.events.CONNECTION_INITIATED, function () {

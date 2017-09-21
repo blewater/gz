@@ -704,6 +704,11 @@ namespace gzWeb.Controllers
             return reCaptchaSiteKey;
         }
 
+        //private bool IsLive()
+        //{
+        //    return Request.RequestUri.Host == "www.greenzorro.com";
+        //}
+
         [AllowAnonymous]
         [HttpGet]
         [Route("GetDeploymentInfo")]
@@ -715,6 +720,7 @@ namespace gzWeb.Controllers
                 Debug = IsInDebugMode(),
                 Version = GetVersion(),
                 ReCaptchaSiteKey = GetReCaptchaSiteKey()
+                //Live = IsLive()
             });
         }
         #endregion
