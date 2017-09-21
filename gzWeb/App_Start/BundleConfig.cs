@@ -8,7 +8,9 @@ namespace gzWeb
 {
     public class BundleConfig
     {
-        private static readonly string GzStaticCdnUrl = "https://gz.azureedge.net{0}?v={1}";
+        private static string _staticCdn = ConfigurationManager.AppSettings["StaticCdn"];
+        private static readonly string GzStaticCdnUrl = _staticCdn + "{0}?v={1}";
+        
         private static readonly CssRewriteUrlTransform CssImageRelPathFixer = new CssRewriteUrlTransform();
 
         private enum BundleTypeEnum {
@@ -20,37 +22,37 @@ namespace gzWeb
         public static void RegisterBundles(BundleCollection bundles)
         {
 #if DEBUG
-            BundleTable.EnableOptimizations = false;
-            bundles.UseCdn = false;
+            BundleTable.EnableOptimizations = true;
+            bundles.UseCdn = true;
 #else
             BundleTable.EnableOptimizations = true;
             // Possibility to Override Cdn use in www.greenzorro.com
-            bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);;
+            bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);
 #endif
 
             #region Styles
             CreateBundleOutOfSingleCss(
                 bundles
-                , "~/css/preloader"
+                , "~/css/preloader.css"
                 , "~/_app/common/preloader.min.css"
                 , useEmbeddedImagePathFixer: false);
 
             CreateBundleOutOfSingleCss(
                 bundles
-                , "~/css/bootstrap"
+                , "~/css/bootstrap.css"
                 , "~/Content/Styles/bootstrap/bootstrap.css"
                 , useEmbeddedImagePathFixer: true, cssCustomCdnPath: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 
             CreateBundleOutOfSingleCss(
                 bundles,
-                "~/css/bootstrap-theme",
+                "~/css/bootstrap-theme.css",
                 "~/Content/Styles/bootstrap/bootstrap-theme.min.css",
                 useEmbeddedImagePathFixer: true,
                 cssCustomCdnPath: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css");
 
             CreateBundleOutOfSingleCss(
                 bundles,
-                "~/css/fa",
+                "~/css/fa.css",
                 "~/Content/Styles/font-awesome/font-awesome.min.css",
                 useEmbeddedImagePathFixer: true,
                 cssCustomCdnPath: "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
@@ -58,7 +60,7 @@ namespace gzWeb
             CreateBundleOfMultiFiles(
                 BundleTypeEnum.Css,
                 bundles,
-                "~/css/app",
+                "~/css/app.css",
                 new string[] {
                     "~/_app/common/basic.css"
                     , "~/_app/common/header.css"
@@ -79,12 +81,12 @@ namespace gzWeb
 
             CreateBundleOfSingleJsFile(
                 bundles
-                ,"~/js/asyncLoad"
+                ,"~/js/asyncLoad.js"
                 ,"~/_app/common/asyncLoad.min.js");
 
             CreateBundleOfSingleJsFile(
                 bundles
-                , "~/js/jquery"
+                , "~/js/jquery.js"
                 , "~/Scripts/jquery/jquery-{version}.js"
                 , "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js");
 
@@ -100,20 +102,20 @@ namespace gzWeb
 
             CreateBundleOfSingleJsFile(
                 bundles
-                , "~/js/bootstrap"
+                , "~/js/bootstrap.js"
                 , "~/Scripts/bootstrap/bootstrap.js"
                 , "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js");
 
             CreateBundleOfSingleJsFile(
                 bundles
-                , "~/js/d3"
+                , "~/js/d3.js"
                 , "~/Scripts/d3/d3.min.js"
                 , "https://cdnjs.cloudflare.com/ajax/libs/d3/4.10.2/d3.min.js");
 
             CreateBundleOfMultiFiles(
                 BundleTypeEnum.Js
                 ,bundles
-                , "~/js/plugins"
+                , "~/js/plugins.js"
                 , new string[] {
                     "~/Scripts/moment/moment.min.js", "~/Scripts/spin/spin.min.js", "~/Scripts/autobahn/autobahn.min.js"
                 });
@@ -121,7 +123,7 @@ namespace gzWeb
             CreateBundleOfMultiFiles(
                 BundleTypeEnum.Js
                 ,bundles
-                , "~/js/angular"
+                , "~/js/angular.js"
                 , new string[] {
                     "~/Scripts/angular/angular.js"
                     , "~/Scripts/angular-route/angular-route.min.js"
@@ -135,7 +137,7 @@ namespace gzWeb
             CreateBundleOfMultiFiles(
                 BundleTypeEnum.Js
                 ,bundles
-                , "~/js/modules"
+                , "~/js/modules.js"
                 , new string[] {
                     "~/Scripts/angular-ui/ui-bootstrap.min.js"
                     , "~/Scripts/angular-ui/ui-bootstrap-tpls.min.js"
@@ -170,7 +172,7 @@ namespace gzWeb
             CreateBundleOfMultiFiles(
                 BundleTypeEnum.Js
                 ,bundles
-                , "~/js/app"
+                , "~/js/app.js"
                 , new string[] { 
                                     "~/_app/common/app.js"
             #region Common
