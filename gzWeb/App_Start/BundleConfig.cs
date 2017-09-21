@@ -8,7 +8,8 @@ namespace gzWeb
 {
     public class BundleConfig
     {
-        private static readonly string GzStaticCdnUrl = "https://gz.azureedge.net{0}?v={1}";
+        private static readonly string _staticCdn = ConfigurationManager.AppSettings["StaticCdn"];
+        private static readonly string GzStaticCdnUrl = _staticCdn + "{0}?v={1}";
         private static readonly CssRewriteUrlTransform CssImageRelPathFixer = new CssRewriteUrlTransform();
 
         private enum BundleTypeEnum {
@@ -23,11 +24,10 @@ namespace gzWeb
             BundleTable.EnableOptimizations = false;
             bundles.UseCdn = false;
 #else
-            BundleTable.EnableOptimizations = true;
-            // Possibility to Override Cdn use in www.greenzorro.com
-            bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);;
+            // Possibility to Override Cdn, bundles in sgn, live
+            BundleTable.EnableOptimizations = Boolean.Parse(ConfigurationManager.AppSettings["UseBundles"]);
+            bundles.UseCdn = Boolean.Parse(ConfigurationManager.AppSettings["UseCDN"]);
 #endif
-
             #region Styles
             CreateBundleOutOfSingleCss(
                 bundles
