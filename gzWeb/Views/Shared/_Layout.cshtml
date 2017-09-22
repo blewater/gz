@@ -25,12 +25,14 @@
         </style>*@
     @Styles.Render("~/css/preloader")
 
+    @if (Request.Url != null && Request.Url.AbsoluteUri.Contains("greenzorro.com")) {
         <script>
-            (function (h, o, t, j, a, r) {
-                h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
+            (function(h, o, t, j, a, r) {
+                h.hj = h.hj || function() { (h.hj.q = h.hj.q || []).push(arguments) };
                 h._hjSettings = { hjid: 612452, hjsv: 5 };
                 a = o.getElementsByTagName('head')[0];
-                r = o.createElement('script'); r.async = 1;
+                r = o.createElement('script');
+                r.async = 1;
                 r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
                 a.appendChild(r);
             })(window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=');
@@ -39,10 +41,13 @@
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102634082-1"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments)};
+
+            function gtag() { dataLayer.push(arguments) };
+
             gtag('js', new Date());
             gtag('config', 'UA-102634082-1');
         </script>
+    }
 </head>
 <body ng-class="{'mobile-menu':mobileMenuExpanded,'fonts-loaded':fontsLoaded}">
     <div id="preloader">
