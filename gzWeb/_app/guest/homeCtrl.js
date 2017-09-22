@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'homeCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', 'nav', '$timeout', 'localStorageService', 'modals', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, message, constants, nav, $timeout, localStorageService, modals) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', 'message', 'constants', 'nav', '$timeout', 'localStorageService', 'modals', 'helpers', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, message, constants, nav, $timeout, localStorageService, modals, helpers) {
         $controller('authCtrl', { $scope: $scope });
 
         function readForgotPwdEmail(urlParams) {
@@ -67,6 +67,7 @@
         }
 
         $scope.signup = function () {
+            helpers.utils.ga(constants.gaKeys.signupAndPlay);
             modals.register(message.open);
         };
 

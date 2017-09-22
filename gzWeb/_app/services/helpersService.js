@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('helpers', ['$window', '$timeout', '$compile', '$templateRequest', '$controller', '$rootScope', 'constants', 'localStorageService', 'screenSize', serviceFactory]);
-    function serviceFactory($window, $timeout, $compile, $templateRequest, $controller, $rootScope, constants, localStorageService, screenSize) {
+    APP.factory('helpers', ['$window', '$timeout', '$compile', '$templateRequest', '$controller', '$rootScope', 'constants', 'localStorageService', 'screenSize', '$location', serviceFactory]);
+    function serviceFactory($window, $timeout, $compile, $templateRequest, $controller, $rootScope, constants, localStorageService, screenSize, $location) {
         var service = {
             reflection: {
                 hasValue: hasValue,
@@ -32,7 +32,8 @@
                 guid: guid,
                 random: random,
                 closure: closure,
-                prettyPrintEmail: prettyPrintEmail
+                prettyPrintEmail: prettyPrintEmail,
+                ga: sendToGoogleAnalytics
             }
         };
         return service;
@@ -241,6 +242,12 @@
         function prettyPrintEmail(email) {
             var splitted = email.split("@");
             return splitted[0].concat(" -at- ").concat(splitted[1].replace(".", " -dot- "));
+        }
+
+        function sendToGoogleAnalytics(key) {
+            if ($location.absUrl().indexOf("www.greenzorro.com") !== -1) {
+                ga('send', 'event', key, 'buttonclick', $location.absUrl());
+            }
         }
         // #endregion
     };
