@@ -21,8 +21,8 @@ namespace gzWeb
         public static void RegisterBundles(BundleCollection bundles)
         {
 #if DEBUG
-            BundleTable.EnableOptimizations = true;
-            bundles.UseCdn = true;
+            BundleTable.EnableOptimizations = false;
+            bundles.UseCdn = false;
 #else
             // Possibility to Override Cdn, bundles in sgn, live
             BundleTable.EnableOptimizations = Boolean.Parse(ConfigurationManager.AppSettings["UseBundles"]);
