@@ -23,7 +23,7 @@
     @*<style type="text/css">
             *{margin:0;padding:0;}#preloader{position:fixed;top:0;width:100%;height:100%;z-index:20000000000;overflow-y:hidden;background-color:#27a95c;opacity:1;transition:all linear 1s}#preloader.die{opacity:0}#preloader .spinner-container{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;opacity:1}#preloader.die .spinner-container{opacity:0;transition:all linear 1s}#loading-percentage{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff}#body-content{display: none;visibility: hidden;position: absolute;top: 200vh;}
         </style>*@
-    @Styles.Render("~/css/preloader.css")
+    @Styles.Render("~/css/preloader")
 
     @if (Request.Url != null && Request.Url.Host=="greenzorro.com")
     {
@@ -72,22 +72,22 @@
     @*<script type="text/javascript">
             var AsyncLoad = function () { "use strict"; function s(n, t) { var i = function () { var i = document.createElement("link"), r; i.rel = "stylesheet"; i.href = n; r = document.getElementsByTagName("HEAD")[0]; r.appendChild(i, r); o(); typeof t == "function" && t() }, r = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame || msRequestAnimationFrame; r ? r(i) : window.addEventListener("load", i) } function u() { if (n.length > 0) { var t = n.splice(0, 1)[0]; s(t, function () { u(n) }) } } function h(n, t) { var i, r, u; r = !1; i = document.createElement("script"); i.type = "text/javascript"; i.src = n; i.onload = i.onreadystatechange = function () { r || this.readyState && this.readyState != "complete" || (r = !0, o(), typeof t == "function" && t()) }; i.onerror = function () { var r = document.getElementsByTagName("BODY")[0], t = document.getElementById("preloader"), n, i; t && (t.className = "die", setTimeout(function () { r.removeChild(t) }, 1e3)); n = document.createElement("img"); n.setAttribute("id", "bg"); n.className = "bg"; n.src = "../../Content/Images/casino-default.png"; r.appendChild(n); i = document.getElementById("loading-error"); i.className = "loading-error"; i.innerHTML = '<div style="line-height: 3em;font-size: 24px;">No dice for now...<\/div><div style="line-height: 3em;font-size: 24px;">...greenzorro apologizes<\/div><div style="line-height: 3em;font-size: 36px;">:(<\/div>' }; u = document.getElementsByTagName("BODY")[0]; u.appendChild(i) } function f() { if (t.length > 0) { var n = t.splice(0, 1)[0]; h(n.src, function () { typeof n.callback == "function" && n.callback(); f(t) }) } } function e() { return n.length + t.length } function o() { var t = e(), i = Math.floor((r - t) / r * 100), n = document.getElementById("loading-percentage"); n && (n.innerHTML = "", n.appendChild(document.createTextNode(i + " %"))) } function c(n) { for (var u = document.getElementsByTagName("SCRIPT"), r = [], i, t = 0; t < u.length; t++) i = u[t], i.getAttribute(n) && r.push(i); for (t = 0; t < r.length; t++) i = r[t], i.parentElement.removeChild(i) } var n = [], t = [], r = 0, i = {}; return i.AddStyles = function (t) { n.push(t) }, i.AddScripts = function (n, i) { t.push({ src: n, callback: i }) }, i.Load = function () { r = e(); u(); f(); c("data-remove") }, i }(AsyncLoad);
         </script>*@
-    @Scripts.Render("~/js/asyncLoad.js")
+    @Scripts.Render("~/js/asyncLoad")
 
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/bootstrap.css")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/bootstrap-theme.css")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/fa.css")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/app.css")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/jquery.js")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/bootstrap")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/bootstrap-theme")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/fa")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/app")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/jquery")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/plugins.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/bootstrap.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/d3.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/angular.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/modules.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/app.js")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/plugins")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/bootstrap")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/d3")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/angular")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/modules")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/app")
     @*@Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit")*@
     <script type="text/javascript" data-remove="true">if (window.addEventListener) window.addEventListener("load", AsyncLoad.Load); else if (window.attachEvent) window.attachEvent("onload", AsyncLoad.Load); else window.onload = AsyncLoad.Load; </script>
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
