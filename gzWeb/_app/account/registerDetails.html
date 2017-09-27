@@ -156,7 +156,7 @@
                             <input type="text" placeholder="Mobile Number" id="phoneNumber" name="phoneNumber" class="form-control" autocomplete="off" ng-model="model.phoneNumber" required
                                    ng-class="{ 'empty': !model.phoneNumber, 'danger': form.phoneNumber.$invalid && !form.phoneNumber.$pristine }"
                                    ng-focus="phoneNumberFocused = true" ng-blur="phoneNumberFocused = false"
-                                   cs-pattern-restrict="^[0-9]*$" ng-minlength="9" ng-maxlength="12">
+                                   cs-pattern-restrict="^[0-9]*$" ng-minlength="8" ng-maxlength="12">
                         </div>
                         <div class="col-xs-12">
                             <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Mobile number is required</div>
