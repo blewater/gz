@@ -14,7 +14,7 @@
         $scope.accountManagementStates = accountManagement.states.menu;
         $scope.gotoState = function (state) {
             if (state.key === accountManagement.states.logout.key)
-                auth.logout()
+                auth.logout();
             else
                 accountManagement.open(state);
         };
@@ -29,14 +29,13 @@
                 constants.routes.portfolio,
                 constants.routes.performance
             ]
-        }
+        };
         $scope.getClass = function (path) {
             return $location.path() === path ? 'focus' : '';
-        }
-
+        };
         $scope.gotoHome = function () {
             $location.path(constants.routes.home.path);
-        }
+        };
         $scope.backToGames = function () {
             window.appInsights.trackEvent("GOTO GAMES", { from: "HEADER" });
             $location.path(constants.routes.games.path).search({});
@@ -107,13 +106,12 @@
         }
         
         $scope.expandCollapseMobileMenu = function(){
-            $rootScope.mobileMenuExpanded = !$rootScope.mobileMenuExpanded
+            $rootScope.mobileMenuExpanded = !$rootScope.mobileMenuExpanded;
             if ($rootScope.mobileMenuExpanded)
-                chat.hide()
+                chat.hide();
             else
-                chat.show()
-        }
-
+                chat.show();
+        };
         $scope._init(function () {
             loadAuthData();
             $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
