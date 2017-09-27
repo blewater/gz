@@ -6,6 +6,10 @@
 
         var _logError = function(error) {
             $log.error(error);
+            if (error.indexOf('Invalid frame header') !== -1) {
+                // Your session has been idle for more than 90 minutes and you have been logged out for security reasons.
+                logout();
+            }
         };
 
         function stripSensitiveData(parameters) {
@@ -102,6 +106,9 @@
             return renderChallenge();
         };
 
+        function logout() {
+            _call("/user#logout");
+        }
 
         var service = {
             call: _call,
@@ -265,9 +272,7 @@
                 return _call("/user#getSessionInfo");
             },
 
-            logout: function() {
-                _call("/user#logout");
-            },
+            logout: logout,
 
             // #endregion
 
