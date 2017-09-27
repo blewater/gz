@@ -160,7 +160,7 @@
                         </div>
                         <div class="col-xs-12">
                             <div class="help-block" ng-class="{'show': phoneNumberFocused && form.phoneNumber.$error.required && !form.phoneNumber.$pristine}">Mobile number is required</div>
-                            <div class="help-block" ng-class="{'show': phoneNumberFocused && (form.phoneNumber.$error.minlength || form.phoneNumber.$error.maxlength) && !form.phoneNumber.$pristine}">Mobile number requires between 9 and 12 digits</div>
+                            <div class="help-block" ng-class="{'show': phoneNumberFocused && (form.phoneNumber.$error.minlength || form.phoneNumber.$error.maxlength) && !form.phoneNumber.$pristine}">Mobile number requires between 8 and 12 digits</div>
                         </div>
                     </div>
                     <gz-field-ok gz-when="model.phonePrefix && form.phoneNumber.$valid"></gz-field-ok>
