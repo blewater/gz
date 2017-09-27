@@ -245,7 +245,7 @@
         }
 
         function sendToGoogleAnalytics(key) {
-            if ($location.absUrl().indexOf("www.greenzorro.com") !== -1) {
+            if ($location.absUrl().indexOf("greenzorro.com") !== -1) {
                 ga('send', 'event', key, 'buttonclick', $location.absUrl());
             }
         }
