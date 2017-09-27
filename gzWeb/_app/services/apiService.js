@@ -8,12 +8,12 @@
         // #region Urls
         function apiBaseUrl(ctrl) {
             return '/api/' + ctrl + 'api/';
-        };
+        }
         var urls = {
             guest: apiBaseUrl('guest'),
             games: apiBaseUrl('games'),
             investments: apiBaseUrl('investments'),
-            pages: apiBaseUrl('pages'),
+            pages: apiBaseUrl('pages')
             //account: apiBaseUrl('account')
         };
         factory.urls = urls;
@@ -141,5 +141,5 @@
         // #endregion
 
         return factory;
-    };
+    }
 })();
