@@ -31,6 +31,12 @@ namespace gzWeb
             #region Styles
             CreateBundleOutOfSingleCss(
                 bundles
+                , "~/css/preloader"
+                , "~/_app/common/preloader.min.css"
+                , useEmbeddedImagePathFixer: false);
+
+            CreateBundleOutOfSingleCss(
+                bundles
                 , "~/css/bootstrap"
                 , "~/Content/Styles/bootstrap/bootstrap.css"
                 , useEmbeddedImagePathFixer: true, cssCustomCdnPath: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
