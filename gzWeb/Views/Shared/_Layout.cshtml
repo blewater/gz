@@ -20,10 +20,10 @@
     <title>greenzorro</title>
     <base href="/" />
 
-    @*<style type="text/css">
+    <style type="text/css">
             *{margin:0;padding:0;}#preloader{position:fixed;top:0;width:100%;height:100%;z-index:20000000000;overflow-y:hidden;background-color:#27a95c;opacity:1;transition:all linear 1s}#preloader.die{opacity:0}#preloader .spinner-container{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;opacity:1}#preloader.die .spinner-container{opacity:0;transition:all linear 1s}#loading-percentage{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff}#body-content{display: none;visibility: hidden;position: absolute;top: 200vh;}
-        </style>*@
-    @Styles.Render("~/css/preloader")
+    </style>
+    @*@Styles.Render("~/css/preloader")*@
 
     @if (Request.Url != null && Request.Url.AbsoluteUri.Contains("greenzorro.com")) {
         <script>
@@ -77,9 +77,12 @@
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/fa")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/app")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/jquery")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}\" async defer></script>", "https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}\" async defer></script>", "https://mpsnare.iesnare.com/snare.js")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" src=\"{0}\" async defer></script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")
+    @*@Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js")
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")*@
+    @*@Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")*@
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/plugins")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/bootstrap")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/d3")
