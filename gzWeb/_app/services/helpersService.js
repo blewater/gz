@@ -33,7 +33,8 @@
                 random: random,
                 closure: closure,
                 prettyPrintEmail: prettyPrintEmail,
-                ga: sendToGoogleAnalytics
+                ga: sendToGoogleAnalytics,
+                gtag: sendToGoogleAnalytics
             }
         };
         return service;
@@ -246,7 +247,12 @@
 
         function sendToGoogleAnalytics(key) {
             if ($location.absUrl().indexOf("greenzorro.com") !== -1) {
-                ga('send', 'event', key, 'buttonclick', $location.absUrl());
+                //ga('send', 'event', key, 'buttonclick', $location.absUrl());
+                gtag('event', 'buttonclick',
+                    {
+                        'event_category': key,
+                        'event_label': $location.absUrl()
+                    });
             }
         }
         // #endregion
