@@ -713,7 +713,7 @@ namespace gzWeb.Controllers
         [HttpGet]
         [Route("GetDeploymentInfo")]
         // 10 minutes caching
-        [System.Web.Mvc.OutputCache(Duration = 6000, VaryByParam = "none", NoStore = false)]
+        [System.Web.Mvc.OutputCache(Duration = 6000, VaryByParam = "none", Location =System.Web.UI.OutputCacheLocation.Any, NoStore = false)]
         public IHttpActionResult GetDeploymentInfo()
         {
             return OkMsg(new
