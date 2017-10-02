@@ -81,9 +81,9 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Misc
         click "#nav > li:nth-child(4) > a"
         // Email Report
-        click "#nav > li:nth-child(4) > ul > li:nth-child(2) > a"
+        click "#nav > li:nth-child(4) > ul > li:first-child > a"
         // List email report
-        click "#nav > li:nth-child(4) > ul > li:nth-child(2) > ul > li:nth-child(1) > a"
+        click "#nav > li:nth-child(4) > ul > li:first-child > ul > li:nth-child(1) > a"
         // Remove last report entry
         // click "#gvList > tbody > tr:nth-last-child(1) > td:nth-last-child(1) > a"
         element ScheduledRptEmailRecipient
