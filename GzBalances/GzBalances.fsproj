@@ -63,6 +63,14 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <Import Project="..\Gm2Gz\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets" Condition="Exists('..\Gm2Gz\packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" />
+  <Import Project="..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets" Condition="Exists('..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets'))" />
+    <Error Condition="!Exists('..\GzBatch\packages\FSharpLint.MSBuild.0.8.0\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GzBatch\packages\FSharpLint.MSBuild.0.8.0\build\FSharpLint.MSBuild.targets'))" />
+  </Target>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="PortfolioTypes.fs" />
@@ -75,23 +83,20 @@
     <None Include="Scripts\load-project-release.fsx" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
-    <Content Include="packages.config" />
     <None Include="quotes.csv" />
     <None Include="everymatrix_deposits.csv" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.2\lib\net45\FSharp.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.2.3\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data">
-      <HintPath>$(SolutionDir)packages\FSharp.Data.2.3.3\lib\net40\FSharp.Data.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.1\lib\net40\FSharp.Data.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -99,25 +104,16 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ValueTuple">
-      <HintPath>$(SolutionDir)packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\GzCommon\GzBatchCommon.fsproj">
       <Name>GzBatchCommon</Name>
       <Project>{d118702e-4b38-4bcf-9184-daa324c5d160}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets" Condition="Exists('..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FSharpLint.MSBuild.0.7.6\build\FSharpLint.MSBuild.targets'))" />
-  </Target>
+  <Import Project="..\GzBatch\packages\FSharpLint.MSBuild.0.8.0\build\FSharpLint.MSBuild.targets" Condition="Exists('..\GzBatch\packages\FSharpLint.MSBuild.0.8.0\build\FSharpLint.MSBuild.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
