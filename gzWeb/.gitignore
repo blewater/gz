@@ -73,6 +73,9 @@ artifacts/
 *.svclog
 *.scc
 
+# Since there are multiple workflows, uncomment next line to ignore bower_components
+bower_components/
+
 # Chutzpah Test files
 _Chutzpah*
 
