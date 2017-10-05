@@ -350,10 +350,8 @@ module DbPlayerRevRpt =
         playerRow.Vendor2UserDeposits <- Nullable 0m
         playerRow.CashBonusAmount <- Nullable 0m
 
-        if yearMonthDay.Substring(6, 2) = "01" then
-            playerRow.BegGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
-
         // If null it means it's a new user so beg balance should be zero
+        // Linq compatible null check
         if playerRow.BegGmBalance.HasValue = false then
             playerRow.BegGmBalance <- Nullable 0m
 
