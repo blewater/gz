@@ -713,11 +713,14 @@ namespace gzWeb.Controllers
         [HttpGet]
         [Route("GetDeploymentInfo")]
         // 10 minutes caching
-        [System.Web.Mvc.OutputCache(Duration = 6000, VaryByParam = "none", Location =System.Web.UI.OutputCacheLocation.Any, NoStore = false)]
-        public IHttpActionResult GetDeploymentInfo()
-        {
+        [ClientCachingInApi(Duration = 600)]
+        public IHttpActionResult GetDeploymentInfo() {
+
+            const string staticCdnKey = "StaticCdn";
+
             return OkMsg(new
             {
+                StaticCdn = System.Configuration.ConfigurationManager.AppSettings[staticCdnKey],
                 Debug = IsInDebugMode(),
                 Version = GetVersion(),
                 ReCaptchaSiteKey = GetReCaptchaSiteKey()
