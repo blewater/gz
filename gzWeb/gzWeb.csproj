@@ -339,6 +339,7 @@
     <Compile Include="Areas\Mvc\Controllers\AuthController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GuestController.cs" />
     <Compile Include="Contracts\IInvestmentsApi.cs" />
+    <Compile Include="Controllers\ClientCachingInApi.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Migrations\201601301303283_Init CustPortfolio Key.cs" />
