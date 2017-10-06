@@ -203,11 +203,13 @@ module DbPlayerRevRpt =
         |> Seq.iter (setDbPlayerGainLoss emailToProcAlone)
         db.DataContext.SubmitChanges()
 
+
     /// get deposits in the user currency
     let getDepositAmountInUserCurrency
                 (excelRow : DepositsExcelSchema.Row)
                 (userCurrency : Currency) =
 
+        let userName = excelRow.Username
         let debitCurrency = excelRow.``Debit real currency``
         let creditCurrency = excelRow.``Credit real currency``
         let trxAmount : TrxAmount =
@@ -223,13 +225,31 @@ module DbPlayerRevRpt =
                 }
             else
                 failwithf 
-                    "Deposit amount not in user currency %s but in (debit %s, credit %s) currency but for %s" userCurrency debitCurrency creditCurrency excelRow.``Trans type``
+                    "Deposit amount for username %s not in user currency %s but in (debit %s, credit %s) currency but for %s" userName userCurrency debitCurrency creditCurrency excelRow.``Trans type``
         logger.Info(sprintf "Importing deposit for user %s amount %f currency %s type %s initiated on %s" 
                 excelRow.Username <| trxAmount.Amount <| trxAmount.Currency <| excelRow.Debit <| excelRow.Initiated)
         trxAmount.Amount
 
+    /// Get user currency when null. Use case for new users of 0 balance receiving their signup bonus
+    let userCurrency 
+            (db : DbContext)
+            (inCurrency : string)
+            (email : string) : string =
+
+        match inCurrency with
+        | null -> 
+            query { 
+                for gzUser in db.AspNetUsers do
+                    where (gzUser.Email = email)
+                    select (gzUser.Currency)
+                    distinct
+                    exactlyOne
+            } 
+        | _ -> inCurrency
+
     /// Update the deposits amounts
-    let private updDbRowDepositsValues 
+    let private updDbRowDepositsValues
+                    (db : DbContext)
                     (depositType : DepositsAmountType)
                     (depositsExcelRow : DepositsExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
@@ -237,8 +257,9 @@ module DbPlayerRevRpt =
         let dbVendor2UserCashBonusAmount = playerRow.CashBonusAmount.Value
         let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
         let dbDeposits = playerRow.TotalDepositsAmount.Value
+        let notNullUserCurrency = userCurrency db playerRow.Currency playerRow.EmailAddress
 
-        let thisDepositAmount = getDepositAmountInUserCurrency depositsExcelRow playerRow.Currency
+        let thisDepositAmount = getDepositAmountInUserCurrency depositsExcelRow notNullUserCurrency
         match depositType with
         | Deposit ->
             let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
@@ -458,7 +479,7 @@ module DbPlayerRevRpt =
                 let warningMsg = sprintf "Couldn't find user %s from deposits excel in the PlayerRevRpt table." depositsExcelRow.Email
                 logger.Warn warningMsg
             else
-                updDbRowDepositsValues depositType depositsExcelRow playerDbRow
+                updDbRowDepositsValues db depositType depositsExcelRow playerDbRow
                 db.DataContext.SubmitChanges()
         )
 
