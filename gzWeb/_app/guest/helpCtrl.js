@@ -15,7 +15,7 @@
 			        { Q: "Who do I contact if I have questions about my account?", A: "Please contact Customer Support by mail at help@greenzorro.com or directly via Live Chat." },
 			        { Q: "What do I do if I no longer want to use my account?", A: "For closing your account please email Customer Support at help@greenzorro.com" },
 			        { Q: "How do I change my password?", A: "You can change your password by accessing 'Change Password', under 'My Account' section, when logged in, and following the instructions on that page." },
-			        { Q: "How do I change my registered email address?", A: "You can change your registered email address by accessing 'Change Email', under 'My Account' section, when logged in, and following the instructions on that page." },
+			        { Q: "How do I change my registered email address?", A: "To change your email account, please email Customer Support at <a class='text-gz' href='mailto:help@greenzorro.com'>help@greenzorro.com</a>" },
 			        { Q: "Is there any way I can check my account activity?", A: "You can check your account activity by accessing 'My Account' once you have logged in, or you can contact Customer Support for any information." },
 			        { Q: "Is it possible to change my username?", A: "No, your registered username cannot be changed unfortunately." },
 			        { Q: "Why is it that I cannot login to my account?", A: "Check if you are using the correct login details for your account, and that Caps Lock is turned off on your keyboard. You can also try to reset your password using the link 'Forgot Password?' next to the login fields. If you still cannot login please contact Customer Support." },
@@ -67,7 +67,7 @@
 			        { Q: "How long does it take for my deposit to be credited to my gaming account?", A: "For most payment methods your deposit will be credited instantly. In the case of bank transfer this can take up to 7 days to be received from the bank, at which point we will credit your account." },
 			        { Q: "Which deposit methods do you have available?", A: "Once logged in, please click deposit button and you will see all of the payment methods available to you." },
 			        { Q: "Which credit/debit cards do you accept?", A: "We accept all Visa and MasterCard/maestro Credit and Debit cards as depositing methods, although there might be restrictions on withdrawals to MasterCard/Maestro card." },
-			        { Q: "Will I be charged any fees when depositing into my account?", A: "Deposit fees will vary depending on your chosen method. Once you login to your account and click deposit button, you will see the fee displayed on the payment methods that are available to you, be aware your Bank may charge you a fee for their service." },
+			        { Q: "Will I be charged any fees when depositing into my account?", A: "No! Deposits are free of charge. Nevertheless, please keep in mind that your bank may charge you a fee for their service." },
 			        { Q: "What is the minimum/maximum amounts that I can deposit at a time?", A: "The minimum deposit amount is €10 or your currency equivalent and the maximum deposit amount vary according to payment methods you used. Please click on Deposit once you login to see the maximum deposit amount." },
 			        { Q: "Is there a way for me to set daily, weekly and monthly deposit limits?", A: "You are able to set Daily, Weekly or Monthly Deposit Limits. These can be set within 'My Account' sub section 'Responsible Gaming'. Limits can be amended at any time in the same section." },
 			        { Q: "How do I transfer money from my bank account?", A: "Please click 'Deposit' in 'My Account' and chose Bank transfers. Then follow the instructions on the screen." },
@@ -77,13 +77,33 @@
                 name: 'Withdrawals Section',
                 items: [
 			        { Q: "How can I make a withdrawal from my website account?", A: "To make a withdrawal, login your account and click the withdrawal button, select the methods that are available to you and follow the onscreen instruction to request a withdrawal." },
-			        { Q: "Are there any limits on how much I can withdraw?", A: "Once login, click the withdrawal button and you will see the limit you can withdraw for the method you choose." },
+			        {
+			            Q: "Are there any limits on how much I can withdraw?",
+			            A: "Yes. There are certain withdrawal amount limits, both per transaction and per period." +
+			                "<p>" +
+			                "The minimum and maximum amount of money you are allowed to withdraw per payment method is:" +
+			                "<ul>" +
+			                "<li>Credit card: 10 EUR - 2,300 EUR</li>" +
+			                "<li>Skrill: 10 EUR - 2,300 EUR</li>" +
+			                "<li>Trustly: 50 EUR - 2,300 EUR</li>" +
+			                "<li>Entercash: 10 EUR - 2,300 EUR</li>" +
+			                "</ul>" +
+			                "</p>" +
+			                "<p>" +
+			                "Per period:" +
+			                "<ul>" +
+			                "<li>Daily: 2,300 EUR</li>" +
+			                "<li>Weekly: 5,000 EUR</li>" +
+			                "<li>Monthly: 20,000 EUR</li>" +
+			                "</ul>" +
+			                "To make sure, once login click the withdrawal button and you will see the limit you can withdraw for the method you choose." +
+			                "</p>"
+			        },
 			        { Q: "Can I cancel a withdrawal request?", A: "If the withdrawal has not been processed yet, you have the option to cancel it by going to My Account-> pending withdrawals or you can contact Customer Service." },
 			        { Q: "Can I get my winnings paid back to my credit/debit card?", A: "Yes you can as long as it is the same card that you used to make your original deposit and the card is able  to accept a  withdraw back onto it." },
 			        { Q: "I used my credit/debit card to deposit, can I request a withdrawal by any other mean?", A: "Our policy is to return the original deposit amount back to the card that is used for deposit and extra winning can be returned via other method. If the card does not accept withdrawal, your winning can be paid out via bank transfer but we might need you to provide some documentation." },
 			        { Q: "Why can’t I choose by which method I want to get paid?", A: "Due to anti money laundering laws, it is our policy to ensure the money is going back to the original source that made the deposit when possible." },
-			        { Q: "Do you charge any withdrawal fees?", A: "Once login, please click the withdrawal button and the fee will be displayed next to the methods that are available to you for withdrawal." },
-			        //{ Q: "How long do withdrawals take to process?", A: "Once login, please click the withdrawal button and the processing time will be displayed next to the methods that are available to you for withdrawal." },
+			        { Q: "Do you charge any withdrawal fees?", A: "We allow you to make one monthly withdrawal free of charge. For any withdrawals further to the 1st withdrawal of the month, a 3% processing fee will be charged." },
                     {
                         Q: "How long do withdrawals take?",
                         A: "<div>Withdrawals to Credit/Debit cards typically take 2-5 days, once executed, while withdrawals via Bank Transfer (Trustly) take 3-5 days, once executed. Withdrawals to e-wallets (e.g. Skrill and Neteller) are instantly processed, once executed.</div>" +
