@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'promotionCtrl';
-    APP.controller(ctrlId, ['$scope', 'api', '$routeParams', '$location', '$controller', 'message', 'accountManagement', ctrlFactory]);
-    function ctrlFactory($scope, api, $routeParams, $location, $controller, message, accountManagement) {
+    APP.controller(ctrlId, ['$scope', 'api', '$routeParams', '$location', '$controller', 'message', 'accountManagement', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, api, $routeParams, $location, $controller, message, accountManagement, modals) {
         $controller('authCtrl', { $scope: $scope });
 
         function loadPage() {
