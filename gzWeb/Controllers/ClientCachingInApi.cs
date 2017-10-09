@@ -20,12 +20,13 @@ namespace gzWeb.Controllers
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext) {
 
-            actionExecutedContext.Response.Headers.CacheControl = new CacheControlHeaderValue {
-                MaxAge = TimeSpan.FromSeconds(Duration),
-                MustRevalidate = true,
-                Public = true
-            };
-
+            if (actionExecutedContext.Response != null) {
+                actionExecutedContext.Response.Headers.CacheControl = new CacheControlHeaderValue {
+                    MaxAge = TimeSpan.FromSeconds(Duration),
+                    MustRevalidate = true,
+                    Public = true
+                };
+            }
         }
     }
 }
