@@ -717,9 +717,11 @@ namespace gzWeb.Controllers
         public IHttpActionResult GetDeploymentInfo() {
 
             const string staticCdnKey = "StaticCdn";
+            const string useCdn = "UseCdn";
 
             return OkMsg(new
             {
+                UseCdn = System.Configuration.ConfigurationManager.AppSettings[useCdn],
                 StaticCdn = System.Configuration.ConfigurationManager.AppSettings[staticCdnKey],
                 Debug = IsInDebugMode(),
                 Version = GetVersion(),

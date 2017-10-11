@@ -55,7 +55,7 @@
             return o;
         }
         function hasValue(variable) {
-            return variable !== undefined && variable != null;
+            return variable !== undefined && variable !== null;
         }
         function getProperty(model, name) {
             return hasValue(model) && hasValue(name) ? getPropertyByString(model, name) : undefined;
