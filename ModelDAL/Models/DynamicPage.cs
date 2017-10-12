@@ -85,7 +85,7 @@ namespace gzDAL.Models
         [Required, MaxLength(255)]
         public string DataType { get; set; }
 
-        [Required]
+        [Required, AllowHtml]
         public string DataValue { get; set; }
     }
 }
