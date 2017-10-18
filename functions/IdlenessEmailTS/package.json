@@ -1,0 +1,15 @@
+{
+    "name": "idlenessemail",
+    "private": true,
+    "version": "0.5.0",
+    "description": "SendGrid messaging for new or existing idle customers",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Mario Karagiorgas",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^8.0.39"
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "disabled": false,
+    "scriptFile": "index.js",
+    "bindings": [{
+            "name": "myTimer",
+            "type": "timerTrigger",
+            "direction": "in",
+            "schedule": "* * * * * *",
+            "connection": "AzureWebJobsStorage",
+            "runOnStartup": true
+        }
+        // ,
+        // {
+        //     "type": "sendGrid",
+        //     "name": "mails",
+        //     "apiKey": "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",
+        //     "direction": "out",
+        //     "from": "<the-email-address-of-sender>"
+        // }
+    ]
+}
