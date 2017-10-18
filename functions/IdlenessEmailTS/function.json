@@ -5,14 +5,14 @@
             "name": "myTimer",
             "type": "timerTrigger",
             "direction": "in",
-            "schedule": "* * * * * *",
+            "schedule": "* * * * * */0",
             "connection": "AzureWebJobsStorage",
             "runOnStartup": true
         },
         {
             "type": "sendGrid",
             "name": "mails",
-            "apiKey": "SendGrid_ApiKey",
+            "apiKey": "SENDGRID_API_KEY",
             "direction": "out",
             "from": "help@greenzorro.com"
         }
