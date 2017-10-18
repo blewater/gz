@@ -1,0 +1,15 @@
+{
+    "tracing": {
+        "consoleLevel": "verbose"
+    },
+    "logger": {
+        "categoryFilter": {
+            "defaultLevel": "Information",
+            "categoryLevels": {
+                "Host": "Error",
+                "Function": "Error",
+                "Host.Aggregator": "Information"
+            }
+        }
+    }
+}
