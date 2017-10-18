@@ -8,14 +8,13 @@
             "schedule": "* * * * * *",
             "connection": "AzureWebJobsStorage",
             "runOnStartup": true
+        },
+        {
+            "type": "sendGrid",
+            "name": "mails",
+            "apiKey": "SendGrid_ApiKey",
+            "direction": "out",
+            "from": "help@greenzorro.com"
         }
-        // ,
-        // {
-        //     "type": "sendGrid",
-        //     "name": "mails",
-        //     "apiKey": "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",
-        //     "direction": "out",
-        //     "from": "<the-email-address-of-sender>"
-        // }
     ]
 }
