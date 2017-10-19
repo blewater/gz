@@ -160,11 +160,22 @@ namespace gzDAL.Models {
         [Column(TypeName = "char")]
         [StringLength(6)]
         public string SoldYearMonth { get; set; }
+
         /// <summary>
-        /// Cash value of this month's shares when they were sold
+        /// Vintage Cash value when liquidated
         /// </summary>
         public decimal? SoldAmount { get; set; }
 
+        /// <summary>
+        /// Early withdrawal penalty when less than 90 days (3 month cycles) 25%.
+        /// </summary>
+        public decimal? EarlyCashoutFee { get; set; }
+        
+        /// <summary>
+        /// Investment fee for greater than 10% vitnage gain (25% deduction).
+        /// </summary>
+        public decimal? HurdleFee { get; set; }
+        
         /// <summary>
         /// Commission & fees by Gz, Funds
         /// </summary>
