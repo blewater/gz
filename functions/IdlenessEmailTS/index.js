@@ -1,13 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var sg = require("@sendgrid/mail/src/mail");
 function run(context, myTimer) {
     var timeStamp = new Date().toISOString();
-    var sg = require("@sendgrid/mail");
-    sg.setApiKey(process.env.SENDGRID_API_KEY);
+    var apiKey = GetEnvironmentVariable("SENDGRID_API_KEY");
+    var sendGridGroupId = GetEnvironmentNumVariable("IDLENESS_GROUP_ID");
+    sg.setApiKey(apiKey);
     sg.setSubstitutionWrappers("%", "%");
-    var msg = {
+    sg.send({
         to: "salem8@gmail.com",
-        from: "help@greenzorro.com",
+        from: "mario.karagiorgas@greenzorro.com",
         templateId: "e056156b-912a-42ac-87c3-7848383a917f",
         substitutions: {
             subject: "Sending with SendGrid Templates is Fun",
@@ -15,28 +17,58 @@ function run(context, myTimer) {
             email: "joe@mymail.com",
             lastloggedin: timeStamp
         },
-    };
-    sg.send(msg);
+        categories: ["Transactional", "Idleness"],
+        asm: {
+            groupId: sendGridGroupId
+        }
+    })
+        .then(function () {
+        return console.log("Mail sent successfully to ");
+    })
+        .then(function () {
+        return context.log("Mail sent successfully to ");
+    })
+        .catch(function (error) {
+        return console.error(error.toString());
+    });
     var sql = require("mssql");
-    //     const message = {
-    //         "personalizations": [ { "to": [ { "email": "sample@sample.com" } ] } ],
-    //        from: { email: "sender@contoso.com" },
-    //        subject: "Azure news",
-    //        content: [{
-    //            type: 'text/plain',
-    //            value: input
-    //        }]
-    //    };
     if (myTimer.isPastDue) {
         context.log("TypeScript is running late!");
     }
     context.log("IdlenessEmailTS function ran! " + timeStamp);
-    context.log(GetEnvironmentVariable("AzureWebJobsStorage"));
+    context.log(GetNamedEnvironmentVariable("AzureWebJobsStorage"));
     context.done();
 }
 exports.run = run;
+function GetEnvironmentNumVariable(name) {
+    if (typeof name === "undefined") {
+        return 0;
+    }
+    var configValue = process.env[name];
+    if (typeof configValue === "undefined") {
+        return 0;
+    }
+    return Number.parseInt(configValue);
+}
 function GetEnvironmentVariable(name) {
-    return name + ": " + process.env[name];
+    if (typeof name === "undefined") {
+        return "";
+    }
+    var configValue = process.env[name];
+    if (typeof configValue === "undefined") {
+        configValue = "";
+    }
+    return configValue;
+}
+function GetNamedEnvironmentVariable(name) {
+    var configValue = GetEnvironmentVariable(name);
+    if (configValue.length === 0) {
+        configValue = "Not found";
+    }
+    else {
+        configValue = name + ": " + process.env[name];
+    }
+    return configValue;
 }
 function getDbConfig() {
     var config = {
@@ -45,7 +77,6 @@ function getDbConfig() {
         user: "***",
         password: "***",
         port: 1433,
-        // since we're on Windows Azure, we need to set the following options
         options: {
             encrypt: true
         },
@@ -55,14 +86,11 @@ function getDbConfig() {
     return config;
 }
 function getEnv() {
-    // check on which environment the function is running
     var environment = process.env.APPSETTING_NODE_ENV || process.env.NODE_ENV;
     if (typeof environment === "undefined") {
         environment = "production";
     }
     if (environment === "production") {
-        // call the AzureFunction when running in production
-        // module.exports = AzureFunction;
         console.log("Production: " + environment);
     }
     else {

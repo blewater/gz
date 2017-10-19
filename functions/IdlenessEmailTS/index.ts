@@ -1,15 +1,15 @@
-import * as SendGrid from "sendgrid";
-
-export class SendGridMail extends SendGrid.mail.Mail {}
+import sg = require("@sendgrid/mail/src/mail");
 
 export function run(context: any, myTimer: any): any {
     const timeStamp: string = new Date().toISOString();
-    const sg = require("@sendgrid/mail");
-    sg.setApiKey(process.env.SENDGRID_API_KEY);
+    const apiKey:string = GetEnvironmentVariable("SENDGRID_API_KEY");
+    const sendGridGroupId:number = GetEnvironmentNumVariable("IDLENESS_GROUP_ID");
+
+    sg.setApiKey(apiKey);
     sg.setSubstitutionWrappers("%", "%");
-    const msg = {
+    sg.send({
         to: "salem8@gmail.com",
-        from: "help@greenzorro.com",
+        from: "mario.karagiorgas@greenzorro.com",
         templateId: "e056156b-912a-42ac-87c3-7848383a917f",
         substitutions: {
             subject: "Sending with SendGrid Templates is Fun",
@@ -18,39 +18,64 @@ export function run(context: any, myTimer: any): any {
             lastloggedin: timeStamp
         },
         categories: ["Transactional", "Idleness"],
-        batchId: "e056156b-912a-42ac-87c3-7848383a917f" + "_20171017",
         asm: {
-            groupId: 5325
+            groupId: sendGridGroupId
         }
-    };
-    sg
-    .send(msg)
-    .then(() => console.log("Mail sent successfully"))
-    .catch(error => console.error(error.toString()));
+    })
+    .then(() =>
+        console.log("Mail sent successfully to ")
+    )
+    .then(() =>
+        context.log("Mail sent successfully to ")
+    )
+    .catch(error =>
+        console.error(error.toString()
+    ));
 
     const sql = require("mssql");
-
-//     const message = {
-//         "personalizations": [ { "to": [ { "email": "sample@sample.com" } ] } ],
-//        from: { email: "sender@contoso.com" },
-//        subject: "Azure news",
-//        content: [{
-//            type: 'text/plain',
-//            value: input
-//        }]
-//    };
 
     if(myTimer.isPastDue) {
         context.log(`TypeScript is running late!`);
     }
     context.log(`IdlenessEmailTS function ran! ${timeStamp}`);
-    context.log(GetEnvironmentVariable("AzureWebJobsStorage"));
+    context.log(GetNamedEnvironmentVariable("AzureWebJobsStorage"));
 
     context.done();
 }
 
-function GetEnvironmentVariable(name: string) {
-    return name + ": " + process.env[name];
+function GetEnvironmentNumVariable(name: string | undefined) : number {
+    if (typeof name === "undefined") {
+        return 0;
+    }
+    let configValue = process.env[name];
+
+    if (typeof configValue === "undefined") {
+        return 0;
+    }
+
+    return Number.parseInt(configValue);
+}
+function GetEnvironmentVariable(name: string | undefined) : string {
+    if (typeof name === "undefined") {
+        return "";
+    }
+    let configValue = process.env[name];
+
+    if (typeof configValue === "undefined") {
+        configValue = "";
+    }
+
+    return configValue;
+}
+function GetNamedEnvironmentVariable(name: string) : string {
+    let configValue = GetEnvironmentVariable(name);
+
+    if (configValue.length === 0) {
+        configValue = "Not found";
+    } else {
+        configValue = name + ": " + process.env[name];
+    }
+    return configValue;
 }
 
 function getDbConfig() {
