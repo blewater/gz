@@ -5,7 +5,7 @@
             "name": "myTimer",
             "type": "timerTrigger",
             "direction": "in",
-            "schedule": "* * * * * */0",
+            "schedule": "* * * * * */1",
             "connection": "AzureWebJobsStorage",
             "runOnStartup": true
         },
@@ -13,6 +13,7 @@
             "type": "sendGrid",
             "name": "mails",
             "apiKey": "SENDGRID_API_KEY",
+            "groupId": "IDLENESS_GROUP_ID",
             "direction": "out",
             "from": "help@greenzorro.com"
         }
