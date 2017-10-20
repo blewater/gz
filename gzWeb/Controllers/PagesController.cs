@@ -28,17 +28,30 @@ namespace gzWeb.Controllers
         public IHttpActionResult Thumbnails(bool isMobile)
         {
             var now = DateTime.UtcNow;
-            return OkMsg(() =>
-                _dbContext.DynamicPages
-                          .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.UseInPromoList && x.IsMobile==isMobile)
-                          .Select(x => new
-                          {
-                              Code = x.Code,
-                              Img = x.ThumbImageUrl,
-                              Title = x.ThumbTitle,
-                              Description = x.ThumbText,
-                          })
-                          .ToList());
+            //return OkMsg(() =>
+            //    _dbContext.DynamicPages
+            //              .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.UseInPromoList && x.IsMobile==isMobile)
+            //              .Select(x => new
+            //              {
+            //                  Code = x.Code,
+            //                  Img = x.ThumbImageUrl,
+            //                  Title = x.ThumbTitle,
+            //                  Description = x.ThumbText,
+            //              })
+            //              .ToList());
+            return OkMsg(() => {
+                var pagesQuerable = _dbContext.DynamicPages.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.UseInPromoList);
+                if (isMobile)
+                    pagesQuerable = pagesQuerable.Where(x => x.IsMobile);
+                var pages = pagesQuerable.Select(x => new
+                {
+                    Code = x.Code,
+                    Img = x.ThumbImageUrl,
+                    Title = x.ThumbTitle,
+                    Description = x.ThumbText,
+                }).ToList();
+                return pages;
+            });
         }
         [HttpGet]
         public IHttpActionResult Page(string code)
