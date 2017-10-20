@@ -211,7 +211,11 @@ module CustomRpt2Db =
 
         // Loop through all excel rows
         for excelRow in customExcelSchemaFile.Data do
-            let isActive = excelRow.``Player status`` = "Active"
+            let isActive = 
+                match excelRow.``Player status`` with 
+                | "Active" -> true
+                | "Blocked" -> true // They may be unblocked in the future
+                | _ -> false
             let excelEmailAddress = excelRow.``Email address``
             let okEmail =
                 match excelEmailAddress with
