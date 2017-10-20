@@ -45,8 +45,15 @@ module WithdrawalRpt2Db =
         let completedYyyyMmDd = if completedDt.HasValue then completedDt.Value.ToYyyyMmDd else "Null"
         let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
         let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
-                
-        let rollbackNote = excelRow.``Last note``.IndexOf("Rollback") <> -1
+
+        let rollbackNote = 
+            match excelRow.``Last note`` with
+            | null -> false
+            | "" -> false
+            | lastNote -> 
+                match lastNote.IndexOf("Rollback") with
+                | -1 -> false
+                | _ -> true
 
         let dateLogMsg = 
             sprintf "Withdrawal for email: %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b, rollbackNote: %b" 
