@@ -5,6 +5,15 @@ The `TimerTrigger` makes it incredibly easy to have your functions executed on a
 ## How it works
 
 For a `TimerTrigger` to work, you provide a schedule in the form of a [cron expression](https://en.wikipedia.org/wiki/Cron#CRON_expression)(See the link for full details). A cron expression is a string with 6 separate expressions which represent a given schedule via patterns. The pattern we use to represent every 5 minutes is `0 */5 * * * *`. This, in plain text, means: "When seconds is equal to 0, minutes is divisible by 5, for any hour, day of the month, month, day of the week, or year".
+0 0 6 6 9 ? 2010
+| | | | | |   |
+| | | | | |   +- 2010 only.
+| | | | | +----- any day of the week.
+| | | | +------- 9th month (September).
+| | | +--------- 6th day of the month.
+| | +----------- 6th hour of the day.
+| +------------- Top of the hour (minutes = 0).
++--------------- Top of the minute (seconds = 0).
 
 ## Useful npm commands
 
