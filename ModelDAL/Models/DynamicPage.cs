@@ -28,10 +28,10 @@ namespace gzDAL.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required, MaxLength(100), Index("DynamicPage_Code", IsUnique = true)]
+        [Required, MaxLength(100), Index("DynamicPage_Code", IsUnique = true, Order = 1)]
         public string Code { get; set; }
 
-        [Required, DefaultValue(false)]
+        [Required, DefaultValue(false), Index("DynamicPage_Code", IsUnique = true, Order = 2)]
         public bool IsMobile { get; set; }
 
         [Required]
