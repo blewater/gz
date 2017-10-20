@@ -362,7 +362,8 @@ module DbPlayerRevRpt =
 
         playerRow.Username <- customExcelRow.Username
         playerRow.PlayerStatus <- customExcelRow.``Player status``
-        if not <| isNull customExcelRow.``Block reason`` then playerRow.BlockReason <- customExcelRow.``Block reason``.ToString()
+        if not <| isNull customExcelRow.``Block reason`` then 
+            playerRow.BlockReason <- customExcelRow.``Block reason``.ToString()
         playerRow.EmailAddress <- customExcelRow.``Email address``
         playerRow.TotalDepositsAmount <- Nullable 0m
         playerRow.WithdrawsMade <- Nullable 0m
