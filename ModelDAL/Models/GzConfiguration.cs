@@ -30,6 +30,24 @@ namespace gzDAL.Models {
         public int LOCK_IN_NUM_DAYS { get; set; } = 90;
 
         /// <summary>
+        /// Early withdrawal penalty when less than 90 days (3 month cycles)
+        /// </summary>
+        [Required]
+        public int EARLY_WITHDRAWAL_FEE_PCNT { get; set; } = 25;
+
+        /// <summary>
+        /// Investment fee for greater than 10% vitnage gain
+        /// </summary>
+        [Required]
+        public int HURDLE_FEE_PCNT { get; set; } = 25;
+
+        /// <summary>
+        /// Vintage gain to trigger deducting the hurdle fee
+        /// </summary>
+        [Required]
+        public int HURDLE_TRIGGER_GAIN_PCNT { get; set; } = 10;
+
+        /// <summary>
         /// greenzorro percentage fee % i.e. 1.5 -> Amount * 0.015
         /// </summary>
         [Required]

@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44300</IISExpressSSLPort>
+    <IISExpressSSLPort>44377</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -709,6 +709,10 @@
     <Compile Include="Migrations\201708041015250_playerrevrpt nullable currency.cs" />
     <Compile Include="Migrations\201708041015250_playerrevrpt nullable currency.Designer.cs">
       <DependentUpon>201708041015250_playerrevrpt nullable currency.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.cs" />
+    <Compile Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.Designer.cs">
+      <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1527,6 +1531,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201708041015250_playerrevrpt nullable currency.resx">
       <DependentUpon>201708041015250_playerrevrpt nullable currency.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.resx">
+      <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

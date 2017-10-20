@@ -69,7 +69,8 @@ var APP = (function () {
                 headerNav.className += " navbar-fixed-top";
 
                 var backToTop = document.getElementById("back-to-top");
-                backToTop.style.display = "block";
+                if (backToTop)
+                    backToTop.style.display = "block";
             }
 
             function setBodyRestHeight() {
