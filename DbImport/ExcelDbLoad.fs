@@ -299,7 +299,7 @@ module DbPlayerRevRpt =
                 }
             else
                 failwithf 
-                    "Withdrawal amount not in user currency %s but in (debit %s, credit %s) currency but for %s" userCurrency debitCurrency creditCurrency excelRow.``Trans type``
+                    "Withdrawal amount for user %s not in user currency %s but in (debit %s, credit %s) currency but for %s" excelRow.Username userCurrency debitCurrency creditCurrency excelRow.``Trans type``
         logger.Info(sprintf "Importing withdrawal for user %s amount %f currency %s type %s initiated on %s" 
                 excelRow.Username <| trxAmount.Amount <| trxAmount.Currency <| excelRow.Debit <| excelRow.Initiated)
 
@@ -307,7 +307,8 @@ module DbPlayerRevRpt =
 
     /// Update the withdrawal amount with an addition for pending withdrawal amounts or deducting rollback withdrawal amounts
     /// Note: they may be multiple pending / rollback withdrawal transactions per user/month
-    let private updDbRowWithdrawalsValues 
+    let private updDbRowWithdrawalsValues
+                    (db : DbContext)
                     (withdrawalType : WithdrawalType) 
                     (withdrawalsExcelRow : WithdrawalsPendingExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
@@ -315,8 +316,9 @@ module DbPlayerRevRpt =
         (* Pending withdrawals is tracked separatedly from total withdrawals *)
         let dbPendingWithdrawalAmount = playerRow.PendingWithdrawals.Value
         let dbWithdrawalAmount = playerRow.WithdrawsMade.Value
-
-        let thisWithdrawalAmount = getWithdrawalAmountInUserCurrency withdrawalsExcelRow playerRow.Currency
+        let notNullUserCurrency = userCurrency db playerRow.Currency playerRow.EmailAddress
+        
+        let thisWithdrawalAmount = getWithdrawalAmountInUserCurrency withdrawalsExcelRow notNullUserCurrency
         match withdrawalType with
         | Pending ->
             let newPendingWithdrawalAmount = dbPendingWithdrawalAmount + thisWithdrawalAmount
@@ -430,7 +432,7 @@ module DbPlayerRevRpt =
                 let warningMsg = sprintf "Couldn't find user %s from %A withdrawals excel file in the PlayerRevRpt table." <| playerEmail <| withdrawalType
                 logger.Warn warningMsg
             else
-                updDbRowWithdrawalsValues withdrawalType withdrawalRow playerDbRow
+                updDbRowWithdrawalsValues db withdrawalType withdrawalRow playerDbRow
                 db.DataContext.SubmitChanges()
         )
 
@@ -508,6 +510,11 @@ module DbPlayerRevRpt =
     /// Update all null everymatrix customer ids from the playerRevRpt (excel reports table)
     let setDbGmCustomerId(db : DbContext) =
 
+        let errorCache = Array.create<bool> 1 false
+        let setErrorStatus() : unit = errorCache.[0] <- true
+        /// Get false if no error occurred else true if there's action required
+        let getErrorStatus() : bool = errorCache.[0]
+
         query { 
             for user in db.AspNetUsers do
                 // SQL friendly syntax.. not HasValue would not translate to SQL
@@ -515,18 +522,25 @@ module DbPlayerRevRpt =
                 select user
         }
         |> Seq.iter (fun user -> 
-            query { 
-                for gmUser in db.PlayerRevRpt do
-                    where (gmUser.EmailAddress = user.Email)
-                    select (user, gmUser.UserID)
-                    distinct
-                    exactlyOneOrDefault
-            } 
-            |> (fun (user, gmUserId) ->
-                match gmUserId with
-                | 0 -> logger.Warn(sprintf "Please delete user %s in AspNetUsers Table. Found a null GmCustomerId: %d" user.Email gmUserId)
-                | _ -> user.GmCustomerId <- Nullable gmUserId;
-                        logger.Warn(sprintf "Updated the GmUserId for user %s in AspNetUsers Table. Found this GmCustomerId: %d" user.Email gmUserId)
+            let playerRevRptUserId = 
+                query { 
+                    for gmUser in db.PlayerRevRpt do
+                        where (gmUser.Username = user.UserName)
+                        select gmUser.UserID
+                        take 1
+                        exactlyOneOrDefault
+               }
+            (user, playerRevRptUserId)
+                |> (fun (user, gmUserId) ->
+                    match gmUserId with
+                    | 0 -> 
+                        logger.Fatal(sprintf "No GmId for user %s in AspNetUsers Table. No row found in playerRevRpt." user.Email)
+                        setErrorStatus()
+                    | gmId -> 
+                        user.GmCustomerId <- Nullable gmId
+                        db.DataContext.SubmitChanges()
             )
         )
-        db.DataContext.SubmitChanges()
+        if getErrorStatus() then
+            failwith "Unresolved AspNetUser rows found without GmPlayerId. Please see the log entries preceeding this."
+      
