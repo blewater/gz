@@ -714,10 +714,6 @@
     <Compile Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.Designer.cs">
       <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710201415242_Modify_Promo_Code_Plus_IsMobile_Uniq.cs" />
-    <Compile Include="Migrations\201710201415242_Modify_Promo_Code_Plus_IsMobile_Uniq.Designer.cs">
-      <DependentUpon>201710201415242_Modify_Promo_Code_Plus_IsMobile_Uniq.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1538,9 +1534,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.resx">
       <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710201415242_Modify_Promo_Code_Plus_IsMobile_Uniq.resx">
-      <DependentUpon>201710201415242_Modify_Promo_Code_Plus_IsMobile_Uniq.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
