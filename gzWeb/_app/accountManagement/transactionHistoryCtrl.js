@@ -28,9 +28,9 @@
             display: 'Deposit',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return trx.debit.amount; },
-            getAmountText: function (trx) { return getAmountText(trx.debit.amount, trx.debit.currency); },
-            getDescription: function (trx) { return trx.debit.name; },
+            getAmount: function (trx) { return trx ? (trx.debit ? trx.debit.amount : trx.credit.amount) : 0; },
+            getAmountText: function (trx) { return trx.debit ? getAmountText(trx.debit.amount, trx.debit.currency) : getAmountText(trx.credit.amount, trx.credit.currency); },
+            getDescription: function (trx) { return trx.debit ? trx.debit.name : trx.credit.name; },
             getStatus: getStatus
         };
         // #endregion
@@ -41,9 +41,9 @@
             display: 'Withdraw',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return trx.credit.amount; },
-            getAmountText: function (trx) { return getAmountText(trx.credit.amount, trx.credit.currency); },
-            getDescription: function (trx) { return trx.credit.name; },
+            getAmount: function (trx) { return trx ? (trx.credit ? trx.credit.amount : trx.debit.amount) : 0; },
+            getAmountText: function (trx) { return trx.credit ? getAmountText(trx.credit.amount, trx.credit.currency) : getAmountText(trx.debit.amount, trx.debit.currency); },
+            getDescription: function (trx) { return trx.credit ? trx.credit.name : trx.debit.name; },
             getStatus: getStatus
         };
         // #endregion
@@ -54,9 +54,9 @@
             display: 'Transfer',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return trx.credit.amount; },
-            getAmountText: function (trx) { return getAmountText(trx.credit.amount, trx.credit.currency); },
-            getDescription: function (trx) { return trx.debit.name; },
+            getAmount: function (trx) { return trx ? (trx.credit ? trx.credit.amount : trx.debit.amount) : 0; },
+            getAmountText: function (trx) { return trx.credit ? getAmountText(trx.credit.amount, trx.credit.currency) : getAmountText(trx.debit.amount, trx.debit.currency); },
+            getDescription: function (trx) { return trx.credit ? trx.credit.name : trx.debit.name; },
             getStatus: getStatus
         };
         // #endregion
@@ -67,9 +67,9 @@
             display: 'Buddy Transfer',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) { return trx.credit.amount; },
-            getAmountText: function (trx) { return getAmountText(trx.credit.amount, trx.credit.currency); },
-            getDescription: function (trx) { return trx.debit.name; },
+            getAmount: function (trx) { return trx ? (trx.credit ? trx.credit.amount : trx.debit.amount) : 0; },
+            getAmountText: function (trx) { return trx.credit ? getAmountText(trx.credit.amount, trx.credit.currency) : getAmountText(trx.debit.amount, trx.debit.currency); },
+            getDescription: function (trx) { return trx.credit ? trx.credit.name : trx.debit.name; },
             getStatus: getStatus
         };
         // #endregion
@@ -80,22 +80,15 @@
             display: 'Gambling',
             getId: getId,
             getDate: getDate,
-            getAmount: function (trx) {
-                return trx.credit === undefined ? trx.debit.amount : trx.credit.amount;
-            },
+            getAmount: function (trx) { return trx ? (trx.debit ? trx.debit.amount : trx.credit.amount) : 0; },
             getAmountText: function (trx) {
-                var currency = trx.credit === undefined ? trx.debit.currency : trx.credit.currency;
-                return (trx.credit === undefined
-                            ? "-" + getAmount(trx.debit.amount, trx.debit.currency)
-                            : getAmountText(trx.credit.amount, trx.credit.currency)
-                    ) + " / " +
+                var currency = trx.debit ? trx.debit.currency : trx.credit.currency;
+                return
+                    (trx.debit ? ("-" + getAmount(trx.debit.amount, trx.debit.currency)) : getAmountText(trx.credit.amount, trx.credit.currency)) +
+                    " / " +
                     $filter('isoCurrency')(trx.balance, currency, 2);
             },
-            getDescription: function(trx) {
-                return (trx.credit === undefined
-                    ? trx.debit.name
-                    : trx.credit.name) + " - " + trx.description;
-            },
+            getDescription: function (trx) { return (trx.debit ? trx.debit.name : trx.credit.name) + " - " + trx.description; },
             getStatus: getStatus
         };
         // #endregion
@@ -148,13 +141,14 @@
                     $scope.pageIndex = response.currentPageIndex;
                     $scope.transactions = [];//response.transactions;
                     for (var i = 0; i < response.transactions.length; i++) {
-                        if ($scope.type.getAmount(response.transactions[i]) > 0) {
+                        var transaction = response.transactions[i];
+                        if ($scope.type.getAmount(transaction) > 0) {
                             $scope.transactions.push({
-                                id: $scope.type.getId(response.transactions[i]),
-                                date: $scope.type.getDate(response.transactions[i]),
-                                amount: $scope.type.getAmountText(response.transactions[i]),
-                                description: $scope.type.getDescription(response.transactions[i]),
-                                status: $scope.type.getStatus(response.transactions[i])
+                                id: $scope.type.getId(transaction),
+                                date: $scope.type.getDate(transaction),
+                                amount: $scope.type.getAmountText(transaction),
+                                description: $scope.type.getDescription(transaction),
+                                status: $scope.type.getStatus(transaction)
                             });
                         }
                     }

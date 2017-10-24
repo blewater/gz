@@ -18,10 +18,12 @@
             return $filter('date')(pendingWithdrawal.time, 'dd/MM/yy HH:mm');
         }
         $scope.getAmount = function (pendingWithdrawal) {
-            return $filter('isoCurrency')(pendingWithdrawal.credit.amount, pendingWithdrawal.credit.currency, 2);
+            return pendingWithdrawal.credit
+                ? $filter('isoCurrency')(pendingWithdrawal.credit.amount, pendingWithdrawal.credit.currency, 2)
+                : $filter('isoCurrency')(pendingWithdrawal.debit.amount, pendingWithdrawal.debit.currency, 2);
         }
         $scope.getDescription = function (pendingWithdrawal) {
-            return pendingWithdrawal.credit.name;
+            return pendingWithdrawal.credit ? pendingWithdrawal.credit.name : pendingWithdrawal.debit.name;
         }
 
         $scope.rollback = function (pendingWithdrawal, index) {
