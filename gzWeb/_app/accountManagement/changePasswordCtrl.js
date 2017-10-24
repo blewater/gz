@@ -65,7 +65,7 @@
         // #endregion
         
         $scope.submit = function () {
-            if ($scope.form.$valid)
+            if ($scope.form.$valid && !$scope.waiting)
                 change();
         };
         function change(){
