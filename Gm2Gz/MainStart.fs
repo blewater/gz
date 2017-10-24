@@ -104,8 +104,15 @@ let gmReports2InvBalanceUpdate
 let portfolioSharesPrelude2MainProcessing (db : DbContext) =
     DailyPortfolioShares.storeShares db
 
+let getTimer() =
+    let timer = System.Diagnostics.Stopwatch()
+    timer.Start()
+    timer
+
 [<EntryPoint>]
 let main argv = 
+
+    let appTimer = getTimer()
 
     try 
         // Create a database context
@@ -126,6 +133,9 @@ let main argv =
 
         // Vintage withdrawal bonus
         WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
+
+        appTimer.Stop()
+        logger.Info(sprintf "The investment awarding process took %f seconds or %f minutes." <| (float) appTimer.ElapsedMilliseconds/1000.0 <| (float) appTimer.ElapsedMilliseconds/60000.0)
         0
     with ex ->
         logger.Fatal(ex, "1 or more runtime exceptions at GzBatch")
