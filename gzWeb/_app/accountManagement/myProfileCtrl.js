@@ -259,7 +259,7 @@
         // #endregion
 
         $scope.submit = function () {
-            if ($scope.form.$valid) {
+            if ($scope.form.$valid && !$scope.waiting) {
                 $scope.waiting = true;
                 var dateOfBirth = moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]).format('YYYY-MM-DD');
                 var gender = $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender;
