@@ -203,7 +203,7 @@
 
         // #region register
         $scope.submit = function () {
-            if ($scope.form.$valid)
+            if ($scope.form.$valid && !$scope.waiting)
                 register();
         };
         
