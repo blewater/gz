@@ -8,7 +8,7 @@
 
         $scope.bonusCode = '';
         $scope.submit = function () {
-            if ($scope.form.$valid) {
+            if ($scope.form.$valid && !$scope.applyingBonus) {
                 $scope.applyingBonus = true;
                 auth.applyBonus($scope.bonusCode).then(function () {
                     window.appInsights.trackEvent("BONUS APPLY", { code: $scope.bonusCode });
