@@ -25,7 +25,7 @@ namespace gzDAL.DTO {
         /// <summary>
         /// Gz and Fund fees. As of this writing in 4%
         /// </summary>
-        public decimal Fees { get; set; }
+        public FeesDto Fees { get; set; }
         /// <summary>
         /// Have 6 months elapsed from investment so that this vintage is
         /// available for selling?
