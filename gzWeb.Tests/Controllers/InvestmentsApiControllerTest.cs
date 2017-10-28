@@ -127,15 +127,14 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public void TestSellingAVintage() {
+        public async Task TestSellingAVintage() {
 
             var user = manager.FindByEmail("salem8@gmail.com");
-            var vintagesDto = SellOneVintage(user);
+            var vintagesDto = await SellOneVintage(user);
         }
 
         private async Task<ICollection<VintageDto>> SellOneVintage(ApplicationUser user) {
 
-            
             var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
 
             // Mark for selling earliest even if sold already or is locked
@@ -188,25 +187,6 @@ namespace gzWeb.Tests.Controllers
 
             var vintages = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
             foreach (var vintageViewModel in vintages) {
-                Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
-                    vintageViewModel.YearMonthStr,
-                    vintageViewModel.InvestmentAmount,
-                    vintageViewModel.SellingValue,
-                    vintageViewModel.Sold,
-                    vintageViewModel.Locked);
-                Assert.IsNotNull(vintageViewModel.SellingValue);
-            }
-        }
-
-        [Test]
-        public async Task GetVintagesSellingValue()
-        {
-
-            var user = manager.FindByEmail("6month@allocation.com");
-
-            var vintages = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
-            foreach (var vintageViewModel in vintages)
-            {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
                     vintageViewModel.YearMonthStr,
                     vintageViewModel.InvestmentAmount,
