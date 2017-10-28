@@ -98,11 +98,16 @@ module DepositsRpt2Db =
 
     /// Separate between Deposits, V2U and BonusGranted
     let private debit2DepositsType (excelDebitDesc : string) : DepositsAmountType =
+
+        // Free spins... so far appear as 0 amounts
         if excelDebitDesc.Contains "BonusGranted" then
+            V2UDeposit
+
+        // Gz deposited cash to user
+        elif excelDebitDesc.Contains "Main (System) Bonus" || excelDebitDesc = "CasinoWallet (CasinoWallet) Bonus" then
             V2UCashBonus
 
-        elif excelDebitDesc.Contains "Main (System)" then
-            V2UDeposit
+        // Normal user cash deposi
         elif excelDebitDesc.Contains "Ordinary" then
             Deposit
         else
@@ -114,28 +119,30 @@ module DepositsRpt2Db =
                 (excelRow : DepositsExcelSchema.Row) 
                 (yyyyMmDd : string) =
 
-        let currentYearMonth = yyyyMmDd.ToDateWithDay
-        // Assume we always has an initiated date value
-        let initiatedDt = (excelRow.Initiated |> excelObj2NullableDt WithdrawalRpt).Value
-        let initiatedCurrently = isInitiatedInCurrentMonth initiatedDt currentYearMonth
+        if excelRow.``Credit real  amount`` <> 0.0 || excelRow.``Debit real amount`` <> 0.0 then
 
-        let completedDt = excelRow.Completed |> excelObj2NullableDt WithdrawalRpt
-        let completedYyyyMmDd = if completedDt.HasValue then completedDt.Value.ToYyyyMmDd else "Null"
-        let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
-        let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
+            let currentYearMonth = yyyyMmDd.ToDateWithDay
+            // Assume we always has an initiated date value
+            let initiatedDt = (excelRow.Initiated |> excelObj2NullableDt WithdrawalRpt).Value
+            let initiatedCurrently = isInitiatedInCurrentMonth initiatedDt currentYearMonth
+
+            let completedDt = excelRow.Completed |> excelObj2NullableDt WithdrawalRpt
+            let completedYyyyMmDd = if completedDt.HasValue then completedDt.Value.ToYyyyMmDd else "Null"
+            let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
+            let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
                 
-        let depositsAmountType = debit2DepositsType excelRow.Debit
+            let depositsAmountType = debit2DepositsType excelRow.Debit
 
-        let dateLogMsg = sprintf "Deposit for email %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" excelRow.Email (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
-        logger.Debug dateLogMsg
+            let dateLogMsg = sprintf "Deposit for email %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" excelRow.Email (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
+            logger.Debug dateLogMsg
 
-        // less restrictive than withdrawals... completed in current processing month?
-        if completedCurrently then
-            DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
+            // less restrictive than withdrawals... completed in current processing month?
+            if completedCurrently then
+                DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
 
-        else
-            logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
-                initiatedDt yyyyMmDd completedYyyyMmDd initiatedCurrently completedCurrently completedInSameMonth)
+            else
+                logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
+                    initiatedDt yyyyMmDd completedYyyyMmDd initiatedCurrently completedCurrently completedInSameMonth)
 
     /// Process all excel lines except Totals and upsert them
     let private updDbDepositsExcelRptRows 

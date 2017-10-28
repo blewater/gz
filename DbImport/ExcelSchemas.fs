@@ -34,8 +34,8 @@ module ExcelSchemas =
     | Completed
 
     type DepositsAmountType =
-    | V2UDeposit    // Vendor2User Deposit
-    | V2UCashBonus  // Vendor2User Cash Bonus
+    | V2UDeposit    // Vendor2User Deposit (free spins bonus? usually 0)
+    | V2UCashBonus  // Vendor2User Cash Bonus (vintage withdrawal or a Gz cash gift to user)
     | Deposit       // Normal User Deposit
 
     let WithdrawalTypeString = function 
