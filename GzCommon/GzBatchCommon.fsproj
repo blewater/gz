@@ -93,10 +93,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\GzBatch\packages\MailKit.1.18.1.1\lib\net451\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.1.20.0\lib\net451\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\GzBatch\packages\MimeKit.1.18.1\lib\net451\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.20.0\lib\net451\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
