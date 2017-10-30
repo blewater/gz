@@ -17,6 +17,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     [<Literal>]
     let ScheduledRptEmailRecipient = "hostmaster@greenzorro.com"
 
+    let WaitBefRetryinMillis = 1000 // 1 sec
     let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
     let downloadFolderName = Path.Combine (drive, reportsArgs.ReportsFoldersArgs.reportsDownloadFolder)
     let inRptFolderName = Path.Combine ([|drive; reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder |])
@@ -401,57 +402,84 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
         let portalArgs = reportsArgs.EverymatrixPortalArgs
 
-        do initCanopyChrome()
+        // start chrome and login to everymatrix backo.
+        let initNewBrowserSession =
+            do initCanopyChrome()
 
-        // Login
-        uiAutomateLoginEverymatrixReports 
-            portalArgs.EverymatrixUsername 
-            portalArgs.EverymatrixPassword 
-            portalArgs.EverymatrixToken
+            // Login
+            uiAutomateLoginEverymatrixReports 
+                portalArgs.EverymatrixUsername 
+                portalArgs.EverymatrixPassword 
+                portalArgs.EverymatrixToken
+
+        // helper for exceptions out of logged out sessions
+        let rec retry times fn = 
+            if times > 0 then
+                try
+                    if times < 3 then
+                        logger.Info (sprintf "** retry remaining efforts: %d" times)
+                    fn()
+                with 
+                | _ -> 
+                    System.Threading.Thread.Sleep(WaitBefRetryinMillis);
+                    quit()
+                    do initNewBrowserSession
+                    retry (times - 1) fn
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
         // Custom
-        if not <| monthlyCustomReportExists() then
-            removeScheduledEmailCustomReport()
-            createNewCustomMonthRpt()
+        let downloadCustomRpt() = 
+            if not <| monthlyCustomReportExists() then
+                removeScheduledEmailCustomReport()
+                createNewCustomMonthRpt()
         
-        if downloadCustomRpt then
-            uiAutomateDownloadedCustomRpt dayToProcess
-            moveDownloadedRptToInRptFolder 
-                rptFilesArgs.DownloadedCustomFilter 
-                rptFilesArgs.CustomRptFilenamePrefix
-                dayToProcess
+            if downloadCustomRpt then
+                uiAutomateDownloadedCustomRpt dayToProcess
+                moveDownloadedRptToInRptFolder 
+                    rptFilesArgs.DownloadedCustomFilter 
+                    rptFilesArgs.CustomRptFilenamePrefix
+                    dayToProcess
 
-        // Vendor2User
-        if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
-            moveDownloadedRptToInRptFolder 
-                rptFilesArgs.DownloadedDepositsFilter
-                rptFilesArgs.DepositsRptFilenamePrefix 
-                dayToProcess
+        retry 3 downloadCustomRpt
+
+        // Deposits
+        let downloadDeposits() =
+            if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
+                moveDownloadedRptToInRptFolder 
+                    rptFilesArgs.DownloadedDepositsFilter
+                    rptFilesArgs.DepositsRptFilenamePrefix 
+                    dayToProcess
+        retry 3 downloadDeposits
 
         // Withdrawals: Pending
-        if uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess then
-            moveDownloadedRptToInRptFolder 
-                rptFilesArgs.DownloadedWithdrawalsFilter
-                rptFilesArgs.WithdrawalsPendingRptFilenamePrefix
-                dayToProcess
+        let downloadWithdrawalsPending() = 
+            if uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess then
+                moveDownloadedRptToInRptFolder 
+                    rptFilesArgs.DownloadedWithdrawalsFilter
+                    rptFilesArgs.WithdrawalsPendingRptFilenamePrefix
+                    dayToProcess
+        retry 3 downloadWithdrawalsPending
 
         // Withdrawals: Rollback
-        if uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess then
-            moveDownloadedRptToInRptFolder 
-                rptFilesArgs.DownloadedWithdrawalsFilter
-                rptFilesArgs.WithdrawalsRollbackRptFilenamePrefix
-                dayToProcess
+        let downloadWithdrawalsRollback() = 
+            if uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess then
+                moveDownloadedRptToInRptFolder 
+                    rptFilesArgs.DownloadedWithdrawalsFilter
+                    rptFilesArgs.WithdrawalsRollbackRptFilenamePrefix
+                    dayToProcess
+        retry 3 downloadWithdrawalsRollback
 
         // Balance: report date counts as day + 23:59
-        if balanceFilesArg = BalanceFilesUsageType.UseBothBalanceFiles then
-            let balanceRptDownloader() = uiAutomatedEndBalanceRpt dayToProcess rptFilesArgs.DownloadedBalanceFilter
-            retryTillTrue 5 balanceRptDownloader
-            moveDownloadedRptToInRptFolder 
-                rptFilesArgs.DownloadedBalanceFilter
-                rptFilesArgs.EndBalanceRptFilenamePrefix
-                (dayToProcess.AddDays(1.0))
+        let downloadEndofMonthBalanceReport() =
+            if balanceFilesArg = BalanceFilesUsageType.UseBothBalanceFiles then
+                let balanceRptDownloader() = uiAutomatedEndBalanceRpt dayToProcess rptFilesArgs.DownloadedBalanceFilter
+                retryTillTrue 5 balanceRptDownloader
+                moveDownloadedRptToInRptFolder 
+                    rptFilesArgs.DownloadedBalanceFilter
+                    rptFilesArgs.EndBalanceRptFilenamePrefix
+                    (dayToProcess.AddDays(1.0))
+        retry 3 downloadEndofMonthBalanceReport
 
         quit ()
 
