@@ -9,20 +9,26 @@
         function init() {
             $scope.pendingWithdrawals = undefined;
             emBankingWithdraw.getPendingWithdrawals().then(function (response) {
-                $scope.pendingWithdrawals = response || [];
+                var withdrawals = response || [];
+                angular.forEach(withdrawals, function (withdrawal) {
+                    withdrawal.date = getDate(withdrawal);
+                    withdrawal.amount = getAmount(withdrawal);
+                    withdrawal.description = getDescription(withdrawal);
+                });
+                $scope.pendingWithdrawals = withdrawals;
             });
         };
         init();
 
-        $scope.getDate = function (pendingWithdrawal) {
+        function getDate(pendingWithdrawal) {
             return $filter('date')(pendingWithdrawal.time, 'dd/MM/yy HH:mm');
         }
-        $scope.getAmount = function (pendingWithdrawal) {
+        function getAmount(pendingWithdrawal) {
             return pendingWithdrawal.credit
                 ? $filter('isoCurrency')(pendingWithdrawal.credit.amount, pendingWithdrawal.credit.currency, 2)
                 : $filter('isoCurrency')(pendingWithdrawal.debit.amount, pendingWithdrawal.debit.currency, 2);
         }
-        $scope.getDescription = function (pendingWithdrawal) {
+        function getDescription(pendingWithdrawal) {
             return pendingWithdrawal.credit ? pendingWithdrawal.credit.name : pendingWithdrawal.debit.name;
         }
 
