@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Web.Http;
 using System.Threading.Tasks;
-using System.Web.Hosting;
 using AutoMapper;
 using gzDAL;
 using gzDAL.Conf;
@@ -17,6 +15,8 @@ using gzWeb.Contracts;
 using gzWeb.Models;
 using Microsoft.AspNet.Identity;
 using Z.EntityFramework.Plus;
+using System.Configuration;
+using System.Web.Hosting;
 
 namespace gzWeb.Controllers {
     [Authorize]
@@ -230,26 +230,31 @@ namespace gzWeb.Controllers {
             var vintagesDtos = vintages
                 .Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
-            
+
+            var emailAdmins = ConfigurationManager.AppSettings["WithdrawalBonunAdmins"];
+            var gmailUser = ConfigurationManager.AppSettings["gmailHostMaster"];
+            var gmailPwd = ConfigurationManager.AppSettings["gmailHostPwd"];
+
             // Sell Vintages
-            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos);
+            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos, true, emailAdmins, gmailUser, gmailPwd);
 
-            // Handle Response
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var vmVintagesAfterWithdrawals =
+                updatedVintages
+                    .Select(v =>
+                        mapper
+                        .Map<VintageDto, VintageViewModel>(v)
+                    );
+            vmVintagesAfterWithdrawals
+                    .Select(v => new VintageViewModel()
+                    {
+                        InvestmentAmount =
+                            DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount),
+                        SellingValue =
+                            DbExpressions.RoundCustomerBalanceAmount(v.SellingValue)
+                    })
+                    .ToList();
 
-            var inUserRateVintages =
-                updatedVintages.AsParallel().Select(v => new VintageViewModel()
-                        {
-                                YearMonthStr = v.YearMonthStr,
-                                InvestmentAmount =
-                                        DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount),
-                                SellingValue =
-                                        DbExpressions.RoundCustomerBalanceAmount(v.SellingValue),
-                                Locked = v.Locked,
-                                Sold = v.Sold
-                        }).ToList();
-
-            return OkMsg(inUserRateVintages);
+            return OkMsg(vmVintagesAfterWithdrawals);
         }
 
         /// <summary>
@@ -259,12 +264,28 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
+        /// <param name="sendEmail2Admins"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="gmailUser"></param>
+        /// <param name="gmailPwd"></param>
         /// <returns></returns>
         public ICollection<VintageDto> SaveDbSellVintages(
                 int customerId,
-                ICollection<VintageDto> vintages)
-        {
-            invBalanceRepo.SaveDbSellAllSelectedVintagesInTransRetry(customerId, vintages);
+                ICollection<VintageDto> vintages,
+                bool sendEmail2Admins,
+                string emailAdmins,
+                string gmailUser,
+                string gmailPwd) {
+
+            invBalanceRepo
+                .SaveDbSellAllSelectedVintagesInTransRetry(
+                    customerId, 
+                    vintages, 
+                    sendEmail2Admins,
+                    emailAdmins, 
+                    gmailUser, 
+                    gmailPwd
+                );
 
             return vintages;
         }

@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
+using System.IO;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 using gzDAL.Conf;
@@ -11,8 +12,14 @@ using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using NLog;
 using Z.EntityFramework.Plus;
+using System.Configuration;
+using System.Diagnostics;
+using System.Web.UI.WebControls.Expressions;
 
 namespace gzDAL.Repos
 {
@@ -485,7 +492,8 @@ namespace gzDAL.Repos
                         out fees);
 
                     vintageDto.VintageShares = vintageShares;
-                    vintageDto.Fees = fees;
+                    vintageDto.SoldFees = fees.Total;
+                    vintageDto.SoldFeesDto = fees;
 
                     numOfVintagesSold++;
                 }
@@ -526,7 +534,8 @@ namespace gzDAL.Repos
                         out fees);
 
                     vintageDto.VintageShares = vintageShares;
-                    vintageDto.Fees = fees;
+                    vintageDto.SoldFees = fees.Total;
+                    vintageDto.SoldFeesDto = fees;
 
                     numOfVintagesSold++;
                 }
@@ -571,6 +580,8 @@ namespace gzDAL.Repos
                 // Save the selling price and shares
                 dto.VintageShares = vintageShares;
                 dto.SellingValue = vintageMarketPrice - fees.Total;
+                dto.SoldFees = fees.Total;
+                dto.SoldFeesDto = fees;
             }
 
             return customerVintages;
@@ -609,6 +620,8 @@ namespace gzDAL.Repos
                     // Save the selling price and shares
                     dto.VintageShares = vintageShares;
                     dto.SellingValue = vintageMarketPrice - fees.Total;
+                    dto.SoldFees = fees.Total;
+                    dto.SoldFeesDto = fees;
                 }
             }
             var soldAmounts = GetSoldVintagesAmounts(customerId);
@@ -701,10 +714,10 @@ namespace gzDAL.Repos
                     vintageToBeSold.Sold = true;
 
                 vintageToBeSold.SoldAmount = vintage.MarketPrice;
-                vintageToBeSold.SoldFees = vintage.Fees.Total;
+                vintageToBeSold.SoldFees = vintage.SoldFees;
                 vintageToBeSold.SoldOnUtc = soldOnUtc.Truncate(TimeSpan.FromSeconds(1));
-                vintageToBeSold.HurdleFee = vintage.Fees.HurdleFee;
-                vintageToBeSold.EarlyCashoutFee = vintage.Fees.EarlyCashoutFee;
+                vintageToBeSold.HurdleFee = vintage.SoldFeesDto.HurdleFee;
+                vintageToBeSold.EarlyCashoutFee = vintage.SoldFeesDto.EarlyCashoutFee;
                 vintageToBeSold.UpdatedOnUtc = vintageToBeSold.SoldOnUtc.Value;
                 // this is set to the month sold
                 vintageToBeSold.SoldYearMonth =
@@ -758,13 +771,17 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
+        /// <param name="gmailPwd"></param>
         /// <param name="sellOnThisYearMonth"></param>
+        /// <param name="sendEmail2Admin"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="gmailUser"></param>
         /// <returns></returns>
-        public void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "")
+        public void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
         {
 
-            // Set market price on it.. they may have left the browser window open 
-            // for a long time (stock market-wise) before hitting withdraw
+            // Update market price on it.. they may have left the browser window open 
+            // for a long time before hitting withdraw
 
             var vintagesToBeSold =
                 sellOnThisYearMonth.Length == 0
@@ -781,8 +798,236 @@ namespace gzDAL.Repos
 
                     });
 
+                if (sendEmail2Admin) {
+
+                    var user = GetEmailVintageLiquidationUser(customerId);
+
+                    //https://stackoverflow.com/questions/29383116/asp-net-mvc-5-asynchronous-action-method
+                    Task.Run(() => 
+                        EmailSendVintageWithdrawalReceipt(user, customerId, vintages, emailAdmins, gmailUser, gmailPwd)
+                    );
+                }
             }
         }
+
+        #region EmailVintageProceeds
+
+        /// <summary>
+        /// 
+        /// Cache essential email user properties
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private EmailVintageLiquidationUser GetEmailVintageLiquidationUser(int userId)
+        {
+            var user =
+                db.Users
+                    .Where(u => u.Id == userId)
+                    .Select(u => new EmailVintageLiquidationUser()
+                    {
+                        UserId = userId,
+                        GmUserId = u.GmCustomerId.Value,
+                        UserName = u.UserName,
+                        Email = u.Email,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        Currency = u.Currency
+                    })
+                    .Single();
+            return user;
+        }
+
+        /// <summary>
+        /// 
+        /// Vintage Liquidation User for Email Type
+        /// 
+        /// </summary>
+        private class EmailVintageLiquidationUser
+        {
+            public int UserId { get; set; }
+            public int GmUserId { get; set; }
+            public string Email { get; set; }
+            public string UserName { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Currency { get; set; }
+            public decimal NetProceeds { get; set; }
+            public decimal Fees { get; set; }
+        }
+
+        /// <summary>
+        /// 
+        /// Entry point for email receipt sending
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userId"></param>
+        /// <param name="vintages"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="gmailUser"></param>
+        /// <param name="gmailPwd"></param>
+        private static void EmailSendVintageWithdrawalReceipt(EmailVintageLiquidationUser user, int userId, ICollection<VintageDto> vintages, string emailAdmins, string gmailUser, string gmailPwd)
+        {
+            try
+            {
+                foreach (var vintageDto in vintages.Where(v=>v.Selected)) {
+                    user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue - vintageDto.SoldFees);
+                    user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
+                }
+                var _ = EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in sendVintageWithdrawalReceiptAsync");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Set up a mime message for sending to admins.
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="gmailUser"></param>
+        /// <param name="gmailPwd"></param>
+        /// <returns></returns>
+        private static async Task EmailSendMimeVintagesProceedsAsync(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins, string gmailUser, string gmailPwd)
+        {
+            var message = GetMimeMessage(emailVintageLiquidationUser, emailAdmins);
+
+            await SendEmailAsync(gmailUser, gmailPwd, message).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 
+        /// Create a mime message for vintage admins
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        private static MimeMessage GetMimeMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+
+            MimeMessage message = null;
+            try {
+                message = GetMessage(emailVintageLiquidationUser, emailAdmins);
+
+                message.Body = GetMessageBody(emailVintageLiquidationUser).ToMessageBody();
+            }
+            catch (Exception e) {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in GetMimeMessage()");
+            }
+
+            return message;
+        }
+
+        /// <summary>
+        /// 
+        /// Create the mime message To, Subject
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="emailAdmins"></param>
+        /// <returns></returns>
+        private static MimeMessage GetMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+
+            MimeMessage message = null;
+            try
+            {
+                message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Admin Greenzorro", "admin@greenzorro.com"));
+                var admins = emailAdmins.Split(';');
+                message.To.Add(new MailboxAddress(admins[0]));
+                message.Cc.Add(new MailboxAddress(admins[1]));
+                message.Subject =
+                    $@"User id {emailVintageLiquidationUser.GmUserId} withdrew vintage(s) on {
+                            DateTime.UtcNow.ToString("ddd d MMM yyyy")
+                        }";
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in GetMessage()");
+            }
+            return message;
+        }
+
+        /// <summary>
+        /// 
+        /// Create the message text body.
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="builder"></param>
+        private static BodyBuilder GetMessageBody(EmailVintageLiquidationUser emailVintageLiquidationUser) {
+
+            BodyBuilder builder = null;
+            try {
+                builder = new BodyBuilder {
+                    TextBody = $@"UserName {emailVintageLiquidationUser.UserName} 
+with email {emailVintageLiquidationUser.Email} withdrew vintage(s)
+Please go to
+Gammatrix Banking...Vendors...System....Manual deposit
+
+Select & Enter
+
+CasinoWallet - Bonus
+To userID {emailVintageLiquidationUser.GmUserId}
+Amount {emailVintageLiquidationUser.NetProceeds} {emailVintageLiquidationUser.Currency}
+
+Thanks
+Your friendly neighborhood admin"
+                };
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in GetMessageBody()");
+            }
+
+            return builder;
+        }
+
+        /// <summary>
+        /// 
+        /// Slow method.
+        /// 
+        /// Connect to gmail and send message.
+        /// 
+        /// </summary>
+        /// <param name="gmailUser"></param>
+        /// <param name="gmailPwd"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private static async Task SendEmailAsync(string gmailUser, string gmailPwd, MimeMessage message) {
+
+            try {
+
+                using (var client = new SmtpClient()) {
+                    await client.ConnectAsync("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
+                        .ConfigureAwait(false);
+
+                    await client.AuthenticateAsync(gmailUser, gmailPwd).ConfigureAwait(false);
+
+                    await client.SendAsync(message).ConfigureAwait(false);
+
+                    await client.DisconnectAsync(true).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in SendEmailAsync()");
+            }
+        }
+
+        #endregion EmailVintageProceeds
 
         #endregion Vintages
 

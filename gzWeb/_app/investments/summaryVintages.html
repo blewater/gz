@@ -55,6 +55,9 @@
         <div ng-if="withdrawMode" class="row">
             <div class="col-xs-12 text-center">
                 <button type="submit" class="btn-gz" ng-disabled="thereIsNoSelectedVintage()">Withdraw</button>
+                <span class="info" ng-show="!thereIsNoSelectedVintage()">
+                    <img src="../../Content/Images/Investment Icons/info.png" tooltip-class="summary-tooltip" uib-tooltip-html="'In the next few 24 hours, you will be notified via e-mail upon transfer of funds minus fees.'" />
+                </span>
             </div>
         </div>
     </form>

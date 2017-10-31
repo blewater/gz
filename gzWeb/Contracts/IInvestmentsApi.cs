@@ -13,7 +13,7 @@ namespace gzWeb.Contracts
 
         Task<List<VintageViewModel>> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user);
 
-        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages);
+        ICollection<VintageDto> SaveDbSellVintages(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admins, string emailAdmins, string gmailUser, string gmailPwd);
 
         Task<List<PlanViewModel>> GetCustomerPlansAsync(int userId, decimal nextInvestAmount = 0);
     }
