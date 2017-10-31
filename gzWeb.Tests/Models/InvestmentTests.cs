@@ -419,7 +419,7 @@ namespace gzWeb.Tests.Models
                     break;
 
             }
-            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, currentYearMonthStr);
+            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, false, null, null, null, currentYearMonthStr);
         }
 
         private async Task ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)
