@@ -380,7 +380,7 @@ namespace gzDAL.Repos
 
             var vintagesList = db.Database
                 .SqlQuery<VintageDto>(
-                    "SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold, COALESCE(SellingValue-SoldFees, 0) As SellingValue," +
+                    "SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold, SellingValue - SoldFees As SellingValue," +
                     " SoldFees, SoldYearMonth FROM dbo.GetVintages(@CustomerId)",
                     new SqlParameter("@CustomerId", customerId))
                 .ToList();
