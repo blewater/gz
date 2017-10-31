@@ -714,6 +714,10 @@
     <Compile Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.Designer.cs">
       <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.cs" />
+    <Compile Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.Designer.cs">
+      <DependentUpon>201710312245283_SQLGetVintagesFuncOptim.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1534,6 +1538,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.resx">
       <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.resx">
+      <DependentUpon>201710312245283_SQLGetVintagesFuncOptim.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
