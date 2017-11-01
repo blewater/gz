@@ -265,16 +265,21 @@ module DbPlayerRevRpt =
             let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UDeposit ->
-            (* Track Vendor2User Deposits separatedly and add to TotatDeposits too *)
-            let newV2uSingleDepositAmount = thisDepositAmount
-            let newV2uTotalDepositAmount = dbVendor2UserDepositsAmount + newV2uSingleDepositAmount // in players native currency
+            // Track Vendor2User Deposits separatedly
+            let newV2uTotalDepositAmount = dbVendor2UserDepositsAmount + thisDepositAmount // in players native currency
             playerRow.Vendor2UserDeposits <- Nullable newV2uTotalDepositAmount
+
             // Add to total deposits too
-            let newDeposits = dbDeposits + newV2uSingleDepositAmount
+            let newDeposits = dbDeposits + thisDepositAmount
             playerRow.TotalDepositsAmount <- Nullable newDeposits
         | V2UCashBonus ->
+            // Track Cash bonus separatedly
             let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + thisDepositAmount // in players native currency
             playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
+
+            // Add to total deposits too
+            let newDeposits = dbDeposits + thisDepositAmount
+            playerRow.TotalDepositsAmount <- Nullable newDeposits
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.DepositsUpd

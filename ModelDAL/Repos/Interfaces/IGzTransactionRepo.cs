@@ -12,14 +12,10 @@ namespace gzDAL.Repos.Interfaces
 
         DateTime GetSoldPortfolioTimestamp(int customerId, int yearCurrent, int monthCurrent);
 
-        decimal GetWithdrawnFees(decimal liquidationAmount);
+        FeesDto GetWithdrawnFees(decimal vintageCashInvestment,string vintageYearMonthStr, decimal liquidationAmount);
 
         void SaveDbGzTransaction(int customerId, GzTransactionTypeEnum gzTransactionType, decimal amount, string trxYearMonth, DateTime createdOnUtc);
 
         void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, string trxYearMonth, DateTime createdOnUtc, decimal begGmBalance, decimal deposits, decimal withdrawals, decimal gainLoss, decimal endGmbalance);
-
-        void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, string trxYearMonth, DateTime createdOnUtc);
-
-        decimal SaveDbLiquidatedPortfolioWithFees(int customerId, decimal liquidationAmount, GzTransactionTypeEnum sellingJournalTypeReason, string trxYearMonth, DateTime createdOnUtcout, out decimal lastInvestmentCredit);
     }
 }

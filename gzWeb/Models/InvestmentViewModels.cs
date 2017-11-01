@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using gzDAL.DTO;
 using gzDAL.Models;
 
 namespace gzWeb.Models
