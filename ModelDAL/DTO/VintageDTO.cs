@@ -23,9 +23,13 @@ namespace gzDAL.DTO {
         /// </summary>
         public decimal SellingValue { get; set; }
         /// <summary>
-        /// Gz and Fund fees. As of this writing in 4%
+        /// Sold Fees itemized: Gz, Fund, Hurdle, EarlyCashout, Total
         /// </summary>
-        public decimal Fees { get; set; }
+        public FeesDto SoldFeesDto { get; set; }
+        /// <summary>
+        /// Total Fees.
+        /// </summary>
+        public decimal SoldFees { get; set; }
         /// <summary>
         /// Have 6 months elapsed from investment so that this vintage is
         /// available for selling?
