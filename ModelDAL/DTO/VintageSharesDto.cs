@@ -8,7 +8,7 @@ namespace gzDAL.DTO {
         public decimal LowRiskShares;
         public decimal MediumRiskShares;
         public decimal HighRiskShares;
-        public decimal MarketPrice { get; set; }
+        public decimal PresentMarketPrice { get; set; }
         public DateTime TradingDay { get; set; }
     }
 }

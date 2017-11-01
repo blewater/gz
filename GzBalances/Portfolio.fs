@@ -704,23 +704,41 @@ module UserTrx =
         }
 
     /// Main entry to process credit losses for the month and put forth balance amounts from gaming activities
-    let processGzTrx(db : DbContext)(yyyyMmDd : string)(portfoliosPricesMap : PortfoliosPricesMap) =
+    let processGzTrx
+        (db : DbContext)
+        (yyyyMm : string)
+        (portfoliosPricesMap : PortfoliosPricesMap)
+        (emailToProcAlone : string option) =
 
-        let yyyyMm = yyyyMmDd.Substring(0, 6)
-        
         let latestInMonthPortfoliosPrices = 
             (portfoliosPricesMap, yyyyMm) 
                 ||> findNearestPortfolioPrice
 
-        query { 
-            for trxRow in db.GzTrxs do
-                where (
-                    trxRow.YearMonthCtd = yyyyMm
-                    && trxRow.GzTrxTypes.Code = int GzTransactionType.CreditedPlayingLoss
-                )
-                sortBy trxRow.CustomerId
-                select trxRow
-        }
+        let trxRows = 
+            match emailToProcAlone with
+            | Some emailAddress ->
+                query { 
+                    for trxRow in db.GzTrxs do
+                        join users in db.AspNetUsers
+                            on (trxRow.CustomerId = users.Id)
+                        where (
+                            users.Email = emailAddress
+                            && trxRow.YearMonthCtd = yyyyMm
+                            && trxRow.GzTrxTypes.Code = int GzTransactionType.CreditedPlayingLoss
+                        )
+                        select trxRow
+                    }
+            | _ ->
+                query { 
+                    for trxRow in db.GzTrxs do
+                        where (
+                            trxRow.YearMonthCtd = yyyyMm
+                            && trxRow.GzTrxTypes.Code = int GzTransactionType.CreditedPlayingLoss
+                        )
+                        sortBy trxRow.CustomerId
+                        select trxRow
+                }
+        trxRows 
         |> Seq.iter (fun (trxRow : DbGzTrx) ->
                     // set input types
                     let dbUserMonth = {Db = db; UserId = trxRow.CustomerId; Month = yyyyMm}

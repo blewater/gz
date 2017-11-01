@@ -157,12 +157,10 @@ module DbUtil =
         if times > 0 then
             try
                 if times < 3 then
-                    logger.Info (sprintf "** DbUtil remaining efforts: %d" times)
+                    logger.Info (sprintf "** retry remaining efforts: %d" times)
                 fn()
             with 
             | _ -> System.Threading.Thread.Sleep(WaitBefRetryinMillis); retry (times - 1) fn
-        else
-            fn()
     
     /// Try a database operation within a transaction 3 times with a delay of 50ms before each commit.
     let tryDBCommit3Times (db : DbContext) (dbOperation : (unit -> unit)) : unit =

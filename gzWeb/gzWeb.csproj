@@ -151,7 +151,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="NLog.Extended, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\NLog.Extended.4.0.0.1\lib\net45-full\NLog.Extended.dll</HintPath>
@@ -713,6 +713,10 @@
     <Compile Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.cs" />
     <Compile Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.Designer.cs">
       <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.cs" />
+    <Compile Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.Designer.cs">
+      <DependentUpon>201710312245283_SQLGetVintagesFuncOptim.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1536,6 +1540,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710191557304_ExtraVintageWithdrawalFees.resx">
       <DependentUpon>201710191557304_ExtraVintageWithdrawalFees.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.resx">
+      <DependentUpon>201710312245283_SQLGetVintagesFuncOptim.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
