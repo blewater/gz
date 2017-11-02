@@ -20,7 +20,7 @@
             $scope.accountLimitMax = Math.min($scope.accountLimits.max, $scope.gamingAccount.amount);
             $scope.limitMin = $scope.accountLimits.min;
             $scope.limitMax = $scope.accountLimitMax;
-            var amountRange = "(between " + $filter('number')($scope.limitMin, 2) + " and " + $filter('number')($scope.limitMax, 2) + ")";
+            var amountRange = " (between " + $filter('number')($scope.limitMin, 2) + " and " + $filter('number')($scope.limitMax, 2) + ")";
             $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
             if ($scope.limitMin < $scope.limitMax)
                 $scope.amountPlaceholder += " " + amountRange;
