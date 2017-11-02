@@ -16,13 +16,31 @@
             if ($scope.model.selectedPayCard) {
                 $scope.model.accountEmail = $scope.model.selectedPayCard.name;
                 $scope.accountLimitMax = $scope.model.selectedPayCard.displaySpecificFields.SkrillOneTapMaxAmount;
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+                var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
+                if ($scope.accountLimits.min < $scope.accountLimitMax)
+                    $scope.amountPlaceholder += amountRange;
+
                 angular.element('#amount').focus();
             } else {
                 $scope.model.accountEmail = undefined;
                 $scope.accountLimitMax = $scope.accountLimits.max;
                 $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
                 angular.element('#accountEmail').focus();
+            }
+        };
+
+        $scope.setAccountLimits = function () {
+            if ($scope.model.reset) {
+                $scope.accountLimitMax = $scope.accountLimits.max;
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+            }
+            else if ($scope.model.selectedPayCard) {
+                $scope.accountLimitMax = $scope.model.selectedPayCard.displaySpecificFields.SkrillOneTapMaxAmount;
+                var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
+                if ($scope.accountLimits.min < $scope.accountLimitMax)
+                    $scope.amountPlaceholder += amountRange;
             }
         };
 
