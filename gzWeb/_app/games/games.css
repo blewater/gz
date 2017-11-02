@@ -737,3 +737,8 @@
 }
 /* #endregion */
 
+/* #region no-game */
+.auth.no-game .heading {
+    height: 60px;
+}
+/* #endregion */

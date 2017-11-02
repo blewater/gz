@@ -18,7 +18,7 @@
         // #region Messages
         var m = 1, n = 1, t = 1;
         $scope.modal = function () {
-            message.modal('Title', {
+            message.modal('Oooops', {
                 nsSize: 'lg',
                 nsBody: '<pre><code>' + 'This is the <b>body</b> <br/> of the message' + '</code></pre>'
             })
@@ -53,6 +53,25 @@
         };
         $scope.errorObj = function () {
             message.error({});
+        };
+
+        $scope.noGame = function () {
+            var promise = message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '_app/games/noGameFound.html',
+                nsCtrl: 'noGameFoundCtrl',
+                nsStatic: true,
+                nsShowClose: false,
+                nsParams: {
+                    searchParams: {
+                        category: 'classicslots'
+                    }
+                }
+            });
+            promise.then(function () {
+                alert("Returned!");
+            });
         };
         // #endregion
 
