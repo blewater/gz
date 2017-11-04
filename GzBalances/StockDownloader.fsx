@@ -241,3 +241,6 @@ db
 |> pFundsQry
 |> getPortfoliosPrices
 |> setDbPortfoliosPrices db
+
+// Just checking if symbol dates 
+db |> pFundsQry |> getFundClosingPrices

@@ -71,8 +71,7 @@ module DailyPortfolioShares =
         dbFundsWithPortfolioFunds
         |> Seq.map
             (fun (f : DbFunds, _ : DbPortfolioFunds) -> 
-                f.Symbol)
-        |> Seq.map getLatestFundQuote
+                getLatestFundQuote f.Symbol)
         // Sync to latest max TradedOn day date
         |> (fun quotes ->
                 let maxDate =
