@@ -129,9 +129,36 @@ namespace gzWeb.Tests.Controllers
         [Test]
         public async Task TestSellingAVintage() {
 
-            var user = manager.FindByEmail("salem8@gmail.com");
+            var user = manager.FindByEmail("alaa_el-chami@hotmail.com");
             var vintagesDto = await SellOneVintage(user);
         }
+
+        [Test]
+        //public async Task TestSellEarlyVintage()
+        //{
+        //    var user = manager.FindByEmail("alaa_el-chami@hotmail.com");
+
+        //    var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
+        //    var sellVintage = vintagesVMs
+        //        .Single(v => v.YearMonthStr == "201711");
+
+        //    sellVintage.Locked = true;
+        //    sellVintage.Selected = true;
+
+        //    ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
+        //        .ToList();
+
+        //    invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
+
+        //    vintagesDto = investmentsApiController.SaveDbSellVintages(
+        //        user.Id,
+        //        vintagesDto,
+        //        false,
+        //        null,
+        //        null,
+        //        null);
+        //    Assert.IsTrue(sellVintage.SoldAmount > 0);
+        //}
 
         private async Task<ICollection<VintageDto>> SellOneVintage(ApplicationUser user) {
 

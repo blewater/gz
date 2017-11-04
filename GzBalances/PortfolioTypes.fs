@@ -59,7 +59,8 @@ module PortfolioTypes =
     type VintagesSold = {
         PortfolioShares : PortfolioShares; 
         BoughtAt : Money; 
-        SoldAt : Money 
+        SoldAt : Money;
+        CurrentMonthLiquidation: Money;
     }
 
     type PortfolioSharePrice = {
@@ -101,7 +102,6 @@ module PortfolioTypes =
         Withdrawals : Money;
         GainLoss : Money;
         EndBalance : Money;
-        AmountToBuyStock : Money;
         Vendor2UserDeposits : Money;
         CashBonus : Money;
     }
