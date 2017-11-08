@@ -74,7 +74,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="PortfolioTypes.fs" />
-    <None Include="Script.fsx" />
+    <None Include="StockDownloader.fsx" />
     <Compile Include="Portfolio.fs" />
     <Compile Include="WithdrawnVintageBonusGen.fs" />
     <None Include="Scripts\load-references-debug.fsx" />
@@ -86,6 +86,7 @@
     <None Include="quotes.csv" />
     <None Include="everymatrix_deposits.csv" />
     <Content Include="packages.config" />
+    <Compile Include="DailyPortfolioShares.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
