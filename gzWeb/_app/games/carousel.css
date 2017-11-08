@@ -35,6 +35,10 @@
     -moz-transition: all 2s ease-out 0s;
     -o-transition: all 2s ease-out 0s;
     transition: all 2s ease-out 0s;
+
+    background-position: center;
+    background-size: cover;
+    /*height: calc(~"563px - (1400px - 100vw - 15px) * 0.19");*/
 }
 
 .gz-carousel .gz-slide .gz-slide-bg {
