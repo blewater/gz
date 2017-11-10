@@ -22,6 +22,14 @@
             templateUrl: function() {
                 return helpers.ui.getTemplate('_app/directives/gzSelect.html');
             },
+            //link: function (scope, element, attrs) {
+            //    function setIconLineHeight() {
+            //        var $select = element.find('select.form-control');
+            //        var $icon = element.find('i.fa');
+            //        $icon.css('line-height', $select.css('height'));
+            //    }
+            //    $timeout(setIconLineHeight, 10);
+            //},
             controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#27A95C', position: 'absolute', top: '50%' };
 
@@ -66,13 +74,6 @@
                 $scope.$on("$destroy", function () {
                     unregisterModelWatch();
                 });
-
-                function setIconLineHeight() {
-                    var $select = $element.find('select.form-control');
-                    var $icon = $element.find('i.fa');
-                    $icon.css('line-height', $select.css('height'));
-                }
-                setIconLineHeight();
             }]
         };
     }
