@@ -6,15 +6,20 @@
 
         <div class="filters">
             <div class="container">
-                <div class="col-xs-12">
+                <div class="col-xs-12 visible-md visible-lg">
                     <div class="filter-categories">
                         <span ng-repeat-start="category in gameCategories" class="filter-category">
-                            <a ng-class="{'selected':category.selected}" ng-click="onCategorySelected($index)">
+                            <a ng-class="{'selected':category.selected}" ng-click="onCategoryClicked($index)">
                                 {{category.title}}
                             </a>
                             <span class="divider" ng-hide="$index === gameCategories.length - 1 || (xs && $index % 3 === 2) || (sm && $index % 6 === 5)">|</span>
                         </span>
                         <span ng-repeat-end ng-class="{'clearfix':(xs && $index % 3 === 2) || (sm && $index % 6 === 5)}"></span>
+                    </div>
+                </div>
+                <div class="col-xs-offset-1 col-xs-10 visible-xs visible-sm">
+                    <div class="filter-categories">
+                        <gz-select gz-model="selectedCategoryModel" gz-collection="gameCategories" gz-id="name" gz-display="title" gz-change="onCategorySelected(id)" gz-prompt="SELECT CATEGORY" gz-loading="loadingCategories"></gz-select>
                     </div>
                 </div>
                 <div class="col-xs-offset-1 col-xs-10 col-sm-offset-1 col-sm-5">
