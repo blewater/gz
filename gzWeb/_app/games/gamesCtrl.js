@@ -31,6 +31,7 @@
 
         var selectedCategoryName = "", selectedVendorName = "";
         $scope.selectedCategory = undefined;
+        $scope.selectedCategoryModel = undefined;
         $scope.searchByNameTerm = "";
         $scope.searchByVendorTerm = "";
         $scope.projectedCategories = [];
@@ -270,15 +271,27 @@
         //    return getFriendlyTitle(name).replace(/ /g, '\xa0');
         //}
 
-        $scope.onCategorySelected = function (index) {
-            for (i = 0; i < $scope.gameCategories.length; i++) 
+        function selectFilterCategory(index) {
+            for (i = 0; i < $scope.gameCategories.length; i++)
                 if (i !== index)
                     $scope.gameCategories[i].selected = false;
-            $scope.gameCategories[index].selected = !$scope.gameCategories[index].selected;
 
-            $location.search('category', $scope.gameCategories[index].selected ? $scope.gameCategories[index].name.toLowerCase() : null);
-
+            if (index > -1) {
+                $scope.gameCategories[index].selected = !$scope.gameCategories[index].selected;
+                $location.search('category', $scope.gameCategories[index].selected ? $scope.gameCategories[index].name.toLowerCase() : null);
+            }
+            else
+                $location.search('category', null);
+        }
+        $scope.onCategoryClicked = function (index) {
+            selectFilterCategory(index);
             $scope.selectedCategory = $scope.gameCategories[index].selected ? $scope.gameCategories[index] : undefined;
+            search();
+        };
+        $scope.onCategorySelected = function (name) {
+            var categoryNames = $filter('map')($scope.gameCategories, function (x) { return x.name; });
+            let index = categoryNames.indexOf(name);
+            selectFilterCategory(index);
             search();
         };
 

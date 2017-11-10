@@ -56,7 +56,8 @@
                     return api.withdrawVintages(updatedVintages);
                 }, function (withdrawResponse) {
                     $scope.vintages = processVintages(withdrawResponse.Result);
-                    message.success("Your wallet balance has been updated. Please check your casino account over the next few days.");
+                    var netProceeds = getVintageSoldNetProceeds(withdrawResponse.Result);
+                    message.success("To be credited into your casino wallet (" + netProceeds.toString() + " " + $scope.currency + " pending withdrawal).");
                 }, {
                     rejectFn: function() {
                         var selectedCount = $filter('where')(updatedVintages, { 'Selected': true }).length;
@@ -96,6 +97,13 @@
             });
             var ordered = $filter('orderBy')(mappedVintages, 'Date', true);
             return ordered;
+        }
+        function getVintageSoldNetProceeds(vintages) {
+            var totalNetProceeds = vintages.reduce(function (prevVal, v) {
+                var netAmount = v.Selected ? prevVal + (v.SellingValue - v.SoldFees) : prevVal;
+                return netAmount;
+            }, 0);
+            return totalNetProceeds;
         }
 
         $scope.toggleInvestmentHistory = function () {

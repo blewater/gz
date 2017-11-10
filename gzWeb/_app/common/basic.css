@@ -346,7 +346,8 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     position: absolute;
     /*right: 10px;*/
     right: 25px;
-    top: 0;
+    /*top: 0;*/
+    top: calc(50% - 5px);
     color: #27A95C;
     font-weight: bold;
     /*line-height: 48px !important;*/

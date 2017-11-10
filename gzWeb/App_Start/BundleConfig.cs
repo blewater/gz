@@ -304,18 +304,19 @@ namespace gzWeb
                                     , "~/_app/investments/summaryCtrl.js"
                                     , "~/_app/investments/portfolioCtrl.js"
                                     , "~/_app/investments/performanceCtrl.js"
-                                    , "~/_app/investments/activityCtrl.js"
+                                    //, "~/_app/investments/activityCtrl.js"
                                     , "~/_app/investments/summaryVintagesCtrl.js"
                                     , "~/_app/investments/gzPlansAllocationChart.js"
-                                    , "~/_app/investments/gzPlanHoldingsChart.js"
+                                    //, "~/_app/investments/gzPlanHoldingsChart.js"
                                     , "~/_app/investments/gzPerformanceGraph.js"
             #endregion
 
             #region Games
                                     , "~/_app/games/gamesCtrl.js"
                                     , "~/_app/games/gameCtrl.js"
-                                    , "~/_app/games/gzFeaturedGame.js"
-                                    , "~/_app/games/gzFeaturedGames.js"
+                                    , "~/_app/games/noGameFoundCtrl.js"
+                                    //, "~/_app/games/gzFeaturedGame.js"
+                                    //, "~/_app/games/gzFeaturedGames.js"
                                     , "~/_app/games/gzCarousel.js"
                                     , "~/_app/games/carouselVideoCtrl.js"
             #endregion
@@ -360,6 +361,7 @@ namespace gzWeb
             #endregion
         }
 
+        #region Bundles Helpers
         /// <summary>
         /// 
         /// Create a bundle out of a single Css file with an option to fix internal image paths 
@@ -379,14 +381,16 @@ namespace gzWeb
             string cssCustomCdnPath = null)
         {
             Bundle cssBundle;
-            if (useEmbeddedImagePathFixer) {
+            if (useEmbeddedImagePathFixer)
+            {
                 cssBundle = new StyleBundle(bundleKeyRelPath)
                     .Include(
-                        cssLocalPath, 
+                        cssLocalPath,
                         /** fix image paths **/ CssImageRelPathFixer
                     );
             }
-            else {
+            else
+            {
                 cssBundle = new StyleBundle(bundleKeyRelPath)
                     .Include(
                         cssLocalPath
@@ -517,6 +521,6 @@ namespace gzWeb
             var contentHash = method.Invoke(bundleResponse, null);
             return contentHash.ToString();
         }
-
+        #endregion
     }
 }

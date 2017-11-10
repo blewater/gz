@@ -118,7 +118,7 @@ namespace gzDAL.Repos {
         /// <param name="portfoliosPricesDto"></param>
         private void SetVintageMarketPricing(VintageSharesDto vintageShares, PortfolioPricesDto portfoliosPricesDto) {
 
-            vintageShares.MarketPrice = vintageShares.LowRiskShares*(decimal) portfoliosPricesDto.ConservativePortfolioPrice +
+            vintageShares.PresentMarketPrice = vintageShares.LowRiskShares*(decimal) portfoliosPricesDto.ConservativePortfolioPrice +
                                         vintageShares.MediumRiskShares*(decimal) portfoliosPricesDto.MediumPortfolioPrice +
                                         vintageShares.HighRiskShares*(decimal) portfoliosPricesDto.HighPortfolioPrice;
             vintageShares.TradingDay = DbExpressions.GetDtYearMonthDay(portfoliosPricesDto.YearMonthDay);

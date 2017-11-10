@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using gzDAL.DTO;
 using GzDb;
 using Microsoft.FSharp.Collections;
+using Microsoft.FSharp.Core;
 using Assert = NUnit.Framework.Assert;
 
 namespace gzWeb.Tests.Models
@@ -146,7 +147,7 @@ namespace gzWeb.Tests.Models
                     SetDbPortfoliosPriceMap(sqlProviderCtx, GetPortfoliosPricesMapTable(startYearMonthStr, monthsCnt), startYearMonthStr,
                         monthsCnt);
 
-                UserTrx.processGzTrx(sqlProviderCtx, startYearMonthStr, portfoliosPriceMap);
+                UserTrx.processGzTrx(sqlProviderCtx, startYearMonthStr, portfoliosPriceMap, FSharpOption<string>.None);
             }
         }
 
@@ -418,7 +419,7 @@ namespace gzWeb.Tests.Models
                     break;
 
             }
-            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, currentYearMonthStr);
+            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, false, null, null, null, currentYearMonthStr);
         }
 
         private async Task ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)
@@ -454,7 +455,7 @@ namespace gzWeb.Tests.Models
                 }
 
                 // Process losses -> invbalance
-                UserTrx.processGzTrx(sqlProviderCtx, currentYearMonthStr, portfoliosPriceMap);
+                UserTrx.processGzTrx(sqlProviderCtx, currentYearMonthStr, portfoliosPriceMap, FSharpOption<string>.None);
             }
 
             await AssertAllUsersVintagesCountAfterMonthClearance(usersFound, monthsCnt + 1);

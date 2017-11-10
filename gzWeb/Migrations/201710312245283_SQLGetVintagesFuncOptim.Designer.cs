@@ -7,13 +7,13 @@ namespace gzWeb.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Modify_Promo_Code_Plus_IsMobile_Uniq : IMigrationMetadata
+    public sealed partial class SQLGetVintagesFuncOptim : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Modify_Promo_Code_Plus_IsMobile_Uniq));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(SQLGetVintagesFuncOptim));
         
         string IMigrationMetadata.Id
         {
-            get { return "201710201415242_Modify_Promo_Code_Plus_IsMobile_Uniq"; }
+            get { return "201710312245283_SQLGetVintagesFuncOptim"; }
         }
         
         string IMigrationMetadata.Source

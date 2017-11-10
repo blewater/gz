@@ -123,19 +123,45 @@ namespace gzWeb.Tests.Controllers
 
             invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
 
-            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto);
+            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto, false, null, null, null);
         }
 
         [Test]
-        public void TestSellingAVintage() {
+        public async Task TestSellingAVintage() {
 
-            var user = manager.FindByEmail("salem8@gmail.com");
-            var vintagesDto = SellOneVintage(user);
+            var user = manager.FindByEmail("alaa_el-chami@hotmail.com");
+            var vintagesDto = await SellOneVintage(user);
         }
+
+        [Test]
+        //public async Task TestSellEarlyVintage()
+        //{
+        //    var user = manager.FindByEmail("alaa_el-chami@hotmail.com");
+
+        //    var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
+        //    var sellVintage = vintagesVMs
+        //        .Single(v => v.YearMonthStr == "201711");
+
+        //    sellVintage.Locked = true;
+        //    sellVintage.Selected = true;
+
+        //    ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
+        //        .ToList();
+
+        //    invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
+
+        //    vintagesDto = investmentsApiController.SaveDbSellVintages(
+        //        user.Id,
+        //        vintagesDto,
+        //        false,
+        //        null,
+        //        null,
+        //        null);
+        //    Assert.IsTrue(sellVintage.SoldAmount > 0);
+        //}
 
         private async Task<ICollection<VintageDto>> SellOneVintage(ApplicationUser user) {
 
-            
             var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
 
             // Mark for selling earliest even if sold already or is locked
@@ -154,7 +180,11 @@ namespace gzWeb.Tests.Controllers
 
             vintagesDto = investmentsApiController.SaveDbSellVintages(
                 user.Id, 
-                vintagesDto);
+                vintagesDto,
+                false,
+                null,
+                null,
+                null);
             return vintagesDto;
         }
 
@@ -188,25 +218,6 @@ namespace gzWeb.Tests.Controllers
 
             var vintages = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
             foreach (var vintageViewModel in vintages) {
-                Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
-                    vintageViewModel.YearMonthStr,
-                    vintageViewModel.InvestmentAmount,
-                    vintageViewModel.SellingValue,
-                    vintageViewModel.Sold,
-                    vintageViewModel.Locked);
-                Assert.IsNotNull(vintageViewModel.SellingValue);
-            }
-        }
-
-        [Test]
-        public async Task GetVintagesSellingValue()
-        {
-
-            var user = manager.FindByEmail("6month@allocation.com");
-
-            var vintages = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
-            foreach (var vintageViewModel in vintages)
-            {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
                     vintageViewModel.YearMonthStr,
                     vintageViewModel.InvestmentAmount,

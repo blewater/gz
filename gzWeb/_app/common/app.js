@@ -128,6 +128,8 @@ var APP = (function () {
                     $rootScope.mobileMenuExpanded = false;
                     if (next && !next.redirectTo && !auth.authorize(next.roles))
                         $location.path(constants.routes.home.path);
+                    else if (next.$$route.originalPath === constants.routes.home.path && auth.data.isGamer)
+                        $location.path(constants.routes.games.path).search({});
                 });
 
                 function onRouteChangeSuccess() {

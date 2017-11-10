@@ -92,7 +92,7 @@
 
         function embedCDE() {
             var sdkUrl = $scope.paymentMethodCfg.secureFormScriptUrl;
-            if (sdkUrl.indexOf('CardTokenization') === -1) {
+            if (!sdkUrl || ssdkUrl.indexOf('CardTokenization') === -1) {
                 message.error('Wrong SecureFormScriptUrl');
                 return;
             }
