@@ -2,9 +2,9 @@
     <div class="gz-carousel-slides">
         <div ng-repeat="slide in gzSlides track by $index"
              class="gz-slide" ng-class="{'current': $index === currentIndex}"
-             ng-style="{ 'margin-left': calcMarginLeft($index), 'z-index': calcZIndex($index) }"
+             ng-style="{ 'margin-left': calcMarginLeft($index), 'z-index': calcZIndex($index), 'background-image': 'url({{slide.bg}})' }"
              ng-mouseover="onHover()" ng-mouseleave="onLeave()">
-            <img class="gz-slide-bg" ng-src="{{slide.bg}}" />
+            <!--<img class="gz-slide-bg" ng-src="{{slide.bg}}" />-->
             <div class="gz-slide-title text-shadow-dark">{{slide.title}}</div>
             <div class="gz-slide-subtitle text-shadow-dark">{{slide.subtitle}}</div>
             <div class="gz-slide-action">
