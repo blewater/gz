@@ -11,10 +11,10 @@
             <div class="col-xs-12">
                 <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required.</div>
                 <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">
-                    Available withdrawal amount is between {{limitMin | number : 2}} and {{limitMax | number : 2}}.
+                    Available withdrawal amount is between {{limitMin | isoCurrency : currency}} and {{limitMax | isoCurrency : currency}}.
                 </div>
                 <div class="help-block" ng-class="{'show': limitMin >= limitMax}">
-                    Your account balance is below the least amount you can withdraw.
+                    Your account balance ({{limitMax | isoCurrency : currency}}) is below the least amount ({{limitMin | isoCurrency : currency}}) you can withdraw.
                 </div>
             </div>
         </div>
