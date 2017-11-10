@@ -69,10 +69,9 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
     }
     everymatrixReportsArgs
 
-let gmReports2InvBalanceUpdate 
+let gmReports2Db 
         (db : DbContext)
-        (emailToProcAlone : string option)
-        (marketPortfolioShares : PortfolioTypes.PortfoliosPricesMap) =
+        (emailToProcAlone : string option) =
 
     logger.Info("Start processing @ UTC : " + DateTime.UtcNow.ToString("s"))
     logger.Info("----------------------------")
@@ -91,26 +90,27 @@ let gmReports2InvBalanceUpdate
 
     // Extract & Load Daily Everymatrix Report
     Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder emailToProcAlone
-
-    (db, rptFilesOkToProcess.DayToProcess, marketPortfolioShares) 
-    |||> UserTrx.processGzTrx
-
-
-
-    logger.Info("----------------------------")
-    logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
+    rptFilesOkToProcess.DayToProcess
 
 /// Choose next biz processing steps based on args
 let portfolioSharesPrelude2MainProcessing (db : DbContext) =
     DailyPortfolioShares.storeShares db
 
+let getTimer() =
+    let timer = System.Diagnostics.Stopwatch()
+    timer.Start()
+    timer
+
 [<EntryPoint>]
 let main argv = 
+
+    let appTimer = getTimer()
 
     try 
         // Create a database context
         let db = getOpenDb dbConnectionString
 
+        // Rtm args
         let cmdArgs = 
             argv |> parseCmdArgs
 
@@ -118,14 +118,27 @@ let main argv =
         let dwLoader = ExcelDownloader(downloadArgs, cmdArgs.BalanceFilesUsage)
         dwLoader.SaveReportsToInputFolder()
 
-        // Main database processing 
-        gmReports2InvBalanceUpdate 
-            db 
+        // Excel reports -> db
+        let customRpdDate = 
+            gmReports2Db 
+                db 
+                cmdArgs.UserEmailProcAlone
+
+        // Clear Monthly Investment User Balances
+        UserTrx.processGzTrx
+            db
+            (customRpdDate.Substring(0, 6))
+            (portfolioSharesPrelude2MainProcessing db)
             cmdArgs.UserEmailProcAlone
-            <| portfolioSharesPrelude2MainProcessing db
 
         // Vintage withdrawal bonus
         WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
+
+        appTimer.Stop()
+        logger.Info("----------------------------")
+        logger.Info(sprintf "The investment awarding process took %f seconds or %f minutes." <| (float) appTimer.ElapsedMilliseconds/1000.0 <| (float) appTimer.ElapsedMilliseconds/60000.0)
+        logger.Info("Finished processing @ UTC : " + DateTime.UtcNow.ToString("s"))
+
         0
     with ex ->
         logger.Fatal(ex, "1 or more runtime exceptions at GzBatch")

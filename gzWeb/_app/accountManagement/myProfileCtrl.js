@@ -200,7 +200,7 @@
             emWamp.getProfile().then(function (response) {
                 $scope.profile = response;
 
-                $timeout(function () {
+                //$timeout(function () {
                     $scope.model.email = $scope.profile.fields.email;
                     $scope.model.username = $scope.profile.fields.username;
                     $scope.model.userId = $scope.profile.fields.userID;
@@ -225,7 +225,7 @@
                     $scope.onCountrySelected($scope.model.country.code);
                     $scope.onYearSelected($scope.model.yearOfBirth);
                     $scope.onMonthSelected($scope.model.monthOfBirth);
-                }, 0);
+                //}, 0);
             });
         }
 
@@ -259,11 +259,12 @@
         // #endregion
 
         $scope.submit = function () {
-            if ($scope.form.$valid) {
+            if ($scope.form.$valid && !$scope.waiting) {
                 $scope.waiting = true;
                 var dateOfBirth = moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]).format('YYYY-MM-DD');
                 var gender = $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender;
                 var parameters = {
+                    email: $scope.model.email,
                     gender: gender,
                     title: $scope.model.title,
                     firstname: $scope.model.firstname,

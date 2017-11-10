@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
@@ -13,8 +10,6 @@ using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
 using Z.EntityFramework.Plus;
 using System.Runtime.Caching;
-using System.Threading.Tasks;
-using System.Web.UI.WebControls.Expressions;
 using NLog;
 
 namespace gzDAL.Repos {
@@ -62,19 +57,6 @@ namespace gzDAL.Repos {
                     .Set(key, lastInvestmentAmount.Value, DateTimeOffset.UtcNow.AddDays(1));
             }
             return lastInvestmentAmount.Value;
-        }
-
-        /// <summary>
-        /// 
-        /// Overloaded (Function): Calculate the greenzorro & Fund fees on any amount that greenzorro offered an investment service.
-        /// 
-        /// </summary>
-        /// <param name="liquidationAmount"></param>
-        /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
-        public decimal GetWithdrawnFees(decimal liquidationAmount) {
-
-            decimal gzFeesAmount, fundsFeesAmount;
-            return GetWithdrawnFees(liquidationAmount, out gzFeesAmount, out fundsFeesAmount);
         }
 
         /// <summary>
@@ -140,150 +122,124 @@ namespace gzDAL.Repos {
 
         /// <summary>
         /// 
-        /// Transfer to the Gaming account by selling investment shares and save the calculated commission and fund fees transactions
-        /// 
-        /// Note investment amount is the full amount before any fees deduction!
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="investmentAmount">Full Investment amount before deducting any fees.</param>
-        /// <param name="trxYearMonth"></param>
-        /// <param name="createdOnUtc"></param>
-        /// <returns></returns>
-        public void SaveDbTransferToGamingAmount(int customerId, decimal investmentAmount, string trxYearMonth, DateTime createdOnUtc) {
-
-            if (investmentAmount <= 0) {
-
-                throw new Exception("Invalid amount to transfer to gaming account. Amount must be greater than 0: " + investmentAmount);
-
-            }
-
-            decimal gzFeesAmount, fundsFeesAmount;
-            decimal netAmountToCustomer = investmentAmount - GetWithdrawnFees(investmentAmount, out gzFeesAmount, out fundsFeesAmount);
-
-            // Save Fees Transactions
-            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.GzFees, gzFeesAmount, trxYearMonth, createdOnUtc, null);
-
-            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.FundFee, fundsFeesAmount, trxYearMonth, createdOnUtc, null);
-
-            // Save the reason for those fees
-            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.TransferToGaming, netAmountToCustomer, trxYearMonth, createdOnUtc, null);
-
-            _db.SaveChanges();
-        }
-
-        /// <summary>
-        /// 
         /// Overloaded: Calculate the greenzorro & Fund fees on any amount that greenzorro offered an investment service.
         /// Returns the individual fees as out parameters.
         /// 
         /// </summary>
+        /// <param name="vintageYearMonthStr"></param>
         /// <param name="liquidationAmount"></param>
-        /// <param name="gzFeesAmount">Out parameter to return the greenzorro fee.</param>
-        /// <param name="fundsFeesAmount">Out parameter to return the Fund fee.</param>
+        /// <param name="vintageCashInvestment"></param>
         /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
-        private decimal GetWithdrawnFees(decimal liquidationAmount, out decimal gzFeesAmount, out decimal fundsFeesAmount) {
+        public FeesDto GetWithdrawnFees(decimal vintageCashInvestment, string vintageYearMonthStr, decimal liquidationAmount) {
 
-            var confTask = confRepo.GetConfRow();
+            var confRow = confRepo.GetConfRow().Result;
 
-            var confRow = confTask.Result;
+            var isAnEarlyWithdrawal = IsAnEarlyWithdrawal(vintageYearMonthStr, confRow);
 
-            gzFeesAmount = liquidationAmount *
-                // COMMISSION_PCNT: Database Configuration Value
-                (decimal)confRow.COMMISSION_PCNT / 100;
+            // beyond the unleash day? (early withdrawal fee)
+            decimal earlyCashoutFee = GetEarlyCashoutFee(liquidationAmount, isAnEarlyWithdrawal, (decimal)confRow.EARLY_WITHDRAWAL_FEE_PCNT);
 
-            fundsFeesAmount = liquidationAmount *
-                // FUND_FEE_PCNT: Database Configuration Value
-                (decimal)confRow.FUND_FEE_PCNT / 100;
+            var gzFeesAmount = GetGzFeesAmount(liquidationAmount, isAnEarlyWithdrawal, (decimal)confRow.COMMISSION_PCNT);
 
-            return gzFeesAmount + fundsFeesAmount;
+            var fundsFeesAmount = GetFundsFeesAmount(liquidationAmount, isAnEarlyWithdrawal, (decimal)confRow.FUND_FEE_PCNT);
+
+            // hurdle fee
+            var hurdleFee = GetHurdleFee(
+                vintageCashInvestment, 
+                liquidationAmount,
+                isAnEarlyWithdrawal,
+                (decimal) confRow.HURDLE_TRIGGER_GAIN_PCNT,
+                (decimal) confRow.EARLY_WITHDRAWAL_FEE_PCNT);
+
+            // Return all fees
+            var fees = new FeesDto() {
+                EarlyCashoutFee = earlyCashoutFee,
+                FundFee = fundsFeesAmount,
+                GzFee = gzFeesAmount,
+                HurdleFee = hurdleFee,
+                Total = gzFeesAmount + fundsFeesAmount + earlyCashoutFee + hurdleFee
+            };
+
+            return fees;
         }
 
-        /// <summary>
-        /// 
-        /// Save to DB the calculated Fund greenzorro fees.
-        /// 
-        /// Note this is not enclosed within a user transaction. It's the responsibility of the caller.
-        /// 
-        /// Uses table configuration values.
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="liquidationAmount"></param>
-        /// <param name="sellingJournalTypeReason"></param>
-        /// <param name="trxYearMonth"></param>
-        /// <param name="createdOnUtc"></param>
-        /// <param name="lastInvestmentCredit">This months casino credit from player losses that will be used for buying funds because of liquidation</param>
-        /// <returns></returns>
-        public decimal SaveDbLiquidatedPortfolioWithFees(
-            int customerId, 
-            decimal liquidationAmount, 
-            GzTransactionTypeEnum sellingJournalTypeReason, 
-            string trxYearMonth, 
-            DateTime createdOnUtc, 
-            out decimal lastInvestmentCredit)
+        private static bool IsAnEarlyWithdrawal(string vintageYearMonthStr, GzConfiguration confRow)
         {
 
-            if (liquidationAmount <= 0) {
+            var monthLockInPeriod = confRow.LOCK_IN_NUM_DAYS / 30;
 
-                throw new Exception("Invalid investment amount to liquidate. Amount must be greater than 0: " + liquidationAmount);
+            var vintageMonthDate = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageYearMonthStr);
 
-            }
+            var futureUnleashDay = vintageMonthDate.AddMonths(monthLockInPeriod); // locking months + 1
 
-            decimal gzFeesAmount, fundsFeesAmount;
-            decimal reducedAmountToReturn = liquidationAmount - GetWithdrawnFees(liquidationAmount, out gzFeesAmount, out fundsFeesAmount);
-
-            // Save Fees Transactions
-            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.GzFees, gzFeesAmount, trxYearMonth, createdOnUtc, null);
-
-            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.FundFee, fundsFeesAmount, trxYearMonth, createdOnUtc, null);
-
-            // Save the liquidation transaction
-            SaveDbGzTransaction(customerId, sellingJournalTypeReason, reducedAmountToReturn, trxYearMonth, createdOnUtc, null);
-
-            // Save the transfer to Everymatrix amount out of the shares selling
-            SaveDbGzTransaction(customerId, GzTransactionTypeEnum.TransferToGaming, reducedAmountToReturn, trxYearMonth, 
-                createdOnUtc, null);
-
-            // Update any credited player losses back to transfer to Everymatrix amounts without any fees deductions.
-            lastInvestmentCredit = SaveDbCashInvestmentsToTrnsfToEverymatrix(customerId, trxYearMonth, createdOnUtc);
-
-            _db.SaveChanges();
-
-            return reducedAmountToReturn;
+            var retValue = futureUnleashDay > DateTime.Today;
+            return retValue;
         }
 
-        /// <summary>
-        /// 
-        /// Update any cash investment transactions to transactions indicating cash to be returned
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="trxYearMonth"></param>
-        /// <param name="createdOnUtc"></param>
-        private decimal SaveDbCashInvestmentsToTrnsfToEverymatrix(int customerId, string trxYearMonth, DateTime createdOnUtc) {
+        private static decimal GetEarlyCashoutFee(decimal liquidationAmount, bool isAnEarlyWithdrawal, decimal earlyCashoutFeePcnt)
+        {
 
-            var currentYearMonthStr = createdOnUtc.ToStringYearMonth();
+            decimal earlyCashoutFee = 0m;
 
-            var cplayingLossId = _db.GzTrxTypes
-                .Where(tt => tt.Code == GzTransactionTypeEnum.CreditedPlayingLoss)
-                .Select(tt => tt.Id)
-                .Single();
+            if (isAnEarlyWithdrawal)
+            {
+                earlyCashoutFee = liquidationAmount
+                                  *
+                                  (earlyCashoutFeePcnt / 100m);
+            }
+            return earlyCashoutFee;
+        }
 
-            var lastInvestmentCredit = _db.GzTrxs
-                .Where(t => t.CustomerId == customerId
-                            && t.YearMonthCtd == currentYearMonthStr
-                            && t.TypeId == cplayingLossId)
-                .Select(t => t.Amount)
-                .SingleOrDefault();
+        private static decimal GetFundsFeesAmount(decimal liquidationAmount, bool isAnEarlyWithdrawal,
+            decimal fundFeePcnt) {
 
-            SaveDbGzTransaction(
-                customerId, 
-                GzTransactionTypeEnum.TransferToGaming, 
-                lastInvestmentCredit, trxYearMonth,
-                createdOnUtc);
+            var fundsFeesAmount =
+                !isAnEarlyWithdrawal
+                    ? liquidationAmount
+                      *
+                      (fundFeePcnt / 100m)
+                    : 0;
+            return fundsFeesAmount;
+        }
 
-            return lastInvestmentCredit;
+        private static decimal GetGzFeesAmount(decimal liquidationAmount, bool isAnEarlyWithdrawal, decimal gzCommissionPcnt) {
+
+            var gzFeesAmount =
+                !isAnEarlyWithdrawal
+                    ? liquidationAmount
+                      *
+                      (gzCommissionPcnt / 100m)
+                    : 0;
+            return gzFeesAmount;
+        }
+
+        private static decimal GetHurdleFee(
+            decimal vintageCashInvestment,
+            decimal liquidationAmount,
+            bool isEarlyWithdrawal,
+            decimal hurdleFeeTriggerPcnt,
+            decimal hurdleFeePcnt)
+        {
+
+            decimal hurdleFee = 0m;
+
+            // Early withdrawals have no other applicable fees
+            if (!isEarlyWithdrawal)
+            {
+
+                if (liquidationAmount
+                    >=
+                    (vintageCashInvestment
+                     * // investment gained more than 10%
+                     (1 + (hurdleFeeTriggerPcnt / 100m))))
+                {
+
+                    hurdleFee = liquidationAmount
+                                *
+                                (hurdleFeePcnt / 100m);
+                }
+            }
+            return hurdleFee;
         }
 
         /// <summary>
@@ -308,7 +264,7 @@ namespace gzDAL.Repos {
             SaveDbGzTransaction(
                 customerId, 
                 GzTransactionTypeEnum.CreditedPlayingLoss,
-                totPlayinLossAmount * (decimal) creditPcnt / 100, 
+                totPlayinLossAmount * ((decimal) creditPcnt / 100m), 
                 trxYearMonth,
                 createdOnUtc,
                 creditPcnt, 

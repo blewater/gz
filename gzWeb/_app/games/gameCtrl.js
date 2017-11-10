@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gameCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', '$log', 'chat', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log, chat) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', '$log', 'chat', 'message', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log, chat, message) {
         $controller('authCtrl', { $scope: $scope });
 
         var searchParams = null;
@@ -29,73 +29,87 @@
                     pageSize: 1,
                 }).then(function (gamesResult) {
                     $scope.game = gamesResult.games[0];
-                    $rootScope.playing = true;
+                    if ($scope.game) {
+                        $rootScope.playing = true;
 
-                    function setGameDimensions() {
-                        var percent = 0.8;
-                        var windowWidth = $window.innerWidth;
-                        var windowHeight = $window.innerHeight - 70;
-                        if ($rootScope.mobile) {
-                            $scope.gameWidth = windowWidth;
-                            $scope.gameHeight = windowHeight;
-                        }
-                        else if ($scope.game.width === 0 && $scope.game.height === 0) {
-                            $scope.gameWidth = windowWidth * 0.7;
-                            $scope.gameHeight = windowHeight * 0.7;
-                        }
-                        else {
-                            var windowAspect = windowWidth / windowHeight;
-                            var gameAspect = $scope.game.width / $scope.game.height;
-                            if (windowAspect >= 1) {
-                                $scope.gameHeight = Math.round(windowHeight * percent);
-                                $scope.gameWidth = Math.round($scope.gameHeight * gameAspect);
+                        function setGameDimensions() {
+                            var percent = 0.8;
+                            var windowWidth = $window.innerWidth;
+                            var windowHeight = $window.innerHeight - 70;
+                            if ($rootScope.mobile) {
+                                $scope.gameWidth = windowWidth;
+                                $scope.gameHeight = windowHeight;
+                            }
+                            else if ($scope.game.width === 0 && $scope.game.height === 0) {
+                                $scope.gameWidth = windowWidth * 0.7;
+                                $scope.gameHeight = windowHeight * 0.7;
                             }
                             else {
-                                $scope.gameWidth = Math.round(windowWidth * percent);
-                                $scope.gameHeight = Math.round($scope.gameWidth / gameAspect);
+                                var windowAspect = windowWidth / windowHeight;
+                                var gameAspect = $scope.game.width / $scope.game.height;
+                                if (windowAspect >= 1) {
+                                    $scope.gameHeight = Math.round(windowHeight * percent);
+                                    $scope.gameWidth = Math.round($scope.gameHeight * gameAspect);
+                                }
+                                else {
+                                    $scope.gameWidth = Math.round(windowWidth * percent);
+                                    $scope.gameHeight = Math.round($scope.gameWidth / gameAspect);
+                                }
                             }
                         }
-                    }
 
-                    setGameDimensions();
-                    angular.element($window).bind('resize', function () {
                         setGameDimensions();
-                    });
-                
-                    window.appInsights.trackEvent("GAME PLAY", {
-                        slug: $scope.game.slug,
-                        name: $scope.game.name,
-                        forFun: $scope.playForFun,
-                        status: 'BEGIN'
-                    });
-
-                    emCasino.getLaunchUrl($scope.game.slug, null, !$scope.playForFun).then(function (launchDataResult) {
-                        $scope.gameLaunchData = launchDataResult;
-                        var launchUrl = launchDataResult.url.indexOf('http://') !== -1
-                            ? launchDataResult.url.replace(/^http:\/\//i, 'https://')
-                            : launchDataResult.url;
-                        $scope.gameUrl = $sce.trustAsResourceUrl(launchUrl);
-
-                        if ($rootScope.mobile)
-                            $scope.openFullscreen();
-                        else
-                            $scope.isFullscreen = false;
+                        angular.element($window).bind('resize', function () {
+                            setGameDimensions();
+                        });
 
                         window.appInsights.trackEvent("GAME PLAY", {
                             slug: $scope.game.slug,
                             name: $scope.game.name,
                             forFun: $scope.playForFun,
-                            status: 'LAUNCH SUCCESS'
+                            status: 'BEGIN'
                         });
-                    }, function () {
-                        logError();
-                        window.appInsights.trackEvent("GAME PLAY", {
-                            slug: $scope.game.slug,
-                            name: $scope.game.name,
-                            forFun: $scope.playForFun,
-                            status: 'LAUNCH FAILED'
+
+                        emCasino.getLaunchUrl($scope.game.slug, null, !$scope.playForFun).then(function (launchDataResult) {
+                            $scope.gameLaunchData = launchDataResult;
+                            var launchUrl = launchDataResult.url.indexOf('http://') !== -1
+                                ? launchDataResult.url.replace(/^http:\/\//i, 'https://')
+                                : launchDataResult.url;
+                            $scope.gameUrl = $sce.trustAsResourceUrl(launchUrl);
+
+                            if ($rootScope.mobile)
+                                $scope.openFullscreen();
+                            else
+                                $scope.isFullscreen = false;
+
+                            window.appInsights.trackEvent("GAME PLAY", {
+                                slug: $scope.game.slug,
+                                name: $scope.game.name,
+                                forFun: $scope.playForFun,
+                                status: 'LAUNCH SUCCESS'
+                            });
+                        }, function (getLaunchUrlError) {
+                            logError(getLaunchUrlError);
+                            window.appInsights.trackEvent("GAME PLAY", {
+                                slug: $scope.game.slug,
+                                name: $scope.game.name,
+                                forFun: $scope.playForFun,
+                                status: 'LAUNCH FAILED'
+                            });
                         });
-                    });
+                    }
+                    else {
+                        logError("No game found with slug '" + slug + "'. User-agent : " + navigator.userAgent);
+                        var noGameFoundPromise = message.open({
+                            nsType: 'modal',
+                            nsSize: '600px',
+                            nsTemplate: '_app/games/noGameFound.html',
+                            nsCtrl: 'noGameFoundCtrl',
+                            nsStatic: true,
+                            nsShowClose: false
+                        });
+                        noGameFoundPromise.then($scope.backToGames);
+                    }
                 }, logError);
             //}
         }
@@ -155,12 +169,22 @@
             if (current.indexOf('?') === -1) {
                 $rootScope.playing = false;
                 $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                window.appInsights.trackEvent("GAME PLAY", {
-                    slug: $scope.game.slug,
-                    name: $scope.game.name,
-                    forFun: $scope.playForFun,
-                    status: 'STOP'
-                });
+                if ($scope.game) {
+                    window.appInsights.trackEvent("GAME PLAY", {
+                        slug: $scope.game.slug,
+                        name: $scope.game.name,
+                        forFun: $scope.playForFun,
+                        status: 'STOP'
+                    });
+                }
+                else {
+                    window.appInsights.trackEvent("GAME PLAY", {
+                        slug: $routeParams.slug,
+                        userAgent: navigator.userAgent,
+                        forFun: $scope.playForFun,
+                        status: 'NO GAME'
+                    });
+                }
             }
         });
 

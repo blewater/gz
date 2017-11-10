@@ -34,7 +34,11 @@ namespace gzDAL.Repos
 
             foreach (var p in db.Portfolios.OrderBy(p=>p.RiskTolerance).ThenByDescending(p=>p.IsActive).ToList()) {
 
-                var r = p.PortFunds.Select(f => f.Weight * f.Fund.YearToDate / 100).Sum();
+                var r = 
+                    p.PortFunds
+                    .Select(
+                        f => f.Weight * f.Fund.YearToDate / 100f).Sum();
+
                 portfolioRates.Add(new PortfolioReturnsDTO() {
 
                     PortfolioId = p.Id,

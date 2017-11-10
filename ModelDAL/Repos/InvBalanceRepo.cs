@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
+using System.IO;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 using gzDAL.Conf;
@@ -11,8 +12,14 @@ using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using NLog;
 using Z.EntityFramework.Plus;
+using System.Configuration;
+using System.Diagnostics;
+using System.Web.UI.WebControls.Expressions;
 
 namespace gzDAL.Repos
 {
@@ -373,7 +380,7 @@ namespace gzDAL.Repos
 
             var vintagesList = db.Database
                 .SqlQuery<VintageDto>(
-                    "SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold, COALESCE(SellingValue-SoldFees, 0) As SellingValue," +
+                    "SELECT InvBalanceId, YearMonthStr, InvestmentAmount, Sold, SellingValue - SoldFees As SellingValue," +
                     " SoldFees, SoldYearMonth FROM dbo.GetVintages(@CustomerId)",
                     new SqlParameter("@CustomerId", customerId))
                 .ToList();
@@ -395,6 +402,7 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <param name="customerId"></param>
+        /// <param name="vintageCashInvestment"></param>
         /// <param name="vintageYearMonthStr"></param>
         /// <param name="sellOnThisYearMonth"></param>
         /// <param name="vintageSharesDto"></param>
@@ -402,10 +410,11 @@ namespace gzDAL.Repos
         /// <returns></returns>
         private decimal GetVintageValuePricedOn(
             int customerId,
+            decimal vintageCashInvestment,
             string vintageYearMonthStr,
             string sellOnThisYearMonth,
             out VintageSharesDto vintageSharesDto,
-            out decimal fees)
+            out FeesDto fees)
         {
 
             vintageSharesDto = userPortfolioSharesRepo.GetVintageSharesMarketValueOn(
@@ -413,9 +422,9 @@ namespace gzDAL.Repos
                 vintageYearMonthStr,
                 sellOnThisYearMonth);
 
-            fees = gzTransactionRepo.GetWithdrawnFees(vintageSharesDto.MarketPrice);
+            fees = gzTransactionRepo.GetWithdrawnFees(vintageCashInvestment, vintageYearMonthStr, vintageSharesDto.PresentMarketPrice);
 
-            return vintageSharesDto.MarketPrice;
+            return vintageSharesDto.PresentMarketPrice;
         }
 
         /// <summary>
@@ -424,24 +433,38 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <param name="customerId"></param>
+        /// <param name="vintageCashInvestment"></param>
         /// <param name="vintageYearMonthStr"></param>
         /// <param name="vintageSharesDto"></param>
         /// <param name="fees"></param>
         /// <returns></returns>
         private decimal GetVintageValuePricedNow(
             int customerId,
-            string vintageYearMonthStr,
+            VintageDto vintageToBeLiquidated,
             out VintageSharesDto vintageSharesDto,
-            out decimal fees)
+            out FeesDto fees)
         {
+            vintageSharesDto =
+                userPortfolioSharesRepo.GetVintageSharesMarketValue(
+                    customerId,
+                    vintageToBeLiquidated.YearMonthStr);
 
-            vintageSharesDto = userPortfolioSharesRepo.GetVintageSharesMarketValue(
-                customerId,
-                vintageYearMonthStr);
+            // if vintageToBeSold month = current month (early cashout in same month)
+            // value of vintage is what's not withdrawn from the month's investement cash
+            if (vintageToBeLiquidated.YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
 
-            fees = gzTransactionRepo.GetWithdrawnFees(vintageSharesDto.MarketPrice);
+                vintageSharesDto.PresentMarketPrice =
+                    vintageToBeLiquidated.InvestmentAmount
+                    - vintageToBeLiquidated.SellingValue
+                    - vintageToBeLiquidated.SoldFees;
+            }
 
-            return vintageSharesDto.MarketPrice;
+            fees = gzTransactionRepo.GetWithdrawnFees(
+                    vintageToBeLiquidated.InvestmentAmount,
+                    vintageToBeLiquidated.YearMonthStr,
+                    vintageSharesDto.PresentMarketPrice);
+
+            return vintageSharesDto.PresentMarketPrice;
         }
 
         /// <summary>
@@ -469,10 +492,11 @@ namespace gzDAL.Repos
             {
                 if (vintageDto.Selected)
                 {
-                    decimal fees;
+                    FeesDto fees;
                     VintageSharesDto vintageShares;
                     vintageDto.MarketPrice = GetVintageValuePricedOn(
                         customerId,
+                        vintageDto.InvestmentAmount,
                         vintageDto.YearMonthStr,
                         //-- On this month
                         sellOnThisYearMonth,
@@ -480,7 +504,8 @@ namespace gzDAL.Repos
                         out fees);
 
                     vintageDto.VintageShares = vintageShares;
-                    vintageDto.Fees = fees;
+                    vintageDto.SoldFees = fees.Total;
+                    vintageDto.SoldFeesDto = fees;
 
                     numOfVintagesSold++;
                 }
@@ -511,16 +536,18 @@ namespace gzDAL.Repos
             {
                 if (vintageDto.Selected)
                 {
-                    decimal fees;
+                    FeesDto fees;
                     VintageSharesDto vintageShares;
-                    vintageDto.MarketPrice = GetVintageValuePricedNow(
-                        customerId,
-                        vintageDto.YearMonthStr,
-                        out vintageShares,
-                        out fees);
+                    vintageDto.MarketPrice = 
+                        GetVintageValuePricedNow(
+                            customerId,
+                            vintageDto,
+                            out vintageShares,
+                            out fees);
 
                     vintageDto.VintageShares = vintageShares;
-                    vintageDto.Fees = fees;
+                    vintageDto.SoldFees = fees.Total;
+                    vintageDto.SoldFeesDto = fees;
 
                     numOfVintagesSold++;
                 }
@@ -551,11 +578,12 @@ namespace gzDAL.Repos
             {
                 // out var declarations
                 VintageSharesDto vintageShares;
-                decimal fees;
+                FeesDto fees;
 
                 // Call to calculate latest selling price
                 decimal vintageMarketPrice = GetVintageValuePricedOn(
                         customerId,
+                        dto.InvestmentAmount,
                         dto.YearMonthStr,
                         sellOnThisYearMonth,
                         out vintageShares,
@@ -563,7 +591,9 @@ namespace gzDAL.Repos
 
                 // Save the selling price and shares
                 dto.VintageShares = vintageShares;
-                dto.SellingValue = vintageMarketPrice - fees;
+                dto.SellingValue = vintageMarketPrice - fees.Total;
+                dto.SoldFees = fees.Total;
+                dto.SoldFeesDto = fees;
             }
 
             return customerVintages;
@@ -582,25 +612,27 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public VintagesWithSellingValues GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
-
             foreach (var dto in customerVintages)
             {
-                if (dto.SellingValue == 0 && dto.InvestmentAmount != 0 && !dto.Locked)
+                if (!dto.Sold && dto.InvestmentAmount != 0 && !dto.Locked)
                 {
                     // out var declarations
                     VintageSharesDto vintageShares;
-                    decimal fees;
+                    FeesDto fees;
 
                     // Call to calculate latest selling price
-                    decimal vintageMarketPrice = GetVintageValuePricedNow(
-                        customerId,
-                        dto.YearMonthStr,
-                        out vintageShares,
-                        out fees);
+                    decimal vintageMarketPrice = 
+                        GetVintageValuePricedNow(
+                            customerId,
+                            dto,
+                            out vintageShares,
+                            out fees);
 
                     // Save the selling price and shares
                     dto.VintageShares = vintageShares;
-                    dto.SellingValue = vintageMarketPrice - fees;
+                    dto.SellingValue = vintageMarketPrice - fees.Total;
+                    dto.SoldFees = fees.Total;
+                    dto.SoldFeesDto = fees;
                 }
             }
             var soldAmounts = GetSoldVintagesAmounts(customerId);
@@ -680,7 +712,6 @@ namespace gzDAL.Repos
         /// <param name="soldOnYearMonth"></param>
         private void SaveDbSellOneVintageSetInvBalance(int customerId, VintageDto vintage, DateTime soldOnUtc, string soldOnYearMonth = "")
         {
-
             try
             {
                 var vintageToBeSold = db.InvBalances
@@ -689,12 +720,23 @@ namespace gzDAL.Repos
                     .Single();
 
                 // Side effect to in-parameter vintage.Sold = true
-                vintage.Sold =
-                    vintageToBeSold.Sold = true;
+                vintage.Sold = vintageToBeSold.Sold = true;
 
-                vintageToBeSold.SoldAmount = vintage.MarketPrice;
-                vintageToBeSold.SoldFees = vintage.Fees;
+                var presentMonth = DateTime.UtcNow.ToStringYearMonth();
+
+                // within the current month multiple withdrawals may occur
+                if (soldOnYearMonth == presentMonth) {
+                    vintageToBeSold.SoldAmount += vintage.MarketPrice;
+                    vintageToBeSold.SoldFees += vintage.SoldFees;
+                    vintageToBeSold.EarlyCashoutFee += vintage.SoldFeesDto.EarlyCashoutFee;
+                }
+                else {
+                    vintageToBeSold.SoldAmount = vintage.MarketPrice;
+                    vintageToBeSold.SoldFees = vintage.SoldFees;
+                    vintageToBeSold.EarlyCashoutFee = vintage.SoldFeesDto.EarlyCashoutFee;
+                }
                 vintageToBeSold.SoldOnUtc = soldOnUtc.Truncate(TimeSpan.FromSeconds(1));
+                vintageToBeSold.HurdleFee = vintage.SoldFeesDto.HurdleFee;
                 vintageToBeSold.UpdatedOnUtc = vintageToBeSold.SoldOnUtc.Value;
                 // this is set to the month sold
                 vintageToBeSold.SoldYearMonth =
@@ -748,13 +790,17 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintages"></param>
+        /// <param name="gmailPwd"></param>
         /// <param name="sellOnThisYearMonth"></param>
+        /// <param name="sendEmail2Admin"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="gmailUser"></param>
         /// <returns></returns>
-        public void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, string sellOnThisYearMonth = "")
+        public void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
         {
 
-            // Set market price on it.. they may have left the browser window open 
-            // for a long time (stock market-wise) before hitting withdraw
+            // Update market price on it.. they may have left the browser window open 
+            // for a long time before hitting withdraw
 
             var vintagesToBeSold =
                 sellOnThisYearMonth.Length == 0
@@ -771,93 +817,238 @@ namespace gzDAL.Repos
 
                     });
 
+                if (sendEmail2Admin) {
+
+                    var user = GetEmailVintageLiquidationUser(customerId);
+
+                    //https://stackoverflow.com/questions/29383116/asp-net-mvc-5-asynchronous-action-method
+                    Task.Run(() => 
+                        EmailSendVintageWithdrawalReceipt(user, customerId, vintages, emailAdmins, gmailUser, gmailPwd)
+                    );
+                }
             }
         }
 
-        #endregion Vintages
-        #region Portfolio Selling
+        #region EmailVintageProceeds
 
         /// <summary>
         /// 
-        /// Save the liquidated Customer portfolio funds.
-        /// 
-        /// Enclosed in a transaction.
+        /// Cache essential email user properties
         /// 
         /// </summary>
-        /// <param name="portfolioFunds"></param>
-        /// <param name="customerId"></param>
-        /// <param name="yearCurrent"></param>
-        /// <param name="monthCurrent"></param>
-        /// <param name="newMonthlyBalance"></param>
-        /// <param name="invGainLoss"></param>
-        /// <param name="monthsPortfolioRisk"></param>
-        /// <param name="updatedDateTimeUtc">Set the desired datetime stamp of the db operations</param>
-        [Obsolete]
-        private void SaveDbLiquidateCustomerPortfolio(
-            Dictionary<int, PortfolioFundDTO> portfolioFunds,
-            int customerId,
-            int yearCurrent,
-            int monthCurrent,
-            decimal newMonthlyBalance,
-            decimal invGainLoss,
-            RiskToleranceEnum monthsPortfolioRisk,
-            DateTime updatedDateTimeUtc)
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private EmailVintageLiquidationUser GetEmailVintageLiquidationUser(int userId)
         {
-
-            /****************** Liquidate a month ****************/
-            var currentYearMonthStr = DbExpressions.GetStrYearMonth(yearCurrent, monthCurrent);
-
-            ConnRetryConf.TransactWithRetryStrategy(db,
-
-            () =>
-            {
-
-                // Save the portfolio for the month
-                custPortfolioRepo.SetDbUserMonthsPortfolioMix(
-                    customerId,
-                    monthsPortfolioRisk,
-                    yearCurrent,
-                    monthCurrent,
-                    updatedDateTimeUtc);
-
-                // Save fees transactions first and continue with reduced cash amount
-                decimal lastInvestmentCredit;
-                var remainingCashAmount =
-                        gzTransactionRepo.SaveDbLiquidatedPortfolioWithFees(
-                            customerId,
-                            newMonthlyBalance,
-                            GzTransactionTypeEnum.FullCustomerFundsLiquidation,
-                            currentYearMonthStr,
-                            updatedDateTimeUtc,
-                            out lastInvestmentCredit);
-
-                db.InvBalances.AddOrUpdate(i => new { i.CustomerId, i.YearMonth },
-                    new InvBalance
+            var user =
+                db.Users
+                    .Where(u => u.Id == userId)
+                    .Select(u => new EmailVintageLiquidationUser()
                     {
-                        YearMonth = currentYearMonthStr,
-                        CustomerId = customerId,
-                        Balance = 0,
-                        //CashBalance = remainingCashAmount,
-                        InvGainLoss = invGainLoss,
-                        // Save cash from sale trx and last month's credit
-                        CashInvestment = -(remainingCashAmount + lastInvestmentCredit),
-                        UpdatedOnUtc = updatedDateTimeUtc
-                    });
-
-                //userPortfolioSharesRepo.SetDbMonthlyUserPortfolioShares(
-                //    boughtShares: false, 
-                //    customerId: customerId,
-                //    fundsShares: portfolioFunds,
-                //    year: yearCurrent,
-                //    month: monthCurrent,
-                //    updatedOnUtc: updatedDateTimeUtc);
-
-                db.Database.Log = null;
-
-            });
+                        UserId = userId,
+                        GmUserId = u.GmCustomerId.Value,
+                        UserName = u.UserName,
+                        Email = u.Email,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        Currency = u.Currency
+                    })
+                    .Single();
+            return user;
         }
 
-        #endregion Portfolio Selling
+        /// <summary>
+        /// 
+        /// Vintage Liquidation User for Email Type
+        /// 
+        /// </summary>
+        private class EmailVintageLiquidationUser
+        {
+            public int UserId { get; set; }
+            public int GmUserId { get; set; }
+            public string Email { get; set; }
+            public string UserName { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Currency { get; set; }
+            public decimal NetProceeds { get; set; }
+            public decimal Fees { get; set; }
+        }
+
+        /// <summary>
+        /// 
+        /// Entry point for email receipt sending
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userId"></param>
+        /// <param name="vintages"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="gmailUser"></param>
+        /// <param name="gmailPwd"></param>
+        private static void EmailSendVintageWithdrawalReceipt(EmailVintageLiquidationUser user, int userId, ICollection<VintageDto> vintages, string emailAdmins, string gmailUser, string gmailPwd)
+        {
+            try
+            {
+                foreach (var vintageDto in vintages.Where(v=>v.Selected)) {
+                    user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue - vintageDto.SoldFees);
+                    user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
+                }
+                var _ = EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in sendVintageWithdrawalReceiptAsync");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Set up a mime message for sending to admins.
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="gmailUser"></param>
+        /// <param name="gmailPwd"></param>
+        /// <returns></returns>
+        private static async Task EmailSendMimeVintagesProceedsAsync(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins, string gmailUser, string gmailPwd)
+        {
+            var message = GetMimeMessage(emailVintageLiquidationUser, emailAdmins);
+
+            await SendEmailAsync(gmailUser, gmailPwd, message).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 
+        /// Create a mime message for vintage admins
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        private static MimeMessage GetMimeMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+
+            MimeMessage message = null;
+            try {
+                message = GetMessage(emailVintageLiquidationUser, emailAdmins);
+
+                message.Body = GetMessageBody(emailVintageLiquidationUser).ToMessageBody();
+            }
+            catch (Exception e) {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in GetMimeMessage()");
+            }
+
+            return message;
+        }
+
+        /// <summary>
+        /// 
+        /// Create the mime message To, Subject
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="emailAdmins"></param>
+        /// <returns></returns>
+        private static MimeMessage GetMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+
+            MimeMessage message = null;
+            try
+            {
+                message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Admin Greenzorro", "admin@greenzorro.com"));
+                var admins = emailAdmins.Split(';');
+                message.To.Add(new MailboxAddress(admins[0]));
+                message.Cc.Add(new MailboxAddress(admins[1]));
+                message.Subject =
+                    $@"User id {emailVintageLiquidationUser.GmUserId} withdrew vintage(s) on {
+                            DateTime.UtcNow.ToString("ddd d MMM yyyy")
+                        }";
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in GetMessage()");
+            }
+            return message;
+        }
+
+        /// <summary>
+        /// 
+        /// Create the message text body.
+        /// 
+        /// </summary>
+        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="builder"></param>
+        private static BodyBuilder GetMessageBody(EmailVintageLiquidationUser emailVintageLiquidationUser) {
+
+            BodyBuilder builder = null;
+            try {
+                builder = new BodyBuilder {
+                    TextBody = $@"UserName {emailVintageLiquidationUser.UserName} 
+with email {emailVintageLiquidationUser.Email} withdrew vintage(s)
+Please go to
+Gammatrix Banking...Vendors...System....Manual deposit
+
+Select & Enter
+
+CasinoWallet - Bonus
+To userID {emailVintageLiquidationUser.GmUserId}
+Amount {emailVintageLiquidationUser.NetProceeds} {emailVintageLiquidationUser.Currency}
+
+Thanks
+Your friendly neighborhood admin"
+                };
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in GetMessageBody()");
+            }
+
+            return builder;
+        }
+
+        /// <summary>
+        /// 
+        /// Slow method.
+        /// 
+        /// Connect to gmail and send message.
+        /// 
+        /// </summary>
+        /// <param name="gmailUser"></param>
+        /// <param name="gmailPwd"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private static async Task SendEmailAsync(string gmailUser, string gmailPwd, MimeMessage message) {
+
+            try {
+
+                using (var client = new SmtpClient()) {
+                    await client.ConnectAsync("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
+                        .ConfigureAwait(false);
+
+                    await client.AuthenticateAsync(gmailUser, gmailPwd).ConfigureAwait(false);
+
+                    await client.SendAsync(message).ConfigureAwait(false);
+
+                    await client.DisconnectAsync(true).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger logger = LogManager.GetCurrentClassLogger();
+                logger.Error(e, "Exception in SendEmailAsync()");
+            }
+        }
+
+        #endregion EmailVintageProceeds
+
+        #endregion Vintages
 
         /// <summary>
         /// 
