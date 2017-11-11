@@ -11,8 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/mssql": "^4.0.6",
-    "@types/node": "^8.0.39",
-    "typescript": "^2.5.3"
+    "@types/node": "^8.0.51",
+    "typescript": "^2.6.1"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.1.4",
