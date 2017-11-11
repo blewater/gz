@@ -349,17 +349,6 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         closeSwitchWindow baseWindow
         downloadedBalanceReport
 
-    /// Retry function call till we get a true result
-    let rec retryTillTrue (times: int)(fn:(unit -> bool)) = 
-        if times > 0 then
-            let isSuccessfulResult = 
-                try
-                    fn()
-                with 
-                    ex -> printfn "In try %d when downloading the balance report exception occured\n %s" times ex.Message; false
-            if not isSuccessfulResult then
-                retryTillTrue (times-1) fn
-
     let moveDownloadedRptToInRptFolder 
             (everymatrixDwnFileMask : string) // "bybalance.xlsx" --or "values.xlsx" --or "transx.xlsx
             (rptFilenamePrefix : string) // "Custom Prod" --or "Balance Prod" --or withdrawalsPending Prod --or withdrawalsRollback Prod 
@@ -473,12 +462,11 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Balance: report date counts as day + 23:59
         let downloadEndofMonthBalanceReport() =
             if balanceFilesArg = BalanceFilesUsageType.UseBothBalanceFiles then
-                let balanceRptDownloader() = uiAutomatedEndBalanceRpt dayToProcess rptFilesArgs.DownloadedBalanceFilter
-                retryTillTrue 5 balanceRptDownloader
-                moveDownloadedRptToInRptFolder 
-                    rptFilesArgs.DownloadedBalanceFilter
-                    rptFilesArgs.EndBalanceRptFilenamePrefix
-                    (dayToProcess.AddDays(1.0))
+                if uiAutomatedEndBalanceRpt dayToProcess rptFilesArgs.DownloadedBalanceFilter then
+                    moveDownloadedRptToInRptFolder 
+                        rptFilesArgs.DownloadedBalanceFilter
+                        rptFilesArgs.EndBalanceRptFilenamePrefix
+                        (dayToProcess.AddDays(1.0))
         retry 3 downloadEndofMonthBalanceReport
 
         quit ()

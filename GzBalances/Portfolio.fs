@@ -462,7 +462,7 @@ module UserTrx =
     /// Process input balances
     let private setDbProcessUserBalances (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance)(invBalanceInput : InvBalanceInput): unit = 
         if userPortfolioInput.CashToInvest > 0M || userFinance.EndBalance > 0M then
-            logger.Info(sprintf "Processing investment balances for user id %d on month of %s having these financial amounts\n%A, cash to invest: %M" 
+            logger.Info(sprintf "Processing investment balances for user id %d in the month of %s having these financial amounts\n%A, cash to invest: %M" 
                 userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance userPortfolioInput.CashToInvest)
 
         let dbTrxOper() = 
