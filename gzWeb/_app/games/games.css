@@ -74,6 +74,12 @@
     box-shadow: 0 0 2px #000;
 }
 
+@media (max-width: 991px) {
+    .games-list .filters .filter-categories {
+        margin-bottom: 10px;
+    }
+}
+
 /*@media (min-width: 1495px) and (max-width: 1805px) {
     .games-list .filters .filter-categories .divider {
         font-size: 20px;

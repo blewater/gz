@@ -1,221 +1,5 @@
 ﻿namespace GzBalances
 
-module DailyPortfolioShares =
-    open System
-    open GzBatchCommon
-    open GzDb.DbUtil
-    open PortfolioTypes
-    open GzBatchCommon.ErrorHandling
-    open FSharp.Data
-
-    type Funds = CsvProvider<"quotes.csv", HasHeaders=false, Schema = "TradedOn (Date),Symbol (string),ClosedPrice (float)">
-
-    //http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22VTI%22)&env=store://datatables.org/alltableswithkeys
-    //http://finance.yahoo.com/d/quotes.csv?s=MUB,VSGBX,VTI,VBMFX,VSTCX,CFA&f=d1sp
-
-    // URL of a service that generates price data
-    [<Literal>]
-    let YahooFinanceUrl = "http://download.finance.yahoo.com/d/quotes.csv?s="
-
-    let getLatestStockPrice (funds : string) : Map<string, FundQuote> =
-
-        let urlLoad = YahooFinanceUrl + funds + "&f=d1sp"
-        let tradedFunds = Funds.Load(urlLoad)
-
-        (* Fix for incosistent dates: set all to latest reported by Yahoo financed *)
-        let maxDate : DateTime = 
-            tradedFunds.Rows 
-            |> Seq.maxBy (fun (f) -> f.TradedOn)
-            |> fun (r) -> r.TradedOn
-
-        // Save to map for easy reference
-        let tradedFundsList : (Symbol * FundQuote) list =
-            [ 
-                for row in tradedFunds.Rows do
-                    let symbol = row.Symbol
-                    let closedPrice = row.ClosedPrice
-                    let yQuote = 
-                        { 
-                            Symbol = symbol;
-                            TradedOn = maxDate
-                            ClosingPrice = closedPrice
-                        }
-                    yield (symbol, yQuote)
-            ]
-
-        tradedFundsList
-        |> Map.ofList
-
-    let getSymbolPrice (symbol : string)(symbolPrices : Map<string, FundQuote>) : float =
-        let fundQuote = symbolPrices.[symbol]
-        fundQuote.ClosingPrice
-
-    let getSymbolTradeDay (symbol : string)(symbolPrices : Map<string, FundQuote>) : DateTime =
-        let fundQuote = symbolPrices.[symbol]
-        fundQuote.TradedOn
-
-    /// Update an existing row of PortfolioPrices
-    let updDbPortfolioPrice
-                (dbPortfolioPrices : DbPortfolioPrices)
-                (portfolioPrices : PortfoliosPrices) =
-
-        dbPortfolioPrices.PortfolioLowPrice <- portfolioPrices.PortfolioLowRiskPrice.Price
-        dbPortfolioPrices.PortfolioMediumPrice <- portfolioPrices.PortfolioMediumRiskPrice.Price
-        dbPortfolioPrices.PortfolioHighPrice <- portfolioPrices.PortfolioHighRiskPrice.Price
-        dbPortfolioPrices.UpdatedOnUtc <- DateTime.UtcNow
-
-    /// insert a new portfolio price for a trading day and price
-    let insDbNewRowPortfolioPrice (db : DbContext)(portfolioPrices : PortfoliosPrices) =
-        let newPortfolioPriceRow = new DbPortfolioPrices(
-                                        YearMonthDay = portfolioPrices.PortfolioLowRiskPrice.TradedOn.ToYyyyMmDd
-                                    )
-        (newPortfolioPriceRow, portfolioPrices) 
-            ||> updDbPortfolioPrice
-
-        db.PortfolioPrices.InsertOnSubmit(newPortfolioPriceRow)
-        
-    let getPortfolioPriceList (db : DbContext)(tradingDay : string) : DbPortfolioPrices =
-        query {
-            for row in db.PortfolioPrices do
-            where (row.YearMonthDay = tradingDay)
-            select row
-            exactlyOneOrDefault
-        }
-
-    /// Insert the portfolio prices for a trading day if not existing already
-    let setDbAskToSavePortfolioPrices(db : DbContext)(portfoliosPrices : PortfoliosPrices) : unit =
-
-        // Any portfolio risk type trading day is the same
-        let portfolioPricesRow = (db, portfoliosPrices.PortfolioLowRiskPrice.TradedOn.ToYyyyMmDd) ||> getPortfolioPriceList
-
-        if isNull portfolioPricesRow then
-
-            (db, portfoliosPrices) ||> insDbNewRowPortfolioPrice
-        else
-            (portfolioPricesRow, portfoliosPrices) 
-                ||> updDbPortfolioPrice
-
-        db.DataContext.SubmitChanges()
-
-    /// Save all trading days portfolio prices
-    let setDbPortfoliosPrices(db : DbContext)(portfoliosPrices : PortfoliosPricesMap) : PortfoliosPricesMap=
-        portfoliosPrices 
-        |> Map.iter (fun key value 
-                        -> (db, value) 
-                            ||> setDbAskToSavePortfolioPrices)
-        portfoliosPrices
-
-    /// Cast an array of 3 risk portfolios to PortfoliosPrices
-    let portfolioPricesArrToType(portfolioPricesArr : PortfolioSharePrice[]) : PortfoliosPrices =
-
-        // Low : 0, Medium, High
-        (portfolioPricesArr.Length = 3, "Incoming Portfolio prices array is not 3 (Low, Medium, High)")
-        ||> traceExc
-
-        let portfoliosPrices = { 
-            PortfolioLowRiskPrice = {PortfolioId = portfolioPricesArr.[LowRiskArrayIndex].PortfolioId; Price = portfolioPricesArr.[LowRiskArrayIndex].Price; TradedOn = portfolioPricesArr.[LowRiskArrayIndex].TradedOn} 
-            PortfolioMediumRiskPrice = {PortfolioId = portfolioPricesArr.[MediumRiskArrayIndex].PortfolioId; Price = portfolioPricesArr.[MediumRiskArrayIndex].Price; TradedOn = portfolioPricesArr.[MediumRiskArrayIndex].TradedOn}; 
-            PortfolioHighRiskPrice = {PortfolioId = portfolioPricesArr.[HighRiskArrayIndex].PortfolioId; Price = portfolioPricesArr.[HighRiskArrayIndex].Price; TradedOn = portfolioPricesArr.[HighRiskArrayIndex].TradedOn} 
-        }
-        portfoliosPrices
-
-    /// Get the portfolio funds weighted
-    let pFundsQry (db : DbContext) =
-            query { 
-                for f in db.Funds do
-                join fp in db.PortFunds on (f.Id = fp.FundId)
-                join p in db.Portfolios on (fp.PortfolioId = p.Id)
-                where (p.IsActive)
-                sortBy fp.PortfolioId
-                thenBy f.Id
-                select (f, fp)
-            }
-
-    /// 1. Read The portfolio funds from Db (in another function)
-    /// 2. Ask yahoo for the fund market closing prices
-    /// 3. Fold fund prices into a portfolio single share market price
-
-    (* Return from (Dbfunds, DbPortfolioFunds) }   
-            Key         Value
-            20170213    PortfolioLowRiskPrice     PortfolioId 1
-                                                  Price 59.5350015
-                                                  TradedOn 2/13/2017 0:00
-                        PortfolioMediumRiskPrice  PortfolioId 3
-                                                  Price 65.4049995
-                                                  TradedOn 2/13/2017 0:00
-                        PortfolioHighRiskPrice    PortfolioId 5
-                                                  Price 38.8099995
-                                                  TradedOn 2/13/2017 0:00
-            20170214    PortfolioLowRiskPrice     PortfolioId 1
-                                                  Price 59.385001
-                                                  TradedOn 2/14/2017 0:00
-                        PortfolioMediumRiskPrice  PortfolioId 3
-                                                  Price 65.615001
-                                                  TradedOn 2/14/2017 0:00
-                        PortfolioHighRiskPrice    PortfolioId 5
-                                                  Price 38.8670005
-                                                  TradedOn 2/14/2017 0:00*)
-    let getPortfoliosPrices (dbFundsWithPortfolioFunds : (DbFunds * DbPortfolioFunds) Linq.IQueryable) : PortfoliosPricesMap =
-
-        let portfolioPrices =
-            let fundTradedPrices =
-                dbFundsWithPortfolioFunds
-                |> Seq.map(fun (f : DbFunds, fp : DbPortfolioFunds) -> f.Symbol)
-                |> String.concat ","
-                |> getLatestStockPrice
-            //printfn "%A" fundTradedPrices
-
-            dbFundsWithPortfolioFunds
-            |> Seq.map(
-                fun (f : DbFunds, fp : DbPortfolioFunds) -> 
-                    let portfolioFundRec = {
-                        PortfolioId = fp.PortfolioId; 
-                        PortfolioWeight = fp.Weight; 
-                        Fund = fundTradedPrices.[f.Symbol]
-                    }
-//                    printfn "%A" portfolioFundRec
-                    portfolioFundRec
-               )
-//               |> ~~ (printfn "%A")
-            |> Seq.groupBy(
-                fun (portfolioFundRec : PortfolioFundRecord) -> 
-                    portfolioFundRec.Fund.TradedOn)
-//              |> ~~ (printfn "%A")
-            |> Seq.map(fun (tradedOnKey : DateTime, spfr : PortfolioFundRecord seq) -> 
-                let gpfr = spfr |> Seq.groupBy (fun pfr -> pfr.PortfolioId)
-                let pricedPortfoliosGroup = 
-                    gpfr
-                    |> Seq.map (fun (p, spsf) ->
-                        let price = 
-                            spsf 
-                            |> Seq.sumBy (fun pfr -> pfr.Fund.ClosingPrice * float pfr.PortfolioWeight / 100.0) 
-                        let topPortfolioFundRecord = spsf |> Seq.head
-                        { PortfolioId = p; Price = price; TradedOn = topPortfolioFundRecord.Fund.TradedOn }
-                    )
-                (tradedOnKey.ToYyyyMmDd, pricedPortfoliosGroup 
-                                            |> Seq.toArray
-                                            |> portfolioPricesArrToType)
-            )
-            |> Map
-        portfolioPrices 
-            |> Seq.iter(fun pp -> 
-                Diagnostics.Trace.Assert(
-                    pp.Value.PortfolioLowRiskPrice.Price > 10.0 &&
-                    pp.Value.PortfolioMediumRiskPrice.Price > 10.0 &&
-                    pp.Value.PortfolioHighRiskPrice.Price > 10.0,
-                    "Portfolio Prices are artificially low check the portfolio calculations"
-                )
-               )
-                
-        portfolioPrices
-
-    /// Ask & Store portfolio shares
-    let storeShares (db : DbContext): PortfoliosPricesMap =
-        db
-        |> pFundsQry
-        |> getPortfoliosPrices
-        |> setDbPortfoliosPrices db
-
 module UserPortfolio =
     open System
     open GzDb
@@ -457,6 +241,7 @@ module InvBalance =
     open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
+    open System.Runtime.Serialization
 
     type InvBalancePrevTotals = {
         TotalCashInvestments : decimal;
@@ -490,7 +275,7 @@ module InvBalance =
 
         let prevShares = input.UserPortfolioShares.PrevPortfolioShares
         let newShares = input.UserPortfolioShares.NewPortfolioShares
-        
+
         let nowBalance = 
             prevShares.Worth 
             + newShares.Worth
@@ -507,20 +292,23 @@ module InvBalance =
             input.InvBalancePrevTotals.TotalSoldVintagesSold 
             + vintagesSoldThisMonth.SoldAt
 
-        let ``bought Price of Sold Vintages`` = vintagesSoldThisMonth.BoughtAt
+        let boughtPriceofSoldVintages = vintagesSoldThisMonth.BoughtAt
 
         let totalCashInvestedForUnsoldVintages = 
             input.InvBalancePrevTotals.TotalCashInvInHold 
             + cashInv
-            - ``bought Price of Sold Vintages``
+            - boughtPriceofSoldVintages
 
-        invBalanceRow.Balance <- nowBalance
+        invBalanceRow.Balance <- if nowBalance > 0m then nowBalance else 0m
         (* Note: See line below for investment gain including sold vintages
         ** invBalanceRow.InvGainLoss <- (nowBalance + ``selling Price Of All Sold Vintages``) - ``total Cash invested for All vintages``
         ** Present business choice: Investment gain of vintages in hold. *)
         invBalanceRow.InvGainLoss <- nowBalance - totalCashInvestedForUnsoldVintages
         invBalanceRow.PortfolioId <- input.UserInputPortfolio.Portfolio.PortfolioId
         invBalanceRow.CashInvestment <- cashInv
+        // In case there have been multiple partial withdrawals
+        if cashInv > 0m then
+            invBalanceRow.Sold <- false
 
         // Vintage Shares
         invBalanceRow.LowRiskShares <- newShares.PortfolioShares.SharesLowRisk
@@ -580,12 +368,13 @@ module InvBalance =
     /// get any sold vintages for this user during the month we're presently clearing
     (* Note this is the only table that is affected by sold vintages and available to read them back and deduct them from user shares *)
     let getSoldVintages (dbUserMonth : DbUserMonth) : VintagesSold = 
-        let totalVintagesSold =
+        let totalPastVintagesSold =
             query {
                 for row in dbUserMonth.Db.InvBalances do
                 where (
                     row.SoldYearMonth = dbUserMonth.Month
                     && row.CustomerId = dbUserMonth.UserId
+                    && row.YearMonth <> dbUserMonth.Month
                 )
                 // Cast drop nullable from SoldAmount
                 select (row.LowRiskShares, row.MediumRiskShares, row.HighRiskShares, row.CashInvestment, decimal row.SoldAmount)
@@ -594,8 +383,25 @@ module InvBalance =
             // it's also much shorter
             |> Seq.fold (fun (ls, ms, hs, cs, ss) (l, m, h, c, s) -> (ls+l, ms+m, hs+h, cs+c, ss + s)) (0M, 0M, 0M, 0M, 0M)
 
+        /// get liquidations within same month -- experimental case. Support liquidations within the month we're calculating the player loss
+        let earlyWithdrawalsInCurrentMonth =
+            query { 
+                for i in dbUserMonth.Db.InvBalances do
+                where (i.YearMonth = dbUserMonth.Month && i.CustomerId = dbUserMonth.UserId)
+                select i.SoldAmount
+                exactlyOneOrDefault
+            }
+            |> (fun (soldAmount : decimal Nullable) ->
+                if Object.ReferenceEquals(soldAmount, null) then
+                    0m
+                elif soldAmount.HasValue then
+                    soldAmount.Value
+                else
+                    0m
+            )
+        
         // Package summed sold vintage shares into return type of VintagesSold
-        totalVintagesSold 
+        totalPastVintagesSold
                 |> 
                 (fun (lowShares, mediumShares, highShares, cashInv, soldAmount) ->
                     let vintShares = {
@@ -603,7 +409,12 @@ module InvBalance =
                         SharesMediumRisk = mediumShares;
                         SharesHighRisk = highShares
                     }
-                    { PortfolioShares = vintShares; BoughtAt = cashInv; SoldAt = soldAmount }
+                    { 
+                        PortfolioShares = vintShares; 
+                        BoughtAt = cashInv; 
+                        SoldAt = soldAmount; 
+                        CurrentMonthLiquidation = earlyWithdrawalsInCurrentMonth 
+                    }
                 )
 
     /// get instance of input values for InvBalance processing
@@ -651,8 +462,8 @@ module UserTrx =
     /// Process input balances
     let private setDbProcessUserBalances (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance)(invBalanceInput : InvBalanceInput): unit = 
         if userPortfolioInput.CashToInvest > 0M || userFinance.EndBalance > 0M then
-            logger.Info(sprintf "Processing investment balances for user id %d on month of %s having these financial amounts\n%A" 
-                userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance)
+            logger.Info(sprintf "Processing investment balances for user id %d in the month of %s having these financial amounts\n%A, cash to invest: %M" 
+                userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance userPortfolioInput.CashToInvest)
 
         let dbTrxOper() = 
             transactionWith 
@@ -681,11 +492,22 @@ module UserTrx =
         
     /// Input type for portfolio processing
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPrices) =
+        let vintagesSold = 
+            dbUserMonth 
+            |> InvBalance.getSoldVintages;
+        let cashToInvest =
+            trxRow.Amount - vintagesSold.CurrentMonthLiquidation
+            |> (fun (cashToInvest) ->
+                if cashToInvest > 0m then
+                     cashToInvest
+                else
+                    0m
+            )
         { 
             DbUserMonth = dbUserMonth;
-            VintagesSold = dbUserMonth |> InvBalance.getSoldVintages;
+            VintagesSold = vintagesSold
             Portfolio = dbUserMonth |> UserPortfolio.getUserPortfolioDetail;
-            CashToInvest = trxRow.Amount;
+            CashToInvest = cashToInvest
             PortfoliosPrices = portfoliosPricesMap
         }
 
@@ -698,7 +520,6 @@ module UserTrx =
             Deposits = if trxRow.Deposits.HasValue then trxRow.Deposits.Value else 0m
             Withdrawals = if trxRow.Withdrawals.HasValue then trxRow.Withdrawals.Value else 0m
             GainLoss = if trxRow.GmGainLoss.HasValue then trxRow.GmGainLoss.Value else 0m
-            AmountToBuyStock = trxRow.Amount
             Vendor2UserDeposits = trxRow.Vendor2UserDeposits
             CashBonus = trxRow.CashBonusAmount
         }
@@ -714,6 +535,7 @@ module UserTrx =
             (portfoliosPricesMap, yyyyMm) 
                 ||> findNearestPortfolioPrice
 
+        // Single user mode --or all ?
         let trxRows = 
             match emailToProcAlone with
             | Some emailAddress ->

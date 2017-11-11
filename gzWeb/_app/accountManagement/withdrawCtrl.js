@@ -172,7 +172,7 @@
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
                                     var thirdPartyPromise = message.open({
                                         nsType: 'modal',
-                                        nsSize: 'xl',
+                                        nsSize: 'auto',
                                         nsBody: html,
                                         nsStatic: true,
                                         nsParams: {

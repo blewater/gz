@@ -11,6 +11,7 @@ module DbGzTrx =
     /// Update a trx row with PlayerRevRpt as the source
     let updDbGzTrxRowValues 
             (amount : decimal)
+            (playerGainLoss : decimal)
             (creditPcntApplied : float32)
             (playerRevRpt : DbPlayerRevRpt)
             (trxRow : DbGzTrx) =
@@ -22,7 +23,7 @@ module DbGzTrx =
         trxRow.EndGmBalance <- playerRevRpt.EndGmBalance
         trxRow.Deposits <- playerRevRpt.TotalDepositsAmount
         trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
-        trxRow.GmGainLoss <- playerRevRpt.GmGainLoss
+        trxRow.GmGainLoss <- Nullable playerGainLoss
         trxRow.CashBonusAmount <- if playerRevRpt.CashBonusAmount.HasValue then playerRevRpt.CashBonusAmount.Value else 0M
         trxRow.Vendor2UserDeposits <- if playerRevRpt.Vendor2UserDeposits.HasValue then playerRevRpt.Vendor2UserDeposits.Value else 0M
 
@@ -31,6 +32,7 @@ module DbGzTrx =
             (db : DbContext) 
             (yearMonth : string)
             (amount : decimal)
+            (playerGainLoss : decimal)
             (creditPcntApplied : float32)
             (gzUserId : int)
             (playerRevRpt : DbPlayerRevRpt) =
@@ -42,7 +44,7 @@ module DbGzTrx =
                 CreatedOnUTC = DateTime.UtcNow,
                 TypeId = int GzTransactionType.CreditedPlayingLoss)
 
-        updDbGzTrxRowValues amount creditPcntApplied playerRevRpt newGzTrxRow
+        updDbGzTrxRowValues amount playerGainLoss creditPcntApplied playerRevRpt newGzTrxRow
         db.GzTrxs.InsertOnSubmit(newGzTrxRow)
 
     /// Get the greenzorro used id by email
@@ -70,25 +72,29 @@ module DbGzTrx =
         }
         |> (fun conf -> conf.CREDIT_LOSS_PCNT)
 
-    /// Main formula calculating the amount that will be credited to the users account
-    /// (**** Player Loss in GzTrx is a positive amount. No point with negatives in there. ***)
+    /// Main formula calculating the amount that will be credited to the users account.
+    /// Here the early liquidations tracked in invBalances are considered as withdrawals
     let getCreditedPlayerAmount (creditLossPcnt : float32)
                                 (playerGainLoss : decimal) : decimal =
 
+        (**** Player Loss in GzTrx is a positive amount considered an amount to be invested. ***)
         let (|Gain|Loss|) (amount : decimal) = if amount >= 0M then Gain 0M else Loss amount
+        
+        // Increase loss by the early liquidations
         match playerGainLoss with
         | Gain _ -> 0M
-        | Loss lossAmount -> (decimal creditLossPcnt / 100m) * -lossAmount
+        | Loss lossAmount -> decimal (creditLossPcnt / 100.0f) * -lossAmount
     
     /// Upsert a GzTrxs transaction row with the credited amount: 1 user row per month
-    let private setDbGzTrxRow(db : DbContext)(yyyyMmDd :string)(playerRevRpt : DbPlayerRevRpt) =
+    let private setDbGzTrxRow(db : DbContext)(yyyyMmDd :string)(playerRevRpt : DbPlayerRevRpt)(creditLossPcnt : float32) =
 
-        let playerGainLoss = playerRevRpt.GmGainLoss.Value
-        let yyyyMm = yyyyMmDd.ToYyyyMm
         let gmEmail = playerRevRpt.EmailAddress
         let gzUserId = getGzUserId db gmEmail
-
         if gzUserId.IsSome then
+
+            let yyyyMm = yyyyMmDd.ToYyyyMm
+            let playerGainLoss = playerRevRpt.GmGainLoss.Value
+
             query { 
                 for trxRow in db.GzTrxs do
                     where (
@@ -100,13 +106,12 @@ module DbGzTrx =
                     exactlyOneOrDefault
             }
             |> (fun trxRow ->
-                let creditLossPcnt = getCreditLossPcnt db 
                 let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
 
                 if isNull trxRow then
-                    insDbGzTrxRowValues db yyyyMm playerLossToInvest creditLossPcnt gzUserId.Value playerRevRpt
+                    insDbGzTrxRowValues db yyyyMm playerLossToInvest playerGainLoss creditLossPcnt gzUserId.Value playerRevRpt
                 else 
-                    updDbGzTrxRowValues playerLossToInvest creditLossPcnt playerRevRpt trxRow
+                    updDbGzTrxRowValues playerLossToInvest playerGainLoss creditLossPcnt playerRevRpt trxRow
             )
             db.DataContext.SubmitChanges()
 
@@ -136,8 +141,12 @@ module DbGzTrx =
         (yyyyMmDd : string) 
         (emailToProcAlone : string option) =
 
+        let creditLossPcnt = getCreditLossPcnt db 
         getDbPlayerMonthlyRows db yyyyMmDd.ToYyyyMm emailToProcAlone
-        |> Seq.iter (fun playerDbRow -> setDbGzTrxRow db yyyyMmDd playerDbRow)
+        |> 
+        Seq.iter (
+            fun playerDbRow -> 
+            setDbGzTrxRow db yyyyMmDd playerDbRow creditLossPcnt)
 
 module DbPlayerRevRpt =
     open System

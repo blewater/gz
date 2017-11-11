@@ -128,49 +128,30 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="vintageYearMonthStr"></param>
         /// <param name="liquidationAmount"></param>
-        /// <param name="gzFeesAmount">Out parameter to return the greenzorro fee.</param>
-        /// <param name="fundsFeesAmount">Out parameter to return the Fund fee.</param>
         /// <param name="vintageCashInvestment"></param>
-        /// <param name="earlyWithdrawalPenalty"></param>
-        /// <param name="hurdleFee"></param>
         /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
         public FeesDto GetWithdrawnFees(decimal vintageCashInvestment, string vintageYearMonthStr, decimal liquidationAmount) {
 
             var confRow = confRepo.GetConfRow().Result;
 
-            var gzFeesAmount = 
-                liquidationAmount 
-                    *
-                    ((decimal)confRow.COMMISSION_PCNT / 100m);
-
-            var fundsFeesAmount = 
-                liquidationAmount 
-                    *
-                    ((decimal)confRow.FUND_FEE_PCNT / 100m);
-
-            decimal earlyCashoutFee = 0m;
-
-            var monthLockInPeriod = confRow.LOCK_IN_NUM_DAYS / 30;
-
-            var vintageMonthDate = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageYearMonthStr);
-
-            var futureUnleashDay = vintageMonthDate.AddMonths(monthLockInPeriod); // locking months + 1
+            var isAnEarlyWithdrawal = IsAnEarlyWithdrawal(vintageYearMonthStr, confRow);
 
             // beyond the unleash day? (early withdrawal fee)
-            if (futureUnleashDay > DateTime.Today) {
-                earlyCashoutFee = liquidationAmount 
-                    * 
-                    ((decimal)confRow.EARLY_WITHDRAWAL_FEE_PCNT / 100m);
-            }
+            decimal earlyCashoutFee = GetEarlyCashoutFee(liquidationAmount, isAnEarlyWithdrawal, (decimal)confRow.EARLY_WITHDRAWAL_FEE_PCNT);
+
+            var gzFeesAmount = GetGzFeesAmount(liquidationAmount, isAnEarlyWithdrawal, (decimal)confRow.COMMISSION_PCNT);
+
+            var fundsFeesAmount = GetFundsFeesAmount(liquidationAmount, isAnEarlyWithdrawal, (decimal)confRow.FUND_FEE_PCNT);
 
             // hurdle fee
-            decimal hurdleFee = 0m;
-            if (liquidationAmount >= (vintageCashInvestment * (1 + confRow.HURDLE_TRIGGER_GAIN_PCNT / 100m))) {
-                hurdleFee = liquidationAmount 
-                    * 
-                    ((decimal)confRow.HURDLE_FEE_PCNT / 100m);
-            }
+            var hurdleFee = GetHurdleFee(
+                vintageCashInvestment, 
+                liquidationAmount,
+                isAnEarlyWithdrawal,
+                (decimal) confRow.HURDLE_TRIGGER_GAIN_PCNT,
+                (decimal) confRow.EARLY_WITHDRAWAL_FEE_PCNT);
 
+            // Return all fees
             var fees = new FeesDto() {
                 EarlyCashoutFee = earlyCashoutFee,
                 FundFee = fundsFeesAmount,
@@ -180,6 +161,85 @@ namespace gzDAL.Repos {
             };
 
             return fees;
+        }
+
+        private static bool IsAnEarlyWithdrawal(string vintageYearMonthStr, GzConfiguration confRow)
+        {
+
+            var monthLockInPeriod = confRow.LOCK_IN_NUM_DAYS / 30;
+
+            var vintageMonthDate = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageYearMonthStr);
+
+            var futureUnleashDay = vintageMonthDate.AddMonths(monthLockInPeriod); // locking months + 1
+
+            var retValue = futureUnleashDay > DateTime.Today;
+            return retValue;
+        }
+
+        private static decimal GetEarlyCashoutFee(decimal liquidationAmount, bool isAnEarlyWithdrawal, decimal earlyCashoutFeePcnt)
+        {
+
+            decimal earlyCashoutFee = 0m;
+
+            if (isAnEarlyWithdrawal)
+            {
+                earlyCashoutFee = liquidationAmount
+                                  *
+                                  (earlyCashoutFeePcnt / 100m);
+            }
+            return earlyCashoutFee;
+        }
+
+        private static decimal GetFundsFeesAmount(decimal liquidationAmount, bool isAnEarlyWithdrawal,
+            decimal fundFeePcnt) {
+
+            var fundsFeesAmount =
+                !isAnEarlyWithdrawal
+                    ? liquidationAmount
+                      *
+                      (fundFeePcnt / 100m)
+                    : 0;
+            return fundsFeesAmount;
+        }
+
+        private static decimal GetGzFeesAmount(decimal liquidationAmount, bool isAnEarlyWithdrawal, decimal gzCommissionPcnt) {
+
+            var gzFeesAmount =
+                !isAnEarlyWithdrawal
+                    ? liquidationAmount
+                      *
+                      (gzCommissionPcnt / 100m)
+                    : 0;
+            return gzFeesAmount;
+        }
+
+        private static decimal GetHurdleFee(
+            decimal vintageCashInvestment,
+            decimal liquidationAmount,
+            bool isEarlyWithdrawal,
+            decimal hurdleFeeTriggerPcnt,
+            decimal hurdleFeePcnt)
+        {
+
+            decimal hurdleFee = 0m;
+
+            // Early withdrawals have no other applicable fees
+            if (!isEarlyWithdrawal)
+            {
+
+                if (liquidationAmount
+                    >=
+                    (vintageCashInvestment
+                     * // investment gained more than 10%
+                     (1 + (hurdleFeeTriggerPcnt / 100m))))
+                {
+
+                    hurdleFee = liquidationAmount
+                                *
+                                (hurdleFeePcnt / 100m);
+                }
+            }
+            return hurdleFee;
         }
 
         /// <summary>

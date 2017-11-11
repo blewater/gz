@@ -440,17 +440,29 @@ namespace gzDAL.Repos
         /// <returns></returns>
         private decimal GetVintageValuePricedNow(
             int customerId,
-            decimal vintageCashInvestment,
-            string vintageYearMonthStr,
+            VintageDto vintageToBeLiquidated,
             out VintageSharesDto vintageSharesDto,
             out FeesDto fees)
         {
+            vintageSharesDto =
+                userPortfolioSharesRepo.GetVintageSharesMarketValue(
+                    customerId,
+                    vintageToBeLiquidated.YearMonthStr);
 
-            vintageSharesDto = userPortfolioSharesRepo.GetVintageSharesMarketValue(
-                customerId,
-                vintageYearMonthStr);
+            // if vintageToBeSold month = current month (early cashout in same month)
+            // value of vintage is what's not withdrawn from the month's investement cash
+            if (vintageToBeLiquidated.YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
 
-            fees = gzTransactionRepo.GetWithdrawnFees(vintageCashInvestment, vintageYearMonthStr, vintageSharesDto.PresentMarketPrice);
+                vintageSharesDto.PresentMarketPrice =
+                    vintageToBeLiquidated.InvestmentAmount
+                    - vintageToBeLiquidated.SellingValue
+                    - vintageToBeLiquidated.SoldFees;
+            }
+
+            fees = gzTransactionRepo.GetWithdrawnFees(
+                    vintageToBeLiquidated.InvestmentAmount,
+                    vintageToBeLiquidated.YearMonthStr,
+                    vintageSharesDto.PresentMarketPrice);
 
             return vintageSharesDto.PresentMarketPrice;
         }
@@ -526,12 +538,12 @@ namespace gzDAL.Repos
                 {
                     FeesDto fees;
                     VintageSharesDto vintageShares;
-                    vintageDto.MarketPrice = GetVintageValuePricedNow(
-                        customerId,
-                        vintageDto.InvestmentAmount,
-                        vintageDto.YearMonthStr,
-                        out vintageShares,
-                        out fees);
+                    vintageDto.MarketPrice = 
+                        GetVintageValuePricedNow(
+                            customerId,
+                            vintageDto,
+                            out vintageShares,
+                            out fees);
 
                     vintageDto.VintageShares = vintageShares;
                     vintageDto.SoldFees = fees.Total;
@@ -600,22 +612,21 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public VintagesWithSellingValues GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
-
             foreach (var dto in customerVintages)
             {
-                if (dto.SellingValue == 0 && dto.InvestmentAmount != 0 && !dto.Locked)
+                if (!dto.Sold && dto.InvestmentAmount != 0 && !dto.Locked)
                 {
                     // out var declarations
                     VintageSharesDto vintageShares;
                     FeesDto fees;
 
                     // Call to calculate latest selling price
-                    decimal vintageMarketPrice = GetVintageValuePricedNow(
-                        customerId,
-                        dto.InvestmentAmount,
-                        dto.YearMonthStr,
-                        out vintageShares,
-                        out fees);
+                    decimal vintageMarketPrice = 
+                        GetVintageValuePricedNow(
+                            customerId,
+                            dto,
+                            out vintageShares,
+                            out fees);
 
                     // Save the selling price and shares
                     dto.VintageShares = vintageShares;
@@ -701,7 +712,6 @@ namespace gzDAL.Repos
         /// <param name="soldOnYearMonth"></param>
         private void SaveDbSellOneVintageSetInvBalance(int customerId, VintageDto vintage, DateTime soldOnUtc, string soldOnYearMonth = "")
         {
-
             try
             {
                 var vintageToBeSold = db.InvBalances
@@ -710,14 +720,23 @@ namespace gzDAL.Repos
                     .Single();
 
                 // Side effect to in-parameter vintage.Sold = true
-                vintage.Sold =
-                    vintageToBeSold.Sold = true;
+                vintage.Sold = vintageToBeSold.Sold = true;
 
-                vintageToBeSold.SoldAmount = vintage.MarketPrice;
-                vintageToBeSold.SoldFees = vintage.SoldFees;
+                var presentMonth = DateTime.UtcNow.ToStringYearMonth();
+
+                // within the current month multiple withdrawals may occur
+                if (soldOnYearMonth == presentMonth) {
+                    vintageToBeSold.SoldAmount += vintage.MarketPrice;
+                    vintageToBeSold.SoldFees += vintage.SoldFees;
+                    vintageToBeSold.EarlyCashoutFee += vintage.SoldFeesDto.EarlyCashoutFee;
+                }
+                else {
+                    vintageToBeSold.SoldAmount = vintage.MarketPrice;
+                    vintageToBeSold.SoldFees = vintage.SoldFees;
+                    vintageToBeSold.EarlyCashoutFee = vintage.SoldFeesDto.EarlyCashoutFee;
+                }
                 vintageToBeSold.SoldOnUtc = soldOnUtc.Truncate(TimeSpan.FromSeconds(1));
                 vintageToBeSold.HurdleFee = vintage.SoldFeesDto.HurdleFee;
-                vintageToBeSold.EarlyCashoutFee = vintage.SoldFeesDto.EarlyCashoutFee;
                 vintageToBeSold.UpdatedOnUtc = vintageToBeSold.SoldOnUtc.Value;
                 // this is set to the month sold
                 vintageToBeSold.SoldYearMonth =
