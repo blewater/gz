@@ -397,7 +397,7 @@
                     subtitle: carouselEntry.SubTitle,
                     action: carouselEntry.ActionText,
                     url: getCarouselUrl(carouselEntry),
-                    bg: carouselEntry.BackgroundImageUrl || $rootScope.defaultImg,
+                    bg: carouselEntry.BackgroundImageUrl.replace(/'/g, "%27") || $rootScope.defaultImg,
                     isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
                 };
             }
