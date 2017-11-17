@@ -21,16 +21,12 @@
             accountManagement.open(accountManagement.states.responsibleGaming);
         };
 
-        $scope._init(initFooter);
+        $scope._init(loadAuthData);
 
-        function initFooter() {
+        function loadAuthData() {
             $scope.isGamer = $scope._authData.isGamer;
             $scope.inDebugMode = localStorageService.get(constants.storageKeys.debug);
             $scope.version = localStorageService.get(constants.storageKeys.version);
-            // Antillephone logo
-            if (window.apg_cd4c451b_bda3_48ab_975c_f4f82f05088d && typeof apg_cd4c451b_bda3_48ab_975c_f4f82f05088d !== 'undefined') {
-                apg_cd4c451b_bda3_48ab_975c_f4f82f05088d.init();
-            }
         }
     }
 })();
