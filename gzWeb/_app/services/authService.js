@@ -443,8 +443,12 @@
                             q.reject(emLoginError);
                         });
                     }, function (emRegisterError) {
-                        logStepFailed("emRegister", emRegisterError.desc);
-                        revoke(emRegisterError.desc);
+                        var errorDesc = emRegisterError.desc;
+                        logStepFailed("emRegister", errorDesc);
+                        // when system is busy, the Em registration likely succeeded; don't revoke
+                        if (errorDesc.indexOf('system is busy now') === -1 ) {
+                            revoke(emRegisterError.desc);
+                        }
                     });
                 }, function (gzLoginError) {
                     logStepFailed("gzLogin", gzLoginError.desc);
