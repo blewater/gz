@@ -280,7 +280,7 @@ namespace gzWeb
 
                                     , "~/_app/accountManagement/withdrawPaymentMethodsCtrl.js"
                                     , "~/_app/accountManagement/withdrawCtrl.js"
-                                    , "~/_app/accountManagement/withdrawFieldsCtrl.js"
+                                    //, "~/_app/accountManagement/withdrawFieldsCtrl.js"
                                     //, "~/_app/accountManagement/withdrawCreditCardCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixCommonCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixCreditCardCtrl.js"
