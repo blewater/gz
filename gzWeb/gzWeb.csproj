@@ -848,8 +848,6 @@
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrill.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrill1TapCtrl.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrillCtrl.js" />
-    <Content Include="_app\accountManagement\withdrawFields.html" />
-    <Content Include="_app\accountManagement\withdrawFieldsCtrl.js" />
     <Content Include="_app\account\registerDepositMoneyMatrixEnterCash.html" />
     <Content Include="_app\account\registerDepositMoneyMatrixEnterCashCtrl.js" />
     <Content Include="_app\account\registerDepositMoneyMatrixSkrill.html" />
