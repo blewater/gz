@@ -178,19 +178,26 @@ footer .gprovider {
 }*/
 
 footer .footer-licenses {
-    margin-bottom: 15px;
+    margin-bottom: 1em;
 }
-footer .footer-licenses .license {
-    border-radius: 4px;
-    padding: 5px;
-}
-footer .footer-licenses .license img {
-    height: 47px;
-}
+    footer .footer-licenses .license {
+        display: inline-block;
+        vertical-align: middle;
+    }
+        footer .mga {
+            width: 9em;
+        }
 
-footer .footer-licenses .license.mga img {
-    width: 80px;
-}
+        #apg-seal-link img {
+            z-index: 1;
+            top:-0.5em !important;
+            height: 3em;
+            max-height: none !important;
+        }
+
+        footer .play-responsibly {
+            width: 12em;
+        }
 
 footer .footer-advice {
     font-size: 10px;
