@@ -417,12 +417,11 @@ module Etl =
         (db, dbOperation) 
             ||> tryDBCommit3Times
 
+        // Update null gmCustomerids
+        setDbGmCustomerId db
+
         // Archive / move excel files
         moveRptsToOutFolder 
             inFolder 
             outFolder 
             reportfileNames
-
-        // Update null gmCustomerids
-        setDbGmCustomerId db
-
