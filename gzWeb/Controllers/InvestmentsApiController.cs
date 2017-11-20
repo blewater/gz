@@ -244,17 +244,18 @@ namespace gzWeb.Controllers {
                         mapper
                         .Map<VintageDto, VintageViewModel>(v)
                     );
-            vmVintagesAfterWithdrawals
-                    .Select(v => new VintageViewModel()
-                    {
-                        InvestmentAmount =
-                            DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount),
-                        SellingValue =
-                            DbExpressions.RoundCustomerBalanceAmount(v.SellingValue)
-                    })
-                    .ToList();
+            var vintageViewModelsRounded = 
+                vmVintagesAfterWithdrawals
+                .Select(v => new VintageViewModel()
+                {
+                    InvestmentAmount =
+                        DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount),
+                    SellingValue =
+                        DbExpressions.RoundCustomerBalanceAmount(v.SellingValue)
+                })
+                .ToList();
 
-            return OkMsg(vmVintagesAfterWithdrawals);
+            return OkMsg(vintageViewModelsRounded);
         }
 
         /// <summary>
