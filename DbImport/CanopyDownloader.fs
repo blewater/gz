@@ -392,7 +392,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         let portalArgs = reportsArgs.EverymatrixPortalArgs
 
         // start chrome and login to everymatrix backo.
-        let initNewBrowserSession =
+        let initNewBrowserSession() : unit =
             do initCanopyChrome()
 
             // Login
@@ -400,6 +400,8 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                 portalArgs.EverymatrixUsername 
                 portalArgs.EverymatrixPassword 
                 portalArgs.EverymatrixToken
+
+        do initNewBrowserSession()
 
         // helper for exceptions out of logged out sessions
         let rec retry times fn = 
@@ -412,7 +414,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                 | _ -> 
                     System.Threading.Thread.Sleep(WaitBefRetryinMillis);
                     quit()
-                    do initNewBrowserSession
+                    do initNewBrowserSession()
                     retry (times - 1) fn
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
