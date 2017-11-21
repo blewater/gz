@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'withdrawMoneyMatrixCommonCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217, $filter) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$q', 'iso4217', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $q, iso4217, $filter) {
         $scope.model = {
             amount: undefined
         };
@@ -21,9 +21,9 @@
             $scope.limitMin = $scope.accountLimits.min;
             $scope.limitMax = $scope.accountLimitMax;
             var amountRange = " (between " + $filter('number')($scope.limitMin, 2) + " and " + $filter('number')($scope.limitMax, 2) + ")";
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
-            if ($scope.limitMin < $scope.limitMax)
-                $scope.amountPlaceholder += " " + amountRange;
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+            if ($scope.limitMin < $scope.limitMax && !$rootScope.mobile)
+                $scope.amountPlaceholder += amountRange;
         }
 
         $scope._init = function() {
