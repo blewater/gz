@@ -762,6 +762,7 @@
     height: 100% !important;
     width: 100% !important;
     overflow-y: auto;
+    background-color: #27A95C;
 }
 #ns-msgs .msg.msg-modal.msg-mobile .msg-close {
     background-color: #27A95C !important;
@@ -778,4 +779,9 @@
 
 #ns-msgs .msg.msg-modal.msg-mobile .msg-content .msg-body {
     max-height: 100vh;
+}
+
+#ns-msgs .msg.msg-mobile .msg-title.msg-title-shout {
+    line-height: 24px;
+    font-size: 12px;
 }
