@@ -495,6 +495,15 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     border: none;
     padding: 100px;
 }
+
+.msg.msg-mobile .third-party-iframe {
+    height: 100vh;
+    padding: 0;
+}
+.msg.msg-mobile .third-party-close {
+    top: 0;
+    right: 0;
+}
 /* #endregion */
 
 
