@@ -12,7 +12,7 @@
             <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">
                 Available withdrawal amount is between {{limitMin | isoCurrency : currency}} and {{limitMax | isoCurrency : currency}}.
             </div>
-            <div class="help-block" ng-class="{'show': limitMin > limitMax}">
+            <div class="help-block help-block-2x" ng-class="{'show': limitMin > limitMax}">
                 Your account balance ({{limitMax | isoCurrency : currency}}) is below the least amount ({{limitMin | isoCurrency : currency}}) you can withdraw.
             </div>
         </div>
