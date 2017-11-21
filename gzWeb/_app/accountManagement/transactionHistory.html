@@ -27,7 +27,7 @@
         </div>
     </form>
 
-    <div class="table-container">
+    <div ng-if="!mobile" class="table-container">
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -48,6 +48,21 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div ng-if="mobile">
+        <ul class="padded-xs">
+            <li ng-repeat="trx in transactions track by $index">
+                <div class="row">
+                    <div class="col-xs-6">{{trx.id}}</div>
+                    <div class="col-xs-6 text-right">{{trx.status}}</div>
+                </div>
+                <div class="row bg-light-grey text-gz">
+                    <div class="col-xs-6">{{trx.date}}</div>
+                    <div class="col-xs-6 text-right">{{trx.amount}}</div>
+                    <div class="col-xs-12">{{trx.description}}</div>
+                </div>
+            </li>
+        </ul>
     </div>
     <div ng-if="transactions !== undefined && transactions.length === 0">
         <h5 class="text-center">No records to display</h5>
