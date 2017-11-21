@@ -532,12 +532,13 @@
         right: 0;
         border-right: none;
     }
+
+    .auth.mgmt-modal .gz-select i {
+        right: 15px;
+        top: calc(50% - 10px);
+    }
 }
 /* #endregion */
-
-
-
-
 
 
 
@@ -545,6 +546,7 @@
 .auth.mgmt-modal .cardSecurityNumberWrapper {
     width: 100%;
     height: 36px;
+    line-height: 24px;
 }
 
 .auth.mgmt-modal #cardNumberContainer iframe,

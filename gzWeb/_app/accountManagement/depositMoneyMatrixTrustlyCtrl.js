@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositMoneyMatrixTrustlyCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217, auth) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$q', 'iso4217', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $q, iso4217, auth) {
         $scope.model = {
             amount: undefined,
             bonusCode: undefined
@@ -12,7 +12,10 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+            if (!$rootScope.mobile)
+                $scope.amountPlaceholder += amountRange;
             $scope.extraValidityCheck = true;
         }
 

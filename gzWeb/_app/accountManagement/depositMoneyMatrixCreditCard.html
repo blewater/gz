@@ -92,7 +92,7 @@
                         <div class="cardSecurityNumberWrapper">
                             <span ng-show="cardSecurityNumberLoading" us-spinner="spinnerWhiteAbs"></span>
                             <div ng-show="!cardSecurityNumberLoading" id="cardSecurityNumberContainer" ng-class="{'focused':cardSecurityNumberFocused, 'danger':cardSecurityNumberFocused && cardSecurityNumberValidity === false}"></div>
-                            <span ng-show="!cardSecurityNumberLoading" class="form-control-feedback" aria-hidden="true" ng-class="{'focused':cardSecurityNumberFocused || form.cardSecurityNumber.$valid}">
+                            <span ng-show="!cardSecurityNumberLoading && !mobile" class="form-control-feedback" aria-hidden="true" ng-class="{'focused':cardSecurityNumberFocused || form.cardSecurityNumber.$valid}">
                                 <i class="fa fa-lg fa-credit-card"></i>
                             </span>
                         </div>
