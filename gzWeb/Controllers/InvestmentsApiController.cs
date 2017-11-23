@@ -222,7 +222,7 @@ namespace gzWeb.Controllers {
         /// <param name="vintages"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IHttpActionResult> WithdrawVintages(IList<VintageViewModel> vintages)
+        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetVintagesSellingValuesByUser requested for [User#{0}]", userId);
@@ -236,7 +236,16 @@ namespace gzWeb.Controllers {
             var gmailPwd = ConfigurationManager.AppSettings["gmailHostPwd"];
 
             // Sell Vintages
-            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos, true, emailAdmins, gmailUser, gmailPwd);
+            var updatedVintages = 
+                    invBalanceRepo
+                        .SaveDbSellAllSelectedVintagesInTransRetry(
+                            userId,
+                            vintagesDtos,
+                            true,
+                            emailAdmins,
+                            gmailUser,
+                            gmailPwd
+                        );
 
             var vmVintagesAfterWithdrawals =
                 updatedVintages
@@ -256,39 +265,6 @@ namespace gzWeb.Controllers {
                 .ToList();
 
             return OkMsg(vintageViewModelsRounded);
-        }
-
-        /// <summary>
-        /// 
-        /// Interface call for selling vintages
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="vintages"></param>
-        /// <param name="sendEmail2Admins"></param>
-        /// <param name="emailAdmins"></param>
-        /// <param name="gmailUser"></param>
-        /// <param name="gmailPwd"></param>
-        /// <returns></returns>
-        public ICollection<VintageDto> SaveDbSellVintages(
-                int customerId,
-                ICollection<VintageDto> vintages,
-                bool sendEmail2Admins,
-                string emailAdmins,
-                string gmailUser,
-                string gmailPwd) {
-
-            invBalanceRepo
-                .SaveDbSellAllSelectedVintagesInTransRetry(
-                    customerId, 
-                    vintages, 
-                    sendEmail2Admins,
-                    emailAdmins, 
-                    gmailUser, 
-                    gmailPwd
-                );
-
-            return vintages;
         }
 
         #endregion
