@@ -126,7 +126,7 @@
             title: 'Logout',
             icon: 'fa-sign-out',
             showInMenu: true,
-            action: function () { auth.logout() }
+            action: function () { auth.logout(); }
         };
         
         var _allStates = [];
