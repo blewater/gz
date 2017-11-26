@@ -12,33 +12,47 @@
     </div>
 </script>
 
-<div class="clearfix investments">
+<div class="clearfix investments" ng-intro-options="IntroOptions" ng-intro-method="introCall">
     <div class="container">
         <div class="summary">
             <div class="row">
-                <div class="col-xs-12 col-md-4">
-                    <div class="summary-box investment-history" ng-class="{'expanded': investmentHistoryExpanded}">
+                <div ng-if="vintages.length > 0" class="col-xs-12 col-sm-{{smgridcols}} col-md-{{mdgridcols}}">
+                    <div class="summary-box current-balance">
                         <div class="summary-box-head">
                             <div class="summary-box-head-icon">
-                                <img src="../../Content/Images/Investment Icons/history.svg" />
+                                <img src="../../Content/Images/Investment Icons/current.svg" />
                             </div>
-                            <div class="summary-box-head-title">Investment history</div>
+                            <div class="summary-box-head-title">Current Investment bonus balance</div>
                         </div>
-                        <div class="summary-box-body">
-                            <div class="label text-normal">Invested so far</div>
-                            <div class="amount text-emphasis">{{model.TotalInvestments | isoCurrency : currency : 0}}</div>
-                            <div class="symbol text-emphasis">+</div>
-                            <div class="label text-normal">Gained from investment so far:</div>
-                            <div class="amount text-emphasis">{{model.TotalInvestmentsReturns | isoCurrency : currency : 0}}</div>
-
-                            <div class="implication hidden-xs hidden-sm">
-                                <img src="../../Content/Images/Investment Icons/big_green_arrow.svg" />
+                        <div id="currentBalance" class="summary-box-body">
+                            <div class="amount text-emphasis">{{model.InvestmentsBalance | isoCurrency : currency : 0}}</div>
+                            <div class="date">
+                                <div class="date-icon">
+                                    <img src="../../Content/Images/Investment Icons/calendar_grey.svg" />
+                                </div>
+                                <div class="date-details">
+                                    <div class="date-label">Status as of:</div>
+                                    <div class="date-data text-emphasis">
+                                        <span class="date-datetime">
+                                            <span class="date-datevalue">{{model.StatusAsOfLocalDate}}</span>
+                                            <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
+                                        </span>
+                                        <span class="info">
+                                            <img src="../../Content/Images/Investment Icons/info.png" tooltip-class="summary-tooltip" uib-tooltip="Calculated once every day at 12:00 pm. Any incremental losses or gains incurred after each daily calculation are not reflected." />
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="summary-box investment-history" ng-class="{'expanded': investmentHistoryExpanded}">
                         <div class="summary-box-foot" ng-style="{height: investmentHistoryExpanded ? (vintages.length * 40 + 190) : 'inherited'}">
-                            <div class="investment-vintages">
-                                <img src="../../Content/Images/Investment Icons/invest_white.svg" alt="" />
-                                <span>Investment vintages</span>
+                            <div class="summary-box-btn relative" ng-click="withdraw()">
+                                <span ng-show="!fetchingSellingValues">
+                                    <img src="../../Content/Images/Investment Icons/cash_white.svg" alt="" />
+                                    <span>WITHDRAW</span>
+                                </span>
+                                <span ng-show="fetchingSellingValues" us-spinner="spinnerWhite"></span>
                             </div>
                             <div class="no-vintages" ng-if="vintages.length === 0">
                                 No vintages yet
@@ -65,47 +79,7 @@
                     </div>
                 </div>
 
-                <div class="col-xs-12 col-md-4">
-                    <div class="summary-box current-balance">
-                        <div class="summary-box-head">
-                            <div class="summary-box-head-icon">
-                                <img src="../../Content/Images/Investment Icons/current.svg" />
-                            </div>
-                            <div class="summary-box-head-title">Current Investment bonus balance</div>
-                        </div>
-                        <div class="summary-box-body">
-                            <div class="amount text-emphasis">{{model.InvestmentsBalance | isoCurrency : currency : 0}}</div>
-                            <div class="date">
-                                <div class="date-icon">
-                                    <img src="../../Content/Images/Investment Icons/calendar_grey.svg" />
-                                </div>
-                                <div class="date-details">
-                                    <div class="date-label">Status as of:</div>
-                                    <div class="date-data text-emphasis">
-                                        <span class="date-datetime">
-                                            <span class="date-datevalue">{{model.StatusAsOfLocalDate}}</span>
-                                            <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
-                                        </span>
-                                        <span class="info">
-                                            <img src="../../Content/Images/Investment Icons/info.png" tooltip-class="summary-tooltip" uib-tooltip="Calculated once every day at 12:00 pm. Any incremental losses or gains incurred after each daily calculation are not reflected." />
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="summary-box-foot">
-                            <div class="summary-box-btn relative" ng-click="withdraw()">
-                                <span ng-show="!fetchingSellingValues">
-                                    <img src="../../Content/Images/Investment Icons/cash_white.svg" alt="" />
-                                    <span>WITHDRAW</span>
-                                </span>
-                                <span ng-show="fetchingSellingValues" us-spinner="spinnerWhite"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xs-12 col-md-4">
+                <div class="col-xs-12 col-sm-{{smgridcols}} col-md-{{mdgridcols}}">
                     <div class="summary-box expected-amount" ng-class="{'expanded': gamingActivitiesExpanded}">
                         <div class="summary-box-head">
                             <div class="summary-box-head-icon">
@@ -113,7 +87,7 @@
                             </div>
                             <div class="summary-box-head-title">Next expected investment amount</div>
                         </div>
-                        <div class="summary-box-body">
+                        <div id="toBeInvested" class="summary-box-body">
                             <div class="amount text-emphasis">{{model.LastInvestmentAmount | isoCurrency : currency : 0}}</div>
                             <div class="amount-note">
                                 <span class="amount-note-text">50% of net loss</span>

@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'summaryCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'message', '$location', 'constants', '$filter', '$sce', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, $controller, api, message, $location, constants, $filter, $sce, iso4217) {
+    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'message', '$location', 'constants', '$filter', '$sce', 'iso4217', 'ngIntroService', ctrlFactory]);
+    function ctrlFactory($scope, $controller, api, message, $location, constants, $filter, $sce, iso4217, ngIntroService) {
         $controller('authCtrl', { $scope: $scope });
 
         $scope.spinnerWhite = constants.spinners.sm_abs_white;
@@ -151,11 +151,64 @@
                 $scope.model.CashBonus = round($scope.model.CashBonus, 1);
 
                 $scope.vintages = processVintages($scope.model.Vintages);
+                $scope.mdgridcols = $scope.smgridcols = $scope.vintages.length === 0 ? 12 : 6;
+                setIntroOptionsForUsers($scope.vintages.length, $scope.model.InvestmentsBalance);
             });            
         }
 
         function loadAuthData() {
             $scope.currency = $scope._authData.currency;
+        }
+
+        function setIntroOptionsNewUsers() {
+            var introOptionsNewUsers = {
+                steps: [
+                    {
+                        element: '#toBeInvested',
+                        intro: "50% of your net loss to credited at investment balance"
+                    }
+                ],
+                showStepNumbers: true,
+                exitOnOverlayClick: true,
+                exitOnEsc: true,
+                skipLabel: 'Exit',
+                doneLabel: 'Got it!'
+            }
+            ngIntroService.setOptions(introOptionsNewUsers);
+            ngIntroService.start();
+        }
+
+        function setIntroOptionsOtherUsers() {
+            var otherUsersOptions = {
+                steps: [
+                    {
+                        element: '#toBeInvested',
+                        intro: "50% of your net loss to credited at investment balance"
+                    },
+                    {
+                        element: '#currentBalance',
+                        intro: "Did you know that your balance is increasing the more you play?",
+                        position: 'right'
+                    }
+                ],
+                showStepNumbers: true,
+                exitOnOverlayClick: true,
+                exitOnEsc: true,
+                nextLabel: '<strong>Next Tip</strong>',
+                prevLabel: '<span style="color:green">Previous</span>',
+                skipLabel: 'Exit',
+                doneLabel: 'Thanks'
+            };
+            ngIntroService.setOptions(otherUsersOptions);
+            ngIntroService.start();
+        }
+
+        function setIntroOptionsForUsers(vintagesLength, balanceAmount) {
+            if (vintagesLength === 0 && balanceAmount === 0) {
+                setIntroOptionsNewUsers();
+            } else if ( vintagesLength > 1 || balanceAmount === 0 ) {
+                setIntroOptionsOtherUsers();
+            }
         }
 
         $scope._init(function() {
