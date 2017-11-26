@@ -51,365 +51,402 @@
     <!--<script>AUTOBAHN_DEBUG = true;</script>-->
     <script src="Scripts/autobahn.min.js"></script>
     <script src="Scripts/angular/angular.js"></script>
+    <script src="Scripts/angular-route/angular-route.min.js"></script>
+    <script src="Scripts/angular-resource/angular-resource.min.js"></script>
+    <script src="Scripts/angular-animate/angular-animate.min.js"></script>
+    <script src="Scripts/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="Scripts/angular-cookies/angular-cookies.min.js"></script>
+    <script src="Scripts/angular-touch/angular-touch.min.js"></script>
+
+
+
     <script src="Scripts/angular-wamp/angular-wamp.js"></script>
     <script src="Scripts/angular-local-storage/angular-local-storage.js"></script>
     <script src="Scripts/angular-recaptcha/angular-recaptcha.js"></script>
     <script src="Scripts/jsnlog/jsnlog.min.js"></script>
-    <script>
-        var APP = angular.module("emTestApiApp", ["vxWamp", "LocalStorageModule", "vcRecaptcha"]);
+    <script src="Scripts/jsnlog/logToServer.js"></script>
+    <script src="Scripts/intro/angular-intro.min.js"></script>
+<script>
+    var APP = angular.module("emTestApiApp", ["ngRoute", "vxWamp", "LocalStorageModule", "vcRecaptcha", "angular-intro"]);
+    //app.run([
+    //    '$rootScope', '$location', '$route', '$timeout', 'screenSize', 'localStorageService', 'constants', 'auth', 'chat', 'helpers', 'nav', '$window',
+    //    function ($rootScope, $location, $route, $timeout, screenSize, localStorageService, constants, auth, chat, helpers, nav, $window) {
 
-        APP.config(function($wampProvider) {
-            $wampProvider.init({
-                transports: [
-                    { 'type': 'websocket', 'url': 'wss://webapi-stage.everymatrix.com/v2' },
-                    { 'type': 'longpoll', 'url': 'https://fb-webapi-stage.everymatrix.com' }
-                ],
-                url: 'wss://webapi-stage.everymatrix.com/v2',
-                realm: 'http://www.greenzorro.com'
-            });
+
+    APP.config(function($wampProvider) {
+        $wampProvider.init({
+            transports: [
+                { 'type': 'websocket', 'url': 'wss://api-stage.everymatrix.com/v2' },
+                { 'type': 'longpoll', 'url': 'https://api-stage.everymatrix.com/longpoll' }
+            ],
+            url: 'wss://api-stage.everymatrix.com/v2',
+            realm: 'http://www.greenzorro.com'
         });
+    });
 
-        APP.constant("constants", {
-            events: {
-                SESSION_STATE_CHANGE: 'sessionStageChange'
-            }
-        });
+    APP.constant("constants", {
+        events: {
+            SESSION_STATE_CHANGE: 'sessionStageChange'
+        },
+        storageKeys: {
+            version: 'gz_version',
+            debug: 'gz_debug',
+            randomSuffix: 'gz_randomSuffix',
+            //live: 'gz_live',
+            authData: 'gz_authData',
+            clientId: 'gz_clientId',
+            lastFailureTime: 'gz_lastFailureTime',
+            //language: 'gz_language',
+            reCaptchaPublicKey: 'gz_reCaptchaPublicKey',
+            btagMarker: 'gz_btagMarker',
+            btagTime: 'gz_btagTime'
+        }
+    });
 
-        APP.controller("emTestApiCtrl",
-            function ($scope, $q, $filter, constants, emWamp, emBanking, emCasino, vcRecaptchaService) {
+    APP.controller("emTestApiCtrl",
+        function ($scope, $q, $filter, constants, emWamp, emBanking, emCasino, vcRecaptchaService, ngIntroService) {
 
-                var _logError = function(error) {
-                    console.log(error);
-                };
+            var _logError = function(error) {
+                console.log(error);
+            };
 
-                $scope.userInfo = "";
-                $scope.sessionInfo = "";
-                $scope.reCaptchaPublicKey = "6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML";
-                $scope.testSendResetPwdEmailResult = "";
-                $scope.testSendResetPwdEmail = function () {
-                    emWamp.sendResetPwdEmail({
-                        email: "xdinos4@nessos.gr",
-                        changePwdURL: "http://localhost:63659/api/resetpwd/",
-                        captchaPublicKey: $scope.reCaptchaPublicKey,
-                        captchaChallenge: "",
-                        captchaResponse: vcRecaptchaService.getResponse()
-                    }).then(function(result) {
-                        $scope.testSendResetPwdEmailResult = result;
-                        vcRecaptchaService.reload();
-                    }, function(error) {
-                        $scope.testSendResetPwdEmailResult = error;
-                        vcRecaptchaService.reload();
-                    });
-                };
+            $scope.userInfo = "";
+            $scope.sessionInfo = "";
+            $scope.reCaptchaPublicKey = "6LfPIgYTAAAAACEcTfYjFMr8y3GX6qYVLoK-2dML";
+            $scope.testSendResetPwdEmailResult = "";
+            $scope.testSendResetPwdEmail = function () {
+                emWamp.sendResetPwdEmail({
+                    email: "xdinos4@nessos.gr",
+                    changePwdURL: "http://localhost:63659/api/resetpwd/",
+                    captchaPublicKey: $scope.reCaptchaPublicKey,
+                    captchaChallenge: "",
+                    captchaResponse: vcRecaptchaService.getResponse()
+                }).then(function(result) {
+                    $scope.testSendResetPwdEmailResult = result;
+                    vcRecaptchaService.reload();
+                }, function(error) {
+                    $scope.testSendResetPwdEmailResult = error;
+                    vcRecaptchaService.reload();
+                });
+            };
 
-                //$scope.$on(constants.events.SESSION_STATE_CHANGE, function (args) {
-                //    console.log("args:" + angular.toJson(args));
-                //});
+            //$scope.$on(constants.events.SESSION_STATE_CHANGE, function (args) {
+            //    console.log("args:" + angular.toJson(args));
+            //});
 
-                //$scope.$on("$wamp.open", function(event, session) {
-                //    console.log('We are connected to the WAMP Router!');
-                //    console.log('event: ' + angular.toJson(event));
-                //    console.log('session: ' + angular.toJson(session));
-                //});
-                
-                //$scope.$on("$wamp.close", function (event, data) {
-                //    $scope.reason = data.reason;
-                //    $scope.details = data.details;
-                //});
+            //$scope.$on("$wamp.open", function(event, session) {
+            //    console.log('We are connected to the WAMP Router!');
+            //    console.log('event: ' + angular.toJson(event));
+            //    console.log('session: ' + angular.toJson(session));
+            //});
 
-                var _actions = [
-                    //{
-                    //    label: "getCountries",
-                    //    action: function () {
-                    //        return emWamp.call("/user/account#getCountries");
-                    //    }
-                    //},
-                    {
-                        label: "getProfile",
-                        action: function() {
-                            return emWamp.call("/user/account#getProfile");
-                        }
-                    },
-                    //{
-                    //    label: "updateProfile",
-                    //    action: function () {
-                    //        var q = $q.defer();
-                    //        emWamp.call("/user/account#getProfile")
-                    //            .then(function(result) {
-                    //                var obj = angular.fromJson(result).fields;
-                    //                    obj.gender = "M";
-                    //                    obj.phonePrefix = obj.mobilePrefix;
-                    //                    obj.phone = obj.mobile;
-                    //                    obj.securityQuestion = "(empty)";
-                    //                    obj.securityAnswer = "(empty)";
-                    //                    q.resolve(emWamp.call("/user/account#updateProfile", obj));
-                    //                },
-                    //                _logError);
-                    //        return q.promise;
-                    //    }
-                    //},
-                ];
+            //$scope.$on("$wamp.close", function (event, data) {
+            //    $scope.reason = data.reason;
+            //    $scope.details = data.details;
+            //});
 
-                var _paymentActions = [
-                    {
-                        label: "getGamingAccounts",
-                        action: function() {
-                            return emWamp.call("/user/account#getGamingAccounts",
+            var _actions = [
+                //{
+                //    label: "getCountries",
+                //    action: function () {
+                //        return emWamp.call("/user/account#getCountries");
+                //    }
+                //},
+                {
+                    label: "getProfile",
+                    action: function() {
+                        return emWamp.call("/user/account#getProfile");
+                    }
+                },
+                //{
+                //    label: "updateProfile",
+                //    action: function () {
+                //        var q = $q.defer();
+                //        emWamp.call("/user/account#getProfile")
+                //            .then(function(result) {
+                //                var obj = angular.fromJson(result).fields;
+                //                    obj.gender = "M";
+                //                    obj.phonePrefix = obj.mobilePrefix;
+                //                    obj.phone = obj.mobile;
+                //                    obj.securityQuestion = "(empty)";
+                //                    obj.securityAnswer = "(empty)";
+                //                    q.resolve(emWamp.call("/user/account#updateProfile", obj));
+                //                },
+                //                _logError);
+                //        return q.promise;
+                //    }
+                //},
+            ];
+
+            var _paymentActions = [
+                {
+                    label: "getGamingAccounts",
+                    action: function() {
+                        return emWamp.call("/user/account#getGamingAccounts",
                             { expectBalance: true, expectBonus: false });
-                        }
-                    },
-                    {
-                        label: "getPaymentMethods",
-                        action: function () {
-                            return emWamp.call("/user/deposit#getPaymentMethods",
+                    }
+                },
+                {
+                    label: "getPaymentMethods",
+                    action: function () {
+                        return emWamp.call("/user/deposit#getPaymentMethods",
                             {
                                 filterByCountry: $scope.sessionInfo.userCountry,
                                 currency: $scope.sessionInfo.currency
                             });
-                        }
-                    },
-                    {
-                        label: "getSupportedPaymentMethods",
-                        action: function () {
-                            return emBanking
-                                .getSupportedPaymentMethods($scope.sessionInfo.userCountry,
-                                    $scope.sessionInfo
-                                    .currency);
-                        }
-                    },
-                    //{
-                    //    label: "getCategorizedPagmentMethods",
-                    //    action: function() {
-                    //        return emWamp.call("/user/deposit#getCategorizedPagmentMethods",
-                    //        { filterByCountry: $scope.sessionInfo.userCountry, currency: $scope.sessionInfo.currency });
-                    //    }
-                    //},
-                ];
+                    }
+                },
+                {
+                    label: "getSupportedPaymentMethods",
+                    action: function () {
+                        return emBanking
+                            .getSupportedPaymentMethods($scope.sessionInfo.userCountry,
+                                $scope.sessionInfo
+                                .currency);
+                    }
+                },
+                //{
+                //    label: "getCategorizedPagmentMethods",
+                //    action: function() {
+                //        return emWamp.call("/user/deposit#getCategorizedPagmentMethods",
+                //        { filterByCountry: $scope.sessionInfo.userCountry, currency: $scope.sessionInfo.currency });
+                //    }
+                //},
+            ];
 
-                var _paymentActionsForVISA = [
-                    {
-                        label: "getPaymentMethodCfg / VISA",
-                        action: function() {
-                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.VISA);
-                        }
-                    },
-                    //{
-                    //    label: "registerPayCardVISA",
-                    //    action: function () {
-                    //        return emBanking.registerPayCardVISA("4532524980200032", "TEST USER", "04/2021"/*855*/);
-                    //    }
-                    //},
-                    //{
-                    //    label: "registerPayCardVISA",
-                    //    action: function() {
-                    //        return emBanking.registerPayCardVISA("4302520141576003", "TEST USER", "10/2020" /*855*/);
-                    //    }
-                    //},
-                    {
-                        label: "prepare / confirm VISA",
-                        action: function() {
-                            var gamingAccountId = "7038069";
-                            var currency = "EUR";
-                            var amount = "10";
-                            // 2087353 / 161
-                            // FAKE:2087352 / 855
-                            var payCardId = 2087352;
-                            var cardSecurityCode = "855";
-                            var defer = $q.defer();
+            var _paymentActionsForVISA = [
+                {
+                    label: "getPaymentMethodCfg / VISA",
+                    action: function() {
+                        return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.VISA);
+                    }
+                },
+                //{
+                //    label: "registerPayCardVISA",
+                //    action: function () {
+                //        return emBanking.registerPayCardVISA("4532524980200032", "TEST USER", "04/2021"/*855*/);
+                //    }
+                //},
+                //{
+                //    label: "registerPayCardVISA",
+                //    action: function() {
+                //        return emBanking.registerPayCardVISA("4302520141576003", "TEST USER", "10/2020" /*855*/);
+                //    }
+                //},
+                {
+                    label: "prepare / confirm VISA",
+                    action: function() {
+                        var gamingAccountId = "7038069";
+                        var currency = "EUR";
+                        var amount = "10";
+                        // 2087353 / 161
+                        // FAKE:2087352 / 855
+                        var payCardId = 2087352;
+                        var cardSecurityCode = "855";
+                        var defer = $q.defer();
 
 
-                            emBanking.prepare({
-                                    paymentMethodCode: emBanking.PaymentMethodCode.VISA,
-                                    fields: {
-                                        gamingAccountID: gamingAccountId,
-                                        currency: currency,
-                                        amount: amount,
-                                        payCardID: payCardId,
-                                        cardSecurityCode: cardSecurityCode,
-                                        bonusCode: ""
-                                    }
-                                })
-                                .then(function(result) {
-                                        defer.resolve(emBanking.confirm(result.pid));
-                                    },
-                                    function(error) { defer.resolve(error) });
+                        emBanking.prepare({
+                                paymentMethodCode: emBanking.PaymentMethodCode.VISA,
+                                fields: {
+                                    gamingAccountID: gamingAccountId,
+                                    currency: currency,
+                                    amount: amount,
+                                    payCardID: payCardId,
+                                    cardSecurityCode: cardSecurityCode,
+                                    bonusCode: ""
+                                }
+                            })
+                            .then(function(result) {
+                                    defer.resolve(emBanking.confirm(result.pid));
+                                },
+                                function(error) { defer.resolve(error) });
 
-                            return defer.promise;
-                            //return emBanking.prepareVISA(gamingAccountId, currency, amount, payCardId, cardSecurityCode);
-                        }
-                    },
-                ];
+                        return defer.promise;
+                        //return emBanking.prepareVISA(gamingAccountId, currency, amount, payCardId, cardSecurityCode);
+                    }
+                },
+            ];
 
-                var _paymentActionsForMoneyMatrix_Trustly = [
-                    {
-                        label: "getPaymentMethodCfg / MoneyMatrix_Trustly",
-                        action: function() {
-                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.MoneyMatrixTrustly);
-                        }
-                    },
-                ];
-                var _paymentActionsForMaestro = [
-                    {
-                        label: "getPaymentMethodCfg / Maestro",
-                        action: function () {
-                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.Maestro);
-                        }
-                    },
-                    //{
-                    //    label: "registerPayCardMaestro",
-                    //    action: function () {
-                    //        return emBanking
-                    //            .registerPayCardMaestro(
-                    //                "5892420026086728",
-                    //                "KONSTANTINOS CHATZOPOULOS",
-                    //                "06/2017",
-                    //                "06/2015",
-                    //                "542");
-                    //    }
-                    //}
-                    //{
-                    //    label: "prepareMaestro",
-                    //    action: function () {
-                    //        var gamingAccountId = 7038069;
-                    //        var currency = "EUR";
-                    //        var amount = 10;
-                    //        var payCardId = 2087341; // from registerPayCardMaestro
-                    //        return emBanking.prepareMaestro(gamingAccountId, currency, amount, payCardId, "542");
-                    //    }
-                    //},
-                ];
+            var _paymentActionsForMoneyMatrix_Trustly = [
+                {
+                    label: "getPaymentMethodCfg / MoneyMatrix_Trustly",
+                    action: function() {
+                        return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.MoneyMatrixTrustly);
+                    }
+                },
+            ];
+            var _paymentActionsForMaestro = [
+                {
+                    label: "getPaymentMethodCfg / Maestro",
+                    action: function () {
+                        return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.Maestro);
+                    }
+                },
+                //{
+                //    label: "registerPayCardMaestro",
+                //    action: function () {
+                //        return emBanking
+                //            .registerPayCardMaestro(
+                //                "5892420026086728",
+                //                "KONSTANTINOS CHATZOPOULOS",
+                //                "06/2017",
+                //                "06/2015",
+                //                "542");
+                //    }
+                //}
+                //{
+                //    label: "prepareMaestro",
+                //    action: function () {
+                //        var gamingAccountId = 7038069;
+                //        var currency = "EUR";
+                //        var amount = 10;
+                //        var payCardId = 2087341; // from registerPayCardMaestro
+                //        return emBanking.prepareMaestro(gamingAccountId, currency, amount, payCardId, "542");
+                //    }
+                //},
+            ];
 
-                var _paymentActionsForMasterCard = [
-                    {
-                        label: "getPaymentMethodCfg / MasterCard",
-                        action: function () {
-                            return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.MasterCard);
-                        }
-                    },
-                    //{
-                    //    label: "registerPayCardMasterCard",
-                    //    action: function () {
-                    //        return emBanking
-                    //            .registerPayCardMasterCard(
-                    //                "5167320000544858",
-                    //                "KONSTANTINOS CHATZOPOULOS",
-                    //                "10/2017",
-                    //                "10/2015",
-                    //                "542");
-                    //    }
-                    //}
-                ];
+            var _paymentActionsForMasterCard = [
+                {
+                    label: "getPaymentMethodCfg / MasterCard",
+                    action: function () {
+                        return emBanking.getPaymentMethodCfg(emBanking.PaymentMethodCode.MasterCard);
+                    }
+                },
+                //{
+                //    label: "registerPayCardMasterCard",
+                //    action: function () {
+                //        return emBanking
+                //            .registerPayCardMasterCard(
+                //                "5167320000544858",
+                //                "KONSTANTINOS CHATZOPOULOS",
+                //                "10/2017",
+                //                "10/2015",
+                //                "542");
+                //    }
+                //}
+            ];
 
-                var _casinoActions = [
-                    {
-                        label: "getGameCategories",
-                        action: function () {
-                            return emCasino.getGameCategories();
-                        }
-                    },
-                    {
-                        label: "getGames",
-                        action: function () {
-                            return emCasino.getGames({
-                                filterByVendor: ['NetEnt'],
-                                expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.BackgroundImage,
-                                //pageSize: 10
-                            });
-                        }
-                    },
-                    {
-                        label: "getGameVendors",
-                        action: function () {
-                            return emCasino.getGameVendors();
-                        }
-                    },
-                    {
-                        label: "mostPlayedGames",
-                        action: function () {
-                            return emCasino.getMostPlayedGames(emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.BackgroundImage);
-                        }
-                    },
-                    {
-                        label: "getLaunchUrlRaw",
-                        action: function () {
-                            return emCasino.getLaunchUrlRaw({
-                                slug: "alien-robots",
-                                //tableID: tableId,
-                                realMoney: false
-                            });
-                        }
-                    },
-                ];
-
-                var _passwordActions = [
-                    //{
-                    //    label: "changePassword",
-                    //    action: function () {
-                    //        return emWamp.changePassword({
-                    //            oldPassword: "lunat!c7",
-                    //            newPassword: "lunat!c7"
-                    //        });
-                    //    }
-                    //},
-                    //{
-                    //    label: "sendResetPwdEmail",
-                    //    action: function () {
-                    //        return emWamp.sendResetPwdEmail({
-                    //            email: "xdinos4@nessos.gr",
-                    //            changePwdURL: "http://localhost:63659/api/resetpwd/",
-                    //            captchaPublicKey: $scope.reCaptchaPublicKey,
-                    //            captchaChallenge: "",
-                    //            captchaResponse: vcRecaptchaService.getResponse()
-                    //        });
-                    //    }
-                    //},
-                ];
-
-                $scope.actionResults = [];
-
-                function runActions(actionsToRun) {
-                    angular.forEach(actionsToRun,
-                        function(action) {
-                            action.action()
-                                .then(function(actionResult) {
-                                        $scope.actionResults.push({
-                                            label: action.label,
-                                            result: actionResult
-                                        });
-                                    },
-                                    function(error) {
-                                        $scope.actionResults.push({
-                                            label: action.label,
-                                            result: error
-                                        });
-                                    });
+            var _casinoActions = [
+                {
+                    label: "getGameCategories",
+                    action: function () {
+                        return emCasino.getGameCategories();
+                    }
+                },
+                {
+                    label: "getGames",
+                    action: function () {
+                        return emCasino.getGames({
+                            filterByVendor: ['NetEnt'],
+                            expectedFields: emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.Thumbnail + emCasino.FIELDS.BackgroundImage,
+                            //pageSize: 10
                         });
-                };
+                    }
+                },
+                {
+                    label: "getGameVendors",
+                    action: function () {
+                        return emCasino.getGameVendors();
+                    }
+                },
+                {
+                    label: "mostPlayedGames",
+                    action: function () {
+                        return emCasino.getMostPlayedGames(emCasino.FIELDS.Slug + emCasino.FIELDS.Name + emCasino.FIELDS.BackgroundImage);
+                    }
+                },
+                {
+                    label: "getLaunchUrlRaw",
+                    action: function () {
+                        return emCasino.getLaunchUrlRaw({
+                            slug: "alien-robots",
+                            //tableID: tableId,
+                            realMoney: false
+                        });
+                    }
+                },
+            ];
 
-                emWamp.init();
-                //emWamp.login({ usernameOrEmail: "xdinos4@nessos.gr", password: "lunat!c7" })
-                emWamp.login({ usernameOrEmail: "info@nessos.gr", password: "gz2016!@" })
-                    .then(function(result) {
-                            $scope.userInfo = result;
-                            emWamp.getSessionInfo()
-                                .then(function(result) {
-                                        $scope.sessionInfo = result;
+            var _passwordActions = [
+                //{
+                //    label: "changePassword",
+                //    action: function () {
+                //        return emWamp.changePassword({
+                //            oldPassword: "lunat!c7",
+                //            newPassword: "lunat!c7"
+                //        });
+                //    }
+                //},
+                //{
+                //    label: "sendResetPwdEmail",
+                //    action: function () {
+                //        return emWamp.sendResetPwdEmail({
+                //            email: "xdinos4@nessos.gr",
+                //            changePwdURL: "http://localhost:63659/api/resetpwd/",
+                //            captchaPublicKey: $scope.reCaptchaPublicKey,
+                //            captchaChallenge: "",
+                //            captchaResponse: vcRecaptchaService.getResponse()
+                //        });
+                //    }
+                //},
+            ];
 
-                                        runActions(_paymentActions);
-                                        //runActions(_paymentActionsForVISA);
-                                        runActions(_paymentActionsForMoneyMatrix_Trustly);
-                                        //runActions(_paymentActionsForMaestro);
-                                        //runActions(_paymentActionsForMasterCard);
-                                        //runActions(_casinoActions);
-                                        //runActions(_passwordActions);
-                                    },
-                                    _logError);
-                        },
-                        _logError);
-            });
-    </script>
-    <script src="Scripts/_app/services/emWamp.js"></script>
-    <script src="Scripts/_app/services/emCasino.js"></script>
-    <script src="Scripts/_app/services/emBanking.js"></script>
+            $scope.actionResults = [];
+
+            function runActions(actionsToRun) {
+                angular.forEach(actionsToRun,
+                    function(action) {
+                        action.action()
+                            .then(function(actionResult) {
+                                    $scope.actionResults.push({
+                                        label: action.label,
+                                        result: actionResult
+                                    });
+                                },
+                                function(error) {
+                                    $scope.actionResults.push({
+                                        label: action.label,
+                                        result: error
+                                    });
+                                });
+                    });
+            };
+
+            emWamp.init();
+            //emWamp.login({ usernameOrEmail: "xdinos4@nessos.gr", password: "lunat!c7" })
+            emWamp.login({ usernameOrEmail: "info@nessos.gr", password: "gz2016!@" })
+                .then(function(result) {
+                        $scope.userInfo = result;
+                        emWamp.getSessionInfo()
+                            .then(function(result) {
+                                    $scope.sessionInfo = result;
+
+                                    runActions(_paymentActions);
+                                    //runActions(_paymentActionsForVISA);
+                                    runActions(_paymentActionsForMoneyMatrix_Trustly);
+                                    //runActions(_paymentActionsForMaestro);
+                                    //runActions(_paymentActionsForMasterCard);
+                                    //runActions(_casinoActions);
+                                    //runActions(_passwordActions);
+                                },
+                                _logError);
+                    },
+                    _logError);
+        });
+</script>
+    <!--<script src="_app/common/constants.js"></script>-->
+    <script src="_app/modules/customDirectives.js"></script>
+    <script src="_app/modules/customFilters.js"></script>
+    <script src="_app/everymatrix/emConCfg-stage.js"></script>
+    <script src="_app/everymatrix/emWamp.js"></script>
+    <script src="_app/everymatrix/emCasino.js"></script>
+    <script src="_app/everymatrix/emBanking.js"></script>
+    <script src="_app/nsMessageService/nsMessage.js"></script>
+    <script src="_app/nsMessageService/nsMessages.js"></script>
+    <script src="_app/nsMessageService/nsMessageService.js"></script>
+    <script src="_app/services/chatService.js"></script>
+    <script src="_app/services/iovationService.js"></script>
 </body>
 </html>
