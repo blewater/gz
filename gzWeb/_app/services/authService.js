@@ -279,7 +279,7 @@
                 iovationBlackbox: iovation.getBlackbox()
             };
             if (captcha) {
-                params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey)
+                params.captchaPublicKey = localStorageService.get(constants.storageKeys.reCaptchaPublicKey);
                 params.captchaChallenge = "";
                 params.captchaResponse = vcRecaptchaService.getResponse(widgetId);
             }
