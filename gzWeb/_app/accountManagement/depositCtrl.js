@@ -90,8 +90,6 @@
                                 $location.path(constants.routes.games.path).search({});
                         } else if (transactionResult.status === "incomplete") {
                             appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-                        } else if (transactionResult.status === "pending") {
-                            appInsightsTrackEvent('TRANSACTION PENDING');
                             $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
                                 $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                             });
