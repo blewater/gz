@@ -17,9 +17,6 @@ using MailKit.Security;
 using MimeKit;
 using NLog;
 using Z.EntityFramework.Plus;
-using System.Configuration;
-using System.Diagnostics;
-using System.Web.UI.WebControls.Expressions;
 
 namespace gzDAL.Repos
 {
@@ -785,7 +782,7 @@ namespace gzDAL.Repos
         /// Sell any vintages marked for selling. 
         /// 
         /// This method will update the vintages selling values before selling them.
-        /// The vintages are sold at the current fund prices as of this method call.
+        /// The vintages are sold at the current fund prices.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
@@ -796,7 +793,7 @@ namespace gzDAL.Repos
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <returns></returns>
-        public void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
+        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
         {
 
             // Update market price on it.. they may have left the browser window open 
@@ -827,6 +824,8 @@ namespace gzDAL.Repos
                     );
                 }
             }
+
+            return vintages;
         }
 
         #region EmailVintageProceeds
