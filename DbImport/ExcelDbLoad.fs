@@ -263,32 +263,11 @@ module DbPlayerRevRpt =
                     (depositsExcelRow : DepositsExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
 
-        let dbVendor2UserCashBonusAmount = playerRow.CashBonusAmount.Value
-        let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
         let dbDeposits = playerRow.TotalDepositsAmount.Value
         let notNullUserCurrency = userCurrency db playerRow.Currency playerRow.EmailAddress
-
         let thisDepositAmount = getDepositAmountInUserCurrency depositsExcelRow notNullUserCurrency
-        match depositType with
-        | Deposit ->
-            let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
-            playerRow.TotalDepositsAmount <- Nullable newDeposits
-        | V2UDeposit ->
-            // Track Vendor2User Deposits separatedly
-            let newV2uTotalDepositAmount = dbVendor2UserDepositsAmount + thisDepositAmount // in players native currency
-            playerRow.Vendor2UserDeposits <- Nullable newV2uTotalDepositAmount
-
-            // Add to total deposits too
-            let newDeposits = dbDeposits + thisDepositAmount
-            playerRow.TotalDepositsAmount <- Nullable newDeposits
-        | V2UCashBonus ->
-            // Track Cash bonus separatedly
-            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + thisDepositAmount // in players native currency
-            playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
-
-            // Add to total deposits too
-            let newDeposits = dbDeposits + thisDepositAmount
-            playerRow.TotalDepositsAmount <- Nullable newDeposits
+        let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
+        playerRow.TotalDepositsAmount <- Nullable newDeposits
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
