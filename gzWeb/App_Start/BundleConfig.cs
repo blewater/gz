@@ -72,6 +72,7 @@ namespace gzWeb
                     , "~/_app/accountManagement/accountManagement.css"
                     , "~/_app/nsMessageService/nsMessages.css"
                     , "~/Content/Styles/introjs/introjs.min.css"
+                    , "~/Content/Styles/introjs/introjs-modern.min.css"
                 });
 
             #endregion

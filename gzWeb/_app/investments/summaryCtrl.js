@@ -79,6 +79,11 @@
             $location.path(constants.routes.games.path).search({});
         };
 
+        $scope.intoPortfolio = function () {
+            window.appInsights.trackEvent("GOTO PORTOFOLIO", { from: "SUMMARY" });
+            $location.path(constants.routes.portfolio.path).search({});
+        };
+
         $scope.getInvestmentText = function(investmentAmount) {
             if (investmentAmount === 0)
                 return "N/A";
@@ -151,8 +156,7 @@
                 $scope.model.CashBonus = round($scope.model.CashBonus, 1);
 
                 $scope.vintages = processVintages($scope.model.Vintages);
-                $scope.mdgridcols = $scope.smgridcols = $scope.vintages.length === 0 ? 12 : 6;
-                setIntroOptionsForUsers($scope.vintages.length, $scope.model.InvestmentsBalance);
+                setIntroOptionsForUsers($scope.vintages.length, $scope.model.InvestmentsBalance, $scope.model.GmGainLoss);
             });            
         }
 
@@ -160,35 +164,36 @@
             $scope.currency = $scope._authData.currency;
         }
 
-        function setIntroOptionsNewUsers() {
+        function setIntroNewUsers() {
             var introOptionsNewUsers = {
                 steps: [
                     {
-                        element: '#toBeInvested',
-                        intro: "50% of your net loss to credited at investment balance"
+                        element: "#toBeInvested",
+                        intro: "Play casino games and 50% of your net loss will be credited into your investment balance."
                     }
                 ],
                 showStepNumbers: true,
                 exitOnOverlayClick: true,
                 exitOnEsc: true,
                 skipLabel: 'Exit',
-                doneLabel: 'Got it!'
+                doneLabel: 'Got it!',
+                tooltipPosition: 'auto'
             }
             ngIntroService.setOptions(introOptionsNewUsers);
             ngIntroService.start();
         }
 
-        function setIntroOptionsOtherUsers() {
+        function setIntroOtherUsers() {
             var otherUsersOptions = {
                 steps: [
                     {
-                        element: '#toBeInvested',
-                        intro: "50% of your net loss to credited at investment balance"
-                    },
+                        element: "#toBeInvested",
+                        intro:
+                            "Play casino games and 50% of your net loss will be credited into your investment balance."
+        },
                     {
-                        element: '#currentBalance',
-                        intro: "Did you know that your balance is increasing the more you play?",
-                        position: 'right'
+                        element: "#currentBalance",
+                        intro: "Did you know that your balance is increasing the more you play?"
                     }
                 ],
                 showStepNumbers: true,
@@ -197,17 +202,47 @@
                 nextLabel: '<strong>Next Tip</strong>',
                 prevLabel: '<span style="color:green">Previous</span>',
                 skipLabel: 'Exit',
-                doneLabel: 'Thanks'
+                doneLabel: 'Got it!',
+                tooltipPosition: 'auto'
             };
             ngIntroService.setOptions(otherUsersOptions);
             ngIntroService.start();
         }
 
-        function setIntroOptionsForUsers(vintagesLength, balanceAmount) {
+        function setIntroNewUserswBalance() {
+            var introOptionsNewUsers = {
+                steps: [
+                    {
+                        element: "#chooseYourInv",
+                        intro: "Choose your investment"
+                    }
+                ],
+                showStepNumbers: false,
+                exitOnOverlayClick: true,
+                exitOnEsc: true,
+                skipLabel: 'Exit',
+                doneLabel: 'Go to selection',
+                tooltipPosition: 'auto'
+            }
+            ngIntroService.setOptions(introOptionsNewUsers);
+
+            ngIntroService.onComplete(function () {
+                $location.path(constants.routes.portfolio.path).search({});
+                $scope.$apply();
+            });
+
+            ngIntroService.start();
+        }
+
+        function setIntroOptionsForUsers(vintagesLength, balanceAmount, gmGainLoss) {
             if (vintagesLength === 0 && balanceAmount === 0) {
-                setIntroOptionsNewUsers();
+                setIntroNewUsers();
+
+            } else if ((vintagesLength === 0 || vintagesLength === 1) && gmGainLoss < 0) {
+                setIntroNewUserswBalance();
+
             } else if ( vintagesLength > 1 || balanceAmount === 0 ) {
-                setIntroOptionsOtherUsers();
+                setIntroOtherUsers();
             }
         }
 

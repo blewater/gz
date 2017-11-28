@@ -16,5 +16,11 @@
     "inputFiles": [
       "Scripts/angular-wamp/angular-wamp.js"
     ]
+  },
+  {
+    "outputFileName": "Content/Styles/introjs/introjs-modern.min.css",
+    "inputFiles": [
+      "Content/Styles/introjs/introjs-modern.css"
+    ]
   }
 ]
