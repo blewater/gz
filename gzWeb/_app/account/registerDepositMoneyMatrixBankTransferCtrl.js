@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'depositMoneyMatrixEnterCashCtrl';
+    var ctrlId = 'registerDepositMoneyMatrixBankTransferCtrl';
     APP.controller(ctrlId, ['$scope', '$rootScope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
     function ctrlFactory($scope, $rootScope, $q, iso4217, auth, emBanking, $filter) {
         $scope.model = {
@@ -16,7 +16,7 @@
         function loadCreditCardInfo() {
             if ($scope.paymentMethodCfg.monitoringScriptUrl) {
                 $.get($scope.paymentMethodCfg.monitoringScriptUrl, undefined, angular.noop, "script").fail(function () {
-                    message.autoCloseError('Cannot load provided MonitoringScriptUrl');
+                    message.error('Cannot load provided MonitoringScriptUrl');
                 });
             }
 
@@ -33,7 +33,6 @@
             $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
             if (!$rootScope.mobile)
                 $scope.amountPlaceholder += amountRange;
-            $scope.extraValidityCheck = true;
         }
 
         function init() {
