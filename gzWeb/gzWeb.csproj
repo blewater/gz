@@ -718,6 +718,10 @@
     <Compile Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.Designer.cs">
       <DependentUpon>201710312245283_SQLGetVintagesFuncOptim.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711291113263_Add IsRegistrationFinalized field to User.cs" />
+    <Compile Include="Migrations\201711291113263_Add IsRegistrationFinalized field to User.Designer.cs">
+      <DependentUpon>201711291113263_Add IsRegistrationFinalized field to User.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1549,6 +1553,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710312245283_SQLGetVintagesFuncOptim.resx">
       <DependentUpon>201710312245283_SQLGetVintagesFuncOptim.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711291113263_Add IsRegistrationFinalized field to User.resx">
+      <DependentUpon>201711291113263_Add IsRegistrationFinalized field to User.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
