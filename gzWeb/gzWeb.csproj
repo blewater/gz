@@ -830,11 +830,15 @@
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
     <Content Include="Scripts\autobahn\autobahn.min.js" />
+    <Content Include="_app\accountManagement\depositMoneyMatrixBankTransfer.html" />
+    <Content Include="_app\accountManagement\depositMoneyMatrixBankTransferCtrl.js" />
     <Content Include="_app\accountManagement\withdrawAmountField.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCommonCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCard.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCardCtrl.js" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixBankTransfer.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixEnterCash.html" />
+    <Content Include="_app\accountManagement\withdrawMoneyMatrixBankTransferCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixEnterCashCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrill.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrillCtrl.js" />
@@ -849,7 +853,9 @@
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrill.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrill1TapCtrl.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixSkrillCtrl.js" />
+    <Content Include="_app\account\registerDepositMoneyMatrixBankTransfer.html" />
     <Content Include="_app\account\registerDepositMoneyMatrixEnterCash.html" />
+    <Content Include="_app\account\registerDepositMoneyMatrixBankTransferCtrl.js" />
     <Content Include="_app\account\registerDepositMoneyMatrixEnterCashCtrl.js" />
     <Content Include="_app\account\registerDepositMoneyMatrixSkrill.html" />
     <Content Include="_app\account\registerDepositMoneyMatrixSkrill1Tap.html" />
@@ -1061,6 +1067,7 @@
     <Content Include="Content\Images\investment icons\cash_white.svg" />
     <Content Include="Content\Images\investment icons\invest_white.svg" />
     <Content Include="Content\Images\payment methods\entercash.svg" />
+    <Content Include="Content\Images\payment methods\banktransfer.svg" />
     <None Include="Properties\PublishProfiles\greenzorro-sgn - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorro-sgn - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\greenzorrodev - FTP.pubxml" />
