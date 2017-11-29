@@ -259,6 +259,7 @@ namespace gzWeb
                                     , "~/_app/account/registerDepositMoneyMatrixSkrillCtrl.js"
                                     , "~/_app/account/registerDepositMoneyMatrixSkrill1TapCtrl.js"
                                     , "~/_app/account/registerDepositMoneyMatrixEnterCashCtrl.js"
+                                    , "~/_app/account/registerDepositMoneyMatrixBankTransferCtrl.js"
                                     , "~/_app/account/receiptCtrl.js"
             #endregion
 
@@ -274,6 +275,7 @@ namespace gzWeb
                                     , "~/_app/accountManagement/depositMoneyMatrixSkrillCtrl.js"
                                     , "~/_app/accountManagement/depositMoneyMatrixSkrill1TapCtrl.js"
                                     , "~/_app/accountManagement/depositMoneyMatrixEnterCashCtrl.js"
+                                    , "~/_app/accountManagement/depositMoneyMatrixBankTransferCtrl.js"
                                     //, "~/_app/accountManagement/depositMoneyMatrixNetellerCtrl.js"
                                     //, "~/_app/accountManagement/depositMoneyMatrixPaySafeCardCtrl.js"
                                     //, "~/_app/accountManagement/depositMoneyMatrixEcoPayzCtrl.js"
@@ -288,6 +290,7 @@ namespace gzWeb
                                     , "~/_app/accountManagement/withdrawMoneyMatrixSkrillCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixSkrill1TapCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixEnterCashCtrl.js"
+                                    , "~/_app/accountManagement/withdrawMoneyMatrixBankTransferCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixNetellerCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixPaySafeCardCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixEcoPayzCtrl.js"

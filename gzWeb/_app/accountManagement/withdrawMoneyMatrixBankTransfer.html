@@ -1,0 +1,52 @@
+﻿<div class="withdraw-entercash">
+    <div>{{model.selectedCreditCard.name}}</div>
+
+    <div ng-if="!payCardID">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="accountNumberRegex" placeholder="account number" id="accountNumber" name="accountNumber" class="form-control" ng-model="model.accountNumber" required
+                               ng-class="{ 'empty': !model.accountNumber, 'danger' : form.accountNumber.$invalid && !form.accountNumber.$pristine }">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.accountNumber.$pristine && form.accountNumber.$invalid}">Invalid account number.</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.accountNumber.$valid"></gz-field-ok>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="bankIdRegex" placeholder="bank id" id="bankId" name="bankId" class="form-control" ng-model="model.bankId" required
+                               ng-class="{ 'empty': !model.bankId, 'danger' : form.bankId.$invalid && !form.bankId.$pristine }">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.bankId.$pristine && form.bankId.$invalid}">Invalid bank id.</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.bankId.$valid"></gz-field-ok>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="ownerNameRegex" placeholder="owner name" id="ownerName" name="ownerName" class="form-control" ng-model="model.ownerName" required
+                               ng-class="{ 'empty': !model.ownerName, 'danger' : form.ownerName.$invalid && !form.ownerName.$pristine }">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.ownerName.$pristine && form.ownerName.$invalid}">Invalid owner name.</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.ownerName.$valid"></gz-field-ok>
+            </div>
+        </div>
+    </div>
+
+    <div ng-include="'_app/accountManagement/withdrawAmountField.html'"></div>
+</div>
