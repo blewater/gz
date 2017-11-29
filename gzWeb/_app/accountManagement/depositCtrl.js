@@ -15,6 +15,7 @@
         var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill.html', ctrlId: 'depositMoneyMatrixSkrillCtrl' }
         var moneyMatrixSkrill1TapFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill1Tap.html', ctrlId: 'depositMoneyMatrixSkrill1TapCtrl' }
         var moneyMatrixEnterCashFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEnterCash.html', ctrlId: 'depositMoneyMatrixEnterCashCtrl' }
+        var moneyMatrixBankTransferFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixBankTransfer.html', ctrlId: 'depositMoneyMatrixBankTransferCtrl' }
         //var moneyMatrixNetellerFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixNeteller.html', ctrlId: 'depositMoneyMatrixNetellerCtrl' }
         //var moneyMatrixPaySafeCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixPaySafeCard.html', ctrlId: 'depositMoneyMatrixPaySafeCardCtrl' }
         //var moneyMatrixEcoPayzFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEcoPayz.html', ctrlId: 'depositMoneyMatrixEcoPayzCtrl' }
@@ -27,6 +28,7 @@
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap] = moneyMatrixSkrill1TapFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixBankTransfer] = moneyMatrixBankTransferFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixNeteller] = moneyMatrixNetellerFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixPaySafeCard] = moneyMatrixPaySafeCardFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEcoPayz] = moneyMatrixEcoPayzFields;

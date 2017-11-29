@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var ctrlId = 'depositMoneyMatrixEnterCashCtrl';
+    var ctrlId = 'depositMoneyMatrixBankTransferCtrl';
     APP.controller(ctrlId, ['$scope', '$rootScope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
     function ctrlFactory($scope, $rootScope, $q, iso4217, auth, emBanking, $filter) {
         $scope.model = {

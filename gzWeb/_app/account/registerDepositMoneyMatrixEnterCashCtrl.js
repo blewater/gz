@@ -61,7 +61,7 @@
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Do you want to deposit the amount of " + prepareData.creditAmount + " using EnterCash?";
+            return "Do you want to deposit the amount of " + prepareData.creditAmount + " using " + $scope.selectedMethod.name + "?";
         };
 
         init();
