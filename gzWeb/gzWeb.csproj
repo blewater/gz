@@ -763,6 +763,7 @@
     <Content Include="Content\Images\costs.svg" />
     <Content Include="Content\Images\curacao.png" />
     <Content Include="Content\Images\custom-caret-48px.svg" />
+    <Content Include="Content\Images\founder1.jpg" />
     <Content Include="Content\Images\payment methods\entercash.png" />
     <Content Include="Content\Images\exit.png" />
     <Content Include="Content\Images\exit.svg" />
