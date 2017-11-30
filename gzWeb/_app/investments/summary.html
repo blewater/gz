@@ -95,7 +95,7 @@
                                     <img src="../../Content/Images/Investment Icons/info.png" tooltip-class="summary-tooltip" uib-tooltip-html="'<div>Calculated as:<br />bet wins - bet losses for the given month.</div>'" />
                                 </span>
                             </div>
-                            <div id="chooseYourInv" class="date">
+                            <div class="date">
                                 <div class="date-icon">
                                     <img src="../../Content/Images/Investment Icons/calendar_green.svg" />
                                 </div>
@@ -104,14 +104,14 @@
                                     <div class="date-data text-emphasis">
                                         <span class="date-datetime">
                                             <span class="date-datevalue">{{model.NextInvestmentOnLocalDate}}</span>
-                                            <span class="date-timevalue">{{model.NextInvestmentOnLocalTime}}</span>
+                                        <span class="date-timevalue">{{model.NextInvestmentOnLocalTime}}</span>
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div ng-if="vintages.length === 1 && " class="summary-box-foot">
-                            <div class="summary-box-btn" ng-click="intoPortfolio()">
+                        <div class="summary-box-foot">
+                            <div ng-if="vintages.length > 0" class="summary-box-btn" ng-click="gotoPortfolio()">
                                 <img src="../../Content/Images/games_white.svg" alt="" />
                                 <span>CHOOSE YOUR INVESTMENT</span>
                             </div>
@@ -126,7 +126,7 @@
                                         <div class="date-data text-emphasis">
                                             <span class="date-datetime">
                                                 <span class="date-datevalue">{{model.StatusAsOfLocalDate}}</span>
-                                                <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
+                                            <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
                                             </span>
                                         </div>
                                     </div>
@@ -143,12 +143,16 @@
                                     <div class="amount-label">Withdrawn</div>
                                     <div class="amount-value">{{model.Withdrawals | isoCurrency : currency : 1}}</div>
                                 </div>
-                                <div class="amount"><hr /></div>
+                                <div class="amount">
+                                    <hr />
+                                </div>
                                 <div class="amount net-gaming-loss-gain">
                                     <div class="amount-label">Net gaming loss/gain</div>
                                     <div class="amount-value">{{model.GmGainLoss | isoCurrency : currency : 1}}</div>
                                 </div>
-                                <div class="amount"><hr /></div>
+                                <div class="amount">
+                                    <hr />
+                                </div>
                                 <div class="amount">
                                     <div class="amount-label">Current balance</div>
                                     <div class="amount-value">{{model.EndGmBalance | isoCurrency : currency : 1}}</div>
@@ -319,6 +323,3 @@
         </div>
     </div>
 </div>
-
-
-
