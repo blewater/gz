@@ -345,8 +345,7 @@
     margin-top: -14px;
 }
 .investments .summary .summary-box.expected-amount.expanded .summary-box-foot {
-    /*height: 470px;*/
-    height: 560px;
+    height: 37em;
 }
 .investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content {
     margin-top: 30px;

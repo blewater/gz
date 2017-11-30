@@ -153,7 +153,6 @@
                 $scope.model.Withdrawals = round($scope.model.Withdrawals, 1);
                 $scope.model.EndGmBalance = round($scope.model.EndGmBalance, 1);
                 $scope.model.GmGainLoss = round($scope.model.EndGmBalance - $scope.model.BegGmBalance - $scope.model.Deposits + $scope.model.Withdrawals, 1);
-                $scope.model.CashBonus = round($scope.model.CashBonus, 1);
 
                 $scope.vintages = processVintages($scope.model.Vintages);
                 setIntroOptionsForUsers($scope.vintages.length, $scope.model.InvestmentsBalance, $scope.model.GmGainLoss);

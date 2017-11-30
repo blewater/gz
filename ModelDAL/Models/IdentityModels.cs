@@ -52,6 +52,8 @@ namespace gzDAL.Models
         /// </summary>
         [Required]
         public bool ActiveCustomerIdInPlatform { get; set; }
+        
+        public bool? IsRegistrationFinalized { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager, string authenticationType)
         {
