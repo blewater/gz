@@ -20,8 +20,11 @@
     [DisabledGzCustomer]         BIT            DEFAULT ((0)) NOT NULL,
     [ClosedGzAccount]            BIT            DEFAULT ((0)) NOT NULL,
     [LastLogin]                  DATETIME       NULL,
+    [IsRegistrationFinalized]    BIT            NULL,
     CONSTRAINT [PK_dbo.AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
