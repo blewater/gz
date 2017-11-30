@@ -196,12 +196,12 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId)
         {
-            var user = await 
-                        userRepo
-                            .GetCachedUserAsync(customerId);
-
-            if (user==null)
+            var user = await db.Users.SingleOrDefaultAsync(x => x.Id == customerId);
+            if (user == null)
                 throw new InvalidOperationException("User not found.");
+
+            if (user.IsRegistrationFinalized.HasValue && user.IsRegistrationFinalized.Value)
+                return;
 
             var defaultPortfolioRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
@@ -211,11 +211,10 @@ namespace gzDAL.Repos
                         {
                             // Fix Everymatrix User Id leak during registration 
                             if (!user.GmCustomerId.HasValue)
-                            {
                                 user.GmCustomerId = gmUserId;
-                            }
 
                             SetDbDefaultPortfolio(customerId, defaultPortfolioRisk);
+                            user.IsRegistrationFinalized = true;
                         });
         }
 
