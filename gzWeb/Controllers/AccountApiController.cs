@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -522,6 +523,13 @@ namespace gzWeb.Controllers
             {
                 Logger.Error("User not found. [User#{0}]", userId);
                 return Ok("User not found!");
+            }
+
+            if (user.IsRegistrationFinalized.HasValue &&
+                user.IsRegistrationFinalized.Value)
+            {
+                Logger.Info("Registration is finalized for [User#{0}].", userId);
+                return Ok();
             }
 
             try
