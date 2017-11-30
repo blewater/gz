@@ -83,10 +83,10 @@
             getAmount: function (trx) { return trx ? (trx.debit ? trx.debit.amount : trx.credit.amount) : 0; },
             getAmountText: function (trx) {
                 var currency = trx.debit ? trx.debit.currency : trx.credit.currency;
-                return
-                    (trx.debit ? ("-" + getAmount(trx.debit.amount, trx.debit.currency)) : getAmountText(trx.credit.amount, trx.credit.currency)) +
+                var amount = (trx.debit ? ("-" + getAmount(trx.debit.amount, trx.debit.currency)) : getAmountText(trx.credit.amount, trx.credit.currency)) +
                     " / " +
                     $filter('isoCurrency')(trx.balance, currency, 2);
+                return amount;
             },
             getDescription: function (trx) { return (trx.debit ? trx.debit.name : trx.credit.name) + " - " + trx.description; },
             getStatus: getStatus
