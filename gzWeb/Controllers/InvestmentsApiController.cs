@@ -94,13 +94,13 @@ namespace gzWeb.Controllers {
                     OkToWithdraw = summaryDto.OkToWithdraw,
                     Prompt = summaryDto.Prompt,
                     Vintages = 
-                    summaryDto
-                    .Vintages
-                    .Select(
-                        t =>
-                            mapper
-                            .Map<VintageDto, VintageViewModel>(t))
-                            .ToList(),
+                        summaryDto
+                        .Vintages
+                        .Select(
+                            t =>
+                                mapper
+                                .Map<VintageDto, VintageViewModel>(t))
+                                .ToList(),
                     BegGmBalance = summaryDto.BegGmBalance,
                     EndGmBalance = summaryDto.EndGmBalance,
                     Deposits = summaryDto.Deposits,
