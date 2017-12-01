@@ -57,7 +57,7 @@
                 }, function(withdrawResponse) {
                     $scope.vintages = processVintages(withdrawResponse.Result);
                     var netProceeds = getVintageSoldNetProceeds(withdrawResponse.Result);
-                    message.success("To be credited into your casino wallet (" + netProceeds.toString() + " " + $scope.currency + " pending withdrawal).");
+                    message.success("To be credited into your casino wallet (" + netProceeds.toString() + " " + $scope.currency + " pending withdrawal). Once awarded bet once and it will be cached out.");
                 }, {
                     rejectFn: function() {
                         var selectedCount = $filter('where')(updatedVintages, { 'Selected': true }).length;
@@ -107,7 +107,7 @@
 
         function getVintageSoldNetProceeds(vintages) {
             var totalNetProceeds = vintages.reduce(function(prevVal, v) {
-                var netAmount = v.Selected ? prevVal + (v.SellingValue - v.SoldFees) : prevVal;
+                var netAmount = v.Selected ? prevVal + v.SellingValue: prevVal;
                 return netAmount;
             }, 0);
             return totalNetProceeds;
