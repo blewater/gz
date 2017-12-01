@@ -61,10 +61,12 @@
                                 <div class="vintage-label">{{vintage.Date | date : 'MMMM'}}</div>
                                 <div class="vintage-value">{{vintage.InvestmentText}}</div>
                             </div>
-                            <div ng-show="investmentHistoryExpanded">
-                                <div class="summary-box-btn" ng-click="showAllVintages()">
-                                    <img src="../../Content/Images/plus_icon.svg" alt="" />
-                                    <span>SHOW ALL</span>
+                            <div class="show-more">
+                                <div ng-show="investmentHistoryExpanded">
+                                    <div class="summary-box-btn" ng-click="showAllVintages()">
+                                        <img src="../../Content/Images/plus_icon.svg" alt="" />
+                                        <span>SHOW ALL</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="expansion" ng-if="vintages.length > 0">
