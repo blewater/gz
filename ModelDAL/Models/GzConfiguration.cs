@@ -27,7 +27,7 @@ namespace gzDAL.Models {
         /// Number of days to enforce lock In Period before caching out portfolio funds 
         /// </summary>
         [Required]
-        public int LOCK_IN_NUM_DAYS { get; set; } = 90;
+        public int LOCK_IN_NUM_DAYS { get; set; } = 30;
 
         /// <summary>
         /// Early withdrawal penalty when less than 90 days (3 month cycles)

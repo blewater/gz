@@ -98,7 +98,7 @@ namespace gzWeb.Tests.Models
             return portfoliosPriceMap;
         }
 
-        private void AssertBalanceNumbers(List<int> usersFound, string endYearMonthStr)
+        private void Assert7MonthBalanceNumbers(List<int> usersFound, string endYearMonthStr)
         {
 
             var expectedBal = DbExpressions.RoundCustomerBalanceAmount(8828.171828m);
@@ -229,6 +229,47 @@ namespace gzWeb.Tests.Models
         // Excel numbers for asserts
         //TotalCashInv CashInv Balance Share Price Total Shares VintageShares   InvGain
         //    1000	    1000	1000	    1	    1000	    1000	        0
+        private void Assert1MonthBalanceNumbers(List<int> usersFound, string endYearMonthStr)
+        {
+
+            var expectedBal = DbExpressions.RoundCustomerBalanceAmount(1000m);
+            var expectedLastVintageShares = DbExpressions.RoundCustomerBalanceAmount(1000);
+            var expectedInvGain = DbExpressions.RoundCustomerBalanceAmount(0);
+            foreach (var userId in usersFound)
+            {
+                var invB = db.InvBalances
+                    .Single(i => i.CustomerId == userId &&
+                                 string.Compare(i.YearMonth, endYearMonthStr, StringComparison.Ordinal) == 0);
+                var bal = invB.Balance;
+                var totalShares = invB.LowRiskShares + invB.MediumRiskShares + invB.HighRiskShares;
+                var gain = invB.InvGainLoss;
+                var totalInvestments = invB.TotalCashInvestments;
+                Assert.AreEqual(expectedBal, DbExpressions.RoundCustomerBalanceAmount(bal));
+                Assert.AreEqual(expectedLastVintageShares, DbExpressions.RoundCustomerBalanceAmount(totalShares));
+                Assert.AreEqual(DbExpressions.RoundCustomerBalanceAmount(gain), DbExpressions.RoundCustomerBalanceAmount(bal - totalInvestments));
+                Assert.AreEqual(expectedInvGain, DbExpressions.RoundCustomerBalanceAmount(gain));
+            }
+        }
+
+        // Excel numbers for asserts
+        //TotalCashInv CashInv Balance Share Price Total Shares VintageShares   InvGain
+        //    1000	    1000	1000	    1	    1000	    1000	        0
+        [Test]
+        public void SetDb1MonthInvBalancesWithFreshTrx() {
+            ClearTrxHistory(userEmails);
+
+            var now = DateTime.UtcNow;
+            var startYearMonthStr = now.AddMonths(-1).ToStringYearMonth();
+
+            int monthsCnt = 0;
+            var usersFound = new List<int>();
+            ProcessInvBalances(usersFound, monthsCnt, startYearMonthStr);
+            Assert1MonthBalanceNumbers(usersFound, startYearMonthStr);
+        }
+
+        // Excel numbers for asserts
+        //TotalCashInv CashInv Balance Share Price Total Shares VintageShares   InvGain
+        //    1000	    1000	1000	    1	    1000	    1000	        0
         //    2000	    1000	2100	    1.1	    1909.090909	909.0909091	    100
         //    3000	    1000	3290.909091	1.2	    2742.424242	833.3333333	    290.9090909
         //    4000	    1000	4565.151515	1.3	    3511.655012	769.2307692	    565.1515152
@@ -236,7 +277,7 @@ namespace gzWeb.Tests.Models
         //    6000	    1000	7338.911089	1.5	    4892.607393	666.6666667	    1338.911089
         //    7000	    1000	8828.171828	1.6	    5517.607393	625	            1828.171828
         [Test]
-        public void SetDb6MonthInvBalancesWithFreshTrx()
+        public void SetDb7MonthInvBalancesWithFreshTrx()
         {
             ClearTrxHistory(userEmails);
 
@@ -254,7 +295,7 @@ namespace gzWeb.Tests.Models
                 monthsCnt++;
                 startYearMonthStr = DbExpressions.AddMonth(startYearMonthStr);
             }
-            AssertBalanceNumbers(usersFound, endYearMonthStr);
+            Assert7MonthBalanceNumbers(usersFound, endYearMonthStr);
         }
 
         private void SetDbMonthlyPlayerLossTrx_3_4(string trxYearMonthStr, int userId)
