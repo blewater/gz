@@ -71,6 +71,8 @@ namespace gzWeb
                     , "~/_app/promotions/promotions.css"
                     , "~/_app/accountManagement/accountManagement.css"
                     , "~/_app/nsMessageService/nsMessages.css"
+                    , "~/Content/Styles/introjs/introjs.min.css"
+                    , "~/Content/Styles/introjs/introjs-modern.min.css"
                 });
 
             #endregion
@@ -115,7 +117,7 @@ namespace gzWeb
                 ,bundles
                 , "~/js/plugins"
                 , new string[] {
-                    "~/Scripts/moment/moment.min.js", "~/Scripts/spin/spin.min.js", "~/Scripts/autobahn/autobahn.min.js"
+                    "~/Scripts/moment/moment.min.js", "~/Scripts/spin/spin.min.js", "~/Scripts/autobahn/autobahn.min.js", "~/Scripts/intro/intro.min.js"
                 });
 
             CreateBundleOfMultiFiles(
@@ -153,6 +155,7 @@ namespace gzWeb
                     , "~/Scripts/jsnlog/jsnlog.min.js"
                     , "~/Scripts/jsnlog/logToServer.js"
                     , "~/Scripts/angular-appinsights/angular-appinsights.js"
+                    , "~/Scripts/intro/angular-intro.min.js"
                     , "~/_app/modules/customDirectives.js"
                     , "~/_app/modules/customFilters.js"
                 });
