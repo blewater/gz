@@ -480,7 +480,7 @@ module UserTrx =
 
         let getMonthLateQuote (portfoliosPrices)= 
             portfoliosPrices
-            |> Map.filter(fun key _ -> key < nextMonth)
+            |> Map.filter(fun key _ -> key <= nextMonth)
             |> Seq.maxBy(fun kvp -> kvp.Key)
             |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
         

@@ -527,7 +527,7 @@ module DbPlayerRevRpt =
                 |> (fun (user, gmUserId) ->
                     match gmUserId with
                     | 0 -> 
-                        logger.Fatal(sprintf "No GmId for user %s in AspNetUsers Table. No row found in playerRevRpt." user.Email)
+                        logger.Warn(sprintf "No GmId for user %s in AspNetUsers Table. No row found in playerRevRpt." user.Email)
                         setErrorStatus()
                     | gmId -> 
                         user.GmCustomerId <- Nullable gmId
@@ -535,5 +535,5 @@ module DbPlayerRevRpt =
             )
         )
         if getErrorStatus() then
-            failwith "Unresolved AspNetUser rows found without GmPlayerId. Please see the log entries preceeding this."
+            logger.Warn "Unresolved AspNetUser rows found without GmPlayerId. Please see the log entries preceeding this."
       
