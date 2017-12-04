@@ -280,10 +280,14 @@
     margin: 1px;
     width: 38px;
     display: block;
+    height: 32px;
+    line-height: 32px;
 }
 .auth.mgmt-modal .pending-withdrawals td.rollback-col .btn-gz.not-allowed {
     cursor: not-allowed;
 }
+
+.auth.mgmt-modal .pending-withdrawals .table-container ul { list-style-type: none; }
 
 @media (max-width: 767px){
     .auth.mgmt-modal .pending-withdrawals .table-container { overflow-x: auto; }
