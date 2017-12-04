@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'withdrawCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', 'message', '$rootScope', 'accountManagement', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout, message, $rootScope, accountManagement, iso4217) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', 'message', '$rootScope', 'accountManagement', 'iso4217', 'modals', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout, message, $rootScope, accountManagement, iso4217, modals) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -81,36 +81,38 @@
                 withdraw();
         };
 
-        //function sendTransactionReceipt(pid, appInsightsTrackEvent) {
-        //    emBanking.getTransactionInfo(pid).then(function (transactionResult) {
-        //        modals.receipt($scope.selectedMethod.displayName, transactionResult, true).then(function (response) {
-        //            emBanking.sendReceiptEmail($scope.pid, "<div>" + response + "</div>");
-        //            $scope.waiting = false;
-        //            if (transactionResult.status === "success") {
-        //                appInsightsTrackEvent('TRANSACTION SUCCESS');
-        //                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-        //                $scope.nsOk(true);
-        //                //init();
-        //                if ($location.path() === constants.routes.home.path)
-        //                    $location.path(constants.routes.games.path).search({});
-        //            } else if (transactionResult.status === "incomplete") {
-        //                appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-        //            } else if (transactionResult.status === "pending") {
-        //                appInsightsTrackEvent('TRANSACTION PENDING');
-        //                $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
-        //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-        //                });
-        //            } else if (transactionResult.status === "error") {
-        //                appInsightsTrackEvent('TRANSACTION ERROR');
-        //                init();
-        //            }
-        //        });
-        //    }, function (error) {
-        //        $scope.waiting = false;
-        //        message.autoCloseError(error.desc);
-        //        init();
-        //    });
-        //}
+        function sendTransactionReceipt(pid, appInsightsTrackEvent) {
+            $timeout(function () {
+                emBankingWithdraw.getTransactionInfo(pid).then(function (transactionResult) {
+                    modals.receipt($scope.selected.method.displayName, transactionResult, true).then(function (response) {
+                        $scope.waiting = false;
+                        if (transactionResult.status === "success") {
+                            appInsightsTrackEvent('TRANSACTION SUCCESS');
+                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                            $scope.nsOk(true);
+                        } else if (transactionResult.status === "incomplete") {
+                            appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                            $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                            });
+                        } else if (transactionResult.status === "pending") {
+                            appInsightsTrackEvent('TRANSACTION PENDING');
+                            $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                            });
+                            $scope.setState(accountManagement.states.pendingWithdrawals);
+                        } else if (transactionResult.status === "error") {
+                            appInsightsTrackEvent('TRANSACTION ERROR');
+                            init();
+                        }
+                    });
+                }, function (error) {
+                    $scope.waiting = false;
+                    message.autoCloseError(error.desc);
+                    init();
+                });
+            }, 2000);
+        }
 
         function withdraw() {
             $scope.waiting = true;
@@ -142,35 +144,7 @@
                                 appInsightsTrackEvent('CONFIRM');
                                 if (confirmResult.status === "setup") {
                                     appInsightsTrackEvent('GET TRANSACTION INFO');
-                                    $timeout(function () {
-                                        emBankingWithdraw.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
-                                            if (transactionResult.status === "success") {
-                                                appInsightsTrackEvent('TRANSACTION SUCCESS');
-                                                var msg = "Withdrawal completed successfully at " + transactionResult.time + "!";
-                                                message.success(msg, { nsType: 'toastr' });
-                                                $scope.waiting = false;
-                                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                                                $scope.nsOk(true);
-                                            } else if (transactionResult.status === "incomplete") {
-                                                appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-                                                $scope.waiting = false;
-                                                message.autoCloseError("Transaction is not completed!");
-                                            } else if (transactionResult.status === "pending") {
-                                                appInsightsTrackEvent('TRANSACTION PENDING');
-                                                $scope.waiting = false;
-                                                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
-                                                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                                                });
-                                                $scope.setState(accountManagement.states.pendingWithdrawals);
-                                            } else if (transactionResult.status === "error") {
-                                                appInsightsTrackEvent('TRANSACTION ERROR');
-                                                $scope.waiting = false;
-                                                message.autoCloseError(transactionResult.error);
-                                            }
-                                        }, function (error) {
-                                            message.autoCloseError(error.desc);
-                                        });
-                                    }, 2000);
+                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent);
                                 } else if (confirmResult.status === "redirection") {
                                     appInsightsTrackEvent('CONFIRM REDIRECTION');
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
@@ -185,12 +159,7 @@
                                         nsShowClose: false
                                     });
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
-                                        appInsightsTrackEvent('TRANSACTION SUCCESS');
-                                        var msg = "You have made the withdrawal successfully!";
-                                        message.success(msg, { nsType: 'toastr' });
-                                        $scope.waiting = false;
-                                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                                        $scope.nsOk(true);
+                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent);
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
                                         $scope.waiting = false;
