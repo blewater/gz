@@ -1,14 +1,15 @@
-﻿(function () {
+﻿(function() {
     'use strict';
     var ctrlId = 'summaryCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'message', '$location', 'constants', '$filter', '$sce', 'iso4217', ctrlFactory]);
-    function ctrlFactory($scope, $controller, api, message, $location, constants, $filter, $sce, iso4217) {
+    APP.controller(ctrlId, ['$scope', '$controller', 'api', 'message', '$location', 'constants', '$filter', '$sce', 'iso4217', 'ngIntroService', ctrlFactory]);
+
+    function ctrlFactory($scope, $controller, api, message, $location, constants, $filter, $sce, iso4217, ngIntroService) {
         $controller('authCtrl', { $scope: $scope });
 
         $scope.spinnerWhite = constants.spinners.sm_abs_white;
         var sellingValuesFetched = false;
 
-        $scope.openVintages = function (title, vintages, withdrawMode, alreadyWithdrawn) {
+        $scope.openVintages = function(title, vintages, withdrawMode, alreadyWithdrawn) {
             return message.modal(title, {
                 nsSize: '700px',
                 nsTemplate: '_app/investments/summaryVintages.html',
@@ -19,45 +20,44 @@
                     withdrawMode: withdrawMode,
                     currency: $scope.currency,
                     alreadyWithdrawn: alreadyWithdrawn
-                    //getInvestmentText: $scope.getInvestmentText
+                        //getInvestmentText: $scope.getInvestmentText
                 }
             });
         };
 
-        $scope.showAllVintages = function () {
+        $scope.showAllVintages = function() {
             window.appInsights.trackEvent("OPEN SHOW VINTAGES");
             $scope.openVintages('Vintages history', $scope.vintages, false);
         };
 
-        $scope.withdraw = function () {
+        $scope.withdraw = function() {
             if (!sellingValuesFetched) {
                 $scope.fetchingSellingValues = true;
-                api.call(function () {
+                api.call(function() {
                     return api.getVintagesWithSellingValues($scope.vintages);
-                }, function (getVintagesResponse) {
+                }, function(getVintagesResponse) {
                     sellingValuesFetched = true;
                     $scope.fetchingSellingValues = false;
                     $scope.vintages = processVintages(getVintagesResponse.Result.Vintages);
                     $scope.alreadyWithdrawn = getVintagesResponse.Result.WithdrawnAmount;
                     withdrawVintages();
                 });
-            }
-            else
+            } else
                 withdrawVintages();
         };
 
         function withdrawVintages() {
             window.appInsights.trackEvent("OPEN WITHDRAW VINTAGES");
-            var withdrawableVintages = $filter('omit')($scope.vintages, function (v) { return v.InvestmentAmount === 0; });
+            var withdrawableVintages = $filter('omit')($scope.vintages, function(v) { return v.InvestmentAmount === 0; });
             var promise = $scope.openVintages('Available funds for withdrawal', withdrawableVintages, true, $scope.alreadyWithdrawn);
-            promise.then(function (updatedVintages) {
-                api.call(function () {
+            promise.then(function(updatedVintages) {
+                api.call(function() {
                     window.appInsights.trackEvent("ACTUAL WITHDRAW VINTAGES");
                     return api.withdrawVintages(updatedVintages);
-                }, function (withdrawResponse) {
+                }, function(withdrawResponse) {
                     $scope.vintages = processVintages(withdrawResponse.Result);
                     var netProceeds = getVintageSoldNetProceeds(withdrawResponse.Result);
-                    message.success("To be credited into your casino wallet (" + netProceeds.toString() + " " + $scope.currency + " pending withdrawal).");
+                    message.success("To be credited into your casino wallet (" + netProceeds.toString() + " " + $scope.currency + " pending withdrawal). Once awarded bet once and it will be cached out.");
                 }, {
                     rejectFn: function() {
                         var selectedCount = $filter('where')(updatedVintages, { 'Selected': true }).length;
@@ -79,6 +79,11 @@
             $location.path(constants.routes.games.path).search({});
         };
 
+        $scope.gotoPortfolio = function() {
+            window.appInsights.trackEvent("GOTO PORTOFOLIO", { from: "SUMMARY" });
+            $location.path(constants.routes.portfolio.path).search({});
+        };
+
         $scope.getInvestmentText = function(investmentAmount) {
             if (investmentAmount === 0)
                 return "N/A";
@@ -87,8 +92,9 @@
             else
                 return $filter('isoCurrency')(investmentAmount, $scope.currency, 0);
         }
+
         function processVintages(vintages) {
-            var mappedVintages = $filter('map')(vintages, function (v) {
+            var mappedVintages = $filter('map')(vintages, function(v) {
                 v.Year = parseInt(v.YearMonthStr.slice(0, 4));
                 v.Month = parseInt(v.YearMonthStr.slice(-2));
                 v.Date = new Date(v.Year, v.Month - 1);
@@ -98,18 +104,19 @@
             var ordered = $filter('orderBy')(mappedVintages, 'Date', true);
             return ordered;
         }
+
         function getVintageSoldNetProceeds(vintages) {
-            var totalNetProceeds = vintages.reduce(function (prevVal, v) {
-                var netAmount = v.Selected ? prevVal + (v.SellingValue - v.SoldFees) : prevVal;
+            var totalNetProceeds = vintages.reduce(function(prevVal, v) {
+                var netAmount = v.Selected ? prevVal + v.SellingValue: prevVal;
                 return netAmount;
             }, 0);
             return totalNetProceeds;
         }
 
-        $scope.toggleInvestmentHistory = function () {
+        $scope.toggleInvestmentHistory = function() {
             $scope.investmentHistoryExpanded = !$scope.investmentHistoryExpanded;
         };
-        $scope.toggleGamingActivities = function () {
+        $scope.toggleGamingActivities = function() {
             window.appInsights.trackEvent("INVESTMENT " + ($scope.gamingActivitiesExpanded ? "CLOSE" : "OPEN") + " GAMING ACTIVITIES");
             $scope.gamingActivitiesExpanded = !$scope.gamingActivitiesExpanded;
         };
@@ -120,9 +127,9 @@
         }
 
         function loadSummaryData() {
-            api.call(function () {
+            api.call(function() {
                 return api.getSummaryData();
-            }, function (response) {
+            }, function(response) {
                 $scope.model = response.Result;
                 var statusAsOfLocal = moment.utc($scope.model.StatusAsOf).toDate();
                 $scope.model.StatusAsOfLocalDate = $filter('date')(statusAsOfLocal, 'MMMM d');
@@ -150,11 +157,35 @@
                 $scope.model.GmGainLoss = round($scope.model.EndGmBalance - $scope.model.BegGmBalance - $scope.model.Deposits + $scope.model.Withdrawals, 1);
 
                 $scope.vintages = processVintages($scope.model.Vintages);
+                setIntroOptionsForUsers($scope.vintages.length, $scope.model.GmGainLoss);
             });            
         }
 
         function loadAuthData() {
             $scope.currency = $scope._authData.currency;
+        }
+
+        function setIntroNewUsers() {
+            var introOptionsNewUsers = {
+                steps: [{
+                    element: "#toBeInvested",
+                    intro: "Play casino games and 50% of your net loss will be credited into your investment balance."
+                }],
+                showStepNumbers: true,
+                exitOnOverlayClick: true,
+                exitOnEsc: true,
+                skipLabel: 'Exit',
+                doneLabel: 'Got it!',
+                tooltipPosition: 'auto'
+            }
+            ngIntroService.setOptions(introOptionsNewUsers);
+            ngIntroService.start();
+        }
+
+        function setIntroOptionsForUsers(vintagesLength, gmGainLoss) {
+            if ( vintagesLength === 0 && gmGainLoss === 0 ) {
+                setIntroNewUsers();
+            }
         }
 
         $scope._init(function() {

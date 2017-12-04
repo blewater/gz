@@ -5,7 +5,7 @@ var APP = (function () {
 
     var app = angular.module(id, [
         // Angular modules 
-        'ngRoute',
+        'ngRoute'
         , 'ngResource'
         , 'ngAnimate'
         , 'ngSanitize'
@@ -33,6 +33,7 @@ var APP = (function () {
         , 'logToServer'
         , 'ui.bootstrap.datetimepicker'
         , 'angular-appinsights'
+        , 'angular-intro'
     ]);
 
     app.id = id;
