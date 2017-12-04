@@ -12,60 +12,11 @@
     </div>
 </script>
 
-<div class="clearfix investments">
+<div class="clearfix investments" ng-intro-options="IntroOptions" ng-intro-method="introCall">
     <div class="container">
         <div class="summary">
             <div class="row">
-                <div class="col-xs-12 col-md-4">
-                    <div class="summary-box investment-history" ng-class="{'expanded': investmentHistoryExpanded}">
-                        <div class="summary-box-head">
-                            <div class="summary-box-head-icon">
-                                <img src="../../Content/Images/Investment Icons/history.svg" />
-                            </div>
-                            <div class="summary-box-head-title">Investment history</div>
-                        </div>
-                        <div class="summary-box-body">
-                            <div class="label text-normal">Invested so far</div>
-                            <div class="amount text-emphasis">{{model.TotalInvestments | isoCurrency : currency : 0}}</div>
-                            <div class="symbol text-emphasis">+</div>
-                            <div class="label text-normal">Gained from investment so far:</div>
-                            <div class="amount text-emphasis">{{model.TotalInvestmentsReturns | isoCurrency : currency : 0}}</div>
-
-                            <div class="implication hidden-xs hidden-sm">
-                                <img src="../../Content/Images/Investment Icons/big_green_arrow.svg" />
-                            </div>
-                        </div>
-                        <div class="summary-box-foot" ng-style="{height: investmentHistoryExpanded ? (vintages.length * 40 + 190) : 'inherited'}">
-                            <div class="investment-vintages">
-                                <img src="../../Content/Images/Investment Icons/invest_white.svg" alt="" />
-                                <span>Investment vintages</span>
-                            </div>
-                            <div class="no-vintages" ng-if="vintages.length === 0">
-                                No vintages yet
-                            </div>
-                            <div class="vintage" ng-repeat="vintage in vintages.slice(0, investmentHistoryExpanded ? 12 : 2)">
-                                <div class="vintage-label">{{vintage.Date | date : 'MMMM'}}</div>
-                                <div class="vintage-value">{{vintage.InvestmentText}}</div>
-                            </div>
-                            <div ng-show="investmentHistoryExpanded">
-                                <div class="summary-box-btn" ng-click="showAllVintages()">
-                                    <img src="../../Content/Images/plus_icon.svg" alt="" />
-                                    <span>SHOW ALL</span>
-                                </div>
-                            </div>
-                            <div class="expansion" ng-if="vintages.length > 0">
-                                <div>
-                                    <span>show&nbsp;</span>
-                                    <span ng-show="investmentHistoryExpanded">less</span>
-                                    <span ng-hide="investmentHistoryExpanded">more</span>
-                                </div>
-                                <img class="arrow pull-right" src="../../Content/Images/Investment Icons/expand_arrow.svg" ng-click="toggleInvestmentHistory()" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xs-12 col-md-4">
+                <div class="col-xs-12 col-sm-6 col-md-6">
                     <div class="summary-box current-balance">
                         <div class="summary-box-head">
                             <div class="summary-box-head-icon">
@@ -73,7 +24,7 @@
                             </div>
                             <div class="summary-box-head-title">Current Investment bonus balance</div>
                         </div>
-                        <div class="summary-box-body">
+                        <div id="currentBalance" class="summary-box-body">
                             <div class="amount text-emphasis">{{model.InvestmentsBalance | isoCurrency : currency : 0}}</div>
                             <div class="date">
                                 <div class="date-icon">
@@ -93,7 +44,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="summary-box-foot">
+                    </div>
+                    <div class="summary-box investment-history" ng-class="{'expanded': investmentHistoryExpanded}">
+                        <div class="summary-box-foot" ng-style="{height: investmentHistoryExpanded ? (vintages.length * 40 + 190) : 'inherited'}">
                             <div class="summary-box-btn relative" ng-click="withdraw()">
                                 <span ng-show="!fetchingSellingValues">
                                     <img src="../../Content/Images/Investment Icons/cash_white.svg" alt="" />
@@ -101,11 +54,34 @@
                                 </span>
                                 <span ng-show="fetchingSellingValues" us-spinner="spinnerWhite"></span>
                             </div>
+                            <div class="no-vintages" ng-if="vintages.length === 0">
+                                No vintages yet
+                            </div>
+                            <div class="vintage" ng-repeat="vintage in vintages.slice(0, investmentHistoryExpanded ? 12 : 2)">
+                                <div class="vintage-label">{{vintage.Date | date : 'MMMM'}}</div>
+                                <div class="vintage-value">{{vintage.InvestmentText}}</div>
+                            </div>
+                            <div class="show-more">
+                                <div ng-show="investmentHistoryExpanded">
+                                    <div class="summary-box-btn" ng-click="showAllVintages()">
+                                        <img src="../../Content/Images/plus_icon.svg" alt="" />
+                                        <span>SHOW ALL</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="expansion" ng-if="vintages.length > 0">
+                                <div>
+                                    <span>show&nbsp;</span>
+                                    <span ng-show="investmentHistoryExpanded">less</span>
+                                    <span ng-hide="investmentHistoryExpanded">more</span>
+                                </div>
+                                <img class="arrow pull-right" src="../../Content/Images/Investment Icons/expand_arrow.svg" ng-click="toggleInvestmentHistory()" />
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xs-12 col-md-4">
+                <div class="col-xs-12 col-sm-6 col-md-6">
                     <div class="summary-box expected-amount" ng-class="{'expanded': gamingActivitiesExpanded}">
                         <div class="summary-box-head">
                             <div class="summary-box-head-icon">
@@ -113,7 +89,7 @@
                             </div>
                             <div class="summary-box-head-title">Next expected investment amount</div>
                         </div>
-                        <div class="summary-box-body">
+                        <div id="toBeInvested" class="summary-box-body">
                             <div class="amount text-emphasis">{{model.LastInvestmentAmount | isoCurrency : currency : 0}}</div>
                             <div class="amount-note">
                                 <span class="amount-note-text">50% of net loss</span>
@@ -130,16 +106,16 @@
                                     <div class="date-data text-emphasis">
                                         <span class="date-datetime">
                                             <span class="date-datevalue">{{model.NextInvestmentOnLocalDate}}</span>
-                                            <span class="date-timevalue">{{model.NextInvestmentOnLocalTime}}</span>
+                                        <span class="date-timevalue">{{model.NextInvestmentOnLocalTime}}</span>
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="summary-box-foot">
-                            <div class="summary-box-btn" ng-click="backToGames()">
+                            <div ng-if="vintages.length > 0" class="summary-box-btn" ng-click="gotoPortfolio()">
                                 <img src="../../Content/Images/games_white.svg" alt="" />
-                                <span>BACK TO GAMES</span>
+                                <span>CHOOSE INVESTMENT</span>
                             </div>
                             <div class="expansion-content">
                                 <div class="gaming-activities-date">{{model.GamingActivitiesRange}}</div>
@@ -152,7 +128,7 @@
                                         <div class="date-data text-emphasis">
                                             <span class="date-datetime">
                                                 <span class="date-datevalue">{{model.StatusAsOfLocalDate}}</span>
-                                                <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
+                                            <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
                                             </span>
                                         </div>
                                     </div>
@@ -169,12 +145,16 @@
                                     <div class="amount-label">Withdrawn</div>
                                     <div class="amount-value">{{model.Withdrawals | isoCurrency : currency : 1}}</div>
                                 </div>
-                                <div class="amount"><hr /></div>
+                                <div class="amount">
+                                    <hr />
+                                </div>
                                 <div class="amount net-gaming-loss-gain">
                                     <div class="amount-label">Net gaming loss/gain</div>
                                     <div class="amount-value">{{model.GmGainLoss | isoCurrency : currency : 1}}</div>
                                 </div>
-                                <div class="amount"><hr /></div>
+                                <div class="amount">
+                                    <hr />
+                                </div>
                                 <div class="amount">
                                     <div class="amount-label">Current balance</div>
                                     <div class="amount-value">{{model.EndGmBalance | isoCurrency : currency : 1}}</div>
@@ -345,6 +325,3 @@
         </div>
     </div>
 </div>
-
-
-
