@@ -69,13 +69,12 @@ module WithdrawnVintageBonusGen =
             let depLine = sprintf "%d;CasinoWallet;%s;%M;vintage month %s cash for U:%s L:%s F:%s" u.GmCustomerId.Value u.Currency (Math.Round(invb.SoldAmount.Value - invb.SoldFees.Value, 1)) invb.YearMonth u.UserName u.LastName u.FirstName
 
             depositsInMem.WriteLine(depLine)
-            logger.Info (depLine)
+            logger.Warn (depLine)
 
             invb.AwardedSoldAmount <- true
         )
         let depositsCsvStrContent = depositsInMem.ToString()
         depositsInMem.Close()
 
-        match depositsCsvStrContent.Length with
-        | 0 -> logger.Warn "No withdrawn vintages today."
-        | _ -> sendCashBonusCsvToAdmins db adminEmailUserArgs folder dayToProcess depositsCsvStrContent
+        if depositsCsvStrContent.Length = 0 then
+            logger.Info "No withdrawn vintages today."
