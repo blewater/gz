@@ -59,7 +59,7 @@
                         }
 
                         setGameDimensions();
-                        angular.element($window).bind('resize', function () {
+                        angular.element($window).bind('resize orientationchange', function () {
                             setGameDimensions();
                         });
 
