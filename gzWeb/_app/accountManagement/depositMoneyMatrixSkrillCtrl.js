@@ -44,6 +44,9 @@
                 $scope.amountPlaceholder += amountRange;
 
             $scope.extraValidityCheck = true;
+
+            if ($scope.existingPayCards.length === 1)
+                $scope.onPayCardSelected($scope.existingPayCards[0].id);
         }
 
         function init() {

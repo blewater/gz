@@ -91,6 +91,8 @@
             $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
             if (!$rootScope.mobile)
                 $scope.amountPlaceholder += amountRange;
+            if ($scope.existingCreditCards.length === 1)
+                $scope.onCreditCardSelected($scope.existingCreditCards[0].id);
         }
 
         function embedCDE() {
