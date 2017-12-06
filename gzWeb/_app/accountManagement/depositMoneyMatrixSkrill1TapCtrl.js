@@ -71,7 +71,11 @@
             $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
             if (!$rootScope.mobile)
                 $scope.amountPlaceholder += amountRange;
+
             $scope.extraValidityCheck = true;
+
+            if ($scope.existingPayCards.length === 1)
+                $scope.onPayCardSelected($scope.existingPayCards[0].id);
         }
 
         function init() {
