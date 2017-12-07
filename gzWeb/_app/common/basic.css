@@ -386,6 +386,10 @@ button.btn-gz.btn-gz-alt.btn-gz-toggle:hover{
     color: #000;
     border-bottom-color: transparent;
 }
+.mobile .form-control {
+    font-size: 16px;
+}    
+
 .form-control[disabled], .form-control.disabled {
     background-color: #ccc;
 }
