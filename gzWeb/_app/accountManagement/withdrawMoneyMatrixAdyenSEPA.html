@@ -1,0 +1,22 @@
+﻿<div class="withdraw-adyen-sepa">
+    <div>{{model.selectedCreditCard.name}}</div>
+
+    <div ng-if="!payCardID">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" ng-pattern="ibanRegex" placeholder="iban" id="iban" name="iban" class="form-control" ng-model="model.iban" required
+                               ng-class="{ 'empty': !model.iban, 'danger' : form.iban.$invalid && !form.iban.$pristine }">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.iban.$pristine && form.iban.$invalid}">Invalid IBAN.</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.iban.$valid"></gz-field-ok>
+            </div>
+        </div>
+    </div>
+
+    <div ng-include="'_app/accountManagement/withdrawAmountField.html'"></div>
+</div>
