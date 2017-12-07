@@ -533,7 +533,9 @@
     margin-bottom: -20px;
 }
 
-
+    .guest .about .legal-ev {
+        font-size: x-small;
+    }
 
 /**************** MD ********************/
 @media (min-width: 992px) and (max-width: 1199px) {
