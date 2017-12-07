@@ -18,7 +18,8 @@
         var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' }
         var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixSkrill.html', ctrlId: 'withdrawMoneyMatrixSkrillCtrl' }
         var moneyMatrixEnterCashFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixEnterCash.html', ctrlId: 'withdrawMoneyMatrixEnterCashCtrl' }
-        var moneyMatrixBankTransferFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixBankTransfer.html', ctrlId: 'withdrawMoneyMatrixBankTransferCtrl' }
+        //var moneyMatrixBankTransferFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixBankTransfer.html', ctrlId: 'withdrawMoneyMatrixBankTransferCtrl' }
+        var moneyMatrixAdyenSepaFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixAdyenSepa.html', ctrlId: 'withdrawMoneyMatrixAdyenSepaCtrl' }
         //var withdrawFields = { templateUrl: '/_app/accountManagement/withdrawFields.html', ctrlId: 'withdrawFieldsCtrl' }
         var paymentMethodsFields = [];
         //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
@@ -28,7 +29,8 @@
         paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
         paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
         paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixBankTransfer] = moneyMatrixBankTransferFields;
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixBankTransfer] = moneyMatrixBankTransferFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixAdyenSepa] = moneyMatrixAdyenSepaFields;
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };
