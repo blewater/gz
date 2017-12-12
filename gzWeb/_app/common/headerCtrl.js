@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'headerCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', 'footerMenu', 'modals', 'helpers', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu, modals, helpers) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$location', '$rootScope', 'constants', 'message', 'auth', 'emBanking', 'localStorageService', 'chat', 'accountManagement', '$filter', '$sce', 'footerMenu', 'modals', 'helpers', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $location, $rootScope, constants, message, auth, emBanking, localStorageService, chat, accountManagement, $filter, $sce, footerMenu, modals, helpers, $timeout) {
         $controller('authCtrl', { $scope: $scope });
 
         var imgDir = "../../Content/Images/";
@@ -90,6 +90,18 @@
 
             $scope.hasGamingBalance = $scope._authData.gamingBalance !== undefined;
             if ($scope.hasGamingBalance) {
+                $scope.gamingBalanceChanged = $scope.gamingBalance && $scope.gamingBalance !== $scope._authData.gamingBalance;
+                $scope.gamingBalanceChangedShown = false;
+                if ($scope.gamingBalanceChanged && !$scope.gamingBalanceChangedShown) {
+                    $scope.gamingBalanceChangedShown = true;
+                    message.toastr("Your account balance updated!");
+                    $timeout(function () {
+                        $scope.gamingBalanceChanged = false;
+                        $scope.gamingBalanceChangedShown = false;
+                    }, 5000);
+                }
+
+
                 $scope.gamingBalance = $scope._authData.gamingBalance;
                 $scope.gamingBalanceDetails = $sce.trustAsHtml(
                     '<div class="row">' +

@@ -55,6 +55,7 @@
                 });
             }
         }])
+        .directive('csAnimateOnChange', ['$animate', '$timeout', csAnimateOnChange]);
     ;
     
     // #region csPatternRestrict
@@ -763,6 +764,27 @@
         };
     }
     // #endregion
+
+    // #region csAnimateOnChange
+    function csAnimateOnChange($animate, $timeout) {
+        return function (scope, element, attrs) {
+            var unregister = scope.$watch(attrs.csAnimateOnChange, function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    var c = attrs.csAnimateOnChangeClass;
+                    element.addClass(c);
+                    $timeout(function () {
+                        element.removeClass(c)
+                    }, 3000);
+                }
+            });
+
+            scope.$on("$destroy", function () {
+                unregister();
+            });
+        };
+    }
+    // #endregion
+
 })();
 
 

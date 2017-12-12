@@ -29,7 +29,9 @@
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <strong>{{transactionId}}</strong>
+                    <strong ng-if="transactionId">{{transactionId}}</strong>
+                    <strong ng-if="!transactionId && status != 'pending'">-</strong>
+                    <span ng-if="!transactionId && status == 'pending'" class="loading-spinner" us-spinner="spinnerOptions"></span>
                 </div>
             </div>
             <br />
@@ -77,7 +79,7 @@
             <br />
             <div class="row">
                 <div class="col-xs-12 text-center">
-                    <button type="button" class="btn-gz" ng-click="nsOk(title)">OK</button>
+                    <button type="button" class="btn-gz" ng-click="onOk()">OK</button>
                 </div>
             </div>
         </div>
