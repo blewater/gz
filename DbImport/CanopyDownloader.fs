@@ -209,15 +209,20 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Transaction
         click "#nav > li:nth-child(1) > ul > li:nth-child(3) > a"
 
-    /// Withdrawals Reports: Press show and if there's data download it
-    let display2SavedRpt (elemSelector : string) : bool =
+        /// Set the transaction report to the full month withdrawal dates
+    let setFormDates (formDateToSet : DateTime) : unit =
+        "#txtStartDate" << "01/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
+        "#txtEndDate" << formDateToSet.Day.ToString("00") + "/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
 
-        click "#btnShowReport"
+    /// Bonus, Transaction Reports: Press show and if there's data download it
+    let display2SavedRpt (btnName : string)(elemSelector : string) : bool =
+
+        click btnName
 
         let dataFound : bool =  
             match fastTextFromCSS elemSelector with
             | [] -> true
-            | h::t -> h <> "no data"
+            | h::t -> h.ToLower() <> "no data"
 
         if 
             dataFound then
@@ -226,17 +231,48 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
             Threading.Thread.Sleep(Wait_For_File_Download_Ms)
         dataFound
 
-        /// Set the transaction report to the full month withdrawal dates
-    let setTransactionsDates (withdrawalDateToSet : DateTime) : unit =
-        "#txtStartDate" << "01/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
-        "#txtEndDate" << withdrawalDateToSet.Day.ToString("00") + "/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
+    /// Deposits, cash bonus
+    let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
+    
+        uiAutomatedEnterTransactionsReport()
 
-        /// Pending + Completed Withdrawals: Initiated + Pending + Success
+        setFormDates dayToProcess
+
+        // Deposit
+        check "#chkTransType_0"
+
+        // Withdrawals
+        uncheck "#chkTransType_1"
+
+        // Vendor2User
+        check "#chkTransType_4"
+
+        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+    // Into the player bonuses including inv bonus
+    let uiEnterBonusReport() = 
+        // Activity
+        click "#nav > li:nth-child(1) > a"
+        // Casino engine
+        click "#nav > li:nth-child(1) > ul > li:nth-child(9) > a"
+        // Casino bonus-completed bonus
+        click "#nav > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(3) > a"
+
+    // Download Bonuses
+    let uiDownloadBonusRpt (dayToProcess : DateTime) : bool =
+    
+        uiEnterBonusReport()
+
+        setFormDates dayToProcess
+
+        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+    /// Pending + Completed Withdrawals: Initiated + Pending + Success
     let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
         uiAutomatedEnterTransactionsReport()
 
-        setTransactionsDates withdrawalDateToSet
+        setFormDates withdrawalDateToSet
 
         // Withdrawals
         check "#chkTransType_1"
@@ -254,14 +290,14 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
         /// Withdrawals: Completed + Rollback
     let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
         uiAutomatedEnterTransactionsReport()
 
-        setTransactionsDates withdrawalDateToSet
+        setFormDates withdrawalDateToSet
 
         // Withdrawals
         check "#chkTransType_1"
@@ -279,25 +315,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
-
-    /// Vendor2User deposits, cash bonus
-    let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
-    
-        uiAutomatedEnterTransactionsReport()
-
-        setTransactionsDates dayToProcess
-
-        // Deposit
-        check "#chkTransType_0"
-
-        // Withdrawals
-        uncheck "#chkTransType_1"
-
-        // Vendor2User
-        check "#chkTransType_4"
-
-        display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// dayToProcess is interpreted @ 23:59 in the report
     let uiAutomatedEndBalanceRpt (dayToProcess : DateTime)(downloadedBalanceFilter : string) : bool =
@@ -437,11 +455,20 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Deposits
         let downloadDeposits() =
             if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
-                moveDownloadedRptToInRptFolder 
+                moveDownloadedRptToInRptFolder
                     rptFilesArgs.DownloadedDepositsFilter
                     rptFilesArgs.DepositsRptFilenamePrefix 
                     dayToProcess
         retry 3 downloadDeposits
+
+        // Inv Bonus Deposits
+        let downloadBonus() =
+            if uiDownloadBonusRpt dayToProcess then
+                moveDownloadedRptToInRptFolder 
+                    rptFilesArgs.DownloadedBonusFilter
+                    rptFilesArgs.BonusRptFilenamePrefix
+                    dayToProcess
+        retry 3 downloadBonus
 
         // Withdrawals: Pending
         let downloadWithdrawalsPending() = 
