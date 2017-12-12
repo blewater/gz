@@ -394,7 +394,7 @@
             var q = $q.defer();
 
             var revoke = function(error) {
-                api.revokeRegistration().then(function () {
+                api.revokeRegistration(error).then(function () {
                     q.reject(error);
                 }, function () {
                     q.reject(error);
@@ -439,20 +439,27 @@
                                 q.reject(getSessionInfoError);
                             });
                         }, function (emLoginError) {
-                            logStepFailed("emLogin", emLoginError);
-                            q.reject(emLoginError);
+                            var emLoginErr = emLoginError || "Undefined error. Please try logging in again.";
+                            logStepFailed("emLogin", emLoginErr);
+                            q.reject(emLoginErr);
                         });
                     }, function (emRegisterError) {
-                        var errorDesc = emRegisterError.desc;
-                        logStepFailed("emRegister", errorDesc);
-                        // when system is busy, the Em registration likely succeeded; don't revoke
-                        if (errorDesc.indexOf('system is busy now') === -1 ) {
-                            revoke(emRegisterError.desc);
-                        }
+                        var emRegisterErr = emRegisterError ? emRegisterError.desc : "Undefined error. Please try again later.";
+                        logStepFailed("emRegister", emRegisterErr);
+                        revoke(emRegisterErr);
+
+                        //var errorDesc = emRegisterError.desc;
+                        //logStepFailed("emRegister", errorDesc);
+                        //// when system is busy, the Em registration likely succeeded; don't revoke
+                        //if (errorDesc.indexOf('system is busy now') === -1 ) {
+                        //    revoke(emRegisterError.desc);
+                        //}
                     });
                 }, function (gzLoginError) {
-                    logStepFailed("gzLogin", gzLoginError.desc);
-                    revoke(gzLoginError.desc);
+                    var gzLoginErr = gzLoginError || "Login error.";
+                    logStepFailed("gzLogin", gzLoginErr);
+                    q.reject(gzLoginErr);
+                    //revoke(gzLoginError.desc);
                 });
             }, function(gzRegisterError) {
                 logStepFailed("gzRegister", gzRegisterError.data.Message);

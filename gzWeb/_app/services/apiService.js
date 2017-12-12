@@ -71,8 +71,9 @@
             return $http.post('/api/Account/Register', parameters);
         };
 
-        factory.revokeRegistration = function () {
+        factory.revokeRegistration = function (error) {
             return $http.post('/api/Account/RevokeRegistration');
+            //return $http.post('/api/Account/RevokeRegistration?reason=' + error);
         };
 
         factory.finalizeRegistration = function (userId) {

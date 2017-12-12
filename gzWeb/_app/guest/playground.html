@@ -41,6 +41,10 @@
             <button type="button" class="btn-gz" ng-click="setBtag()">Set Btag</button>
             <button type="button" class="btn-gz" ng-click="getBtag()">Get Btag</button>
         </div>
+        <div>
+            <button type="button" class="btn-gz" ng-click="change()">Change</button>
+            <span>Text to change: </span><span ng-class="{'gaming-balance-changed': accountBalanceChanged}">{{changeCounter}}</span>
+        </div>
         <h6 style="margin-top: 20px;">Withdraw</h6>
         <div>
             <button type="button" class="btn-gz" ng-click="getPaymentMethods()">getPaymentMethods()</button>

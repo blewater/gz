@@ -54,7 +54,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="gamer" ng-show="routeData.gaming || routeData.wandering" style="margin-top: 0;">
-                    <li ng-if="hasGamingBalance && lg" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
+                    <li ng-if="hasGamingBalance && lg" class="gaming-balance" ng-class="{'gaming-balance-changed': gamingBalanceChanged}" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
                         {{currency}} {{gamingBalance | number : 2}}
                     </li>
                     <li ng-class="{'text-center': sm || md}">
@@ -71,7 +71,7 @@
                     </li>
                 </ul>
                 <ul gz-authorize="investor" ng-show="routeData.investing" ng-class="{'text-center':!lg}">
-                    <li ng-if="hasGamingBalance && lg" class="gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
+                    <li ng-if="hasGamingBalance && lg" class="gaming-balance" ng-class="{'gaming-balance-changed': gamingBalanceChanged}" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
                         {{currency}} {{gamingBalance | number : 2}}
                     </li>
                     <li ng-repeat="route in routes.investment">
@@ -110,7 +110,7 @@
                         greenzorro
                     </h2>
                 </a>
-                <span ng-if="hasGamingBalance && !lg" class="gaming-balance outer-gaming-balance" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
+                <span ng-if="hasGamingBalance && !lg" class="gaming-balance outer-gaming-balance" ng-class="{'gaming-balance-changed': gamingBalanceChanged}" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="balance-tooltip" ng-class="{'text-center':!lg}">
                     {{currency}} {{gamingBalance | number : 2}}
                 </span>
                 <button type="button" class="navbar-toggle collapsed" ng-class="{'collapsed': !mobileMenuExpanded}" ng-click="expandCollapseMobileMenu()">

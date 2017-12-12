@@ -56,6 +56,14 @@
             $scope.initializing = true;
             emBankingWithdraw.getPaymentMethodCfg($scope.selected.method.code, $scope.selected.method.payCard ? $scope.selected.method.payCard.id : null).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
+
+                //$scope.existingPayCards = $scope.paymentMethodCfg.fields.payCardID.options;
+                //$scope.maximumPayCards = $scope.paymentMethodCfg.fields.payCardID.maximumPayCards;
+                //$scope.thereAreExistingPayCards = $scope.existingPayCards.length > 0;
+                //$scope.canAddNewPayCard = $scope.existingPayCards.length < $scope.maximumPayCards;
+                //if ($scope.existingPayCards.length === 1)
+                //    $scope.selected.method = $scope.existingPayCards[0];
+
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
                 $scope.initializing = false;
             }, function (error) {
@@ -84,36 +92,58 @@
         };
 
         function sendTransactionReceipt(pid, appInsightsTrackEvent) {
-            $timeout(function () {
-                emBankingWithdraw.getTransactionInfo(pid).then(function (transactionResult) {
-                    modals.receipt($scope.selected.method.displayName, transactionResult, true).then(function (response) {
-                        $scope.waiting = false;
-                        if (transactionResult.status === "success") {
-                            appInsightsTrackEvent('TRANSACTION SUCCESS');
-                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                            $scope.nsOk(true);
-                        } else if (transactionResult.status === "incomplete") {
-                            appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-                            $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
-                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                            });
-                        } else if (transactionResult.status === "pending") {
-                            appInsightsTrackEvent('TRANSACTION PENDING');
-                            $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
-                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                            });
-                            $scope.setState(accountManagement.states.pendingWithdrawals);
-                        } else if (transactionResult.status === "error") {
-                            appInsightsTrackEvent('TRANSACTION ERROR');
-                            init();
-                        }
-                    });
-                }, function (error) {
-                    $scope.waiting = false;
-                    message.autoCloseError(error.desc);
-                    init();
-                });
-            }, 2000);
+            var getTransactionInfoCall = function () { return emBankingWithdraw.getTransactionInfo(pid); };
+            modals.receipt(getTransactionInfoCall, $scope.selected.method.displayName, true).then(function (transactionResult) {
+                $scope.waiting = false;
+                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                if (transactionResult.status === "success") {
+                    appInsightsTrackEvent('TRANSACTION SUCCESS');
+                    $scope.nsOk(true);
+                } else if (transactionResult.status === "incomplete") {
+                    appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                } else if (transactionResult.status === "pending") {
+                    appInsightsTrackEvent('TRANSACTION PENDING');
+                    $scope.setState(accountManagement.states.pendingWithdrawals);
+                } else if (transactionResult.status === "error") {
+                    appInsightsTrackEvent('TRANSACTION ERROR');
+                }
+                init();
+            }, function (error) {
+                $scope.waiting = false;
+                message.autoCloseError(error.desc);
+                init();
+            });
+
+            //$timeout(function () {
+            //    emBankingWithdraw.getTransactionInfo(pid).then(function (transactionResult) {
+            //        modals.receipt($scope.selected.method.displayName, transactionResult, true).then(function (response) {
+            //            $scope.waiting = false;
+            //            if (transactionResult.status === "success") {
+            //                appInsightsTrackEvent('TRANSACTION SUCCESS');
+            //                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+            //                $scope.nsOk(true);
+            //            } else if (transactionResult.status === "incomplete") {
+            //                appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+            //                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+            //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+            //                });
+            //            } else if (transactionResult.status === "pending") {
+            //                appInsightsTrackEvent('TRANSACTION PENDING');
+            //                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+            //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+            //                });
+            //                $scope.setState(accountManagement.states.pendingWithdrawals);
+            //            } else if (transactionResult.status === "error") {
+            //                appInsightsTrackEvent('TRANSACTION ERROR');
+            //                init();
+            //            }
+            //        });
+            //    }, function (error) {
+            //        $scope.waiting = false;
+            //        message.autoCloseError(error.desc);
+            //        init();
+            //    });
+            //}, 2000);
         }
 
         function withdraw() {
