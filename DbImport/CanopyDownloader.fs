@@ -215,9 +215,9 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         "#txtEndDate" << formDateToSet.Day.ToString("00") + "/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
 
     /// Bonus, Transaction Reports: Press show and if there's data download it
-    let display2SavedRpt (btnName : string)(elemSelector : string) : bool =
+    let display2SavedRpt (searchBtnId : string)(downBtnId : string)(elemSelector : string) : bool =
 
-        click btnName
+        click searchBtnId
 
         let dataFound : bool =  
             match fastTextFromCSS elemSelector with
@@ -227,7 +227,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         if 
             dataFound then
         
-            click "#btnSaveAsExcel"
+            click downBtnId
             Threading.Thread.Sleep(Wait_For_File_Download_Ms)
         dataFound
 
@@ -247,7 +247,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         check "#chkTransType_4"
 
-        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     // Into the player bonuses including inv bonus
     let uiEnterBonusReport() = 
@@ -265,7 +265,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
         setFormDates dayToProcess
 
-        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#ButShow" "#ButSave" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Pending + Completed Withdrawals: Initiated + Pending + Success
     let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
@@ -290,7 +290,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
         /// Withdrawals: Completed + Rollback
     let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
@@ -315,7 +315,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// dayToProcess is interpreted @ 23:59 in the report
     let uiAutomatedEndBalanceRpt (dayToProcess : DateTime)(downloadedBalanceFilter : string) : bool =
