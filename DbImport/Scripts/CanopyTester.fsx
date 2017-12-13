@@ -9,7 +9,7 @@
 #r "System.Drawing.dll"
 #r "System.Configuration.dll"
 #r "../packages/Selenium.WebDriver/lib/net40/WebDriver.dll"
-#r "../../GzBatch/packages/Selenium.Support.3.6.0/lib/net40/WebDriver.Support.dll"
+#r "../../GzBatch/packages/Selenium.Support.3.8.0/lib/net40/WebDriver.Support.dll"
 #r "../packages/canopy/lib/canopy.dll"
 #r "../../GzBatch/packages/System.ValueTuple.4.4.0/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
@@ -243,10 +243,10 @@ let uiAutomatedEnterTransactionsReport() =
     // Transaction
     click "#nav > li:nth-child(1) > ul > li:nth-child(3) > a"
 
-/// Transaction Reports: Press show and if there's data download it
-let display2SavedRpt (btnName : string)(elemSelector : string) : bool =
+/// Bonus, Transaction Reports: Press show and if there's data download it
+let display2SavedRpt (searchBtnId : string)(downBtnId : string)(elemSelector : string) : bool =
 
-    click btnName
+    click searchBtnId
 
     let dataFound : bool =  
         match fastTextFromCSS elemSelector with
@@ -256,7 +256,7 @@ let display2SavedRpt (btnName : string)(elemSelector : string) : bool =
     if 
         dataFound then
         
-        click "#btnSaveAsExcel"
+        click downBtnId
         Threading.Thread.Sleep(Wait_For_File_Download_Ms)
     dataFound
 
@@ -276,7 +276,7 @@ let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
     // Vendor2User
     check "#chkTransType_4"
 
-    display2SavedRpt "#btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+    display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
 // Into the player bonuses including inv bonus
 let uiEnterBonusReport() = 
@@ -294,7 +294,7 @@ let uiDownloadBonusRpt (dayToProcess : DateTime) : bool =
 
     setFormDates dayToProcess
 
-    display2SavedRpt "btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+    display2SavedRpt "#ButShow" "#ButSave" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Withdrawals: Initiated + Pending + Rollback
 let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
@@ -319,7 +319,7 @@ let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) :
     // Vendor2User
     uncheck "#chkTransType_4"
 
-    display2SavedRpt "#btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+    display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Withdrawals: Completed + Rollback
 let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
@@ -344,7 +344,7 @@ let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) 
     // Vendor2User
     uncheck "#chkTransType_4"
 
-    display2SavedRpt "#btnShowReport" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+    display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
 /// dayToProcess is interpreted @ 23:59 in the report
 let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =

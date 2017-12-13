@@ -11,6 +11,7 @@ module ExcelSchemas =
     // Transactions Rpt: Withdrawal Type + Completed + Rollback
     type WithdrawalsRollbackExcelSchema = WithdrawalsPendingExcelSchema
     type DepositsExcelSchema = ExcelFile< "Vendor2User Prod 20170606.xlsx" >
+    type BonusExcelSchema = ExcelFile< "Bonus Prod 20171212.xlsx" >
     type CurrencyExchanges = ExcelFile< "ExchangeRate-31-08-2017.xlsx" >
 
     type DepositOrWithdrawalTrxType =

@@ -185,7 +185,7 @@ module DepositsRpt2Db =
 
         let depositsRptDtStr = 
             Some depositsRptFullPath 
-                |> getVendor2UserDtStr
+                |> getDepositDtStr
 
         if depositsRptDtStr.IsSome then
             updDbDepositsExcelRptRows db openFile depositsRptDtStr.Value emailToProcAlone
