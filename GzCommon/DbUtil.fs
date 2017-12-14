@@ -39,10 +39,11 @@ module DbUtil =
     type GmRptProcessStatus =
         | CustomRptUpd = 1
         | DepositsUpd = 2
-        | BegBalanceRptUpd = 3
-        | EndBalanceRptUpd = 4
-        | WithdrawsRptUpd = 5
-        | GainLossRptUpd = 6
+        | BonusUpd = 3
+        | BegBalanceRptUpd = 4
+        | EndBalanceRptUpd = 5
+        | WithdrawsRptUpd = 6
+        | GainLossRptUpd = 7
             
     type GzTransactionType =
         /// <summary>
