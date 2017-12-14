@@ -84,6 +84,7 @@ let gmReports2Db
                                 |> GmRptFiles.getExcelFilenames
                                 |> GmRptFiles.balanceRptDateMatchTitles
                                 |> GmRptFiles.depositsRptContentMatch
+                                |> GmRptFiles.bonusRptContentMatch
                                 |> GmRptFiles.getExcelDtStr
                                 |> GmRptFiles.getExcelDates 
                                 |> GmRptFiles.areExcelFilenamesValid

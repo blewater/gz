@@ -337,11 +337,42 @@ module GmRptFiles =
         | None ->
             true // return ok
 
+    /// Check if bonus excel report is really that type of excel report
+    let private bonusRptContentMatchCheck(excelFilename : BonusFilenameType) : bool =
+
+        match excelFilename with
+        | Some bonusFilename ->
+            let bonusExcel = new BonusExcelSchema(bonusFilename)
+
+            // Keep the first data row
+            let bonusRows = bonusExcel.Data |> Seq.truncate 2
+            let len = bonusRows |> Seq.length 
+            if len <= 1 then
+                true // header + total line only-> empty balance file
+            else
+                bonusRows
+                |> Seq.tryFindIndex(fun (excelRow) ->
+                    let bonusProgramId = excelRow.``Bonus program ID``
+                    bonusProgramId.Length > 1
+                )   
+                |> function
+                    | None -> false // this is not a Bonus Report excel file
+                    | _ -> true // Ok it's Bonus file
+        | None ->
+            true // return ok
+
     /// Enforce beginning and ending balance Report files title dates match their content
     let depositsRptContentMatch(excelFiles : RptFilenames) : RptFilenames =
         if not (excelFiles.DepositsFilename
                     |> depositsRptContentMatchCheck) then 
             failWithLogInvalidArg "[DepositsFileNotMatchingContent]" (sprintf "The deposits excel report filename: %s does not match its contents." excelFiles.DepositsFilename.Value)
+        excelFiles
+
+    /// Enforce beginning and ending balance Report files title dates match their content
+    let bonusRptContentMatch(excelFiles : RptFilenames) : RptFilenames =
+        if not (excelFiles.BonusFilename
+                    |> bonusRptContentMatchCheck) then 
+            failWithLogInvalidArg "[BonusFileNotMatchingContent]" (sprintf "The bonus excel report filename: %s does not match its contents." excelFiles.BonusFilename.Value)
         excelFiles
 
     /// Check if balance report dates content mismatches title. Precondition is excelFilename is Some  
@@ -408,6 +439,14 @@ module GmRptFiles =
         | None -> 
             logger.Warn "No Deposits excel file to validate."
 
+    let private sameDayCustomBonusValidation (customDate : DateTime)(bonusUserDate : BonusDateType) : Unit =
+        match bonusUserDate with
+        | Some bonusDate -> 
+            if customDate <> bonusDate then
+                failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date mismatch with %s Bonus Date: %s." <| customDate.ToString("yyyy-MMM-dd") <| bonusDate.ToString("yyyy-MMM-dd"))
+        | None -> 
+            logger.Warn "No Bonus excel file to validate."
+
     /// Enforce begBalance on 1st month day
     let private begBalance1stDay (customDate : DateTime) (begBalanceDate : DateTime) : Unit =
         if customDate.Month <> begBalanceDate.Month && begBalanceDate.Day <> 1 then
@@ -443,6 +482,7 @@ module GmRptFiles =
         sameDayCustomWithdrawalPendingValidation rDates.customDate rDates.withdrawalsPendingDate
         sameDayCustomWithdrawalRollbackValidation rDates.customDate rDates.withdrawalsRollbackDate
         sameDayCustomDepositsValidation rDates.customDate rDates.DepositsDate
+        sameDayCustomBonusValidation rDates.customDate rDates.BonusDate
 
         if rDates.begBalanceDate.IsSome then
             begBalance1stDay rDates.customDate rDates.begBalanceDate.Value

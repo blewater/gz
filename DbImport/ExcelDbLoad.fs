@@ -280,7 +280,7 @@ module DbPlayerRevRpt =
         playerRow.TotalDepositsAmount <- Nullable newDeposits
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
-        playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
+        playerRow.Processed <- int GmRptProcessStatus.BonusUpd
 
     /// get withdrawals in the user currency or fail if not possible
     let getWithdrawalAmountInUserCurrency

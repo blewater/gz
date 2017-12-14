@@ -194,11 +194,13 @@ module BonusRpt2Db =
         let year = yyyyMmDd.Substring(0, 4) |> int
         let month = yyyyMmDd.Substring(4, 2) |> int
 
-        if excelRow.Year <> year && excelRow.Month <> month then
+        if int excelRow.Year <> year && int excelRow.Month <> month then
             //logger.Warn( sprintf "%s" excelRow.
-            logger.Warn(sprintf "\nBonus row  for username %s Year %d Month %d not in sync with current YearMonthDay %s!" 
+            logger.Warn(sprintf "\nBonus row for username %s Year %d Month %d not in sync with current YearMonthDay %s!" 
                 excelRow.Username excelRow.Year excelRow.Month yyyyMmDd)
 
+        logger.Debug(sprintf "\nBonus row for username %s Amount %f Currency %s" 
+            excelRow.Username excelRow.Amount excelRow.Currency)
         // less restrictive than withdrawals... completed in current processing month?
         DbPlayerRevRpt.updDbBonusPlayerRow db yyyyMmDd excelRow
 
@@ -214,7 +216,9 @@ module BonusRpt2Db =
     [<Literal>]
     let InvBonusID = "1029498"
     [<Literal>]
-    let GrantedStatus = "Granted"
+    let InvBonusName = "CASHBACK"
+    [<Literal>]
+    let GrantedStatus = "Cashout"
 
     /// Process all excel lines except Totals and upsert them
     let private updDbBonusExcelRptRows 
@@ -228,7 +232,7 @@ module BonusRpt2Db =
             query {
                 for excelRow in bonusExcelFile.Data do
                 where (
-                    excelRow.``Bonus program ID`` = InvBonusID 
+                    (excelRow.``Bonus program ID`` = InvBonusID || excelRow.``Bonus program`` = InvBonusName)
                     && excelRow.``Bonus amount`` > 0.0 
                     && excelRow.``bonus status`` = GrantedStatus
                     //&& excelRow.``Completed year`` = year
@@ -243,19 +247,19 @@ module BonusRpt2Db =
                     Month = int excelRow.``Completed month``;
                 }
             }
-
         for excelRow in invBonuses do
             let userId = excelRow.UserId
             if userId > 0 then
-                let excelPlayerEmail = 
-                    excelRow.UserId
-                    |> getEmailFromUsername db
-                
-                if emailToProcAlone.IsNone then
+                match emailToProcAlone with
+                | None ->
                     updDbBonusExcelRptRow db excelRow yyyyMmDd
                 
-                elif emailToProcAlone.IsSome && emailToProcAlone.Value = excelPlayerEmail then 
-                    updDbBonusExcelRptRow db excelRow yyyyMmDd
+                | Some email ->
+                    let excelPlayerEmail = 
+                        excelRow.UserId
+                        |> getEmailFromUsername db
+                    if email = excelPlayerEmail then
+                        updDbBonusExcelRptRow db excelRow yyyyMmDd
     
     /// Open a deposits excel file and console out the filename
     let private openBonusRptSchemaFile excelFilename = 
@@ -278,7 +282,7 @@ module BonusRpt2Db =
 
         let bonusRptDtStr = 
             Some bonusRptFullPath 
-                |> getDepositDtStr
+                |> getBonusDtStr
 
         if bonusRptDtStr.IsSome then
             updDbBonusExcelRptRows db openFile bonusRptDtStr.Value emailToProcAlone
@@ -404,11 +408,17 @@ module Etl =
                 (inFolder, outFolder, rpts.begBalanceFilename.Value)
                     |||> moveFileWithOverwrite
         
-        // Vendor2User
+        // Deposits
         match rpts.DepositsFilename with
         | Some excelFilename -> 
             (inFolder, outFolder, excelFilename) |||> moveFileWithOverwrite
         | None -> logger.Warn "No Vendor2User file to move."
+        
+        // Bonus
+        match rpts.BonusFilename with
+        | Some excelFilename -> 
+            (inFolder, outFolder, excelFilename) |||> moveFileWithOverwrite
+        | None -> logger.Warn "No Bonus file to move."
         
         // Withdrawals Pending
         match rpts.withdrawalsPendingFilename with
