@@ -60,7 +60,6 @@ module PortfolioTypes =
         PortfolioShares : PortfolioShares; 
         BoughtAt : Money; 
         SoldAt : Money;
-        CurrentMonthLiquidation: Money;
     }
 
     type PortfolioSharePrice = {
