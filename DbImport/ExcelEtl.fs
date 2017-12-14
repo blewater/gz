@@ -141,7 +141,7 @@ module DepositsRpt2Db =
                 DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
 
             else
-                logger.Warn(sprintf "\nVendor2User row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
+                logger.Warn(sprintf "\nDeposits row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
                     initiatedDt yyyyMmDd completedYyyyMmDd initiatedCurrently completedCurrently completedInSameMonth)
 
     /// Process all excel lines except Totals and upsert them
@@ -190,8 +190,150 @@ module DepositsRpt2Db =
         if depositsRptDtStr.IsSome then
             updDbDepositsExcelRptRows db openFile depositsRptDtStr.Value emailToProcAlone
 
-open DepositsRpt2Db
-            
+module BonusRpt2Db =
+    open NLog
+    open System
+    open GzBatchCommon
+    open GzDb.DbUtil
+    open ExcelSchemas
+    open GmRptFiles
+    open ExcelUtil
+
+    let logger = LogManager.GetCurrentClassLogger()
+
+    /// Deposits performed in current processing month
+    let private isInitiatedInCurrentMonth(initiatedDate : DateTime)(currentYm : DateTime) : bool =
+        currentYm.Month = initiatedDate.Month && currentYm.Year = initiatedDate.Year
+
+    let private completedEqThisDateMonth (completedDt : DateTime Nullable)(thisDate : DateTime) : bool =
+        if not completedDt.HasValue then
+            false
+        else 
+            thisDate.Month = completedDt.Value.Month && thisDate.Year = completedDt.Value.Year
+
+    /// Deposits completion performed within current processing month
+    let private isCompletedInCurrentMonth (completedDt : DateTime Nullable)(currentYm : DateTime) : bool =
+        completedEqThisDateMonth completedDt currentYm
+
+    /// Deposits initiated & completed in the reported month
+    let private isCompletedInSameMonth (completedDt : DateTime Nullable)(initiatedDate : DateTime) : bool =
+        completedEqThisDateMonth completedDt initiatedDate
+
+    /// Separate between Deposits, V2U and BonusGranted
+    let private debit2DepositsType (excelDebitDesc : string) : DepositsAmountType =
+
+        // Free spins... so far appear as 0 amounts
+        if excelDebitDesc.Contains "BonusGranted" then
+            V2UDeposit
+
+        // Gz deposited cash to user
+        elif excelDebitDesc.Contains "Main (System) Bonus" || excelDebitDesc = "CasinoWallet (CasinoWallet) Bonus" then
+            V2UCashBonus
+
+        // Normal user cash deposi
+        elif excelDebitDesc.Contains "Ordinary" then
+            Deposit
+        else
+            failwithf "Unknown Deposits debit description: %s." excelDebitDesc
+
+    /// Process (upload to database) a single excel deposit
+    let private updDbBonusExcelRptRow
+                (db : DbContext) 
+                (excelRow : BonusExcel) 
+                (yyyyMmDd : string) =
+
+        let year = yyyyMmDd.Substring(0, 4) |> int
+        let month = yyyyMmDd.Substring(4, 2) |> int
+
+        if excelRow.Year <> year && excelRow.Month <> month then
+            //logger.Warn( sprintf "%s" excelRow.
+            logger.Warn(sprintf "\nBonus row  for username %s Year %d Month %d not in sync with current YearMonthDay %s!" 
+                excelRow.Username excelRow.Year excelRow.Month yyyyMmDd)
+
+        // less restrictive than withdrawals... completed in current processing month?
+        DbPlayerRevRpt.updDbBonusPlayerRow db yyyyMmDd excelRow
+
+    let getEmailFromUsername(db : DbContext)(userId : int) : string =
+        query {
+            for playerDbRow in db.PlayerRevRpt do
+                where (playerDbRow.UserID = userId)
+                select playerDbRow.EmailAddress
+                take 1
+                exactlyOne
+        }
+
+    [<Literal>]
+    let InvBonusID = "1029498"
+    [<Literal>]
+    let GrantedStatus = "Granted"
+
+    /// Process all excel lines except Totals and upsert them
+    let private updDbBonusExcelRptRows 
+                (db : DbContext) 
+                (bonusExcelFile : BonusExcelSchema) 
+                (yyyyMmDd : string) 
+                (emailToProcAlone: string option) : Unit =
+
+        // Loop through all excel rows
+        let invBonuses =
+            query {
+                for excelRow in bonusExcelFile.Data do
+                where (
+                    excelRow.``Bonus program ID`` = InvBonusID 
+                    && excelRow.``Bonus amount`` > 0.0 
+                    && excelRow.``bonus status`` = GrantedStatus
+                    //&& excelRow.``Completed year`` = year
+                    //&& excelRow.``granted month`` = month
+                    )
+                select {
+                    Amount = excelRow.``Bonus amount``;
+                    UserId = int excelRow.UserID;
+                    Username = excelRow.Username;
+                    Currency = excelRow.Currency;
+                    Year = int excelRow.``Completed year``;
+                    Month = int excelRow.``Completed month``;
+                }
+            }
+
+        for excelRow in invBonuses do
+            let userId = excelRow.UserId
+            if userId > 0 then
+                let excelPlayerEmail = 
+                    excelRow.UserId
+                    |> getEmailFromUsername db
+                
+                if emailToProcAlone.IsNone then
+                    updDbBonusExcelRptRow db excelRow yyyyMmDd
+                
+                elif emailToProcAlone.IsSome && emailToProcAlone.Value = excelPlayerEmail then 
+                    updDbBonusExcelRptRow db excelRow yyyyMmDd
+    
+    /// Open an Vendor2User excel file and console out the filename
+    let private openBonusRptSchemaFile excelFilename = 
+        let bonusExcelSchemaFile = BonusExcelSchema(excelFilename)
+        logger.Info ""
+        logger.Info (sprintf "************ Processing Bonus Report %s excel file" excelFilename)
+        logger.Info ""
+        bonusExcelSchemaFile
+    
+    /// Process the deposits (normal, vendor2user, cashbonus) excel file: Extract each row and upsert database deposits amounts
+    let updDbBonusRpt 
+        (db : DbContext)
+        (bonusRptFullPath: string) 
+        (emailToProcAlone: string option) =
+
+        // Open excel report file for the memory schema
+        let openFile = 
+            bonusRptFullPath
+            |> openBonusRptSchemaFile
+
+        let bonusRptDtStr = 
+            Some bonusRptFullPath 
+                |> getDepositDtStr
+
+        if bonusRptDtStr.IsSome then
+            updDbBonusExcelRptRows db openFile bonusRptDtStr.Value emailToProcAlone
+
 module CustomRpt2Db =
     open NLog
     open GzDb.DbUtil
@@ -274,7 +416,8 @@ module Etl =
     open BalanceRpt2Db
     open WithdrawalRpt2Db
     open DbPlayerRevRpt
-
+    open DepositsRpt2Db
+    open BonusRpt2Db
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -334,6 +477,7 @@ module Etl =
         let { 
                 customFilename = customFilename; 
                 DepositsFilename = depositsFilename;
+                BonusFilename = bonusFilename;
                 withdrawalsPendingFilename = withdrawalsPendingFilename;
                 withdrawalsRollbackFilename = withdrawalsRollbackFilename;
                 begBalanceFilename = begBalanceFilename; 
@@ -366,6 +510,13 @@ module Etl =
                 (db, depositsFilename, emailToProcAlone) 
                     |||> updDbDepositsRpt
         | None -> logger.Warn "No Deposits file to import."
+        
+        // Bonus import
+        match bonusFilename with
+        | Some bonusFilename -> 
+                (db, bonusFilename, emailToProcAlone) 
+                    |||> updDbBonusRpt
+        | None -> logger.Warn "No Bonus file to import."
         
         // Pending withdrawals import
         match withdrawalsPendingFilename with

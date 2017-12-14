@@ -14,6 +14,16 @@ module ExcelSchemas =
     type BonusExcelSchema = ExcelFile< "Bonus Prod 20171212.xlsx" >
     type CurrencyExchanges = ExcelFile< "ExchangeRate-31-08-2017.xlsx" >
 
+    type BonusExcel = 
+        {
+            Amount : float;
+            UserId : int;
+            Username : string;
+            Currency : string;
+            Year : int;
+            Month : int;
+        }
+
     type DepositOrWithdrawalTrxType =
         | DepositTrx
         | WithdrawalTrx
