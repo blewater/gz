@@ -96,23 +96,6 @@ module DepositsRpt2Db =
     let private isCompletedInSameMonth (completedDt : DateTime Nullable)(initiatedDate : DateTime) : bool =
         completedEqThisDateMonth completedDt initiatedDate
 
-    /// Separate between Deposits, V2U and BonusGranted
-    let private debit2DepositsType (excelDebitDesc : string) : DepositsAmountType =
-
-        // Free spins... so far appear as 0 amounts
-        if excelDebitDesc.Contains "BonusGranted" then
-            V2UDeposit
-
-        // Gz deposited cash to user
-        elif excelDebitDesc.Contains "Main (System) Bonus" || excelDebitDesc = "CasinoWallet (CasinoWallet) Bonus" then
-            V2UCashBonus
-
-        // Normal user cash deposi
-        elif excelDebitDesc.Contains "Ordinary" then
-            Deposit
-        else
-            failwithf "Unknown Deposits debit description: %s." excelDebitDesc
-
     /// Process (upload to database) a single excel deposit
     let private updDbDepositsExcelRptRow
                 (db : DbContext) 
@@ -129,14 +112,12 @@ module DepositsRpt2Db =
         let completedCurrently = isCompletedInCurrentMonth completedDt currentYearMonth 
         let completedInSameMonth = isCompletedInSameMonth completedDt initiatedDt
                 
-        let depositsAmountType = debit2DepositsType excelRow.Debit
-
         let dateLogMsg = sprintf "Deposit for email %s initiatedDt: %s, completedDt: %s, completedCurrenntly: %b, completedInSameMonth: %b" excelRow.Email (initiatedDt.ToYyyyMmDd) completedYyyyMmDd completedCurrently completedInSameMonth
         logger.Debug dateLogMsg
 
         // less restrictive than withdrawals... completed in current processing month?
         if completedCurrently then
-            DbPlayerRevRpt.updDbDepositsPlayerRow depositsAmountType db yyyyMmDd excelRow
+            DbPlayerRevRpt.updDbDepositsPlayerRow db yyyyMmDd excelRow
 
         else
             logger.Warn(sprintf "\nDeposits row not imported! Initiated: %O, CurrentDt: %s, CompletedDt: %s, initiatedCurrently: %b, completedCurrently: %b, completedInSameMonth: %b" 
