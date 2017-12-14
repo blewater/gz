@@ -467,7 +467,6 @@ module DbPlayerRevRpt =
 
     /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
     let updDbDepositsPlayerRow 
-                        (depositType : DepositsAmountType)
                         (db : DbContext)
                         (yyyyMmDd :string)
                         (depositsExcelRow : DepositsExcelSchema.Row) =
