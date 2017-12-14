@@ -35,6 +35,10 @@
         $scope.notify = function () {
             message.notify('Notification ' + n++);
         };
+        //$timeout(function () {
+        //    $scope.notify();
+        //}, 10000);
+
         $scope.toastr = function () {
             message.toastr('Toastr ' + t++);
         };
@@ -246,6 +250,15 @@
             localStorageService.remove(constants.storageKeys.btagMarker);
             localStorageService.remove(constants.storageKeys.btagTime);
         }
+        $scope.changeCounter = 12345;
+        $scope.change = function () {
+            $scope.changeCounter++;
+            $scope.accountBalanceChanged = true;
+            message.notify("Your account balance updated!");
+            $timeout(function () {
+                $scope.accountBalanceChanged = false;
+            }, 5000);
+        };
         // #endregion
 
         $scope.getPaymentMethods = function () {

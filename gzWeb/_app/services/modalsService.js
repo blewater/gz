@@ -73,7 +73,7 @@
         function forgotPassword(method) {
             return method(_modals.forgotPassword);
         };
-        function receipt(paymentMethod, transactionInfo, isCredit) {
+        function receipt(getTransactionInfoCall, paymentMethod, isCredit) {
             return message.open({
                 nsType: 'modal',
                 nsSize: '600px',
@@ -82,9 +82,9 @@
                 nsShowClose: false,
                 nsStatic: true,
                 nsParams: {
+                    getTransactionInfoCall: getTransactionInfoCall,
                     paymentMethod: paymentMethod,
-                    isDebit: !isCredit,
-                    transactionInfo: transactionInfo
+                    isDebit: !isCredit
                 }
             });
         };

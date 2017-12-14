@@ -368,6 +368,9 @@
 #ns-msgs .msg.msg-md { width: 800px; }
 #ns-msgs .msg.msg-lg { width: 1200px; }
 #ns-msgs .msg.msg-xl { width: calc(100% - 40px); }
+@media (max-width: 767px) {
+    #ns-msgs .msg { width: calc(100% - 20px) !important; }
+}
 /*#endregion*/
 
 #ns-msgs .msg.msg-notification.msg-sm {

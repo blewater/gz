@@ -170,6 +170,12 @@ var APP = (function () {
 
                 reveal();
 
+                $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
+                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                });
+                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                });
                 $rootScope.$broadcast(constants.events.ON_AFTER_INIT);
             }
 

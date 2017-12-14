@@ -78,31 +78,27 @@
         };
 
         function sendTransactionReceipt(pid, appInsightsTrackEvent) {
-            $timeout(function () {
-                emBanking.getTransactionInfo(pid).then(function (transactionResult) {
-                    modals.receipt($scope.selectedMethod.displayName, transactionResult).then(function (response) {
-                        emBanking.sendReceiptEmail($scope.pid, "<div>" + response + "</div>");
-                        $scope.waiting = false;
-                        if (transactionResult.status === "success") {
-                            appInsightsTrackEvent('TRANSACTION SUCCESS');
-                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                            $scope.nsOk(true);
-                        } else if (transactionResult.status === "incomplete") {
-                            appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-                            $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
-                                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                            });
-                        } else if (transactionResult.status === "error") {
-                            appInsightsTrackEvent('TRANSACTION ERROR');
-                            init();
-                        }
-                    });
-                }, function (error) {
-                    $scope.waiting = false;
-                    message.autoCloseError(error.desc);
-                    init();
-                });
-            }, 2000);
+            var getTransactionInfoCall = function () { return emBanking.getTransactionInfo(pid); };
+            modals.receipt(getTransactionInfoCall, $scope.selectedMethod.displayName).then(function (transactionResult) {
+                emBanking.sendReceiptEmail($scope.pid, "<div>" + transactionResult.status + "</div>");
+                $scope.waiting = false;
+                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                if (transactionResult.status === "success") {
+                    appInsightsTrackEvent('TRANSACTION SUCCESS');
+                    $scope.nsOk(true);
+                    if ($location.path() === constants.routes.home.path)
+                        $location.path(constants.routes.games.path).search({});
+                } else if (transactionResult.status === "incomplete") {
+                    appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                } else if (transactionResult.status === "error") {
+                    appInsightsTrackEvent('TRANSACTION ERROR');
+                }
+                init();
+            }, function (error) {
+                $scope.waiting = false;
+                message.autoCloseError(error.desc);
+                init();
+            });
         }
 
         function deposit() {
