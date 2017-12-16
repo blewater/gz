@@ -87,6 +87,9 @@
         };
         init();
 
+        $scope.showInvestmentMsg = function() {
+            message.info("Do you know that 50% of your losses are invested and can be tracked in the investment page?");
+        }
         $scope.toggleEditDepositLimit = function () {
             $scope.editDeposit = !$scope.editDeposit;
         };
@@ -104,7 +107,7 @@
             });
         };
         $scope.removeDepositLimit = function () {
-            message.confirm("You are about to remove your " + $scope.limits.deposit.current.period + " deposit limit. Click OK to continue.", function () {
+            message.confirm("You are about to remove your " + $scope.limits.deposit.current.period + " deposit limit. Click OK to continue. ", function () {
                 $rootScope.loading = true;
                 emResponsibleGaming.removeDepositLimit($scope.limits.deposit.current.period).then(function () {
                     getLimits(function () {
