@@ -330,22 +330,25 @@ namespace gzWeb.Controllers {
                 return OkMsg(new object(), "User not found!");
             }
 
-            var invBalanceRes =
+            var invBalance =
                 invBalanceRepo
-                .GetLatestBalanceDto(
-                    await
-                        invBalanceRepo.GetCachedLatestBalanceAsync(userId)
-                );
+                    .GetLatestBalanceDto(
+                        await
+                            invBalanceRepo.GetCachedLatestBalanceAsync(userId)
+                    ).Balance;
+
+            var lastInvestmentAmount =
+                gzTransactionRepo.LastInvestmentAmount
+                (user.Id,
+                    DateTime.UtcNow
+                        .ToStringYearMonth());
 
             var model = new PerformanceDataViewModel
             {
-                    InvestmentsBalance =
-                            DbExpressions.RoundCustomerBalanceAmount(invBalanceRes.Balance),
+                    InvestmentsBalance = // Don't include the month's loss amount in the current inv balance
+                            DbExpressions.RoundCustomerBalanceAmount(invBalance - lastInvestmentAmount),
                     NextExpectedInvestment =
-                            DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount
-                                                                                (user.Id,
-                                                                                DateTime.UtcNow
-                                                                                        .ToStringYearMonth())),
+                            DbExpressions.RoundCustomerBalanceAmount(lastInvestmentAmount),
                     Plans = await GetCustomerPlansAsync(user.Id)
             };
             return OkMsg(model);

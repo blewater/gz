@@ -226,7 +226,8 @@ namespace gzDAL.Repos
                     Vintages = vintages,
 
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
-                    InvestmentsBalance = invBalanceRes.Balance, // balance
+                    // current balance should not include this month's loss amount to be invested
+                    InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount, 
 
                     // Monthly gaming amounts
                     BegGmBalance = invBalanceRes.BegGmBalance,
