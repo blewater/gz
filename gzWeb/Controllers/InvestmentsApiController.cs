@@ -101,12 +101,12 @@ namespace gzWeb.Controllers {
                                 mapper
                                 .Map<VintageDto, VintageViewModel>(t))
                                 .ToList(),
-                    BegGmBalance = summaryDto.BegGmBalance,
-                    EndGmBalance = summaryDto.EndGmBalance,
-                    Deposits = summaryDto.Deposits,
-                    GmGainLoss = summaryDto.GmGainLoss,
-                    Withdrawals = summaryDto.Withdrawals,
-                    CashBonus = summaryDto.CashBonus
+                    BegGmBalance = Math.Round(summaryDto.BegGmBalance, 1),
+                    EndGmBalance = Math.Round(summaryDto.EndGmBalance, 1),
+                    Deposits = Math.Round(summaryDto.Deposits, 1),
+                    GmGainLoss = Math.Round(summaryDto.GmGainLoss, 1),
+                    Withdrawals = Math.Round(summaryDto.Withdrawals, 1),
+                    CashBonus = Math.Round(summaryDto.CashBonus, 1)
             };
 
             foreach (var vm in summaryDvm.Vintages)
