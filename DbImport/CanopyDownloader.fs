@@ -17,6 +17,10 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     [<Literal>]
     let ScheduledRptEmailRecipient = "hostmaster@greenzorro.com"
 
+    // Browser efforts to download everymatrix reports
+    [<Literal>]
+    let NUM_DOWNLOAD_ATTEMPTS = 20
+
     let WaitBefRetryinMillis = 1000 // 1 sec
     let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
     let downloadFolderName = Path.Combine (drive, reportsArgs.ReportsFoldersArgs.reportsDownloadFolder)
@@ -425,7 +429,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         let rec retry times fn = 
             if times > 0 then
                 try
-                    if times < 3 then
+                    if times < NUM_DOWNLOAD_ATTEMPTS then
                         logger.Info (sprintf "** retry remaining efforts: %d" times)
                     fn()
                 with 
@@ -450,7 +454,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.CustomRptFilenamePrefix
                     dayToProcess
 
-        retry 3 downloadCustomRpt
+        retry NUM_DOWNLOAD_ATTEMPTS downloadCustomRpt
 
         // Deposits
         let downloadDeposits() =
@@ -459,7 +463,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.DownloadedDepositsFilter
                     rptFilesArgs.DepositsRptFilenamePrefix 
                     dayToProcess
-        retry 3 downloadDeposits
+        retry NUM_DOWNLOAD_ATTEMPTS downloadDeposits
 
         // Inv Bonus Deposits
         let downloadBonus() =
@@ -468,7 +472,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.DownloadedBonusFilter
                     rptFilesArgs.BonusRptFilenamePrefix
                     dayToProcess
-        retry 3 downloadBonus
+        retry NUM_DOWNLOAD_ATTEMPTS downloadBonus
 
         // Withdrawals: Pending
         let downloadWithdrawalsPending() = 
@@ -477,7 +481,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.DownloadedWithdrawalsFilter
                     rptFilesArgs.WithdrawalsPendingRptFilenamePrefix
                     dayToProcess
-        retry 3 downloadWithdrawalsPending
+        retry NUM_DOWNLOAD_ATTEMPTS downloadWithdrawalsPending
 
         // Withdrawals: Rollback
         let downloadWithdrawalsRollback() = 
@@ -486,7 +490,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.DownloadedWithdrawalsFilter
                     rptFilesArgs.WithdrawalsRollbackRptFilenamePrefix
                     dayToProcess
-        retry 3 downloadWithdrawalsRollback
+        retry NUM_DOWNLOAD_ATTEMPTS downloadWithdrawalsRollback
 
         // Balance: report date counts as day + 23:59
         let downloadEndofMonthBalanceReport() =
@@ -496,7 +500,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                         rptFilesArgs.DownloadedBalanceFilter
                         rptFilesArgs.EndBalanceRptFilenamePrefix
                         (dayToProcess.AddDays(1.0))
-        retry 3 downloadEndofMonthBalanceReport
+        retry NUM_DOWNLOAD_ATTEMPTS downloadEndofMonthBalanceReport
 
         quit ()
 
