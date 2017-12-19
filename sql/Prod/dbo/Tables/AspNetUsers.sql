@@ -33,6 +33,8 @@
 
 
 
+
+
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [IX_UQ_GmCustomerId]
     ON [dbo].[AspNetUsers]([GmCustomerId] ASC) WHERE ([GmCustomerId] IS NOT NULL);
@@ -59,4 +61,9 @@ GO
 GRANT DELETE
     ON OBJECT::[dbo].[AspNetUsers] TO [gzAdminUser]
     AS [dbo];
+
+
+GO
+CREATE NONCLUSTERED INDEX [nci_wi_AspNetUsers_FAD9A4DCB2C2226FB45CF38DA1713AD0]
+    ON [dbo].[AspNetUsers]([Email] ASC);
 
