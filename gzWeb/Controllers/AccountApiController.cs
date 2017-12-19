@@ -522,7 +522,9 @@ namespace gzWeb.Controllers
                                             LastLogin = user.LastLogin,
                                             ActiveCustomerIdInPlatform = user.ActiveCustomerIdInPlatform,
                                             IsRegistrationFinalized = user.IsRegistrationFinalized,
-                                            Reason = reason
+
+                                            Reason = reason,
+                                            TimeStampUtc = DateTime.UtcNow
                                         });
 
             var result = await UserManager.DeleteAsync(user);

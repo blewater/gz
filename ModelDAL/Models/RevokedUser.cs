@@ -94,5 +94,6 @@ namespace gzDAL.Models
         #endregion
 
         public string Reason { get; set; }
+        public DateTime TimeStampUtc { get; set; }
     }
 }
