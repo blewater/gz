@@ -20,8 +20,16 @@
 
 
 
+
+
 GO
 GRANT SELECT
     ON OBJECT::[dbo].[LogEntries] TO [gzAdminUser]
     AS [dbo];
+
+
+GO
+CREATE NONCLUSTERED INDEX [nci_wi_LogEntries_E1B1E14B56A7BCEEFE774F1347CA3074]
+    ON [dbo].[LogEntries]([Logged] ASC)
+    INCLUDE([Level]);
 
