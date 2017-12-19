@@ -46,7 +46,7 @@
                         </div>
                     </div>
                     <div class="summary-box investment-history" ng-class="{'expanded': investmentHistoryExpanded}">
-                        <div class="summary-box-foot" ng-style="{height: investmentHistoryExpanded ? (vintages.length * 40 + 190) : 'inherited'}">
+                        <div class="summary-box-foot" ng-style="{height: investmentHistoryExpanded ? (vintages.length * 40 + 80) : 'inherited'}">
                             <div class="summary-box-btn relative" ng-click="withdraw()">
                                 <span ng-show="!fetchingSellingValues">
                                     <img src="../../Content/Images/Investment Icons/cash_white.svg" alt="" />
@@ -69,7 +69,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="expansion" ng-if="vintages.length > 0">
+                            <div class="expansion" ng-if="vintages.length > 1">
                                 <div>
                                     <span>show&nbsp;</span>
                                     <span ng-show="investmentHistoryExpanded">less</span>
