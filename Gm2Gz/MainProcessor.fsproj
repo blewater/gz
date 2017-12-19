@@ -88,6 +88,7 @@
     <None Include="Vendor2User Prod 20170606.xlsx" />
     <None Include="ExchangeRate-31-08-2017.xlsx" />
     <None Include="NLog.xsd" />
+    <None Include="Bonus Prod 20171212.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Argu">
@@ -107,8 +108,7 @@
       <HintPath>..\GzBatch\packages\FSharp.Core.4.2.3\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data">
-      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.2\lib\net45\FSharp.Data.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.3\lib\net45\FSharp.Data.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data.TypeProviders">
       <HintPath>$(SolutionDir)packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>

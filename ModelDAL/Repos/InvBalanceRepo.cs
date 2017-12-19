@@ -187,13 +187,11 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId)
         {
-
             ApplicationUser userRet = null;
             UserSummaryDTO summaryDtoRet = null;
 
             try
             {
-
                 var invBalanceRes =
                     GetLatestBalanceDto(
                         await GetCachedLatestBalanceAsync(userId)
@@ -226,7 +224,8 @@ namespace gzDAL.Repos
                     Vintages = vintages,
 
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
-                    InvestmentsBalance = invBalanceRes.Balance, // balance
+                    // current balance should not include this month's loss amount to be invested
+                    InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount, 
 
                     // Monthly gaming amounts
                     BegGmBalance = invBalanceRes.BegGmBalance,
@@ -372,7 +371,6 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId)
         {
-
             var monthsLockPeriod = (await confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
 
             var vintagesList = db.Database
@@ -382,6 +380,12 @@ namespace gzDAL.Repos
                     new SqlParameter("@CustomerId", customerId))
                 .ToList();
 
+            // Remove current month as a vintage
+            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
+                vintagesList.RemoveAt(vintagesList.Count - 1);
+            }
+
+            // Calcluate earliest locking date, locked status
             foreach (var dto in vintagesList)
             {
                 var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);

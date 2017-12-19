@@ -7,6 +7,12 @@
             amount: undefined
         };
 
+        $scope._init = function() {
+            loadPayCardInfo();
+            if (angular.isFunction($scope.getExtraModelProperties))
+                angular.extend($scope.model, $scope.getExtraModelProperties());
+        };
+
         function loadPayCardInfo() {
             loadPayCardGenericInfo();
             if (angular.isDefined($scope.loadPayCardSpecificInfo) && angular.isFunction($scope.loadPayCardSpecificInfo))
@@ -25,12 +31,6 @@
             if ($scope.limitMin < $scope.limitMax && !$rootScope.mobile)
                 $scope.amountPlaceholder += amountRange;
         }
-
-        $scope._init = function() {
-            loadPayCardInfo();
-            if (angular.isFunction($scope.getExtraModelProperties))
-                angular.extend($scope.model, $scope.getExtraModelProperties());
-        };
 
         $scope.readFields = function () {
             var q = $q.defer();

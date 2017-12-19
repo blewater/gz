@@ -143,18 +143,8 @@
                 var todayDate = utcNow.getDate();
                 $scope.model.GamingActivitiesRange =
                     $filter('ordinalDate')(startOfMonth, 'MMMM d') +
-                    (todayDate === 1 ? '' : (' - ' + $filter('ordinalDate')(utcNow, 'd')));
+                (todayDate === 1 ? '' : (' - ' + $filter('ordinalDate')(statusAsOfLocal, 'd')));
                 $scope.model.OkToWithdraw = false;
-
-                $scope.model.InvestmentsBalance = Math.round($scope.model.InvestmentsBalance);
-                $scope.model.TotalInvestments = Math.round($scope.model.TotalInvestments);
-                $scope.model.TotalInvestmentsReturns = $scope.model.InvestmentsBalance - $scope.model.TotalInvestments;
-
-                $scope.model.BegGmBalance = round($scope.model.BegGmBalance, 1);
-                $scope.model.Deposits = round($scope.model.Deposits, 1);
-                $scope.model.Withdrawals = round($scope.model.Withdrawals, 1);
-                $scope.model.EndGmBalance = round($scope.model.EndGmBalance, 1);
-                $scope.model.GmGainLoss = round($scope.model.EndGmBalance - $scope.model.BegGmBalance - $scope.model.Deposits + $scope.model.Withdrawals, 1);
 
                 $scope.vintages = processVintages($scope.model.Vintages);
                 setIntroOptionsForUsers($scope.vintages.length, $scope.model.GmGainLoss);

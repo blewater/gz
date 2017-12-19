@@ -10,6 +10,13 @@
                 <span class="method-name">{{selectedMethodGroup[0].displayName}}</span>
             </div>
 
+            <div class="form-group" ng-if="selected.group.length === 1 && selected.method.payCard && selected.method.payCard.name">
+                <div class="col-xs-12">
+                    <input type="text" class="form-control" ng-model="selected.method.payCard.name" disabled="disabled" />
+                </div>
+                <gz-field-ok gz-when="selected.method"></gz-field-ok>
+            </div>
+
             <div class="form-group" ng-if="selected.group.length > 1">
                 <div class="col-xs-12">
                     <gz-select gz-model="selected.method" gz-collection="selected.group" gz-prompt="--select pay card--"

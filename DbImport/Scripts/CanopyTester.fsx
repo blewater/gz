@@ -9,9 +9,9 @@
 #r "System.Drawing.dll"
 #r "System.Configuration.dll"
 #r "../packages/Selenium.WebDriver/lib/net40/WebDriver.dll"
-#r "../../GzBatch/packages/Selenium.Support.3.4.0/lib/net40/WebDriver.Support.dll"
+#r "../../GzBatch/packages/Selenium.Support.3.8.0/lib/net40/WebDriver.Support.dll"
 #r "../packages/canopy/lib/canopy.dll"
-#r "../../GzBatch/packages/System.ValueTuple.4.3.1/lib/netstandard1.0/System.ValueTuple.dll"
+#r "../../GzBatch/packages/System.ValueTuple.4.4.0/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
 open canopy
 open System.IO
@@ -27,7 +27,7 @@ let Wait_For_File_Download_Ms = 2000 // 2 Seconds
 let ScheduledRptEmailRecipient = "hostmaster@greenzorro.com"
 
 let everymatrixUsername = "admin"
-let everymatrixPassword = "MoneyLine8!"
+let everymatrixPassword = "player888"
 let everymatrixSecureToken = "3DFEC757D808494"
 
 let drive = System.IO.Path.GetPathRoot  __SOURCE_DIRECTORY__
@@ -39,12 +39,14 @@ let downloadedCustomFilter = "values*.xlsx"
 let downloadedBalanceFilter = "byBalance*.xlsx"
 let downloadedWithdrawalsFilter = "trans*.xlsx"
 let downloadedDepositsFilter = "trans*.xlsx"
+let downloadedBonusFilter = "Casino bonus-completed bonus*.xlsx"
 
 let customRptFilenamePrefix = "Custom Prod "
 let endBalanceRptFilenamePrefix = "Balance Prod "
 let withdrawalsPendingRptFilenamePrefix = "withdrawalsPending Prod "
 let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
 let depositsRptFilenamePrefix = "Deposits Prod "
+let bonusRptFilenamePrefix = "Bonus Prod "
 
 let dayToProcess = DateTime.Today.AddDays(-1.0)
 
@@ -229,6 +231,11 @@ let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
     click "#BtnToExcel"
     Threading.Thread.Sleep(Wait_For_File_Download_Ms)
 
+    /// Set the transaction report to the full month withdrawal dates
+let setFormDates (formDates : DateTime) : unit =
+    "#txtStartDate" << "01/" + formDates.Month.ToString("00") + "/" + formDates.Year.ToString()
+    "#txtEndDate" << formDates.Day.ToString("00") + "/" + formDates.Month.ToString("00") + "/" + formDates.Year.ToString()
+
     /// Enter transactions report and set it to withdrawals mode
 let uiAutomatedEnterTransactionsReport() = 
     // Activity
@@ -236,34 +243,65 @@ let uiAutomatedEnterTransactionsReport() =
     // Transaction
     click "#nav > li:nth-child(1) > ul > li:nth-child(3) > a"
 
-/// Withdrawals Reports: Press show and if there's data download it
-let display2SavedRpt (elemSelector : string) : bool =
+/// Bonus, Transaction Reports: Press show and if there's data download it
+let display2SavedRpt (searchBtnId : string)(downBtnId : string)(elemSelector : string) : bool =
 
-    click "#btnShowReport"
+    click searchBtnId
 
     let dataFound : bool =  
         match fastTextFromCSS elemSelector with
         | [] -> true
-        | h::t -> h <> "no data"
+        | h::t -> h.ToLower() <> "no data"
 
     if 
         dataFound then
         
-        click "#btnSaveAsExcel"
+        click downBtnId
         Threading.Thread.Sleep(Wait_For_File_Download_Ms)
     dataFound
 
-    /// Set the transaction report to the full month withdrawal dates
-let setTransactionsDates (withdrawalDateToSet : DateTime) : unit =
-    "#txtStartDate" << "01/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
-    "#txtEndDate" << withdrawalDateToSet.Day.ToString("00") + "/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
+/// Deposits, cash bonus
+let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
+    
+    uiAutomatedEnterTransactionsReport()
+
+    setFormDates dayToProcess
+
+    // Deposit
+    check "#chkTransType_0"
+
+    // Withdrawals
+    uncheck "#chkTransType_1"
+
+    // Vendor2User
+    check "#chkTransType_4"
+
+    display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+// Into the player bonuses including inv bonus
+let uiEnterBonusReport() = 
+    // Activity
+    click "#nav > li:nth-child(1) > a"
+    // Casino engine
+    click "#nav > li:nth-child(1) > ul > li:nth-child(9) > a"
+    // Casino bonus-completed bonus
+    click "#nav > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(3) > a"
+
+// Download Bonuses
+let uiDownloadBonusRpt (dayToProcess : DateTime) : bool =
+    
+    uiEnterBonusReport()
+
+    setFormDates dayToProcess
+
+    display2SavedRpt "#ButShow" "#ButSave" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Withdrawals: Initiated + Pending + Rollback
 let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
     uiAutomatedEnterTransactionsReport()
 
-    setTransactionsDates withdrawalDateToSet
+    setFormDates withdrawalDateToSet
 
     // Withdrawals
     check "#chkTransType_1"
@@ -281,14 +319,14 @@ let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) :
     // Vendor2User
     uncheck "#chkTransType_4"
 
-    display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+    display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Withdrawals: Completed + Rollback
 let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
     uiAutomatedEnterTransactionsReport()
 
-    setTransactionsDates withdrawalDateToSet
+    setFormDates withdrawalDateToSet
 
     // Withdrawals
     check "#chkTransType_1"
@@ -306,25 +344,7 @@ let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) 
     // Vendor2User
     uncheck "#chkTransType_4"
 
-    display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
-
-/// Vendor2User deposits, cash bonus
-let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
-    
-    uiAutomatedEnterTransactionsReport()
-
-    setTransactionsDates dayToProcess
-
-    // Deposit
-    check "#chkTransType_0"
-
-    // Withdrawals
-    uncheck "#chkTransType_1"
-
-    // Vendor2User
-    check "#chkTransType_4"
-
-    display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+    display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
 /// dayToProcess is interpreted @ 23:59 in the report
 let uiAutomatedEndBalanceRpt (dayToProcess : DateTime) : bool =
@@ -428,9 +448,12 @@ let uiAutomationDownloading (dayToProcess : DateTime) =
     uiAutomateDownloadedCustomRpt dayToProcess
     moveDownloadedRptToInRptFolder downloadedCustomFilter customRptFilenamePrefix dayToProcess
 
-    // Vendor2User
+    // Deposits
     if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
         moveDownloadedRptToInRptFolder downloadedDepositsFilter depositsRptFilenamePrefix dayToProcess
+
+    if uiDownloadBonusRpt dayToProcess then
+        moveDownloadedRptToInRptFolder downloadedBonusFilter bonusRptFilenamePrefix dayToProcess
 
     // Withdrawals: Pending
     if uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess then
