@@ -722,6 +722,14 @@
     <Compile Include="Migrations\201711291113263_Add IsRegistrationFinalized field to User.Designer.cs">
       <DependentUpon>201711291113263_Add IsRegistrationFinalized field to User.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712061320599_Add RevokedUser entity.cs" />
+    <Compile Include="Migrations\201712061320599_Add RevokedUser entity.Designer.cs">
+      <DependentUpon>201712061320599_Add RevokedUser entity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712061343436_Add reason field to RevokedUser entity.cs" />
+    <Compile Include="Migrations\201712061343436_Add reason field to RevokedUser entity.Designer.cs">
+      <DependentUpon>201712061343436_Add reason field to RevokedUser entity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1570,6 +1578,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711291113263_Add IsRegistrationFinalized field to User.resx">
       <DependentUpon>201711291113263_Add IsRegistrationFinalized field to User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712061320599_Add RevokedUser entity.resx">
+      <DependentUpon>201712061320599_Add RevokedUser entity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712061343436_Add reason field to RevokedUser entity.resx">
+      <DependentUpon>201712061343436_Add reason field to RevokedUser entity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
