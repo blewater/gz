@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[RevokedUsers] (
+    [Id]                         INT            IDENTITY (1, 1) NOT NULL,
+    [Email]                      NVARCHAR (MAX) NULL,
+    [EmailConfirmed]             BIT            NOT NULL,
+    [PasswordHash]               NVARCHAR (MAX) NULL,
+    [SecurityStamp]              NVARCHAR (MAX) NULL,
+    [PhoneNumber]                NVARCHAR (MAX) NULL,
+    [PhoneNumberConfirmed]       BIT            NOT NULL,
+    [TwoFactorEnabled]           BIT            NOT NULL,
+    [LockoutEndDateUtc]          DATETIME       NULL,
+    [LockoutEnabled]             BIT            NOT NULL,
+    [AccessFailedCount]          INT            NOT NULL,
+    [UserName]                   NVARCHAR (MAX) NULL,
+    [FirstName]                  NVARCHAR (MAX) NULL,
+    [LastName]                   NVARCHAR (MAX) NULL,
+    [Birthday]                   DATETIME       NOT NULL,
+    [GmCustomerId]               INT            NULL,
+    [Currency]                   NVARCHAR (MAX) NULL,
+    [DisabledGzCustomer]         BIT            NOT NULL,
+    [ClosedGzAccount]            BIT            NOT NULL,
+    [LastLogin]                  DATETIME       NULL,
+    [ActiveCustomerIdInPlatform] BIT            NOT NULL,
+    [IsRegistrationFinalized]    BIT            NULL,
+    [Reason]                     NVARCHAR (MAX) NULL,
+    [TimeStampUtc]               DATETIME       DEFAULT ('1900-01-01T00:00:00.000') NOT NULL,
+    CONSTRAINT [PK_dbo.RevokedUsers] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
