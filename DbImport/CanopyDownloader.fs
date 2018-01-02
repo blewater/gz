@@ -21,7 +21,10 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     [<Literal>]
     let NUM_DOWNLOAD_ATTEMPTS = 20
 
-    let WaitBefRetryinMillis = 1000 // 1 sec
+    [<Literal>]
+    let WaitBefDownloadRetryinMillis = 1000 // 1 sec
+    [<Literal>]
+    let WaitForSearchResults = 2000 // 2 sec
     let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
     let downloadFolderName = Path.Combine (drive, reportsArgs.ReportsFoldersArgs.reportsDownloadFolder)
     let inRptFolderName = Path.Combine ([|drive; reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder |])
@@ -183,7 +186,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Monthly
         "#txtReceivers" << ScheduledRptEmailRecipient
         // scheduled time
-        "#txtSentTime" << "0400"
+        "#txtSentTime" << "0326"
         click "#btnSave"
         browser.Close()
         switchToWindow baseWindow
@@ -219,20 +222,35 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         "#txtEndDate" << formDateToSet.Day.ToString("00") + "/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
 
     /// Bonus, Transaction Reports: Press show and if there's data download it
-    let display2SavedRpt (searchBtnId : string)(downBtnId : string)(elemSelector : string) : bool =
+    let display2SavedRpt (searchBtnId: string)(downBtnId: string)(searchResultsSel: string)(selectorDataFound : string) : bool =
 
-        click searchBtnId
+        try 
+            // Raw selenium click
+            (element searchBtnId).Click()
+            
+        with ex ->
+            waitForElement searchResultsSel
+            match someElement "#TransDetail1_gvTransactionDetails" with
+            | Some(_) -> logger.Debug "Found results within the transactions report"
+            | None -> raise ex
 
-        let dataFound : bool =  
-            match fastTextFromCSS elemSelector with
+        let dataFound : bool =
+            match fastTextFromCSS selectorDataFound with
             | [] -> true
             | h::t -> h.ToLower() <> "no data"
 
         if 
             dataFound then
-        
-            click downBtnId
+            try 
+                // Raw selenium click
+                (element downBtnId).Click()
+            with ex ->
+                logger.Warn(ex, sprintf "Exception after clicking the download button: %s." downBtnId)
+
+            // Workaround for completing the download task without looping
+            enabled downBtnId
             Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+                
         dataFound
 
     /// Deposits, cash bonus
@@ -251,7 +269,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         check "#chkTransType_4"
 
-        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     // Into the player bonuses including inv bonus
     let uiEnterBonusReport() = 
@@ -269,7 +287,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
         setFormDates dayToProcess
 
-        display2SavedRpt "#ButShow" "#ButSave" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#ButShow" "#ButSave" "#GVC" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// Pending + Completed Withdrawals: Initiated + Pending + Success
     let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
@@ -294,7 +312,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
         /// Withdrawals: Completed + Rollback
     let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
@@ -319,7 +337,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// dayToProcess is interpreted @ 23:59 in the report
     let uiAutomatedEndBalanceRpt (dayToProcess : DateTime)(downloadedBalanceFilter : string) : bool =
@@ -398,6 +416,10 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     let initCanopyChrome() : unit =
         let projDir = __SOURCE_DIRECTORY__
         canopy.configuration.chromeDir <- projDir
+        // 10 minute timeouts
+        canopy.configuration.elementTimeout <- 600.0
+        canopy.configuration.compareTimeout <- 600.0
+        canopy.configuration.pageTimeout <- 600.0
         start chrome
         match screen.monitorCount with
         | m when m >= 3 -> pinToMonitor 3
@@ -426,18 +448,21 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         do initNewBrowserSession()
 
         // helper for exceptions out of logged out sessions
-        let rec retry times fn = 
+        let rec retry times fn : unit = 
             if times > 0 then
                 try
                     if times < NUM_DOWNLOAD_ATTEMPTS then
                         logger.Info (sprintf "** retry remaining efforts: %d" times)
                     fn()
-                with 
-                | _ -> 
-                    System.Threading.Thread.Sleep(WaitBefRetryinMillis);
+
+                with ex ->
+                    logger.Warn(ex, "Downloading exception")
+                    System.Threading.Thread.Sleep(WaitBefDownloadRetryinMillis);
                     quit()
                     do initNewBrowserSession()
                     retry (times - 1) fn
+            else
+                failwithf "Quiting after exhausting %d number of report downloading tries." NUM_DOWNLOAD_ATTEMPTS
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
