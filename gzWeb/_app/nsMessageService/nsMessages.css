@@ -368,6 +368,9 @@
 #ns-msgs .msg.msg-md { width: 800px; }
 #ns-msgs .msg.msg-lg { width: 1200px; }
 #ns-msgs .msg.msg-xl { width: calc(100% - 40px); }
+@media (max-width: 767px) {
+    #ns-msgs .msg { width: calc(100% - 20px) !important; }
+}
 /*#endregion*/
 
 #ns-msgs .msg.msg-notification.msg-sm {
@@ -762,6 +765,7 @@
     height: 100% !important;
     width: 100% !important;
     overflow-y: auto;
+    background-color: #27A95C;
 }
 #ns-msgs .msg.msg-modal.msg-mobile .msg-close {
     background-color: #27A95C !important;
@@ -778,4 +782,9 @@
 
 #ns-msgs .msg.msg-modal.msg-mobile .msg-content .msg-body {
     max-height: 100vh;
+}
+
+#ns-msgs .msg.msg-mobile .msg-title.msg-title-shout {
+    line-height: 24px;
+    font-size: 12px;
 }

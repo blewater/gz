@@ -7,7 +7,7 @@
     </p>
 
     <div class="table-container" ng-if="pendingWithdrawals !== undefined && pendingWithdrawals.length > 0">
-        <table class="table table-bordered">
+        <table ng-if="!mobile" class="table table-bordered">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -36,5 +36,29 @@
                 </tr>
             </tbody>
         </table>
+        <div ng-if="mobile">
+            <ul class="padded-xs">
+                <li ng-repeat="pw in pendingWithdrawals track by pw.transactionID">
+                    <div class="row">
+                        <div class="col-xs-12">{{pw.transactionID}}</div>
+                    </div>
+                    <div class="row bg-light-grey text-gz">
+                        <div class="col-xs-6">{{pw.date}}</div>
+                        <div class="col-xs-6 text-right">{{pw.amount}}</div>
+                        <div class="col-xs-12">{{pw.description}}</div>
+                        <div class="text-right rollback-btn" ng-mouseenter="pw.hovered = true" ng-mouseleave="pw.hovered = false">
+                            <button type="button" class="btn-gz btn-gz-alt" ng-class="{'not-allowed':!pw.isRollbackAllowed || pw.cancelling}" ng-click="!pw.isRollbackAllowed || pw.cancelling || rollback(pw, $index)">
+                                <span ng-if="pw.cancelling && !pw.hovered" us-spinner="spinnerWhite"></span>
+                                <span ng-if="pw.cancelling && pw.hovered" us-spinner="spinnerGreen"></span>
+                                <span ng-show="!pw.cancelling">
+                                    <i ng-show="pw.isRollbackAllowed" class="fa fa-undo" title="Rollback"></i>
+                                    <i ng-show="!pw.isRollbackAllowed" class="fa fa-ban" title="Rollback not allowed"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>

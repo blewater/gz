@@ -383,7 +383,7 @@
                         subtitle: carouselEntry.SubTitle,
                         action: carouselEntry.ActionText,
                         url: getCarouselUrl(carouselEntry),
-                        bg: gameResult.games[0] ? gameResult.games[0].backgroundImage : $rootScope.defaultImg, //'../../Content/Images/casino-default.png',
+                        bg: gameResult.games[0] ? gameResult.games[0].backgroundImage.replace(/'/g, "%27") : $rootScope.defaultImg, //'../../Content/Images/casino-default.png',
                         isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
                     });
                 }, function (error) {
@@ -397,7 +397,7 @@
                     subtitle: carouselEntry.SubTitle,
                     action: carouselEntry.ActionText,
                     url: getCarouselUrl(carouselEntry),
-                    bg: carouselEntry.BackgroundImageUrl || $rootScope.defaultImg,
+                    bg: carouselEntry.BackgroundImageUrl.replace(/'/g, "%27") || $rootScope.defaultImg,
                     isVideo: carouselEntry.ActionType === constants.carouselActionTypes.video
                 };
             }

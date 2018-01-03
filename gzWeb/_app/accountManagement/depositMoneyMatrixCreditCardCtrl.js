@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositMoneyMatrixCreditCardCtrl';
-    APP.controller(ctrlId, ['$scope', '$filter', 'emBanking', '$q', 'iso4217', '$timeout', 'constants', 'message', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, $filter, emBanking, $q, iso4217, $timeout, constants, message, auth) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$filter', 'emBanking', '$q', 'iso4217', '$timeout', 'constants', 'message', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $filter, emBanking, $q, iso4217, $timeout, constants, message, auth) {
         $scope.spinnerWhiteAbs = constants.spinners.sm_abs_white;
         var thisYear = moment().year();
         var maxYear = thisYear + 30;
@@ -87,7 +87,12 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+            if (!$rootScope.mobile)
+                $scope.amountPlaceholder += amountRange;
+            if ($scope.existingCreditCards.length === 1)
+                $scope.onCreditCardSelected($scope.existingCreditCards[0].id);
         }
 
         function embedCDE() {

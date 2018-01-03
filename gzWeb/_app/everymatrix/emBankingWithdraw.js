@@ -21,6 +21,8 @@
             MoneyMatrixSkrill: "MoneyMatrix_Skrill",
             MoneyMatrixSkrill1Tap: "MoneyMatrix_Skrill_1Tap",
             MoneyMatrixEnterCash: "MoneyMatrix_EnterCash",
+            //MoneyMatrixBankTransfer: "MoneyMatrix_BankTransfer",
+            MoneyMatrixAdyenSepa: "MoneyMatrix_Adyen_SEPA",
             //MoneyMatrixEuteller: "MoneyMatrix_Euteller",
             //MoneyMatrixNeteller: "MoneyMatrix_Neteller",
             //MoneyMatrixPaySafeCard: "MoneyMatrix_PaySafeCard",

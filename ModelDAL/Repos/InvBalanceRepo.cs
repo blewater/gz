@@ -17,9 +17,6 @@ using MailKit.Security;
 using MimeKit;
 using NLog;
 using Z.EntityFramework.Plus;
-using System.Configuration;
-using System.Diagnostics;
-using System.Web.UI.WebControls.Expressions;
 
 namespace gzDAL.Repos
 {
@@ -190,13 +187,11 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId)
         {
-
             ApplicationUser userRet = null;
             UserSummaryDTO summaryDtoRet = null;
 
             try
             {
-
                 var invBalanceRes =
                     GetLatestBalanceDto(
                         await GetCachedLatestBalanceAsync(userId)
@@ -229,7 +224,8 @@ namespace gzDAL.Repos
                     Vintages = vintages,
 
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
-                    InvestmentsBalance = invBalanceRes.Balance, // balance
+                    // current balance should not include this month's loss amount to be invested
+                    InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount, 
 
                     // Monthly gaming amounts
                     BegGmBalance = invBalanceRes.BegGmBalance,
@@ -375,7 +371,6 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId)
         {
-
             var monthsLockPeriod = (await confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
 
             var vintagesList = db.Database
@@ -385,9 +380,15 @@ namespace gzDAL.Repos
                     new SqlParameter("@CustomerId", customerId))
                 .ToList();
 
+            // Remove current month as a vintage
+            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
+                vintagesList.RemoveAt(vintagesList.Count - 1);
+            }
+
+            // Calcluate earliest locking date, locked status
             foreach (var dto in vintagesList)
             {
-                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod + 1);
+                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);
                 dto.Locked = firstOfMonthUnlocked > DateTime.UtcNow;
             }
 
@@ -433,8 +434,7 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="vintageCashInvestment"></param>
-        /// <param name="vintageYearMonthStr"></param>
+        /// <param name="vintageToBeLiquidated"></param>
         /// <param name="vintageSharesDto"></param>
         /// <param name="fees"></param>
         /// <returns></returns>
@@ -444,13 +444,33 @@ namespace gzDAL.Repos
             out VintageSharesDto vintageSharesDto,
             out FeesDto fees)
         {
-            vintageSharesDto =
-                userPortfolioSharesRepo.GetVintageSharesMarketValue(
-                    customerId,
-                    vintageToBeLiquidated.YearMonthStr);
 
+            // Sales after the completion of one month only, have earned no interest
+            var vintageMonthToBeSold = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageToBeLiquidated.YearMonthStr);
+            var salesMonthDiff = DbExpressions.MonthDiff(DateTime.UtcNow, vintageMonthToBeSold);
+            if (salesMonthDiff <= 1) {
+                vintageToBeLiquidated.MarketPrice = vintageToBeLiquidated.InvestmentAmount;
+                vintageSharesDto = new VintageSharesDto() {
+                    HighRiskShares = 0m,
+                    MediumRiskShares = 0m,
+                    LowRiskShares = 0m,
+                    PresentMarketPrice = vintageToBeLiquidated.MarketPrice
+                };
+            }
+            // Sales post 2 or more months
+            else
+            {
+
+                vintageSharesDto =
+                    userPortfolioSharesRepo.GetVintageSharesMarketValue(
+                        customerId,
+                        vintageToBeLiquidated.YearMonthStr);
+
+            }
+
+            // Obsolete Special case: SALE within same month (ref alaa)
             // if vintageToBeSold month = current month (early cashout in same month)
-            // value of vintage is what's not withdrawn from the month's investement cash
+            // value of vintage is what's not withdrawn from the month's investment cash
             if (vintageToBeLiquidated.YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
 
                 vintageSharesDto.PresentMarketPrice =
@@ -785,7 +805,7 @@ namespace gzDAL.Repos
         /// Sell any vintages marked for selling. 
         /// 
         /// This method will update the vintages selling values before selling them.
-        /// The vintages are sold at the current fund prices as of this method call.
+        /// The vintages are sold at the current fund prices.
         /// 
         /// </summary>
         /// <param name="customerId"></param>
@@ -796,7 +816,7 @@ namespace gzDAL.Repos
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <returns></returns>
-        public void SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
+        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
         {
 
             // Update market price on it.. they may have left the browser window open 
@@ -827,6 +847,8 @@ namespace gzDAL.Repos
                     );
                 }
             }
+
+            return vintages;
         }
 
         #region EmailVintageProceeds
@@ -891,7 +913,7 @@ namespace gzDAL.Repos
             try
             {
                 foreach (var vintageDto in vintages.Where(v=>v.Selected)) {
-                    user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue - vintageDto.SoldFees);
+                    user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue);
                     user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
                 }
                 var _ = EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)

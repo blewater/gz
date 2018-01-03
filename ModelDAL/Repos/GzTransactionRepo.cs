@@ -165,12 +165,11 @@ namespace gzDAL.Repos {
 
         private static bool IsAnEarlyWithdrawal(string vintageYearMonthStr, GzConfiguration confRow)
         {
-
-            var monthLockInPeriod = confRow.LOCK_IN_NUM_DAYS / 30;
+            const int nominalWithdrawalMonths = 3;
 
             var vintageMonthDate = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageYearMonthStr);
 
-            var futureUnleashDay = vintageMonthDate.AddMonths(monthLockInPeriod); // locking months + 1
+            var futureUnleashDay = vintageMonthDate.AddMonths(nominalWithdrawalMonths); // locking months + 1
 
             var retValue = futureUnleashDay > DateTime.Today;
             return retValue;

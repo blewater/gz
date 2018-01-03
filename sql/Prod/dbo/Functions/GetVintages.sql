@@ -1,4 +1,5 @@
-﻿CREATE FUNCTION [dbo].[GetVintages]
+﻿/****** Object:  UserDefinedFunction [dbo].[GetVintages]    Script Date: 11/1/2017 12:38:47 AM ******/
+CREATE FUNCTION [dbo].[GetVintages]
                 (
 	                @CustomerId int
                 )
@@ -15,7 +16,7 @@
                 AS
                 BEGIN
 	                INSERT @VintagesTable
-	                SELECT Id, YearMonth, CashInvestment, Sold, ISNULL(SoldAmount, 0), SoldFees, SoldYearMonth
+	                SELECT Id, YearMonth, CashInvestment, Sold, ISNULL(SoldAmount, 0), ISNULL(SoldFees, 0), SoldYearMonth
 	                FROM dbo.InvBalances
 	                WHERE 
 		                CustomerId = @CustomerId

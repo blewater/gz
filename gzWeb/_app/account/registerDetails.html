@@ -169,20 +169,26 @@
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group text-left">
-                    <gz-check-box gz-model="model" gz-value="agreedGames">I have read and agreed the <a class="terms" ng-click="readGamesTerms()">gaming terms & conditions</a></gz-check-box>
+                    <gz-check-box gz-model="model" gz-value="agreedGames">I have read and accepted the <a class="terms" ng-click="readGamesTerms()">gaming terms & conditions</a></gz-check-box>
                 </div>
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group text-left">
-                    <gz-check-box gz-model="model" gz-value="agreedInvestment">I have read and agreed the <a class="terms" ng-click="readInvestmentTerms()">investment terms & conditions</a></gz-check-box>
+                    <gz-check-box gz-model="model" gz-value="agreedInvestment">I have read and accepted the <a class="terms" ng-click="readInvestmentTerms()">investment terms & conditions</a></gz-check-box>
+                </div>
+            </div>
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="form-group text-left">
+                    <gz-check-box gz-model="model" gz-value="oldEnough">I'm 18 years or older.</gz-check-box>
                 </div>
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <div class="btns text-center">
-                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !model.agreedGames || !model.agreedInvestment"
+                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !model.agreedGames || !model.agreedInvestment || !model.oldEnough"
                                 ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                             <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
                             <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>

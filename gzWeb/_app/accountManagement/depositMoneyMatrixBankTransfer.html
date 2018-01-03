@@ -1,0 +1,67 @@
+﻿<div class="deposit-entercash">
+    <div ng-if="thereAreExistingPayCards">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div>Select an account</div>
+                <div ng-if="!canAddNewPayCard" class="max-number-of-cards">
+                    Note: You have exceeded the maximum number of accounts you are allowed to register. If you want to register a new one, please <a href="mailto:help@greenzorro.com">contact us</a>.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <gz-select gz-model="model.selectedPayCard" gz-collection="existingPayCards" gz-prompt="--select account--" gz-loading="loadingPayCards"
+                                   gz-id="id" gz-display="name" gz-change="onPayCardSelected(id)">
+                        </gz-select>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="model.selectedPayCard"></gz-field-ok>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="thereAreExistingPayCards && canAddNewPayCard" class="col-xs-12">
+        <div class="form-group">
+            <div class="text-center">-- OR --</div>
+        </div>
+    </div>
+
+    <div>
+        <div class="col-xs-12" ng-if="thereAreExistingPayCards && canAddNewPayCard">
+            <div class="form-group">
+                <div>Register a new account</div>
+            </div>
+        </div>
+
+        <div class="col-xs-12" ng-show="model.selectedPayCard">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" id="accountName" name="accountName" class="form-control" ng-model="model.selectedPayCard.name" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="number" placeholder="{{amountPlaceholder}}" id="amount" name="amount" class="form-control" autocomplete="off" ng-model="model.amount" required autofocus
+                               ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
+                               min="{{accountLimits.min}}" max="{{accountLimits.max}}"
+                               ng-focus="amountFocused = true;" ng-blur="amountFocused = false;">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required.</div>
+                        <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">Amount must be between {{accountLimits.min}} and {{accountLimits.max}}.</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
+            </div>
+        </div>
+    </div>
+</div>

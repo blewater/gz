@@ -15,6 +15,7 @@
         var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill.html', ctrlId: 'depositMoneyMatrixSkrillCtrl' }
         var moneyMatrixSkrill1TapFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill1Tap.html', ctrlId: 'depositMoneyMatrixSkrill1TapCtrl' }
         var moneyMatrixEnterCashFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEnterCash.html', ctrlId: 'depositMoneyMatrixEnterCashCtrl' }
+        var moneyMatrixBankTransferFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixBankTransfer.html', ctrlId: 'depositMoneyMatrixBankTransferCtrl' }
         //var moneyMatrixNetellerFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixNeteller.html', ctrlId: 'depositMoneyMatrixNetellerCtrl' }
         //var moneyMatrixPaySafeCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixPaySafeCard.html', ctrlId: 'depositMoneyMatrixPaySafeCardCtrl' }
         //var moneyMatrixEcoPayzFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEcoPayz.html', ctrlId: 'depositMoneyMatrixEcoPayzCtrl' }
@@ -27,6 +28,7 @@
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap] = moneyMatrixSkrill1TapFields;
         paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixBankTransfer] = moneyMatrixBankTransferFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixNeteller] = moneyMatrixNetellerFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixPaySafeCard] = moneyMatrixPaySafeCardFields;
         //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEcoPayz] = moneyMatrixEcoPayzFields;
@@ -76,29 +78,23 @@
         };
 
         function sendTransactionReceipt(pid, appInsightsTrackEvent) {
-            emBanking.getTransactionInfo(pid).then(function (transactionResult) {
-                modals.receipt($scope.selectedMethod.displayName, transactionResult).then(function (response) {
-                    emBanking.sendReceiptEmail($scope.pid, "<div>" + response + "</div>");
-                    $scope.waiting = false;
-                    if (transactionResult.status === "success") {
-                        appInsightsTrackEvent('TRANSACTION SUCCESS');
-                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                        $scope.nsOk(true);
-                        //init();
-                        if ($location.path() === constants.routes.home.path)
-                            $location.path(constants.routes.games.path).search({});
-                    } else if (transactionResult.status === "incomplete") {
-                        appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-                    } else if (transactionResult.status === "pending") {
-                        appInsightsTrackEvent('TRANSACTION PENDING');
-                        $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
-                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                        });
-                    } else if (transactionResult.status === "error") {
-                        appInsightsTrackEvent('TRANSACTION ERROR');
-                        init();
-                    }
-                });
+            var getTransactionInfoCall = function () { return emBanking.getTransactionInfo(pid); };
+            modals.receipt(getTransactionInfoCall, $scope.selectedMethod.displayName).then(function (transactionResult) {
+                message.info("Do you know that 50% of your losses are invested and can be tracked in the investment page?");
+                emBanking.sendReceiptEmail($scope.pid, "<div>" + transactionResult.status + "</div>");
+                $scope.waiting = false;
+                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                if (transactionResult.status === "success") {
+                    appInsightsTrackEvent('TRANSACTION SUCCESS');
+                    $scope.nsOk(true);
+                    if ($location.path() === constants.routes.home.path)
+                        $location.path(constants.routes.games.path).search({});
+                } else if (transactionResult.status === "incomplete") {
+                    appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                } else if (transactionResult.status === "error") {
+                    appInsightsTrackEvent('TRANSACTION ERROR');
+                }
+                init();
             }, function (error) {
                 $scope.waiting = false;
                 message.autoCloseError(error.desc);
@@ -139,10 +135,11 @@
                                     sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent);
                                 } else if (confirmResult.status === "redirection") {
                                     appInsightsTrackEvent('CONFIRM REDIRECTION');
-                                    var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
+                                    var html =
+                                        '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>';
                                     var thirdPartyPromise = message.open({
                                         nsType: 'modal',
-                                        nsSize: 'xl',
+                                        nsSize: 'auto',
                                         nsBody: html,
                                         nsStatic: true,
                                         nsParams: {

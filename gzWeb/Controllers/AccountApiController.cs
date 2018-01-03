@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -487,16 +488,44 @@ namespace gzWeb.Controllers
 
         [HttpPost]
         [Route("RevokeRegistration")]
-        public async Task<IHttpActionResult> RevokeRegistration()
+        public async Task<IHttpActionResult> RevokeRegistration(string reason = null)
         {
             var userId = User.Identity.GetUserId<int>();
-            
+
             var user = await _userRepo.GetCachedUserAsync(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);
                 return Ok("User not found!");
             }
+
+            _dbContext.RevokedUsers.Add(new RevokedUser
+                                        {
+                                            Email = user.Email,
+                                            EmailConfirmed = user.EmailConfirmed,
+                                            PasswordHash = user.PasswordHash,
+                                            SecurityStamp = user.SecurityStamp,
+                                            PhoneNumber = user.PhoneNumber,
+                                            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                                            TwoFactorEnabled = user.TwoFactorEnabled,
+                                            LockoutEndDateUtc = user.LockoutEndDateUtc,
+                                            LockoutEnabled = user.LockoutEnabled,
+                                            AccessFailedCount = user.AccessFailedCount,
+                                            UserName = user.UserName,
+                                            FirstName = user.FirstName,
+                                            LastName = user.LastName,
+                                            Birthday = user.Birthday,
+                                            GmCustomerId = user.GmCustomerId,
+                                            Currency = user.Currency,
+                                            DisabledGzCustomer = user.DisabledGzCustomer,
+                                            ClosedGzAccount = user.ClosedGzAccount,
+                                            LastLogin = user.LastLogin,
+                                            ActiveCustomerIdInPlatform = user.ActiveCustomerIdInPlatform,
+                                            IsRegistrationFinalized = user.IsRegistrationFinalized,
+
+                                            Reason = reason,
+                                            TimeStampUtc = DateTime.UtcNow
+                                        });
 
             var result = await UserManager.DeleteAsync(user);
             if (!result.Succeeded)
@@ -505,6 +534,8 @@ namespace gzWeb.Controllers
                              String.Join(Environment.NewLine, result.Errors));
                 return GetErrorResult(result);
             }
+
+            await _dbContext.SaveChangesAsync();
 
             Logger.Info("RevokeRegistration for [User#{0}]. Succeeded.", userId);
 
@@ -522,6 +553,13 @@ namespace gzWeb.Controllers
             {
                 Logger.Error("User not found. [User#{0}]", userId);
                 return Ok("User not found!");
+            }
+
+            if (user.IsRegistrationFinalized.HasValue &&
+                user.IsRegistrationFinalized.Value)
+            {
+                Logger.Info("Registration is finalized for [User#{0}].", userId);
+                return Ok();
             }
 
             try

@@ -94,19 +94,19 @@ namespace gzWeb.Controllers {
                     OkToWithdraw = summaryDto.OkToWithdraw,
                     Prompt = summaryDto.Prompt,
                     Vintages = 
-                    summaryDto
-                    .Vintages
-                    .Select(
-                        t =>
-                            mapper
-                            .Map<VintageDto, VintageViewModel>(t))
-                            .ToList(),
-                    BegGmBalance = summaryDto.BegGmBalance,
-                    EndGmBalance = summaryDto.EndGmBalance,
-                    Deposits = summaryDto.Deposits,
-                    GmGainLoss = summaryDto.GmGainLoss,
-                    Withdrawals = summaryDto.Withdrawals,
-                    CashBonus = summaryDto.CashBonus
+                        summaryDto
+                        .Vintages
+                        .Select(
+                            t =>
+                                mapper
+                                .Map<VintageDto, VintageViewModel>(t))
+                                .ToList(),
+                    BegGmBalance = Math.Round(summaryDto.BegGmBalance, 1),
+                    EndGmBalance = Math.Round(summaryDto.EndGmBalance, 1),
+                    Deposits = Math.Round(summaryDto.Deposits, 1),
+                    GmGainLoss = Math.Round(summaryDto.GmGainLoss, 1),
+                    Withdrawals = Math.Round(summaryDto.Withdrawals, 1),
+                    CashBonus = Math.Round(summaryDto.CashBonus, 1)
             };
 
             foreach (var vm in summaryDvm.Vintages)
@@ -222,7 +222,7 @@ namespace gzWeb.Controllers {
         /// <param name="vintages"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IHttpActionResult> WithdrawVintages(IList<VintageViewModel> vintages)
+        public IHttpActionResult WithdrawVintages(IList<VintageViewModel> vintages)
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetVintagesSellingValuesByUser requested for [User#{0}]", userId);
@@ -236,7 +236,16 @@ namespace gzWeb.Controllers {
             var gmailPwd = ConfigurationManager.AppSettings["gmailHostPwd"];
 
             // Sell Vintages
-            var updatedVintages = SaveDbSellVintages(userId, vintagesDtos, true, emailAdmins, gmailUser, gmailPwd);
+            var updatedVintages = 
+                    invBalanceRepo
+                        .SaveDbSellAllSelectedVintagesInTransRetry(
+                            userId,
+                            vintagesDtos,
+                            true,
+                            emailAdmins,
+                            gmailUser,
+                            gmailPwd
+                        );
 
             var vmVintagesAfterWithdrawals =
                 updatedVintages
@@ -244,50 +253,12 @@ namespace gzWeb.Controllers {
                         mapper
                         .Map<VintageDto, VintageViewModel>(v)
                     );
-            vmVintagesAfterWithdrawals
-                    .Select(v => new VintageViewModel()
-                    {
-                        InvestmentAmount =
-                            DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount),
-                        SellingValue =
-                            DbExpressions.RoundCustomerBalanceAmount(v.SellingValue)
-                    })
-                    .ToList();
+            foreach (var v in vmVintagesAfterWithdrawals) {
+                v.InvestmentAmount = DbExpressions.RoundCustomerBalanceAmount(v.InvestmentAmount);
+                v.SellingValue = DbExpressions.RoundCustomerBalanceAmount(v.SellingValue);
+            }
 
             return OkMsg(vmVintagesAfterWithdrawals);
-        }
-
-        /// <summary>
-        /// 
-        /// Interface call for selling vintages
-        /// 
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="vintages"></param>
-        /// <param name="sendEmail2Admins"></param>
-        /// <param name="emailAdmins"></param>
-        /// <param name="gmailUser"></param>
-        /// <param name="gmailPwd"></param>
-        /// <returns></returns>
-        public ICollection<VintageDto> SaveDbSellVintages(
-                int customerId,
-                ICollection<VintageDto> vintages,
-                bool sendEmail2Admins,
-                string emailAdmins,
-                string gmailUser,
-                string gmailPwd) {
-
-            invBalanceRepo
-                .SaveDbSellAllSelectedVintagesInTransRetry(
-                    customerId, 
-                    vintages, 
-                    sendEmail2Admins,
-                    emailAdmins, 
-                    gmailUser, 
-                    gmailPwd
-                );
-
-            return vintages;
         }
 
         #endregion
@@ -359,22 +330,25 @@ namespace gzWeb.Controllers {
                 return OkMsg(new object(), "User not found!");
             }
 
-            var invBalanceRes =
+            var invBalance =
                 invBalanceRepo
-                .GetLatestBalanceDto(
-                    await
-                        invBalanceRepo.GetCachedLatestBalanceAsync(userId)
-                );
+                    .GetLatestBalanceDto(
+                        await
+                            invBalanceRepo.GetCachedLatestBalanceAsync(userId)
+                    ).Balance;
+
+            var lastInvestmentAmount =
+                gzTransactionRepo.LastInvestmentAmount
+                (user.Id,
+                    DateTime.UtcNow
+                        .ToStringYearMonth());
 
             var model = new PerformanceDataViewModel
             {
-                    InvestmentsBalance =
-                            DbExpressions.RoundCustomerBalanceAmount(invBalanceRes.Balance),
+                    InvestmentsBalance = // Don't include the month's loss amount in the current inv balance
+                            DbExpressions.RoundCustomerBalanceAmount(invBalance - lastInvestmentAmount),
                     NextExpectedInvestment =
-                            DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount
-                                                                                (user.Id,
-                                                                                DateTime.UtcNow
-                                                                                        .ToStringYearMonth())),
+                            DbExpressions.RoundCustomerBalanceAmount(lastInvestmentAmount),
                     Plans = await GetCustomerPlansAsync(user.Id)
             };
             return OkMsg(model);

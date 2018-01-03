@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'pendingWithdrawalsCtrl';
-    APP.controller(ctrlId, ['$scope', 'emBankingWithdraw', '$filter', 'constants', ctrlFactory]);
-    function ctrlFactory($scope, emBankingWithdraw, $filter, constants) {
+    APP.controller(ctrlId, ['$scope', 'emBankingWithdraw', '$filter', 'constants', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, emBankingWithdraw, $filter, constants, $timeout) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -34,10 +34,11 @@
 
         $scope.rollback = function (pendingWithdrawal, index) {
             pendingWithdrawal.cancelling = true;
-            emBankingWithdraw.rollback(pendingWithdrawal.id).then(function (response) {
+            emBankingWithdraw.rollback(pendingWithdrawal.id).then();
+            $timeout(function () {
                 pendingWithdrawal.cancelling = false;
                 $scope.pendingWithdrawals.splice(index, 1);
-            });
+            }, 1000);
         }
     }
 })();

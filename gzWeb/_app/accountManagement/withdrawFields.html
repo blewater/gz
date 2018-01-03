@@ -6,14 +6,14 @@
                        ng-class="{ 'empty': !model.amount, 'danger' : form.amount.$invalid && !form.amount.$pristine }"
                        min="{{limitMin}}" max="{{limitMax}}"
                        ng-focus="amountFocused = true;" ng-blur="amountFocused = false;"
-                       ng-disabled="limitMin >= limitMax">
+                       ng-disabled="limitMin > limitMax">
             </div>
             <div class="col-xs-12">
                 <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required.</div>
                 <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">
                     Available withdrawal amount is between {{limitMin | number : 2}} and {{limitMax | number : 2}}.
                 </div>
-                <div class="help-block" ng-class="{'show': limitMin >= limitMax}">
+                <div class="help-block" ng-class="{'show': limitMin > limitMax}">
                     Your account balance is below the least amount you can withdraw.
                 </div>
             </div>

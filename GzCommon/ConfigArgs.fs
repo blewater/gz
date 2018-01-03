@@ -27,11 +27,13 @@ module ConfigArgs =
         DownloadedBalanceFilter : string;
         DownloadedWithdrawalsFilter : string;
         DownloadedDepositsFilter : string;
+        DownloadedBonusFilter : string;
         CustomRptFilenamePrefix : string;
         EndBalanceRptFilenamePrefix : string;
         WithdrawalsPendingRptFilenamePrefix : string;
         WithdrawalsRollbackRptFilenamePrefix : string;
         DepositsRptFilenamePrefix : string;
+        BonusRptFilenamePrefix : string;
         Wait_For_File_Download_MS : int;
     }
 

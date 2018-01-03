@@ -1,7 +1,4 @@
-﻿@charset "utf-8";
-
-
-/* #region Common */
+﻿/* #region Common */
 .investments {
     font-weight: 300;
     padding-top: 100px;
@@ -71,13 +68,11 @@
 
 
 /* #region Summary */
-.investments .summary { }
 .investments .summary .summary-box {
     position: relative;
     text-align: center;
     border: 1px solid #ccc;
     padding: 0;
-    margin: 20px -10px;
 }
 .investments .summary .summary-box .summary-box-head {
     padding: 30px 0;
@@ -111,10 +106,13 @@
 .investments .summary .summary-box .summary-box-foot .summary-box-btn {
     margin: 0 auto;
     padding: 15px 0;
-    width: 60%;
+    width: 80%;
     height: 50px;
     color: #fff;
     cursor: pointer;
+}
+.extra {
+    padding: 20px;
 }
 .investments .summary .summary-box .summary-box-foot .summary-box-btn img {
     margin-right: 20px;
@@ -200,8 +198,6 @@
     font-weight: bold;
     padding: 0;
     font-size: 12px;
-}
-.investments .summary .summary-box .date-data {
 }
 
 .investments .summary .summary-box .date-datevalue {
@@ -294,10 +290,10 @@
 /*.investments .summary .summary-box.investment-history.expanded .summary-box-foot {
     height: 670px;
 }*/
-.investments .summary .summary-box.investment-history .summary-box-foot .summary-box-btn {
-    background-color: #27A95C;
-    margin-top: 25px;
-}
+    .investments .summary .summary-box.investment-history .summary-box-foot .summary-box-btn {
+        background-color: #148DA4;
+        margin-top: 25px;
+    }
 
 .investments .summary .summary-box.investment-history .expansion {
     border-color: transparent;
@@ -305,9 +301,6 @@
 .investments .summary .summary-box.investment-history.expanded .expansion {
     border-top: 1px solid #ccc;
 }
-
-
-
 
 .investments .summary .summary-box.current-balance .summary-box-head {
     background-color: #148DA4;
@@ -320,8 +313,7 @@
     margin-top: 40px;
 }
 .investments .summary .summary-box.current-balance .date {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    background-color: #e2e2e2;
 }
 .investments .summary .summary-box.current-balance .summary-box-foot  {
     padding-top: 40px;
@@ -329,8 +321,6 @@
 .investments .summary .summary-box.current-balance .summary-box-foot .summary-box-btn {
     background-color: #148DA4;
 }
-
-
 
 .investments .summary .summary-box.expected-amount .summary-box-head {
     background-color: #007850;
@@ -355,10 +345,14 @@
 }
 .investments .summary .summary-box.expected-amount .summary-box-foot .summary-box-btn {
     background-color: #007850;
+    margin-top: -14px;
 }
+    .summary-box-foot .show-more {
+        margin-top: -1em;
+    }
+
 .investments .summary .summary-box.expected-amount.expanded .summary-box-foot {
-    /*height: 470px;*/
-    height: 560px;
+    height: 37em;
 }
 .investments .summary .summary-box.expected-amount .summary-box-foot .expansion-content {
     margin-top: 30px;
@@ -461,17 +455,10 @@
 .investments .summary .summary-section {
     margin-top: 60px;
 }
-.investments .summary .summary-section img.icon {
+.investments .summary .summary-section .icon {
     margin-bottom: 40px;
     opacity: 0.35;
     height: 45px;
-}
-
-.investments .summary .summary-section.gaming-activities {
-} 
-.investments .summary .summary-section.investments-overview {
-} 
-.investments .summary .summary-section.investments-schedule {
 }
 
 .investments .summary .side-box {
@@ -501,7 +488,6 @@
     padding: 50px;
 }
 
-.investments .summary .vintages-box .vintages-box-table { }
 .investments .summary .vintages-box .vintages-box-table .vintages-box-table-head {
     padding-bottom: 20px;
     font-size: 20px;
@@ -628,8 +614,6 @@
     border-top-color: #27A95C;
 }
 
-
-
 .summary-vintages {
     overflow: hidden;
 }
@@ -741,7 +725,6 @@
 
 
 /* #region Portfolio */
-.investments .portfolio { }
 .investments .portfolio .invest-prompt{
     font-size: 36px;
     color: #27A95C;
@@ -777,8 +760,6 @@
 .investments .portfolio .side-box .side-box-section {
     height: 80px;
     position: relative;
-}
-.investments .portfolio .side-box .side-box-section.side-box-top {
 }
 .investments .portfolio .side-box .side-box-section.side-box-top .next-investment-label {
     position: absolute;
@@ -821,8 +802,6 @@
     color: #7b7b7b;
     text-decoration: underline;
     text-align: center;
-}
-.investments .portfolio .portfolio-plans .plan {
 }
 .investments .portfolio .portfolio-plans .plan .basic {
     background-color: #fff;
@@ -881,12 +860,6 @@
 .investments .portfolio .portfolio-plans .plan .details .heading {
     text-decoration: underline;
     margin-bottom: 5px;
-}
-.investments .portfolio .portfolio-plans .plan .details .holding {
-}
-.investments .portfolio .portfolio-plans .plan .details .holding .holding-name {
-}
-.investments .portfolio .portfolio-plans .plan .details .holding .holding-weight {
 }
 .investments .portfolio .portfolio-plans .plan .details .hr {
     margin: 5px auto;
@@ -969,8 +942,6 @@
 }
 
 
-.investments .portfolio .current-portfolio {
-}
 .investments .portfolio .current-portfolio .side-box {
     padding: 0;
 }
@@ -1017,14 +988,6 @@
     font-size: 14px;
     margin: 20px auto;
 }
-.portfolio-chart-tooltip .percent {
-
-}
-.portfolio-chart-tooltip .amount {
-
-}
-
-
 @media (min-width: 992px) {
     .investments .portfolio .invest-prompt{
         margin-bottom: 100px;

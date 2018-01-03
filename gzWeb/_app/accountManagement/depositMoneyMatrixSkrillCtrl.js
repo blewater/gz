@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositMoneyMatrixSkrillCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'emBanking', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217, emBanking, $filter) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$q', 'iso4217', 'emBanking', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $q, iso4217, emBanking, $filter) {
         $scope.model = {
             selectedPayCard: undefined,
             accountEmail: undefined,
@@ -37,8 +37,16 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+
+            var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+            if (!$rootScope.mobile)
+                $scope.amountPlaceholder += amountRange;
+
             $scope.extraValidityCheck = true;
+
+            if ($scope.existingPayCards.length === 1)
+                $scope.onPayCardSelected($scope.existingPayCards[0].id);
         }
 
         function init() {

@@ -12,6 +12,7 @@ module GmRptFiles =
     // Filename types
     type CustomFilenameType = string
     type DepositsFilenameType = string option
+    type BonusFilenameType = string option
     type WithdrawalsPendingFilenameType = string option
     type WithdrawalsRollingFilenameType = string option
     type BegBalanceFilenameType = string option
@@ -20,6 +21,7 @@ module GmRptFiles =
     // Filename string dates
     type CustomStrDateType = string
     type DepositsStrDateType = string option
+    type BonusStrDateType = string option
     type WithdrawalsPendingStrDateType = string option
     type WithdrawalsRollbackStrDateType = string option
     type BegBalanceStrDateType = string option
@@ -28,15 +30,16 @@ module GmRptFiles =
     // Filename dates
     type CustomDateType = DateTime
     type DepositsDateType = DateTime option
+    type BonusDateType = DateTime option
     type WithdrawalsPendingDateType = DateTime option
     type WithdrawalsRollbackDateType = DateTime option
     type BegBalanceDateType = DateTime option
     type EndBalanceDateType = DateTime option
 
     type InRptFolder = { isProd : bool; folderName : FolderNameType }
-    type RptFilenames = { customFilename : CustomFilenameType; DepositsFilename : DepositsFilenameType; withdrawalsPendingFilename : WithdrawalsPendingFilenameType; withdrawalsRollbackFilename : WithdrawalsRollingFilenameType; begBalanceFilename : BegBalanceFilenameType; endBalanceFilename : EndBalanceFilenameType}
-    type RptStrDates = { customDtStr : CustomStrDateType; DepositsDtStr : DepositsStrDateType; withdrawalsPendingDtStr : WithdrawalsPendingStrDateType; withdrawalsRollbackDtStr : WithdrawalsRollbackStrDateType; begBalanceDtStr : BegBalanceStrDateType; endBalanceDtStr : EndBalanceStrDateType}
-    type RptDates = { customDate : CustomDateType; DepositsDate : DepositsDateType; withdrawalsPendingDate : WithdrawalsPendingDateType; withdrawalsRollbackDate : WithdrawalsRollbackDateType; begBalanceDate : BegBalanceDateType; endBalanceDate : EndBalanceDateType}
+    type RptFilenames = { customFilename : CustomFilenameType; DepositsFilename : DepositsFilenameType; BonusFilename: BonusFilenameType; withdrawalsPendingFilename : WithdrawalsPendingFilenameType; withdrawalsRollbackFilename : WithdrawalsRollingFilenameType; begBalanceFilename : BegBalanceFilenameType; endBalanceFilename : EndBalanceFilenameType}
+    type RptStrDates = { customDtStr : CustomStrDateType; DepositsDtStr : DepositsStrDateType; BonusDtStr : BonusStrDateType; withdrawalsPendingDtStr : WithdrawalsPendingStrDateType; withdrawalsRollbackDtStr : WithdrawalsRollbackStrDateType; begBalanceDtStr : BegBalanceStrDateType; endBalanceDtStr : EndBalanceStrDateType}
+    type RptDates = { customDate : CustomDateType; DepositsDate : DepositsDateType; BonusDate : BonusDateType; withdrawalsPendingDate : WithdrawalsPendingDateType; withdrawalsRollbackDate : WithdrawalsRollbackDateType; begBalanceDate : BegBalanceDateType; endBalanceDate : EndBalanceDateType}
 
     type ExcelDatesValid = { Valid : bool; DayToProcess : string }
 
@@ -47,7 +50,9 @@ module GmRptFiles =
     [<Literal>]
     let CustomFileListPrefix = "Custom"
     [<Literal>]
-    let Vendor2UserFileListPrefix = "Deposits"
+    let DepositsFileListPrefix = "Deposits"
+    [<Literal>]
+    let BonusFileListPrefix = "Bonus"
     [<Literal>]
     let WithdrawalPendingFileListPrefix = "withdrawalsPending"
     [<Literal>]
@@ -165,7 +170,11 @@ module GmRptFiles =
         getLatestCustomExcelRptFilename inRptFolder
 
     let getDepositsFilename (inRptFolder : InRptFolder)(customFilename : CustomFilenameType) : DepositsFilenameType = 
-        (Vendor2UserFileListPrefix , inRptFolder, customFilename) 
+        (DepositsFileListPrefix , inRptFolder, customFilename) 
+            |||> getOptionalExcelRptFilenameInSyncWithCustomDate 
+
+    let getBonusFilename (inRptFolder : InRptFolder)(customFilename : CustomFilenameType) : BonusFilenameType = 
+        (BonusFileListPrefix, inRptFolder, customFilename) 
             |||> getOptionalExcelRptFilenameInSyncWithCustomDate 
 
     let getWithdrawalPendingFilename (inRptFolder : InRptFolder)(customFilename : CustomFilenameType) : WithdrawalsPendingFilenameType = 
@@ -189,6 +198,7 @@ module GmRptFiles =
         { 
             customFilename = customFilename
             DepositsFilename = getDepositsFilename inRptFolder customFilename
+            BonusFilename = getBonusFilename inRptFolder customFilename
             withdrawalsPendingFilename = getWithdrawalPendingFilename inRptFolder customFilename
             withdrawalsRollbackFilename = getWithdrawalsRollbackFilename inRptFolder customFilename
             begBalanceFilename = getBegBalanceFilename inRptFolder
@@ -212,8 +222,12 @@ module GmRptFiles =
         | Some filename -> Some (filename |> validateDateOnExcelFilename)
         | None -> None
 
-    let getVendor2UserDtStr (vendor2UserFilename : string option) : string option = 
-        vendor2UserFilename 
+    let getDepositDtStr (depositFilename : string option) : string option = 
+        depositFilename 
+            |> getOptionalFilenameDateValidation
+
+    let getBonusDtStr (bonusFilename : string option) : string option = 
+        bonusFilename 
             |> getOptionalFilenameDateValidation
 
     let getWithdrawalDtStr (withdrawalFilename : string option) : string option = 
@@ -231,7 +245,8 @@ module GmRptFiles =
     let private excelFilenames2DatesStr(excelFiles : RptFilenames) : RptStrDates = 
         { 
             customDtStr = getCustomDtStr excelFiles.customFilename;
-            DepositsDtStr = getVendor2UserDtStr excelFiles.DepositsFilename; 
+            DepositsDtStr = getDepositDtStr excelFiles.DepositsFilename;
+            BonusDtStr = getBonusDtStr excelFiles.BonusFilename;
             withdrawalsPendingDtStr = getWithdrawalDtStr excelFiles.withdrawalsPendingFilename; 
             withdrawalsRollbackDtStr = getWithdrawalDtStr excelFiles.withdrawalsRollbackFilename; 
             begBalanceDtStr = getBegBalanceDtStr excelFiles.begBalanceFilename;
@@ -255,8 +270,12 @@ module GmRptFiles =
         | Some dateString -> Some dateString.ToDateWithDay
         | None -> None
 
-    let getVendor2UserlDate (vendor2UserDtStr : DepositsStrDateType) : DepositsDateType = 
-        vendor2UserDtStr 
+    let getDepositsDate (depositsDtStr : DepositsStrDateType) : DepositsDateType = 
+        depositsDtStr 
+            |> getOptionalDtFromFilename
+
+    let getBonusDate (bonusDtStr : BonusStrDateType) : BonusDateType = 
+        bonusDtStr 
             |> getOptionalDtFromFilename
 
     let getWithdrawalPendingDate (withdrawalDtStr : WithdrawalsPendingStrDateType) : WithdrawalsPendingDateType = 
@@ -278,7 +297,8 @@ module GmRptFiles =
     let private excelDatesStr2Dt(excelDatesStr : RptStrDates) : RptDates = 
         { 
             customDate = getCustomDate excelDatesStr.customDtStr;
-            DepositsDate = getVendor2UserlDate excelDatesStr.DepositsDtStr;
+            DepositsDate = getDepositsDate excelDatesStr.DepositsDtStr;
+            BonusDate = getBonusDate excelDatesStr.BonusDtStr;
             withdrawalsPendingDate = getWithdrawalPendingDate excelDatesStr.withdrawalsPendingDtStr;
             withdrawalsRollbackDate = getWithdrawalsRollingDate excelDatesStr.withdrawalsRollbackDtStr;
             begBalanceDate = getBegBalanceDate excelDatesStr.begBalanceDtStr; 
@@ -317,11 +337,42 @@ module GmRptFiles =
         | None ->
             true // return ok
 
+    /// Check if bonus excel report is really that type of excel report
+    let private bonusRptContentMatchCheck(excelFilename : BonusFilenameType) : bool =
+
+        match excelFilename with
+        | Some bonusFilename ->
+            let bonusExcel = new BonusExcelSchema(bonusFilename)
+
+            // Keep the first data row
+            let bonusRows = bonusExcel.Data |> Seq.truncate 2
+            let len = bonusRows |> Seq.length 
+            if len <= 1 then
+                true // header + total line only-> empty balance file
+            else
+                bonusRows
+                |> Seq.tryFindIndex(fun (excelRow) ->
+                    let bonusProgramId = excelRow.``Bonus program ID``
+                    bonusProgramId.Length > 1
+                )   
+                |> function
+                    | None -> false // this is not a Bonus Report excel file
+                    | _ -> true // Ok it's Bonus file
+        | None ->
+            true // return ok
+
     /// Enforce beginning and ending balance Report files title dates match their content
     let depositsRptContentMatch(excelFiles : RptFilenames) : RptFilenames =
         if not (excelFiles.DepositsFilename
                     |> depositsRptContentMatchCheck) then 
             failWithLogInvalidArg "[DepositsFileNotMatchingContent]" (sprintf "The deposits excel report filename: %s does not match its contents." excelFiles.DepositsFilename.Value)
+        excelFiles
+
+    /// Enforce beginning and ending balance Report files title dates match their content
+    let bonusRptContentMatch(excelFiles : RptFilenames) : RptFilenames =
+        if not (excelFiles.BonusFilename
+                    |> bonusRptContentMatchCheck) then 
+            failWithLogInvalidArg "[BonusFileNotMatchingContent]" (sprintf "The bonus excel report filename: %s does not match its contents." excelFiles.BonusFilename.Value)
         excelFiles
 
     /// Check if balance report dates content mismatches title. Precondition is excelFilename is Some  
@@ -388,6 +439,14 @@ module GmRptFiles =
         | None -> 
             logger.Warn "No Deposits excel file to validate."
 
+    let private sameDayCustomBonusValidation (customDate : DateTime)(bonusUserDate : BonusDateType) : Unit =
+        match bonusUserDate with
+        | Some bonusDate -> 
+            if customDate <> bonusDate then
+                failWithLogInvalidArg "[MismatchedFilenameDates]" (sprintf "Custom date mismatch with %s Bonus Date: %s." <| customDate.ToString("yyyy-MMM-dd") <| bonusDate.ToString("yyyy-MMM-dd"))
+        | None -> 
+            logger.Warn "No Bonus excel file to validate."
+
     /// Enforce begBalance on 1st month day
     let private begBalance1stDay (customDate : DateTime) (begBalanceDate : DateTime) : Unit =
         if customDate.Month <> begBalanceDate.Month && begBalanceDate.Day <> 1 then
@@ -423,6 +482,7 @@ module GmRptFiles =
         sameDayCustomWithdrawalPendingValidation rDates.customDate rDates.withdrawalsPendingDate
         sameDayCustomWithdrawalRollbackValidation rDates.customDate rDates.withdrawalsRollbackDate
         sameDayCustomDepositsValidation rDates.customDate rDates.DepositsDate
+        sameDayCustomBonusValidation rDates.customDate rDates.BonusDate
 
         if rDates.begBalanceDate.IsSome then
             begBalance1stDay rDates.customDate rDates.begBalanceDate.Value
