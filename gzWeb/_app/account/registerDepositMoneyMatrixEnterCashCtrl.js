@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'registerDepositMoneyMatrixEnterCashCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217, auth, emBanking, $filter) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $q, iso4217, auth, emBanking, $filter) {
         $scope.model = {
             selectedPayCard: undefined,
             amount: undefined,
@@ -28,7 +28,11 @@
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+
+            var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimits.max + ")";
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+            if (!$rootScope.mobile)
+                $scope.amountPlaceholder += amountRange;
         }
 
         function init() {
@@ -57,7 +61,7 @@
         }
 
         $scope.readConfirmMessage = function (prepareData) {
-            return "Do you want to deposit the amount of " + prepareData.creditAmount + " using EnterCash?";
+            return "Do you want to deposit the amount of " + prepareData.creditAmount + " using " + $scope.selectedMethod.name + "?";
         };
 
         init();

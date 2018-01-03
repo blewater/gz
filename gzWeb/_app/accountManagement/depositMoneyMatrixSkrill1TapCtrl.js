@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositMoneyMatrixSkrill1TapCtrl';
-    APP.controller(ctrlId, ['$scope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, $q, iso4217, auth, emBanking, $filter) {
+    APP.controller(ctrlId, ['$scope', '$rootScope', '$q', 'iso4217', 'auth', 'emBanking', '$filter', ctrlFactory]);
+    function ctrlFactory($scope, $rootScope, $q, iso4217, auth, emBanking, $filter) {
         $scope.model = {
             selectedPayCard: undefined,
             accountEmail: undefined,
@@ -17,15 +17,18 @@
                 $scope.model.accountEmail = $scope.model.selectedPayCard.name;
                 $scope.accountLimitMax = $scope.model.selectedPayCard.displaySpecificFields.SkrillOneTapMaxAmount;
                 var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
-                if ($scope.accountLimits.min < $scope.accountLimitMax)
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+                if ($scope.accountLimits.min < $scope.accountLimitMax && !$rootScope.mobile)
                     $scope.amountPlaceholder += amountRange;
 
                 angular.element('#amount').focus();
             } else {
                 $scope.model.accountEmail = undefined;
                 $scope.accountLimitMax = $scope.accountLimits.max;
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+                var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+                if (!$rootScope.mobile)
+                    $scope.amountPlaceholder += amountRange;
                 angular.element('#accountEmail').focus();
             }
         };
@@ -33,13 +36,16 @@
         $scope.setAccountLimits = function () {
             if ($scope.model.reset) {
                 $scope.accountLimitMax = $scope.accountLimits.max;
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+                var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+                if (!$rootScope.mobile)
+                    $scope.amountPlaceholder += amountRange;
             }
             else if ($scope.model.selectedPayCard) {
                 $scope.accountLimitMax = $scope.model.selectedPayCard.displaySpecificFields.SkrillOneTapMaxAmount;
                 var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
-                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount";
-                if ($scope.accountLimits.min < $scope.accountLimitMax)
+                $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+                if ($scope.accountLimits.min < $scope.accountLimitMax && !$rootScope.mobile)
                     $scope.amountPlaceholder += amountRange;
             }
         };
@@ -61,8 +67,15 @@
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
             $scope.accountLimitMax = $scope.accountLimits.max;
-            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " Amount (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+            var amountRange = " (between " + $scope.accountLimits.min + " and " + $scope.accountLimitMax + ")";
+            $scope.amountPlaceholder = iso4217.getCurrencyByCode($scope.currency).symbol + " amount";
+            if (!$rootScope.mobile)
+                $scope.amountPlaceholder += amountRange;
+
             $scope.extraValidityCheck = true;
+
+            if ($scope.existingPayCards.length === 1)
+                $scope.onPayCardSelected($scope.existingPayCards[0].id);
         }
 
         function init() {

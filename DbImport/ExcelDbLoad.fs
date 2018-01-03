@@ -256,42 +256,31 @@ module DbPlayerRevRpt =
             } 
         | _ -> inCurrency
 
-    /// Update the deposits amounts
+    /// Increase the total deposits value in the playerRevRpt table by the deposits value
     let private updDbRowDepositsValues
                     (db : DbContext)
-                    (depositType : DepositsAmountType)
                     (depositsExcelRow : DepositsExcelSchema.Row) 
                     (playerRow : DbPlayerRevRpt) = 
 
-        let dbVendor2UserCashBonusAmount = playerRow.CashBonusAmount.Value
-        let dbVendor2UserDepositsAmount = playerRow.Vendor2UserDeposits.Value
         let dbDeposits = playerRow.TotalDepositsAmount.Value
         let notNullUserCurrency = userCurrency db playerRow.Currency playerRow.EmailAddress
-
         let thisDepositAmount = getDepositAmountInUserCurrency depositsExcelRow notNullUserCurrency
-        match depositType with
-        | Deposit ->
-            let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
-            playerRow.TotalDepositsAmount <- Nullable newDeposits
-        | V2UDeposit ->
-            // Track Vendor2User Deposits separatedly
-            let newV2uTotalDepositAmount = dbVendor2UserDepositsAmount + thisDepositAmount // in players native currency
-            playerRow.Vendor2UserDeposits <- Nullable newV2uTotalDepositAmount
-
-            // Add to total deposits too
-            let newDeposits = dbDeposits + thisDepositAmount
-            playerRow.TotalDepositsAmount <- Nullable newDeposits
-        | V2UCashBonus ->
-            // Track Cash bonus separatedly
-            let newV2UCashBonusAmount = dbVendor2UserCashBonusAmount + thisDepositAmount // in players native currency
-            playerRow.CashBonusAmount <- Nullable newV2UCashBonusAmount
-
-            // Add to total deposits too
-            let newDeposits = dbDeposits + thisDepositAmount
-            playerRow.TotalDepositsAmount <- Nullable newDeposits
+        let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
+        playerRow.TotalDepositsAmount <- Nullable newDeposits
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
+
+    /// Increase the total deposits value in the playerRevRpt table by the investment bonus
+    let private updDbRowBonusValues(bonusExcelRow : BonusExcel)(playerRow : DbPlayerRevRpt) = 
+
+        let dbDeposits = playerRow.TotalDepositsAmount.Value
+        let thisDepositAmount = bonusExcelRow.Amount
+        let newDeposits = dbDeposits + decimal thisDepositAmount  // in players native currency
+        playerRow.TotalDepositsAmount <- Nullable newDeposits
+        //Non-excel content
+        playerRow.UpdatedOnUtc <- DateTime.UtcNow
+        playerRow.Processed <- int GmRptProcessStatus.BonusUpd
 
     /// get withdrawals in the user currency or fail if not possible
     let getWithdrawalAmountInUserCurrency
@@ -478,7 +467,6 @@ module DbPlayerRevRpt =
 
     /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
     let updDbDepositsPlayerRow 
-                        (depositType : DepositsAmountType)
                         (db : DbContext)
                         (yyyyMmDd :string)
                         (depositsExcelRow : DepositsExcelSchema.Row) =
@@ -493,10 +481,33 @@ module DbPlayerRevRpt =
         }
         |> (fun playerDbRow -> 
             if isNull playerDbRow then 
-                let warningMsg = sprintf "Couldn't find user %s from deposits excel in the PlayerRevRpt table." depositsExcelRow.Email
+                let warningMsg = sprintf "Couldn't find user %s from the deposits excel file in the PlayerRevRpt table." depositsExcelRow.Email
                 logger.Warn warningMsg
             else
-                updDbRowDepositsValues db depositType depositsExcelRow playerDbRow
+                updDbRowDepositsValues db depositsExcelRow playerDbRow
+                db.DataContext.SubmitChanges()
+        )
+
+    /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
+    let updDbBonusPlayerRow 
+                        (db : DbContext)
+                        (yyyyMmDd :string)
+                        (bonusExcelRow : BonusExcel) =
+
+        let gmUserId = bonusExcelRow.UserId
+        let yyyyMm = yyyyMmDd.ToYyyyMm
+        query { 
+            for playerDbRow in db.PlayerRevRpt do
+                where (playerDbRow.YearMonth = yyyyMm && playerDbRow.UserID = gmUserId)
+                select playerDbRow
+                exactlyOneOrDefault
+        }
+        |> (fun playerDbRow -> 
+            if isNull playerDbRow then 
+                let warningMsg = sprintf "Couldn't find user %s from the bonus excel file in the PlayerRevRpt table." bonusExcelRow.Username
+                logger.Warn warningMsg
+            else
+                updDbRowBonusValues bonusExcelRow playerDbRow
                 db.DataContext.SubmitChanges()
         )
 
@@ -548,7 +559,7 @@ module DbPlayerRevRpt =
                 |> (fun (user, gmUserId) ->
                     match gmUserId with
                     | 0 -> 
-                        logger.Fatal(sprintf "No GmId for user %s in AspNetUsers Table. No row found in playerRevRpt." user.Email)
+                        logger.Warn(sprintf "No GmId for user %s in AspNetUsers Table. No row found in playerRevRpt." user.Email)
                         setErrorStatus()
                     | gmId -> 
                         user.GmCustomerId <- Nullable gmId
@@ -556,5 +567,5 @@ module DbPlayerRevRpt =
             )
         )
         if getErrorStatus() then
-            failwith "Unresolved AspNetUser rows found without GmPlayerId. Please see the log entries preceeding this."
+            logger.Warn "Unresolved AspNetUser rows found without GmPlayerId. Please see the log entries preceeding this."
       

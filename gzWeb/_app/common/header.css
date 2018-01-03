@@ -60,7 +60,7 @@ header {
     font-size: 16px;
     font-weight: 300;
 	color:#fff;
-	margin:20px 0 0 15px;
+	margin:17px 0 0 15px;
     float: left;
 }
 .navbar-brand .version {
@@ -630,3 +630,30 @@ header .switch .divider {
     line-height: 70px;
     right: 60px;
 }
+
+.gaming-balance-changed {
+    display: inline-block;
+    transform: scale(1.4);
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+    transition: all 0.5s ease;
+}
+/*@-moz-keyframes anim-changed
+{
+  0%{transform:scale(1);font-weight:normal;}
+  40%{transform:scale(1.5);font-weight:bold;}
+  100%{transform:scale(1);font-weight:normal;}
+}
+@-webkit-keyframes anim-changed
+{
+  0%{transform:scale(1);font-weight:normal;}
+  40%{transform:scale(1.5);font-weight:bold;}
+  100%{transform:scale(1);font-weight:normal;}
+}
+@keyframes anim-changed
+{
+  0%{transform:scale(1);font-weight:normal;}
+  40%{transform:scale(1.5);font-weight:bold;}
+  100%{transform:scale(1);font-weight:normal;}
+}*/
+

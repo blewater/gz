@@ -19,7 +19,7 @@
                 <a href="https://www.linkedin.com/company/greenzorro?trk=top_nav_home" target="_blank"><i class="fa fa-linkedin" ng-class="{'fa-lg': !xs}"></i></a>
                 <a href="https://www.instagram.com/greenzorro_official/" target="_blank"><i class="fa fa-instagram" ng-class="{'fa-lg': !xs}"></i></a>
                 <a href="mailto:help@greenzorro.com" target="_blank"><i class="fa fa-envelope" ng-class="{'fa-lg': !xs}"></i></a>
-                <a href="http://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker" ng-class="{'fa-lg': !xs}"></i></a>
+                <a href="https://maps.google.com/?q=80 Long Ln, London EC1A 9ET, UK" target="_blank"><i class="fa fa-map-marker" ng-class="{'fa-lg': !xs}"></i></a>
             </div>
         </div>
     </div>
@@ -32,14 +32,16 @@
                 <img class="gprovider grayscale revealing" src="../../Content/Images/worldmatch.png" alt="WorldMatch">
             </div>
             <div class="footer-licenses text-center" ng-show="routeData.gaming || routeData.wandering">
-                <a class="license mga" href="https://www.authorisation.mga.org.mt/verification.aspx?lang=en&company=6d9bcc8f-2ec5-49d3-90c6-58f0dde5d820" target="_blank">
-                    <img src="../../Content/Images/mga.png" alt="EveryMatrix Limited - Licensed">
+                <a class="license" href="https://www.authorisation.mga.org.mt/verification.aspx?lang=en&company=6d9bcc8f-2ec5-49d3-90c6-58f0dde5d820" target="_blank">
+                    <img class="mga" src="../../Content/Images/mga.png" alt="EveryMatrix Limited - Licensed">
                 </a>
-                <a class="license curacao" href="http://www.gaminglicences.com/pages/validate.php?lid=8048-E0709353" target="_blank">
-                    <img src="../../Content/Images/curacao.png" alt="AntillePhone Licence Verification">
+                <span class="license" id="apg-cd4c451b-bda3-48ab-975c-f4f82f05088d" data-apg-seal-id="cd4c451b-bda3-48ab-975c-f4f82f05088d"
+                      data-apg-image-size="128" data-apg-image-type="basic-small"></span>
+                <a class="license" ng-href="/responsible-gambling" target="_blank">
+                    <img class="play-responsibly" src="../../Content/Images/18plus_invert_transparent.png" alt="18+ Play Responsibly">
                 </a>
-                <a class="license play-responsibly" ng-href="/responsible-gambling" target="_blank">
-                    <img src="../../Content/Images/18plus_invert_transparent.png" alt="18+ Play Responsibly">
+                <a ng-href="https://www.gambleaware.co.uk/" class="license" target="_blank">
+                    <img class="begambleaware" src="../../Content/Images/begambleawareorg.png" alt="BeGambleAware">
                 </a>
             </div>
             <div class="footer-advice text-center" ng-show="routeData.gaming || routeData.wandering">
@@ -67,13 +69,22 @@
                 <div class="footer-payment-method footer-entercash">
                     <img class="img-responsive grayscale revealing" src="../../Content/Images/payment methods/entercash.svg" alt="EnterCash">
                 </div>
+                <!--<div class="footer-payment-method">
+                    <img class="img-responsive grayscale revealing" src="../../Content/Images/payment methods/banktransfer.svg" alt="Bank Transfer">
+                </div>-->
+                <div class="footer-payment-method">
+                    <img class="img-responsive grayscale revealing" src="../../Content/Images/payment methods/sepa.svg" alt="Adyen SEPA">
+                </div>
             </div>
 
             <div class="license-disclaimer text-justify">
                 <div class="row">
                     <div class="col-xs-offset-1 col-xs-10 col-sm-offset-2 col-sm-8">
                         <div ng-show="routeData.gaming || routeData.wandering">
-                            <p>The website is operated and managed by EveryMatrix Ltd., a company bearing registration number C44411, and having its registered address at Level 5, Suite 1A, Portomaso Business Tower, Vjal Portomaso, St. Julians, STJ 4012, Malta and by EveryMatrix N.V., a limited liability company incorporated under the laws of Curacao, bearing company registration number 108354 and having its registered address at Dr. Hugenholtzweg Z/N, Curacao, and by. Casino games on this website are provided by EveryMatrix N.V. Specific casino games content on this website are also provided by EveryMatrix Ltd., licensed and regulated by the Malta Gaming Authority (www.mga.org.mt) in virtue of a Class 1 on 4 license numbered MGA/CL1/497/2010 issued on the 2nd of May 2012.</p>
+                            <p>
+                                The website is operated and managed by EveryMatrix Ltd., a company bearing registration number C44411, and having its registered address at Level 5, Suite 1A, Portomaso Business Tower, Vjal Portomaso, St. Julians, STJ 4012, Malta and by EveryMatrix N.V., a limited liability company incorporated under the laws of Curacao, bearing company registration number 108354 and having its registered address at Dr. Hugenholtzweg Z/N, Curacao. Casino games on this website are provided by EveryMatrix N.V. Specific casino games content on this website, by NetEnt Malta Limited, are provided by EveryMatrix Ltd., licensed and regulated by the Malta Gaming Authority (www.mga.org.mt) in virtue of a Class 1 on 4 license numbered MGA/CL1/497/2010 issued on the 2nd of May 2012.
+                                Payments are processed by MoneyMatrix Ltd, on behalf of EveryMatrix Ltd. MoneyMatrix Ltd was incorporated under the laws of Malta, bearing company registration number C64593 and having its registered address at Level 5, Suite 1B, Portomaso Business Tower, St Julians, Malta.
+                            </p>
                         </div>
                         <div ng-show="routeData.investing || routeData.wandering">
                             <p>The investment offering on this site is not operated nor offered by EveryMatrix N.V or EveryMatrix Ltd. Please access the investment section in order to see specific Terms and conditions provided by Greenzorro Limited, a company incorporated under the laws of United Kingdom, bearing company registration number 10401612 and having its registered address at 80-83 Long Lane, London, EC1A 9ET, UK.</p>
@@ -84,7 +95,7 @@
                     </div>
                 </div>
             </div>
-            <hr class="copyright-hr"/>
+            <hr class="copyright-hr" />
             <div class="copyright text-center">
                 &copy; {{copyrightYears}} | greenzorro limited | All rights reserved
             </div>
@@ -94,7 +105,7 @@
                 <span>Registered in England & Wales</span>
             </div>
             <div ng-show="inDebugMode" class="debug-info text-center clearfix">
-                <br/>
+                <br />
                 <span>{{version}}</span>
             </div>
         </div>

@@ -71,6 +71,8 @@ namespace gzWeb
                     , "~/_app/promotions/promotions.css"
                     , "~/_app/accountManagement/accountManagement.css"
                     , "~/_app/nsMessageService/nsMessages.css"
+                    , "~/Content/Styles/introjs/introjs.min.css"
+                    , "~/Content/Styles/introjs/introjs-modern.min.css"
                 });
 
             #endregion
@@ -115,7 +117,7 @@ namespace gzWeb
                 ,bundles
                 , "~/js/plugins"
                 , new string[] {
-                    "~/Scripts/moment/moment.min.js", "~/Scripts/spin/spin.min.js", "~/Scripts/autobahn/autobahn.min.js"
+                    "~/Scripts/moment/moment.min.js", "~/Scripts/spin/spin.min.js", "~/Scripts/autobahn/autobahn.min.js", "~/Scripts/intro/intro.min.js"
                 });
 
             CreateBundleOfMultiFiles(
@@ -153,6 +155,7 @@ namespace gzWeb
                     , "~/Scripts/jsnlog/jsnlog.min.js"
                     , "~/Scripts/jsnlog/logToServer.js"
                     , "~/Scripts/angular-appinsights/angular-appinsights.js"
+                    , "~/Scripts/intro/angular-intro.min.js"
                     , "~/_app/modules/customDirectives.js"
                     , "~/_app/modules/customFilters.js"
                 });
@@ -259,6 +262,7 @@ namespace gzWeb
                                     , "~/_app/account/registerDepositMoneyMatrixSkrillCtrl.js"
                                     , "~/_app/account/registerDepositMoneyMatrixSkrill1TapCtrl.js"
                                     , "~/_app/account/registerDepositMoneyMatrixEnterCashCtrl.js"
+                                    //, "~/_app/account/registerDepositMoneyMatrixBankTransferCtrl.js"
                                     , "~/_app/account/receiptCtrl.js"
             #endregion
 
@@ -274,13 +278,14 @@ namespace gzWeb
                                     , "~/_app/accountManagement/depositMoneyMatrixSkrillCtrl.js"
                                     , "~/_app/accountManagement/depositMoneyMatrixSkrill1TapCtrl.js"
                                     , "~/_app/accountManagement/depositMoneyMatrixEnterCashCtrl.js"
+                                    //, "~/_app/accountManagement/depositMoneyMatrixBankTransferCtrl.js"
                                     //, "~/_app/accountManagement/depositMoneyMatrixNetellerCtrl.js"
                                     //, "~/_app/accountManagement/depositMoneyMatrixPaySafeCardCtrl.js"
                                     //, "~/_app/accountManagement/depositMoneyMatrixEcoPayzCtrl.js"
 
                                     , "~/_app/accountManagement/withdrawPaymentMethodsCtrl.js"
                                     , "~/_app/accountManagement/withdrawCtrl.js"
-                                    , "~/_app/accountManagement/withdrawFieldsCtrl.js"
+                                    //, "~/_app/accountManagement/withdrawFieldsCtrl.js"
                                     //, "~/_app/accountManagement/withdrawCreditCardCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixCommonCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixCreditCardCtrl.js"
@@ -288,6 +293,8 @@ namespace gzWeb
                                     , "~/_app/accountManagement/withdrawMoneyMatrixSkrillCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixSkrill1TapCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixEnterCashCtrl.js"
+                                    //, "~/_app/accountManagement/withdrawMoneyMatrixBankTransferCtrl.js"
+                                    , "~/_app/accountManagement/withdrawMoneyMatrixAdyenSepaCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixNetellerCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixPaySafeCardCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixEcoPayzCtrl.js"

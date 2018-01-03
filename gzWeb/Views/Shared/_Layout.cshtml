@@ -4,6 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @*<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">*@
     <meta name="description" content="greenzorro is a online gambling operator that combines gambling with investing, offering a unique value proposition to players">
     <meta name="keywords" content="greenzorro, gambling, gaming, games, casino, portfolio, investment, returns, roi, return on investment, jackpot, slots, poker, scratch">
     <meta name="robots" content="index,follow">
@@ -75,12 +76,14 @@
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/fa")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddStyles('{0}')</script>", "~/css/app")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/jquery")
-    @*@Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js")
-    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://mpsnare.iesnare.com/snare.js")*@
-    @*@Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://maps.googleapis.com/maps/api/js?key=AIzaSyDpw0KfgLOdZYUYqcNsV3DjdIQ2wqj2oSo&libraries=places")*@
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/plugins")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/bootstrap")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/d3")
+    
+@if (Request.Url != null && Request.Url.AbsoluteUri.Contains("greenzorro.com"))
+{
+    @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "https://cd4c451b-bda3-48ab-975c-f4f82f05088d.snippet.antillephone.com/apg-seal.js")
+}
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/angular")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/modules")
     @Scripts.RenderFormat("<script type=\"text/javascript\" data-remove=\"true\" defer>AsyncLoad.AddScripts('{0}')</script>", "~/js/app")

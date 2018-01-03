@@ -5,7 +5,7 @@ var APP = (function () {
 
     var app = angular.module(id, [
         // Angular modules 
-        'ngRoute',
+        'ngRoute'
         , 'ngResource'
         , 'ngAnimate'
         , 'ngSanitize'
@@ -33,6 +33,7 @@ var APP = (function () {
         , 'logToServer'
         , 'ui.bootstrap.datetimepicker'
         , 'angular-appinsights'
+        , 'angular-intro'
     ]);
 
     app.id = id;
@@ -169,6 +170,12 @@ var APP = (function () {
 
                 reveal();
 
+                $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
+                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                });
+                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                });
                 $rootScope.$broadcast(constants.events.ON_AFTER_INIT);
             }
 

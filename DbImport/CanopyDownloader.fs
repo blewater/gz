@@ -17,7 +17,14 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     [<Literal>]
     let ScheduledRptEmailRecipient = "hostmaster@greenzorro.com"
 
-    let WaitBefRetryinMillis = 1000 // 1 sec
+    // Browser efforts to download everymatrix reports
+    [<Literal>]
+    let NUM_DOWNLOAD_ATTEMPTS = 20
+
+    [<Literal>]
+    let WaitBefDownloadRetryinMillis = 1000 // 1 sec
+    [<Literal>]
+    let WaitForSearchResults = 2000 // 2 sec
     let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
     let downloadFolderName = Path.Combine (drive, reportsArgs.ReportsFoldersArgs.reportsDownloadFolder)
     let inRptFolderName = Path.Combine ([|drive; reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder |])
@@ -179,7 +186,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Monthly
         "#txtReceivers" << ScheduledRptEmailRecipient
         // scheduled time
-        "#txtSentTime" << "0400"
+        "#txtSentTime" << "0326"
         click "#btnSave"
         browser.Close()
         switchToWindow baseWindow
@@ -209,34 +216,85 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Transaction
         click "#nav > li:nth-child(1) > ul > li:nth-child(3) > a"
 
-    /// Withdrawals Reports: Press show and if there's data download it
-    let display2SavedRpt (elemSelector : string) : bool =
+        /// Set the transaction report to the full month withdrawal dates
+    let setFormDates (formDateToSet : DateTime) : unit =
+        "#txtStartDate" << "01/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
+        "#txtEndDate" << formDateToSet.Day.ToString("00") + "/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
 
-        click "#btnShowReport"
+    /// Bonus, Transaction Reports: Press show and if there's data download it
+    let display2SavedRpt (searchBtnId: string)(downBtnId: string)(searchResultsSel: string)(selectorDataFound : string) : bool =
 
-        let dataFound : bool =  
-            match fastTextFromCSS elemSelector with
+        try 
+            // Raw selenium click
+            (element searchBtnId).Click()
+            
+        with ex ->
+            waitForElement searchResultsSel
+            match someElement "#TransDetail1_gvTransactionDetails" with
+            | Some(_) -> logger.Debug "Found results within the transactions report"
+            | None -> raise ex
+
+        let dataFound : bool =
+            match fastTextFromCSS selectorDataFound with
             | [] -> true
-            | h::t -> h <> "no data"
+            | h::t -> h.ToLower() <> "no data"
 
         if 
             dataFound then
-        
-            click "#btnSaveAsExcel"
+            try 
+                // Raw selenium click
+                (element downBtnId).Click()
+            with ex ->
+                logger.Warn(ex, sprintf "Exception after clicking the download button: %s." downBtnId)
+
+            // Workaround for completing the download task without looping
+            enabled downBtnId
             Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+                
         dataFound
 
-        /// Set the transaction report to the full month withdrawal dates
-    let setTransactionsDates (withdrawalDateToSet : DateTime) : unit =
-        "#txtStartDate" << "01/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
-        "#txtEndDate" << withdrawalDateToSet.Day.ToString("00") + "/" + withdrawalDateToSet.Month.ToString("00") + "/" + withdrawalDateToSet.Year.ToString()
+    /// Deposits, cash bonus
+    let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
+    
+        uiAutomatedEnterTransactionsReport()
 
-        /// Pending + Completed Withdrawals: Initiated + Pending + Success
+        setFormDates dayToProcess
+
+        // Deposit
+        check "#chkTransType_0"
+
+        // Withdrawals
+        uncheck "#chkTransType_1"
+
+        // Vendor2User
+        check "#chkTransType_4"
+
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+    // Into the player bonuses including inv bonus
+    let uiEnterBonusReport() = 
+        // Activity
+        click "#nav > li:nth-child(1) > a"
+        // Casino engine
+        click "#nav > li:nth-child(1) > ul > li:nth-child(9) > a"
+        // Casino bonus-completed bonus
+        click "#nav > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(3) > a"
+
+    // Download Bonuses
+    let uiDownloadBonusRpt (dayToProcess : DateTime) : bool =
+    
+        uiEnterBonusReport()
+
+        setFormDates dayToProcess
+
+        display2SavedRpt "#ButShow" "#ButSave" "#GVC" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+    /// Pending + Completed Withdrawals: Initiated + Pending + Success
     let uiAutomateDownloadedPendingWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
         uiAutomatedEnterTransactionsReport()
 
-        setTransactionsDates withdrawalDateToSet
+        setFormDates withdrawalDateToSet
 
         // Withdrawals
         check "#chkTransType_1"
@@ -254,14 +312,14 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
         /// Withdrawals: Completed + Rollback
     let uiAutomateDownloadedRollbackWithdrawalsRpt (withdrawalDateToSet : DateTime) : bool =
     
         uiAutomatedEnterTransactionsReport()
 
-        setTransactionsDates withdrawalDateToSet
+        setFormDates withdrawalDateToSet
 
         // Withdrawals
         check "#chkTransType_1"
@@ -279,25 +337,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Vendor2User
         uncheck "#chkTransType_4"
 
-        display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
-
-    /// Vendor2User deposits, cash bonus
-    let uiAutomateDownloadedDepositsBonusCashRpt (dayToProcess : DateTime) : bool =
-    
-        uiAutomatedEnterTransactionsReport()
-
-        setTransactionsDates dayToProcess
-
-        // Deposit
-        check "#chkTransType_0"
-
-        // Withdrawals
-        uncheck "#chkTransType_1"
-
-        // Vendor2User
-        check "#chkTransType_4"
-
-        display2SavedRpt "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
     /// dayToProcess is interpreted @ 23:59 in the report
     let uiAutomatedEndBalanceRpt (dayToProcess : DateTime)(downloadedBalanceFilter : string) : bool =
@@ -349,17 +389,6 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         closeSwitchWindow baseWindow
         downloadedBalanceReport
 
-    /// Retry function call till we get a true result
-    let rec retryTillTrue (times: int)(fn:(unit -> bool)) = 
-        if times > 0 then
-            let isSuccessfulResult = 
-                try
-                    fn()
-                with 
-                    ex -> printfn "In try %d when downloading the balance report exception occured\n %s" times ex.Message; false
-            if not isSuccessfulResult then
-                retryTillTrue (times-1) fn
-
     let moveDownloadedRptToInRptFolder 
             (everymatrixDwnFileMask : string) // "bybalance.xlsx" --or "values.xlsx" --or "transx.xlsx
             (rptFilenamePrefix : string) // "Custom Prod" --or "Balance Prod" --or withdrawalsPending Prod --or withdrawalsRollback Prod 
@@ -387,6 +416,10 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     let initCanopyChrome() : unit =
         let projDir = __SOURCE_DIRECTORY__
         canopy.configuration.chromeDir <- projDir
+        // 10 minute timeouts
+        canopy.configuration.elementTimeout <- 600.0
+        canopy.configuration.compareTimeout <- 600.0
+        canopy.configuration.pageTimeout <- 600.0
         start chrome
         match screen.monitorCount with
         | m when m >= 3 -> pinToMonitor 3
@@ -403,7 +436,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         let portalArgs = reportsArgs.EverymatrixPortalArgs
 
         // start chrome and login to everymatrix backo.
-        let initNewBrowserSession =
+        let initNewBrowserSession() : unit =
             do initCanopyChrome()
 
             // Login
@@ -412,19 +445,24 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                 portalArgs.EverymatrixPassword 
                 portalArgs.EverymatrixToken
 
+        do initNewBrowserSession()
+
         // helper for exceptions out of logged out sessions
-        let rec retry times fn = 
+        let rec retry times fn : unit = 
             if times > 0 then
                 try
-                    if times < 3 then
+                    if times < NUM_DOWNLOAD_ATTEMPTS then
                         logger.Info (sprintf "** retry remaining efforts: %d" times)
                     fn()
-                with 
-                | _ -> 
-                    System.Threading.Thread.Sleep(WaitBefRetryinMillis);
+
+                with ex ->
+                    logger.Warn(ex, "Downloading exception")
+                    System.Threading.Thread.Sleep(WaitBefDownloadRetryinMillis);
                     quit()
-                    do initNewBrowserSession
+                    do initNewBrowserSession()
                     retry (times - 1) fn
+            else
+                failwithf "Quiting after exhausting %d number of report downloading tries." NUM_DOWNLOAD_ATTEMPTS
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
@@ -441,16 +479,25 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.CustomRptFilenamePrefix
                     dayToProcess
 
-        retry 3 downloadCustomRpt
+        retry NUM_DOWNLOAD_ATTEMPTS downloadCustomRpt
 
         // Deposits
         let downloadDeposits() =
             if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
-                moveDownloadedRptToInRptFolder 
+                moveDownloadedRptToInRptFolder
                     rptFilesArgs.DownloadedDepositsFilter
                     rptFilesArgs.DepositsRptFilenamePrefix 
                     dayToProcess
-        retry 3 downloadDeposits
+        retry NUM_DOWNLOAD_ATTEMPTS downloadDeposits
+
+        // Inv Bonus Deposits
+        let downloadBonus() =
+            if uiDownloadBonusRpt dayToProcess then
+                moveDownloadedRptToInRptFolder 
+                    rptFilesArgs.DownloadedBonusFilter
+                    rptFilesArgs.BonusRptFilenamePrefix
+                    dayToProcess
+        retry NUM_DOWNLOAD_ATTEMPTS downloadBonus
 
         // Withdrawals: Pending
         let downloadWithdrawalsPending() = 
@@ -459,7 +506,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.DownloadedWithdrawalsFilter
                     rptFilesArgs.WithdrawalsPendingRptFilenamePrefix
                     dayToProcess
-        retry 3 downloadWithdrawalsPending
+        retry NUM_DOWNLOAD_ATTEMPTS downloadWithdrawalsPending
 
         // Withdrawals: Rollback
         let downloadWithdrawalsRollback() = 
@@ -468,18 +515,17 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     rptFilesArgs.DownloadedWithdrawalsFilter
                     rptFilesArgs.WithdrawalsRollbackRptFilenamePrefix
                     dayToProcess
-        retry 3 downloadWithdrawalsRollback
+        retry NUM_DOWNLOAD_ATTEMPTS downloadWithdrawalsRollback
 
         // Balance: report date counts as day + 23:59
         let downloadEndofMonthBalanceReport() =
             if balanceFilesArg = BalanceFilesUsageType.UseBothBalanceFiles then
-                let balanceRptDownloader() = uiAutomatedEndBalanceRpt dayToProcess rptFilesArgs.DownloadedBalanceFilter
-                retryTillTrue 5 balanceRptDownloader
-                moveDownloadedRptToInRptFolder 
-                    rptFilesArgs.DownloadedBalanceFilter
-                    rptFilesArgs.EndBalanceRptFilenamePrefix
-                    (dayToProcess.AddDays(1.0))
-        retry 3 downloadEndofMonthBalanceReport
+                if uiAutomatedEndBalanceRpt dayToProcess rptFilesArgs.DownloadedBalanceFilter then
+                    moveDownloadedRptToInRptFolder 
+                        rptFilesArgs.DownloadedBalanceFilter
+                        rptFilesArgs.EndBalanceRptFilenamePrefix
+                        (dayToProcess.AddDays(1.0))
+        retry NUM_DOWNLOAD_ATTEMPTS downloadEndofMonthBalanceReport
 
         quit ()
 

@@ -123,7 +123,15 @@ namespace gzWeb.Tests.Controllers
 
             invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
 
-            investmentsApiController.SaveDbSellVintages(user.Id, vintagesDto, false, null, null, null);
+            invBalanceRepo
+                .SaveDbSellAllSelectedVintagesInTransRetry(
+                    user.Id,
+                    vintagesDto,
+                    true,
+                    null,
+                    null,
+                    null
+                );
         }
 
         [Test]
@@ -178,13 +186,17 @@ namespace gzWeb.Tests.Controllers
 
             invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
 
-            vintagesDto = investmentsApiController.SaveDbSellVintages(
-                user.Id, 
-                vintagesDto,
-                false,
-                null,
-                null,
-                null);
+            vintagesDto = 
+                invBalanceRepo
+                    .SaveDbSellAllSelectedVintagesInTransRetry(
+                        user.Id,
+                        vintagesDto,
+                        true,
+                        null,
+                        null,
+                        null
+                    );
+
             return vintagesDto;
         }
 

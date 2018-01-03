@@ -280,10 +280,14 @@
     margin: 1px;
     width: 38px;
     display: block;
+    height: 32px;
+    line-height: 32px;
 }
 .auth.mgmt-modal .pending-withdrawals td.rollback-col .btn-gz.not-allowed {
     cursor: not-allowed;
 }
+
+.auth.mgmt-modal .pending-withdrawals .table-container ul { list-style-type: none; }
 
 @media (max-width: 767px){
     .auth.mgmt-modal .pending-withdrawals .table-container { overflow-x: auto; }
@@ -532,12 +536,13 @@
         right: 0;
         border-right: none;
     }
+
+    .auth.mgmt-modal .gz-select i {
+        right: 15px;
+        top: calc(50% - 10px);
+    }
 }
 /* #endregion */
-
-
-
-
 
 
 
@@ -545,6 +550,7 @@
 .auth.mgmt-modal .cardSecurityNumberWrapper {
     width: 100%;
     height: 36px;
+    line-height: 24px;
 }
 
 .auth.mgmt-modal #cardNumberContainer iframe,

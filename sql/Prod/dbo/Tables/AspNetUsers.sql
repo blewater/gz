@@ -20,8 +20,13 @@
     [DisabledGzCustomer]         BIT            DEFAULT ((0)) NOT NULL,
     [ClosedGzAccount]            BIT            DEFAULT ((0)) NOT NULL,
     [LastLogin]                  DATETIME       NULL,
+    [IsRegistrationFinalized]    BIT            NULL,
     CONSTRAINT [PK_dbo.AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
+
+
 
 
 
@@ -56,4 +61,9 @@ GO
 GRANT DELETE
     ON OBJECT::[dbo].[AspNetUsers] TO [gzAdminUser]
     AS [dbo];
+
+
+GO
+CREATE NONCLUSTERED INDEX [nci_wi_AspNetUsers_FAD9A4DCB2C2226FB45CF38DA1713AD0]
+    ON [dbo].[AspNetUsers]([Email] ASC);
 
