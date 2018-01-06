@@ -1,0 +1,19 @@
+{
+  "name": "awardvintagebonus",
+  "version": "0.1.0",
+  "description": "Award everymatrix bonus for each queued request",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mario Karagiorgas",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^0.13.0"
+  },
+  "devDependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "@types/node": "^8.5.2",
+    "@types/puppeteer": "^0.13.9"
+  }
+}
