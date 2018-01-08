@@ -1,27 +1,42 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer = require("puppeteer");
-function run(context, item) {
-    context.log(`TypeScript queue trigger function processed work item: ${item}`);
-    browse();
+let logger;
+function failureCallback(error) {
+    logger("--> Error = '" + error + "'");
+}
+function run(context, bonusReq) {
+    logger = context.log;
+    context.log(`TypeScript queue trigger function processed work item: ${bonusReq}`);
+    context.log(`userId: ${bonusReq.userId}, amount: ${bonusReq.amount}, currency: ${bonusReq.currency}, comment: ${bonusReq.comment}`);
+    context.log("Node.js queue trigger function processed work item", context.bindings.gzWithdrawnVintagesQueueBonus);
+    context.log("queueTrigger =", context.bindingData.queueTrigger);
+    context.log("expirationTime =", context.bindingData.expirationTime);
+    context.log("insertionTime =", context.bindingData.insertionTime);
+    context.log("nextVisibleTime =", context.bindingData.nextVisibleTime);
+    context.log("id =", context.bindingData.id);
+    context.log("popReceipt =", context.bindingData.popReceipt);
+    context.log("dequeueCount =", context.bindingData.dequeueCount);
     context.done();
 }
 exports.run = run;
-function browse() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const browser = yield puppeteer.launch();
-        const page = yield browser.newPage();
-        const everyMatrixBOUrl = "https://admin3.gammatrix.com/Admin/Default.aspx";
-        yield page.goto(everyMatrixBOUrl);
-        yield browser.close();
-    });
+function browse(logger) {
+    const everyMatrixBOUrl = "https://admin3.gammatrix.com/Admin/Default.aspx";
+    let browser;
+    puppeteer
+        .launch({
+        headless: true,
+        args: ["--no-sandbox", "--single-process", "--disable-gpu"]
+    })
+        .then(b => {
+        browser = b;
+        return browser.newPage();
+    }, failureCallback)
+        .then(page => {
+        return page.goto(everyMatrixBOUrl);
+    }, failureCallback)
+        .then(r => {
+        browser.close();
+    }, failureCallback);
 }
 //# sourceMappingURL=index.js.map
