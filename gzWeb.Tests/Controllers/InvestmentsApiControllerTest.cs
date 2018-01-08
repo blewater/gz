@@ -141,31 +141,40 @@ namespace gzWeb.Tests.Controllers
             var vintagesDto = await SellOneVintage(user);
         }
 
-        [Test]
+        //[Test]
         //public async Task TestSellEarlyVintage()
         //{
-        //    var user = manager.FindByEmail("alaa_el-chami@hotmail.com");
+        //    var user = manager.FindByEmail("kenuu90@outlook.com");
 
         //    var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
-        //    var sellVintage = vintagesVMs
-        //        .Single(v => v.YearMonthStr == "201711");
-
-        //    sellVintage.Locked = true;
-        //    sellVintage.Selected = true;
-
-        //    ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
+        //    var sellVintages = vintagesVMs
+        //        .Where(v => v.YearMonthStr == "201701" || v.YearMonthStr == "201702" || v.YearMonthStr == "201703" ||
+        //                    v.YearMonthStr == "201704")
         //        .ToList();
 
-        //    invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
+        //    foreach (var vintageViewModel in sellVintages) {
+        //        vintageViewModel.Locked = true;
+        //        vintageViewModel.Selected = true;
+        //    }
 
-        //    vintagesDto = investmentsApiController.SaveDbSellVintages(
-        //        user.Id,
-        //        vintagesDto,
-        //        false,
-        //        null,
-        //        null,
-        //        null);
-        //    Assert.IsTrue(sellVintage.SoldAmount > 0);
+        //    ICollection<VintageDto> vintagesDto = sellVintages.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
+        //        .ToList();
+
+        //    vintagesDto =
+        //        invBalanceRepo
+        //            .SaveDbSellAllSelectedVintagesInTransRetry(
+        //                user.Id,
+        //                vintagesDto,
+        //                false,
+        //                null,
+        //                null,
+        //                null
+        //            );
+
+        //    foreach (var dto in vintagesDto) {
+        //        Assert.IsTrue(dto.SellingValue > 0);
+        //        Assert.IsTrue(dto.SoldFees > 0);
+        //    }
         //}
 
         private async Task<ICollection<VintageDto>> SellOneVintage(ApplicationUser user) {
