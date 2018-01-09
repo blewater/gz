@@ -233,7 +233,7 @@ namespace gzDAL.Repos {
                      (1 + (hurdleFeeTriggerPcnt / 100m))))
                 {
 
-                    hurdleFee = liquidationAmount
+                    hurdleFee = (liquidationAmount - vintageCashInvestment)
                                 *
                                 (hurdleFeePcnt / 100m);
                 }
