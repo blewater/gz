@@ -830,10 +830,10 @@
     <Content Include="Content\Images\signup.svg" />
     <Content Include="Content\Images\skrill-logo-200x87.gif" />
     <Content Include="Content\Images\skrill-logo.svg" />
+    <Content Include="Content\Images\slotsia-dark.png" />
     <Content Include="Content\Images\spades.svg" />
     <Content Include="Content\Images\sum.png" />
     <Content Include="Content\Images\sum.svg" />
-    <Content Include="Content\Images\worldmatch.png" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.css" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.min.css" />
     <Content Include="Content\Styles\bootstrap\bootstrap.css" />
