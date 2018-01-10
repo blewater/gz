@@ -8,12 +8,8 @@
   },
   "author": "Mario Karagiorgas",
   "license": "ISC",
-  "dependencies": {
-    "puppeteer": "^0.13.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/es6-promise": "^3.3.0",
-    "@types/node": "^8.5.2",
-    "@types/puppeteer": "^0.13.9"
+    "@types/node": "^8.5.2"
   }
 }
