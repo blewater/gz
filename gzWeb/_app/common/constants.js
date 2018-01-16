@@ -127,7 +127,15 @@
         tpl: '_app/promotions/promotion.html',
         title: 'Promotions',
         roles: [roles.guest],
-        category: categories.wandering
+        category: categories.wandering,
+        //redirectTo: function (routeParams, path, search) {
+        //    switch (routeParams.key) {
+        //        case 'signup':
+        //            return path + "?open=" + routeParams.key;
+        //        default:
+        //            return undefined;
+        //    }
+        //}
     };
     routes.promotions = {
         path: '/promotions',

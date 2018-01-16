@@ -8,9 +8,10 @@
         };
 
         $scope._init = function() {
-            loadPayCardInfo();
             if (angular.isFunction($scope.getExtraModelProperties))
                 angular.extend($scope.model, $scope.getExtraModelProperties());
+
+            loadPayCardInfo();
         };
 
         function loadPayCardInfo() {
@@ -54,7 +55,7 @@
         $scope.readConfirmMessage = function (prepareData) {
             var confirmMessage = angular.isFunction($scope.getSpecificConfirmMessage)
                 ? $scope.getSpecificConfirmMessage(prepareData)
-                : "Do you want to withdraw the amount of " + prepareData.debitAmount + " using " + $scope.selected.method.name + "?";
+                : "Do you want to withdraw the amount of " + prepareData.debitAmount + " using " + $scope.selected.group[0].name + "?";
             return confirmMessage;
         };
     }

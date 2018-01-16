@@ -9,29 +9,13 @@
         // #endregion
 
         // #region payment methods fields
-        //var creditCardFields = { templateUrl: '/_app/accountManagement/depositCreditCard.html', ctrlId: 'depositCreditCardCtrl' }
-        var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixCreditCard.html', ctrlId: 'depositMoneyMatrixCreditCardCtrl' }
-        var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixTrustly.html', ctrlId: 'depositMoneyMatrixTrustlyCtrl' }
-        var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill.html', ctrlId: 'depositMoneyMatrixSkrillCtrl' }
-        var moneyMatrixSkrill1TapFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill1Tap.html', ctrlId: 'depositMoneyMatrixSkrill1TapCtrl' }
-        var moneyMatrixEnterCashFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEnterCash.html', ctrlId: 'depositMoneyMatrixEnterCashCtrl' }
-        var moneyMatrixBankTransferFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixBankTransfer.html', ctrlId: 'depositMoneyMatrixBankTransferCtrl' }
-        //var moneyMatrixNetellerFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixNeteller.html', ctrlId: 'depositMoneyMatrixNetellerCtrl' }
-        //var moneyMatrixPaySafeCardFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixPaySafeCard.html', ctrlId: 'depositMoneyMatrixPaySafeCardCtrl' }
-        //var moneyMatrixEcoPayzFields = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEcoPayz.html', ctrlId: 'depositMoneyMatrixEcoPayzCtrl' }
         var paymentMethodsFields = [];
-        //paymentMethodsFields[emBanking.PaymentMethodCode.VISA] = creditCardFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.Maestro] = creditCardFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MasterCard] = creditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap] = moneyMatrixSkrill1TapFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
-        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixBankTransfer] = moneyMatrixBankTransferFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixNeteller] = moneyMatrixNetellerFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixPaySafeCard] = moneyMatrixPaySafeCardFields;
-        //paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEcoPayz] = moneyMatrixEcoPayzFields;
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixCreditCard] = { templateUrl: '/_app/accountManagement/depositMoneyMatrixCreditCard.html', ctrlId: 'depositMoneyMatrixCreditCardCtrl' };
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixTrustly] = { templateUrl: '/_app/accountManagement/depositMoneyMatrixTrustly.html', ctrlId: 'depositMoneyMatrixTrustlyCtrl' };
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill] = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill.html', ctrlId: 'depositMoneyMatrixSkrillCtrl' };
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixSkrill1Tap] = { templateUrl: '/_app/accountManagement/depositMoneyMatrixSkrill1Tap.html', ctrlId: 'depositMoneyMatrixSkrill1TapCtrl' };
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixEnterCash] = { templateUrl: '/_app/accountManagement/depositMoneyMatrixEnterCash.html', ctrlId: 'depositMoneyMatrixEnterCashCtrl' };
+        paymentMethodsFields[emBanking.PaymentMethodCode.MoneyMatrixBankTransfer] = { templateUrl: '/_app/accountManagement/depositMoneyMatrixBankTransfer.html', ctrlId: 'depositMoneyMatrixBankTransferCtrl' };
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };
@@ -43,7 +27,7 @@
         };
 
         function getPaymentMethodCfg() {
-             $scope.initializing = true;
+            $scope.initializing = true;
             emBanking.getPaymentMethodCfg($scope.selectedMethod.code).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
