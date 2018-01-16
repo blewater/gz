@@ -1,0 +1,114 @@
+﻿<div class="row withdraw">
+    <div class="col-sm-8 left-content">
+        <form class="form-horizontal" name="form" ng-submit="submit()" role="form" novalidate>
+            <div class="form-group text-center">
+                <h5>Make a withdrawal</h5>
+            </div>
+
+            <div class="form-group payment-method">
+                <span class="method-icon" ng-bind-html="selectedMethodGroup[0].icon"></span>
+                <span class="method-name">{{selectedMethodGroup[0].displayName}}</span>
+            </div>
+
+            <div ng-if="thereAreExistingPayCards">
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <div>Select a card</div>
+                        <div ng-if="!canAddNewPayCard" class="max-number-of-cards">
+                            Note: You have exceeded the maximum number of cards you are allowed to register. If you want to register a new one, please <a href="mailto:help@greenzorro.com">contact us</a>.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <gz-select gz-model="selected.method" gz-collection="existingPayCards" gz-prompt="--select pay card--" gz-loading="loadingPayCards"
+                                           gz-id="id" gz-display="name" gz-change="onPayCardSelected(id)">
+                                </gz-select>
+                            </div>
+                        </div>
+                        <gz-field-ok gz-when="selected.method"></gz-field-ok>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="thereAreExistingPayCards && canAddNewPayCard" class="col-xs-12">
+                <div class="form-group">
+                    <div class="text-center">-- OR --</div>
+                </div>
+                <div class="form-group">
+                    <div>Register a new card</div>
+                </div>
+            </div>
+
+            <div ng-if="initializing" us-spinner="spinnerWhite"></div>
+
+            <div class="col-xs-12" ng-repeat="field in registrationFields">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="text" ng-pattern="field.regex" placeholder="{{field.label}}" name="{{field.key}}" class="form-control" autocomplete="off" ng-model="field.value" required autofocus
+                                   ng-class="{ 'empty': !field.value, 'danger': (form[field.key].$invalid && !form[field.key].$pristine) }">
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="help-block" ng-class="{'show': !form[field.key].$pristine && form[field.key].$error.required}">{{field.label}} is required.</div>
+                            <div class="help-block" ng-class="{'show': !form[field.key].$pristine && form[field.key].$invalid} && !form[field.key].$error.required">{{field.label}} is invalid.</div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="form[field.key].$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-12 withdraw-amount">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="number" placeholder="{{amountPlaceholder}}" id="amount" name="amount" class="form-control" autocomplete="off" ng-model="model.amount" required autofocus
+                                   ng-class="{ 'empty': !model.amount, 'danger' : (form.amount.$invalid && !form.amount.$pristine) || (limitMin > limitMax) }"
+                                   min="{{limitMin}}" max="{{limitMax}}"
+                                   ng-focus="amountFocused = true;" ng-blur="amountFocused = false;"
+                                   ng-disabled="limitMin > limitMax">
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="help-block" ng-class="{'show': !form.amount.$pristine && form.amount.$error.required}">Amount is required.</div>
+                            <div class="help-block" ng-class="{'show': !form.amount.$pristine && !form.amount.$error.required && form.amount.$invalid}">
+                                Available withdrawal amount is between {{limitMin | isoCurrency : currency}} and {{limitMax | isoCurrency : currency}}.
+                            </div>
+                            <div class="help-block help-block-2x" ng-class="{'show': limitMin > limitMax}">
+                                Your account balance ({{limitMax | isoCurrency : currency}}) is below the least amount ({{limitMin | isoCurrency : currency}}) you can withdraw.
+                            </div>
+                        </div>
+                    </div>
+                    <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
+                </div>
+            </div>
+
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <div class="btns text-center">
+                        <button type="submit" class="btn-gz" ng-disabled="form.$invalid || waiting">
+                            <span ng-show="waiting" us-spinner="spinnerGreen"></span>
+                            <span ng-show="!waiting">Withdraw</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="divider"></div>
+    <div class="col-sm-4 right-content">
+        <div class="text-center">
+            <h5>Other methods</h5>
+        </div>
+
+        <div class="payment-methods">
+            <div class="payment-method col-sm-12 col-xs-6" ng-repeat="group in groupedPaymentMethods" ng-if="group !== selectedMethodGroup" ng-class="{'single':groupedPaymentMethods.length === 2}">
+                <div class="payment-method-icon" ng-bind-html="group[0].icon" ng-click="selectPaymentMethod(group)"></div>
+                <div>{{group[0].displayName}}</div>
+            </div>
+            <div class="col-xs-12 text-center" ng-if="paymentMethods.length === 1">-</div>
+        </div>
+    </div>
+</div>

@@ -850,7 +850,9 @@
     <Content Include="Scripts\intro\angular-intro.min.js" />
     <Content Include="Scripts\intro\intro.min.js" />
     <Content Include="Content\Styles\introjs\introjs.min.css" />
+    <Content Include="_app\accountManagement\withdrawDynamic.html" />
     <Content Include="_app\accountManagement\withdrawAmountField.html" />
+    <Content Include="_app\accountManagement\withdrawDynamicCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCommonCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCard.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixCreditCardCtrl.js" />

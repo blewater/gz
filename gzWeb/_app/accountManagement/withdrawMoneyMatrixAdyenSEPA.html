@@ -1,20 +1,49 @@
 ﻿<div class="withdraw-adyen-sepa">
-    <div>{{model.selectedCreditCard.name}}</div>
+    <div ng-if="thereAreExistingPayCards">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <div>Select a card</div>
+                <div ng-if="!canAddNewPayCard" class="max-number-of-cards">
+                    Note: You have exceeded the maximum number of cards you are allowed to register. If you want to register a new one, please <a href="mailto:help@greenzorro.com">contact us</a>.
+                </div>
+            </div>
+        </div>
 
-    <div ng-if="!payCardID">
         <div class="col-xs-12">
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-12">
-                        <input type="text" ng-pattern="ibanRegex" placeholder="iban" id="iban" name="iban" class="form-control" ng-model="model.iban" required
-                               ng-class="{ 'empty': !model.iban, 'danger' : form.iban.$invalid && !form.iban.$pristine }">
-                    </div>
-                    <div class="col-xs-12">
-                        <div class="help-block" ng-class="{'show': !form.iban.$pristine && form.iban.$invalid}">Invalid IBAN.</div>
+                        <gz-select gz-model="selected.method" gz-collection="existingPayCards" gz-prompt="--select pay card--" gz-loading="loadingPayCards"
+                                   gz-id="id" gz-display="name" gz-change="onPayCardSelected(id)">
+                        </gz-select>
                     </div>
                 </div>
-                <gz-field-ok gz-when="form.iban.$valid"></gz-field-ok>
+                <gz-field-ok gz-when="selected.method"></gz-field-ok>
             </div>
+        </div>
+    </div>
+
+    <div ng-if="thereAreExistingPayCards && canAddNewPayCard" class="col-xs-12">
+        <div class="form-group">
+            <div class="text-center">-- OR --</div>
+        </div>
+        <div class="form-group">
+            <div>Register a new card</div>
+        </div>
+    </div>
+
+    <div class="col-xs-12">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="text" ng-pattern="ibanRegex" placeholder="iban" id="iban" name="iban" class="form-control" ng-model="model.iban" required
+                           ng-class="{ 'empty': !model.iban, 'danger' : form.iban.$invalid && !form.iban.$pristine }" ng-disabled="selected.method">
+                </div>
+                <div class="col-xs-12">
+                    <div class="help-block" ng-class="{'show': !form.iban.$pristine && form.iban.$invalid}">Invalid IBAN.</div>
+                </div>
+            </div>
+            <gz-field-ok gz-when="form.iban.$valid"></gz-field-ok>
         </div>
     </div>
 
