@@ -368,13 +368,12 @@ module InvBalance =
     /// get any sold vintages for this user during the month we're presently clearing
     (* Note this is the only table that is affected by sold vintages and available to read them back and deduct them from user shares *)
     let getSoldVintages (dbUserMonth : DbUserMonth) : VintagesSold = 
-        let totalPastVintagesSold =
+        let totalVintagesSold =
             query {
                 for row in dbUserMonth.Db.InvBalances do
                 where (
                     row.SoldYearMonth = dbUserMonth.Month
                     && row.CustomerId = dbUserMonth.UserId
-                    && row.YearMonth <> dbUserMonth.Month
                 )
                 // Cast drop nullable from SoldAmount
                 select (row.LowRiskShares, row.MediumRiskShares, row.HighRiskShares, row.CashInvestment, decimal row.SoldAmount)
@@ -383,25 +382,8 @@ module InvBalance =
             // it's also much shorter
             |> Seq.fold (fun (ls, ms, hs, cs, ss) (l, m, h, c, s) -> (ls+l, ms+m, hs+h, cs+c, ss + s)) (0M, 0M, 0M, 0M, 0M)
 
-        /// get liquidations within same month -- experimental case. Support liquidations within the month we're calculating the player loss
-        let earlyWithdrawalsInCurrentMonth =
-            query { 
-                for i in dbUserMonth.Db.InvBalances do
-                where (i.YearMonth = dbUserMonth.Month && i.CustomerId = dbUserMonth.UserId)
-                select i.SoldAmount
-                exactlyOneOrDefault
-            }
-            |> (fun (soldAmount : decimal Nullable) ->
-                if Object.ReferenceEquals(soldAmount, null) then
-                    0m
-                elif soldAmount.HasValue then
-                    soldAmount.Value
-                else
-                    0m
-            )
-        
         // Package summed sold vintage shares into return type of VintagesSold
-        totalPastVintagesSold
+        totalVintagesSold 
                 |> 
                 (fun (lowShares, mediumShares, highShares, cashInv, soldAmount) ->
                     let vintShares = {
@@ -409,12 +391,7 @@ module InvBalance =
                         SharesMediumRisk = mediumShares;
                         SharesHighRisk = highShares
                     }
-                    { 
-                        PortfolioShares = vintShares; 
-                        BoughtAt = cashInv; 
-                        SoldAt = soldAmount; 
-                        CurrentMonthLiquidation = earlyWithdrawalsInCurrentMonth 
-                    }
+                    { PortfolioShares = vintShares; BoughtAt = cashInv; SoldAt = soldAmount }
                 )
 
     /// get instance of input values for InvBalance processing
@@ -492,22 +469,11 @@ module UserTrx =
         
     /// Input type for portfolio processing
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPrices) =
-        let vintagesSold = 
-            dbUserMonth 
-            |> InvBalance.getSoldVintages;
-        let cashToInvest =
-            trxRow.Amount - vintagesSold.CurrentMonthLiquidation
-            |> (fun (cashToInvest) ->
-                if cashToInvest > 0m then
-                     cashToInvest
-                else
-                    0m
-            )
         { 
             DbUserMonth = dbUserMonth;
-            VintagesSold = vintagesSold
+            VintagesSold = dbUserMonth |> InvBalance.getSoldVintages
             Portfolio = dbUserMonth |> UserPortfolio.getUserPortfolioDetail;
-            CashToInvest = cashToInvest
+            CashToInvest = trxRow.Amount;
             PortfoliosPrices = portfoliosPricesMap
         }
 
