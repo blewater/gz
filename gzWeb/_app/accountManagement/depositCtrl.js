@@ -64,6 +64,7 @@
         function sendTransactionReceipt(pid, appInsightsTrackEvent) {
             var getTransactionInfoCall = function () { return emBanking.getTransactionInfo(pid); };
             modals.receipt(getTransactionInfoCall, $scope.selectedMethod.displayName).then(function (transactionResult) {
+                message.info("Do you know that 50% of your losses are invested and can be tracked in the investment page?");
                 emBanking.sendReceiptEmail($scope.pid, "<div>" + transactionResult.status + "</div>");
                 $scope.waiting = false;
                 $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
@@ -118,7 +119,8 @@
                                     sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent);
                                 } else if (confirmResult.status === "redirection") {
                                     appInsightsTrackEvent('CONFIRM REDIRECTION');
-                                    var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
+                                    var html =
+                                        '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>';
                                     var thirdPartyPromise = message.open({
                                         nsType: 'modal',
                                         nsSize: 'auto',
