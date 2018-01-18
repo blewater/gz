@@ -127,7 +127,7 @@
                         });
                     };
                     function logSuccessfulTransaction() {
-                        $log.info("SUCCESSFULL WITHDRAWAL: " + prepareData.crditBaseAmount);
+                        $log.info("SUCCESSFULL WITHDRAWAL: " + prepareData.creditBaseAmount);
                     };
 
                     if (prepareResult.status === "setup") {
