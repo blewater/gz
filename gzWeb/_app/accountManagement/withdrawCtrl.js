@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'withdrawCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', 'message', '$rootScope', 'accountManagement', 'iso4217', 'modals', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout, message, $rootScope, accountManagement, iso4217, modals, $filter) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', 'message', '$rootScope', 'accountManagement', 'iso4217', 'modals', '$filter', '$log', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout, message, $rootScope, accountManagement, iso4217, modals, $filter, $log) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -70,13 +70,14 @@
                 withdraw();
         };
 
-        function sendTransactionReceipt(pid, appInsightsTrackEvent) {
+        function sendTransactionReceipt(pid, appInsightsTrackEvent, logSuccessfulTransaction) {
             var getTransactionInfoCall = function () { return emBankingWithdraw.getTransactionInfo(pid); };
             modals.receipt(getTransactionInfoCall, $scope.selected.group[0].displayName, true).then(function (transactionResult) {
                 $scope.waiting = false;
                 $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                 if (transactionResult.status === "success") {
                     appInsightsTrackEvent('TRANSACTION SUCCESS');
+                    logSuccessfulTransaction();
                     $scope.nsOk(true);
                 } else if (transactionResult.status === "incomplete") {
                     appInsightsTrackEvent('TRANSACTION INCOMPLETE');
@@ -102,19 +103,31 @@
                 emBankingWithdraw.prepare($scope.selected.group[0].code, fields).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
 
+                    var rates = $scope.paymentMethodCfg.fields.currency.rates;
+                    var baseCurrencyRate = rates[constants.baseCurrency];
+                    var creditRate = rates[prepareResult.credit.currency];
+                    var debitRate = rates[prepareResult.debit.currency];
+                    var baseCurrencyCredit = $filter('number')(prepareResult.credit.amount * baseCurrencyRate / creditRate, 1);
+                    var baseCurrencyDebit = $filter('number')(prepareResult.debit.amount * baseCurrencyRate / debitRate, 1);
+
                     var prepareData = {
                         creditTo: prepareResult.credit.name,
                         creditAmount: iso4217.getCurrencyByCode(prepareResult.credit.currency).symbol + " " + prepareResult.credit.amount,
+                        creditBaseAmount: iso4217.getCurrencyByCode(constants.baseCurrency).symbol + " " + baseCurrencyCredit,
                         debitFrom: prepareResult.debit.name,
-                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount
+                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount,
+                        debitBaseAmount: iso4217.getCurrencyByCode(constants.baseCurrency).symbol + " " + baseCurrencyDebit,
                     };
 
                     function appInsightsTrackEvent(status) {
                         window.appInsights.trackEvent("WITHDRAW", {
-                            credit: prepareData.creditTo + " " + prepareData.creditAmount,
-                            debit: prepareData.debitTo + " " + prepareData.debitAmount,
+                            credit: prepareData.creditTo + " " + prepareData.creditBaseAmount,
+                            debit: prepareData.debitTo + " " + prepareData.debitBaseAmount,
                             status: status
                         });
+                    };
+                    function logSuccessfulTransaction() {
+                        $log.info("SUCCESSFULL WITHDRAWAL: " + prepareData.crditBaseAmount);
                     };
 
                     if (prepareResult.status === "setup") {
@@ -124,7 +137,7 @@
                                 appInsightsTrackEvent('CONFIRM');
                                 if (confirmResult.status === "setup") {
                                     appInsightsTrackEvent('GET TRANSACTION INFO');
-                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent);
+                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                 } else if (confirmResult.status === "redirection") {
                                     appInsightsTrackEvent('CONFIRM REDIRECTION');
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
@@ -139,7 +152,7 @@
                                         nsShowClose: false
                                     });
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
-                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent);
+                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
                                         $scope.waiting = false;
