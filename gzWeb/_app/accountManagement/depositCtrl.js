@@ -120,7 +120,7 @@
                         });
                     };
                     function logSuccessfulTransaction() {
-                        $log.info("SUCCESSFULL WITHDRAWAL: " + prepareData.crditBaseAmount);
+                        $log.info("SUCCESSFULL DEPOSIT: " + prepareData.debitBaseAmount);
                     };
 
                     if (prepareResult.status === "setup") {
