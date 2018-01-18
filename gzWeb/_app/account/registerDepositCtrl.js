@@ -89,7 +89,7 @@
                 deposit();
         };
 
-        function sendTransactionReceipt(pid, appInsightsTrackEvent) {
+        function sendTransactionReceipt(pid, appInsightsTrackEvent, logSuccessfulTransaction) {
             var getTransactionInfoCall = function () { return emBanking.getTransactionInfo(pid); };
             modals.receipt(getTransactionInfoCall, $scope.selectedMethod.displayName).then(function (transactionResult) {
                 emBanking.sendReceiptEmail($scope.pid, "<div>" + transactionResult.status + "</div>");
@@ -97,6 +97,7 @@
                 $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                 if (transactionResult.status === "success") {
                     appInsightsTrackEvent('TRANSACTION SUCCESS');
+                    logSuccessfulTransaction();
                     $scope.nsOk(true);
                     if ($location.path() === constants.routes.home.path)
                         $location.path(constants.routes.games.path).search({});
@@ -121,19 +122,31 @@
                 emBanking.prepare({ paymentMethodCode: $scope.selectedMethod.code, fields: fields }).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
 
+                    var rates = $scope.paymentMethodCfg.fields.currency.rates;
+                    var baseCurrencyRate = rates[constants.baseCurrency];
+                    var creditRate = rates[prepareResult.credit.currency];
+                    var debitRate = rates[prepareResult.debit.currency];
+                    var baseCurrencyCredit = $filter('number')(prepareResult.credit.amount * baseCurrencyRate / creditRate, 1);
+                    var baseCurrencyDebit = $filter('number')(prepareResult.debit.amount * baseCurrencyRate / debitRate, 1);
+
                     var prepareData = {
                         creditTo: prepareResult.credit.name,
                         creditAmount: iso4217.getCurrencyByCode(prepareResult.credit.currency).symbol + " " + prepareResult.credit.amount,
+                        creditBaseAmount: iso4217.getCurrencyByCode(constants.baseCurrency).symbol + " " + baseCurrencyCredit,
                         debitFrom: prepareResult.debit.name,
-                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount
+                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount,
+                        debitBaseAmount: iso4217.getCurrencyByCode(constants.baseCurrency).symbol + " " + baseCurrencyDebit,
                     };
 
                     function appInsightsTrackEvent(status) {
                         window.appInsights.trackEvent("REGISTER DEPOSIT", {
-                            credit: prepareData.creditTo + " " + prepareData.creditAmount,
-                            debit: prepareData.debitTo + " " + prepareData.debitAmount,
+                            credit: prepareData.creditTo + " " + prepareData.creditBaseAmount,
+                            debit: prepareData.debitTo + " " + prepareData.debitBaseAmount,
                             status: status
                         });
+                    };
+                    function logSuccessfulTransaction() {
+                        $log.info("SUCCESSFULL WITHDRAWAL: " + prepareData.crditBaseAmount);
                     };
 
                     if (prepareResult.status === "setup") {
@@ -142,7 +155,7 @@
                             emBanking.confirm($scope.pid).then(function (confirmResult) {
                                 appInsightsTrackEvent('CONFIRM');
                                 if (confirmResult.status === "success") {
-                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent);
+                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                     appInsightsTrackEvent('GET TRANSACTION INFO');
                                     //emBanking.getTransactionInfo(confirmResult.pid).then(function (transactionResult) {
                                     //    if (transactionResult.status === "success") {
@@ -189,7 +202,7 @@
                                         nsShowClose: false
                                     });
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
-                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent);
+                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                         //var msg = "You have made the deposit successfully!";
                                         //message.success(msg, { nsType: 'toastr' });
                                         //emBanking.sendReceiptEmail($scope.pid, "<div>" + msg + "</div>");
