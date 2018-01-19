@@ -5,20 +5,23 @@
 FROM fsharp
 ENV CHROME_DRIVER_VERSION 2.35
 
-RUN apt -qqy update \
-      && apt -qqy install \
+# Install utilities
+RUN apt-get update --fix-missing && apt-get -y upgrade
+
+RUN apt -qqy install \
       unzip \
       wget \
       && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
       && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
       && apt -qqy update \
-      && apt-get install xvfb unzip google-chrome-stable -y \
+      && apt-get install xvfb unzip google-chrome-stable -y --no-install-recommends \
       && wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
       && unzip -od /usr/local/bin chromedriver_linux64.zip \
       && chmod +x /usr/local/bin/chromedriver \
-      && mkdir -p /src \
-      && ln -fs /usr/local/bin/chromedriver /src/chromedriver \
-      && rm -rf /var/lib/apt/lists/*
+      && rm -rf /var/lib/apt/lists/* \
+      && rm -rf /src/*.deb \
+      && mkdir -p /app \
+      && ln -fs /usr/local/bin/chromedriver /app/chromedriver
 
 ENV CHROMEDRIVER_PORT 4444
 ENV CHROMEDRIVER_WHITELISTED_IPS ""

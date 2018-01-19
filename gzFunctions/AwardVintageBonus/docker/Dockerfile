@@ -8,8 +8,12 @@ ENV CHROMEDRIVER_URL_BASE ''
 
 EXPOSE 4444
 
-WORKDIR     /src
-COPY        src/*.dll .
-COPY        src/*.fsx .
+RUN         mkdir -p /app
+RUN         ln -fs /usr/local/bin/chromedriver /app/chromedriver
+WORKDIR     /app
+COPY        src/*.dll ./
+COPY        src/*.fsx ./
 RUN         ls -la
-ENTRYPOINT ["sh","-c", "xvfb-run -a fsharpi awardbonus.fsx"]
+RUN         fsharpc AwardBonus.fsx
+RUN         mono AwardBonus.exe
+ENTRYPOINT ["sh","-c", "xvfb-run -a fsharpi AwardBonus.fsx"]

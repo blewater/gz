@@ -1,9 +1,11 @@
-#I __SOURCE_DIRECTORY__
-#r "./packages/Selenium.WebDriver/lib/net40/WebDriver.dll"
-#r "./packages/canopy/lib/canopy.dll"
+﻿#I __SOURCE_DIRECTORY__
+#r "canopy.dll"
+#r "FSharp.Data.dll"
+#r "FSharp.Data.TypeProviders.dll"
+#r "NLog.dll"
+#r "WebDriver.dll"
 
 open canopy
-open runner
 open System
 open OpenQA.Selenium
 
@@ -16,24 +18,16 @@ let everymatrixSecureToken = "3DFEC757D808494"
 
 // Need to use --no-sandbox or chrome wont start
 // https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
-// let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
-// chromeOptions.AddArgument("--no-sandbox")
-// let chromeNoSandbox = ChromeWithOptions(chromeOptions)
-// start chromeNoSandbox
+let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
+chromeOptions.AddArgument("--no-sandbox")
+chromeOptions.AddArgument("--disable-extensions")
+chromeOptions.AddArgument("--headless")
+chromeOptions.AddArgument("--disable-gpu")
+chromeOptions.AddArgument("--port=4444")
+//chromeOptions.AddArgument("--remote-debugging-port=4444")
+let chromeNoSandbox = ChromeWithOptions(chromeOptions)
 canopy.configuration.chromeDir <- "."
-start chrome
-
-"Should check home page h1" &&& fun _ ->
-  url "https://stackoverflow.com/"
-
-  "h1#h-top-questions" == "Top Questions"
-
-"Should check questions page h1" &&& fun _ ->
-  url "https://stackoverflow.com/questions"
-
-  "h1#h-all-questions" == "All Questions"
-
-run()
+start chromeNoSandbox
 
 let uiAutomateLoginEverymatrixReports 
         (everyMatrixUserName : string)
@@ -44,6 +38,39 @@ let uiAutomateLoginEverymatrixReports
     "#rtbTop_text" << everyMatrixUserName
     "#rtbMid_text" << everymatrixPassword
     "#rtbBottom_text" << everymatrixLoginToken
-    click "#btnLogin" 
+    click "#btnLogin"
+
+let searchCustomer() : unit =
+    "#rtbSearch" << "4300962"
+    click "#imgSearch"
+
+let selCashBackBonusinSelectList() : unit =
+    click "#ctl00_cphPage_rcbBonus"
+    let bonusInput = element "#ctl00_cphPage_rcbBonus_Input"
+    
+    let rec selBonusLi(bonusInput : IWebElement) : unit =
+        press down
+        let bonusName = read bonusInput
+        if bonusName <> "CASHBACK - 1029498" then
+            selBonusLi(bonusInput)
+    
+    do selBonusLi bonusInput
+    press enter
+
+uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
+searchCustomer()
+// go to the portfolio page
+click "#cphPage_UsersControl1_gvData > tbody > tr:nth-child(2) > td:nth-child(2) > a"
+click "#cphPage_UserAccountsCompactControl1_gvData > tbody > tr > td:first-child > table > tbody > tr > td:nth-child(2) > a"
+// go into the bonus
+click "#cphPage_CasinoWalletAccountDataControl1_btnGiveManualBonus"
+
+selCashBackBonusinSelectList()
+
+let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
+bonusAmountEl << "0.10"
+let amount = read bonusAmountEl
 
 quit()
+
+printfn "Amount: %s" amount
