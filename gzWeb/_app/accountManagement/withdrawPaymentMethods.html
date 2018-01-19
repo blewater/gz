@@ -3,11 +3,6 @@
 
     <div ng-if="initializing" class="initializing-spinner" us-spinner="spinnerWhite"></div>
     <div ng-if="!initializing">
-        <!--<div ng-show="paymentMethods.length > 0" class="payment-method col-xs-6" ng-repeat="method in paymentMethods track by $index" ng-class="{'single':paymentMethods.length === 1}">
-            <div class="payment-method-icon" ng-bind-html="method.icon" ng-click="selectPaymentMethod(method)"></div>
-            <div>{{method.displayName}}</div>
-        </div>
-        <div ng-show="paymentMethods.length === 0" class="single">You have to make a deposit first in order to make a withdrawal.</div>-->
         <div ng-show="groupedPaymentMethods.length > 0" class="payment-method col-xs-6" ng-repeat="group in groupedPaymentMethods track by $index" ng-class="{'single':groupedPaymentMethods.length === 1}">
             <div class="payment-method-icon" ng-bind-html="group[0].icon" ng-click="selectPaymentMethod(group)"></div>
             <div>{{group[0].displayName}}</div>

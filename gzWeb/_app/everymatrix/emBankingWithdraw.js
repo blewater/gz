@@ -58,9 +58,9 @@
                 includeAll: includeAll
             });
         };
-        _service.getSupportedPaymentMethods = function (currency) {
+        _service.getSupportedPaymentMethods = function () {
             var q = $q.defer();
-            emWamp.call("/user/withdraw#getPaymentMethods", { currency: currency, includeAll: true }).then(function (result) {
+            emWamp.call("/user/withdraw#getPaymentMethods", { }).then(function (result) { //currency: currency, includeAll: true
                 var supportedPaymentMethodCodesList = $filter('toArray')(_supportedPaymentMethodCodes);
                 var paymentMethods = $filter('filter')(result.paymentMethods, function (value, index, array) {
                     return supportedPaymentMethodCodesList.indexOf(value.code) > -1;

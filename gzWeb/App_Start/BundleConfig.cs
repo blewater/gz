@@ -293,11 +293,12 @@ namespace gzWeb
                                     , "~/_app/accountManagement/withdrawMoneyMatrixSkrillCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixSkrill1TapCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixEnterCashCtrl.js"
-                                    //, "~/_app/accountManagement/withdrawMoneyMatrixBankTransferCtrl.js"
+                                    , "~/_app/accountManagement/withdrawMoneyMatrixBankTransferCtrl.js"
                                     , "~/_app/accountManagement/withdrawMoneyMatrixAdyenSepaCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixNetellerCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixPaySafeCardCtrl.js"
                                     //, "~/_app/accountManagement/withdrawMoneyMatrixEcoPayzCtrl.js"
+                                    , "~/_app/accountManagement/withdrawDynamicCtrl.js"
 
                                     , "~/_app/accountManagement/pendingWithdrawalsCtrl.js"
                                     , "~/_app/accountManagement/transactionHistoryCtrl.js"

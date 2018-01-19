@@ -90,16 +90,16 @@
 
             $scope.hasGamingBalance = $scope._authData.gamingBalance !== undefined;
             if ($scope.hasGamingBalance) {
-                $scope.gamingBalanceChanged = $scope.gamingBalance && $scope.gamingBalance !== $scope._authData.gamingBalance;
-                $scope.gamingBalanceChangedShown = false;
-                if ($scope.gamingBalanceChanged && !$scope.gamingBalanceChangedShown) {
-                    $scope.gamingBalanceChangedShown = true;
-                    message.toastr("Your account balance updated!");
-                    $timeout(function () {
-                        $scope.gamingBalanceChanged = false;
-                        $scope.gamingBalanceChangedShown = false;
-                    }, 5000);
-                }
+                //$scope.gamingBalanceChanged = $scope.gamingBalance && $scope.gamingBalance !== $scope._authData.gamingBalance;
+                //$scope.gamingBalanceChangedShown = false;
+                //if ($scope.gamingBalanceChanged && !$scope.gamingBalanceChangedShown) {
+                //    $scope.gamingBalanceChangedShown = true;
+                //    message.toastr("Your account balance updated!");
+                //    $timeout(function () {
+                //        $scope.gamingBalanceChanged = false;
+                //        $scope.gamingBalanceChangedShown = false;
+                //    }, 5000);
+                //}
 
 
                 $scope.gamingBalance = $scope._authData.gamingBalance;

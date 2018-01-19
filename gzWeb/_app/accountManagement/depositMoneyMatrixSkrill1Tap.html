@@ -40,12 +40,12 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-12">
-                        <input type="text" ng-pattern="accountRegex" placeholder="account email" id="accountEmail" name="accountEmail" class="form-control" ng-model="model.accountEmail"
+                        <input type="text" ng-pattern="accountRegex" placeholder="account email" id="accountEmail" name="accountEmail" class="form-control" ng-model="model.accountEmail" required
                                ng-class="{ 'empty': !model.accountEmail, 'danger' : form.accountEmail.$invalid && !form.accountEmail.$pristine }"
                                ng-disabled="model.selectedPayCard || !canAddNewPayCard">
                     </div>
                     <div class="col-xs-12">
-                        <div class="help-block" ng-class="{'show': !form.accountEmail.$pristine && form.accountEmail.$invalid}">Invalid account email.</div>
+                        <div class="help-block" ng-class="{'show': (!form.accountEmail.$pristine || !canAddNewPayCard) && form.accountEmail.$invalid}">Invalid account email.</div>
                     </div>
                 </div>
                 <gz-field-ok gz-when="form.accountEmail.$valid"></gz-field-ok>
