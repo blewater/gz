@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "name": "inputMessage",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "withdrawn-vintages-bonus",
+      "connection": "AzureWebJobsStorage"
+    }
+  ],
+  "disabled": false
+}
