@@ -53,6 +53,8 @@
             key: 'withdraw',
             ctrl: 'withdrawCtrl',
             tpl: '_app/accountManagement/withdraw.html',
+            //ctrl: 'withdrawDynamicCtrl',
+            //tpl: '_app/accountManagement/withdrawDynamic.html',
             title: 'Withdraw',
             type: 'button',
             btnType: 'minus',

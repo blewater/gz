@@ -127,7 +127,15 @@
         tpl: '_app/promotions/promotion.html',
         title: 'Promotions',
         roles: [roles.guest],
-        category: categories.wandering
+        category: categories.wandering,
+        //redirectTo: function (routeParams, path, search) {
+        //    switch (routeParams.key) {
+        //        case 'signup':
+        //            return path + "?open=" + routeParams.key;
+        //        default:
+        //            return undefined;
+        //    }
+        //}
     };
     routes.promotions = {
         path: '/promotions',
@@ -240,6 +248,7 @@
         carouselActionTypes: actionTypes,
         keepBtagAliveTime: 1296000000, // 15 days
         defaultImg: '../../Content/Images/casino-default.png',
+        baseCurrency: "EUR",
 
         spinners: {
             //sm_abs_black: { radius: 5, width: 2, length: 4, color: '#000' },
