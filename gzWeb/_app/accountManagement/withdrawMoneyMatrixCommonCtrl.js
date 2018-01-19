@@ -8,9 +8,10 @@
         };
 
         $scope._init = function() {
-            loadPayCardInfo();
             if (angular.isFunction($scope.getExtraModelProperties))
                 angular.extend($scope.model, $scope.getExtraModelProperties());
+
+            loadPayCardInfo();
         };
 
         function loadPayCardInfo() {
@@ -19,7 +20,7 @@
                 $scope.loadPayCardSpecificInfo();
         }
         function loadPayCardGenericInfo() {
-            $scope.payCardID = $scope.paymentMethodCfg.fields.payCardID.options[0];
+            //$scope.payCardID = $scope.paymentMethodCfg.fields.payCardID.options[0];
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;
             $scope.accountLimits = $scope.paymentMethodCfg.fields.amount.limits[$scope.currency];
@@ -42,8 +43,8 @@
             if (angular.isFunction($scope.getExtraWithdrawFields))
                 angular.extend(fields, $scope.getExtraWithdrawFields());
 
-            if ($scope.payCardID)
-                fields.payCardID = $scope.payCardID.id;
+            if ($scope.selected.method)
+                fields.payCardID = $scope.selected.method.id;
             else if (angular.isFunction($scope.getRegistrationFields))
                 angular.extend(fields, $scope.getRegistrationFields());
 
@@ -54,7 +55,7 @@
         $scope.readConfirmMessage = function (prepareData) {
             var confirmMessage = angular.isFunction($scope.getSpecificConfirmMessage)
                 ? $scope.getSpecificConfirmMessage(prepareData)
-                : "Do you want to withdraw the amount of " + prepareData.debitAmount + " using " + $scope.selected.method.name + "?";
+                : "Do you want to withdraw the amount of " + prepareData.debitAmount + " using " + $scope.selected.group[0].name + "?";
             return confirmMessage;
         };
     }
