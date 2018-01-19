@@ -420,7 +420,21 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         canopy.configuration.elementTimeout <- 600.0
         canopy.configuration.compareTimeout <- 600.0
         canopy.configuration.pageTimeout <- 600.0
-        start chrome
+        canopy.configuration.autoPinBrowserRightOnLaunch <- true
+
+        let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
+        //chromeOptions.AddArgument("--no-sandbox")
+        chromeOptions.AddArgument("--disable-extensions")
+        //chromeOptions.AddArgument("--headless")
+        chromeOptions.AddArgument("--disable-gpu")
+        let chromeNoSandbox = ChromeWithOptions(chromeOptions)
+
+        //ChromeDriverService service = ChromeDriverService.CreateDefaultService()
+        //service.SuppressInitialDiagnosticInformation = true
+
+        //IWebDriver driver = new ChromeDriver(service, options)
+
+        start chromeNoSandbox
         match screen.monitorCount with
         | m when m >= 3 -> pinToMonitor 3
         | m when m = 2 -> pinToMonitor 2

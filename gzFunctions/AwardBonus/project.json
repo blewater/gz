@@ -1,0 +1,9 @@
+{
+    "frameworks": {
+        "net46": {
+            "dependencies": {
+                "AngleSharp": "0.9.9.1"
+            }
+        }
+    }
+}
