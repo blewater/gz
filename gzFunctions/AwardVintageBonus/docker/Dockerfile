@@ -3,17 +3,24 @@
 FROM fsharpcanopy
 
 ENV CHROMEDRIVER_PORT 4444
-ENV CHROMEDRIVER_WHITELISTED_IPS ""
+ENV CHROMEDRIVER_WHITELISTED_IPS "127.0.0.1"
 ENV CHROMEDRIVER_URL_BASE ''
 
 EXPOSE 4444
 
 RUN         mkdir -p /app
-RUN         ln -fs /usr/local/bin/chromedriver /app/chromedriver
 WORKDIR     /app
-COPY        src/*.dll ./
-COPY        src/*.fsx ./
+RUN         ln -fs /usr/local/bin/chromedriver ./chromedriver
+COPY        ./packages/canopy/lib/canopy.dll ./packages/canopy/lib/
+COPY        ./packages/FSharp.Data/lib/net45/*.dll ./packages/FSharp.Data/lib/net45/
+COPY        ./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll ./packages/FSharp.Data.TypeProviders/lib/net40/
+COPY        ./packages/NLog/lib/net45/NLog.dll ./packages/NLog/lib/net45/
+COPY        ./packages/Selenium.WebDriver/lib/net45/WebDriver.dll ./packages/Selenium.WebDriver/lib/net45/
+COPY        ./packages/Selenium.WebDriver/lib/net45/WebDriver.dll ./
+COPY        awardbonus.fsx ./
+RUN         fsharpc awardbonus.fsx
+RUN         fsharpi awardbonus.fsx
+# RUN         rm awardbonus.fsx
 RUN         ls -la
-RUN         fsharpc AwardBonus.fsx
-RUN         mono AwardBonus.exe
-ENTRYPOINT ["sh","-c", "xvfb-run -a fsharpi AwardBonus.fsx"]
+ENTRYPOINT ["fsharpi", "awardbonus.fsx"]
+# ENTRYPOINT ["sh","-c", "xvfb-run -a mono awardbonus.exe"]

@@ -1,9 +1,9 @@
 ﻿#I __SOURCE_DIRECTORY__
-#r "canopy.dll"
-#r "FSharp.Data.dll"
-#r "FSharp.Data.TypeProviders.dll"
-#r "NLog.dll"
-#r "WebDriver.dll"
+#r "./packages/canopy/lib/canopy.dll"
+#r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
+#r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
+#r "./packages/NLog/lib/net45/NLog.dll"
+#r "./packages/Selenium.WebDriver/lib/net45/WebDriver.dll"
 
 open canopy
 open System
@@ -23,7 +23,7 @@ chromeOptions.AddArgument("--no-sandbox")
 chromeOptions.AddArgument("--disable-extensions")
 chromeOptions.AddArgument("--headless")
 chromeOptions.AddArgument("--disable-gpu")
-chromeOptions.AddArgument("--port=4444")
+//chromeOptions.AddArgument("--port=4444")
 //chromeOptions.AddArgument("--remote-debugging-port=4444")
 let chromeNoSandbox = ChromeWithOptions(chromeOptions)
 canopy.configuration.chromeDir <- "."

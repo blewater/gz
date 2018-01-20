@@ -8,6 +8,7 @@ open ExcelSchemas
 open ConfigArgs
 open Microsoft.FSharp.Collections
 open NLog
+open OpenQA.Selenium.Chrome
 
 type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsType) =
 
@@ -423,10 +424,20 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         canopy.configuration.autoPinBrowserRightOnLaunch <- true
 
         let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
-        //chromeOptions.AddArgument("--no-sandbox")
-        chromeOptions.AddArgument("--disable-extensions")
-        //chromeOptions.AddArgument("--headless")
+        chromeOptions.AddArgument("--no-sandbox")
         chromeOptions.AddArgument("--disable-gpu")
+        chromeOptions.AddArgument("--disable-extensions")
+        chromeOptions.AddArgument("--headless")
+        chromeOptions.AddArgument("--disable-client-side-phishing-detection")
+        chromeOptions.AddArgument("--disable-suggestions-service")
+        chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
+        chromeOptions.AddArgument("--no-first-run")
+        chromeOptions.DebuggerAddress <- "127.0.0.1:4444"
+        //chromeOptions.AddUserProfilePreference("download.prompt_for_download", false)
+        //chromeOptions.AddUserProfilePreference("download.directory_upgrade", true)
+        chromeOptions.AddUserProfilePreference("download.default_directory", @"d:\sc\gz\outRpt\")
+        //let chromeService = new ChromeDriverService()
+
         let chromeNoSandbox = ChromeWithOptions(chromeOptions)
 
         //ChromeDriverService service = ChromeDriverService.CreateDefaultService()
