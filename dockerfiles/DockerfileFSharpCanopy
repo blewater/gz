@@ -1,0 +1,27 @@
+# Ref: https://github.com/TheAngryByrd/docker-canopy/blob/master/Dockerfile
+# Ref: https://github.com/RobCherry/docker-chromedriver/blob/master/Dockerfile
+# Ref: https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile
+
+FROM fsharp
+ENV CHROME_DRIVER_VERSION 2.35
+
+RUN apt -qqy update \
+      && apt -qqy install \
+      unzip \
+      wget \
+      && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+      && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+      && apt -qqy update \
+      && apt-get install xvfb unzip google-chrome-stable -y \
+      && wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
+      && unzip -od /usr/local/bin chromedriver_linux64.zip \
+      && chmod +x /usr/local/bin/chromedriver \
+      && mkdir -p /src \
+      && ln -fs /usr/local/bin/chromedriver /src/chromedriver \
+      && rm -rf /var/lib/apt/lists/*
+
+ENV CHROMEDRIVER_PORT 4444
+ENV CHROMEDRIVER_WHITELISTED_IPS ""
+ENV CHROMEDRIVER_URL_BASE ''
+
+EXPOSE 4444
