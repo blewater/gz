@@ -3,25 +3,72 @@
 # Ref: https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile
 
 FROM fsharp
-ENV CHROME_DRIVER_VERSION 2.35
+#ENV CHROME_DRIVER_VERSION 2.35
 
 # Install utilities
 RUN apt-get update --fix-missing && apt-get -y upgrade
 
+#RUN apt -qqy install \
+#   unzip \
+#   wget
+
+#============================================
+# Google Chrome
+#============================================
+# can specify versions by CHROME_VERSION;
+#  e.g. google-chrome-stable=53.0.2785.101-1
+#       google-chrome-beta=53.0.2785.92-1
+#       google-chrome-unstable=54.0.2840.14-1
+#       latest (equivalent to google-chrome-stable)
+#       google-chrome-beta  (pull latest beta)
+#============================================
+#ARG CHROME_VERSION="google-chrome-stable"
+#RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+#  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+#  && apt-get update -qqy \
+#  && apt-get -qqy install \
+#    ${CHROME_VERSION:-google-chrome-stable} \
+#  && rm /etc/apt/sources.list.d/google-chrome.list \
+#  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+#============================================
+# Chrome webdriver
+#============================================
+# can specify versions by CHROME_DRIVER_VERSION
+# Latest released version will be used by default
+#============================================
+#ARG CHROME_DRIVER_VERSION="latest"
+#RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); else echo $CHROME_DRIVER_VERSION; fi) \
+#  && echo "Using chromedriver version: "$CD_VERSION \
+#  && wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CD_VERSION/chromedriver_linux64.zip \
+#  && rm -rf /opt/selenium/chromedriver \
+#  && unzip /tmp/chromedriver_linux64.zip -d /opt/selenium \
+#  && rm /tmp/chromedriver_linux64.zip \
+#  && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CD_VERSION \
+#  && chmod 755 /opt/selenium/chromedriver-$CD_VERSION \
+#&& sudo ln -fs /opt/selenium/chromedriver-$CD_VERSION /usr/bin/chromedriver
+
+#ARG CHROME_DRIVER_VERSION="latest"
+#RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); else echo $CHROME_DRIVER_VERSION; fi) \
+#  && echo "Using chromedriver version: "$CD_VERSION \
 RUN apt -qqy install \
-      unzip \
-      wget \
-      && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-      && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-      && apt -qqy update \
-      && apt-get install xvfb unzip google-chrome-stable -y --no-install-recommends \
-      && wget https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
-      && unzip -od /usr/local/bin chromedriver_linux64.zip \
-      && chmod +x /usr/local/bin/chromedriver \
-      && rm -rf /var/lib/apt/lists/* \
-      && rm -rf /src/*.deb \
-      && mkdir -p /app \
-      && ln -fs /usr/local/bin/chromedriver /app/chromedriver
+    unzip \
+    wget \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt -qqy update \
+    && apt-get install xvfb unzip google-chrome-stable -y --no-install-recommends \
+    && CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); else echo $CHROME_DRIVER_VERSION; fi) \
+    && echo "Using chromedriver version: "$CD_VERSION \
+    && wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CD_VERSION/chromedriver_linux64.zip \
+    # && wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
+    && unzip /tmp/chromedriver_linux64.zip -od /usr/local/bin \
+    && rm /tmp/chromedriver_linux64.zip \
+    && chmod 755 /usr/local/bin/chromedriver \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /src/*.deb \
+    && mkdir -p /app \
+    && ln -fs /usr/local/bin/chromedriver /app/chromedriver
 
 ENV CHROMEDRIVER_PORT 4444
 ENV CHROMEDRIVER_WHITELISTED_IPS "127.0.0.1"
