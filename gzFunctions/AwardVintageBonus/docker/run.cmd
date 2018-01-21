@@ -1,0 +1,1 @@
+docker run -P --shm-size=2g --rm --name awardbonus awardbonus

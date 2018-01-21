@@ -16,7 +16,10 @@ chromeOptions.AddArgument("--no-sandbox")
 chromeOptions.AddArgument("--disable-extensions")
 chromeOptions.AddArgument("--headless")
 chromeOptions.AddArgument("--disable-gpu")
-chromeOptions.AddArgument("--port=4444")
+chromeOptions.AddArgument("--disable-client-side-phishing-detection")
+chromeOptions.AddArgument("--disable-suggestions-service")
+chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
+chromeOptions.AddArgument("--no-first-run")
 let chromeNoSandbox = ChromeWithOptions(chromeOptions)
 canopy.configuration.chromeDir <- "."
 start chromeNoSandbox
@@ -51,14 +54,16 @@ let selCashBackBonusinSelectList() : unit =
 
 [<EntryPoint>]
 let main argv = 
-
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
     searchCustomer()
+    // go to the portfolio page
     click "#cphPage_UsersControl1_gvData > tbody > tr:nth-child(2) > td:nth-child(2) > a"
     click "#cphPage_UserAccountsCompactControl1_gvData > tbody > tr > td:first-child > table > tbody > tr > td:nth-child(2) > a"
+    // go into the bonus
     click "#cphPage_CasinoWalletAccountDataControl1_btnGiveManualBonus"
 
     selCashBackBonusinSelectList()
+
     let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
     bonusAmountEl << "0.10"
     let amount = read bonusAmountEl
@@ -66,4 +71,5 @@ let main argv =
     quit()
 
     printfn "Amount: %s" amount
+
     0 // return an integer exit code
