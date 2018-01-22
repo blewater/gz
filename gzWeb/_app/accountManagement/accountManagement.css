@@ -492,6 +492,7 @@
 .auth.mgmt-modal .withdraw .left-content {
     position: relative;
     padding-right: 40px;
+    display: inline-block;
 }
 .auth.mgmt-modal .deposit .left-content .field-ok,
 .auth.mgmt-modal .withdraw .left-content .field-ok {
