@@ -12,7 +12,7 @@
                 });
             }
             if ($scope.paymentMethodCfg.fields.payCardID.registrationFields) {
-                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.Iban.regularExpression;
+                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.PaymentParameterIban.regularExpression;
             }
 
             if ($scope.existingPayCards.length === 1)
