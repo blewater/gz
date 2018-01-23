@@ -12,8 +12,11 @@
                 });
             }
             if ($scope.paymentMethodCfg.fields.payCardID.registrationFields) {
-                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.Iban.regularExpression;
+                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.PaymentParameterIban.regularExpression;
             }
+
+            if ($scope.existingPayCards.length === 1)
+                $scope.onPayCardSelected($scope.existingPayCards[0].id);
         }
 
         $scope.getExtraModelProperties = function () {
@@ -30,6 +33,18 @@
             return {
                 Iban: $scope.model.iban
             };
+        };
+
+        $scope.onPayCardSelected = function (payCardId) {
+            $scope.selected.method = $filter('where')($scope.existingPayCards, { 'id': payCardId })[0];
+            if ($scope.selected.method) {
+                $scope.model.iban = $scope.selected.method.name;
+                angular.element('#amount').focus();
+            }
+            else {
+                $scope.model.iban = undefined;
+                angular.element('#iban').focus();
+            }
         };
 
         $scope._init();

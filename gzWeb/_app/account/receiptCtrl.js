@@ -4,6 +4,9 @@
     APP.controller(ctrlId, ['$scope', 'iso4217', '$timeout', '$rootScope', 'constants', ctrlFactory]);
     function ctrlFactory($scope, iso4217, $timeout, $rootScope, constants) {
         $scope.spinnerOptions = { radius: 5, width: 2, length: 4, color: '#fff', position: 'absolute', top: '50%' };
+        var MAX_ATTEMPTS_NO = 5;
+        var DELAY = 3000;
+        var currentAttemptNo = 0;
 
         function chooseTitle(status) {
             switch (status) {
@@ -26,6 +29,7 @@
             $scope.nsOk($scope.transactionInfo);
         };
         function getTransactionInfo() {
+            currentAttemptNo++;
             $scope.getTransactionInfoCall().then(function (transactionResult) {
                 assignToScope(transactionResult);
             }, function (error) {
@@ -45,8 +49,9 @@
                 $scope.amount = iso4217.getCurrencyByCode(amountInfo.currency).symbol + " " + amountInfo.amount;
             $scope.paymentMethod = $scope.paymentMethod;
 
-            if (!$scope.transactionId && $scope.status === 'pending')
-                $timeout(getTransactionInfo, 2000);
+            $scope.stillWaiting = currentAttemptNo <= MAX_ATTEMPTS_NO;
+            if ($scope.isDebit && !$scope.transactionId && $scope.status === 'pending' && $scope.stillWaiting)
+                $timeout(getTransactionInfo, DELAY);
         }
 
         function init() {
