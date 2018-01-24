@@ -245,3 +245,5 @@ build/.fake/
 build/.azSession
 GmFsTests/bin/
 .vscode/launch.json
+*.exe
+awardvintagebonus/paket-files/paket.restore.cached

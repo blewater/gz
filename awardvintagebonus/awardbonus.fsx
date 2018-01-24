@@ -10,9 +10,9 @@ open System
 open OpenQA.Selenium
 
 [<Literal>]
-let everymatrixUsername = "admin"
+let everymatrixUsername = "presto"
 [<Literal>]
-let everymatrixPassword = "player888"
+let everymatrixPassword = "gz2017!@"
 [<Literal>]
 let everymatrixSecureToken = "3DFEC757D808494"
 
@@ -27,10 +27,8 @@ chromeOptions.AddArgument("--disable-client-side-phishing-detection")
 chromeOptions.AddArgument("--disable-suggestions-service")
 chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
 chromeOptions.AddArgument("--no-first-run")
-// chromeOptions.AddArgument("--single-process")
-// chromeOptions.AddArgument("--remote-debugging-port=4444")
 let chromeNoSandbox = ChromeWithOptions(chromeOptions)
-canopy.configuration.chromeDir <- "."
+canopy.configuration.chromeDir <- "./bin/Debug/"
 start chromeNoSandbox
 
 let uiAutomateLoginEverymatrixReports 

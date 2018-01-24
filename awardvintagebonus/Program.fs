@@ -1,13 +1,13 @@
 ﻿open canopy
 open System
 open OpenQA.Selenium
+open FSharp.Configuration
 
-[<Literal>]
-let everymatrixUsername = "admin"
-[<Literal>]
-let everymatrixPassword = "player888"
-[<Literal>]
-let everymatrixSecureToken = "3DFEC757D808494"
+type Settings = AppSettings<"App.config">
+
+let everymatrixUsername = Settings.Evuser
+let everymatrixPassword = Settings.Evpwd
+let everymatrixSecureToken = Settings.Evtoken
 
 // Need to use --no-sandbox or chrome wont start
 // https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
@@ -21,7 +21,7 @@ chromeOptions.AddArgument("--disable-suggestions-service")
 chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
 chromeOptions.AddArgument("--no-first-run")
 let chromeNoSandbox = ChromeWithOptions(chromeOptions)
-canopy.configuration.chromeDir <- "."
+canopy.configuration.chromeDir <- "./"
 start chromeNoSandbox
 
 let uiAutomateLoginEverymatrixReports 
