@@ -143,6 +143,7 @@ var APP = (function () {
                             setRouteData($route.current.$$route);
                         }
                         document.title = title;
+                        angular.element('#header-nav').css('top', 0);
                     });
                 }
                 onRouteChangeSuccess();

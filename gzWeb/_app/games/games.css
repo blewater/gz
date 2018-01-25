@@ -754,7 +754,8 @@
     position: fixed;
     z-index: 10000000000000;
     bottom: 10px;
-    left: 10px;
+    right: 10px;
+    /*left: 10px;*/
     font-size: 14px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .8);
 }
@@ -764,11 +765,11 @@
 .fullscreen-hud .exit {
     /*margin-right: 40px;*/
     cursor: pointer;
-    /*margin-left: 20px;*/
+    margin-left: 20px;
 }
 .fullscreen-hud .clock {
     width: 75px;
-    margin-right: 20px;
+    /*margin-right: 20px;*/
 }
 /* #endregion */
 
