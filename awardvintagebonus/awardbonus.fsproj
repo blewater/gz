@@ -66,8 +66,9 @@
     <Content Include="NLog.config">
       <Paket>True</Paket>
     </Content>
-    <None Include="awardbonus.fsx" />
     <None Include="D:\sc\gz\awardvintagebonus\paket.lock" />
+    <None Include="Queue.fsx" />
+    <None Include="awardbonus.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
