@@ -208,6 +208,10 @@ footer .footer-licenses {
             border-radius: 7px;
         }
 
+        footer .spinsia {
+            margin-top: 0.5em;
+        }
+
 footer .footer-advice {
     font-size: 10px;
     margin: 20px;

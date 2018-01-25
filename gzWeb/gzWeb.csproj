@@ -830,6 +830,7 @@
     <Content Include="Content\Images\skrill-logo.svg" />
     <Content Include="Content\Images\slotsia-dark.png" />
     <Content Include="Content\Images\spades.svg" />
+    <Content Include="Content\Images\spinsia.png" />
     <Content Include="Content\Images\sum.png" />
     <Content Include="Content\Images\sum.svg" />
     <Content Include="Content\Styles\bootstrap\bootstrap-theme.css" />
