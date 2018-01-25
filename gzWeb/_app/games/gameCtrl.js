@@ -1,14 +1,31 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'gameCtrl';
-    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', '$log', 'chat', 'message', ctrlFactory]);
-    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log, chat, message) {
+    APP.controller(ctrlId, ['$scope', '$controller', '$routeParams', '$sce', 'emCasino', '$window', '$interval', '$location', 'constants', '$rootScope', '$log', 'chat', 'message', '$timeout', ctrlFactory]);
+    function ctrlFactory($scope, $controller, $routeParams, $sce, emCasino, $window, $interval, $location, constants, $rootScope, $log, chat, message, $timeout) {
         $controller('authCtrl', { $scope: $scope });
 
         var searchParams = null;
         $scope.game = null;
         $scope.gameLaunchData = null;
         $scope.gameUrl = null;
+
+        function hideElement(selector) { angular.element(selector).css('top', -70); };
+        function showElement(selector) { angular.element(selector).css('top', 0); };
+        $scope.hideHeader = function () {
+            hideElement('#header-nav');
+            hideElement('#menu-up');
+            $timeout(function () {
+                showElement('#menu-down');
+            }, 500);
+        };
+        $scope.showHeader = function () {
+            hideElement('#menu-down');
+            $timeout(function () {
+                showElement('#header-nav');
+                showElement('#menu-up');
+            }, 500);
+        };
 
         function loadGame() {
             //if (typeof navigator.mimeTypes['application/x-shockwave-flash'] != 'undefined') {
@@ -35,7 +52,8 @@
                         function setGameDimensions() {
                             var percent = 0.8;
                             var windowWidth = $window.innerWidth;
-                            var windowHeight = $window.innerHeight - 70;
+                            //var windowHeight = $window.innerHeight - 70;
+                            var windowHeight = $window.innerHeight;
                             if ($rootScope.mobile) {
                                 $scope.gameWidth = windowWidth;
                                 $scope.gameHeight = windowHeight;
@@ -77,8 +95,10 @@
                                 : launchDataResult.url;
                             $scope.gameUrl = $sce.trustAsResourceUrl(launchUrl);
 
-                            if ($rootScope.mobile)
+                            if ($rootScope.mobile) {
                                 $scope.openFullscreen();
+                                $timeout($scope.hideHeader, 3000);
+                            }
                             else
                                 $scope.isFullscreen = false;
 
@@ -131,6 +151,7 @@
             if ($scope.playForFun)
                 $location.search('funMode', true);
             $location.replace();
+
             loadGame();
             setClock();
         });
@@ -193,21 +214,24 @@
         };
 
         $scope.getGameTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? ($rootScope.mobile ? '70px' : '0') : 'calc(50% - ' + (($scope.gameHeight - 70) / 2) + 'px)';
+            //return $scope.gameLaunchData === null || $scope.isFullscreen ? ($rootScope.mobile ? '70px' : '0') : 'calc(50% - ' + (($scope.gameHeight - 70) / 2) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameHeight / 2) + 'px)';
         };
         $scope.getGameRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';
         };
 
         $scope.getActionsTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% + ' + (($scope.gameHeight + 70) / 2) + 'px)';
+            //return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% + ' + (($scope.gameHeight + 70) / 2) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% + ' + ($scope.gameHeight / 2) + 'px)';
         };
         $scope.getActionsRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ($scope.gameWidth / 2) + 'px)';
         };
 
         $scope.getCloseTop = function () {
-            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ((($scope.gameHeight - 70) / 2) + 18) + 'px)';
+            //return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + ((($scope.gameHeight - 70) / 2) + 18) + 'px)';
+            return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameHeight / 2) + 18) + 'px)';
         };
         $scope.getCloseRight = function () {
             return $scope.gameLaunchData === null || $scope.isFullscreen ? '0' : 'calc(50% - ' + (($scope.gameWidth / 2) + 18) + 'px)';
