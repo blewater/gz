@@ -12,3 +12,4 @@ nuget NLog.Config
 nuget NLog.Schema
 nuget Selenium.WebDriver
 nuget Selenium.Chrome.WebDriver
+nuget WindowsAzure.Storage

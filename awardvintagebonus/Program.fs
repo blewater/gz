@@ -2,12 +2,17 @@
 open System
 open OpenQA.Selenium
 open FSharp.Configuration
+open Microsoft.Azure // Namespace for CloudConfigurationManager 
+open Microsoft.WindowsAzure.Storage // Namespace for CloudStorageAccount
+open Microsoft.WindowsAzure.Storage.Queue // Namespace for Queue storage types
 
 type Settings = AppSettings<"App.config">
 
 let everymatrixUsername = Settings.Evuser
 let everymatrixPassword = Settings.Evpwd
 let everymatrixSecureToken = Settings.Evtoken
+let queueConnString = Settings.QueueConnString.ToString()
+let queueName = Settings.QueueName
 
 // Need to use --no-sandbox or chrome wont start
 // https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
@@ -52,8 +57,18 @@ let selCashBackBonusinSelectList() : unit =
     do selBonusLi bonusInput
     press enter
 
+let initQueue (queueConnString : string)(queueName : string) : CloudQueue=
+    // Parse the connection string and return a reference to the storage account.
+    let storageAccount = CloudStorageAccount.Parse(queueConnString)
+    let queueClient = storageAccount.CreateCloudQueueClient()
+    let queue = queueClient.GetQueueReference(queueName)
+    queue
+
 [<EntryPoint>]
 let main argv = 
+        
+    let queue = initQueue queueConnString queueName
+
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
     searchCustomer()
     // go to the portfolio page
