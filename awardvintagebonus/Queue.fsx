@@ -7,3 +7,7 @@
 open FSharp.Configuration
 
 type Settings = AppSettings<"App.config">
+
+let queueConnString = Settings.QueueConnString.ToString()
+let queueName = Settings.QueueName
+
