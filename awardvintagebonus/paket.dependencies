@@ -3,6 +3,7 @@ source https://www.nuget.org/api/v2/
 framework: net452
 
 nuget canopy
+nuget FSharp.Azure.StorageTypeProvider
 nuget FSharp.Configuration
 nuget FSharp.Core >= 4.1.17 lowest_matching:true
 nuget FSharp.Data
@@ -12,4 +13,3 @@ nuget NLog.Config
 nuget NLog.Schema
 nuget Selenium.WebDriver
 nuget Selenium.Chrome.WebDriver
-nuget WindowsAzure.Storage
