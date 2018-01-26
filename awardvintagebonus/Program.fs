@@ -2,9 +2,10 @@
 open System
 open OpenQA.Selenium
 open FSharp.Configuration
-open Microsoft.Azure // Namespace for CloudConfigurationManager 
-open Microsoft.WindowsAzure.Storage // Namespace for CloudStorageAccount
-open Microsoft.WindowsAzure.Storage.Queue // Namespace for Queue storage types
+//open Microsoft.Azure // Namespace for CloudConfigurationManager 
+//open Microsoft.WindowsAzure.Storage // Namespace for CloudStorageAccount
+//open Microsoft.WindowsAzure.Storage.Queue // Namespace for Queue storage types
+open FSharp.Azure.StorageTypeProvider
 
 type Settings = AppSettings<"App.config">
 
@@ -57,17 +58,17 @@ let selCashBackBonusinSelectList() : unit =
     do selBonusLi bonusInput
     press enter
 
-let initQueue (queueConnString : string)(queueName : string) : CloudQueue=
-    // Parse the connection string and return a reference to the storage account.
-    let storageAccount = CloudStorageAccount.Parse(queueConnString)
-    let queueClient = storageAccount.CreateCloudQueueClient()
-    let queue = queueClient.GetQueueReference(queueName)
-    queue
+//let initQueue (queueConnString : string)(queueName : string) : CloudQueue=
+//    // Parse the connection string and return a reference to the storage account.
+//    let storageAccount = CloudStorageAccount.Parse(queueConnString)
+//    let queueClient = storageAccount.CreateCloudQueueClient()
+//    let queue = queueClient.GetQueueReference(queueName)
+//    queue
 
 [<EntryPoint>]
 let main argv = 
         
-    let queue = initQueue queueConnString queueName
+    //let queue = initQueue queueConnString queueName
 
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
     searchCustomer()

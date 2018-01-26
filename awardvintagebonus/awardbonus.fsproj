@@ -57,7 +57,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Program.fs" />
-    <None Include="App.config" />
     <Content Include="NLog.xsd">
       <Paket>True</Paket>
     </Content>
@@ -69,8 +68,12 @@
     <None Include="D:\sc\gz\awardvintagebonus\paket.lock" />
     <None Include="Queue.fsx" />
     <None Include="awardbonus.fsx" />
+    <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Azure.StorageTypeProvider">
+      <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net452\FSharp.Azure.StorageTypeProvider.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -148,61 +151,6 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
       <ItemGroup>
-        <Reference Include="Microsoft.Azure.KeyVault.Core">
-          <HintPath>packages\Microsoft.Azure.KeyVault.Core\lib\net45\Microsoft.Azure.KeyVault.Core.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="Microsoft.Data.Edm">
-          <HintPath>packages\Microsoft.Data.Edm\lib\net40\Microsoft.Data.Edm.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="Microsoft.Data.OData">
-          <HintPath>packages\Microsoft.Data.OData\lib\net40\Microsoft.Data.OData.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="Microsoft.Data.Services.Client">
-          <HintPath>packages\Microsoft.Data.Services.Client\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="Newtonsoft.Json">
-          <HintPath>packages\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
         <Reference Include="NLog">
           <HintPath>packages\NLog\lib\net45\NLog.dll</HintPath>
           <Private>True</Private>
@@ -236,33 +184,8 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
       <ItemGroup>
-        <Reference Include="System.Spatial">
-          <HintPath>packages\System.Spatial\lib\net40\System.Spatial.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
         <Reference Include="System.ValueTuple">
           <HintPath>packages\System.ValueTuple\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="System.Xml">
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="Microsoft.WindowsAzure.Storage">
-          <HintPath>packages\WindowsAzure.Storage\lib\net45\Microsoft.WindowsAzure.Storage.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
