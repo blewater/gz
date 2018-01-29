@@ -74,6 +74,9 @@
     <Reference Include="FSharp.Azure.StorageTypeProvider">
       <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net452\FSharp.Azure.StorageTypeProvider.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage">
+      <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net452\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />

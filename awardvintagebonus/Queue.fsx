@@ -1,18 +1,18 @@
-﻿#I __SOURCE_DIRECTORY__
+﻿//#I __SOURCE_DIRECTORY__
 #r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
 #r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
 #r "./packages/NLog/lib/net45/NLog.dll"
-#r "./packages/FSharp.Configuration\lib/net45/FSharp.Configuration.dll"
+#r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"
 #r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/FSharp.Azure.StorageTypeProvider.dll"
 
 open FSharp.Configuration
-open FSharp.Configuration.AppSettingsTypeProvider
-//open Microsoft.WindowsAzure.Storage // Namespace for CloudStorageAccount
-//open Microsoft.WindowsAzure.Storage.Queue // Namespace for Queue storage types
 open FSharp.Azure.StorageTypeProvider
+open FSharp.Azure.StorageTypeProvider.Queue
 open FSharp.Data.TypeProviders
 open NLog
 
+type Azure = AzureTypeProvider<"UseDevelopmentStorage=true">
+Azure.Queues.
 let logger = LogManager.GetCurrentClassLogger()
 
 // Use for compile time memory schema representation
@@ -32,12 +32,17 @@ type DbPortfolioPrices = DbSchema.ServiceTypes.PortfolioPrices
 type DbVintageShares = DbSchema.ServiceTypes.VintageShares
 type DbInvBalances = DbSchema.ServiceTypes.InvBalances
 
+type Settings = AppSettings<"App.config">
+
 let path = System.IO.Path.Combine [|__SOURCE_DIRECTORY__ ; "bin"; "debug"; "awardbonus.exe" |]
 Settings.SelectExecutableFile path
 printfn "%s" Settings.ConfigFileName
 
 let queueConnString = Settings.QueueConnString.ToString()
 let queueName = Settings.QueueName
+// Connect via configuration file with named connection string.
+type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnString", configFileName=Settings.ConfigFileName>
+
 
 //let initQueue (queueConnString : string)(queueName : string) : CloudQueue=
 //    // Parse the connection string and return a reference to the storage account.
@@ -63,8 +68,6 @@ envVars
     |> Seq.iter (fun (KeyValue(k,v)) -> printfn "%s: %s" k v)
     
 let (res, value) = envVars.TryGetValue(InvBalKey)
-
-initQueue queueConnString queueName
 
 /// <summary>
 ///

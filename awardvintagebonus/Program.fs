@@ -1,11 +1,35 @@
-﻿open canopy
+﻿#if INTERACTIVE
+#r "./packages/canopy/lib/canopy.dll"
+#r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
+#r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
+#r "./packages/NLog/lib/net45/NLog.dll"
+#r "./packages/Selenium.WebDriver/lib/net45/WebDriver.dll"
+#r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"
+#r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/Microsoft.WindowsAzure.Storage.dll"
+#r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/FSharp.Azure.StorageTypeProvider.dll"
+#endif
+open canopy
 open System
 open OpenQA.Selenium
 open FSharp.Configuration
-//open Microsoft.Azure // Namespace for CloudConfigurationManager 
-//open Microsoft.WindowsAzure.Storage // Namespace for CloudStorageAccount
-//open Microsoft.WindowsAzure.Storage.Queue // Namespace for Queue storage types
 open FSharp.Azure.StorageTypeProvider
+open Microsoft.WindowsAzure.Storage
+open FSharp.Azure.StorageTypeProvider.Queue
+
+// Connect via configuration file with named connection string.
+type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnString", configFileName="App.config">
+let bonusQueue = FunctionsQueue.Queues.``withdrawn-vintages-bonus``
+printfn "Queue length is %d." (bonusQueue.GetCurrentLength())
+
+// Connect to local storage emulator localstorageConnString
+(*
+type FunctionsQueueLocal = AzureTypeProvider<"UseDevelopmentStorage=true">
+//let qc = FunctionsQueueLocal.Queues.CloudQueueClient
+//let lq = qc.GetQueueReference(Settings.QueueName)
+//let res = lq.CreateIfNotExists()
+let localBonusQueue = FunctionsQueueLocal.Queues.``withdrawn-vintages-bonus``
+printfn "Local Queue length is %d." (localBonusQueue.GetCurrentLength())
+*)
 
 type Settings = AppSettings<"App.config">
 
