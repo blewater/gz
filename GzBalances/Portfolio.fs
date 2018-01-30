@@ -77,7 +77,7 @@ module UserPortfolio =
         else
             (userPortfolioInput.Portfolio.Risk, currentCustomerPortfolio) ||> updDbUserPortfolio
 
-        userPortfolioInput.DbUserMonth.Db.DataContext.SubmitChanges()
+        userPortfolioInput.DbUserMonth.Db.SubmitChanges()
 
 module CalcUserPortfolioShares =
     open PortfolioTypes
@@ -194,7 +194,7 @@ module VintageShares =
             (userPortfolioShares, tradingDay, dbUserSharesRow) 
             |||> updDbVintageShares
 
-        dbUserMonth.Db.DataContext.SubmitChanges()
+        dbUserMonth.Db.SubmitChanges()
 
     /// Price portfolio shares
     let private getPricedPortfolioShares (shares : PortfolioShares)(prices :PortfoliosPrices) : PortfolioPriced=
@@ -354,7 +354,7 @@ module InvBalance =
             (input, invBalanceRow) 
             ||> updDbInvBalance
 
-        input.UserInputPortfolio.DbUserMonth.Db.DataContext.SubmitChanges()
+        input.UserInputPortfolio.DbUserMonth.Db.SubmitChanges()
 
     /// get db invBalance totals of previous month
     let getInvBalancePrevTotals(dbUserMonth : DbUserMonth) : InvBalancePrevTotals =
