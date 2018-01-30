@@ -57,7 +57,7 @@ module DbGzTrx =
         }
         |> (fun userId ->
             if userId = 0 then
-                logger.Warn (sprintf "*** Everymatrix email %s not found in the AspNetUsers table of db: %s. Cannot award..." gmUserEmail db.DataContext.Connection.DataSource)
+                logger.Warn (sprintf "*** Everymatrix email %s not found in the AspNetUsers table of db: %s. Cannot award..." gmUserEmail db.Connection.DataSource)
                 None
             else
                 Some userId
@@ -113,13 +113,13 @@ module DbGzTrx =
                 else 
                     updDbGzTrxRowValues playerLossToInvest playerGainLoss creditLossPcnt playerRevRpt trxRow
             )
-            db.DataContext.SubmitChanges()
+            db.SubmitChanges()
 
     /// Read all 
     let getDbPlayerMonthlyRows
         (db : DbContext)
         (yyyyMm : string)
-        (emailToProcAlone : string option) : Linq.IQueryable<DbSchema.ServiceTypes.PlayerRevRpt>=
+        (emailToProcAlone : string option) : Linq.IQueryable<DbSchema.PlayerRevRpt>=
 
         match emailToProcAlone with
         | Some singleEmailUser ->
@@ -160,7 +160,7 @@ module DbPlayerRevRpt =
 
     /// Update the player gaming amounts
     let private setDbPlayerGainLossValues
-        (row : DbSchema.ServiceTypes.PlayerRevRpt) =
+        (row : DbSchema.PlayerRevRpt) =
 
         let totalWithdrawals = row.WithdrawsMade.Value + row.PendingWithdrawals.Value
         // Formula to get player losses as negative amounts
@@ -176,7 +176,7 @@ module DbPlayerRevRpt =
     /// Update db player Gain Loss
     let private setDbPlayerGainLoss 
         (emailToProcAlone: string option) 
-        (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
+        (row : DbSchema.PlayerRevRpt) : unit =
 
         // Normal processing
         if emailToProcAlone.IsNone then
@@ -210,7 +210,7 @@ module DbPlayerRevRpt =
         }
                     // append dbRow param here as 2nd setDbPlayerGainLos() arg
         |> Seq.iter (setDbPlayerGainLoss emailToProcAlone)
-        db.DataContext.SubmitChanges()
+        db.SubmitChanges()
 
 
     /// get deposits in the user currency
@@ -436,7 +436,7 @@ module DbPlayerRevRpt =
                 logger.Warn warningMsg
             else
                 updDbRowWithdrawalsValues db withdrawalType withdrawalRow playerDbRow
-                db.DataContext.SubmitChanges()
+                db.SubmitChanges()
         )
 
     /// Set beginning or ending amount in a db PlayerRevRpt Row
@@ -463,7 +463,7 @@ module DbPlayerRevRpt =
                 | BeginingBalance -> updDbRowBegBalanceValues balanceRow playerDbRow
                 | EndingBalance -> updDbRowEndBalanceValues balanceRow playerDbRow
         )
-        db.DataContext.SubmitChanges()
+        db.SubmitChanges()
 
     /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
     let updDbDepositsPlayerRow 
@@ -485,7 +485,7 @@ module DbPlayerRevRpt =
                 logger.Warn warningMsg
             else
                 updDbRowDepositsValues db depositsExcelRow playerDbRow
-                db.DataContext.SubmitChanges()
+                db.SubmitChanges()
         )
 
     /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
@@ -508,7 +508,7 @@ module DbPlayerRevRpt =
                 logger.Warn warningMsg
             else
                 updDbRowBonusValues bonusExcelRow playerDbRow
-                db.DataContext.SubmitChanges()
+                db.SubmitChanges()
         )
 
     /// Upsert excel row values in a db PlayerRevRpt Row
@@ -530,7 +530,7 @@ module DbPlayerRevRpt =
             else 
                 setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow
         )
-        db.DataContext.SubmitChanges()
+        db.SubmitChanges()
 
     /// Update all null everymatrix customer ids from the playerRevRpt (excel reports table)
     let setDbGmCustomerId(db : DbContext) =
@@ -563,7 +563,7 @@ module DbPlayerRevRpt =
                         setErrorStatus()
                     | gmId -> 
                         user.GmCustomerId <- Nullable gmId
-                        db.DataContext.SubmitChanges()
+                        db.SubmitChanges()
             )
         )
         if getErrorStatus() then
