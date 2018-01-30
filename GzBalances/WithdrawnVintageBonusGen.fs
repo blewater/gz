@@ -49,7 +49,7 @@ module WithdrawnVintageBonusGen =
             let gmailClient = EmailAccess(dayToProcess, adminEmailUserArgs.EmailReportsUser, adminEmailUserArgs.EmailReportsPwd)
             gmailClient.SendWithdrawnVintagesCashBonusCsv depositsCsvStrContent depositsCsvFilename dayToProcess
 
-            db.DataContext.SubmitChanges()
+            db.SubmitChanges()
             logger.Debug "*** Emailed bonuses csv ***"
 
     /// award deposit bonus for withdrawn vintages
