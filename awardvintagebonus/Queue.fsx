@@ -4,16 +4,14 @@
 #r "./packages/NLog/lib/net45/NLog.dll"
 #r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"
 #r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/FSharp.Azure.StorageTypeProvider.dll"
+#r "System.Data.Linq.dll"
 
 open FSharp.Configuration
 open FSharp.Azure.StorageTypeProvider
 open FSharp.Azure.StorageTypeProvider.Queue
 open FSharp.Data.TypeProviders
-open NLog
 
 type Azure = AzureTypeProvider<"UseDevelopmentStorage=true">
-Azure.Queues.
-let logger = LogManager.GetCurrentClassLogger()
 
 // Use for compile time memory schema representation
 [<Literal>]
@@ -78,7 +76,7 @@ let (res, value) = envVars.TryGetValue(InvBalKey)
 /// <returns>A newly created database object</returns>
 let getOpenDb (dbConnectionString : string) : DbContext= 
 
-    logger.Debug("Attempting to open the database connection...")
+    //logger.Debug("Attempting to open the database connection...")
     // Open db
     let db = DbSchema.GetDataContext(dbConnectionString)
     //db.DataContext.Log <- System.Console.Out
