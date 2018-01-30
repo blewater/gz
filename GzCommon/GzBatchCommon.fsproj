@@ -76,6 +76,7 @@
     <Compile Include="gzUtils.fs" />
     <Compile Include="ConfigArgs.fs" />
     <Compile Include="EmailFacade.fs" />
+    <None Include="gzdbdev.dbml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">
