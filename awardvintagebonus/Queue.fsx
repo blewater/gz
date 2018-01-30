@@ -11,24 +11,22 @@ open FSharp.Azure.StorageTypeProvider
 open FSharp.Azure.StorageTypeProvider.Queue
 open FSharp.Data.TypeProviders
 
-type Azure = AzureTypeProvider<"UseDevelopmentStorage=true">
+//type Azure = AzureTypeProvider<"UseDevelopmentStorage=true">
 
-// Use for compile time memory schema representation
-[<Literal>]
-let CompileTimeDbString = "Server=tcp:gzdbdev.database.windows.net,1433;Database=gzDbDev;User ID=gzDevReader;Password=Life is good wout writing8!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+//-- Db Types / entities
 
-//-- Types
+type DbSchema = DbmlFile<"gzdbdev.dbml", ContextTypeName="GzRunTimeDb">
 
-type DbSchema = SqlDataConnection<ConnectionString=CompileTimeDbString >
-type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev
-type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
-type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
-type DbFunds = DbSchema.ServiceTypes.Funds
-type DbPortfolios = DbSchema.ServiceTypes.Portfolios
-type DbPortfolioFunds = DbSchema.ServiceTypes.PortFunds
-type DbPortfolioPrices = DbSchema.ServiceTypes.PortfolioPrices
-type DbVintageShares = DbSchema.ServiceTypes.VintageShares
-type DbInvBalances = DbSchema.ServiceTypes.InvBalances
+type DbContext = DbSchema.GzRunTimeDb
+//type DbPlayerRevRpt = DbSchema.PlayerRevRpt
+//type DbGzTrx = DbSchema.GzTrxs
+//type DbFunds = DbSchema.Funds
+//type DbPortfolios = DbSchema.Portfolios
+//type DbPortfolioFunds = DbSchema.PortFunds
+//type DbPortfolioPrices = DbSchema.PortfolioPrices
+//type DbVintageShares = DbSchema.VintageShares
+type DbInvBalances = DbSchema.InvBalances
+//type DbCustoPortfolios = DbSchema.CustPortfolios
 
 type Settings = AppSettings<"App.config">
 
@@ -78,8 +76,7 @@ let getOpenDb (dbConnectionString : string) : DbContext=
 
     //logger.Debug("Attempting to open the database connection...")
     // Open db
-    let db = DbSchema.GetDataContext(dbConnectionString)
+    let db = new DbSchema.GzRunTimeDb(dbConnectionString)
     //db.DataContext.Log <- System.Console.Out
     db.Connection.Open()
     db
-
