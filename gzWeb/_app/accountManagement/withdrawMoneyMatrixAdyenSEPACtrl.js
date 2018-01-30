@@ -31,7 +31,7 @@
         };
         $scope.getRegistrationFields = function () {
             return {
-                Iban: $scope.model.iban
+                PaymentParameterIban: $scope.model.iban
             };
         };
 

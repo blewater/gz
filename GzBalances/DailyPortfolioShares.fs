@@ -211,7 +211,7 @@ module DailyPortfolioShares =
             (portfolioPricesRow, portfoliosPrices) 
                 ||> updDbPortfolioPrice
 
-        db.DataContext.SubmitChanges()
+        db.SubmitChanges()
 
     /// Save all trading days portfolio prices
     let setDbPortfoliosPrices(db : DbContext)(portfoliosPrices : PortfoliosPricesMap) : PortfoliosPricesMap=

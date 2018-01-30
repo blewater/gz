@@ -1,6 +1,8 @@
 ﻿<div class="clearfix games">
     <div class="game-play">
         <img ng-if="!mobile" class="game-bg center-screen responsive-size" src="{{game.backgroundImage}}" cs-fallback-src="{{defaultImg}}" alt="Background" />
+        <i ng-if="mobile" id="menu-up" class="fa fa-angle-double-up fa-2x" ng-click="hideHeader()"></i>
+        <i ng-if="mobile" id="menu-down" class="fa fa-angle-double-down fa-2x" ng-click="showHeader()"></i>
         <div ng-hide="gameLaunchData==null" class="game-frame" fullscreen="isFullscreen" only-watched-property>
             <iframe ng-src="{{gameUrl}}" width="{{getGameWidth()}}" height="{{getGameHeight()}}"
                     ng-style="{

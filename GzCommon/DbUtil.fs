@@ -10,23 +10,22 @@ module DbUtil =
     let WaitBefRetryinMillis = 500 // milliseconds
 
     // Use for compile time memory schema representation
-    [<Literal>]
-    let CompileTimeDbString = "Server=tcp:gzdbdev.database.windows.net,1433;Database=gzDbDev;User ID=gzDevReader;Password=Life is good wout writing8!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     let logger = LogManager.GetCurrentClassLogger()
 
-//-- Types
+//-- Db Types / entities
 
-    type DbSchema = SqlDataConnection<ConnectionString=CompileTimeDbString >
-    type DbContext = DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev
-    type DbPlayerRevRpt = DbSchema.ServiceTypes.PlayerRevRpt
-    type DbGzTrx = DbSchema.ServiceTypes.GzTrxs
-    type DbFunds = DbSchema.ServiceTypes.Funds
-    type DbPortfolios = DbSchema.ServiceTypes.Portfolios
-    type DbPortfolioFunds = DbSchema.ServiceTypes.PortFunds
-    type DbPortfolioPrices = DbSchema.ServiceTypes.PortfolioPrices
-    type DbVintageShares = DbSchema.ServiceTypes.VintageShares
-    type DbInvBalances = DbSchema.ServiceTypes.InvBalances
-    type DbCustoPortfolios = DbSchema.ServiceTypes.CustPortfolios
+    type DbSchema = DbmlFile<"gzdbdev.dbml", ContextTypeName="GzRunTimeDb">
+
+    type DbContext = DbSchema.GzRunTimeDb
+    type DbPlayerRevRpt = DbSchema.PlayerRevRpt
+    type DbGzTrx = DbSchema.GzTrxs
+    type DbFunds = DbSchema.Funds
+    type DbPortfolios = DbSchema.Portfolios
+    type DbPortfolioFunds = DbSchema.PortFunds
+    type DbPortfolioPrices = DbSchema.PortfolioPrices
+    type DbVintageShares = DbSchema.VintageShares
+    type DbInvBalances = DbSchema.InvBalances
+    type DbCustoPortfolios = DbSchema.CustPortfolios
 
     type Currency = string
 
@@ -119,16 +118,16 @@ module DbUtil =
 
         logger.Debug("Attempting to open the database connection...")
         // Open db
-        let db = DbSchema.GetDataContext(dbConnectionString)
+        let db = new DbSchema.GzRunTimeDb(dbConnectionString)
         //db.DataContext.Log <- System.Console.Out
         db.Connection.Open()
         db
 
     /// Start a Db Transaction
     let private startDbTransaction (db : DbContext) = 
-        let transaction = db.Connection.BeginTransaction()
-        db.DataContext.Transaction <- transaction
-        transaction
+        let newTransaction = db.Connection.BeginTransaction()
+        db.Transaction <- newTransaction
+        newTransaction
 
     /// Commit a transaction
     let private commitTransaction (transaction : Data.Common.DbTransaction) = 
