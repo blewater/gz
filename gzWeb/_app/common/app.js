@@ -133,17 +133,24 @@ var APP = (function () {
                         $location.path(constants.routes.games.path).search({});
                 });
 
+                function setDocumentTitle() {
+                    var title = constants.title;
+                    if ($route.current.$$route) {
+                        if ($route.current.$$route.title)
+                            title += " - " + $route.current.$$route.title;
+                        setRouteData($route.current.$$route);
+                    }
+                    document.title = title;
+                };
+                function restoreHeader() {
+                    angular.element('#header-nav').css('top', 0);
+                };
                 function onRouteChangeSuccess() {
                     $timeout(function () {
                         $rootScope.loading = false;
-                        var title = constants.title;
-                        if ($route.current.$$route) {
-                            if ($route.current.$$route.title)
-                                title += " - " + $route.current.$$route.title;
-                            setRouteData($route.current.$$route);
-                        }
-                        document.title = title;
-                        angular.element('#header-nav').css('top', 0);
+                        setDocumentTitle();
+                        restoreHeader();
+                        auth.readBtag();
                     });
                 }
                 onRouteChangeSuccess();
