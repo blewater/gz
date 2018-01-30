@@ -56,7 +56,6 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Program.fs" />
     <Content Include="NLog.xsd">
       <Paket>True</Paket>
     </Content>
@@ -69,6 +68,9 @@
     <None Include="Queue.fsx" />
     <None Include="awardbonus.fsx" />
     <Content Include="App.config" />
+    <Compile Include="Queue.fs" />
+    <Compile Include="BonusAwarder.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Azure.StorageTypeProvider">
@@ -80,6 +82,7 @@
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
