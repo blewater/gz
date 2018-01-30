@@ -49,15 +49,6 @@
                 //message.toastr(logoutReason, { nsClass: 'info'});
         }
 
-        function readAffiliateMarker(urlParams) {
-            var btag = urlParams.btag;
-            if (btag) {
-                var now = new Date();
-                localStorageService.set(constants.storageKeys.btagMarker, btag);
-                localStorageService.set(constants.storageKeys.btagTime, now.getTime());
-            }
-        }
-
         $scope.watchVideo = function() {
             message.open({
                 nsType: 'modal',
@@ -71,16 +62,6 @@
             modals.register(message.open);
         };
 
-        function readModals(urlParams) {
-            var btag = urlParams.btag;
-            if (btag) {
-                var now = new Date();
-                localStorageService.set(constants.storageKeys.btagMarker, btag);
-                localStorageService.set(constants.storageKeys.btagTime, now.getTime());
-            }
-        }
-
-
         function readSearchKeys() {
             var urlParams = $location.search();
             if (Object.keys(urlParams).length > 0) {
@@ -90,7 +71,6 @@
                     readResetPwdKeys(urlParams);
                     readLogoutReason(urlParams);
                     readForgotPwdEmail(urlParams);
-                    readAffiliateMarker(urlParams);
                     $location.search('');
                 }
             }

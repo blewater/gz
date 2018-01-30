@@ -326,6 +326,15 @@
         // #endregion
 
         // #region Register
+        factory.readBtag = function () {
+            var btag = $location.search().btag;
+            if (btag) {
+                var now = new Date();
+                localStorageService.set(constants.storageKeys.btagMarker, btag);
+                localStorageService.set(constants.storageKeys.btagTime, now.getTime());
+            }
+        };
+
         function clearBtags() {
             localStorageService.remove(constants.storageKeys.btagMarker);
             localStorageService.remove(constants.storageKeys.btagTime);
@@ -340,6 +349,7 @@
             clearBtags();
             return "";
         };
+
         function emRegister(parameters) {
             return emWamp.register({
                 username: parameters.username,
@@ -580,6 +590,7 @@
         // #region Init
         factory.init = function () {
             factory.readAuthData();
+            factory.readBtag();
 
             api.call(function () {
                 return api.getDeploymentInfo();
