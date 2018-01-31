@@ -12,10 +12,30 @@
 //#endif
 open System
 open FSharp.Configuration
+open NLog
+open FSharp.Data.TypeProviders
+
+let logger = LogManager.GetCurrentClassLogger()
+
+type Settings = AppSettings<"App.config">
+
 
 [<EntryPoint>]
 let main argv = 
 
-    BonusAwarder.start()    
+    let dbConnection = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
+    try
+        query {
+            for soldVintages in dbConnection.InvBalances do
+            where (soldVintages.AwardedSoldAmount = false)
+            select soldVintages.SoldAmount
+        } 
+        |> Seq.iter (fun sv -> 
+        
+            BonusAwarder.start()
+        )
+
+    with ex -> 
+        logger.Fatal(ex, "Aborting awardbonus!")
         
     0 // return an integer exit code
