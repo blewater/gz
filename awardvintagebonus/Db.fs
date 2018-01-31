@@ -1,6 +1,5 @@
 ﻿module Db
 
-open System.Data
 open FSharp.Configuration
 open FSharp.Data.TypeProviders
 open System
