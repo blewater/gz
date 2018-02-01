@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -107,6 +108,8 @@ namespace gzWeb.Tests.Controllers
         [Test]
         public async Task SaveDbVintages() {
 
+            string queueAzureConnString = ConfigurationManager.AppSettings["QueueAzureConnString"];
+            string queueName = ConfigurationManager.AppSettings["QueueName"];
             var user = manager.FindByEmail("info@nessos.gr");
 
             var vintagesDto = await SellOneVintage(user);
@@ -127,7 +130,9 @@ namespace gzWeb.Tests.Controllers
                 .SaveDbSellAllSelectedVintagesInTransRetry(
                     user.Id,
                     vintagesDto,
-                    true,
+                    false,
+                    queueAzureConnString,
+                    queueName,
                     null,
                     null,
                     null
@@ -141,44 +146,10 @@ namespace gzWeb.Tests.Controllers
             var vintagesDto = await SellOneVintage(user);
         }
 
-        //[Test]
-        //public async Task TestSellEarlyVintage()
-        //{
-        //    var user = manager.FindByEmail("kenuu90@outlook.com");
-
-        //    var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
-        //    var sellVintages = vintagesVMs
-        //        .Where(v => v.YearMonthStr == "201701" || v.YearMonthStr == "201702" || v.YearMonthStr == "201703" ||
-        //                    v.YearMonthStr == "201704")
-        //        .ToList();
-
-        //    foreach (var vintageViewModel in sellVintages) {
-        //        vintageViewModel.Locked = true;
-        //        vintageViewModel.Selected = true;
-        //    }
-
-        //    ICollection<VintageDto> vintagesDto = sellVintages.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
-        //        .ToList();
-
-        //    vintagesDto =
-        //        invBalanceRepo
-        //            .SaveDbSellAllSelectedVintagesInTransRetry(
-        //                user.Id,
-        //                vintagesDto,
-        //                false,
-        //                null,
-        //                null,
-        //                null
-        //            );
-
-        //    foreach (var dto in vintagesDto) {
-        //        Assert.IsTrue(dto.SellingValue > 0);
-        //        Assert.IsTrue(dto.SoldFees > 0);
-        //    }
-        //}
-
         private async Task<ICollection<VintageDto>> SellOneVintage(ApplicationUser user) {
 
+            string queueAzureConnString = ConfigurationManager.AppSettings["QueueAzureConnString"];
+            string queueName = ConfigurationManager.AppSettings["QueueName"];
             var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
 
             // Mark for selling earliest even if sold already or is locked
@@ -200,7 +171,10 @@ namespace gzWeb.Tests.Controllers
                     .SaveDbSellAllSelectedVintagesInTransRetry(
                         user.Id,
                         vintagesDto,
-                        true,
+                        false,
+                        queueAzureConnString,
+                        queueName,
+                        null,
                         null,
                         null,
                         null

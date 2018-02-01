@@ -17,6 +17,9 @@ using MailKit.Security;
 using MimeKit;
 using NLog;
 using Z.EntityFramework.Plus;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Newtonsoft.Json.Linq;
 
 namespace gzDAL.Repos
 {
@@ -389,7 +392,8 @@ namespace gzDAL.Repos
             foreach (var dto in vintagesList)
             {
                 var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);
-                dto.Locked = firstOfMonthUnlocked > DateTime.UtcNow;
+                // Unlock at Utc noon of 1st month day
+                dto.Locked = firstOfMonthUnlocked >= DateTime.UtcNow.AddHours(12);
             }
 
             return vintagesList;
@@ -813,10 +817,21 @@ namespace gzDAL.Repos
         /// <param name="gmailPwd"></param>
         /// <param name="sellOnThisYearMonth"></param>
         /// <param name="sendEmail2Admin"></param>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <returns></returns>
-        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
+        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(
+            int customerId, 
+            ICollection<VintageDto> vintages,
+            bool sendEmail2Admin,
+            string queueAzureConnString,
+            string queueName,
+            string emailAdmins, 
+            string gmailUser, 
+            string gmailPwd, 
+            string sellOnThisYearMonth = "")
         {
 
             // Update market price on it.. they may have left the browser window open 
@@ -843,7 +858,7 @@ namespace gzDAL.Repos
 
                     //https://stackoverflow.com/questions/29383116/asp-net-mvc-5-asynchronous-action-method
                     Task.Run(() => 
-                        EmailSendVintageWithdrawalReceipt(user, customerId, vintages, emailAdmins, gmailUser, gmailPwd)
+                        EmailSendVintageWithdrawalReceipt(user, customerId, vintages, queueAzureConnString, queueName, emailAdmins, gmailUser, gmailPwd)
                     );
                 }
             }
@@ -905,10 +920,20 @@ namespace gzDAL.Repos
         /// <param name="user"></param>
         /// <param name="userId"></param>
         /// <param name="vintages"></param>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <param name="gmailPwd"></param>
-        private static void EmailSendVintageWithdrawalReceipt(EmailVintageLiquidationUser user, int userId, ICollection<VintageDto> vintages, string emailAdmins, string gmailUser, string gmailPwd)
+        private static void EmailSendVintageWithdrawalReceipt(
+            EmailVintageLiquidationUser user, 
+            int userId, 
+            ICollection<VintageDto> vintages, 
+            string queueAzureConnString,
+            string queueName,
+            string emailAdmins, 
+            string gmailUser, 
+            string gmailPwd)
         {
             try
             {
@@ -916,6 +941,14 @@ namespace gzDAL.Repos
                     user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue);
                     user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
                 }
+                // Parse the connection string and return a reference to the storage account.
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(queueAzureConnString);
+                CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+                CloudQueue queue = queueClient.GetQueueReference(queueName);
+                JArray invBalanceIdsArray = new JArray();
+                CloudQueueMessage qmsg = new CloudQueueMessage("");
+
+                // Async fire and forget
                 var _ = EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)
                     .ConfigureAwait(false);
             }
