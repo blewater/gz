@@ -448,17 +448,15 @@ namespace gzDAL.Repos
             out VintageSharesDto vintageSharesDto,
             out FeesDto fees)
         {
-
+            var presentMonth = DateTime.UtcNow.ToStringYearMonth();
             // Sales after the completion of one month only, have earned no interest
-            var vintageMonthToBeSold = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageToBeLiquidated.YearMonthStr);
-            var salesMonthDiff = DbExpressions.MonthDiff(DateTime.UtcNow, vintageMonthToBeSold);
-            if (salesMonthDiff <= 1) {
-                vintageToBeLiquidated.MarketPrice = vintageToBeLiquidated.InvestmentAmount;
+            var sellingInFollowingMonth = DbExpressions.AddMonth(vintageToBeLiquidated.YearMonthStr);
+            if (sellingInFollowingMonth == presentMonth) {
                 vintageSharesDto = new VintageSharesDto() {
                     HighRiskShares = 0m,
                     MediumRiskShares = 0m,
                     LowRiskShares = 0m,
-                    PresentMarketPrice = vintageToBeLiquidated.MarketPrice
+                    PresentMarketPrice = vintageToBeLiquidated.InvestmentAmount
                 };
             }
             // Sales post 2 or more months
