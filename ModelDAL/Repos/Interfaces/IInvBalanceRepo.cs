@@ -19,7 +19,16 @@ namespace gzDAL.Repos.Interfaces {
         SoldVintagesAmounts GetSoldVintagesAmounts(int userId);
         ICollection<VintageDto> GetUserVintagesSellingValueOn(int customerId, List<VintageDto> customerVintages,
             string sellOnThisYearMonth);
-        ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admins, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "");
+        ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(
+            int customerId, 
+            ICollection<VintageDto> vintages, 
+            bool sendEmail2Admins, 
+            string queueAzureConnString,
+            string queueName,
+            string emailAdmins, 
+            string gmailUser, 
+            string gmailPwd, 
+            string sellOnThisYearMonth = "");
         void UpsInvBalance(
             int customerId,
             RiskToleranceEnum userPortfolioRiskSelection,

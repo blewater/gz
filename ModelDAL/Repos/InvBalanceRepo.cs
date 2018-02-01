@@ -17,6 +17,10 @@ using MailKit.Security;
 using MimeKit;
 using NLog;
 using Z.EntityFramework.Plus;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace gzDAL.Repos
 {
@@ -389,7 +393,8 @@ namespace gzDAL.Repos
             foreach (var dto in vintagesList)
             {
                 var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);
-                dto.Locked = firstOfMonthUnlocked > DateTime.UtcNow;
+                // Unlock at Utc noon of 1st month day
+                dto.Locked = firstOfMonthUnlocked >= DateTime.UtcNow.AddHours(12);
             }
 
             return vintagesList;
@@ -444,17 +449,15 @@ namespace gzDAL.Repos
             out VintageSharesDto vintageSharesDto,
             out FeesDto fees)
         {
-
+            var presentMonth = DateTime.UtcNow.ToStringYearMonth();
             // Sales after the completion of one month only, have earned no interest
-            var vintageMonthToBeSold = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageToBeLiquidated.YearMonthStr);
-            var salesMonthDiff = DbExpressions.MonthDiff(DateTime.UtcNow, vintageMonthToBeSold);
-            if (salesMonthDiff <= 1) {
-                vintageToBeLiquidated.MarketPrice = vintageToBeLiquidated.InvestmentAmount;
+            var sellingInFollowingMonth = DbExpressions.AddMonth(vintageToBeLiquidated.YearMonthStr);
+            if (sellingInFollowingMonth == presentMonth) {
                 vintageSharesDto = new VintageSharesDto() {
                     HighRiskShares = 0m,
                     MediumRiskShares = 0m,
                     LowRiskShares = 0m,
-                    PresentMarketPrice = vintageToBeLiquidated.MarketPrice
+                    PresentMarketPrice = vintageToBeLiquidated.MarketPrice = vintageToBeLiquidated.InvestmentAmount
                 };
             }
             // Sales post 2 or more months
@@ -813,10 +816,21 @@ namespace gzDAL.Repos
         /// <param name="gmailPwd"></param>
         /// <param name="sellOnThisYearMonth"></param>
         /// <param name="sendEmail2Admin"></param>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <returns></returns>
-        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
+        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(
+            int customerId, 
+            ICollection<VintageDto> vintages,
+            bool sendEmail2Admin,
+            string queueAzureConnString,
+            string queueName,
+            string emailAdmins, 
+            string gmailUser, 
+            string gmailPwd, 
+            string sellOnThisYearMonth = "")
         {
 
             // Update market price on it.. they may have left the browser window open 
@@ -843,15 +857,13 @@ namespace gzDAL.Repos
 
                     //https://stackoverflow.com/questions/29383116/asp-net-mvc-5-asynchronous-action-method
                     Task.Run(() => 
-                        EmailSendVintageWithdrawalReceipt(user, customerId, vintages, emailAdmins, gmailUser, gmailPwd)
+                        SendVintageWithdrawalReq(user, customerId, vintages, queueAzureConnString, queueName, emailAdmins, gmailUser, gmailPwd)
                     );
                 }
             }
 
             return vintages;
         }
-
-        #region EmailVintageProceeds
 
         /// <summary>
         /// 
@@ -860,12 +872,12 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        private EmailVintageLiquidationUser GetEmailVintageLiquidationUser(int userId)
+        private VintageLiquidationUser GetEmailVintageLiquidationUser(int userId)
         {
             var user =
                 db.Users
                     .Where(u => u.Id == userId)
-                    .Select(u => new EmailVintageLiquidationUser()
+                    .Select(u => new VintageLiquidationUser()
                     {
                         UserId = userId,
                         GmUserId = u.GmCustomerId.Value,
@@ -884,7 +896,7 @@ namespace gzDAL.Repos
         /// Vintage Liquidation User for Email Type
         /// 
         /// </summary>
-        private class EmailVintageLiquidationUser
+        private class VintageLiquidationUser
         {
             public int UserId { get; set; }
             public int GmUserId { get; set; }
@@ -905,24 +917,133 @@ namespace gzDAL.Repos
         /// <param name="user"></param>
         /// <param name="userId"></param>
         /// <param name="vintages"></param>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <param name="gmailPwd"></param>
-        private static void EmailSendVintageWithdrawalReceipt(EmailVintageLiquidationUser user, int userId, ICollection<VintageDto> vintages, string emailAdmins, string gmailUser, string gmailPwd)
+        private static void SendVintageWithdrawalReq(
+            VintageLiquidationUser user, 
+            int userId, 
+            ICollection<VintageDto> vintages, 
+            string queueAzureConnString,
+            string queueName,
+            string emailAdmins, 
+            string gmailUser, 
+            string gmailPwd)
         {
+            Logger logger = LogManager.GetCurrentClassLogger();
+
+            var soldVintages = vintages.Where(v => v.Selected).ToList();
+            foreach (var vintageDto in soldVintages)
+            {
+                user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue);
+                user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
+            }
+
+            SendQueueBonusReqMsg(user, queueAzureConnString, queueName, emailAdmins, soldVintages, logger);
+
+            SendEmailBonusReq(user, emailAdmins, gmailUser, gmailPwd, logger);
+        }
+
+#region Queue
+        private static void SendQueueBonusReqMsg(VintageLiquidationUser user, string queueAzureConnString, string queueName,
+            string emailAdmins, List<VintageDto> soldVintages, Logger logger)
+        {
+
             try
             {
-                foreach (var vintageDto in vintages.Where(v=>v.Selected)) {
-                    user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue);
-                    user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
-                }
-                var _ = EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)
-                    .ConfigureAwait(false);
+
+                // Parse the connection string and return a reference to the queue.
+                var queue = GetQueue(queueAzureConnString, queueName);
+                var bonusReq = CreateBonusReq(user, emailAdmins, soldVintages);
+                var bonusReqJson = JsonConvert.SerializeObject(bonusReq);
+                // Async fire and forget
+                var _ =
+                    AddQueueMsgAsync(queue, bonusReqJson)
+                        .ConfigureAwait(false);
+
+            }
+            catch (Exception ex)
+            {
+
+                logger.Error(ex, "Exception while sendina a queue message");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Init az queue
+        /// 
+        /// </summary>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
+        private static CloudQueue GetQueue(string queueAzureConnString, string queueName)
+        {
+
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(queueAzureConnString);
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+            return queueClient.GetQueueReference(queueName);
+        }
+
+        /// <summary>
+        /// 
+        /// Create & init the bonus req object
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="soldVintageDtos"></param>
+        /// <returns></returns>
+        private static BonusReq CreateBonusReq(VintageLiquidationUser user, string emailAdmins, ICollection<VintageDto> soldVintageDtos)
+        {
+
+            var adminsArr = emailAdmins.Split(';');
+            var newBonusReq = new BonusReq()
+            {
+                AdminEmailRecipients = adminsArr,
+                Amount = user.NetProceeds,
+                GmUserId = user.GmUserId,
+                InvBalIds = soldVintageDtos.Select(v => v.InvBalanceId).ToArray(),
+                UserEmail = user.Email,
+                UserFirstName = user.FirstName
+            };
+            return newBonusReq;
+        }
+
+        /// <summary>
+        /// 
+        /// Create and send a queue json string (msg)
+        /// 
+        /// </summary>
+        /// <param name="queue"></param>
+        /// <param name="bonusJson"></param>
+        /// <returns></returns>
+        private static async Task AddQueueMsgAsync(CloudQueue queue, string bonusJson)
+        {
+            CloudQueueMessage qmsg = new CloudQueueMessage(bonusJson);
+            await queue.AddMessageAsync(qmsg);
+        }
+
+        #endregion Queue
+
+        #region EmailVintageProceeds
+
+        private static void SendEmailBonusReq(VintageLiquidationUser user, string emailAdmins, string gmailUser,
+            string gmailPwd, Logger logger)
+        {
+
+            try
+            {
+                // Async fire and forget
+                var _ =
+                    EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)
+                        .ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                Logger logger = LogManager.GetCurrentClassLogger();
-                logger.Error(e, "Exception in sendVintageWithdrawalReceiptAsync");
+                logger.Error(e, "Exception in SendVintageWithdrawalReq");
             }
         }
 
@@ -931,14 +1052,14 @@ namespace gzDAL.Repos
         /// Set up a mime message for sending to admins.
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <param name="gmailPwd"></param>
         /// <returns></returns>
-        private static async Task EmailSendMimeVintagesProceedsAsync(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins, string gmailUser, string gmailPwd)
+        private static async Task EmailSendMimeVintagesProceedsAsync(VintageLiquidationUser vintageLiquidationUser, string emailAdmins, string gmailUser, string gmailPwd)
         {
-            var message = GetMimeMessage(emailVintageLiquidationUser, emailAdmins);
+            var message = GetMimeMessage(vintageLiquidationUser, emailAdmins);
 
             await SendEmailAsync(gmailUser, gmailPwd, message).ConfigureAwait(false);
         }
@@ -948,17 +1069,17 @@ namespace gzDAL.Repos
         /// Create a mime message for vintage admins
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="builder"></param>
         /// <returns></returns>
-        private static MimeMessage GetMimeMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+        private static MimeMessage GetMimeMessage(VintageLiquidationUser vintageLiquidationUser, string emailAdmins) {
 
             MimeMessage message = null;
             try {
-                message = GetMessage(emailVintageLiquidationUser, emailAdmins);
+                message = GetMessage(vintageLiquidationUser, emailAdmins);
 
-                message.Body = GetMessageBody(emailVintageLiquidationUser).ToMessageBody();
+                message.Body = GetMessageBody(vintageLiquidationUser).ToMessageBody();
             }
             catch (Exception e) {
                 Logger logger = LogManager.GetCurrentClassLogger();
@@ -973,10 +1094,10 @@ namespace gzDAL.Repos
         /// Create the mime message To, Subject
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="emailAdmins"></param>
         /// <returns></returns>
-        private static MimeMessage GetMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+        private static MimeMessage GetMessage(VintageLiquidationUser vintageLiquidationUser, string emailAdmins) {
 
             MimeMessage message = null;
             try
@@ -987,7 +1108,7 @@ namespace gzDAL.Repos
                 message.To.Add(new MailboxAddress(admins[0]));
                 message.Cc.Add(new MailboxAddress(admins[1]));
                 message.Subject =
-                    $@"User id {emailVintageLiquidationUser.GmUserId} withdrew vintage(s) on {
+                    $@"User id {vintageLiquidationUser.GmUserId} withdrew vintage(s) on {
                             DateTime.UtcNow.ToString("ddd d MMM yyyy")
                         }";
             }
@@ -1004,23 +1125,18 @@ namespace gzDAL.Repos
         /// Create the message text body.
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="builder"></param>
-        private static BodyBuilder GetMessageBody(EmailVintageLiquidationUser emailVintageLiquidationUser) {
+        private static BodyBuilder GetMessageBody(VintageLiquidationUser vintageLiquidationUser) {
 
             BodyBuilder builder = null;
             try {
                 builder = new BodyBuilder {
-                    TextBody = $@"UserName {emailVintageLiquidationUser.UserName} 
-with email {emailVintageLiquidationUser.Email} withdrew vintage(s)
-Please go to
-Gammatrix Banking...Vendors...System....Manual deposit
+                    TextBody = $@"UserName {vintageLiquidationUser.UserName} 
+with email {vintageLiquidationUser.Email} withdrew vintage(s)
 
-Select & Enter
-
-CasinoWallet - Bonus
-To userID {emailVintageLiquidationUser.GmUserId}
-Amount {emailVintageLiquidationUser.NetProceeds} {emailVintageLiquidationUser.Currency}
+To userID {vintageLiquidationUser.GmUserId}
+Amount {vintageLiquidationUser.NetProceeds} {vintageLiquidationUser.Currency}
 
 Thanks
 Your friendly neighborhood admin"
