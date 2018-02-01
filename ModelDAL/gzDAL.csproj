@@ -175,6 +175,7 @@
     <Compile Include="DTO\PortfolioReturnsDTO.cs" />
     <Compile Include="DTO\PortfolioDto.cs" />
     <Compile Include="DTO\FeesDto.cs" />
+    <Compile Include="DTO\BonusReqDTO.cs" />
     <Compile Include="DTO\VintageDTO.cs" />
     <Compile Include="DTO\VintageSharesDto.cs" />
     <Compile Include="DTO\WithdrawEligibilityDTO.cs" />

@@ -231,6 +231,8 @@ namespace gzWeb.Controllers {
                 .Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
                 .ToList();
 
+            var queueAzureConnString = ConfigurationManager.AppSettings["QueueAzureConnString"];
+            var queueName = ConfigurationManager.AppSettings["QueueName"];
             var emailAdmins = ConfigurationManager.AppSettings["WithdrawalBonunAdmins"];
             var gmailUser = ConfigurationManager.AppSettings["gmailHostMaster"];
             var gmailPwd = ConfigurationManager.AppSettings["gmailHostPwd"];
@@ -242,6 +244,8 @@ namespace gzWeb.Controllers {
                             userId,
                             vintagesDtos,
                             true,
+                            queueAzureConnString,
+                            queueName,
                             emailAdmins,
                             gmailUser,
                             gmailPwd
