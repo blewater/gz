@@ -1023,7 +1023,10 @@ namespace gzDAL.Repos
         private static async Task AddQueueMsgAsync(CloudQueue queue, string bonusJson)
         {
             CloudQueueMessage qmsg = new CloudQueueMessage(bonusJson);
-            await queue.AddMessageAsync(qmsg);
+            await 
+                queue
+                .AddMessageAsync(qmsg)
+                .ConfigureAwait(false);
         }
 
         #endregion Queue
