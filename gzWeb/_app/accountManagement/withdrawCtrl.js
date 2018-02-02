@@ -79,15 +79,17 @@
                     appInsightsTrackEvent('TRANSACTION SUCCESS');
                     logSuccessfulTransaction();
                     $scope.nsOk(true);
+                    init();
                 } else if (transactionResult.status === "incomplete") {
                     appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                    init();
                 } else if (transactionResult.status === "pending") {
                     appInsightsTrackEvent('TRANSACTION PENDING');
                     $scope.setState(accountManagement.states.pendingWithdrawals);
                 } else if (transactionResult.status === "error") {
                     appInsightsTrackEvent('TRANSACTION ERROR');
+                    init();
                 }
-                init();
             }, function (error) {
                 $scope.waiting = false;
                 message.autoCloseError(error.desc);
