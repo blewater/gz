@@ -186,7 +186,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Monthly
         "#txtReceivers" << ScheduledRptEmailRecipient
         // scheduled time
-        "#txtSentTime" << "0326"
+        "#txtSentTime" << "0530"
         click "#btnSave"
         browser.Close()
         switchToWindow baseWindow
