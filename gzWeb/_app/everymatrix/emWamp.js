@@ -579,7 +579,7 @@
             // This event is fired when the deposit transaction status is changed in 3rd-party site.
             //
             $wamp.subscribe("/deposit/statusChanged", function (args, kwargs, details) {
-                $rootScope.$broadcast(constants.events.DEPOSIT_STATUS_CHANGED, kwargs);
+                $rootScope.$broadcast(constants.events.DEPOSIT_STATUS_CHANGED, args);
 
                 $log.debug(
                     "DEPOSIT_STATUS_CHANGED => args: " + angular.toJson(args) +
@@ -588,10 +588,10 @@
             });
 
             //
-            // This event is fired when the deposit transaction status is changed in 3rd-party site.
+            // This event is fired when the withdraw transaction status is changed in 3rd-party site.
             //
             $wamp.subscribe("/withdraw/statusChanged", function (args, kwargs, details) {
-                $rootScope.$broadcast(constants.events.WITHDRAW_STATUS_CHANGED, kwargs);
+                $rootScope.$broadcast(constants.events.WITHDRAW_STATUS_CHANGED, args);
 
                 $log.debug(
                     "WITHDRAW_STATUS_CHANGED => args: " + angular.toJson(args) +
