@@ -12,7 +12,8 @@
                 });
             }
             if ($scope.paymentMethodCfg.fields.payCardID.registrationFields) {
-                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.PaymentParameterIban.regularExpression;
+                //$scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.PaymentParameterIban.regularExpression;
+                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.PaymentParameterAccountNumber.regularExpression;
             }
 
             if ($scope.existingPayCards.length === 1)
@@ -31,7 +32,8 @@
         };
         $scope.getRegistrationFields = function () {
             return {
-                PaymentParameterIban: $scope.model.iban
+                //PaymentParameterIban: $scope.model.iban
+                PaymentParameterAccountNumber: $scope.model.iban
             };
         };
 
