@@ -32,6 +32,9 @@
             };
         };
 
+        if ($scope.selected.group.length === 1)
+            $scope.selected.method = $scope.selected.group[0];
+
         $scope._init();
     }
 })();
