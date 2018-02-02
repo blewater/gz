@@ -1004,6 +1004,7 @@ namespace gzDAL.Repos
             {
                 AdminEmailRecipients = adminsArr,
                 Amount = user.NetProceeds,
+                Fees = user.Fees,
                 GmUserId = user.GmUserId,
                 InvBalIds = soldVintageDtos.Select(v => v.InvBalanceId).ToArray(),
                 UserEmail = user.Email,
