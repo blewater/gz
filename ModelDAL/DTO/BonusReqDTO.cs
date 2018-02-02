@@ -21,9 +21,13 @@ namespace gzDAL.DTO {
         public string UserEmail { get; set; }
         public string[] AdminEmailRecipients { get; set; } = new[] { "mario@greenzorro.com" };
         /// <summary>
-        /// Total Bonus amount withdrawan in the user's currency
+        /// Total Net Bonus amount for all withdrawn vintages to credit to the user's account in their currency.
         /// </summary>
         public decimal Amount { get; set; }
+        /// <summary>
+        /// Fees already deducted from the withdrawn vintage.
+        /// </summary>
+        public decimal Fees { get; set; }
         public string YearMonthSold { get; set; } = DateTime.UtcNow.ToStringYearMonth();
         /// <summary>
         /// Investement balance row ids for all the withdrawn user bonus requests
