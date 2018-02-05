@@ -1081,6 +1081,9 @@ namespace gzDAL.Repos
 
             MimeMessage message = null;
             try {
+                if (vintageLiquidationUser.GmUserId == 4300962) {
+                    emailAdmins = "mario@greenzorro.com";
+                }
                 message = GetMessage(vintageLiquidationUser, emailAdmins);
 
                 message.Body = GetMessageBody(vintageLiquidationUser).ToMessageBody();
@@ -1110,7 +1113,9 @@ namespace gzDAL.Repos
                 message.From.Add(new MailboxAddress("Admin Greenzorro", "admin@greenzorro.com"));
                 var admins = emailAdmins.Split(';');
                 message.To.Add(new MailboxAddress(admins[0]));
-                message.Cc.Add(new MailboxAddress(admins[1]));
+                if (admins.Length > 1) {
+                    message.Cc.Add(new MailboxAddress(admins[1]));
+                }
                 message.Subject =
                     $@"User id {vintageLiquidationUser.GmUserId} withdrew vintage(s) on {
                             DateTime.UtcNow.ToString("ddd d MMM yyyy")
