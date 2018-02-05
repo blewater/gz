@@ -428,7 +428,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
     /// UI Web Automate with Everymatrix reporting site and download reports    
     let uiAutomationDownloading 
-                (downloadCustomRpt : bool)
+                (customEmailRptNotFound : bool)
                 (dayToProcess : DateTime)
                 (reportsArgs : EverymatriReportsArgsType)
                 (balanceFilesArg : BalanceFilesUsageType) =
@@ -466,20 +466,36 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
-        // Custom
-        let downloadCustomRpt() = 
-            if not <| monthlyCustomReportExists() then
-                removeScheduledEmailCustomReport()
-                createNewCustomMonthRpt()
-        
-            if downloadCustomRpt then
-                uiAutomateDownloadedCustomRpt dayToProcess
-                moveDownloadedRptToInRptFolder 
-                    rptFilesArgs.DownloadedCustomFilter 
-                    rptFilesArgs.CustomRptFilenamePrefix
-                    dayToProcess
 
-        retry NUM_DOWNLOAD_ATTEMPTS downloadCustomRpt
+        // Create Custom Scheduled Report
+        if not <| monthlyCustomReportExists() then
+            removeScheduledEmailCustomReport()
+            createNewCustomMonthRpt()
+        
+        // Custom download with retry
+        let rec retryCustomRpt times : unit = 
+            if times > 0 then
+                try
+                    if times < NUM_DOWNLOAD_ATTEMPTS then
+                        logger.Info (sprintf "** downloading the Custom Report: left remaining efforts: %d" times)
+
+                    uiAutomateDownloadedCustomRpt dayToProcess
+                    moveDownloadedRptToInRptFolder 
+                        rptFilesArgs.DownloadedCustomFilter 
+                        rptFilesArgs.CustomRptFilenamePrefix
+                        dayToProcess
+
+                with ex ->
+                    logger.Warn(ex, "Custom report downloading exception")
+                    System.Threading.Thread.Sleep(WaitBefDownloadRetryinMillis);
+                    quit()
+                    do initNewBrowserSession()
+                    retryCustomRpt (times - 1)
+
+            elif customEmailRptNotFound then
+                failwithf "Quiting after failed to download the emailed custom report and exhausting %d number of custom report downloading tries." NUM_DOWNLOAD_ATTEMPTS
+
+        retryCustomRpt NUM_DOWNLOAD_ATTEMPTS
 
         // Deposits
         let downloadDeposits() =
@@ -531,6 +547,6 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
     member this.DownloadReports
             (balanceFilesArg : BalanceFilesUsageType)
-            (downloadCustomRpt : bool) : unit =
+            (customEmailRptNotFound : bool) : unit =
 
-        uiAutomationDownloading downloadCustomRpt dayToProcess reportsArgs balanceFilesArg
+        uiAutomationDownloading customEmailRptNotFound dayToProcess reportsArgs balanceFilesArg
