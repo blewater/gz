@@ -240,7 +240,7 @@ namespace gzDAL.Repos
                 (
                     from p in db.Portfolios
                         join b in db.InvBalances on p.Id equals b.PortfolioId
-                        where b.CustomerId == 8
+                        where b.CustomerId == userId
                         && !b.Sold
                     group b by p
                     into g
