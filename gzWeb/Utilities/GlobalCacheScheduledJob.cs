@@ -66,13 +66,19 @@ namespace gzWeb.Utilities  {
                 var db = new ApplicationDbContext();
 
                 // Cache configuration object
-                await new ConfRepo(db).GetConfRow();
+                var _ = new ConfRepo(db).GetConfRow().ConfigureAwait(false);
 
                 //-------- Cache Fund prices for 2 hours
-                await db.PortfolioPrices
-                    .Where(p=>p.YearMonthDay == db.PortfolioPrices.Select(pm=>pm.YearMonthDay).Max())
-                    .Select(p => new { p.PortfolioLowPrice, p.PortfolioMediumPrice, p.PortfolioHighPrice, p.YearMonthDay })
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2));
+                var __ = db.PortfolioPrices
+                    .Where(p => p.YearMonthDay == db.PortfolioPrices.Select(pm => pm.YearMonthDay).Max())
+                    .Select(p => new {
+                        p.PortfolioLowPrice,
+                        p.PortfolioMediumPrice,
+                        p.PortfolioHighPrice,
+                        p.YearMonthDay
+                    })
+                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
+                    .ConfigureAwait(false);
             }
             catch (Exception ex) {
                 _logger.Error(ex, "CacheGlobalData()");

@@ -36,9 +36,9 @@ namespace gzWeb.Utilities {
 
                 var summaryRes = await invBalanceRepo.GetSummaryDataAsync(userId);
 
-                invBalanceRepo.GetCustomerVintagesSellingValueNow(summaryRes.Item2.Id, summaryRes.Item1.Vintages.ToList());
+                invBalanceRepo.GetCustomerVintagesSellingValueNow(userId, summaryRes.Item1.Vintages.ToList());
 
-                await custPortfolioRepo.GetUserPlansAsync(userId);
+                var _ = custPortfolioRepo.GetUserPlansAsync(userId).ConfigureAwait(false);
 
             }
             catch (Exception ex) {
