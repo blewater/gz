@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
-using System.IO;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 using gzDAL.Conf;
@@ -20,7 +18,6 @@ using Z.EntityFramework.Plus;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace gzDAL.Repos
 {
@@ -440,12 +437,14 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintageToBeLiquidated"></param>
+        /// <param name="portfolioPrices"></param>
         /// <param name="vintageSharesDto"></param>
         /// <param name="fees"></param>
         /// <returns></returns>
         private decimal GetVintageValuePricedNow(
             int customerId,
             VintageDto vintageToBeLiquidated,
+            PortfolioPricesDto portfolioPrices,
             out VintageSharesDto vintageSharesDto,
             out FeesDto fees)
         {
@@ -461,13 +460,13 @@ namespace gzDAL.Repos
                 };
             }
             // Sales post 2 or more months
-            else
-            {
+            else {
 
                 vintageSharesDto =
                     userPortfolioSharesRepo.GetVintageSharesMarketValue(
                         customerId,
-                        vintageToBeLiquidated.YearMonthStr);
+                        vintageToBeLiquidated.YearMonthStr, 
+                        portfolioPrices);
 
             }
 
@@ -555,6 +554,9 @@ namespace gzDAL.Repos
         {
 
             var numOfVintagesSold = 0;
+
+            var portfolioPrices = userPortfolioSharesRepo.GetCachedLatestPortfolioSharePrice();
+
             foreach (var vintageDto in vintages)
             {
                 if (vintageDto.Selected)
@@ -565,6 +567,7 @@ namespace gzDAL.Repos
                         GetVintageValuePricedNow(
                             customerId,
                             vintageDto,
+                            portfolioPrices,
                             out vintageShares,
                             out fees);
 
@@ -635,6 +638,8 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public VintagesWithSellingValues GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
+            var portfolioPrices = userPortfolioSharesRepo.GetCachedLatestPortfolioSharePrice();
+
             foreach (var dto in customerVintages)
             {
                 if (!dto.Sold && dto.InvestmentAmount != 0 && !dto.Locked)
@@ -648,6 +653,7 @@ namespace gzDAL.Repos
                         GetVintageValuePricedNow(
                             customerId,
                             dto,
+                            portfolioPrices,
                             out vintageShares,
                             out fees);
 
