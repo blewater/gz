@@ -40,7 +40,7 @@ namespace gzWeb.Utilities  {
 
                 _logger.Trace("Execute() of GlobalCacheScheduledJob.");
 
-                CacheGlobalData().Wait();
+                CacheGlobalData();
             }
         }
 
@@ -58,7 +58,7 @@ namespace gzWeb.Utilities  {
         /// Cache global database data applicable to all customers
         /// 
         /// </summary>
-        private async Task CacheGlobalData() {
+        private void CacheGlobalData() {
 
             try {
 
