@@ -63,5 +63,21 @@
                 <gz-field-ok gz-when="form.amount.$valid"></gz-field-ok>
             </div>
         </div>
+
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" placeholder="bonus code" name="bonusCode" class="form-control" autocomplete="off" ng-model="model.bonusCode"
+                               ng-class="{ 'empty': !model.bonusCode, 'danger' : form.bonusCode.$invalid && !form.bonusCode.$pristine }"
+                               ng-focus="bonusCodeFocused = true;" ng-blur="bonusCodeFocused = false;">
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="help-block" ng-class="{'show': !form.bonusCode.$pristine && form.bonusCode.$invalid}">Bonus code is invalid</div>
+                    </div>
+                </div>
+                <gz-field-ok gz-when="model.bonusCode.length > 0"></gz-field-ok>
+            </div>
+        </div>
     </div>
 </div>

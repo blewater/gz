@@ -103,10 +103,11 @@
                         $location.path(constants.routes.games.path).search({});
                 } else if (transactionResult.status === "incomplete") {
                     appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                    init();
                 } else if (transactionResult.status === "error") {
                     appInsightsTrackEvent('TRANSACTION ERROR');
+                    init();
                 }
-                init();
             }, function (error) {
                 $scope.waiting = false;
                 message.autoCloseError(error.desc);
