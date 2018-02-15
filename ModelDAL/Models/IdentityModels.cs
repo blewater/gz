@@ -165,6 +165,7 @@ namespace gzDAL.Models
         public DbSet<GzTrx> GzTrxs { get; set; }
         public DbSet<GzTrxType> GzTrxTypes { get; set; }
         public DbSet<InvBalance> InvBalances { get; set; }
+        public DbSet<InvAdj> InvAdjustments { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
