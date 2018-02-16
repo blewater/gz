@@ -270,6 +270,18 @@ module InvBalance =
             }
         invBalance
 
+    /// get the invAdj row for month parameter
+    let private getInvAdj (dbUserMonth : DbUserMonth) : DbInvAdjs = 
+        query {
+            for row in dbUserMonth.Db.InvAdjs do
+            where (
+                row.YearMonth = dbUserMonth.Month
+                && row.UserId = dbUserMonth.UserId
+            )
+            select row
+            exactlyOneOrDefault
+        }
+
     /// update an invBalance row
     let private updDbInvBalance(input : InvBalanceInput)(invBalanceRow : DbInvBalances) : unit =
 
@@ -364,6 +376,28 @@ module InvBalance =
             { TotalCashInvestments = invB.TotalCashInvestments; TotalCashInvInHold = invB.TotalCashInvInHold; TotalSoldVintagesSold = invB.TotalSoldVintagesValue }
         else
             { TotalCashInvestments = 0M; TotalCashInvInHold = 0M; TotalSoldVintagesSold = 0M }
+
+    /// adjust inv balance if a monthly adjustment exists
+    let adjustInvBalanceTotals(dbUserMonth : DbUserMonth)(userFinance : UserFinance) : UserFinance =
+        let invAdjustment = getInvAdj dbUserMonth
+
+        if isNull invAdjustment then
+            userFinance
+        else
+            match enum invAdjustment.AmountType with
+            | InvAdjustmentType.Deposit ->
+                { 
+                    userFinance with 
+                        Deposits = userFinance.Deposits + invAdjustment.Amount; 
+                        GainLoss = userFinance.GainLoss - invAdjustment.Amount 
+                }
+            | InvAdjustmentType.Withdrawal ->
+                {
+                    userFinance with 
+                        Withdrawals = userFinance.Withdrawals + invAdjustment.Amount; 
+                        GainLoss = userFinance.GainLoss + invAdjustment.Amount 
+                }
+            | _ -> userFinance
 
     /// get any sold vintages for this user during the month we're presently clearing
     (* Note this is the only table that is affected by sold vintages and available to read them back and deduct them from user shares *)
@@ -538,6 +572,7 @@ module UserTrx =
                     let userFinance = 
                         trxRow 
                         |> getUserFinance
+                        |> adjustInvBalanceTotals dbUserMonth
                     
                     let invBalanceInput = 
                         (userPortfolioInput, userFinance) 

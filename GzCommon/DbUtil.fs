@@ -13,7 +13,7 @@ module DbUtil =
     let logger = LogManager.GetCurrentClassLogger()
 
 //-- Db Types / entities
-
+//  sqlmetal /conn:"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=gzDbDev;Integrated Security=True" /dbml:GzCommon\gzdbdev.dbml
     type DbSchema = DbmlFile<"gzdbdev.dbml", ContextTypeName="GzRunTimeDb">
 
     type DbContext = DbSchema.GzRunTimeDb
@@ -26,6 +26,7 @@ module DbUtil =
     type DbVintageShares = DbSchema.VintageShares
     type DbInvBalances = DbSchema.InvBalances
     type DbCustoPortfolios = DbSchema.CustPortfolios
+    type DbInvAdjs = DbSchema.InvAdjs
 
     type Currency = string
 
@@ -33,6 +34,10 @@ module DbUtil =
         Amount : decimal;
         Currency : Currency;
     }
+
+    type InvAdjustmentType =
+        | Deposit = 1
+        | Withdrawal = 2
 
     /// PlayerRevRpt update status
     type GmRptProcessStatus =

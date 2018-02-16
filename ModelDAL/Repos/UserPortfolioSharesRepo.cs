@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Data.Entity.Migrations;
-using System.Diagnostics;
-using System.Runtime.Caching;
-using System.Threading.Tasks;
 using gzDAL.DTO;
 using gzDAL.ModelUtil;
 using gzDAL.Repos.Interfaces;
 using gzDAL.Models;
 using NLog;
-using Z.EntityFramework.Plus;
 
 namespace gzDAL.Repos {
-    class PortfolioPricesDto
+    public class PortfolioPricesDto
     {
         public double ConservativePortfolioPrice;
         public double MediumPortfolioPrice;
@@ -82,12 +75,13 @@ namespace gzDAL.Repos {
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintageYearMonthStr"></param>
+        /// <param name="latestPortfoliosPrices"></param>
         /// <returns></returns>
-        public VintageSharesDto GetVintageSharesMarketValue(int customerId, string vintageYearMonthStr) {
-
+        public VintageSharesDto GetVintageSharesMarketValue(int customerId, string vintageYearMonthStr, PortfolioPricesDto latestPortfoliosPrices)
+        {
             var vintageShares = GetVintagePortfolioSharesDto(customerId, vintageYearMonthStr);
 
-            SetPortfolioSharesLatestValue(vintageShares);
+            SetVintageMarketPricing(vintageShares, latestPortfoliosPrices);
 
             return vintageShares;
         }
@@ -122,21 +116,6 @@ namespace gzDAL.Repos {
                                         vintageShares.MediumRiskShares*(decimal) portfoliosPricesDto.MediumPortfolioPrice +
                                         vintageShares.HighRiskShares*(decimal) portfoliosPricesDto.HighPortfolioPrice;
             vintageShares.TradingDay = DbExpressions.GetDtYearMonthDay(portfoliosPricesDto.YearMonthDay);
-        }
-
-        /// <summary>
-        /// 
-        /// Calculate the latest portfolio prices of the In parameter shares collection.
-        /// 
-        /// To be used for selling shares not for calculating balances.
-        /// 
-        /// </summary>
-        /// <param name="vintageShares"></param>
-        private void SetPortfolioSharesLatestValue(VintageSharesDto vintageShares) {
-
-            var latestPortfoliosPrices = GetCachedLatestPortfolioSharePrice();
-
-            SetVintageMarketPricing(vintageShares, latestPortfoliosPrices);
         }
 
         /// <summary>
@@ -206,7 +185,7 @@ namespace gzDAL.Repos {
         /// 
         /// </summary>
         /// <returns></returns>
-        private PortfolioPricesDto GetCachedLatestPortfolioSharePrice() {
+        public PortfolioPricesDto GetCachedLatestPortfolioSharePrice() {
 
             // Find latest closing price
             var latestPortfoliosPrices =

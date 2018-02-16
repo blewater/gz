@@ -588,7 +588,7 @@
             });
 
             //
-            // This event is fired when the deposit transaction status is changed in 3rd-party site.
+            // This event is fired when the withdraw transaction status is changed in 3rd-party site.
             //
             $wamp.subscribe("/withdraw/statusChanged", function (args, kwargs, details) {
                 $rootScope.$broadcast(constants.events.WITHDRAW_STATUS_CHANGED, kwargs);
