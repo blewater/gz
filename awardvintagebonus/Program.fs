@@ -19,6 +19,18 @@ let logger = LogManager.GetCurrentClassLogger()
 
 type Settings = AppSettings<"App.config">
 
+(*
+ var newBonusReq = new BonusReq()
+            {
+                AdminEmailRecipients = adminsArr,
+                Amount = user.NetProceeds,
+                Fees = user.Fees,
+                GmUserId = user.GmUserId,
+                InvBalIds = soldVintageDtos.Select(v => v.InvBalanceId).ToArray(),
+                UserEmail = user.Email,
+                UserFirstName = user.FirstName
+            };
+            *)
 
 [<EntryPoint>]
 let main argv = 
