@@ -111,6 +111,9 @@
     <Build Include="Security\RoleMemberships_2.sql" />
     <Build Include="dbo\Tables\PlayerRevLastMonths.sql" />
     <Build Include="dbo\Tables\RevokedUsers.sql" />
+    <Build Include="dbo\Tables\InvAdjs.sql" />
+    <Build Include="Security\RoleMemberships_3.sql" />
+    <Build Include="Security\RoleMemberships_4.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gzAdminUser.sql" />

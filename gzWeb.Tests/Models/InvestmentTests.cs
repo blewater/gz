@@ -88,13 +88,13 @@ namespace gzWeb.Tests.Models
         }
 
         private FSharpMap<string, PortfolioTypes.PortfoliosPrices> SetDbPortfoliosPriceMap(
-            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev SqlProviderCtx,
+            DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx,
             FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap,
             string startYearMonthStr,
             int monthCnt)
         {
 
-            DailyPortfolioShares.setDbPortfoliosPrices(SqlProviderCtx, portfoliosPriceMap);
+            DailyPortfolioShares.setDbPortfoliosPrices(sqlProviderCtx, portfoliosPriceMap);
             return portfoliosPriceMap;
         }
 
@@ -140,7 +140,7 @@ namespace gzWeb.Tests.Models
                 }
             }
 
-            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev sqlProviderCtx;
+            DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx;
             using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString))
             {
                 var portfoliosPriceMap =
@@ -460,7 +460,7 @@ namespace gzWeb.Tests.Models
                     break;
 
             }
-            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, false, null, null, null, currentYearMonthStr);
+            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, false, null, null, null, null, null, currentYearMonthStr);
         }
 
         private async Task ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)
@@ -468,7 +468,7 @@ namespace gzWeb.Tests.Models
 
             FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap = null;
 
-            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev sqlProviderCtx;
+            DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx;
             using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString)) {
 
                 foreach (var email in userEmails) {

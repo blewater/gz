@@ -732,6 +732,10 @@
     <Compile Include="Migrations\201712191147491_Add timestamp field to RevokedUser entity.Designer.cs">
       <DependentUpon>201712191147491_Add timestamp field to RevokedUser entity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802150947337_InvAjustment.cs" />
+    <Compile Include="Migrations\201802150947337_InvAjustment.Designer.cs">
+      <DependentUpon>201802150947337_InvAjustment.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1596,6 +1600,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712191147491_Add timestamp field to RevokedUser entity.resx">
       <DependentUpon>201712191147491_Add timestamp field to RevokedUser entity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802150947337_InvAjustment.resx">
+      <DependentUpon>201802150947337_InvAjustment.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

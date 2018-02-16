@@ -44,7 +44,7 @@
                 angular.extend(fields, $scope.getExtraWithdrawFields());
 
             if ($scope.selected.method)
-                fields.payCardID = $scope.selected.method.id;
+                fields.payCardID = $scope.selected.method.id || ($scope.selected.method.payCard ? $scope.selected.method.payCard.id : undefined);
             else if (angular.isFunction($scope.getRegistrationFields))
                 angular.extend(fields, $scope.getRegistrationFields());
 

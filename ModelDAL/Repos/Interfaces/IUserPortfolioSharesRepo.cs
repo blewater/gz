@@ -14,6 +14,9 @@ namespace gzDAL.Repos.Interfaces
 
         VintageSharesDto GetVintageSharesMarketValue(
             int customerId, 
-            string vintageYearMonthStr);
+            string vintageYearMonthStr,
+            PortfolioPricesDto portfolioPrices);
+
+        PortfolioPricesDto GetCachedLatestPortfolioSharePrice();
     }
 }

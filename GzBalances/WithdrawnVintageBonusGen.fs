@@ -66,12 +66,22 @@ module WithdrawnVintageBonusGen =
         db 
         |> withdrawnVintages
         |> Seq.iter (fun (invb, u) -> 
-            let depLine = sprintf "%d;CasinoWallet;%s;%M;vintage month %s cash for U:%s L:%s F:%s" u.GmCustomerId.Value u.Currency (Math.Round(invb.SoldAmount.Value - invb.SoldFees.Value, 1)) invb.YearMonth u.UserName u.LastName u.FirstName
+            let soldAmount = invb.SoldAmount.GetValueOrDefault()
+            let soldFees = invb.SoldFees.GetValueOrDefault()
+            let depLine = 
+                sprintf "%d;CasinoWallet;%s;SoldAmount %M;SoldFees %M;Net %M;vintage month %s cash for U:%s L:%s F:%s" 
+                    (u.GmCustomerId.GetValueOrDefault())
+                    u.Currency
+                    soldAmount
+                    soldFees
+                    (Math.Round(soldAmount - soldFees, 1)) 
+                    invb.YearMonth 
+                    u.UserName 
+                    u.LastName 
+                    u.FirstName
 
             depositsInMem.WriteLine(depLine)
             logger.Warn (depLine)
-
-            invb.AwardedSoldAmount <- true
         )
         let depositsCsvStrContent = depositsInMem.ToString()
         depositsInMem.Close()
