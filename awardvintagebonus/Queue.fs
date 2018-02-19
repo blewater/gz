@@ -18,31 +18,37 @@ open FSharp.Json
 
 // Connect via configuration file with named connection string.
 type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnString", configFileName="App.config">
-let bonusQueue = FunctionsQueue.Queues.bonusreq
-printfn "Queue length is %d." (bonusQueue.GetCurrentLength())
+let qCnt() =
+    let bonusQueue = FunctionsQueue.Queues.bonusreq
+    let cnt = bonusQueue.GetCurrentLength()
+    printfn "Queue length is %d." (cnt)
+    cnt
 
 let printMessage msg =
     printfn "Message %A with body '%s' has been dequeued %d times." msg.Id msg.AsString.Value msg.DequeueCount
 
-let getNextBonusReq(qs : FunctionsQueue.Domain.Queues) =
+let getNextQMsg(qs : FunctionsQueue.Domain.Queues) : ProvidedQueueMessage option =
     async {
-        let! message = qs.bonusreq.Dequeue()
-        let bonusReq =
-            match message with
-            | Some req ->
-                printMessage req
-                let bonusReq = Json.deserialize<BonusReqType> req.AsString.Value
-                Some bonusReq
-            | _ -> None
-        return bonusReq
+        let! qMsg = qs.bonusreq.Dequeue()
+        return qMsg
     } |> Async.RunSynchronously
 
-let enQueueBonusReq(qs : FunctionsQueue.Domain.Queues)(bonusReqJson : string) =
+let getNextBonusReq(qMsg : ProvidedQueueMessage option) : BonusReqType option =
+    match qMsg with
+    | Some msq ->
+        printMessage msq
+        let bonusReq = Json.deserialize<BonusReqType> msq.AsString.Value
+        Some bonusReq
+    | _ -> None
+
+let private enQueueJson(qs : FunctionsQueue.Domain.Queues)(json : string) =
     async {
-        let json = JsonConvert.SerializeObject(bonusReqJson)
+        let json = JsonConvert.SerializeObject(json)
         do! qs.bonusreq.Enqueue(json)
     } |> Async.RunSynchronously
 
+/// Partially applied: bound to
+let enqJson = enQueueJson FunctionsQueue.Queues
 
 // Connect to local storage emulator localstorageConnString
 (*
