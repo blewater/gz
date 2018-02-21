@@ -67,13 +67,14 @@
     <None Include="D:\sc\gz\awardvintagebonus\paket.lock" />
     <None Include="Queue.fsx" />
     <None Include="awardbonus.fsx" />
-    <Content Include="App.config" />
     <Compile Include="BonusReq.fs" />
     <Compile Include="Queue.fs" />
     <Compile Include="BonusAwarder.fs" />
     <None Include="gzdbdev.dbml" />
     <Compile Include="TblLogger.fs" />
     <Compile Include="Db.fs" />
+    <Compile Include="SendEmail.fs" />
+    <Content Include="App.config" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -83,8 +84,14 @@
     <Reference Include="FSharp.Json">
       <HintPath>packages\FSharp.Json\lib\net45\FSharp.Json.dll</HintPath>
     </Reference>
+    <Reference Include="MailKit">
+      <HintPath>packages\MailKit\lib\net45\MailKit.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.Storage">
       <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net452\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>packages\MimeKit\lib\net45\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json">
