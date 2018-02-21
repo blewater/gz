@@ -1,5 +1,7 @@
 ﻿module BonusReq
 
+open System
+
 (*
  var newBonusReq = new BonusReq()
             {
@@ -22,4 +24,8 @@ type BonusReqType = {
     InvBalIds : int[];
     UserEmail : string;
     UserFirstName : string;
+    YearMonthSold : string;
+    ProcessedCnt : int;
+    CreatedOn: DateTime;
+    LastProcessedTime: DateTime;
 }

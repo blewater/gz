@@ -12,6 +12,7 @@ open canopy
 open System
 open OpenQA.Selenium
 open FSharp.Configuration
+open BonusReq
 
 type Settings = AppSettings<"App.config">
 
@@ -64,7 +65,7 @@ let selCashBackBonusinSelectList() : unit =
     do selBonusLi bonusInput
     press enter
 
-let start() : unit =
+let start(bonusReq : BonusReqType) : BonusReqType =
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
     searchCustomer()
     // go to the portfolio page
@@ -76,9 +77,10 @@ let start() : unit =
     selCashBackBonusinSelectList()
 
     let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
-    bonusAmountEl << "0.10"
+    bonusAmountEl << bonusReq.Amount.ToString()
     let amount = read bonusAmountEl
 
     printfn "Amount: %s" amount
 
     quit()
+    bonusReq
