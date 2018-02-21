@@ -10,15 +10,19 @@
 //#else
 //module main
 //#endif
-open System
+open Microsoft.FSharp.Collections
 open FSharp.Configuration
 open NLog
-open FSharp.Data.TypeProviders
+open BonusQueue
+open BonusReq
+open System.Data.Linq
+open System
 
 let logger = LogManager.GetCurrentClassLogger()
 
 type Settings = AppSettings<"App.config">
 
+let dbCtx = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
 (*
  var newBonusReq = new BonusReq()
             {
@@ -32,21 +36,42 @@ type Settings = AppSettings<"App.config">
             };
             *)
 
+let dbAwardGiven(bonusReq : BonusReqType) = 
+    try 
+        let invIds =
+            bonusReq.InvBalIds |> Array.toSeq
+            //query {
+            //    for id in bonusReq.InvBalIds do
+            //    select id
+            //}
+
+        query {
+            for soldVintage in dbCtx.InvBalances do
+            where (invIds |> Seq.contains (soldVintage.Id))
+            select soldVintage
+        } 
+        |> Seq.iter (fun sv -> 
+            
+            sv.AwardedSoldAmount <- true
+            sv.UpdatedOnUTC <- DateTime.UtcNow
+        )
+        dbCtx.SubmitChanges()
+    with ex ->
+        logger.Error(ex, "Database update")
+
 [<EntryPoint>]
 let main argv = 
 
-    let dbConnection = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
     try
-        query {
-            for soldVintages in dbConnection.InvBalances do
-            where (soldVintages.AwardedSoldAmount = false)
-            select soldVintages.SoldAmount
-        } 
-        |> Seq.iter (fun sv -> 
-        
-            BonusAwarder.start()
-        )
-
+        while qCnt() > 0 do
+            match getNextQMsg() with
+            | Some bonusQReq ->
+                bonusQReq 
+                |> getNextBonusReq 
+                |> BonusAwarder.start
+                |> dbAwardGiven
+                deleteBonusReq bonusQReq
+            | _ -> ()
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
         
