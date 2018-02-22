@@ -337,8 +337,7 @@ namespace gzWeb.Controllers {
             var invBalance =
                 invBalanceRepo
                     .GetLatestBalanceDto(
-                        await
-                            invBalanceRepo.GetCachedLatestBalanceAsync(userId)
+                            invBalanceRepo.GetCachedLatestBalance(userId)
                     ).Balance;
 
             var lastInvestmentAmount =

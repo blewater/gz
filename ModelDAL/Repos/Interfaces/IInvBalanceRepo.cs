@@ -6,8 +6,8 @@ using gzDAL.Models;
 
 namespace gzDAL.Repos.Interfaces {
     public interface IInvBalanceRepo {
-        Task<InvBalance> GetCachedLatestBalanceAsync(int customerId);
-        Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm);
+        InvBalance GetCachedLatestBalance(int customerId);
+        InvBalance GetCachedLatestBalanceByMonth(int customerId, string yyyyMm);
         InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow);
         WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId);
         Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId);

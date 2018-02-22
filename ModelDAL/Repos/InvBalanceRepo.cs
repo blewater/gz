@@ -112,15 +112,15 @@ namespace gzDAL.Repos
         /// <param name="yyyyMm"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public async Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm)
+        public InvBalance GetCachedLatestBalanceByMonth(int customerId, string yyyyMm)
         {
             var invBalanceRow =
-                await db.InvBalances
+                db.InvBalances
                     .Where(i => i.CustomerId == customerId
                                 && i.YearMonth == yyyyMm)
                     .DeferredSingleOrDefault()
                     // Cache 4 hours
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
+                    .FromCache(DateTime.UtcNow.AddHours(4));
 
             return invBalanceRow;
         }
@@ -135,7 +135,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId)
+        public InvBalance GetCachedLatestBalance(int customerId)
         {
             var now = DateTime.UtcNow;
             string monthToAskInvBalance = 
@@ -145,7 +145,7 @@ namespace gzDAL.Repos
                 : 
                 now.ToStringYearMonth();
 
-            return GetCachedLatestBalanceAsyncByMonth(customerId, monthToAskInvBalance);
+            return GetCachedLatestBalanceByMonth(customerId, monthToAskInvBalance);
         }
 
         /// <summary>
@@ -195,8 +195,8 @@ namespace gzDAL.Repos
             {
                 var invBalanceRes =
                     GetLatestBalanceDto(
-                        await GetCachedLatestBalanceAsync(userId)
-                        );
+                        GetCachedLatestBalance(userId)
+                    );
 
                 userRet = userRepo.GetCachedUser(userId);
 
