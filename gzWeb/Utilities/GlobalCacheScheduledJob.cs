@@ -66,7 +66,7 @@ namespace gzWeb.Utilities  {
                 var db = new ApplicationDbContext();
 
                 // Cache configuration object
-                var _ = new ConfRepo(db).GetConfRow().ConfigureAwait(false);
+                var _ = new ConfRepo(db).GetConfRow();
 
                 //-------- Cache Fund prices for 2 hours
                 var __ = db.PortfolioPrices

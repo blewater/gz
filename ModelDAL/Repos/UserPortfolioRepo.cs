@@ -116,9 +116,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<Portfolio> GetCurrentCustomerPortfolio(int customerId) {
-
-            return await GetUserPortfolioForThisMonthOrBeforeAsync(customerId, DateTime.UtcNow.ToStringYearMonth());
+        public Portfolio GetCurrentCustomerPortfolio(int customerId)
+        {
+            return GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.ToStringYearMonth());
         }
 
         /// <summary>
@@ -128,12 +128,12 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<Portfolio> GetPresentMonthsUserPortfolioAsync(int customerId) {
+        public Portfolio GetPresentMonthsUserPortfolio(int customerId)
+        {
 
-            return 
-                await 
-                    GetUserPortfolioForThisMonthOrBeforeAsync(
-                        customerId, 
+            return
+                GetUserPortfolioForThisMonthOrBefore(
+                        customerId,
                         DateTime.UtcNow.ToStringYearMonth()
                     );
         }
@@ -146,22 +146,23 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="nextYearMonthStr">+1 Month from Present To be safe we have the latest</param>
         /// <returns></returns>
-        public async Task<Portfolio> GetUserPortfolioForThisMonthOrBeforeAsync(int customerId, string nextYearMonthStr) {
-
+        public Portfolio GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr)
+        {
             Portfolio customerMonthPortfolioReturn;
 
             // userPortfolioMaxMonthSet typically comes back as the present month or -1 
             // if no portfolio back-end management has run yet.
             var userPortfolioMaxMonthSet = GetUserPortfolioLastYearMonthSet(customerId, nextYearMonthStr);
 
-            if (userPortfolioMaxMonthSet != null) {
+            if (userPortfolioMaxMonthSet != null)
+            {
 
                 // Don't cache portfolio. Portfolio selections occur within the current month
                 customerMonthPortfolioReturn =
-                    await db.CustPortfolios
+                    db.CustPortfolios
                         .Where(p => p.YearMonth == userPortfolioMaxMonthSet && p.CustomerId == customerId)
                         .Select(cp => cp.Portfolio)
-                        .SingleOrDefaultAsync();
+                        .SingleOrDefault();
             }
             /**
              * Edge Case for leaky user registrations: 
@@ -169,16 +170,19 @@ namespace gzDAL.Repos
              * portfolio in their account. Portfolio management adds a portfolio next time 
              * it runs.
              */
-            else {
+            else
+            {
 
                 // Cached already
-                var defaultRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
+                var defaultRisk =
+                    (confRepo
+                        .GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
                 customerMonthPortfolioReturn =
-                    await db
-                        .Portfolios
-                        .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
-                        .FromCacheAsync(DateTime.UtcNow.AddHours(2));
+                    db
+                    .Portfolios
+                    .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
+                    .FromCache(DateTime.UtcNow.AddHours(2));
             }
 
             return customerMonthPortfolioReturn;
@@ -203,7 +207,7 @@ namespace gzDAL.Repos
             if (user.IsRegistrationFinalized.HasValue && user.IsRegistrationFinalized.Value)
                 return;
 
-            var defaultPortfolioRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
+            var defaultPortfolioRisk = (confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
             ConnRetryConf.TransactWithRetryStrategy(
                     db,
@@ -227,12 +231,11 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public async Task<List<PortfolioDto>> GetUserPlansAsync(int userId) {
 
-            var currentPortfolioId = (await 
-                                            GetPresentMonthsUserPortfolioAsync(userId))
+            var currentPortfolioId = (GetPresentMonthsUserPortfolio(userId))
                                                 .Id;
 
             // Get gz Database Configuration
-            var gzDbConf = await confRepo.GetConfRow();
+            var gzDbConf = confRepo.GetConfRow();
 
             var portfolioDtos = 
                 (

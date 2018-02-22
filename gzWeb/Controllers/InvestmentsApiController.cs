@@ -172,12 +172,12 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public async Task<List<VintageViewModel>> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user)
+        public List<VintageViewModel> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user)
         {
             Logger.Trace("GetVintagesSellingValuesByUser requested for [User#{0}]", user.Id);
 
-            var vintagesValuedAtPresentValue = 
-                await invBalanceRepo
+            var vintagesValuedAtPresentValue =
+                invBalanceRepo
                     .GetCustomerVintagesSellingValueUnitTestHelper(user.Id);
 
             var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValue);

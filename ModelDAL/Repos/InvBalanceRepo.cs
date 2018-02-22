@@ -203,7 +203,7 @@ namespace gzDAL.Repos
                 var withdrawalEligibility = GetWithdrawEligibilityData(userId);
 
                 //---------------- Execute SQL Function
-                var vintages = await GetCustomerVintagesAsync(userId);
+                var vintages = GetCustomerVintages(userId);
 
                 var lastInvestmentAmount =
                     DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount(userId,
@@ -328,7 +328,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         private Tuple<bool, DateTime, int> IsWithdrawalEligible(int customerId)
         {
-            var lockInDays = (confRepo.GetConfRow().Result).LOCK_IN_NUM_DAYS;
+            var lockInDays = (confRepo.GetConfRow()).LOCK_IN_NUM_DAYS;
 
             var nowUtc = DateTime.UtcNow;
             var monthsLockCnt = lockInDays / 30;
@@ -370,9 +370,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId)
+        public List<VintageDto> GetCustomerVintages(int customerId)
         {
-            var monthsLockPeriod = (await confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
+            var monthsLockPeriod = (confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
 
             var vintagesList = db.Database
                 .SqlQuery<VintageDto>(
@@ -382,7 +382,8 @@ namespace gzDAL.Repos
                 .ToList();
 
             // Remove current month as a vintage
-            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
+            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth())
+            {
                 vintagesList.RemoveAt(vintagesList.Count - 1);
             }
 
@@ -720,10 +721,10 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<List<VintageDto>> GetCustomerVintagesSellingValueUnitTestHelper(int customerId)
+        public List<VintageDto> GetCustomerVintagesSellingValueUnitTestHelper(int customerId)
         {
 
-            var customerVintages = await GetCustomerVintagesAsync(customerId);
+            var customerVintages = GetCustomerVintages(customerId);
 
             GetCustomerVintagesSellingValueNow(customerId, customerVintages);
 

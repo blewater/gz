@@ -150,7 +150,7 @@ namespace gzWeb.Tests.Controllers
 
             string queueAzureConnString = ConfigurationManager.AppSettings["QueueAzureConnString"];
             string queueName = ConfigurationManager.AppSettings["QueueName"];
-            var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
+            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
 
             // Mark for selling earliest even if sold already or is locked
             var sellVintage = vintagesVMs
@@ -211,7 +211,7 @@ namespace gzWeb.Tests.Controllers
 
             var user = manager.FindByEmail("6month@allocation.com");
 
-            var vintages = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
+            var vintages = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
             foreach (var vintageViewModel in vintages) {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
                     vintageViewModel.YearMonthStr,
