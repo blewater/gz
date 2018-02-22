@@ -21,6 +21,10 @@ namespace gzDAL.DTO {
         public string UserEmail { get; set; }
         public string[] AdminEmailRecipients { get; set; } = new[] { "mario@greenzorro.com" };
         /// <summary>
+        /// Bonus currency = User Currency
+        /// </summary>
+        public string Currency { get; set; }
+        /// <summary>
         /// Total Net Bonus amount for all withdrawn vintages to credit to the user's account in their currency.
         /// </summary>
         public decimal Amount { get; set; }
