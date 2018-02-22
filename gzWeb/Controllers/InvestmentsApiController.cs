@@ -125,12 +125,12 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IHttpActionResult> GetVintagesWithSellingValues(IList<VintageViewModel> vintages)
+        public IHttpActionResult GetVintagesWithSellingValues(IList<VintageViewModel> vintages)
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetVintagesWithSellingValues requested for [User#{0}]", userId);
 
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}].", userId);
@@ -139,7 +139,7 @@ namespace gzWeb.Controllers {
 
             var vintagesWithSoldAmounts = GetVintagesSellingValuesByUser(user, vintages);
 
-            return OkMsg( () => vintagesWithSoldAmounts );
+            return OkMsg(() => vintagesWithSoldAmounts);
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace gzWeb.Controllers {
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetPortfolioData requested for [User#{0}]", userId);
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);
@@ -297,18 +297,18 @@ namespace gzWeb.Controllers {
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> SetPlanSelection(PlanViewModel plan)
+        public IHttpActionResult SetPlanSelection(PlanViewModel plan)
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("SetPlanSelection requested for [User#{0}]", userId);
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);
                 return OkMsg(new object(), "User not found!");
             }
 
-            return 
+            return
                 OkMsg(() =>
                 {
                     return
@@ -327,7 +327,7 @@ namespace gzWeb.Controllers {
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("SetPlanSelection requested for [User#{0}]", userId);
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);

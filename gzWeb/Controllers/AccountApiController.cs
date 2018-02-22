@@ -492,7 +492,7 @@ namespace gzWeb.Controllers
         {
             var userId = User.Identity.GetUserId<int>();
 
-            var user = await _userRepo.GetCachedUserAsync(userId);
+            var user = _userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);
@@ -548,7 +548,7 @@ namespace gzWeb.Controllers
         public async Task<IHttpActionResult> FinalizeRegistration(int gmUserId)
         {
             var userId = User.Identity.GetUserId<int>();
-            var user = await _userRepo.GetCachedUserAsync(userId);
+            var user = _userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found. [User#{0}]", userId);
@@ -777,7 +777,7 @@ namespace gzWeb.Controllers
         public async Task<IHttpActionResult> CacheUserData()
         {
             var userId = User.Identity.GetUserId<int>();
-            var user = await _userRepo.GetCachedUserAsync(userId);
+            var user = _userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}", userId);

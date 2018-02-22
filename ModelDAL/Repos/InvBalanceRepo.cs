@@ -198,7 +198,7 @@ namespace gzDAL.Repos
                         await GetCachedLatestBalanceAsync(userId)
                         );
 
-                userRet = await userRepo.GetCachedUserAsync(userId);
+                userRet = userRepo.GetCachedUser(userId);
 
                 var withdrawalEligibility = GetWithdrawEligibilityData(userId);
 
