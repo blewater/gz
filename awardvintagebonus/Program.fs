@@ -15,12 +15,19 @@ open FSharp.Configuration
 open NLog
 open BonusQueue
 open BonusReq
-open System.Data.Linq
 open System
+open SendEmail
 
 let logger = LogManager.GetCurrentClassLogger()
 
 type Settings = AppSettings<"App.config">
+
+let hostEmail = Settings.HostGmailUser;
+let hostPwd = Settings.HostGmailPwd;
+let helpEmail = Settings.HelpGmailUser;
+let helpPwd = Settings.HelpGmailPwd;
+
+let emailSender = EmailReceipts()
 
 let dbCtx = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
 (*
@@ -58,6 +65,7 @@ let dbAwardGiven(bonusReq : BonusReqType) =
         dbCtx.SubmitChanges()
     with ex ->
         logger.Error(ex, "Database update")
+    bonusReq
 
 [<EntryPoint>]
 let main argv = 
@@ -70,6 +78,8 @@ let main argv =
                 |> getNextBonusReq 
                 |> BonusAwarder.start
                 |> dbAwardGiven
+                |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
+
                 deleteBonusReq bonusQReq
             | _ -> ()
     with ex -> 
