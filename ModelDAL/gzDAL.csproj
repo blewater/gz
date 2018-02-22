@@ -198,7 +198,6 @@
     <Compile Include="Models\TestDbContext.cs" />
     <Compile Include="Repos\Interfaces\IUserRepo.cs" />
     <Compile Include="Repos\UserRepo.cs" />
-    <Compile Include="Repos\CurrencyRateRepo.cs" />
     <Compile Include="Models\CustFundShare.cs" />
     <Compile Include="Repos\UserPortfolioSharesRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -218,7 +217,6 @@
     <Compile Include="Repos\Interfaces\IConfRepo.cs" />
     <Compile Include="Repos\Interfaces\IUserPortfolioRepo.cs" />
     <Compile Include="Repos\Interfaces\IUserPortfolioSharesRepo.cs" />
-    <Compile Include="Repos\Interfaces\ICurrencyRateRepo.cs" />
     <Compile Include="Repos\InvBalanceRepo.cs" />
     <Compile Include="Models\Portfolio.cs" />
     <Compile Include="Repos\Interfaces\IPortfolioRepository.cs" />

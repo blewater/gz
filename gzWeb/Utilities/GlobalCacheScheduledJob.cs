@@ -77,8 +77,7 @@ namespace gzWeb.Utilities  {
                         p.PortfolioHighPrice,
                         p.YearMonthDay
                     })
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
-                    .ConfigureAwait(false);
+                    .FromCache(DateTime.UtcNow.AddHours(2));
             }
             catch (Exception ex) {
                 _logger.Error(ex, "CacheGlobalData()");

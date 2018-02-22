@@ -364,22 +364,23 @@ namespace gzWeb.Controllers {
         #endregion
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetPortfolios()
+        public IHttpActionResult GetPortfolios()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetPortfolios requested for [User#{0}]", userId);
 
             var portfolios =
-                await dbContext.Portfolios
+                dbContext.Portfolios
                     .Where(x => x.IsActive)
-                    .Select(x => new {
+                    .Select(x => new
+                    {
                         x.Id,
                         x.RiskTolerance,
                         Funds =
                             x.PortFunds.Select(
-                                f => new {f.Fund.HoldingName, f.Weight})
+                                f => new { f.Fund.HoldingName, f.Weight })
                     })
-                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+                    .FromCache(DateTime.UtcNow.AddDays(1));
 
             return OkMsg(portfolios);
         }
