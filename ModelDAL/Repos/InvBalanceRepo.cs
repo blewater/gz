@@ -1009,6 +1009,7 @@ namespace gzDAL.Repos
             var newBonusReq = new BonusReq()
             {
                 AdminEmailRecipients = adminsArr,
+                Currency = user.Currency,
                 Amount = user.NetProceeds,
                 Fees = user.Fees,
                 GmUserId = user.GmUserId,
