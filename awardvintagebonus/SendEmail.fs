@@ -17,7 +17,7 @@ type EmailReceipts() =
 
     static let logger = LogManager.GetCurrentClassLogger()
 
-    let sendUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(userEmail : string)(firstName : string)(amount: string) =
+    let sendUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(userEmail : string)(firstName : string)(amount: string) : unit =
 
         use smtpClient = new SmtpClient()
         smtpClient.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
@@ -45,7 +45,7 @@ type EmailReceipts() =
         smtpClient.Send(msg)
         smtpClient.Disconnect(true)
 
-    member this.SendBonusReqAdminReceipt(fromGmailUser: string)(fromGmailPwd : string)(gmUserId : int)(userEmail : string)(amount: string) =
+    let sendAdminReceipt(fromGmailUser: string)(fromGmailPwd : string)(gmUserId : int)(userEmail : string)(amount: string) : unit =
 
         use smtpClient = new SmtpClient()
         smtpClient.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
@@ -72,7 +72,19 @@ type EmailReceipts() =
         smtpClient.Send(msg)
         smtpClient.Disconnect(true)
 
-    member this.SendBonusReqUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(bonusReq : BonusReqType) =
+    let getAmountCur (bonusReq : BonusReqType) : string = 
+        String.concat " " [Math.Round(bonusReq.Amount, 2).ToString(); bonusReq.Currency]
+
+    let rec retry(triesLeft : int)(fn : (unit -> unit)) =
+        try
+            if triesLeft > 0 then
+                fn()
+        with _ ->
+            retry (triesLeft - 1) fn
+
+    member this.SendBonusReqUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(bonusReq : BonusReqType) : BonusReqType =
+
+        // Capitalize first letter of first name
         let firstName = 
             List.ofSeq bonusReq.UserFirstName
             |> function
@@ -81,7 +93,13 @@ type EmailReceipts() =
                     |> List.toArray
                     |> String
                 | _ -> "Player"
-        let amount = bonusReq.Amount.ToString()
-            //String.concat ([bonusReq.Amount.ToString(), " ", bonusReq.
-        sendUserReceipt fromGmailUser fromGmailPwd bonusReq.UserEmail firstName amount
+
+        let toCallFunc() = sendUserReceipt fromGmailUser fromGmailPwd bonusReq.UserEmail firstName (getAmountCur bonusReq)
+        retry 3 toCallFunc
+            
         bonusReq
+
+    member this.SendBonusReqAdminReceipt (fromGmailUser: string)(fromGmailPwd : string)(bonusReq : BonusReqType) : unit =
+        
+        let toCallFunc() = sendAdminReceipt fromGmailUser fromGmailPwd bonusReq.GmUserId bonusReq.UserEmail (getAmountCur bonusReq)
+        retry 3 toCallFunc

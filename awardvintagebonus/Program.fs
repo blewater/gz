@@ -17,6 +17,7 @@ open BonusQueue
 open BonusReq
 open System
 open SendEmail
+open FSharp.Azure.StorageTypeProvider.Queue
 
 let logger = LogManager.GetCurrentClassLogger()
 
@@ -26,22 +27,9 @@ let hostEmail = Settings.HostGmailUser;
 let hostPwd = Settings.HostGmailPwd;
 let helpEmail = Settings.HelpGmailUser;
 let helpPwd = Settings.HelpGmailPwd;
-
 let emailSender = EmailReceipts()
-
 let dbCtx = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
-(*
- var newBonusReq = new BonusReq()
-            {
-                AdminEmailRecipients = adminsArr,
-                Amount = user.NetProceeds,
-                Fees = user.Fees,
-                GmUserId = user.GmUserId,
-                InvBalIds = soldVintageDtos.Select(v => v.InvBalanceId).ToArray(),
-                UserEmail = user.Email,
-                UserFirstName = user.FirstName
-            };
-            *)
+let yearMonthSold = DateTime.UtcNow.Year.ToString("0000") + DateTime.UtcNow.Month.ToString("00")
 
 let dbAwardGiven(bonusReq : BonusReqType) = 
     try 
@@ -67,6 +55,18 @@ let dbAwardGiven(bonusReq : BonusReqType) =
         logger.Error(ex, "Database update")
     bonusReq
 
+let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
+
+    let bonusReq = 
+        bonusQReq 
+        |> bonusQ2Obj 
+    try
+        bonusReq
+        |> incProcessCnt
+        |> enQUpdated bonusQReq.Id
+    with ex ->
+        TblLogger.insert yearMonthSold bonusReq
+
 [<EntryPoint>]
 let main argv = 
 
@@ -74,15 +74,22 @@ let main argv =
         while qCnt() > 0 do
             match getNextQMsg() with
             | Some bonusQReq ->
-                bonusQReq 
-                |> getNextBonusReq 
-                |> BonusAwarder.start
-                |> dbAwardGiven
-                |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
-
-                deleteBonusReq bonusQReq
+                try
+                    bonusQReq 
+                    |> bonusQ2Obj 
+                    |> BonusAwarder.start
+                    |> dbAwardGiven
+                    |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
+                    |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
+                    deleteBonusReq bonusQReq
+                with ex ->
+                    TblLogger.insert yearMonthSold (bonusQ2Obj bonusQReq)
+                    // Update process cnt
+                    updQBonusReq bonusQReq
+                    logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
             | _ -> ()
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
+
         
     0 // return an integer exit code

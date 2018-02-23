@@ -18,6 +18,7 @@ open System
 
 type BonusReqType = {
     AdminEmailRecipients : string[];
+    Currency : string;
     Amount : decimal;
     Fees : decimal;
     GmUserId : int;
@@ -29,3 +30,8 @@ type BonusReqType = {
     CreatedOn: DateTime;
     LastProcessedTime: DateTime;
 }
+
+let incProcessCnt(bonusReq : BonusReqType) : BonusReqType=
+    let newProcessedCnt = bonusReq.ProcessedCnt + 1
+    let timestamp = DateTime.UtcNow
+    { bonusReq with ProcessedCnt = newProcessedCnt; LastProcessedTime = timestamp }
