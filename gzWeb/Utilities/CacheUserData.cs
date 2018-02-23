@@ -30,18 +30,20 @@ namespace gzWeb.Utilities {
         /// 
         /// </summary>
         /// <param name="userId"></param>
-        public async Task Query(int userId) {
+        public void Query(int userId)
+        {
+            try
+            {
 
-            try {
-
-                var summaryRes = await invBalanceRepo.GetSummaryDataAsync(userId);
+                var summaryRes = invBalanceRepo.GetSummaryData(userId);
 
                 invBalanceRepo.GetCustomerVintagesSellingValueNow(userId, summaryRes.Item1.Vintages.ToList());
 
                 var _ = custPortfolioRepo.GetUserPlansAsync(userId).ConfigureAwait(false);
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.Error(ex, "Exception in Query()");
             }
         }

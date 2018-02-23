@@ -10,7 +10,7 @@ namespace gzDAL.Repos.Interfaces {
         InvBalance GetCachedLatestBalanceByMonth(int customerId, string yyyyMm);
         InvBalAmountsRow GetLatestBalanceDto(InvBalance lastBalanceRow);
         WithdrawEligibilityDTO GetWithdrawEligibilityData(int customerId);
-        Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId);
+        Tuple<UserSummaryDTO, ApplicationUser> GetSummaryData(int userId);
         int SetAllSelectedVintagesPresentMarketValue(int customerId, IEnumerable<VintageDto> vintages);
         List<VintageDto> GetCustomerVintages(int customerId);
         /// ** Unit Test Helper **

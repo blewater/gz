@@ -49,12 +49,12 @@ namespace gzWeb.Controllers {
         #region Summary
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetSummaryData()
+        public IHttpActionResult GetSummaryData()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetSummaryData requested for [User#{0}]", userId);
-            
-            var summaryRes = await invBalanceRepo.GetSummaryDataAsync(userId);
+
+            var summaryRes = invBalanceRepo.GetSummaryData(userId);
             var user = summaryRes.Item2;
             var summaryDto = summaryRes.Item1;
 
@@ -64,7 +64,7 @@ namespace gzWeb.Controllers {
                 return OkMsg(new object(), "User not found!");
             }
 
-            return OkMsg(((IInvestmentsApi) this).GetSummaryData(user, summaryDto));
+            return OkMsg(((IInvestmentsApi)this).GetSummaryData(user, summaryDto));
         }
 
         /// <summary>

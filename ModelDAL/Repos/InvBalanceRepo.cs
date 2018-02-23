@@ -186,7 +186,7 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId)
+        public Tuple<UserSummaryDTO, ApplicationUser> GetSummaryData(int userId)
         {
             ApplicationUser userRet = null;
             UserSummaryDTO summaryDtoRet = null;
@@ -226,7 +226,7 @@ namespace gzDAL.Repos
 
                     Currency = CurrencyHelper.GetSymbol(userRet.Currency),
                     // current balance should not include this month's loss amount to be invested
-                    InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount, 
+                    InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount,
 
                     // Monthly gaming amounts
                     BegGmBalance = invBalanceRes.BegGmBalance,

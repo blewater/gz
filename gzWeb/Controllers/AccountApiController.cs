@@ -774,7 +774,7 @@ namespace gzWeb.Controllers
         // GET api/Account/CacheUserData
         [HttpPost]
         [Route("CacheUserData")]
-        public async Task<IHttpActionResult> CacheUserData()
+        public IHttpActionResult CacheUserData()
         {
             var userId = User.Identity.GetUserId<int>();
             var user = _userRepo.GetCachedUser(userId);
@@ -784,7 +784,7 @@ namespace gzWeb.Controllers
                 return Ok("User not found!");
             }
 
-            await _cacheUserData.Query(user.Id);
+            _cacheUserData.Query(user.Id);
 
             return Ok();
         }
