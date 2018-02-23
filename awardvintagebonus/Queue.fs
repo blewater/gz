@@ -55,7 +55,7 @@ let getNextQMsg() : ProvidedQueueMessage option =
         return qMsg
     } |> Async.RunSynchronously
 
-let getNextBonusReq(qMsg : ProvidedQueueMessage) : BonusReqType =
+let bonusQ2Obj(qMsg : ProvidedQueueMessage) : BonusReqType =
     printMessage qMsg
     let bonusReq = Json.deserialize<BonusReqType> qMsg.AsString.Value
     bonusReq
@@ -69,9 +69,16 @@ let enQueueJson(br : BonusReqType) =
         do! bonusQueue.Enqueue(json)
     } |> Async.RunSynchronously
 
+let enQUpdated(qMsgId)(br : BonusReqType) =
+    async {
+        let json = JsonConvert.SerializeObject(br)
+        do! bonusQueue.UpdateMessage(qMsgId, json)
+    } |> Async.RunSynchronously
+
 let testBonusReq() : BonusReqType = {
     AdminEmailRecipients = [|"mario@greenzorro.com"|];
     Amount = 0.10m;
+    Currency = "EUR";
     Fees = 0.025m;
     GmUserId = 4300962; // ladderman
     InvBalIds = [|588; 2783|];
