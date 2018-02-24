@@ -20,8 +20,6 @@ let path = System.IO.Path.Combine [|__SOURCE_DIRECTORY__ ; "bin"; "debug"; "awar
 Settings.SelectExecutableFile path
 printfn "%s" Settings.ConfigFileName
 
-let queueConnString = Settings.QueueConnString.ToString()
-let queueName = Settings.QueueName
 // Connect via configuration file with named connection string.
 type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnString", configFileName=Settings.ConfigFileName>
 #else
@@ -97,9 +95,6 @@ let createTestBonusReq() =
 // Connect to local storage emulator localstorageConnString
 (*
 type FunctionsQueueLocal = AzureTypeProvider<"UseDevelopmentStorage=true">
-//let qc = FunctionsQueueLocal.Queues.CloudQueueClient
-//let lq = qc.GetQueueReference(Settings.QueueName)
-//let res = lq.CreateIfNotExists()
 let localBonusQueue = FunctionsQueueLocal.Queues.``withdrawn-vintages-bonus``
 printfn "Local Queue length is %d." (localBonusQueue.GetCurrentLength())
 *)
