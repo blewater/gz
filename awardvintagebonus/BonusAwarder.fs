@@ -1,40 +1,54 @@
 ﻿#if INTERACTIVE
+#I __SOURCE_DIRECTORY__
 #r "./packages/canopy/lib/canopy.dll"
 #r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
 #r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
 #r "./packages/Selenium.WebDriver/lib/net45/WebDriver.dll"
 #r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"
+#load "BonusReq.fs"
+open canopy
+open OpenQA.Selenium
+open FSharp.Configuration
+open BonusReq
+
+type Settings = AppSettings<"App.config">
+let configPath = System.IO.Path.Combine [|__SOURCE_DIRECTORY__ ; "bin"; "debug"; "awardbonus.exe" |]
+Settings.SelectExecutableFile configPath
+printfn "%s" Settings.ConfigFileName
 #else
 module BonusAwarder
-#endif
-
 open canopy
-open System
 open OpenQA.Selenium
 open FSharp.Configuration
 open BonusReq
 
 type Settings = AppSettings<"App.config">
 
+#endif
+
 let everymatrixUsername = Settings.Evuser
 let everymatrixPassword = Settings.Evpwd
 let everymatrixSecureToken = Settings.Evtoken
-let queueConnString = Settings.QueueConnString.ToString()
-let queueName = Settings.QueueName
 
 // Need to use --no-sandbox or chrome wont start
 // https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
 let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
 chromeOptions.AddArgument("--no-sandbox")
 chromeOptions.AddArgument("--disable-extensions")
+#if !INTERACTIVE
 chromeOptions.AddArgument("--headless")
+#endif
 chromeOptions.AddArgument("--disable-gpu")
 chromeOptions.AddArgument("--disable-client-side-phishing-detection")
 chromeOptions.AddArgument("--disable-suggestions-service")
 chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
 chromeOptions.AddArgument("--no-first-run")
 let chromeNoSandbox = ChromeWithOptions(chromeOptions)
-canopy.configuration.chromeDir <- "./"
+#if INTERACTIVE
+canopy.configuration.chromeDir <- __SOURCE_DIRECTORY__
+#else
+canopy.configuration.chromeDir <- "."
+#endif
 start chromeNoSandbox
 
 let uiAutomateLoginEverymatrixReports 
@@ -48,8 +62,8 @@ let uiAutomateLoginEverymatrixReports
     "#rtbBottom_text" << everymatrixLoginToken
     click "#btnLogin"
 
-let searchCustomer() : unit =
-    "#rtbSearch" << "4300962"
+let searchCustomer(gmUserId : int) : unit =
+    "#rtbSearch" << gmUserId.ToString()
     click "#imgSearch"
 
 let selCashBackBonusinSelectList() : unit =
@@ -67,7 +81,7 @@ let selCashBackBonusinSelectList() : unit =
 
 let start(bonusReq : BonusReqType) : BonusReqType =
     uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
-    searchCustomer()
+    searchCustomer bonusReq.GmUserId
     // go to the portfolio page
     click "#cphPage_UsersControl1_gvData > tbody > tr:nth-child(2) > td:nth-child(2) > a"
     click "#cphPage_UserAccountsCompactControl1_gvData > tbody > tr > td:first-child > table > tbody > tr > td:nth-child(2) > a"
@@ -76,11 +90,15 @@ let start(bonusReq : BonusReqType) : BonusReqType =
 
     selCashBackBonusinSelectList()
 
+    // Bonus amount text input
     let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
-    bonusAmountEl << bonusReq.Amount.ToString()
-    let amount = read bonusAmountEl
+    bonusAmountEl << (bonusReq.Amount.ToString())
 
-    printfn "Amount: %s" amount
+    // Set Comment
+    (element "#ctl00_cphPage_rtbComment_text") << sprintf "User %d bonus granted for vintages sold on %s" bonusReq.GmUserId bonusReq.YearMonthSold
+
+    // Press Give bonus button
+    click "#cphPage_btnConfirm"
 
     quit()
     bonusReq

@@ -1,21 +1,17 @@
 ﻿#if INTERACTIVE
 #r "./packages/MailKit/lib/net45/MailKit.dll"
 #r "./packages/MimeKit/lib/net45/MimeKit.dll"
-#r "./packages/NLog/lib/net45/NLog.dll"
 #else
 module SendEmail
 #endif
 
 open MimeKit
-open NLog
 open MailKit.Net.Smtp
 open MailKit.Security
 open BonusReq
 open System
 
 type EmailReceipts() =
-
-    static let logger = LogManager.GetCurrentClassLogger()
 
     let sendUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(userEmail : string)(firstName : string)(amount: string) : unit =
 
