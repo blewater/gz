@@ -17,6 +17,6 @@ namespace gzDAL.Repos.Interfaces
 
         Portfolio GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr);
         void SetDbDefaultPortfolio(int customerId, RiskToleranceEnum riskType);
-        Task SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId);
+        void SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId);
     }
 }

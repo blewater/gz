@@ -198,9 +198,9 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="gmUserId"></param>
         /// <returns></returns>
-        public async Task SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId)
+        public void SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId)
         {
-            var user = await db.Users.SingleOrDefaultAsync(x => x.Id == customerId);
+            var user = db.Users.SingleOrDefault(x => x.Id == customerId);
             if (user == null)
                 throw new InvalidOperationException("User not found.");
 
