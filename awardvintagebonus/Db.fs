@@ -29,7 +29,6 @@ type Settings = AppSettings<"App.config">
 let getOpenDb (dbConnectionString : string) : DbContext= 
 
     //logger.Debug("Attempting to open the database connection...")
-    // Open db
     let db = new DbSchema.GzRunTimeDb(dbConnectionString)
     //db.DataContext.Log <- System.Console.Out
     db.Connection.Open()

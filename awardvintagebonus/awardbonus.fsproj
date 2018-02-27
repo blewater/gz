@@ -70,7 +70,7 @@
     <None Include="awardbonus.fsx" />
     <Compile Include="BonusReq.fs" />
     <Compile Include="Queue.fs" />
-    <Compile Include="BonusAwarder.fs" />
+    <Compile Include="ChromeAwarder.fs" />
     <None Include="gzdbdev.dbml" />
     <None Include="TblLoggerSchema.json" />
     <Compile Include="TblLogger.fs" />
