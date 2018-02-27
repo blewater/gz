@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using gzDAL.Conf;
 using gzDAL.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
@@ -30,7 +31,7 @@ namespace gzWeb.Providers
             _logger.Info("Authentication attempt for {0}", context.UserName);
 
             var userManager = _userManagerFactory();
-            var user = await userManager.FindAsync(context.UserName, context.Password);
+            var user = userManager.Find(context.UserName, context.Password);
 
             if (user == null)
             {
@@ -38,7 +39,7 @@ namespace gzWeb.Providers
 
                 const string ERROR_TYPE = "invalid_grant";
                 const string ERROR_MSG = "The username/email or password is incorrect.";
-                user = await userManager.FindByEmailAsync(context.UserName);
+                user = userManager.FindByEmail(context.UserName);
                 if (user == null)
                 {
                     context.SetError(ERROR_TYPE, ERROR_MSG);
@@ -46,7 +47,7 @@ namespace gzWeb.Providers
                     return;
                 }
                 
-                user = await userManager.CheckPasswordAsync(user, context.Password) ? user : null;
+                user = userManager.CheckPassword(user, context.Password) ? user : null;
                 if (user == null)
                 {
                     context.SetError(ERROR_TYPE, ERROR_MSG);
@@ -56,7 +57,7 @@ namespace gzWeb.Providers
             }
 
             user.LastLogin = DateTime.UtcNow;
-            await userManager.UpdateAsync(user);
+            userManager.Update(user);
 
             // TODO: in case of ...
             //if (!user.EmailConfirmed)
@@ -65,8 +66,8 @@ namespace gzWeb.Providers
             //    return;
             //}
 
-            var oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType);
-            var cookiesIdentity = await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
+            var oAuthIdentity = user.GenerateUserIdentity(userManager, OAuthDefaults.AuthenticationType);
+            var cookiesIdentity = user.GenerateUserIdentity(userManager, CookieAuthenticationDefaults.AuthenticationType);
 
             var properties = CreateProperties(user);
             var ticket = new AuthenticationTicket(oAuthIdentity, properties);
