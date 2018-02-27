@@ -68,13 +68,13 @@ namespace gzWeb.Controllers
         // POST api/Account/ChangePassword
         [HttpPost]
         [Route("ChangePassword")]
-        public async Task<IHttpActionResult> ChangePassword(ChangePasswordBindingModel model)
+        public IHttpActionResult ChangePassword(ChangePasswordBindingModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var userId = User.Identity.GetUserId<int>();
-            IdentityResult result = await UserManager.ChangePasswordAsync(userId, model.OldPassword, model.NewPassword);
+            IdentityResult result = UserManager.ChangePassword(userId, model.OldPassword, model.NewPassword);
 
             if (!result.Succeeded)
             {
@@ -88,16 +88,16 @@ namespace gzWeb.Controllers
 
             return Ok();
         }
-        
+
         // POST api/Account/SetPassword
         [Route("SetPassword")]
-        public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)
+        public IHttpActionResult SetPassword(SetPasswordBindingModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var userId = User.Identity.GetUserId<int>();
-            IdentityResult result = await UserManager.AddPasswordAsync(userId, model.NewPassword);
+            IdentityResult result = UserManager.AddPassword(userId, model.NewPassword);
 
             if (!result.Succeeded)
             {
@@ -115,19 +115,19 @@ namespace gzWeb.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("ForgotPassword")]
-        public async Task<IHttpActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public IHttpActionResult ForgotPassword(ForgotPasswordViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await UserManager.FindByEmailAsync(model.Email);
+            var user = UserManager.FindByEmail(model.Email);
             if (user == null /*|| !await UserManager.IsEmailConfirmedAsync(user.Id)*/)
             {
                 Logger.Error("User with email '{0}' not found.", model.Email);
                 return BadRequest();
             }
 
-            var token = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+            var token = UserManager.GeneratePasswordResetToken(user.Id);
 
             Logger.Info("ForgotPassword for [User#{0}] with email:'{1}'. Succeeded.", user.Id, model.Email);
 
@@ -137,19 +137,19 @@ namespace gzWeb.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("ResetPassword")]
-        public async Task<IHttpActionResult> ResetPassword(ResetPasswordViewModel model)
+        public IHttpActionResult ResetPassword(ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await UserManager.FindByEmailAsync(model.Email);
+            var user = UserManager.FindByEmail(model.Email);
             if (user == null)
             {
                 Logger.Error("User with email '{0}' not found.", model.Email);
                 return BadRequest();
             }
 
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            var result = UserManager.ResetPassword(user.Id, model.Code, model.Password);
             if (!result.Succeeded)
             {
                 Logger.Error("ResetPassword for [User#{0}] failed with error: {1}", user.Id,
@@ -323,7 +323,7 @@ namespace gzWeb.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Activate")]
-        public async Task<IHttpActionResult> Activate(ActivationBindingModel model)
+        public IHttpActionResult Activate(ActivationBindingModel model)
         {
             Logger.Info("Activate requested for [User#{0}] with code: {1}.", model.UserId, model.Code);
 
@@ -339,7 +339,7 @@ namespace gzWeb.Controllers
                 return BadRequest();
             }
 
-            var result = await UserManager.ConfirmEmailAsync(model.UserId, model.Code);
+            var result = UserManager.ConfirmEmail(model.UserId, model.Code);
             if (!result.Succeeded)
                 Logger.Error("UserManager.ConfirmEmailAsync failed. {0}",
                              String.Join(Environment.NewLine, result.Errors));
