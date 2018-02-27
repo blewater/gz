@@ -59,12 +59,13 @@
     <Content Include="NLog.xsd">
       <Paket>True</Paket>
     </Content>
+    <None Include="paket.dependencies" />
     <Content Include="paket.references" />
     <None Include="NLog.xsd" />
+    <None Include="D:\sc\gz\awardvintagebonus\paket.lock" />
     <Content Include="NLog.config">
       <Paket>True</Paket>
     </Content>
-    <None Include="D:\sc\gz\awardvintagebonus\paket.lock" />
     <None Include="Queue.fsx" />
     <None Include="awardbonus.fsx" />
     <Compile Include="BonusReq.fs" />
@@ -74,6 +75,9 @@
     <Compile Include="TblLogger.fs" />
     <Compile Include="Db.fs" />
     <Compile Include="SendEmail.fs" />
+    <Content Include="connectionStrings.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="App.config" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -195,28 +199,5 @@
       </ItemGroup>
     </When>
   </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="System.Runtime.InteropServices.RuntimeInformation">
-          <HintPath>packages\System.Runtime.InteropServices.RuntimeInformation\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="System.ValueTuple">
-          <HintPath>packages\System.ValueTuple\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Import Project="packages\NETStandard.Library\build\NETStandard.Library.targets" Condition="Exists('packages\NETStandard.Library\build\NETStandard.Library.targets')" Label="Paket" />
   <Import Project="packages\Selenium.Chrome.WebDriver\build\Selenium.Chrome.WebDriver.targets" Condition="Exists('packages\Selenium.Chrome.WebDriver\build\Selenium.Chrome.WebDriver.targets')" Label="Paket" />
 </Project>
