@@ -73,21 +73,6 @@ let enQUpdated(qMsgId)(br : BonusReqType) =
         do! bonusQueue.UpdateMessage(qMsgId, json)
     } |> Async.RunSynchronously
 
-let testBonusReq() : BonusReqType = {
-    AdminEmailRecipients = [|"mario@greenzorro.com"|];
-    Amount = 0.10m;
-    Currency = "EUR";
-    Fees = 0.025m;
-    GmUserId = 4300962; // ladderman
-    InvBalIds = [|588; 2783|];
-    UserEmail = "salem8@gmail.com";
-    UserFirstName = "Mario";
-    YearMonthSold = "201802";
-    ProcessedCnt = 0;
-    CreatedOn = DateTime.UtcNow;
-    LastProcessedTime = DateTime.UtcNow;
-}
-
 let createTestBonusReq() =
     let br = testBonusReq()
     enQueueJson br

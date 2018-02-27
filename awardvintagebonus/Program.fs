@@ -1,15 +1,17 @@
-﻿//#if INTERACTIVE
-//#r "./packages/canopy/lib/canopy.dll"
-//#r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
-//#r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
-//#r "./packages/NLog/lib/net45/NLog.dll"
-//#r "./packages/Selenium.WebDriver/lib/net45/WebDriver.dll"
-//#r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"
-//#r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/Microsoft.WindowsAzure.Storage.dll"
-//#r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/FSharp.Azure.StorageTypeProvider.dll"
+﻿#if INTERACTIVE
+#r "./packages/canopy/lib/canopy.dll"
+#r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
+#r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
+#r "./packages/NLog/lib/net45/NLog.dll"
+#r "./packages/Selenium.WebDriver/lib/net45/WebDriver.dll"
+#r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"
+#r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/Microsoft.WindowsAzure.Storage.dll"
+#r "./packages/FSharp.Azure.StorageTypeProvider/lib/net452/FSharp.Azure.StorageTypeProvider.dll"
+#load "BonusReq.fs"
+#load "Queue.fs"
 //#else
 //module main
-//#endif
+#endif
 open Microsoft.FSharp.Collections
 open FSharp.Configuration
 open NLog
@@ -77,7 +79,7 @@ let main argv =
                 try
                     bonusQReq 
                     |> bonusQ2Obj 
-                    |> BonusAwarder.start
+                    |> ChromeAwarder.start true
                     |> dbAwardGiven
                     |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
                     |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
