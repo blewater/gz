@@ -15,9 +15,40 @@ open BonusReq
 open Newtonsoft.Json
 
 // Connect via configuration file with named connection string.
-type AzStorage = AzureTypeProvider<connectionStringName = "storageConnString", configFileName="App.config">
+type AzStorage = AzureTypeProvider<connectionStringName = "storageConnString", configFileName="App.config", tableSchema="TblLoggerSchema.json">
 
 let log = AzStorage.Tables.BonusLog
+
+type BonusLogType = {
+    YearMonthSold : string;
+    GmUserId : int;
+    UserEmail : string;
+    UserFirstName : string;
+    Currency : string;
+    Amount : decimal;
+    Fees : decimal;
+    InvBalIds : string;
+    ProcessedCnt : int;
+    CreatedOn: DateTime;
+    LastProcessedTime: DateTime;
+}
+
+let bonusReq2Log(bonusReg : BonusReqType) : BonusLogType =
+    {
+        YearMonthSold = bonusReg.YearMonthSold;
+        GmUserId = bonusReg.GmUserId;
+        UserEmail = bonusReg.UserEmail;
+        UserFirstName = bonusReg.UserFirstName;
+        Currency = bonusReg.Currency;
+        Amount = bonusReg.Amount;
+        Fees = bonusReg.Fees;
+        InvBalIds = bonusReg.InvBalIds 
+                    |> Array.map(fun i -> i.ToString()) 
+                    |> String.concat ",";
+        ProcessedCnt = bonusReg.ProcessedCnt;
+        CreatedOn = bonusReg.CreatedOn;
+        LastProcessedTime = bonusReg.LastProcessedTime;
+    }
 
 let handleResponse =
     function
@@ -27,7 +58,11 @@ let handleResponse =
     | BatchError(entityId, httpCode, errorCode) -> printfn "Entity %A failed with an unknown batch error: %d - %s." entityId httpCode errorCode
 
 let insert (yearMonthSold : string)(logEntry: BonusReqType) =
-    let json = JsonConvert.SerializeObject(logEntry)
-    log.InsertAsync(Table.Partition yearMonthSold, Table.Row (logEntry.GmUserId.ToString()), json, Table.TableInsertMode.Insert)
+    let bonusLog = bonusReq2Log logEntry
+    log.InsertAsync(
+        Table.Partition logEntry.YearMonthSold, 
+        Table.Row (logEntry.GmUserId.ToString()), 
+        bonusLog, 
+        Table.TableInsertMode.Insert)
     |> Async.RunSynchronously
     |> handleResponse

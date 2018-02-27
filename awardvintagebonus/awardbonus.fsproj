@@ -72,6 +72,7 @@
     <Compile Include="Queue.fs" />
     <Compile Include="BonusAwarder.fs" />
     <None Include="gzdbdev.dbml" />
+    <None Include="TblLoggerSchema.json" />
     <Compile Include="TblLogger.fs" />
     <Compile Include="Db.fs" />
     <Compile Include="SendEmail.fs" />

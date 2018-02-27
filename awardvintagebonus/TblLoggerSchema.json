@@ -1,0 +1,37 @@
+﻿{
+  "BonusLog": {
+    "YearMonthSold": {
+      "Type": "String"
+    },
+    "GmUserId": {
+      "Type": "int32"
+    },
+    "UserEmail": {
+      "Type": "String"
+    },
+    "UserFirstName": {
+      "Type": "String"
+    },
+    "Currency": {
+      "Type": "String"
+    },
+    "Amount": {
+      "Type": "double"
+    },
+    "Fees": {
+      "Type": "double"
+    },
+    "InvBalIds": {
+      "Type": "String"
+    },
+    "ProcessedCnt": {
+      "Type": "int32"
+    },
+    "CreatedOn": {
+      "Type": "DateTime"
+    },
+    "LastProcessedTime": {
+      "Type": "DateTime"
+    }
+  }
+}
