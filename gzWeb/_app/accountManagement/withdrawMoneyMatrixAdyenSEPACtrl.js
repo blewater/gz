@@ -33,7 +33,7 @@
 
             if ($scope.existingPayCards.length === 1)
                 $scope.onPayCardSelected($scope.existingPayCards[0].id);
-        }
+        };
 
         $scope.getExtraModelProperties = function () {
             return {
@@ -42,7 +42,7 @@
         };
         $scope.getExtraWithdrawFields = function () {
             return {
-                MonitoringSessionId: window.MMM !== undefined ? window.MMM.getSession() : null,
+                MonitoringSessionId: window.MMM !== undefined ? window.MMM.getSession() : null
             };
         };
 
