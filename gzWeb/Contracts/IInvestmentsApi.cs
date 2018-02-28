@@ -13,6 +13,6 @@ namespace gzWeb.Contracts
 
         List<VintageViewModel> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user);
 
-        Task<List<PlanViewModel>> GetCustomerPlansAsync(int userId, decimal nextInvestAmount = 0);
+        List<PlanViewModel> GetCustomerPlans(int userId, decimal nextInvestAmount = 0);
     }
 }

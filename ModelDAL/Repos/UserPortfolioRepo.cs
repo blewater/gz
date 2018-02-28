@@ -229,7 +229,8 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<PortfolioDto>> GetUserPlansAsync(int userId) {
+        public List<PortfolioDto> GetUserPlans(int userId)
+        {
 
             var currentPortfolioId = (GetPresentMonthsUserPortfolio(userId))
                                                 .Id;
@@ -237,69 +238,73 @@ namespace gzDAL.Repos
             // Get gz Database Configuration
             var gzDbConf = confRepo.GetConfRow();
 
-            var portfolioDtos = 
-                (
-                    await 
+            var portfolioDtos =
                 (
                     from p in db.Portfolios
-                        join b in db.InvBalances on p.Id equals b.PortfolioId
-                        where b.CustomerId == userId
-                        && !b.Sold
+                    join b in db.InvBalances on p.Id equals b.PortfolioId
+                    where b.CustomerId == userId
+                          && !b.Sold
                     group b by p
                     into g
-                    select new PortfolioDto {
+                    select new PortfolioDto
+                    {
                         Id = g.Key.Id,
                         Title = g.Key.Title,
                         Color = g.Key.Color,
                         ROI = ((RiskToleranceEnum)g.Key.RiskTolerance) == RiskToleranceEnum.Low
-                                    ? gzDbConf.CONSERVATIVE_RISK_ROI
-                                    : (RiskToleranceEnum)g.Key.RiskTolerance == RiskToleranceEnum.Medium
-                                        ? gzDbConf.MEDIUM_RISK_ROI
-                                        : gzDbConf.AGGRESSIVE_RISK_ROI,
+                            ? gzDbConf.CONSERVATIVE_RISK_ROI
+                            : (RiskToleranceEnum)g.Key.RiskTolerance == RiskToleranceEnum.Medium
+                                ? gzDbConf.MEDIUM_RISK_ROI
+                                : gzDbConf.AGGRESSIVE_RISK_ROI,
                         Risk = ((RiskToleranceEnum)g.Key.RiskTolerance),
                         AllocatedAmount = g.Sum(b => b.CashInvestment),
-                        Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
-                            Name = f.Fund.HoldingName,
-                            Weight = f.Weight
-                        })
-                        .ToList()
-                })
-
-                // Cache 1 Day
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1)))
-                .ToList()
-                /*** Union with non-allocated customer portfolio ****/
-                .Union(
-                    await (from p in db.Portfolios
-                        where p.IsActive
-                        select new PortfolioDto {
-                            Id = p.Id,
-                            Title = p.Title,
-                            Color = p.Color,
-                            ROI = p.RiskTolerance == RiskToleranceEnum.Low
-                                ? gzDbConf.CONSERVATIVE_RISK_ROI
-                                : p.RiskTolerance == RiskToleranceEnum.Medium
-                                    ? gzDbConf.MEDIUM_RISK_ROI
-                                    : gzDbConf.AGGRESSIVE_RISK_ROI,
-                            Risk = p.RiskTolerance,
-                            AllocatedAmount = 0M,
-                            Holdings = p.PortFunds.Select(f => new HoldingDto {
+                        Holdings = g.Key.PortFunds.Select(f => new HoldingDto
+                            {
                                 Name = f.Fund.HoldingName,
                                 Weight = f.Weight
                             })
                             .ToList()
-                        })
+                    })
+
+                // Cache 1 Day
+                .FromCache(DateTime.UtcNow.AddDays(1))
+                .ToList()
+                /*** Union with non-allocated customer portfolio ****/
+                .Union(
+                    (from p in db.Portfolios
+                     where p.IsActive
+                     select new PortfolioDto
+                     {
+                         Id = p.Id,
+                         Title = p.Title,
+                         Color = p.Color,
+                         ROI = p.RiskTolerance == RiskToleranceEnum.Low
+                             ? gzDbConf.CONSERVATIVE_RISK_ROI
+                             : p.RiskTolerance == RiskToleranceEnum.Medium
+                                 ? gzDbConf.MEDIUM_RISK_ROI
+                                 : gzDbConf.AGGRESSIVE_RISK_ROI,
+                         Risk = p.RiskTolerance,
+                         AllocatedAmount = 0M,
+                         Holdings = p.PortFunds.Select(f => new HoldingDto
+                         {
+                             Name = f.Fund.HoldingName,
+                             Weight = f.Weight
+                         })
+                         .ToList()
+                     })
 
                         // Cache 1 day
-                        .FromCacheAsync(DateTime.UtcNow.AddDays(1))
+                        .FromCache(DateTime.UtcNow.AddDays(1))
                         , new PortfolioComparer())
                 .ToList();
 
             // Calculate allocation percentage
             var totalSum = portfolioDtos.Sum(p => p.AllocatedAmount);
-            foreach (var portfolioDto in portfolioDtos) {
-                if (totalSum != 0) {
-                    portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
+            foreach (var portfolioDto in portfolioDtos)
+            {
+                if (totalSum != 0)
+                {
+                    portfolioDto.AllocatedPercent = (float)(100 * portfolioDto.AllocatedAmount / totalSum);
                 }
                 portfolioDto.Selected = portfolioDto.Id == currentPortfolioId;
             }

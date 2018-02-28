@@ -270,7 +270,7 @@ namespace gzWeb.Controllers {
         #region Portfolio
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetPortfolioData()
+        public IHttpActionResult GetPortfolioData()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetPortfolioData requested for [User#{0}]", userId);
@@ -288,11 +288,11 @@ namespace gzWeb.Controllers {
                                                                                                              ()));
 
             var model = new PortfolioDataViewModel
-                        {
-                                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                                NextExpectedInvestment = investmentAmount,
-                                Plans = await GetCustomerPlansAsync(user.Id, investmentAmount)
-                        };
+            {
+                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
+                NextExpectedInvestment = investmentAmount,
+                Plans = GetCustomerPlans(user.Id, investmentAmount)
+            };
             return OkMsg(model);
         }
 
@@ -323,7 +323,7 @@ namespace gzWeb.Controllers {
         #region Performance
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetPerformanceData()
+        public IHttpActionResult GetPerformanceData()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("SetPlanSelection requested for [User#{0}]", userId);
@@ -348,11 +348,11 @@ namespace gzWeb.Controllers {
 
             var model = new PerformanceDataViewModel
             {
-                    InvestmentsBalance = // Don't include the month's loss amount in the current inv balance
+                InvestmentsBalance = // Don't include the month's loss amount in the current inv balance
                             DbExpressions.RoundCustomerBalanceAmount(invBalance - lastInvestmentAmount),
-                    NextExpectedInvestment =
+                NextExpectedInvestment =
                             DbExpressions.RoundCustomerBalanceAmount(lastInvestmentAmount),
-                    Plans = await GetCustomerPlansAsync(user.Id)
+                Plans = GetCustomerPlans(user.Id)
             };
             return OkMsg(model);
         }
@@ -389,28 +389,28 @@ namespace gzWeb.Controllers {
 
         #region Methods
 
-        public async Task<List<PlanViewModel>> GetCustomerPlansAsync(int userId, decimal nextInvestAmount = 0)
+        public List<PlanViewModel> GetCustomerPlans(int userId, decimal nextInvestAmount = 0)
         {
-            var portfolioDtos = await userPortfolioRepo.GetUserPlansAsync(userId);
+            var portfolioDtos = userPortfolioRepo.GetUserPlans(userId);
             var portfolios = portfolioDtos
                     .Select(p => new PlanViewModel()
-                                 {
-                                         Id = p.Id,
-                                         Title = p.Title,
-                                         Color = p.Color,
-                                         AllocatedPercent = p.AllocatedPercent,
-                                         AllocatedAmount = p.AllocatedAmount,
-                                         ROI = p.ROI,
-                                         Risk = p.Risk,
-                                         Selected = p.Selected,
-                                         Holdings = p.Holdings
+                    {
+                        Id = p.Id,
+                        Title = p.Title,
+                        Color = p.Color,
+                        AllocatedPercent = p.AllocatedPercent,
+                        AllocatedAmount = p.AllocatedAmount,
+                        ROI = p.ROI,
+                        Risk = p.Risk,
+                        Selected = p.Selected,
+                        Holdings = p.Holdings
                                                      .Select(h => new HoldingViewModel()
-                                                                  {
-                                                                          Name = h.Name,
-                                                                          Weight = h.Weight
-                                                                  })
+                                                     {
+                                                         Name = h.Name,
+                                                         Weight = h.Weight
+                                                     })
                                                                     .ToList()
-                                 })
+                    })
                     .OrderBy(x => x.Risk)
                     .ToList();
 

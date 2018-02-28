@@ -100,7 +100,7 @@ namespace gzWeb.Tests.Controllers
             var user = await manager.FindByEmailAsync("info@nessos.gr");
 
             // Act
-            var result = await investmentsApiController.GetCustomerPlansAsync(user.Id);
+            var result = investmentsApiController.GetCustomerPlans(user.Id);
 
             // 3 Active Portfolios
             Assert.IsNotNull(result.Count() == 3);

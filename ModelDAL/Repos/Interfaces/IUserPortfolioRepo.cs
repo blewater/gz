@@ -9,7 +9,7 @@ namespace gzDAL.Repos.Interfaces
     public interface IUserPortfolioRepo {
 
         void SetDbUserMonthsPortfolioMix(int customerId, RiskToleranceEnum riskType, int portfYear, int portfMonth, DateTime UpdatedOnUTC);
-        Task<List<PortfolioDto>> GetUserPlansAsync(int userId);
+        List<PortfolioDto> GetUserPlans(int userId);
 
         Portfolio GetCurrentCustomerPortfolio(int customerId);
 

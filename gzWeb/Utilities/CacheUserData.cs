@@ -39,7 +39,7 @@ namespace gzWeb.Utilities {
 
                 invBalanceRepo.GetCustomerVintagesSellingValueNow(userId, summaryRes.Item1.Vintages.ToList());
 
-                var _ = custPortfolioRepo.GetUserPlansAsync(userId).ConfigureAwait(false);
+                var _ = custPortfolioRepo.GetUserPlans(userId);
 
             }
             catch (Exception ex)
