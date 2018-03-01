@@ -59,30 +59,32 @@ let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
         |> incProcessCnt
         |> enQUpdated bonusQReq.Id
     with ex ->
-        TblLogger.insert (Some ex) bonusReq
+        TblLogger.Upsert (Some ex) bonusReq |> ignore
 
 [<EntryPoint>]
 let main argv = 
 
     try
-        if qCnt() > 0 then ChromeAwarder.startBrowserSession false
-        while qCnt() > 0 do
-            match getNextQMsg() with
-            | Some bonusQReq ->
-                try
-                    bonusQReq 
-                    |> bonusQ2Obj 
-                    |> ChromeAwarder.awardUser
-                    |> dbAwardGiven
-                    |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
-                    |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
-                    deleteBonusReq bonusQReq
-                with ex ->
-                    TblLogger.insert (Some ex) (bonusQ2Obj bonusQReq)
-                    // Update process cnt
-                    updQBonusReq bonusQReq
-                    logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
-            | _ -> ()
+        if qCnt() > 0 then 
+            ChromeAwarder.startBrowserSession false
+            while qCnt() > 0 do
+                match getNextQMsg() with
+                | Some bonusQReq ->
+                    try
+                        bonusQReq 
+                        |> bonusQ2Obj
+                        |> TblLogger.Upsert None
+                        |> ChromeAwarder.awardUser
+                        |> dbAwardGiven
+                        |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
+                        |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
+                        deleteBonusReq bonusQReq
+                    with ex ->
+                        TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
+                        // Update process cnt
+                        updQBonusReq bonusQReq
+                        logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
+                | _ -> ()
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
 

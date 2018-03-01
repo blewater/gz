@@ -96,7 +96,7 @@ type EmailReceipts() =
         try
             retry 3 toCallFunc
         with ex ->
-            TblLogger.insert (Some ex) bonusReq
+            TblLogger.Upsert (Some ex) bonusReq |> ignore
         bonusReq
 
     member this.SendBonusReqAdminReceipt (fromGmailUser: string)(fromGmailPwd : string)(bonusReq : BonusReqType) : unit =
@@ -105,4 +105,4 @@ type EmailReceipts() =
         try
             retry 3 toCallFunc
         with ex ->
-            TblLogger.insert (Some ex) bonusReq
+            TblLogger.Upsert (Some ex) bonusReq |> ignore
