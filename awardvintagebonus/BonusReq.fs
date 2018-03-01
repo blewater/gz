@@ -2,20 +2,6 @@
 
 open System
 
-(*
- var newBonusReq = new BonusReq()
-            {
-                AdminEmailRecipients = adminsArr,
-                Amount = user.NetProceeds,
-                Fees = user.Fees,
-                GmUserId = user.GmUserId,
-                InvBalIds = soldVintageDtos.Select(v => v.InvBalanceId).ToArray(),
-                UserEmail = user.Email,
-                UserFirstName = user.FirstName
-            };
-            *)
-
-
 type BonusReqType = {
     AdminEmailRecipients : string[];
     Currency : string;
@@ -50,3 +36,19 @@ let testBonusReq() : BonusReqType = {
     CreatedOn = DateTime.UtcNow;
     LastProcessedTime = DateTime.UtcNow;
 }
+(*
+let bonusReq : BonusReqType = {
+    AdminEmailRecipients = [|"mario@greenzorro.com"|];
+    Amount = 764.0m;
+    Currency = "SEK";
+    Fees = 0.025m;
+    GmUserId = 6235163; // ladderman
+    InvBalIds = [|588; 2783|];
+    UserEmail = "salem8@gmail.com";
+    UserFirstName = "Mario";
+    YearMonthSold = "201802";
+    ProcessedCnt = 0;
+    CreatedOn = DateTime.UtcNow;
+    LastProcessedTime = DateTime.UtcNow;
+}
+*)

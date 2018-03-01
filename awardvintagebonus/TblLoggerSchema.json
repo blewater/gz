@@ -1,7 +1,12 @@
 ﻿{
   "BonusLog": {
-    "YearMonthSold": {
-      "Type": "String"
+    "Exn": {
+      "Type": "String",
+      "Optional": true
+    },
+    "ExnSf": {
+      "Type": "String",
+      "Optional": true
     },
     "GmUserId": {
       "Type": "int32"

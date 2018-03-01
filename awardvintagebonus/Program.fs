@@ -35,24 +35,16 @@ let yearMonthSold = DateTime.UtcNow.Year.ToString("0000") + DateTime.UtcNow.Mont
 
 let dbAwardGiven(bonusReq : BonusReqType) = 
     try 
-        let invIds =
-            bonusReq.InvBalIds |> Array.toSeq
-            //query {
-            //    for id in bonusReq.InvBalIds do
-            //    select id
-            //}
+        let sql =
+            sprintf "UPDATE InvBalances Set AwardedSoldAmount = 1, UpdatedOnUTC = GETUTCDATE() WHERE Id IN (%s)"
+                (bonusReq.InvBalIds 
+                    |> Array.map(fun i -> i.ToString()) 
+                    |> String.concat ",")
 
-        query {
-            for soldVintage in dbCtx.InvBalances do
-            where (invIds |> Seq.contains (soldVintage.Id))
-            select soldVintage
-        } 
-        |> Seq.iter (fun sv -> 
-            
-            sv.AwardedSoldAmount <- true
-            sv.UpdatedOnUTC <- DateTime.UtcNow
-        )
-        dbCtx.SubmitChanges()
+        let rowCnt = 
+            dbCtx.ExecuteCommand(sql)
+        printfn "Updated %d rows." rowCnt
+
     with ex ->
         logger.Error(ex, "Database update")
     bonusReq
@@ -67,7 +59,7 @@ let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
         |> incProcessCnt
         |> enQUpdated bonusQReq.Id
     with ex ->
-        TblLogger.insert yearMonthSold bonusReq
+        TblLogger.insert (Some ex) bonusReq
 
 [<EntryPoint>]
 let main argv = 
@@ -79,19 +71,18 @@ let main argv =
                 try
                     bonusQReq 
                     |> bonusQ2Obj 
-                    |> ChromeAwarder.start true
+                    |> ChromeAwarder.start false
                     |> dbAwardGiven
                     |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
                     |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
                     deleteBonusReq bonusQReq
                 with ex ->
-                    TblLogger.insert yearMonthSold (bonusQ2Obj bonusQReq)
+                    TblLogger.insert (Some ex) (bonusQ2Obj bonusQReq)
                     // Update process cnt
                     updQBonusReq bonusQReq
                     logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
             | _ -> ()
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
-
         
     0 // return an integer exit code

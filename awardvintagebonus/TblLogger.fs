@@ -20,7 +20,8 @@ type AzStorage = AzureTypeProvider<connectionStringName = "storageConnString", c
 let log = AzStorage.Tables.BonusLog
 
 type BonusLogType = {
-    YearMonthSold : string;
+    Exn : string option;
+    ExnSf : string option;
     GmUserId : int;
     UserEmail : string;
     UserFirstName : string;
@@ -33,21 +34,28 @@ type BonusLogType = {
     LastProcessedTime: DateTime;
 }
 
-let bonusReq2Log(bonusReg : BonusReqType) : BonusLogType =
+let bonusReq2Log(bonusReq : BonusReqType)(exn : exn option) : BonusLogType =
     {
-        YearMonthSold = bonusReg.YearMonthSold;
-        GmUserId = bonusReg.GmUserId;
-        UserEmail = bonusReg.UserEmail;
-        UserFirstName = bonusReg.UserFirstName;
-        Currency = bonusReg.Currency;
-        Amount = bonusReg.Amount;
-        Fees = bonusReg.Fees;
-        InvBalIds = bonusReg.InvBalIds 
+        Exn = exn 
+                |> function 
+                    | Some exn -> Some exn.Message
+                    | _ -> None
+        ExnSf = exn 
+                |> function 
+                    | Some exn -> Some exn.StackTrace
+                    | _ -> None
+        GmUserId = bonusReq.GmUserId;
+        UserEmail = bonusReq.UserEmail;
+        UserFirstName = bonusReq.UserFirstName;
+        Currency = bonusReq.Currency;
+        Amount = bonusReq.Amount;
+        Fees = bonusReq.Fees;
+        InvBalIds = bonusReq.InvBalIds 
                     |> Array.map(fun i -> i.ToString()) 
                     |> String.concat ",";
-        ProcessedCnt = bonusReg.ProcessedCnt;
-        CreatedOn = bonusReg.CreatedOn;
-        LastProcessedTime = bonusReg.LastProcessedTime;
+        ProcessedCnt = bonusReq.ProcessedCnt;
+        CreatedOn = bonusReq.CreatedOn;
+        LastProcessedTime = bonusReq.LastProcessedTime;
     }
 
 let handleResponse =
@@ -57,8 +65,8 @@ let handleResponse =
     | BatchOperationFailedError(entityId) -> printfn "Entity %A was ignored as part of a failed batch operation." entityId
     | BatchError(entityId, httpCode, errorCode) -> printfn "Entity %A failed with an unknown batch error: %d - %s." entityId httpCode errorCode
 
-let insert (yearMonthSold : string)(logEntry: BonusReqType) =
-    let bonusLog = bonusReq2Log logEntry
+let insert (excn : exn option)(logEntry: BonusReqType) =
+    let bonusLog = bonusReq2Log logEntry excn
     log.InsertAsync(
         Table.Partition logEntry.YearMonthSold, 
         Table.Row (logEntry.GmUserId.ToString()), 
