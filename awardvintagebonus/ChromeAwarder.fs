@@ -94,22 +94,39 @@ let start (visualSession : bool)(bonusReq : BonusReqType) : BonusReqType =
 
         selCashBackBonusinSelectList()
 
-        // Bonus amount text input
-        let bonusStr = bonusReq.Amount.ToString()
-        let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
-        bonusAmountEl << bonusStr
-        let valueReadBack = read bonusAmountEl 
-        assert (valueReadBack = bonusStr)
-
         // Set Comment
         (element "#ctl00_cphPage_rtbComment_text") << sprintf "User %d bonus granted for vintages sold on %s" bonusReq.GmUserId bonusReq.YearMonthSold
 
-        // Press Give bonus button
-        click "#cphPage_btnConfirm"
+        // Bonus amount text input
+        let bonusStr = bonusReq.Amount.ToString()
+        let rec retrySetAmount(tries : int) : bool =
+            let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
+            try
+                bonusAmountEl << bonusStr
+                let readAmount = read bonusAmountEl
+                assert (readAmount = bonusStr)
+                true
+            with ex ->
+                TblLogger.insert (Some ex) bonusReq
+                printfn "Setting bonus amount to Element failed! Remaining tries: %d" tries
+                if tries > 0 then 
+                    retrySetAmount (tries - 1)
+                else
+                    false
+        
+        retrySetAmount 3
+        |> function
+            | true -> 
+                printfn "Succeeded in setting the bonus amount"
+                // Press Give bonus button
+                click "#cphPage_btnConfirm"
+            | false ->
+                failwith "Failed in setting the bonus amount."
 
         quit()
         bonusReq
     with ex ->
+        TblLogger.insert (Some ex) bonusReq
         try
             quit()
         with _ -> ()

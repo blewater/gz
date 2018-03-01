@@ -29,9 +29,9 @@ type EmailReceipts() =
                     \n\
                     Further to your request, we would like to inform you that your Investment bonus of %s has been credited to your account!\n\
                     \n\
-                    In order to turn your bonus into cash, all that is required is to place a single minimum bet on one of our games (even 0,10 EUR).\n\
+                    In order to turn your bonus into cash, all that is required is to place a single minimum bet on one of our games.\n\
                     \n\
-                    Thank you for choosing Greenzorro and we wish you a wonderful day and all the best for the new year!\n\
+                    Thank you for choosing Greenzorro and we hope you enjoy it!\n\
                     \n\
                     Best regards,\n\
                     \n\
@@ -49,9 +49,9 @@ type EmailReceipts() =
 
         let msg = MimeMessage()
         msg.From.Add(MailboxAddress ("Admin", "admin@greenzorro.com"))
-        //msg.To.Add(MailboxAddress ("Antonis", "antonis@greenzorro.com"))
+        msg.To.Add(MailboxAddress ("Antonis", "antonis@greenzorro.com"))
         msg.To.Add(MailboxAddress ("Mario", "mario@greenzorro.com"))
-        msg.Subject <- sprintf "Bonus fulfilled for %s" <| userEmail
+        msg.Subject <- sprintf "Bonus fulfilled for id:%d" <| gmUserId
         let body = TextPart ("plain")
         body.Text <- 
             sprintf "Bonus fulfilled for\n\
@@ -73,10 +73,12 @@ type EmailReceipts() =
 
     let rec retry(triesLeft : int)(fn : (unit -> unit)) =
         try
+            fn()
+        with ex ->
             if triesLeft > 0 then
-                fn()
-        with _ ->
-            retry (triesLeft - 1) fn
+                retry (triesLeft - 1) fn
+            else
+                raise ex
 
     member this.SendBonusReqUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(bonusReq : BonusReqType) : BonusReqType =
 
@@ -91,11 +93,16 @@ type EmailReceipts() =
                 | _ -> "Player"
 
         let toCallFunc() = sendUserReceipt fromGmailUser fromGmailPwd bonusReq.UserEmail firstName (getAmountCur bonusReq)
-        retry 3 toCallFunc
-            
+        try
+            retry 3 toCallFunc
+        with ex ->
+            TblLogger.insert (Some ex) bonusReq
         bonusReq
 
     member this.SendBonusReqAdminReceipt (fromGmailUser: string)(fromGmailPwd : string)(bonusReq : BonusReqType) : unit =
         
         let toCallFunc() = sendAdminReceipt fromGmailUser fromGmailPwd bonusReq.GmUserId bonusReq.UserEmail (getAmountCur bonusReq)
-        retry 3 toCallFunc
+        try
+            retry 3 toCallFunc
+        with ex ->
+            TblLogger.insert (Some ex) bonusReq

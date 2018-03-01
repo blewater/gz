@@ -70,10 +70,10 @@
     <None Include="awardbonus.fsx" />
     <Compile Include="BonusReq.fs" />
     <Compile Include="Queue.fs" />
-    <Compile Include="ChromeAwarder.fs" />
     <None Include="gzdbdev.dbml" />
     <None Include="TblLoggerSchema.json" />
     <Compile Include="TblLogger.fs" />
+    <Compile Include="ChromeAwarder.fs" />
     <Compile Include="Db.fs" />
     <Compile Include="SendEmail.fs" />
     <Content Include="connectionStrings.config">
