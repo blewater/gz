@@ -389,9 +389,9 @@ namespace gzDAL.Repos
             // Calcluate earliest locking date, locked status
             foreach (var dto in vintagesList)
             {
-                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);
+                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod).AddHours(12);
                 // Unlock at Utc noon of 1st month day
-                dto.Locked = firstOfMonthUnlocked >= DateTime.UtcNow.AddHours(12);
+                dto.Locked = firstOfMonthUnlocked >= DateTime.UtcNow;
             }
 
             return vintagesList;
