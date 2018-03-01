@@ -65,13 +65,14 @@ let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
 let main argv = 
 
     try
+        if qCnt() > 0 then ChromeAwarder.startBrowserSession false
         while qCnt() > 0 do
             match getNextQMsg() with
             | Some bonusQReq ->
                 try
                     bonusQReq 
                     |> bonusQ2Obj 
-                    |> ChromeAwarder.start false
+                    |> ChromeAwarder.awardUser
                     |> dbAwardGiven
                     |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
                     |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
@@ -84,5 +85,6 @@ let main argv =
             | _ -> ()
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
-        
+
+    ChromeAwarder.endBrowserSession()
     0 // return an integer exit code

@@ -81,10 +81,15 @@ let selCashBackBonusinSelectList() : unit =
     do selBonusLi bonusInput
     press enter
 
-let start (visualSession : bool)(bonusReq : BonusReqType) : BonusReqType =
+let startBrowserSession (visualSession : bool) =
+    setChromeOptions visualSession
+    uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
+
+let endBrowserSession() =
+    quit()
+
+let awardUser (bonusReq : BonusReqType) : BonusReqType =
     try
-        setChromeOptions visualSession
-        uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
         searchCustomer bonusReq.GmUserId
         // go to the portfolio page
         click "#cphPage_UsersControl1_gvData > tbody > tr:nth-child(2) > td:nth-child(2) > a"
@@ -105,6 +110,7 @@ let start (visualSession : bool)(bonusReq : BonusReqType) : BonusReqType =
                 bonusAmountEl << bonusStr
                 let readAmount = read bonusAmountEl
                 assert (readAmount = bonusStr)
+                printfn "Amount to award: %s" readAmount
                 true
             with ex ->
                 TblLogger.insert (Some ex) bonusReq
@@ -123,11 +129,7 @@ let start (visualSession : bool)(bonusReq : BonusReqType) : BonusReqType =
             | false ->
                 failwith "Failed in setting the bonus amount."
 
-        quit()
         bonusReq
     with ex ->
         TblLogger.insert (Some ex) bonusReq
-        try
-            quit()
-        with _ -> ()
         raise ex
