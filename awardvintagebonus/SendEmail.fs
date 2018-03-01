@@ -51,11 +51,11 @@ type EmailReceipts() =
         msg.From.Add(MailboxAddress ("Admin", "admin@greenzorro.com"))
         msg.To.Add(MailboxAddress ("Antonis", "antonis@greenzorro.com"))
         msg.To.Add(MailboxAddress ("Mario", "mario@greenzorro.com"))
-        msg.Subject <- sprintf "Bonus fulfilled for id:%d" <| gmUserId
+        msg.Subject <- sprintf "Bonus fulfilled for id: %d" <| gmUserId
         let body = TextPart ("plain")
         body.Text <- 
             sprintf "Bonus fulfilled for\n\
-                    user id:%d\n\
+                    user id: %d\n\
                     email: %s\n\
                     Amount: %s.\n\
                     \n\
