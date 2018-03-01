@@ -89,47 +89,45 @@ let endBrowserSession() =
     quit()
 
 let awardUser (bonusReq : BonusReqType) : BonusReqType =
-    try
-        searchCustomer bonusReq.GmUserId
-        // go to the portfolio page
-        click "#cphPage_UsersControl1_gvData > tbody > tr:nth-child(2) > td:nth-child(2) > a"
-        click "#cphPage_UserAccountsCompactControl1_gvData > tbody > tr > td:first-child > table > tbody > tr > td:nth-child(2) > a"
-        // go into the bonus
-        click "#cphPage_CasinoWalletAccountDataControl1_btnGiveManualBonus"
+    searchCustomer bonusReq.GmUserId
+    // go to the portfolio page
+    click "#cphPage_UsersControl1_gvData > tbody > tr:nth-child(2) > td:nth-child(2) > a"
+    click "#cphPage_UserAccountsCompactControl1_gvData > tbody > tr > td:first-child > table > tbody > tr > td:nth-child(2) > a"
+    // go into the bonus
+    click "#cphPage_CasinoWalletAccountDataControl1_btnGiveManualBonus"
 
-        selCashBackBonusinSelectList()
+    selCashBackBonusinSelectList()
 
-        // Set Comment
-        (element "#ctl00_cphPage_rtbComment_text") << sprintf "User %d bonus granted for vintages sold on %s" bonusReq.GmUserId bonusReq.YearMonthSold
+    // Set Comment
+    (element "#ctl00_cphPage_rtbComment_text") << sprintf "User %d bonus granted for vintages sold on %s" bonusReq.GmUserId bonusReq.YearMonthSold
 
-        // Bonus amount text input
-        let bonusStr = bonusReq.Amount.ToString()
-        let rec retrySetAmount(tries : int) : bool =
-            let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
-            try
-                bonusAmountEl << bonusStr
-                let readAmount = read bonusAmountEl
-                assert (readAmount = bonusStr)
-                printfn "Amount to award: %s" readAmount
-                true
-            with ex ->
-                TblLogger.insert (Some ex) bonusReq
-                printfn "Setting bonus amount to Element failed! Remaining tries: %d" tries
-                if tries > 0 then 
-                    retrySetAmount (tries - 1)
-                else
-                    false
+    // Bonus amount text input
+    let bonusStr = bonusReq.Amount.ToString()
+    let rec retrySetAmount(tries : int) : bool =
+        let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
+        try
+            bonusAmountEl << bonusStr
+            let readAmount = read bonusAmountEl
+            assert (readAmount = bonusStr)
+            printfn "Amount to award: %s" readAmount
+            true
+        with ex ->
+            printfn "Setting bonus amount to Element failed! Remaining tries: %d" tries
+            if tries > 0 then 
+                retrySetAmount (tries - 1)
+            else
+#if !INTERACTIVE
+                TblLogger.Upsert (Some ex) bonusReq |> ignore
+#endif
+                false
         
-        retrySetAmount 3
-        |> function
-            | true -> 
-                printfn "Succeeded in setting the bonus amount"
-                // Press Give bonus button
-                click "#cphPage_btnConfirm"
-            | false ->
-                failwith "Failed in setting the bonus amount."
+    retrySetAmount 30
+    |> function
+        | true -> 
+            // Press Give bonus button
+            click "#cphPage_btnConfirm"
+            printfn "Succeeded awarding the bonus amount"
+        | false ->
+            failwith "Failed in setting the bonus amount."
 
-        bonusReq
-    with ex ->
-        TblLogger.insert (Some ex) bonusReq
-        raise ex
+    bonusReq

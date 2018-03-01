@@ -58,19 +58,20 @@ let bonusReq2Log(bonusReq : BonusReqType)(exn : exn option) : BonusLogType =
         LastProcessedTime = bonusReq.LastProcessedTime;
     }
 
-let handleResponse =
+let private handleResponse =
     function
     | SuccessfulResponse(entityId, errorCode) -> printfn "Entity %A succeeded: %d." entityId errorCode
     | EntityError(entityId, httpCode, errorCode) -> printfn "Entity %A failed: %d - %s." entityId httpCode errorCode
     | BatchOperationFailedError(entityId) -> printfn "Entity %A was ignored as part of a failed batch operation." entityId
     | BatchError(entityId, httpCode, errorCode) -> printfn "Entity %A failed with an unknown batch error: %d - %s." entityId httpCode errorCode
 
-let insert (excn : exn option)(logEntry: BonusReqType) =
+let Upsert (excn : exn option)(logEntry: BonusReqType) : BonusReqType=
     let bonusLog = bonusReq2Log logEntry excn
     log.InsertAsync(
         Table.Partition logEntry.YearMonthSold, 
         Table.Row (logEntry.GmUserId.ToString()), 
         bonusLog, 
-        Table.TableInsertMode.Insert)
+        Table.TableInsertMode.Upsert)
     |> Async.RunSynchronously
     |> handleResponse
+    logEntry
