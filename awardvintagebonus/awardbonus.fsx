@@ -21,7 +21,7 @@ let everymatrixSecureToken = "3DFEC757D808494"
 let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
 chromeOptions.AddArgument("--no-sandbox")
 chromeOptions.AddArgument("--disable-extensions")
-chromeOptions.AddArgument("--headless")
+//chromeOptions.AddArgument("--headless")
 chromeOptions.AddArgument("--disable-gpu")
 chromeOptions.AddArgument("--disable-client-side-phishing-detection")
 chromeOptions.AddArgument("--disable-suggestions-service")
@@ -72,6 +72,12 @@ selCashBackBonusinSelectList()
 let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
 bonusAmountEl << "0.10"
 let amount = read bonusAmountEl
+
+// Set Comment
+(element "#ctl00_cphPage_rtbComment_text") << sprintf "User %d bonus granted for vintages sold on %s" bonusReq.GmUserId bonusReq.YearMonthSold
+
+click "#cphPage_btnConfirm"
+
 
 quit()
 

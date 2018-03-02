@@ -17,6 +17,7 @@ Settings.SelectExecutableFile configPath
 printfn "%s" Settings.ConfigFileName
 #else
 module ChromeAwarder
+open System
 open canopy
 open OpenQA.Selenium
 open FSharp.Configuration
@@ -52,6 +53,7 @@ let setChromeOptions(visualSession : bool) : unit =
     canopy.configuration.chromeDir <- "."
     #endif
     start chromeNoSandbox
+    pin FullScreen
 
 let uiAutomateLoginEverymatrixReports 
         (everyMatrixUserName : string)
@@ -106,10 +108,17 @@ let awardUser (bonusReq : BonusReqType) : BonusReqType =
     let rec retrySetAmount(tries : int) : bool =
         let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
         try
-            bonusAmountEl << bonusStr
-            let readAmount = read bonusAmountEl
-            assert (readAmount = bonusStr)
-            printfn "Amount to award: %s" readAmount
+            bonusAmountEl.Clear()
+            bonusStr
+            |> Seq.iter(
+                fun(c : char) ->
+                    let cs = c.ToString()
+                    bonusAmountEl.SendKeys cs
+                )
+            //bonusAmountEl << bonusStr
+            let readAmount = Decimal.Parse(read bonusAmountEl)
+            assert (readAmount = bonusReq.Amount)
+            printfn "Amount to award: %M" readAmount
             true
         with ex ->
             printfn "Setting bonus amount to Element failed! Remaining tries: %d" tries
