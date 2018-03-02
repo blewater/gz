@@ -18,6 +18,7 @@ using gzWeb.Models;
 using gzWeb.Utilities;
 using System.Reflection;
 using gzWeb.Providers;
+using Microsoft.ApplicationInsights;
 
 namespace gzWeb.Controllers
 {
@@ -60,8 +61,16 @@ namespace gzWeb.Controllers
         [Route("Logout")]
         public IHttpActionResult Logout()
         {
-            Logger.Info("Logout requested for [User#{0}]", User.Identity.GetUserId<int>());
-            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            try {
+                Logger.Info("Logout requested for [User#{0}]", User.Identity.GetUserId<int>());
+                Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "api/Account/Logout");
+                telemetry.TrackException(ex);
+            }
+
             return Ok();
         }
 
@@ -70,22 +79,29 @@ namespace gzWeb.Controllers
         [Route("ChangePassword")]
         public IHttpActionResult ChangePassword(ChangePasswordBindingModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var userId = User.Identity.GetUserId<int>();
-            IdentityResult result = UserManager.ChangePassword(userId, model.OldPassword, model.NewPassword);
-
-            if (!result.Succeeded)
+            try
             {
-                Logger.Error("ChangePassword for [User#{0}]. Failed with error: {1}", userId,
-                             String.Join(Environment.NewLine, result.Errors));
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                return GetErrorResult(result);
+                var userId = User.Identity.GetUserId<int>();
+                IdentityResult result = UserManager.ChangePassword(userId, model.OldPassword, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    Logger.Error("ChangePassword for [User#{0}]. Failed with error: {1}", userId,
+                        String.Join(Environment.NewLine, result.Errors));
+
+                    return GetErrorResult(result);
+                }
+
+                Logger.Info("ChangePassword for [User#{0}]. Succeeded.", userId);
             }
-
-            Logger.Info("ChangePassword for [User#{0}]. Succeeded.", userId);
-
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "api/Account/Logout");
+                telemetry.TrackException(ex);
+            }
             return Ok();
         }
 
@@ -93,21 +109,29 @@ namespace gzWeb.Controllers
         [Route("SetPassword")]
         public IHttpActionResult SetPassword(SetPasswordBindingModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var userId = User.Identity.GetUserId<int>();
-            IdentityResult result = UserManager.AddPassword(userId, model.NewPassword);
-
-            if (!result.Succeeded)
+            try
             {
-                Logger.Error("SetPassword for [User#{0}]. Failed with error: {1}", userId,
-                            String.Join(Environment.NewLine, result.Errors));
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                return GetErrorResult(result);
+                var userId = User.Identity.GetUserId<int>();
+                IdentityResult result = UserManager.AddPassword(userId, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    Logger.Error("SetPassword for [User#{0}]. Failed with error: {1}", userId,
+                        String.Join(Environment.NewLine, result.Errors));
+
+                    return GetErrorResult(result);
+                }
+
+                Logger.Info("SetPassword for [User#{0}]. Succeeded.", userId);
             }
-
-            Logger.Info("SetPassword for [User#{0}]. Succeeded.", userId);
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "api/Account/SetPassword");
+                telemetry.TrackException(ex);
+            }
 
             return Ok();
         }
@@ -117,19 +141,28 @@ namespace gzWeb.Controllers
         [Route("ForgotPassword")]
         public IHttpActionResult ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = UserManager.FindByEmail(model.Email);
-            if (user == null /*|| !await UserManager.IsEmailConfirmedAsync(user.Id)*/)
+            string token = null;
+            try
             {
-                Logger.Error("User with email '{0}' not found.", model.Email);
-                return BadRequest();
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var user = UserManager.FindByEmail(model.Email);
+                if (user == null /*|| !await UserManager.IsEmailConfirmedAsync(user.Id)*/)
+                {
+                    Logger.Error("User with email '{0}' not found.", model.Email);
+                    return BadRequest();
+                }
+
+                token = UserManager.GeneratePasswordResetToken(user.Id);
+
+                Logger.Info("ForgotPassword for [User#{0}] with email:'{1}'. Succeeded.", user.Id, model.Email);
             }
-
-            var token = UserManager.GeneratePasswordResetToken(user.Id);
-
-            Logger.Info("ForgotPassword for [User#{0}] with email:'{1}'. Succeeded.", user.Id, model.Email);
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "api/Account/ForgotPassword");
+                telemetry.TrackException(ex);
+            }
 
             return Ok(token);
         }
@@ -139,25 +172,33 @@ namespace gzWeb.Controllers
         [Route("ResetPassword")]
         public IHttpActionResult ResetPassword(ResetPasswordViewModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = UserManager.FindByEmail(model.Email);
-            if (user == null)
+            try
             {
-                Logger.Error("User with email '{0}' not found.", model.Email);
-                return BadRequest();
-            }
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            var result = UserManager.ResetPassword(user.Id, model.Code, model.Password);
-            if (!result.Succeeded)
+                var user = UserManager.FindByEmail(model.Email);
+                if (user == null)
+                {
+                    Logger.Error("User with email '{0}' not found.", model.Email);
+                    return BadRequest();
+                }
+
+                var result = UserManager.ResetPassword(user.Id, model.Code, model.Password);
+                if (!result.Succeeded)
+                {
+                    Logger.Error("ResetPassword for [User#{0}] failed with error: {1}", user.Id,
+                        String.Join(Environment.NewLine, result.Errors));
+                    return BadRequest();
+                }
+
+                Logger.Info("ResetPassword for [User#{0}]. Succeeded.", user.Id);
+            }
+            catch (Exception ex)
             {
-                Logger.Error("ResetPassword for [User#{0}] failed with error: {1}", user.Id,
-                             String.Join(Environment.NewLine, result.Errors));
-                return BadRequest();
+                Logger.Error(ex, "api/Account/ResetPassword");
+                telemetry.TrackException(ex);
             }
-
-            Logger.Info("ResetPassword for [User#{0}]. Succeeded.", user.Id);
 
             return Ok();
         }
@@ -168,63 +209,72 @@ namespace gzWeb.Controllers
         [Route("Register")]
         public IHttpActionResult Register(RegisterBindingModel model)
         {
-            Logger.Info("Server Registration Step 1:Register requested for [User - {0}/{1}].", model.Username, model.Email);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = new ApplicationUser
-                       {
-                               UserName = model.Username,
-                               Email = model.Email,
-                               FirstName = model.FirstName,
-                               LastName = model.LastName,
-                               Birthday = model.Birthday,
-                               Currency = model.Currency,
-
-                               EmailConfirmed = true,
-                       };
-
-            IdentityResult result = UserManager.Create(user, model.Password);
-            if (!result.Succeeded)
+            IdentityResult result = null;
+            try
             {
-                Logger.Error("Server Registration Step 1:gzRegistration for User with username: '{0}' and email: '{1}' failed with error: {2}",
-                             model.Username,
-                             model.Email,
-                             String.Join(Environment.NewLine, result.Errors));
-                var deleteResult = UserManager.Delete(user);
-                if (!deleteResult.Succeeded)
+                Logger.Info("Server Registration Step 1:Register requested for [User - {0}/{1}].", model.Username, model.Email);
+
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var user = new ApplicationUser
                 {
-                    Logger.Warn(
+                    UserName = model.Username,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Birthday = model.Birthday,
+                    Currency = model.Currency,
+
+                    EmailConfirmed = true,
+                };
+
+                result = UserManager.Create(user, model.Password);
+                if (!result.Succeeded)
+                {
+                    Logger.Error("Server Registration Step 1:gzRegistration for User with username: '{0}' and email: '{1}' failed with error: {2}",
+                        model.Username,
+                        model.Email,
+                        String.Join(Environment.NewLine, result.Errors));
+                    var deleteResult = UserManager.Delete(user);
+                    if (!deleteResult.Succeeded)
+                    {
+                        Logger.Warn(
                             "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
                             model.Username,
                             model.Email,
                             String.Join(Environment.NewLine, result.Errors));
-                }
-                else
-                {
-                    Logger.Info(
+                    }
+                    else
+                    {
+                        Logger.Info(
                             "Server Registration Step 1:Delete of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
                             model.Username, model.Email);
+                    }
+                    return GetErrorResult(result);
                 }
-                return GetErrorResult(result);
+
+                #region In case of email confirmation ...
+                //var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                //var callbackUrl = Url.Link("MvcRoute",
+                //                           new
+                //                           {
+                //                                   Controller = "Auth",
+                //                                   Action = "Activate",
+                //                                   userId = user.Id,
+                //                                   code = activationCode
+                //                           });
+                //callbackUrl += "&key=";
+                //return Ok(callbackUrl);
+                #endregion
+
+                Logger.Info("Server Registration Step 1:gzRegistration for [User#{0} - {1}]. Succeeded.", user.Id, model.Username);
             }
-
-            #region In case of email confirmation ...
-            //var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-            //var callbackUrl = Url.Link("MvcRoute",
-            //                           new
-            //                           {
-            //                                   Controller = "Auth",
-            //                                   Action = "Activate",
-            //                                   userId = user.Id,
-            //                                   code = activationCode
-            //                           });
-            //callbackUrl += "&key=";
-            //return Ok(callbackUrl);
-            #endregion
-
-            Logger.Info("Server Registration Step 1:gzRegistration for [User#{0} - {1}]. Succeeded.", user.Id, model.Username);
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "api/Account/Register");
+                telemetry.TrackException(ex);
+            }
 
             return Ok(result);
         }
@@ -233,55 +283,63 @@ namespace gzWeb.Controllers
         [Route("RevokeRegistration")]
         public IHttpActionResult RevokeRegistration(string reason = null)
         {
-            var userId = User.Identity.GetUserId<int>();
-
-            var user = _userRepo.GetCachedUser(userId);
-            if (user == null)
+            IdentityResult result = null;
+            try
             {
-                Logger.Error("User not found [User#{0}]", userId);
-                return Ok("User not found!");
+                var userId = User.Identity.GetUserId<int>();
+
+                var user = _userRepo.GetCachedUser(userId);
+                if (user == null)
+                {
+                    Logger.Error("User not found [User#{0}]", userId);
+                    return Ok("User not found!");
+                }
+
+                _dbContext.RevokedUsers.Add(new RevokedUser
+                {
+                    Email = user.Email,
+                    EmailConfirmed = user.EmailConfirmed,
+                    PasswordHash = user.PasswordHash,
+                    SecurityStamp = user.SecurityStamp,
+                    PhoneNumber = user.PhoneNumber,
+                    PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                    TwoFactorEnabled = user.TwoFactorEnabled,
+                    LockoutEndDateUtc = user.LockoutEndDateUtc,
+                    LockoutEnabled = user.LockoutEnabled,
+                    AccessFailedCount = user.AccessFailedCount,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Birthday = user.Birthday,
+                    GmCustomerId = user.GmCustomerId,
+                    Currency = user.Currency,
+                    DisabledGzCustomer = user.DisabledGzCustomer,
+                    ClosedGzAccount = user.ClosedGzAccount,
+                    LastLogin = user.LastLogin,
+                    ActiveCustomerIdInPlatform = user.ActiveCustomerIdInPlatform,
+                    IsRegistrationFinalized = user.IsRegistrationFinalized,
+
+                    Reason = reason,
+                    TimeStampUtc = DateTime.UtcNow
+                });
+
+                result = UserManager.Delete(user);
+                if (!result.Succeeded)
+                {
+                    Logger.Error("RevokeRegistration for [User#{0}] failed with error: {1}", userId,
+                        String.Join(Environment.NewLine, result.Errors));
+                    return GetErrorResult(result);
+                }
+
+                _dbContext.SaveChanges();
+
+                Logger.Info("RevokeRegistration for [User#{0}]. Succeeded.", userId);
             }
-
-            _dbContext.RevokedUsers.Add(new RevokedUser
-                                        {
-                                            Email = user.Email,
-                                            EmailConfirmed = user.EmailConfirmed,
-                                            PasswordHash = user.PasswordHash,
-                                            SecurityStamp = user.SecurityStamp,
-                                            PhoneNumber = user.PhoneNumber,
-                                            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                                            TwoFactorEnabled = user.TwoFactorEnabled,
-                                            LockoutEndDateUtc = user.LockoutEndDateUtc,
-                                            LockoutEnabled = user.LockoutEnabled,
-                                            AccessFailedCount = user.AccessFailedCount,
-                                            UserName = user.UserName,
-                                            FirstName = user.FirstName,
-                                            LastName = user.LastName,
-                                            Birthday = user.Birthday,
-                                            GmCustomerId = user.GmCustomerId,
-                                            Currency = user.Currency,
-                                            DisabledGzCustomer = user.DisabledGzCustomer,
-                                            ClosedGzAccount = user.ClosedGzAccount,
-                                            LastLogin = user.LastLogin,
-                                            ActiveCustomerIdInPlatform = user.ActiveCustomerIdInPlatform,
-                                            IsRegistrationFinalized = user.IsRegistrationFinalized,
-
-                                            Reason = reason,
-                                            TimeStampUtc = DateTime.UtcNow
-                                        });
-
-            var result = UserManager.Delete(user);
-            if (!result.Succeeded)
+            catch (Exception ex)
             {
-                Logger.Error("RevokeRegistration for [User#{0}] failed with error: {1}", userId,
-                             String.Join(Environment.NewLine, result.Errors));
-                return GetErrorResult(result);
+                Logger.Error(ex, "api/Account/RevokeRegistration");
+                telemetry.TrackException(ex);
             }
-
-            _dbContext.SaveChanges();
-
-            Logger.Info("RevokeRegistration for [User#{0}]. Succeeded.", userId);
-
             return Ok(result);
         }
 
@@ -311,6 +369,7 @@ namespace gzWeb.Controllers
             catch (Exception exception)
             {
                 Logger.Error(exception, "Server Registration Step 6: FinalizeRegistration for [User#{0}]. Failed.", userId);
+                telemetry.TrackException(exception);
                 throw;
             }
 
@@ -467,20 +526,41 @@ namespace gzWeb.Controllers
 
         private string GetVersion()
         {
-            var assembly = Assembly.GetAssembly(typeof(ApplicationOAuthProvider));
-            var assemblyName = assembly.GetName().Name;
-            var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
-            var versionField = gitVersionInformationType.GetField("InformationalVersion");
-            return versionField.GetValue(null).ToString();
+            string versionFieldVal = null;
+            try
+            {
+                var assembly = Assembly.GetAssembly(typeof(ApplicationOAuthProvider));
+                var assemblyName = assembly.GetName().Name;
+                var gitVersionInformationType = assembly.GetType(assemblyName + ".GitVersionInformation");
+                var versionField = gitVersionInformationType.GetField("InformationalVersion");
+                versionFieldVal = versionField.GetValue(null).ToString();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "apiAccount.GetVersion()");
+                telemetry.TrackException(exception);
+            }
+
+            return versionFieldVal;
         }
 
         private string GetReCaptchaSiteKey()
         {
-            var host = Request.RequestUri.Host;
-            if (host == "localhost")
-                host = "greenzorro.azurewebsites.net";
-            var appKey = "ReCaptchaSiteKey@" + host;
-            var reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings[appKey];
+            string reCaptchaSiteKey = null;
+            try
+            {
+                var host = Request.RequestUri.Host;
+                if (host == "localhost")
+                    host = "greenzorro.azurewebsites.net";
+                var appKey = "ReCaptchaSiteKey@" + host;
+                reCaptchaSiteKey = System.Configuration.ConfigurationManager.AppSettings[appKey];
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "apiAccount.GetReCaptchaSiteKey()");
+                telemetry.TrackException(exception);
+            }
+
             return reCaptchaSiteKey;
         }
 
@@ -494,12 +574,21 @@ namespace gzWeb.Controllers
         [Route("GetDeploymentInfo")]
         // 10 minutes caching
         // Crashing? [ClientCachingInApi(Duration = 600)]
-        public IHttpActionResult GetDeploymentInfo() {
-
-            const string staticCdnKey = "StaticCdn";
-            const string useCdn = "UseCdn";
-            var useCdnValue = System.Configuration.ConfigurationManager.AppSettings[useCdn];
-            var cdnValue = System.Configuration.ConfigurationManager.AppSettings[staticCdnKey];
+        public IHttpActionResult GetDeploymentInfo()
+        {
+            string useCdnValue = "false", cdnValue = null;
+            try
+            {
+                const string staticCdnKey = "StaticCdn";
+                const string useCdn = "UseCdn";
+                useCdnValue = System.Configuration.ConfigurationManager.AppSettings[useCdn];
+                cdnValue = System.Configuration.ConfigurationManager.AppSettings[staticCdnKey];
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "api/Account/GetDeploymentInfo");
+                telemetry.TrackException(exception);
+            }
 
             return OkMsg(new
             {
@@ -518,15 +607,23 @@ namespace gzWeb.Controllers
         [Route("CacheUserData")]
         public IHttpActionResult CacheUserData()
         {
-            var userId = User.Identity.GetUserId<int>();
-            var user = _userRepo.GetCachedUser(userId);
-            if (user == null)
+            try
             {
-                Logger.Error("User not found [User#{0}", userId);
-                return Ok("User not found!");
-            }
+                var userId = User.Identity.GetUserId<int>();
+                var user = _userRepo.GetCachedUser(userId);
+                if (user == null)
+                {
+                    Logger.Error("User not found [User#{0}", userId);
+                    return Ok("User not found!");
+                }
 
-            _cacheUserData.Query(user.Id);
+                _cacheUserData.Query(user.Id);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "api/Account/CacheUserData");
+                telemetry.TrackException(exception);
+            }
 
             return Ok();
         }
