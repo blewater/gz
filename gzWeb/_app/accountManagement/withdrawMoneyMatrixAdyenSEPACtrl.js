@@ -48,9 +48,11 @@
 
         $scope.getRegistrationFields = function () {
             var paymentPropName = getPaymentParameterName($scope.paymentMethodCfg.fields.payCardID.registrationFields);
-            return {
-                paymentPropName: $scope.model.iban
-            };
+
+            var paymentPropNameObj = new Object();
+            paymentPropNameObj[paymentPropName] = $scope.model.iban;
+
+            return paymentPropNameObj;
         };
 
         $scope.onPayCardSelected = function (payCardId) {
