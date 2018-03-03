@@ -65,9 +65,10 @@ let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
 let main argv = 
 
     try
-        if qCnt() > 0 then 
-            ChromeAwarder.startBrowserSession false
-            while qCnt() > 0 do
+        let queueItems = qCnt()
+        let rec procQueue(qLeftItems) : unit =
+            if qLeftItems > 0 then
+                ChromeAwarder.startBrowserSession false
                 match getNextQMsg() with
                 | Some bonusQReq ->
                     try
@@ -85,6 +86,9 @@ let main argv =
                         updQBonusReq bonusQReq
                         logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
                 | _ -> ()
+                procQueue (qLeftItems - 1)
+        procQueue queueItems
+            
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
 

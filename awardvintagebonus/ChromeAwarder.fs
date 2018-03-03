@@ -106,16 +106,11 @@ let awardUser (bonusReq : BonusReqType) : BonusReqType =
     // Bonus amount text input
     let bonusStr = bonusReq.Amount.ToString()
     let rec retrySetAmount(tries : int) : bool =
+        waitForElement "#ctl00_cphPage_rtbBonusAmount_text"
         let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
         try
             bonusAmountEl.Clear()
-            bonusStr
-            |> Seq.iter(
-                fun(c : char) ->
-                    let cs = c.ToString()
-                    bonusAmountEl.SendKeys cs
-                )
-            //bonusAmountEl << bonusStr
+            bonusAmountEl << bonusStr
             let readAmount = Decimal.Parse(read bonusAmountEl)
             assert (readAmount = bonusReq.Amount)
             printfn "Amount to award: %M" readAmount
