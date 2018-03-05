@@ -62,7 +62,9 @@
     <None Include="paket.dependencies" />
     <Content Include="paket.references" />
     <None Include="NLog.xsd" />
-    <None Include="D:\sc\gz\awardvintagebonus\paket.lock" />
+    <None Include="D:\sc\gz\awardvintagebonus\paket.lock">
+      <Link>paket.lock</Link>
+    </None>
     <Content Include="NLog.config">
       <Paket>True</Paket>
     </Content>
@@ -79,8 +81,13 @@
     <Content Include="connectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="App.config" />
+    <Content Include="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="Program.fs" />
+    <None Include="chromedriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Azure.StorageTypeProvider">

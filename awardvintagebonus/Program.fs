@@ -20,7 +20,6 @@ open BonusReq
 open System
 open SendEmail
 open FSharp.Azure.StorageTypeProvider.Queue
-
 let logger = LogManager.GetCurrentClassLogger()
 
 type Settings = AppSettings<"App.config">
@@ -65,10 +64,10 @@ let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
 let main argv = 
 
     try
-        let queueItems = qCnt()
-        let rec procQueue(qLeftItems) : unit =
-            if qLeftItems > 0 then
-                ChromeAwarder.startBrowserSession false
+        let queuedItemCnt = qCnt()
+        if queuedItemCnt > 0 then
+            ChromeAwarder.startBrowserSession false
+            let rec procQueue(qLeftItems) : unit =
                 match getNextQMsg() with
                 | Some bonusQReq ->
                     try
@@ -86,8 +85,9 @@ let main argv =
                         updQBonusReq bonusQReq
                         logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
                 | _ -> ()
-                procQueue (qLeftItems - 1)
-        procQueue queueItems
+                if qLeftItems > 1 then
+                    procQueue (qLeftItems - 1)
+            procQueue queuedItemCnt
             
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
