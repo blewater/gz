@@ -34,8 +34,6 @@ let path = System.IO.Path.Combine [|__SOURCE_DIRECTORY__ ; "bin"; "debug"; "awar
 Settings.SelectExecutableFile path
 printfn "%s" Settings.ConfigFileName
 
-let queueConnString = Settings.QueueConnString.ToString()
-let queueName = Settings.QueueName
 // Connect via configuration file with named connection string.
 type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnString", configFileName=Settings.ConfigFileName>
 

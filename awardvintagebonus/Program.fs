@@ -20,7 +20,6 @@ open BonusReq
 open System
 open SendEmail
 open FSharp.Azure.StorageTypeProvider.Queue
-
 let logger = LogManager.GetCurrentClassLogger()
 
 type Settings = AppSettings<"App.config">
@@ -65,29 +64,30 @@ let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
 let main argv = 
 
     try
-        let queueItems = qCnt()
-        let rec procQueue(qLeftItems) : unit =
-            if qLeftItems > 0 then
-                ChromeAwarder.startBrowserSession false
-                match getNextQMsg() with
-                | Some bonusQReq ->
-                    try
-                        bonusQReq 
-                        |> bonusQ2Obj
-                        |> TblLogger.Upsert None
-                        |> ChromeAwarder.awardUser
-                        |> dbAwardGiven
-                        |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
-                        |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
-                        deleteBonusReq bonusQReq
-                    with ex ->
-                        TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
-                        // Update process cnt
-                        updQBonusReq bonusQReq
-                        logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
-                | _ -> ()
-                procQueue (qLeftItems - 1)
-        procQueue queueItems
+        let queuedItemCnt = qCnt()
+        if queuedItemCnt > 0 then
+            ChromeAwarder.startBrowserSession false
+            let rec procQueue(qLeftItems) : unit =
+                if qLeftItems > 0 then
+                    match getNextQMsg() with
+                    | Some bonusQReq ->
+                        try
+                            bonusQReq 
+                            |> bonusQ2Obj
+                            |> TblLogger.Upsert None
+                            |> ChromeAwarder.awardUser
+                            |> dbAwardGiven
+                            |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
+                            |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
+                            deleteBonusReq bonusQReq
+                        with ex ->
+                            TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
+                            // Update process cnt
+                            updQBonusReq bonusQReq
+                            logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
+                    | _ -> ()
+                    procQueue (qLeftItems - 1)
+            procQueue queuedItemCnt
             
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
