@@ -10,6 +10,8 @@ open MailKit.Net.Smtp
 open MailKit.Security
 open BonusReq
 open System
+open NLog
+let logger = LogManager.GetCurrentClassLogger()
 
 type EmailReceipts() =
 
@@ -96,6 +98,7 @@ type EmailReceipts() =
         try
             retry 3 toCallFunc
         with ex ->
+            logger.Error(ex, sprintf "Failed emailing the user with id: %d" bonusReq.GmUserId)
             TblLogger.Upsert (Some ex) bonusReq |> ignore
         bonusReq
 
@@ -105,4 +108,5 @@ type EmailReceipts() =
         try
             retry 3 toCallFunc
         with ex ->
+            logger.Error(ex, sprintf "Failed emailing the admins for user with id: %d" bonusReq.GmUserId)
             TblLogger.Upsert (Some ex) bonusReq |> ignore

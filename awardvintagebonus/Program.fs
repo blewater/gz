@@ -33,19 +33,19 @@ let dbCtx = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
 let yearMonthSold = DateTime.UtcNow.Year.ToString("0000") + DateTime.UtcNow.Month.ToString("00")
 
 let dbAwardGiven(bonusReq : BonusReqType) = 
-    try 
-        let sql =
-            sprintf "UPDATE InvBalances Set AwardedSoldAmount = 1, UpdatedOnUTC = GETUTCDATE() WHERE Id IN (%s)"
-                (bonusReq.InvBalIds 
-                    |> Array.map(fun i -> i.ToString()) 
-                    |> String.concat ",")
+    let sql =
+        sprintf "UPDATE InvBalances Set AwardedSoldAmount = 1, UpdatedOnUTC = GETUTCDATE() WHERE Id IN (%s)"
+            (bonusReq.InvBalIds 
+                |> Array.map(fun i -> i.ToString()) 
+                |> String.concat ",")
 
+    try 
         let rowCnt = 
             dbCtx.ExecuteCommand(sql)
         printfn "Updated %d rows." rowCnt
 
     with ex ->
-        logger.Error(ex, "Database update")
+        logger.Error(ex, (sprintf "Database update error %s" sql) )
     bonusReq
 
 let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
@@ -58,6 +58,7 @@ let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
         |> incProcessCnt
         |> enQUpdated bonusQReq.Id
     with ex ->
+        logger.Error(ex, sprintf "Error in updQBonusReq() for id: %d" bonusReq.GmUserId )
         TblLogger.Upsert (Some ex) bonusReq |> ignore
 
 [<EntryPoint>]
@@ -83,7 +84,7 @@ let main argv =
                         TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
                         // Update process cnt
                         updQBonusReq bonusQReq
-                        logger.Fatal(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
+                        logger.Error(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
                 | _ -> ()
                 if qLeftItems > 1 then
                     procQueue (qLeftItems - 1)
