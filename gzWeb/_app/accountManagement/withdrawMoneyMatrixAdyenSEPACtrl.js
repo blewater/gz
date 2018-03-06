@@ -5,6 +5,21 @@
     function ctrlFactory($scope, $q, iso4217, $filter, $controller) {
         $controller('withdrawMoneyMatrixCommonCtrl', { $scope: $scope });
 
+        function getPaymentParameterName(obj) {
+            var propNameRet = "PaymentParameterAccountNumber";
+            var keys = Object.keys(obj);
+            for (var k = 0; k < keys.length; k++)
+            {
+                if (keys[k].toLowerCase().indexOf("paymentparameteraccountnumber") === 0) {
+                    propNameRet = keys[k];
+                    break;
+                } else if (keys[k].toLowerCase().indexOf("paymentparameteriban") === 0) {
+                    propNameRet = keys[k];
+                    break;
+                }
+            }
+            return propNameRet;
+        }
         $scope.loadPayCardSpecificInfo = function () {
             if ($scope.paymentMethodCfg.monitoringScriptUrl) {
                 $.get($scope.paymentMethodCfg.monitoringScriptUrl, undefined, angular.noop, "script").fail(function () {
@@ -12,8 +27,8 @@
                 });
             }
             if ($scope.paymentMethodCfg.fields.payCardID.registrationFields) {
-                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.PaymentParameterIban.regularExpression;
-                //$scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.PaymentParameterAccountNumber.regularExpression;
+                var paymentPropName = getPaymentParameterName($scope.paymentMethodCfg.fields.payCardID.registrationFields);
+                $scope.ibanRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields[paymentPropName].regularExpression;
             }
 
             if ($scope.existingPayCards.length === 1)
@@ -30,11 +45,14 @@
                 MonitoringSessionId: window.MMM !== undefined ? window.MMM.getSession() : null,
             };
         };
+
         $scope.getRegistrationFields = function () {
-            return {
-                PaymentParameterIban: $scope.model.iban
-                //PaymentParameterAccountNumber: $scope.model.iban
-            };
+            var paymentPropName = getPaymentParameterName($scope.paymentMethodCfg.fields.payCardID.registrationFields);
+
+            var paymentPropNameObj = new Object();
+            paymentPropNameObj[paymentPropName] = $scope.model.iban;
+
+            return paymentPropNameObj;
         };
 
         $scope.onPayCardSelected = function (payCardId) {
