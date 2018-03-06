@@ -24,6 +24,9 @@ open OpenQA.Selenium
 open FSharp.Configuration
 open BonusReq
 open System.Text.RegularExpressions
+open NLog
+
+let logger = LogManager.GetCurrentClassLogger()
 
 type Settings = AppSettings<"App.config">
 
@@ -156,7 +159,7 @@ let rec submitInBonusForm(bonusReq : BonusReqType)(tries : int) =
             printfn "Amount to award: %M" readAmount
             true
         with ex ->
-            printfn "Setting bonus amount to Element failed! Remaining tries: %d" tries
+            logger.Error(ex, sprintf "Failed setting the bonus amount %d for id: %M, tries left: %d" bonusReq.GmUserId bonusReq.Amount tries)
             if tries > 0 then 
                 retrySetAmount (tries - 1)
             else
