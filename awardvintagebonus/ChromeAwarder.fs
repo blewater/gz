@@ -119,6 +119,7 @@ let checkAwardingResult(bonusAmount : decimal) : bool =
     | Regex @"bonus amount=\w+ (\S+(\.\d{1,2})?)," [ resTxtAmount ; decimalPart ] ->
         let parsedAmount = Decimal.Parse(resTxtAmount)
         logger.Info(sprintf "Bonus amount awarded %M" parsedAmount)
+        logger.Trace(sprintf "Bonus amount request %M" bonusAmount)
         parsedAmount = bonusAmount
     | _ -> 
         logger.Info("No match given")

@@ -67,31 +67,33 @@ let main argv =
     try
         let queuedItemCnt = qCnt()
         if queuedItemCnt > 0 then
-            ChromeAwarder.startBrowserSession false
-            let rec procQueue(qLeftItems) : unit =
-                match getNextQMsg() with
-                | Some bonusQReq ->
-                    try
-                        bonusQReq 
-                        |> bonusQ2Obj
-                        |> TblLogger.Upsert None
-                        |> ChromeAwarder.awardUser
-                        //|> dbAwardGiven
-                        |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
-                        |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
-                        deleteBonusReq bonusQReq
-                    with ex ->
-                        TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
-                        // Update process cnt
-                        updQBonusReq bonusQReq
-                        logger.Error(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
-                | _ -> ()
-                if qLeftItems > 1 then
-                    procQueue (qLeftItems - 1)
-            procQueue queuedItemCnt
+            try
+                ChromeAwarder.startBrowserSession false
+                let rec procQueue(qLeftItems) : unit =
+                    match getNextQMsg() with
+                    | Some bonusQReq ->
+                        try
+                            bonusQReq 
+                            |> bonusQ2Obj
+                            |> TblLogger.Upsert None
+                            |> ChromeAwarder.awardUser
+                            //|> dbAwardGiven
+                            |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
+                            |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
+                            deleteBonusReq bonusQReq
+                        with ex ->
+                            TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
+                            // Update process cnt
+                            updQBonusReq bonusQReq
+                            logger.Error(ex, sprintf "Failed processing q msg %A" bonusQReq.Id)
+                    | _ -> ()
+                    if qLeftItems > 1 then
+                        procQueue (qLeftItems - 1)
+                procQueue queuedItemCnt
+            finally
+                ChromeAwarder.endBrowserSession()
             
     with ex -> 
         logger.Fatal(ex, "Aborting awardbonus!")
 
-    ChromeAwarder.endBrowserSession()
     0 // return an integer exit code
