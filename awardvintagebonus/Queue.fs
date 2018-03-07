@@ -32,6 +32,9 @@ open FSharp.Azure.StorageTypeProvider.Queue
 open BonusReq
 open Newtonsoft.Json
 open FSharp.Json
+open NLog
+
+let logger = LogManager.GetCurrentClassLogger()
 // Connect via configuration file with named connection string.
 let appConfigPath = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "App.config")
 type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnString", configFileName="App.config">
@@ -41,11 +44,11 @@ let bonusQueue = FunctionsQueue.Queues.bonusreq
 
 let qCnt() =
     let cnt = bonusQueue.GetCurrentLength()
-    printfn "Queue length is %d." (cnt)
+    logger.Info(sprintf "Queue length is %d." cnt)
     cnt
 
 let printMessage msg =
-    printfn "Message %A with body '%s' has been dequeued %d times." msg.Id msg.AsString.Value msg.DequeueCount
+    logger.Info(sprintf "Message %A with body '%s' has been dequeued %d times." msg.Id msg.AsString.Value msg.DequeueCount)
 
 let getNextQMsg() : ProvidedQueueMessage option =
     async {
