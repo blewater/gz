@@ -13,6 +13,8 @@ open FSharp.Azure.StorageTypeProvider.Table
 open FSharp.Azure.StorageTypeProvider
 open BonusReq
 open Newtonsoft.Json
+open NLog
+let logger = LogManager.GetCurrentClassLogger()
 
 // Connect via configuration file with named connection string.
 type AzStorage = AzureTypeProvider<connectionStringName = "storageConnString", configFileName="App.config", tableSchema="TblLoggerSchema.json">
@@ -60,10 +62,10 @@ let bonusReq2Log(bonusReq : BonusReqType)(exn : exn option) : BonusLogType =
 
 let private handleResponse =
     function
-    | SuccessfulResponse(entityId, errorCode) -> printfn "Entity %A succeeded: %d." entityId errorCode
-    | EntityError(entityId, httpCode, errorCode) -> printfn "Entity %A failed: %d - %s." entityId httpCode errorCode
-    | BatchOperationFailedError(entityId) -> printfn "Entity %A was ignored as part of a failed batch operation." entityId
-    | BatchError(entityId, httpCode, errorCode) -> printfn "Entity %A failed with an unknown batch error: %d - %s." entityId httpCode errorCode
+    | SuccessfulResponse(entityId, errorCode) -> logger.Trace(sprintf "Entity %A succeeded: %d." entityId errorCode)
+    | EntityError(entityId, httpCode, errorCode) -> logger.Error(sprintf "Entity %A failed: %d - %s." entityId httpCode errorCode)
+    | BatchOperationFailedError(entityId) -> logger.Error(sprintf "Entity %A was ignored as part of a failed batch operation." entityId)
+    | BatchError(entityId, httpCode, errorCode) -> logger.Error(sprintf "Entity %A failed with an unknown batch error: %d - %s." entityId httpCode errorCode)
 
 let Upsert (excn : exn option)(logEntry: BonusReqType) : BonusReqType=
     let bonusLog = bonusReq2Log logEntry excn

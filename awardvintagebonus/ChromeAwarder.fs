@@ -57,6 +57,7 @@ let setChromeOptions(visualSession : bool) : unit =
     chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
     chromeOptions.AddArgument("--no-first-run")
     chromeOptions.AddArgument("--allow-insecure-localhost");
+    //chromeOptions.AddArgument("--remote-debugging-port=9222");
     let chromeNoSandbox = ChromeWithOptions(chromeOptions)
     #if INTERACTIVE
     canopy.configuration.chromeDir <- __SOURCE_DIRECTORY__
@@ -117,10 +118,10 @@ let checkAwardingResult(bonusAmount : decimal) : bool =
     match resText with
     | Regex @"bonus amount=\w+ (\S+(\.\d{1,2})?)," [ resTxtAmount ; decimalPart ] ->
         let parsedAmount = Decimal.Parse(resTxtAmount)
-        printfn "Bonus amount awarded %M" parsedAmount
+        logger.Info(sprintf "Bonus amount awarded %M" parsedAmount)
         parsedAmount = bonusAmount
     | _ -> 
-        printfn "No match given"
+        logger.Info("No match given")
         false
 
 let cancelLastBonusAward() =
@@ -132,6 +133,35 @@ let cancelLastBonusAward() =
     click "#cphPage_btnCloseWindow"
     switchToWindow baseWindow
 
+let rec retrySetAmount(bonusReq : BonusReqType)(tries : int) : bool =
+    try
+        waitForElement "#ctl00_cphPage_rtbBonusAmount_text"
+        sleep 1
+        let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
+        bonusAmountEl.Clear()
+        // Bonus amount text input
+        let bonusStr = bonusReq.Amount.ToString()
+        bonusStr
+        |> Seq.iter(
+            fun(c : char) ->
+                let cs = c.ToString()
+                bonusAmountEl.SendKeys cs
+            )
+        let readAmount = Decimal.Parse(read bonusAmountEl)
+        assert (readAmount = bonusReq.Amount)
+            
+        logger.Info(sprintf "Amount to be awarded %M equals what's set: %M" readAmount)
+        true
+    with ex ->
+        logger.Error(ex, sprintf "Failed setting the bonus amount %d for id: %M, tries left: %d" bonusReq.GmUserId bonusReq.Amount tries)
+        if tries > 0 then 
+            retrySetAmount bonusReq (tries - 1)
+        else
+#if !INTERACTIVE
+            TblLogger.Upsert (Some ex) bonusReq |> ignore
+#endif
+            false
+        
 let rec submitInBonusForm(bonusReq : BonusReqType)(tries : int) =
 
     // go into the bonus
@@ -140,50 +170,23 @@ let rec submitInBonusForm(bonusReq : BonusReqType)(tries : int) =
     selCashBackBonusinSelectList()
     press tab
 
-    let rec retrySetAmount(tries : int) : bool =
-        try
-            waitForElement "#ctl00_cphPage_rtbBonusAmount_text"
-            sleep 1
-            let bonusAmountEl = element "#ctl00_cphPage_rtbBonusAmount_text"
-            bonusAmountEl.Clear()
-            // Bonus amount text input
-            let bonusStr = bonusReq.Amount.ToString()
-            bonusStr
-            |> Seq.iter(
-                fun(c : char) ->
-                    let cs = c.ToString()
-                    bonusAmountEl.SendKeys cs
-                )
-            let readAmount = Decimal.Parse(read bonusAmountEl)
-            assert (readAmount = bonusReq.Amount)
-            printfn "Amount to award: %M" readAmount
-            true
-        with ex ->
-            logger.Error(ex, sprintf "Failed setting the bonus amount %d for id: %M, tries left: %d" bonusReq.GmUserId bonusReq.Amount tries)
-            if tries > 0 then 
-                retrySetAmount (tries - 1)
-            else
-#if !INTERACTIVE
-                TblLogger.Upsert (Some ex) bonusReq |> ignore
-#endif
-                false
-        
-    retrySetAmount 30
+    retrySetAmount bonusReq 30
     |> function
         | true -> 
             // Set Comment
             (element "#ctl00_cphPage_rtbComment_text") << sprintf "User %d bonus granted for vintages sold on %s" bonusReq.GmUserId bonusReq.YearMonthSold
             // Press Give bonus button
             click "#cphPage_btnConfirm"
-            printfn "Succeeded awarding the bonus amount"
+            logger.Info(sprintf "Succeeded awarding the bonus amount %M" bonusReq.Amount)
         | false ->
+            logger.Error( sprintf "Failed in setting the amount in the bonus form! %M" bonusReq.Amount)
             failwith "Failed in setting the bonus amount."
 
     if not <| checkAwardingResult bonusReq.Amount then
         click "#cphPage_btnReturn"
         click "#cphPage_CasinoWalletAccountDataControl1_btnBonusDetails"
         cancelLastBonusAward()
-        printfn "Failed to award the right amount: %M, tries left: %d" bonusReq.Amount (tries-1)
+        logger.Error(sprintf "Resulting bonus award amount did not match the requested %M, tries left: %d" bonusReq.Amount (tries-1))
         submitInBonusForm bonusReq (tries - 1)
 
 let awardUser (bonusReq : BonusReqType) : BonusReqType =

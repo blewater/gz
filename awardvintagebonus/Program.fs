@@ -29,24 +29,24 @@ let hostPwd = Settings.HostGmailPwd;
 let helpEmail = Settings.HelpGmailUser;
 let helpPwd = Settings.HelpGmailPwd;
 let emailSender = EmailReceipts()
-let dbCtx = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
+//let dbCtx = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
 let yearMonthSold = DateTime.UtcNow.Year.ToString("0000") + DateTime.UtcNow.Month.ToString("00")
 
-let dbAwardGiven(bonusReq : BonusReqType) = 
-    let sql =
-        sprintf "UPDATE InvBalances Set AwardedSoldAmount = 1, UpdatedOnUTC = GETUTCDATE() WHERE Id IN (%s)"
-            (bonusReq.InvBalIds 
-                |> Array.map(fun i -> i.ToString()) 
-                |> String.concat ",")
+//let dbAwardGiven(bonusReq : BonusReqType) = 
+//    let sql =
+//        sprintf "UPDATE InvBalances Set AwardedSoldAmount = 1, UpdatedOnUTC = GETUTCDATE() WHERE Id IN (%s)"
+//            (bonusReq.InvBalIds 
+//                |> Array.map(fun i -> i.ToString()) 
+//                |> String.concat ",")
 
-    try 
-        let rowCnt = 
-            dbCtx.ExecuteCommand(sql)
-        printfn "Updated %d rows." rowCnt
+//    try 
+//        let rowCnt = 
+//            dbCtx.ExecuteCommand(sql)
+//        printfn "Updated %d rows." rowCnt
 
-    with ex ->
-        logger.Error(ex, (sprintf "Database update error %s" sql) )
-    bonusReq
+//    with ex ->
+//        logger.Error(ex, (sprintf "Database update error %s" sql) )
+//    bonusReq
 
 let updQBonusReq(bonusQReq : ProvidedQueueMessage) =
 
@@ -76,7 +76,7 @@ let main argv =
                         |> bonusQ2Obj
                         |> TblLogger.Upsert None
                         |> ChromeAwarder.awardUser
-                        |> dbAwardGiven
+                        //|> dbAwardGiven
                         |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
                         |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
                         deleteBonusReq bonusQReq
