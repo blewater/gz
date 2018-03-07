@@ -67,6 +67,7 @@
     </None>
     <Content Include="NLog.config">
       <Paket>True</Paket>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Queue.fsx" />
     <None Include="awardbonus.fsx" />
