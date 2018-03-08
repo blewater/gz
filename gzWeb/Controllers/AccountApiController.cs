@@ -236,20 +236,31 @@ namespace gzWeb.Controllers
                         model.Username,
                         model.Email,
                         String.Join(Environment.NewLine, result.Errors));
-                    var deleteResult = UserManager.Delete(user);
-                    if (!deleteResult.Succeeded)
+
+                    try
                     {
-                        Logger.Warn(
+                        var deleteResult = UserManager.Delete(user);
+                        if (!deleteResult.Succeeded)
+                        {
+                            Logger.Warn(
+                                "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
+                                model.Username,
+                                model.Email,
+                                String.Join(Environment.NewLine, result.Errors));
+                        }
+                        else
+                        {
+                            Logger.Info(
+                                "Server Registration Step 1:Delete of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
+                                model.Username, model.Email);
+                        }
+                    } catch (Exception ex)
+                    {
+                        Logger.Warn(ex,
                             "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
                             model.Username,
                             model.Email,
                             String.Join(Environment.NewLine, result.Errors));
-                    }
-                    else
-                    {
-                        Logger.Info(
-                            "Server Registration Step 1:Delete of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
-                            model.Username, model.Email);
                     }
                     return GetErrorResult(result);
                 }
@@ -323,12 +334,20 @@ namespace gzWeb.Controllers
                     TimeStampUtc = DateTime.UtcNow
                 });
 
-                result = UserManager.Delete(user);
-                if (!result.Succeeded)
+                try
                 {
-                    Logger.Error("RevokeRegistration for [User#{0}] failed with error: {1}", userId,
+                    result = UserManager.Delete(user);
+                    if (!result.Succeeded)
+                    {
+                        Logger.Error("RevokeRegistration for [User#{0}] failed with error: {1}", userId,
+                            String.Join(Environment.NewLine, result.Errors));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex,
+                        "RevokeRegistration for [User#{0}] failed with error: {1}", userId,
                         String.Join(Environment.NewLine, result.Errors));
-                    return GetErrorResult(result);
                 }
 
                 _dbContext.SaveChanges();
