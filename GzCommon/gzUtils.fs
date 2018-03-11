@@ -29,3 +29,6 @@ let (~~) (func:'a-> unit) (arg:'a) = (func arg) |> fun () -> arg
 //                |> List.filter (fun i -> i < 5)
 //                |> List.head
 let identity item = item
+
+// Effiecient F# null checking
+let objIsNotNull(x : 't when 't : null) = not <| System.Object.ReferenceEquals(x, null)

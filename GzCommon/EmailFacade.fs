@@ -23,7 +23,7 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
 
     let mimePart2Disk (mimePart : MimePart)(filename : string) : unit =
         use fs = new FileStream(filename, FileMode.Create)
-        mimePart.ContentObject.DecodeTo(fs)
+        mimePart.Content.DecodeTo(fs)
         fs.Flush()
 
     let msgPart2Disk (messagePart : MessagePart)(filename : string) : unit =
@@ -123,7 +123,7 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
 
         // create an image attachment for the file located at path
         let attachment = MimePart ("text", "csv")
-        attachment.ContentObject <- ContentObject (File.OpenRead (csvFilenamePath), ContentEncoding.Default)
+        attachment.Content <- MimeContent (File.OpenRead (csvFilenamePath), ContentEncoding.Default)
         attachment.ContentDisposition <- ContentDisposition (ContentDisposition.Attachment)
         attachment.ContentTransferEncoding <- ContentEncoding.Base64
         attachment.FileName <- Path.GetFileName (csvFilenamePath)

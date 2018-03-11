@@ -25,7 +25,7 @@ module DbGzTrx =
         trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
         trxRow.GmGainLoss <- Nullable playerGainLoss
         trxRow.CashBonusAmount <- if playerRevRpt.CashBonusAmount.HasValue then playerRevRpt.CashBonusAmount.Value else 0M
-        trxRow.Vendor2UserDeposits <- if playerRevRpt.Vendor2UserDeposits.HasValue then playerRevRpt.Vendor2UserDeposits.Value else 0M
+        trxRow.CashDeposits <- playerRevRpt.CashDeposits
 
     /// Create & Insert a GzTrxs row
     let insDbGzTrxRowValues
@@ -201,7 +201,7 @@ module DbPlayerRevRpt =
                             playerDbRow.BegGmBalance <> Nullable 0M 
                             || playerDbRow.EndGmBalance <> Nullable 0M
                             || playerDbRow.TotalDepositsAmount <> Nullable 0M
-                            || playerDbRow.Vendor2UserDeposits <> Nullable 0m
+                            || playerDbRow.CashDeposits <> 0m
                             || playerDbRow.PendingWithdrawals <> Nullable 0M
                             || playerDbRow.WithdrawsMade <> Nullable 0M
                             || playerDbRow.CashBonusAmount <> Nullable 0M
@@ -265,8 +265,10 @@ module DbPlayerRevRpt =
         let dbDeposits = playerRow.TotalDepositsAmount.Value
         let notNullUserCurrency = userCurrency db playerRow.Currency playerRow.EmailAddress
         let thisDepositAmount = getDepositAmountInUserCurrency depositsExcelRow notNullUserCurrency
-        let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
-        playerRow.TotalDepositsAmount <- Nullable newDeposits
+        let newDepositsTotal = dbDeposits + thisDepositAmount  // in players native currency
+        playerRow.TotalDepositsAmount <- Nullable newDepositsTotal
+        // Bonus has not been added yet so DepositsTotal = CashBonusBonus
+        playerRow.CashDeposits <- newDepositsTotal
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
@@ -274,10 +276,17 @@ module DbPlayerRevRpt =
     /// Increase the total deposits value in the playerRevRpt table by the investment bonus
     let private updDbRowBonusValues(bonusExcelRow : BonusExcel)(playerRow : DbPlayerRevRpt) = 
 
-        let dbDeposits = playerRow.TotalDepositsAmount.Value
-        let thisDepositAmount = bonusExcelRow.Amount
-        let newDeposits = dbDeposits + decimal thisDepositAmount  // in players native currency
-        playerRow.TotalDepositsAmount <- Nullable newDeposits
+        let dbDeposits = if playerRow.TotalDepositsAmount.HasValue then playerRow.TotalDepositsAmount.Value else 0M
+        let dbBonusDeposits = if playerRow.CashBonusAmount.HasValue then playerRow.CashBonusAmount.Value else 0M
+        let thisBonusAmount = decimal bonusExcelRow.Amount
+        // Deposits + Bonus
+        let newDepositsTotal = dbDeposits + thisBonusAmount
+        // Total Bonus without cash deposits
+        let newBonusTotal = dbBonusDeposits + thisBonusAmount
+
+        playerRow.CashBonusAmount <- Nullable newBonusTotal
+        playerRow.TotalDepositsAmount <- Nullable newDepositsTotal
+        playerRow.CashDeposits <- newDepositsTotal - newBonusTotal
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.BonusUpd
@@ -374,8 +383,8 @@ module DbPlayerRevRpt =
         playerRow.WithdrawsMade <- Nullable 0m
 
         // Zero out gaming deposit cashBonus
-        playerRow.Vendor2UserDeposits <- Nullable 0m
         playerRow.CashBonusAmount <- Nullable 0m
+        playerRow.CashDeposits <- 0m
 
         // If null it means it's a new user so beg balance should be zero
         // Linq compatible null check
@@ -394,6 +403,20 @@ module DbPlayerRevRpt =
         playerRow.Phone <- customExcelRow.Phone |> excelObjNullableString
         playerRow.City <- customExcelRow.City
         playerRow.Country <- customExcelRow.Country
+
+        playerRow.JoinDate <- customExcelRow.``Join date``.ToNullableDate
+
+        if objIsNotNull(customExcelRow.``Initial deposit date``) then
+            let dateObj = customExcelRow.``Initial deposit date``.ToString()
+            playerRow.FirstDeposit <- dateObj.ToNullableDate
+
+        if objIsNotNull customExcelRow.``Last deposit date`` then
+            let dateObj = customExcelRow.``Last deposit date``.ToString()
+            playerRow.LastDeposit <- dateObj.ToNullableDate
+
+        if objIsNotNull customExcelRow.``Last played date`` then
+            let dateObj = customExcelRow.``Last played date``.ToString()
+            playerRow.LastPlayedDate <- dateObj.ToNullableDate
 
         //Non-excel content
         playerRow.YearMonth <- yearMonthDay.ToYyyyMm
