@@ -137,7 +137,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // role
         uncheck "#cbxDisplayColumns_7"
         // join date
-        uncheck "#cbxDisplayColumns_15"
+        check "#cbxDisplayColumns_15"
         // registered by
         uncheck "#cbxDisplayColumns_16"
         // Country
@@ -159,9 +159,11 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Affiliate marker
         uncheck "#cbxDisplayColumns_30"
         // Initial deposit date
-        uncheck "#cbxDisplayColumns_31"
+        check "#cbxDisplayColumns_31"
         // Initial deposit amount
         uncheck "#cbxDisplayColumns_32"
+        // Last deposit date
+        check "#cbxDisplayColumns_38"
         // check Withdrawas made
         check "#cbxDisplayColumns_39"
         // user payment methods
@@ -170,6 +172,8 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         check "#cbxDisplayColumns_42"
         // phone
         check "#cbxDisplayColumns_43"
+        // last played date
+        check "#cbxDisplayColumns_44"
         // Real Balance
         check "#cbxDisplayColumns_54"
         // Suspended balance

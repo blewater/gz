@@ -5,7 +5,7 @@ module ExcelSchemas =
 
     // LGA Reports...Player Balances
     type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
-    type CustomExcelSchema = ExcelFile< "Custom Prod 20170611.xlsx" >
+    type CustomExcelSchema = ExcelFile< "Custom Prod 20180309.xlsx" >
     // Transactions Rpt: Withdrawal Type + Initiated + Pending + Rollback
     type WithdrawalsPendingExcelSchema = ExcelFile< "WithdrawalsPending prod 20160930.xlsx" >
     // Transactions Rpt: Withdrawal Type + Completed + Rollback

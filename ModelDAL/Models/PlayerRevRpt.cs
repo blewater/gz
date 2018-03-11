@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -51,7 +52,9 @@ namespace gzDAL.Models {
 
         public decimal? CashBonusAmount { get; set; }
 
-        public decimal? Vendor2UserDeposits { get; set; }
+        [DefaultValue(0)]
+        [Required]
+        public decimal CashDeposits { get; set; }
 
         [StringLength(30)]
         public string Phone { get; set; }
@@ -77,6 +80,14 @@ namespace gzDAL.Models {
 
         public int Processed { get; set; }
 
+        public DateTime? JoinDate { get; set; }
+
+        public DateTime? FirstDeposit { get; set; }
+
+        public DateTime? LastDeposit { get; set; }
+
+        public DateTime? LastPlayedDate { get; set; }
+
         public DateTime CreatedOnUtc { get; set; }
 
         public DateTime UpdatedOnUtc { get; set; }
@@ -87,10 +98,10 @@ namespace gzDAL.Models {
             EndGmBalance = 0;
             GmGainLoss = 0;
             TotalDepositsAmount = 0;
+            CashDeposits = 0;
             WithdrawsMade = 0;
             PendingWithdrawals = 0;
             CashBonusAmount = 0;
-            Vendor2UserDeposits = 0;
             CreatedOnUtc = DateTime.UtcNow;
             UpdatedOnUtc = DateTime.UtcNow;
         }
