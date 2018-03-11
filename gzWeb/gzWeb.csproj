@@ -736,6 +736,10 @@
     <Compile Include="Migrations\201802150947337_InvAjustment.Designer.cs">
       <DependentUpon>201802150947337_InvAjustment.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803101802259_CashDeposits_XReportDates.cs" />
+    <Compile Include="Migrations\201803101802259_CashDeposits_XReportDates.Designer.cs">
+      <DependentUpon>201803101802259_CashDeposits_XReportDates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1603,6 +1607,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802150947337_InvAjustment.resx">
       <DependentUpon>201802150947337_InvAjustment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803101802259_CashDeposits_XReportDates.resx">
+      <DependentUpon>201803101802259_CashDeposits_XReportDates.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

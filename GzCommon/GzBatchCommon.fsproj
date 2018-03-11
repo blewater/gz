@@ -76,7 +76,9 @@
     <Compile Include="gzUtils.fs" />
     <Compile Include="ConfigArgs.fs" />
     <Compile Include="EmailFacade.fs" />
-    <None Include="gzdbdev.dbml" />
+    <None Include="gzdbdev.dbml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">

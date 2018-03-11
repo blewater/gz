@@ -70,7 +70,6 @@
       <Association Name="FK_dbo.CustPortfolios_dbo.AspNetUsers_CustomerId" Member="CustPortfolios" ThisKey="Id" OtherKey="CustomerId" Type="CustPortfolios" DeleteRule="CASCADE" />
       <Association Name="FK_dbo.GzTransactions_dbo.AspNetUsers_CustomerId" Member="GzTrxs" ThisKey="Id" OtherKey="CustomerId" Type="GzTrxs" DeleteRule="CASCADE" />
       <Association Name="FK_dbo.InvAdjs_dbo.AspNetUsers_UserId" Member="InvAdjs" ThisKey="Id" OtherKey="UserId" Type="InvAdjs" DeleteRule="CASCADE" />
-      <Association Name="FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId" Member="InvBalances" ThisKey="Id" OtherKey="CustomerId" Type="InvBalances" DeleteRule="CASCADE" />
     </Type>
   </Table>
   <Table Name="dbo.CarouselEntries" Member="CarouselEntries">
@@ -260,7 +259,11 @@
       <Column Name="EndGmBalance" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
       <Column Name="GmGainLoss" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
       <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
-      <Column Name="Vendor2UserDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
+      <Column Name="JoinDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FirstDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastPlayedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="FK_dbo.GzTransactions_dbo.AspNetUsers_CustomerId" Member="AspNetUsers" ThisKey="CustomerId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
       <Association Name="FK_dbo.GzTransactions_dbo.GzTransactionTypes_TypeId" Member="GzTrxTypes" ThisKey="TypeId" OtherKey="Id" Type="GzTrxTypes" IsForeignKey="true" DeleteOnNull="true" />
       <Association Name="FK_dbo.GzTrxs_dbo.PlayerRevRpt_PlayerRevRptId" Member="PlayerRevRpt" ThisKey="PlayerRevRptId" OtherKey="Id" Type="PlayerRevRpt" IsForeignKey="true" />
@@ -312,13 +315,11 @@
       <Column Name="TotalSoldVintagesValue" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
       <Column Name="TotalCashInvInHold" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
       <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
-      <Column Name="Vendor2UserDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
       <Column Name="AwardedSoldAmount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="EarlyCashoutFee" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
       <Column Name="HurdleFee" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
       <Association Name="FK_dbo.CustFundShares_dbo.InvBalances_SoldInvBalanceId" Member="CustFundShares" ThisKey="Id" OtherKey="InvBalanceId" Type="CustFundShares" DeleteRule="NO ACTION" />
-      <Association Name="FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId" Member="AspNetUsers" ThisKey="CustomerId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
-      <Association Name="FK_dbo.InvBalances_dbo.Portfolios_PortfolioId" Member="Portfolios" ThisKey="PortfolioId" OtherKey="Id" Type="Portfolios" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.LogEntries" Member="LogEntries">
@@ -368,11 +369,15 @@
       <Column Name="Player status" Member="PlayerStatus" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="Block reason" Member="BlockReason" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
-      <Column Name="Vendor2UserDeposits" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
       <Column Name="Phone" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
       <Column Name="Mobile" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
       <Column Name="City" Type="System.String" DbType="NVarChar(80)" CanBeNull="true" />
       <Column Name="Country" Type="System.String" DbType="NVarChar(80)" CanBeNull="true" />
+      <Column Name="JoinDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FirstDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastPlayedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="FK_dbo.GzTrxs_dbo.PlayerRevRpt_PlayerRevRptId" Member="GzTrxs" ThisKey="Id" OtherKey="PlayerRevRptId" Type="GzTrxs" DeleteRule="NO ACTION" />
     </Type>
   </Table>
@@ -394,7 +399,6 @@
       <Column Name="Title" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="Color" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
       <Association Name="FK_dbo.CustPortfolios_dbo.Portfolios_PortfolioId" Member="CustPortfolios" ThisKey="Id" OtherKey="PortfolioId" Type="CustPortfolios" DeleteRule="CASCADE" />
-      <Association Name="FK_dbo.InvBalances_dbo.Portfolios_PortfolioId" Member="InvBalances" ThisKey="Id" OtherKey="PortfolioId" Type="InvBalances" DeleteRule="NO ACTION" />
       <Association Name="FK_dbo.PortFunds_dbo.Portfolios_PortfolioId" Member="PortFunds" ThisKey="Id" OtherKey="PortfolioId" Type="PortFunds" DeleteRule="CASCADE" />
     </Type>
   </Table>
