@@ -26,7 +26,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     [<Literal>]
     let WaitForSearchResults = 2000 // 2 sec
     let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
-    let downloadFolderName = Path.Combine (drive, reportsArgs.ReportsFoldersArgs.reportsDownloadFolder)
+    
     let inRptFolderName = Path.Combine ([|drive; reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder |])
 
     //let downloadedCustomFilter = reportsArgs.ReportsFilesArgs.DownloadedCustomFilter
@@ -380,7 +380,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                 // Sleep 2 seconds to allow for the file to download
                 Threading.Thread.Sleep(Wait_For_File_Download_Ms)
 
-                let downloadedBalanceRpt = lastDownloadedRpt downloadedBalanceFilter downloadFolderName
+                let downloadedBalanceRpt = lastDownloadedRpt downloadedBalanceFilter inRptFolderName
                 // Check for incomplete download if last file entry is "bybalance.xlsx.crdownload"
                 not <| downloadedBalanceRpt.Name.EndsWith("crdownload")
             with
@@ -393,14 +393,14 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         closeSwitchWindow baseWindow
         downloadedBalanceReport
 
-    let moveDownloadedRptToInRptFolder 
+    let renameRptInRptFolder 
             (everymatrixDwnFileMask : string) // "bybalance.xlsx" --or "values.xlsx" --or "transx.xlsx
             (rptFilenamePrefix : string) // "Custom Prod" --or "Balance Prod" --or withdrawalsPending Prod --or withdrawalsRollback Prod 
             (rptFilenameDatePostfix : DateTime) // 20170430
                 : unit =
 
         // "bybalance.xlsx" --or "values.xlsx" --or "transx.xlsx
-        let downloadedRpt = lastDownloadedRpt everymatrixDwnFileMask downloadFolderName
+        let downloadedRpt = lastDownloadedRpt everymatrixDwnFileMask inRptFolderName
 
         (* 
          * "Custom Prod 20170430.xlsx"
@@ -413,9 +413,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
         let finalDestinationRptName = Path.Combine(inRptFolderName, correctRptFilename)
 
-        let downloadedCorrectRptFilename = Path.Combine(downloadFolderName, correctRptFilename)
-        overwriteRenameFile (downloadedRpt.FullName) downloadedCorrectRptFilename
-        overwriteMoveFile downloadedCorrectRptFilename finalDestinationRptName
+        overwriteRenameFile (downloadedRpt.FullName) finalDestinationRptName
 
     let initCanopyChrome() : unit =
         let projDir = __SOURCE_DIRECTORY__
@@ -424,7 +422,26 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         canopy.configuration.elementTimeout <- 600.0
         canopy.configuration.compareTimeout <- 600.0
         canopy.configuration.pageTimeout <- 600.0
-        start chrome
+        canopy.configuration.autoPinBrowserRightOnLaunch <- true
+
+        let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
+        //chromeOptions.AddArgument("--no-sandbox")
+        //chromeOptions.AddArgument("--disable-gpu")
+        //chromeOptions.AddArgument("--disable-extensions")
+        //chromeOptions.AddArgument("--headless")
+        //chromeOptions.AddArgument("--single-process")
+        //chromeOptions.AddArgument("--disable-client-side-phishing-detection")
+        //hromeOptions.AddArgument("--disable-suggestions-service")
+        //chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
+        //chromeOptions.AddArgument("--no-first-run")
+        //chromeOptions.AddArgument("--remote-debugging-port=4444")
+        chromeOptions.AddUserProfilePreference("download.prompt_for_download", false)
+        chromeOptions.AddUserProfilePreference("download.directory_upgrade", true)
+        chromeOptions.AddUserProfilePreference("download.default_directory", inRptFolderName)
+
+        let chromeNoSandbox = ChromeWithOptions(chromeOptions)
+
+        start chromeNoSandbox
         match screen.monitorCount with
         | m when m >= 3 -> pinToMonitor 3
         | m when m = 2 -> pinToMonitor 2
@@ -484,7 +501,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                         logger.Info (sprintf "** downloading the Custom Report: left remaining efforts: %d" times)
 
                     uiAutomateDownloadedCustomRpt dayToProcess
-                    moveDownloadedRptToInRptFolder 
+                    renameRptInRptFolder 
                         rptFilesArgs.DownloadedCustomFilter 
                         rptFilesArgs.CustomRptFilenamePrefix
                         dayToProcess
@@ -504,7 +521,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Deposits
         let downloadDeposits() =
             if uiAutomateDownloadedDepositsBonusCashRpt dayToProcess then
-                moveDownloadedRptToInRptFolder
+                renameRptInRptFolder
                     rptFilesArgs.DownloadedDepositsFilter
                     rptFilesArgs.DepositsRptFilenamePrefix 
                     dayToProcess
@@ -513,7 +530,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Inv Bonus Deposits
         let downloadBonus() =
             if uiDownloadBonusRpt dayToProcess then
-                moveDownloadedRptToInRptFolder 
+                renameRptInRptFolder 
                     rptFilesArgs.DownloadedBonusFilter
                     rptFilesArgs.BonusRptFilenamePrefix
                     dayToProcess
@@ -522,7 +539,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Withdrawals: Pending
         let downloadWithdrawalsPending() = 
             if uiAutomateDownloadedPendingWithdrawalsRpt dayToProcess then
-                moveDownloadedRptToInRptFolder 
+                renameRptInRptFolder 
                     rptFilesArgs.DownloadedWithdrawalsFilter
                     rptFilesArgs.WithdrawalsPendingRptFilenamePrefix
                     dayToProcess
@@ -531,7 +548,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         // Withdrawals: Rollback
         let downloadWithdrawalsRollback() = 
             if uiAutomateDownloadedRollbackWithdrawalsRpt dayToProcess then
-                moveDownloadedRptToInRptFolder 
+                renameRptInRptFolder 
                     rptFilesArgs.DownloadedWithdrawalsFilter
                     rptFilesArgs.WithdrawalsRollbackRptFilenamePrefix
                     dayToProcess
@@ -541,7 +558,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         let downloadEndofMonthBalanceReport() =
             if balanceFilesArg = BalanceFilesUsageType.UseBothBalanceFiles then
                 if uiAutomatedEndBalanceRpt dayToProcess rptFilesArgs.DownloadedBalanceFilter then
-                    moveDownloadedRptToInRptFolder 
+                    renameRptInRptFolder 
                         rptFilesArgs.DownloadedBalanceFilter
                         rptFilesArgs.EndBalanceRptFilenamePrefix
                         (dayToProcess.AddDays(1.0))
