@@ -26,6 +26,10 @@ module DbGzTrx =
         trxRow.GmGainLoss <- Nullable playerGainLoss
         trxRow.CashBonusAmount <- if playerRevRpt.CashBonusAmount.HasValue then playerRevRpt.CashBonusAmount.Value else 0M
         trxRow.CashDeposits <- playerRevRpt.CashDeposits
+        trxRow.JoinDate <- playerRevRpt.JoinDate
+        trxRow.FirstDeposit <- playerRevRpt.FirstDeposit
+        trxRow.LastDeposit <- playerRevRpt.LastDeposit
+        trxRow.LastPlayedDate <- playerRevRpt.LastPlayedDate
 
     /// Create & Insert a GzTrxs row
     let insDbGzTrxRowValues
@@ -409,6 +413,7 @@ module DbPlayerRevRpt =
         if objIsNotNull(customExcelRow.``Initial deposit date``) then
             let dateObj = customExcelRow.``Initial deposit date``.ToString()
             playerRow.FirstDeposit <- dateObj.ToNullableDate
+            playerRow.LastDeposit <- dateObj.ToNullableDate
 
         if objIsNotNull customExcelRow.``Last deposit date`` then
             let dateObj = customExcelRow.``Last deposit date``.ToString()
