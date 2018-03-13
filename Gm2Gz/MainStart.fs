@@ -46,7 +46,6 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
         BaseFolder = Settings.BaseFolder;
         ExcelInFolder = Settings.ExcelInFolder;
         ExcelOutFolder = Settings.ExcelOutFolder;
-        reportsDownloadFolder = Settings.ReportsDownloadFolder;
     }
 
     let reportsFilesArgs : ConfigArgs.ReportsFilesArgsType = {
