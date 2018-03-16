@@ -76,7 +76,6 @@
     <Compile Include="PortfolioTypes.fs" />
     <None Include="StockDownloader.fsx" />
     <Compile Include="Portfolio.fs" />
-    <Compile Include="WithdrawnVintageBonusGen.fs" />
     <None Include="Scripts\load-references-debug.fsx" />
     <None Include="Scripts\load-project-debug.fsx" />
     <None Include="Scripts\load-references-release.fsx" />
