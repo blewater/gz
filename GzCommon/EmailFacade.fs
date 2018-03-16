@@ -5,7 +5,6 @@ open System.IO
 open MailKit
 open MimeKit
 open MailKit.Net.Imap
-open NLog
 open MailKit.Net.Smtp
 open MailKit.Security
 
@@ -13,12 +12,9 @@ type MessagesCount = { CurrentIndex : int ; TotalReportMessages : int ; FoundDay
 
 type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : string) =
 
-    static let logger = LogManager.GetCurrentClassLogger()
-
     let todaysFileTitle : string =
         let dtStr = dayToProcess.ToString("ddMMMyyyy")
-        let yyyyMm = dayToProcess.ToYyyyMm
-        let filename = yyyyMm + " " + "(daily" + dtStr + ").xlsx"
+        let filename = "Auto " + "(daily" + dtStr + ").xlsx"
         filename
 
     let mimePart2Disk (mimePart : MimePart)(filename : string) : unit =
@@ -31,7 +27,7 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
         messagePart.Message.WriteTo(fs)
         fs.Flush()
 
-    let saveUsefulAttachment (destCustomRptName : string)(message : MimeMessage)(yyyyMm : string) : bool = 
+    let saveUsefulAttachment (destCustomRptName : string)(message : MimeMessage) : bool = 
         let from = 
             (
                 message.From.Mailboxes 
@@ -60,10 +56,10 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
     let messageMarkedForDeletion (folder : IMailFolder)(messageIdx : int) : unit = 
         folder.AddFlags(messageIdx, MessageFlags.Deleted, true)
 
-    let messageTasks (inbox : IMailFolder)(destCustomRptName : string)(yyyyMm : string)(index : int) : bool =
+    let messageTasks (inbox : IMailFolder)(destCustomRptName : string)(index : int) : bool =
         let message = inbox.GetMessage(index)
         
-        let foundUsefulAttachment = saveUsefulAttachment destCustomRptName message yyyyMm
+        let foundUsefulAttachment = saveUsefulAttachment destCustomRptName message
         if not foundUsefulAttachment then
             messageMarkedForDeletion inbox index
         foundUsefulAttachment
@@ -72,9 +68,9 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
         // Accept all certificates
         client.ServerCertificateValidationCallback <- (fun _ _ _ _ -> true)
 
-        let connRes = client.Connect("imap.gmail.com", 993)
+        client.Connect("imap.gmail.com", 993)
         client.AuthenticationMechanisms.Remove ("XOAUTH2") |> ignore
-        let loginRes = client.Authenticate (gmailUser,  gmailPassword)
+        client.Authenticate (gmailUser,  gmailPassword)
         let inbox = client.Inbox
         ignore ( inbox.Open(FolderAccess.ReadWrite) )
         inbox
@@ -84,14 +80,12 @@ type EmailAccess(dayToProcess : DateTime, gmailUser: string, gmailPassword : str
         use client = new ImapClient()
         let inbox = initInbox client
 
-        let yyyyMm = dayToProcess.ToYyyyMm
-
         let rec loop (inbox : IMailFolder)(currentCounts : MessagesCount) : MessagesCount = 
             let index = currentCounts.CurrentIndex
             if index = 0 then
                 { currentCounts with CurrentIndex = 0 }
             else 
-                let foundReport = messageTasks inbox destCustomRptName yyyyMm (index - 1)
+                let foundReport = messageTasks inbox destCustomRptName (index - 1)
                 let newMsgCount = { 
                     CurrentIndex = index - 1; 
                     TotalReportMessages = currentCounts.TotalReportMessages + 1;
