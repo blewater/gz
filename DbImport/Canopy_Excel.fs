@@ -9,7 +9,7 @@ open ConfigArgs
 open Microsoft.FSharp.Collections
 open NLog
 
-type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsType) =
+type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsType) =
 
     static let logger = LogManager.GetCurrentClassLogger()
 
@@ -23,8 +23,10 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
 
     [<Literal>]
     let WaitBefDownloadRetryinMillis = 1000 // 1 sec
+
     [<Literal>]
-    let WaitForSearchResults = 2000 // 2 sec
+    let CustomRptName = "Auto"
+
     let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
     
     let inRptFolderName = Path.Combine ([|drive; reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder |])
@@ -116,7 +118,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         enterCustomReports()
 
         click "#hyNewReport"
-        "#txtReportName" << today.ToYyyyMm
+        "#txtReportName" << CustomRptName
         click "#btnSave"
         "#ddlContionPropertyName" << "ProductActivityDateRange"
         "#txtStartDate" << 
@@ -198,18 +200,16 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     /// Check on present if the custom report exists
     let monthlyCustomReportExists() : bool =
 
-        let thisMonth = DateTime.UtcNow.ToYyyyMm
         enterCustomReports()
-        let foundMonthIndex = (element "#ddlReport").Text.LastIndexOf(thisMonth)
+        let foundMonthIndex = (element "#ddlReport").Text.LastIndexOf(CustomRptName)
         match foundMonthIndex with
         | -1 -> false
         | _ -> true
 
     /// Download the monthly custom report
-    let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
+    let uiAutomateDownloadedCustomRpt () =
 
-        let monthToFind = dayToProcess.ToYyyyMm
-        "#ddlReport" << "GreenZorro.com " + monthToFind
+        "#ddlReport" << "GreenZorro.com " + CustomRptName
         click "#BtnToExcel"
         Threading.Thread.Sleep(Wait_For_File_Download_Ms)
 
@@ -346,8 +346,6 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
     /// dayToProcess is interpreted @ 23:59 in the report
     let uiAutomatedEndBalanceRpt (dayToProcess : DateTime)(downloadedBalanceFilter : string) : bool =
 
-        let downloadingFailure = true
-
         // LGA reports
         click "#nav > li:nth-child(5) > a"
         // Player balances
@@ -429,12 +427,10 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
         //chromeOptions.AddArgument("--disable-gpu")
         //chromeOptions.AddArgument("--disable-extensions")
         //chromeOptions.AddArgument("--headless")
-        //chromeOptions.AddArgument("--single-process")
         //chromeOptions.AddArgument("--disable-client-side-phishing-detection")
-        //hromeOptions.AddArgument("--disable-suggestions-service")
+        //chromeOptions.AddArgument("--disable-suggestions-service")
         //chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
         //chromeOptions.AddArgument("--no-first-run")
-        //chromeOptions.AddArgument("--remote-debugging-port=4444")
         chromeOptions.AddUserProfilePreference("download.prompt_for_download", false)
         chromeOptions.AddUserProfilePreference("download.directory_upgrade", true)
         chromeOptions.AddUserProfilePreference("download.default_directory", inRptFolderName)
@@ -500,7 +496,7 @@ type CanopyDownloader(dayToProcess : DateTime, reportsArgs : EverymatriReportsAr
                     if times < NUM_DOWNLOAD_ATTEMPTS then
                         logger.Info (sprintf "** downloading the Custom Report: left remaining efforts: %d" times)
 
-                    uiAutomateDownloadedCustomRpt dayToProcess
+                    uiAutomateDownloadedCustomRpt()
                     renameRptInRptFolder 
                         rptFilesArgs.DownloadedCustomFilter 
                         rptFilesArgs.CustomRptFilenamePrefix
