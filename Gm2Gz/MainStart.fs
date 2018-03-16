@@ -133,9 +133,6 @@ let main argv =
             (portfolioSharesPrelude2MainProcessing db)
             cmdArgs.UserEmailProcAlone
 
-        // Vintage withdrawal bonus
-        WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
-
         appTimer.Stop()
         logger.Info("----------------------------")
         logger.Info(sprintf "The investment awarding process took %f seconds or %f minutes." <| (float) appTimer.ElapsedMilliseconds/1000.0 <| (float) appTimer.ElapsedMilliseconds/60000.0)
