@@ -27,11 +27,7 @@ type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTy
     [<Literal>]
     let CustomRptName = "Auto"
 
-    let drive = Path.GetPathRoot  __SOURCE_DIRECTORY__
-    
-    let inRptFolderName = Path.Combine ([|drive; reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder |])
-
-    //let downloadedCustomFilter = reportsArgs.ReportsFilesArgs.DownloadedCustomFilter
+    let inRptFolderName = Path.Combine (reportsArgs.ReportsFoldersArgs.BaseFolder, reportsArgs.ReportsFoldersArgs.ExcelInFolder)
 
     let rptFilename (rptFilenamePrefix : string)(filenameDatePostfix : DateTime) : string =
         rptFilenamePrefix
@@ -414,8 +410,7 @@ type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTy
         overwriteRenameFile (downloadedRpt.FullName) finalDestinationRptName
 
     let initCanopyChrome() : unit =
-        let projDir = __SOURCE_DIRECTORY__
-        canopy.configuration.chromeDir <- projDir
+        canopy.configuration.chromeDir <- "."
         // 10 minute timeouts
         canopy.configuration.elementTimeout <- 600.0
         canopy.configuration.compareTimeout <- 600.0
