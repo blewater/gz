@@ -207,7 +207,7 @@ namespace gzWeb.Controllers
         [Route("Register")]
         public IHttpActionResult Register(RegisterBindingModel model)
         {
-            IdentityResult result = null;
+            IdentityResult userCreationResult = null;
             try
             {
                 Logger.Info("Server Registration Step 1:Register requested for [User - {0}/{1}].", model.Username, model.Email);
@@ -227,42 +227,75 @@ namespace gzWeb.Controllers
                     EmailConfirmed = true,
                 };
 
-                result = UserManager.Create(user, model.Password);
-                if (!result.Succeeded)
-                {
-                    Logger.Error("Server Registration Step 1:gzRegistration for User with username: '{0}' and email: '{1}' failed with error: {2}",
-                        model.Username,
-                        model.Email,
-                        String.Join(Environment.NewLine, result.Errors));
+#region Registration Create User
 
+                bool userCreationSucceeded = false;
+                try {
+                    
+                    userCreationResult = UserManager.Create(user, model.Password);
+                    userCreationSucceeded = userCreationResult.Succeeded;
+
+                } catch (Exception ex) {
+                    telemetry.TrackException(ex);
+                    Logger.Warn(ex,
+                        "Server Registration Step 1:Failed to create User to create user gzRegistration for User with username: '{0}' and email: '{1}'",
+                        model.Username,
+                        model.Email);
+                }
+
+                if (!userCreationSucceeded) {
+
+                    if (userCreationResult != null) {
+                        Logger.Error(
+                            "Server Registration Step 1:Failed to create user gzRegistration for User with username: '{0}' and email: '{1}' failed with error: {2}",
+                            model.Username,
+                            model.Email,
+                            String.Join(Environment.NewLine, userCreationResult.Errors));
+                    }
+                    else {
+                        Logger.Error(
+                            "Server Registration Step 1:Failed to create user gzRegistration for User with username: '{0}' and email: '{1}'",
+                            model.Username,
+                            model.Email);
+                    }
+
+#endregion Registration Create User
+
+#region Delete Failed Registration User
                     try
                     {
-                        var deleteResult = UserManager.Delete(user);
-                        if (!deleteResult.Succeeded)
-                        {
+                        IdentityResult userDeletionResult = UserManager.Delete(user);
+                        if (userDeletionResult != null && !userDeletionResult.Succeeded) {
                             Logger.Warn(
                                 "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
                                 model.Username,
                                 model.Email,
-                                String.Join(Environment.NewLine, result.Errors));
+                                String.Join(Environment.NewLine, userDeletionResult.Errors));
                         }
-                        else
-                        {
+                        else if (userDeletionResult == null) {
+                            Logger.Warn(
+                                "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}'",
+                                model.Username,
+                                model.Email);
+                        }
+                        else if (userDeletionResult.Succeeded) {
                             Logger.Info(
-                                "Server Registration Step 1:Delete of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
+                                "Server Registration Step 1:Deletion of unsuccessful user gzRegistration with username: '{0}' and email: '{1}', succeeded.",
                                 model.Username, model.Email);
                         }
-                    } catch (Exception ex)
-                    {
+                    }
+                    catch (Exception ex) {
                         telemetry.TrackException(ex);
                         Logger.Warn(ex,
-                            "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}', with error: {2}",
+                            "Server Registration Step 1:Failed to delete User of unsuccessful gzRegistration with username: '{0}' and email: '{1}'",
                             model.Username,
-                            model.Email,
-                            String.Join(Environment.NewLine, result.Errors));
+                            model.Email);
                     }
-                    return GetErrorResult(result);
+
+                    return GetErrorResult(userCreationResult);
                 }
+
+#endregion Delete Failed Registration User
 
                 #region In case of email confirmation ...
                 //var activationCode = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -282,11 +315,11 @@ namespace gzWeb.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "api/Account/Register");
                 telemetry.TrackException(ex);
+                Logger.Error(ex, "api/Account/Register");
             }
 
-            return Ok(result);
+            return Ok(userCreationResult);
         }
 
         [HttpPost]
