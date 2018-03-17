@@ -107,7 +107,8 @@
       <HintPath>..\GzBatch\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="canopy">
-      <HintPath>..\GzBatch\packages\canopy.1.6.1\lib\canopy.dll</HintPath>
+      <HintPath>..\GzBatch\packages\canopy.1.6.3\lib\canopy.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Excel">
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\Excel.dll</HintPath>
@@ -116,10 +117,12 @@
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ExcelProvider.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.3.3\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.3.4\lib\net45\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
-      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.4\lib\net45\FSharp.Data.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.5\lib\net45\FSharp.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data.TypeProviders">
       <HintPath>$(SolutionDir)packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
@@ -145,10 +148,12 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebDriver">
-      <HintPath>..\GzBatch\packages\Selenium.WebDriver.3.8.0\lib\net45\WebDriver.dll</HintPath>
+      <HintPath>..\GzBatch\packages\Selenium.WebDriver.3.11.0\lib\net45\WebDriver.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WebDriver.Support">
-      <HintPath>..\GzBatch\packages\Selenium.Support.3.8.0\lib\net45\WebDriver.Support.dll</HintPath>
+      <HintPath>..\GzBatch\packages\Selenium.Support.3.11.0\lib\net45\WebDriver.Support.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
