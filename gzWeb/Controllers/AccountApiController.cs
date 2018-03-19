@@ -419,9 +419,8 @@ namespace gzWeb.Controllers
             }
             catch (Exception exception)
             {
-                Logger.Error(exception, "Server Registration Step 6: FinalizeRegistration for [User#{0}]. Failed.", userId);
                 telemetry.TrackException(exception);
-                throw;
+                Logger.Error(exception, "Server Registration Step 6: FinalizeRegistration for [User#{0}]. Failed.", userId);
             }
 
             Logger.Info("Server Registration Step 6: GzFinalizeRegistration for [User#{0}]. Succeeded.", userId);
