@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
-MinimumVisualStudioVersion = 10.0.40219.1
+MinimumVisualStudioVersion = 14.0.25420.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzBatchCommon", "..\GzCommon\GzBatchCommon.fsproj", "{D118702E-4B38-4BCF-9184-DAA324C5D160}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzBalances", "..\GzBalances\GzBalances.fsproj", "{906609CB-1AA2-4596-8584-94C2CCC23274}"

@@ -101,7 +101,7 @@ module PortfolioTypes =
         Withdrawals : Money;
         GainLoss : Money;
         EndBalance : Money;
-        Vendor2UserDeposits : Money;
+        CashDeposits : Money;
         CashBonus : Money;
     }
 
