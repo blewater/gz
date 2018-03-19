@@ -38,15 +38,15 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<ApplicationUser> GetCachedUserAsync(int userId) {
+        public ApplicationUser GetCachedUser(int userId)
+        {
+            var userRow =
+                db.Users
+                    .Where(u => u.Id == userId)
+                    .DeferredSingleOrDefault()
+                    .FromCache(DateTime.UtcNow.AddDays(1));
 
-                var userRow = 
-                    await db.Users
-                        .Where(u => u.Id == userId)
-                        .DeferredSingleOrDefault()
-                        .FromCacheAsync(DateTime.UtcNow.AddDays(1));
-
-                return userRow;
+            return userRow;
         }
     }
 }

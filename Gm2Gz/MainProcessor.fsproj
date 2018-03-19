@@ -41,7 +41,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Production|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +61,28 @@
     </StartArguments>
   </PropertyGroup>
   <Choose>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.3.0.0 AND $(TargetFSharpCoreVersion) &lt; 4.3.1.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.3.1.0 AND $(TargetFSharpCoreVersion) &lt; 4.4.0.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.4.0.0 AND $(TargetFSharpCoreVersion) &lt; 4.4.1.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\4.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\4.1\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <!-- <Choose>
     <When Condition="'$(VisualStudioVersion)' == '11.0'">
       <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')">
         <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
@@ -68,13 +93,15 @@
         <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
       </PropertyGroup>
     </Otherwise>
-  </Choose>
+  </Choose> -->
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="ArgumentsProcessor.fs" />
     <Compile Include="MainStart.fs" />
-    <None Include="App.config" />
+    <None Include="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="connectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -82,17 +109,11 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Balance Prod 20161001.xlsx" />
-    <None Include="Custom Prod 20170611.xlsx" />
-    <None Include="WithdrawalsPending prod 20160930.xlsx" />
-    <None Include="Vendor2User Prod 20170606.xlsx" />
-    <None Include="ExchangeRate-31-08-2017.xlsx" />
     <None Include="NLog.xsd" />
-    <None Include="Bonus Prod 20171212.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Argu">
-      <HintPath>..\GzBatch\packages\Argu.5.0.1\lib\net45\Argu.dll</HintPath>
+      <HintPath>..\GzBatch\packages\Argu.5.1.0\lib\net45\Argu.dll</HintPath>
     </Reference>
     <Reference Include="Excel">
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\Excel.dll</HintPath>
@@ -101,13 +122,13 @@
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ExcelProvider.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Configuration">
-      <HintPath>..\GzBatch\packages\FSharp.Configuration.1.3.1\lib\net45\FSharp.Configuration.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Configuration.1.4.0\lib\net45\FSharp.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.3.3\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.3.4\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data">
-      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.4\lib\net45\FSharp.Data.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.5\lib\net45\FSharp.Data.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data.TypeProviders">
       <HintPath>$(SolutionDir)packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
@@ -118,10 +139,10 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\GzBatch\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="SharpYaml">
-      <HintPath>..\GzBatch\packages\FSharp.Configuration.1.3.1\lib\net45\SharpYaml.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Configuration.1.4.0\lib\net45\SharpYaml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -151,6 +172,13 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets" Condition="Exists('packages\FSharpLint.MSBuild.0.4.11\build\FSharpLint.MSBuild.targets')" />
+  <Import Project="..\GzBatch\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets" Condition="Exists('..\GzBatch\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\GzBatch\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GzBatch\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

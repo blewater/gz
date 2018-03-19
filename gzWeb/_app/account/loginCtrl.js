@@ -14,7 +14,7 @@
         $scope.responseMsg = null;
 
         $scope.usernameOrEmailContainsAt = function () {
-            $scope.model.usernameOrEmail && $scope.model.usernameOrEmail.indexOf('@') !== -1;
+            return $scope.model.usernameOrEmail && $scope.model.usernameOrEmail.indexOf('@') !== -1;
         };
 
         $scope.model = {

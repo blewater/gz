@@ -60,7 +60,7 @@ namespace gzDAL.Models {
 
         [DefaultValue(0)]
         [Required]
-        public decimal Vendor2UserDeposits { get; set; }
+        public decimal CashDeposits { get; set; }
 
         /// <summary>
         /// Monthly withdrawals imported from Everymatrix reports
@@ -186,7 +186,7 @@ namespace gzDAL.Models {
         [Required]
         public DateTime UpdatedOnUtc { get; set; }
         public InvBalance() {
-            CashBonusAmount = Vendor2UserDeposits = CashInvestment = TotalCashInvestments = TotalSoldVintagesValue = 0M;
+            CashBonusAmount = CashInvestment = TotalCashInvestments = TotalSoldVintagesValue = 0M;
             PortfolioId = (int) RiskToleranceEnum.Medium;
             UpdatedOnUtc = DateTime.UtcNow;
         }

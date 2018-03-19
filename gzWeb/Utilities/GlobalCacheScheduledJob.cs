@@ -66,7 +66,7 @@ namespace gzWeb.Utilities  {
                 var db = new ApplicationDbContext();
 
                 // Cache configuration object
-                var _ = new ConfRepo(db).GetConfRow().ConfigureAwait(false);
+                var _ = new ConfRepo(db).GetConfRow();
 
                 //-------- Cache Fund prices for 2 hours
                 var __ = db.PortfolioPrices
@@ -77,8 +77,7 @@ namespace gzWeb.Utilities  {
                         p.PortfolioHighPrice,
                         p.YearMonthDay
                     })
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2))
-                    .ConfigureAwait(false);
+                    .FromCache(DateTime.UtcNow.AddHours(2));
             }
             catch (Exception ex) {
                 _logger.Error(ex, "CacheGlobalData()");

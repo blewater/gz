@@ -40,12 +40,10 @@
       <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="MailKit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <HintPath>..\packages\MailKit.2.0.1\lib\net45\MailKit.dll</HintPath>
@@ -200,7 +198,6 @@
     <Compile Include="Models\TestDbContext.cs" />
     <Compile Include="Repos\Interfaces\IUserRepo.cs" />
     <Compile Include="Repos\UserRepo.cs" />
-    <Compile Include="Repos\CurrencyRateRepo.cs" />
     <Compile Include="Models\CustFundShare.cs" />
     <Compile Include="Repos\UserPortfolioSharesRepo.cs" />
     <Compile Include="Models\CustPortfolio.cs" />
@@ -220,7 +217,6 @@
     <Compile Include="Repos\Interfaces\IConfRepo.cs" />
     <Compile Include="Repos\Interfaces\IUserPortfolioRepo.cs" />
     <Compile Include="Repos\Interfaces\IUserPortfolioSharesRepo.cs" />
-    <Compile Include="Repos\Interfaces\ICurrencyRateRepo.cs" />
     <Compile Include="Repos\InvBalanceRepo.cs" />
     <Compile Include="Models\Portfolio.cs" />
     <Compile Include="Repos\Interfaces\IPortfolioRepository.cs" />

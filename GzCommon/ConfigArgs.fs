@@ -18,7 +18,6 @@ module ConfigArgs =
         BaseFolder : string;
         ExcelInFolder : string; 
         ExcelOutFolder : string;
-        reportsDownloadFolder : string;
     }
 
     /// Reports Files & Download Args

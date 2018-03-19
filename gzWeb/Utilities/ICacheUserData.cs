@@ -2,6 +2,6 @@
 
 namespace gzWeb.Utilities {
     public interface ICacheUserData {
-        Task Query(int userId);
+        void Query(int userId);
     }
 }

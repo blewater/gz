@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using gzDAL.Conf;
 using gzDAL.Models;
+using Microsoft.ApplicationInsights;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
@@ -15,11 +17,17 @@ namespace gzWeb.Providers
         private readonly Func<ApplicationUserManager> _userManagerFactory;
         private readonly string _publicClientId;
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly TelemetryClient telemetry;
 
         public ApplicationOAuthProvider(string publicClientId, Func<ApplicationUserManager> userManagerFactory)
         {
-            if (publicClientId == null)
-                throw new ArgumentNullException("publicClientId");
+            telemetry = new TelemetryClient();
+            if (publicClientId == null) {
+                var ex = new ArgumentNullException(nameof(publicClientId));
+
+                telemetry.TrackException(ex);
+                throw ex;
+            }
 
             _publicClientId = publicClientId;
             _userManagerFactory = userManagerFactory;
@@ -27,51 +35,60 @@ namespace gzWeb.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            _logger.Info("Authentication attempt for {0}", context.UserName);
+            try {
+                _logger.Info("Authentication attempt for {0}", context.UserName);
 
-            var userManager = _userManagerFactory();
-            var user = await userManager.FindAsync(context.UserName, context.Password);
+                var userManager = _userManagerFactory();
+                var user = await userManager.FindAsync(context.UserName, context.Password);
 
-            if (user == null)
-            {
-                _logger.Info("Authentication by username attempt for user '{0}' failed. Invalid username or password. Checking for email.", context.UserName);
+                if (user == null) {
+                    _logger.Info(
+                        "Authentication by username attempt for user '{0}' failed. Invalid username or password. Checking for email.",
+                        context.UserName);
 
-                const string ERROR_TYPE = "invalid_grant";
-                const string ERROR_MSG = "The username/email or password is incorrect.";
-                user = await userManager.FindByEmailAsync(context.UserName);
-                if (user == null)
-                {
-                    context.SetError(ERROR_TYPE, ERROR_MSG);
-                    _logger.Info("Authentication by email attempt for user '{0}' failed. Invalid email.", context.UserName);
-                    return;
+                    const string ERROR_TYPE = "invalid_grant";
+                    const string ERROR_MSG = "The username/email or password is incorrect.";
+                    user = userManager.FindByEmail(context.UserName);
+                    if (user == null) {
+                        context.SetError(ERROR_TYPE, ERROR_MSG);
+                        _logger.Info("Authentication by email attempt for user '{0}' failed. Invalid email.",
+                            context.UserName);
+                        return;
+                    }
+
+                    user = userManager.CheckPassword(user, context.Password) ? user : null;
+                    if (user == null) {
+                        context.SetError(ERROR_TYPE, ERROR_MSG);
+                        _logger.Info("Authentication password attempt for user '{0}' check failed. Invalid password.",
+                            context.UserName);
+                        return;
+                    }
                 }
-                
-                user = await userManager.CheckPasswordAsync(user, context.Password) ? user : null;
-                if (user == null)
-                {
-                    context.SetError(ERROR_TYPE, ERROR_MSG);
-                    _logger.Info("Authentication password attempt for user '{0}' check failed. Invalid password.", context.UserName);
-                    return;
-                }
+
+                var oAuthIdentity = user.GenerateUserIdentity(userManager, OAuthDefaults.AuthenticationType);
+                var cookiesIdentity =
+                    user.GenerateUserIdentity(userManager, CookieAuthenticationDefaults.AuthenticationType);
+
+                var properties = CreateProperties(user);
+
+                user.LastLogin = DateTime.UtcNow;
+                await userManager.UpdateAsync(user).ConfigureAwait(false);
+
+                // TODO: in case of ...
+                //if (!user.EmailConfirmed)
+                //{
+                //    context.SetError("invalid_grant", "Account pending approval.");
+                //    return;
+                //}
+
+                var ticket = new AuthenticationTicket(oAuthIdentity, properties);
+                context.Validated(ticket);
+                context.Request.Context.Authentication.SignIn(cookiesIdentity);
             }
+            catch (Exception ex) {
 
-            user.LastLogin = DateTime.UtcNow;
-            await userManager.UpdateAsync(user);
-
-            // TODO: in case of ...
-            //if (!user.EmailConfirmed)
-            //{
-            //    context.SetError("invalid_grant", "Account pending approval.");
-            //    return;
-            //}
-
-            var oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, OAuthDefaults.AuthenticationType);
-            var cookiesIdentity = await user.GenerateUserIdentityAsync(userManager, CookieAuthenticationDefaults.AuthenticationType);
-
-            var properties = CreateProperties(user);
-            var ticket = new AuthenticationTicket(oAuthIdentity, properties);
-            context.Validated(ticket);
-            context.Request.Context.Authentication.SignIn(cookiesIdentity);
+                telemetry.TrackException(ex);
+            }
         }
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)

@@ -37,7 +37,10 @@
     <DocumentationFile>bin\Release\CpcDataServices.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Production|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,6 +53,28 @@
     <OutputPath>bin\Production\</OutputPath>
   </PropertyGroup>
   <Choose>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.3.0.0 AND $(TargetFSharpCoreVersion) &lt; 4.3.1.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.3.1.0 AND $(TargetFSharpCoreVersion) &lt; 4.4.0.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.4.0.0 AND $(TargetFSharpCoreVersion) &lt; 4.4.1.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\4.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\4.1\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <!-- <Choose>
     <When Condition="'$(VisualStudioVersion)' == '11.0'">
       <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')">
         <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
@@ -60,7 +85,7 @@
         <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
       </PropertyGroup>
     </Otherwise>
-  </Choose>
+  </Choose> -->
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
@@ -74,20 +99,41 @@
     <None Include="openexchangerates.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="CanopyDownloader.fs" />
+    <Compile Include="Canopy_PlayerId.fs" />
+    <Compile Include="Canopy_Excel.fs" />
     <Compile Include="ExcelDownloader.fs" />
     <None Include="Scripts\CanopyTester.fsx" />
     <None Include="Scripts\load-references-production.fsx" />
     <None Include="Scripts\load-project-production.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
     <None Include="Scripts\load-project-debug.fsx" />
+    <None Include="Custom Prod 20180309.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Bonus Prod 20171212.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ExchangeRate-31-08-2017.xlsx" />
+    <None Include="Vendor2User Prod 20170606.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="WithdrawalsPending prod 20160930.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Balance Prod 20161001.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="chromedriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\GzBatch\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="canopy">
-      <HintPath>..\GzBatch\packages\canopy.1.6.1\lib\canopy.dll</HintPath>
+      <HintPath>..\GzBatch\packages\canopy.1.6.3\lib\canopy.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Excel">
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\Excel.dll</HintPath>
@@ -96,10 +142,10 @@
       <HintPath>$(SolutionDir)packages\ExcelProvider.0.8.2\lib\ExcelProvider.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\GzBatch\packages\FSharp.Core.4.3.3\lib\net45\FSharp.Core.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Core.4.3.4\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data">
-      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.4\lib\net45\FSharp.Data.dll</HintPath>
+      <HintPath>..\GzBatch\packages\FSharp.Data.2.4.5\lib\net45\FSharp.Data.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data.TypeProviders">
       <HintPath>$(SolutionDir)packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
@@ -110,7 +156,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="NLog">
-      <HintPath>..\GzBatch\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\GzBatch\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -125,10 +171,12 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebDriver">
-      <HintPath>..\GzBatch\packages\Selenium.WebDriver.3.8.0\lib\net45\WebDriver.dll</HintPath>
+      <HintPath>..\GzBatch\packages\Selenium.WebDriver.3.11.0\lib\net45\WebDriver.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WebDriver.Support">
-      <HintPath>..\GzBatch\packages\Selenium.Support.3.8.0\lib\net45\WebDriver.Support.dll</HintPath>
+      <HintPath>..\GzBatch\packages\Selenium.Support.3.11.0\lib\net45\WebDriver.Support.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

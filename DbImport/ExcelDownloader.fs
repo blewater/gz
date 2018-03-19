@@ -26,7 +26,7 @@ type ExcelDownloader(reportsArgs : EverymatriReportsArgsType, balanceFilesArg : 
         logger.Info (sprintf "Found %d message(s), found custom report? %b." messageCount.TotalReportMessages messageCount.FoundDaysReport)
 
         logger.Info "*** Downloading Rest of reports ***"
-        let webDownloader = CanopyDownloader(dayToProcess, reportsArgs)
+        let webDownloader = Canopy_Excel(dayToProcess, reportsArgs)
         webDownloader.DownloadReports 
             balanceFilesArg
             (not messageCount.FoundDaysReport)

@@ -6,6 +6,6 @@ using gzDAL.Models;
 namespace gzDAL.Repos.Interfaces {
     public interface IUserRepo {
 
-        Task<ApplicationUser> GetCachedUserAsync(int userId);
+        ApplicationUser GetCachedUser(int userId);
     }
 }

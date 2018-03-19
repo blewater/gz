@@ -46,7 +46,6 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
         BaseFolder = Settings.BaseFolder;
         ExcelInFolder = Settings.ExcelInFolder;
         ExcelOutFolder = Settings.ExcelOutFolder;
-        reportsDownloadFolder = Settings.ReportsDownloadFolder;
     }
 
     let reportsFilesArgs : ConfigArgs.ReportsFilesArgsType = {
@@ -133,9 +132,6 @@ let main argv =
             (customRpdDate.Substring(0, 6))
             (portfolioSharesPrelude2MainProcessing db)
             cmdArgs.UserEmailProcAlone
-
-        // Vintage withdrawal bonus
-        WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
 
         appTimer.Stop()
         logger.Info("----------------------------")

@@ -260,7 +260,11 @@
       <Column Name="EndGmBalance" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
       <Column Name="GmGainLoss" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
       <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
-      <Column Name="Vendor2UserDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="JoinDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FirstDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastPlayedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="FK_dbo.GzTransactions_dbo.AspNetUsers_CustomerId" Member="AspNetUsers" ThisKey="CustomerId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
       <Association Name="FK_dbo.GzTransactions_dbo.GzTransactionTypes_TypeId" Member="GzTrxTypes" ThisKey="TypeId" OtherKey="Id" Type="GzTrxTypes" IsForeignKey="true" DeleteOnNull="true" />
       <Association Name="FK_dbo.GzTrxs_dbo.PlayerRevRpt_PlayerRevRptId" Member="PlayerRevRpt" ThisKey="PlayerRevRptId" OtherKey="Id" Type="PlayerRevRpt" IsForeignKey="true" />
@@ -312,7 +316,7 @@
       <Column Name="TotalSoldVintagesValue" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
       <Column Name="TotalCashInvInHold" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
       <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
-      <Column Name="Vendor2UserDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
       <Column Name="AwardedSoldAmount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="EarlyCashoutFee" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
       <Column Name="HurdleFee" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
@@ -368,11 +372,15 @@
       <Column Name="Player status" Member="PlayerStatus" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="Block reason" Member="BlockReason" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
-      <Column Name="Vendor2UserDeposits" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
       <Column Name="Phone" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
       <Column Name="Mobile" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
       <Column Name="City" Type="System.String" DbType="NVarChar(80)" CanBeNull="true" />
       <Column Name="Country" Type="System.String" DbType="NVarChar(80)" CanBeNull="true" />
+      <Column Name="JoinDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FirstDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastPlayedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="FK_dbo.GzTrxs_dbo.PlayerRevRpt_PlayerRevRptId" Member="GzTrxs" ThisKey="Id" OtherKey="PlayerRevRptId" Type="GzTrxs" DeleteRule="NO ACTION" />
     </Type>
   </Table>
