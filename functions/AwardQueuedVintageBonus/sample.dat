@@ -1,6 +1,0 @@
- data {
-     "userId":75, 
-     "amount":1, 
-     "currency":"SEK", 
-     "comment": "debug bonus request"
-}
