@@ -10,7 +10,6 @@ open FSharp.Configuration
 open FSharp.Azure.StorageTypeProvider
 open Microsoft.WindowsAzure.Storage
 open FSharp.Azure.StorageTypeProvider.Table
-open FSharp.Azure.StorageTypeProvider
 open BonusReq
 open Newtonsoft.Json
 open NLog
