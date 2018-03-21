@@ -9,11 +9,11 @@ open ConfigArgs
 open Microsoft.FSharp.Collections
 open NLog
 
-type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsType) =
+type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsType) =
 
     static let logger = LogManager.GetCurrentClassLogger()
 
-    let Wait_For_File_Download_Ms = reportsArgs.ReportsFilesArgs.Wait_For_File_Download_MS
+    let waitForFileDownloadMs = reportsArgs.ReportsFilesArgs.Wait_For_File_Download_MS
     [<Literal>]
     let ScheduledRptEmailRecipient = "hostmaster@greenzorro.com"
 
@@ -188,7 +188,7 @@ type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTy
         // Monthly
         "#txtReceivers" << ScheduledRptEmailRecipient
         // scheduled time
-        "#txtSentTime" << "0530"
+        "#txtSentTime" << "0730"
         click "#btnSave"
         browser.Close()
         switchToWindow baseWindow
@@ -207,7 +207,7 @@ type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTy
 
         "#ddlReport" << "GreenZorro.com " + CustomRptName
         click "#BtnToExcel"
-        Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+        Threading.Thread.Sleep(waitForFileDownloadMs)
 
     /// Enter transactions report and set it to withdrawals mode
     let uiAutomatedEnterTransactionsReport() = 
@@ -249,7 +249,7 @@ type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTy
 
             // Workaround for completing the download task without looping
             enabled downBtnId
-            Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+            Threading.Thread.Sleep(waitForFileDownloadMs)
                 
         dataFound
 
@@ -372,7 +372,7 @@ type Canopy_Excel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTy
             try 
                 click "#ShowProductBalance1_btnSaveas"
                 // Sleep 2 seconds to allow for the file to download
-                Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+                Threading.Thread.Sleep(waitForFileDownloadMs)
 
                 let downloadedBalanceRpt = lastDownloadedRpt downloadedBalanceFilter inRptFolderName
                 // Check for incomplete download if last file entry is "bybalance.xlsx.crdownload"
