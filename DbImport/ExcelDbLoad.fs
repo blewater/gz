@@ -392,7 +392,7 @@ module DbPlayerRevRpt =
 
         // If null it means it's a new user so beg balance should be zero
         // Linq compatible null check
-        if playerRow.BegGmBalance.HasValue = false then
+        if not <| playerRow.BegGmBalance.HasValue then
             playerRow.BegGmBalance <- Nullable 0m
 
         playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
