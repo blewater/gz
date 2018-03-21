@@ -188,7 +188,7 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
         // Monthly
         "#txtReceivers" << ScheduledRptEmailRecipient
         // scheduled time
-        "#txtSentTime" << "0530"
+        "#txtSentTime" << "0730"
         click "#btnSave"
         browser.Close()
         switchToWindow baseWindow
