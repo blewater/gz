@@ -6,7 +6,7 @@ open OpenQA.Selenium
 open System.Text.RegularExpressions
 open NLog
 
-type Canopy_PlayerId(visualSession : bool, everymatrixUsername : string, everymatrixPassword : string, everymatrixSecureToken : string)=
+type CanopyPlayerId(visualSession : bool, everymatrixUsername : string, everymatrixPassword : string, everymatrixSecureToken : string)=
 
     // Need to use --no-sandbox or chrome wont start
     // https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
