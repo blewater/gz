@@ -7,17 +7,17 @@
 #r @"C:/Users/Mario/data/Functions/packages/nuget/fsharp.data.typeproviders/5.0.0.2/lib/net40/FSharp.Data.TypeProviders.dll"
 #r @"C:/Users/Mario/data/Functions/packages/nuget/fsharp.azure.storagetypeprovider/1.9.5/lib/net452/Microsoft.WindowsAzure.Storage.dll"
 #r @"C:/Users/Mario/data/Functions/packages/nuget/fsharp.azure.storagetypeprovider/1.9.5/lib/net452/FSharp.Azure.StorageTypeProvider.dll"
+#r @"C:/Users/Mario/data/Functions/packages/nuget/fsharp.json/0.3.1/lib/net45/FSharp.Json.dll"
 open Microsoft.Azure.WebJobs.Host
 
 #endif
 open System
 open FSharp.Azure.StorageTypeProvider
-//open FSharp.Azure.StorageTypeProvider.Table
+open FSharp.Json
 open FSharp.Data.TypeProviders
 open MimeKit
 open MailKit.Net.Smtp
 open MailKit.Security
-
 type AzStorage = AzureTypeProvider<"DefaultEndpointsProtocol=https;AccountName=gzazurefunctionsstorage;AccountKey=70GYx9psHLDTh+y4TBIYNb2OSkXRWy5JTIdFFGL7GY3EsrTnebs8ztsyEu3ro5ZEnOm1g8RmgbrlORpSQuJEjQ==;EndpointSuffix=core.windows.net">
 
 type BonusReqType = {
@@ -34,7 +34,6 @@ type BonusReqType = {
     CreatedOn: DateTime;
     LastProcessedTime: DateTime;
 }
-
 let log = AzStorage.Tables.BonusLog
 
 type BonusLogType = {
@@ -51,7 +50,6 @@ type BonusLogType = {
     CreatedOn: DateTime;
     LastProcessedTime: DateTime;
 }
-
 let bonusReq2Log(bonusReq : BonusReqType)(exn : exn option) : BonusLogType =
     {
         Exn = exn 
@@ -75,14 +73,6 @@ let bonusReq2Log(bonusReq : BonusReqType)(exn : exn option) : BonusLogType =
         CreatedOn = bonusReq.CreatedOn;
         LastProcessedTime = bonusReq.LastProcessedTime;
     }
-
-// let private handleResponse =
-//     function
-//     | SuccessfulResponse(entityId, errorCode) -> log.Trace(sprintf "Entity %A succeeded: %d." entityId errorCode)
-//     | EntityError(entityId, httpCode, errorCode, log) -> log.Error(sprintf "Entity %A failed: %d - %s." entityId httpCode errorCode)
-//     | BatchOperationFailedError(entityId, log) -> log.Error(sprintf "Entity %A was ignored as part of a failed batch operation." entityId)
-//     | BatchError(entityId, httpCode, errorCode, log) -> log.Error(sprintf "Entity %A failed with an unknown batch error: %d - %s." entityId httpCode errorCode)
-
 let Upsert (excn : exn option)(logEntry: BonusReqType) : BonusReqType=
     let bonusLog = bonusReq2Log logEntry excn
     log.InsertAsync(
@@ -95,9 +85,13 @@ let Upsert (excn : exn option)(logEntry: BonusReqType) : BonusReqType=
     //|> handleResponse
     logEntry
 
-type EmailReceipts() =
+let inline getAmountCur (bonusReq : BonusReqType) : string = 
+    let rounded = Math.Round(bonusReq.Amount, 2)
+    let roundedStr = rounded.ToString()
+    roundedStr + " " + bonusReq.Currency
 
-    let sendUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(userEmail : string)(firstName : string)(amount: string) : unit =
+type EmailReceipts() =
+    let sendUserReceipt(fromGmailUser: string)(fromGmailPwd : string)(userEmail : string)(firstName : string)(amount: string)(admins : string[]) : unit =
 
         use smtpClient = new SmtpClient()
         smtpClient.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
@@ -106,6 +100,9 @@ type EmailReceipts() =
         let msg = MimeMessage()
         msg.From.Add(MailboxAddress ("Greenzorro", "help@greenzorro.com"))
         msg.To.Add(MailboxAddress (firstName, userEmail))
+        admins
+        |> Array.iter(fun (admin : string) -> 
+            msg.Bcc.Add(MailboxAddress (Array.get (admin.Split('@')) 0, admin)))
         msg.Subject <- sprintf "Greenzorro fullfilled your Bonus request"
         let body = TextPart ("plain")
         body.Text <- 
@@ -125,7 +122,7 @@ type EmailReceipts() =
         smtpClient.Send(msg)
         smtpClient.Disconnect(true)
 
-    let sendAdminReceipt(fromGmailUser: string)(fromGmailPwd : string)(gmUserId : int)(userEmail : string)(amount: string) : unit =
+    let sendAdminReceipt(fromGmailUser: string)(fromGmailPwd : string)(gmUserId : int)(userEmail : string)(amount: string)(admins : string[]) : unit =
 
         use smtpClient = new SmtpClient()
         smtpClient.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect)
@@ -133,8 +130,9 @@ type EmailReceipts() =
 
         let msg = MimeMessage()
         msg.From.Add(MailboxAddress ("Admin", "admin@greenzorro.com"))
-        msg.To.Add(MailboxAddress ("Antonis", "antonis@greenzorro.com"))
-        msg.To.Add(MailboxAddress ("Mario", "mario@greenzorro.com"))
+        admins
+        |> Array.iter(fun (admin : string) -> 
+            msg.To.Add(MailboxAddress (Array.get (admin.Split('@')) 0, admin)))
         msg.Subject <- sprintf "Bonus fulfilled for id: %d" <| gmUserId
         let body = TextPart ("plain")
         body.Text <- 
@@ -151,9 +149,6 @@ type EmailReceipts() =
 
         smtpClient.Send(msg)
         smtpClient.Disconnect(true)
-
-    let getAmountCur (bonusReq : BonusReqType) : string = 
-        String.concat " " [Math.Round(bonusReq.Amount, 2).ToString(); bonusReq.Currency]
 
     let rec retry(triesLeft : int)(fn : (unit -> unit)) =
         try
@@ -176,7 +171,14 @@ type EmailReceipts() =
                     |> String
                 | _ -> "Player"
 
-        let toCallFunc() = sendUserReceipt fromGmailUser fromGmailPwd bonusReq.UserEmail firstName (getAmountCur bonusReq)
+        let toCallFunc() = 
+            sendUserReceipt 
+                fromGmailUser 
+                fromGmailPwd 
+                bonusReq.UserEmail 
+                firstName 
+                (getAmountCur bonusReq) 
+                bonusReq.AdminEmailRecipients
         try
             retry 3 toCallFunc
         with ex ->
@@ -185,11 +187,28 @@ type EmailReceipts() =
 
     member this.SendBonusReqAdminReceipt (fromGmailUser: string)(fromGmailPwd : string)(bonusReq : BonusReqType) : unit =
         
-        let toCallFunc() = sendAdminReceipt fromGmailUser fromGmailPwd bonusReq.GmUserId bonusReq.UserEmail (getAmountCur bonusReq)
+        let toCallFunc() = 
+            sendAdminReceipt 
+                fromGmailUser 
+                fromGmailPwd 
+                bonusReq.GmUserId bonusReq.UserEmail
+                (getAmountCur bonusReq) 
+                bonusReq.AdminEmailRecipients
         try
             retry 3 toCallFunc
         with ex ->
             Upsert (Some ex) bonusReq |> ignore
-
 let Run(inputMessage: string, log: TraceWriter) =
-    log.Info(sprintf "F# Queue trigger function processed: '%s'" inputMessage)
+    log.Info(sprintf "BonusMessaging() Queue message received: '%s'" inputMessage)
+    let helpEmail = System.Environment.GetEnvironmentVariable("HelpGmailUser")
+    let helpPwd = System.Environment.GetEnvironmentVariable("HelpGmailPwd")
+    let hostEmail = System.Environment.GetEnvironmentVariable("HostGmailUser")
+    let hostPwd = System.Environment.GetEnvironmentVariable("HostGmailPwd")
+    log.Info("HelpGmailUser = " + helpEmail)
+    log.Info("HelpGmailPwd = " + helpPwd)
+    if not <| String.IsNullOrEmpty(inputMessage) then
+        let emailSender = EmailReceipts()
+        let bonusAwarded = Json.deserialize<BonusReqType> inputMessage
+        bonusAwarded
+        |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
+        |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd |> ignore

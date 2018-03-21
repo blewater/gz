@@ -6,7 +6,6 @@
 open System
 open FSharp.Configuration
 open FSharp.Azure.StorageTypeProvider
-//open Microsoft.WindowsAzure.Storage
 open FSharp.Azure.StorageTypeProvider.Queue
 open Newtonsoft.Json
 
