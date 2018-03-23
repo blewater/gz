@@ -33,16 +33,24 @@ open BonusReq
 open Newtonsoft.Json
 open FSharp.Json
 open NLog
+open Microsoft.WindowsAzure.Storage.Queue
 
 let logger = LogManager.GetCurrentClassLogger()
 // Connect via configuration file with named connection string.
 let appConfigPath = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "App.config")
 type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnString", configFileName="App.config">
+// Parse the connection string and return a reference to the storage account.
+type Settings = AppSettings<"App.config">
 #endif
 
 let bonusQueue = FunctionsQueue.Queues.bonusreq
 
-let bonusMsg = FunctionsQueue.Queues.bonusmsg
+// Init the bon
+[<Literal>]
+let bonusMsgQName = "bonusmsg"
+let storageAccount = CloudStorageAccount.Parse(Settings.ConnectionStrings.StorageConnString)
+let queueClient = storageAccount.CreateCloudQueueClient()
+let bonusMsgQ = queueClient.GetQueueReference(bonusMsgQName)
 
 let qCnt() =
     let cnt = bonusQueue.GetCurrentLength()
@@ -67,20 +75,22 @@ let deleteBonusReq(msq : ProvidedQueueMessage) =
     async { do! bonusQueue.DeleteMessage msq.Id } |> Async.RunSynchronously
 
 let enQueue2BonusReq(bonusReq : BonusReqType) =
+    let json = JsonConvert.SerializeObject(bonusReq)
     async {
-        let json = JsonConvert.SerializeObject(bonusReq)
         do! bonusQueue.Enqueue(json)
     } |> Async.RunSynchronously
 
+/// Enqueue message using window q library instead of the mono type provider bug
 let enQueue2BonusMsg(bonusReq : BonusReqType) =
+    let json = JsonConvert.SerializeObject(bonusReq)
+    let bonusQMsg = new CloudQueueMessage(json)
     async {
-        let json = JsonConvert.SerializeObject(bonusReq)
-        do! bonusMsg.Enqueue(json)
+        bonusMsgQ.AddMessageAsync(bonusQMsg) |> ignore
     } |> Async.RunSynchronously
 
 let enQUpdated(qMsgId)(br : BonusReqType) =
+    let json = JsonConvert.SerializeObject(br)
     async {
-        let json = JsonConvert.SerializeObject(br)
         do! bonusQueue.UpdateMessage(qMsgId, json)
     } |> Async.RunSynchronously
 

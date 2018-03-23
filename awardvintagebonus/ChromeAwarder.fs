@@ -45,19 +45,19 @@ let everymatrixSecureToken = Settings.Evtoken
 // https://github.com/elgalu/docker-selenium#chrome-not-reachable-or-timeout-after-60-secs
 let setChromeOptions(visualSession : bool) : unit =
     let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
-    chromeOptions.AddArgument("--no-sandbox")
-    chromeOptions.AddArgument("--disable-extensions")
 #if !INTERACTIVE
     if not visualSession then
         chromeOptions.AddArgument("--headless")
 #endif
+    chromeOptions.AddArgument("--no-sandbox")
+    chromeOptions.AddArgument("--disable-extensions")
     chromeOptions.AddArgument("--disable-gpu")
     chromeOptions.AddArgument("--disable-client-side-phishing-detection")
     chromeOptions.AddArgument("--disable-suggestions-service")
     chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
     chromeOptions.AddArgument("--no-first-run")
     chromeOptions.AddArgument("--allow-insecure-localhost");
-    //chromeOptions.AddArgument("--remote-debugging-port=9222");
+    //chromeOptions.AddArgument("--port=4444");
     let chromeNoSandbox = ChromeWithOptions(chromeOptions)
     #if INTERACTIVE
     canopy.configuration.chromeDir <- __SOURCE_DIRECTORY__
@@ -126,7 +126,6 @@ let checkAwardingResult(bonusAmount : decimal) : bool =
     | Regex @"bonus amount=\w+ (\S+(\.\d{1,2})?)," [ resTxtAmount ; decimalPart ] ->
         let parsedAmount = Decimal.Parse(resTxtAmount)
         logger.Info(sprintf "Bonus amount awarded %M" parsedAmount)
-        logger.Trace(sprintf "Bonus amount request %M" bonusAmount)
         parsedAmount = bonusAmount
     | _ -> 
         logger.Info("No match given")
