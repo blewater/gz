@@ -113,6 +113,13 @@ let endBrowserSession() =
     quit()
 
 let checkAwardingResult(bonusAmount : decimal) : bool =
+    let someErrorElement = someElement "#ErrorMessage1_lblError"
+    match someErrorElement with
+    | Some(elem) -> 
+        let errorMessage = read elem
+        failwithf "Awarding the bonus failed with this GamMatrix msg: %s" errorMessage
+    | None -> ()
+
     let resEl = element "#cphPage_lblSuccessMessage"
     let resText = read resEl
     match resText with
@@ -178,7 +185,7 @@ let rec submitInBonusForm(bonusReq : BonusReqType)(tries : int) =
             (element "#ctl00_cphPage_rtbComment_text") << sprintf "User %d bonus granted for vintages sold on %s" bonusReq.GmUserId bonusReq.YearMonthSold
             // Press Give bonus button
             click "#cphPage_btnConfirm"
-            logger.Info(sprintf "Succeeded awarding the bonus amount %M" bonusReq.Amount)
+            logger.Info(sprintf "Submitted the correct bonus amount %M" bonusReq.Amount)
         | false ->
             logger.Error( sprintf "Failed in setting the amount in the bonus form! %M" bonusReq.Amount)
             failwith "Failed in setting the bonus amount."
