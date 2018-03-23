@@ -42,6 +42,8 @@ type FunctionsQueue = AzureTypeProvider<connectionStringName = "storageConnStrin
 
 let bonusQueue = FunctionsQueue.Queues.bonusreq
 
+let bonusMsg = FunctionsQueue.Queues.bonusmsg
+
 let qCnt() =
     let cnt = bonusQueue.GetCurrentLength()
     logger.Info(sprintf "Queue length is %d." cnt)
@@ -64,10 +66,16 @@ let bonusQ2Obj(qMsg : ProvidedQueueMessage) : BonusReqType =
 let deleteBonusReq(msq : ProvidedQueueMessage) =
     async { do! bonusQueue.DeleteMessage msq.Id } |> Async.RunSynchronously
 
-let enQueueJson(br : BonusReqType) =
+let enQueue2BonusReq(bonusReq : BonusReqType) =
     async {
-        let json = JsonConvert.SerializeObject(br)
+        let json = JsonConvert.SerializeObject(bonusReq)
         do! bonusQueue.Enqueue(json)
+    } |> Async.RunSynchronously
+
+let enQueue2BonusMsg(bonusReq : BonusReqType) =
+    async {
+        let json = JsonConvert.SerializeObject(bonusReq)
+        do! bonusMsg.Enqueue(json)
     } |> Async.RunSynchronously
 
 let enQUpdated(qMsgId)(br : BonusReqType) =
@@ -78,7 +86,7 @@ let enQUpdated(qMsgId)(br : BonusReqType) =
 
 let createTestBonusReq() =
     let br = testBonusReq()
-    enQueueJson br
+    enQueue2BonusReq br
 
 // Connect to local storage emulator localstorageConnString
 (*

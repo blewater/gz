@@ -77,9 +77,9 @@ let main argv =
                             |> bonusQ2Obj
                             |> TblLogger.Upsert None
                             |> ChromeAwarder.awardUser
-                            //|> dbAwardGiven
-                            |> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
-                            |> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
+                            |> enQueue2BonusMsg
+                            //|> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
+                            //|> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
                             deleteBonusReq bonusQReq
                         with ex ->
                             TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
