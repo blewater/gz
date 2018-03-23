@@ -1,0 +1,1 @@
+docker tag awardbonus gzcontainerregistry.azurecr.io/awardbonus:v%1

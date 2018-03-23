@@ -435,7 +435,13 @@ let moveDownloadedRptToInRptFolder
 let uiAutomationDownloading (dayToProcess : DateTime) =
     let projDir = Path.Combine(__SOURCE_DIRECTORY__, "..")
     canopy.configuration.chromeDir <- projDir
-    start chrome
+    let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
+    chromeOptions.AddArgument("--no-sandbox")
+    chromeOptions.AddArgument("--disable-extensions")
+    chromeOptions.AddArgument("--headless")
+    chromeOptions.AddArgument("--disable-gpu")
+    let chromeNoSandbox = ChromeWithOptions(chromeOptions)
+    start chromeNoSandbox
     match screen.monitorCount with
     | m when m >= 3 -> pinToMonitor 3
     | m when m = 2 -> pinToMonitor 2

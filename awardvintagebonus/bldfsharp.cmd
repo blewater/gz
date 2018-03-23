@@ -1,0 +1,1 @@
+docker build -t fsharpcanopy --shm-size 2g -f DockerfileFSharpCanopy .
