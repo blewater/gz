@@ -1,0 +1,3 @@
+SET ACI_PERS_RESOURCE_GROUP=AwardBonus_ACI_RG
+SET STORAGE_KEY=UA+y+FrfbMDdWfTuCQxbLJHmPmyjCkiQc2llKlCQTDtQFK6Tb+JgGifz6Uz1qA6xLNmH65vWbUz2nnZpjrtUqg==
+az container create --resource-group %ACI_PERS_RESOURCE_GROUP% --name awardbonus-container --image gzcontainerregistry.azurecr.io/awardbonus:v1.0 --cpu 1 --memory 2 --registry-username gzContainerRegistry --registry-password P7QqmKxsMPUyrPtB7gAT6lM94+7VUoRC --dns-name-label awardbonus --azure-file-volume-account-name awardbonusacistorage --azure-file-volume-account-key %STORAGE_KEY% --azure-file-volume-share-name awardbonusacishare --azure-file-volume-mount-path /acilogs/ --restart-policy Never

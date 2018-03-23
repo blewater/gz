@@ -1,0 +1,41 @@
+# Ref: https://github.com/TheAngryByrd/docker-canopy/blob/master/Dockerfile
+# Ref: https://github.com/RobCherry/docker-chromedriver/blob/master/Dockerfile
+# Ref: https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile
+# Ref: https://raw.githubusercontent.com/fsprojects/docker-fsharp/f1c1a562118cee0f0f9b31890b5f099b37e72284/4.1.34/mono/Dockerfile
+
+FROM fsharp
+
+# Install utilities
+RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
+    apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get dist-upgrade -y && \
+    apt-get -y autoremove && \
+    apt-get clean && \
+    apt-get install -y \
+    unzip \
+    wget
+
+ARG CHROME_DRIVER_VERSION="latest"
+RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); else echo $CHROME_DRIVER_VERSION; fi) \
+  && echo "Using chromedriver version: "$CD_VERSION
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get -qqy update \
+    && apt-get install xvfb unzip google-chrome-stable -y --no-install-recommends \
+    && CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); else echo $CHROME_DRIVER_VERSION; fi) \
+    && echo "Using chromedriver version: "$CD_VERSION \
+    && wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CD_VERSION/chromedriver_linux64.zip \
+    && unzip -o /tmp/chromedriver_linux64.zip -d /usr/local/bin \
+    && rm /tmp/chromedriver_linux64.zip \
+    && chmod 755 /usr/local/bin/chromedriver \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /src/*.deb \
+    && mkdir -p /app \
+    && ln -fs /usr/local/bin/chromedriver /app/chromedriver
+
+ENV CHROMEDRIVER_PORT 4444
+ENV CHROMEDRIVER_WHITELISTED_IPS "127.0.0.1"
+ENV CHROMEDRIVER_URL_BASE ''
+
+EXPOSE 4444
