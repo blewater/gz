@@ -106,8 +106,18 @@ let selCashBackBonusinSelectList() : unit =
     press enter
 
 let startBrowserSession (visualSession : bool) =
-    setChromeOptions visualSession
-    uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
+    let rec retryInitBrowser(triesLeft : int) =
+        try
+            setChromeOptions visualSession
+            uiAutomateLoginEverymatrixReports everymatrixUsername everymatrixPassword everymatrixSecureToken
+        with ex ->
+            logger.Info(sprintf "Failed to launch browser. Tries left %d" triesLeft)
+            quit()
+            if triesLeft = 0 then
+                failwithf "Can't launch browser: %s" ex.Message
+            else 
+                retryInitBrowser (triesLeft - 1)
+    retryInitBrowser 5
 
 let endBrowserSession() =
     quit()
