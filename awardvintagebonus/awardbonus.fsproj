@@ -78,7 +78,6 @@
     <Compile Include="TblLogger.fs" />
     <Compile Include="ChromeAwarder.fs" />
     <Compile Include="Db.fs" />
-    <Compile Include="SendEmail.fs" />
     <Content Include="connectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -97,14 +96,8 @@
     <Reference Include="FSharp.Json">
       <HintPath>packages\FSharp.Json\lib\net45\FSharp.Json.dll</HintPath>
     </Reference>
-    <Reference Include="MailKit">
-      <HintPath>packages\MailKit\lib\net45\MailKit.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.WindowsAzure.Storage">
       <HintPath>packages\FSharp.Azure.StorageTypeProvider\lib\net452\Microsoft.WindowsAzure.Storage.dll</HintPath>
-    </Reference>
-    <Reference Include="MimeKit">
-      <HintPath>packages\MimeKit\lib\net45\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json">
