@@ -1,7 +1,6 @@
 RESTRICTION: == net452
 NUGET
   remote: https://www.nuget.org/api/v2
-    BouncyCastle (1.8.1)
     canopy (1.6.3)
       FSharp.Core (>= 4.0.0.1)
       Selenium.WebDriver (>= 3.10)
@@ -15,12 +14,7 @@ NUGET
       FSharp.Core (>= 3.1.2.5)
     FSharp.Json (0.3.1)
       FSharp.Core (>= 4.0.0.1)
-    MailKit (2.0.1)
-      BouncyCastle (>= 1.8.1)
-      MimeKit (>= 2.0.1)
     Microsoft.Azure.KeyVault.Core (2.0.4)
-    MimeKit (2.0.1)
-      BouncyCastle (>= 1.8.1)
     Newtonsoft.Json (11.0.1)
     NLog (4.4.13)
     NLog.Config (4.4.13)
