@@ -5,15 +5,10 @@
 FROM fsharpcanopy
 WORKDIR     /app
 COPY        awardbonus.fsx ./
-# RUN         fsharpc awardbonus.fsx
-# RUN         rm awardbonus.fsx
-COPY ./bin/Debug/*.XML ./
-COPY ./bin/Debug/*.dll ./
-COPY ./bin/Debug/*.config ./
-COPY ./bin/Debug/awardbonus.exe ./
+COPY ./bin/Release/*.XML ./
+COPY ./bin/Release/*.dll ./
+COPY ./bin/Release/*.config ./
+COPY ./bin/Release/awardbonus.exe ./
 
 RUN         ls -la
 ENTRYPOINT ["mono", "awardbonus.exe"]
-# ENTRYPOINT ["fsharpi", "awardbonus.fsx"]
-# ENTRYPOINT ["sh","-c", "mono awardbonus.exe"]
-# ENTRYPOINT ["sh","-c", "xvfb-run -a mono awardbonus.exe"]
