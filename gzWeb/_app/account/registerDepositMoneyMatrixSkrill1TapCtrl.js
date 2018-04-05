@@ -44,7 +44,8 @@
             $scope.maximumPayCards = $scope.paymentMethodCfg.fields.payCardID.maximumPayCards;
             $scope.thereAreExistingPayCards = $scope.existingPayCards.length > 0;
             $scope.canAddNewPayCard = $scope.existingPayCards.length < $scope.maximumPayCards;
-            $scope.accountRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.SkrillEmailAddress.regularExpression;
+            if ($scope.paymentMethodCfg.fields.payCardID.registrationFields)
+                $scope.accountRegex = $scope.paymentMethodCfg.fields.payCardID.registrationFields.SkrillEmailAddress.regularExpression;
 
             $scope.gamingAccount = $scope.paymentMethodCfg.fields.gamingAccountID.options[0];
             $scope.currency = $scope.gamingAccount.currency;

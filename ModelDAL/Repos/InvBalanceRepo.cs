@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
-using System.IO;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 using gzDAL.Conf;
@@ -17,6 +15,9 @@ using MailKit.Security;
 using MimeKit;
 using NLog;
 using Z.EntityFramework.Plus;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Newtonsoft.Json;
 
 namespace gzDAL.Repos
 {
@@ -75,7 +76,6 @@ namespace gzDAL.Repos
         private readonly ApplicationDbContext db;
         private readonly IUserPortfolioSharesRepo userPortfolioSharesRepo;
         private readonly IGzTransactionRepo gzTransactionRepo;
-        private readonly IUserPortfolioRepo custPortfolioRepo;
         private readonly IConfRepo confRepo;
         private readonly IUserRepo userRepo;
 
@@ -93,7 +93,6 @@ namespace gzDAL.Repos
             this.db = db;
             this.userPortfolioSharesRepo = userPortfolioSharesRepo;
             this.gzTransactionRepo = gzTransactionRepo;
-            this.custPortfolioRepo = custPortfolioRepo;
             this.confRepo = confRepo;
             this.userRepo = userRepo;
         }
@@ -111,15 +110,15 @@ namespace gzDAL.Repos
         /// <param name="yyyyMm"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public async Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm)
+        public InvBalance GetCachedLatestBalanceByMonth(int customerId, string yyyyMm)
         {
             var invBalanceRow =
-                await db.InvBalances
+                db.InvBalances
                     .Where(i => i.CustomerId == customerId
                                 && i.YearMonth == yyyyMm)
                     .DeferredSingleOrDefault()
                     // Cache 4 hours
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
+                    .FromCache(DateTime.UtcNow.AddHours(4));
 
             return invBalanceRow;
         }
@@ -134,7 +133,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId)
+        public InvBalance GetCachedLatestBalance(int customerId)
         {
             var now = DateTime.UtcNow;
             string monthToAskInvBalance = 
@@ -144,7 +143,7 @@ namespace gzDAL.Repos
                 : 
                 now.ToStringYearMonth();
 
-            return GetCachedLatestBalanceAsyncByMonth(customerId, monthToAskInvBalance);
+            return GetCachedLatestBalanceByMonth(customerId, monthToAskInvBalance);
         }
 
         /// <summary>
@@ -185,77 +184,69 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId)
+        public Tuple<UserSummaryDTO, ApplicationUser> GetSummaryData(int userId)
         {
             ApplicationUser userRet = null;
             UserSummaryDTO summaryDtoRet = null;
 
-            try
+            var invBalanceRes =
+                GetLatestBalanceDto(
+                    GetCachedLatestBalance(userId)
+                );
+
+            userRet = userRepo.GetCachedUser(userId);
+
+            var withdrawalEligibility = GetWithdrawEligibilityData(userId);
+
+            //---------------- Execute SQL Function
+            var vintages = GetCustomerVintages(userId);
+
+            var lastInvestmentAmount =
+                DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount(userId,
+                    DateTime.UtcNow
+                        .ToStringYearMonth
+                        ()));
+            //-------------- Retrieve previously executed async query results
+
+            // user
+            if (userRet == null)
             {
-                var invBalanceRes =
-                    GetLatestBalanceDto(
-                        await GetCachedLatestBalanceAsync(userId)
-                        );
-
-                userRet = await userRepo.GetCachedUserAsync(userId);
-
-                var withdrawalEligibility = GetWithdrawEligibilityData(userId);
-
-                //---------------- Execute SQL Function
-                var vintages = await GetCustomerVintagesAsync(userId);
-
-                var lastInvestmentAmount =
-                    DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount(userId,
-                        DateTime.UtcNow
-                            .ToStringYearMonth
-                            ()));
-                //-------------- Retrieve previously executed async query results
-
-                // user
-                if (userRet == null)
-                {
-                    _logger.Error("User with id {0} is null in GetSummaryData()", userId);
-                }
-
-                // Package all the results
-                summaryDtoRet = new UserSummaryDTO()
-                {
-
-                    Vintages = vintages,
-
-                    Currency = CurrencyHelper.GetSymbol(userRet.Currency),
-                    // current balance should not include this month's loss amount to be invested
-                    InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount, 
-
-                    // Monthly gaming amounts
-                    BegGmBalance = invBalanceRes.BegGmBalance,
-                    Deposits = invBalanceRes.Deposits,
-                    Withdrawals = invBalanceRes.Withdrawals,
-                    GmGainLoss = invBalanceRes.GmGainLoss,
-                    EndGmBalance = invBalanceRes.EndGmBalance,
-                    CashBonus = invBalanceRes.CashBonus,
-
-                    TotalInvestments = invBalanceRes.TotalCashInvInHold,
-                    TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
-
-                    NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                    LastInvestmentAmount = lastInvestmentAmount,
-
-                    //latestBalanceUpdateDatetime
-                    StatusAsOf = GetLastUpdatedMidnight(invBalanceRes.UpdatedOnUtc),
-
-                    // Withdrawal eligibility
-                    LockInDays = withdrawalEligibility.LockInDays,
-                    EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
-                    OkToWithdraw = withdrawalEligibility.OkToWithdraw,
-                    Prompt = withdrawalEligibility.Prompt
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Exception in GetSummaryData()");
+                _logger.Error("User with id {0} is null in GetSummaryData()", userId);
             }
 
+            // Package all the results
+            summaryDtoRet = new UserSummaryDTO()
+            {
+
+                Vintages = vintages,
+
+                Currency = CurrencyHelper.GetSymbol(userRet.Currency),
+                // current balance should not include this month's loss amount to be invested
+                InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount,
+
+                // Monthly gaming amounts
+                BegGmBalance = invBalanceRes.BegGmBalance,
+                Deposits = invBalanceRes.Deposits,
+                Withdrawals = invBalanceRes.Withdrawals,
+                GmGainLoss = invBalanceRes.GmGainLoss,
+                EndGmBalance = invBalanceRes.EndGmBalance,
+                CashBonus = invBalanceRes.CashBonus,
+
+                TotalInvestments = invBalanceRes.TotalCashInvInHold,
+                TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
+
+                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
+                LastInvestmentAmount = lastInvestmentAmount,
+
+                //latestBalanceUpdateDatetime
+                StatusAsOf = GetLastUpdatedMidnight(invBalanceRes.UpdatedOnUtc),
+
+                // Withdrawal eligibility
+                LockInDays = withdrawalEligibility.LockInDays,
+                EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
+                OkToWithdraw = withdrawalEligibility.OkToWithdraw,
+                Prompt = withdrawalEligibility.Prompt
+            };
             return Tuple.Create(summaryDtoRet, userRet);
         }
 
@@ -327,7 +318,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         private Tuple<bool, DateTime, int> IsWithdrawalEligible(int customerId)
         {
-            var lockInDays = (confRepo.GetConfRow().Result).LOCK_IN_NUM_DAYS;
+            var lockInDays = (confRepo.GetConfRow()).LOCK_IN_NUM_DAYS;
 
             var nowUtc = DateTime.UtcNow;
             var monthsLockCnt = lockInDays / 30;
@@ -369,9 +360,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId)
+        public List<VintageDto> GetCustomerVintages(int customerId)
         {
-            var monthsLockPeriod = (await confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
+            var monthsLockPeriod = (confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
 
             var vintagesList = db.Database
                 .SqlQuery<VintageDto>(
@@ -381,15 +372,17 @@ namespace gzDAL.Repos
                 .ToList();
 
             // Remove current month as a vintage
-            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
+            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth())
+            {
                 vintagesList.RemoveAt(vintagesList.Count - 1);
             }
 
             // Calcluate earliest locking date, locked status
             foreach (var dto in vintagesList)
             {
-                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);
-                dto.Locked = firstOfMonthUnlocked > DateTime.UtcNow;
+                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod).AddHours(12);
+                // Unlock at Utc noon of 1st month day
+                dto.Locked = firstOfMonthUnlocked >= DateTime.UtcNow;
             }
 
             return vintagesList;
@@ -435,36 +428,36 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="vintageToBeLiquidated"></param>
+        /// <param name="portfolioPrices"></param>
         /// <param name="vintageSharesDto"></param>
         /// <param name="fees"></param>
         /// <returns></returns>
         private decimal GetVintageValuePricedNow(
             int customerId,
             VintageDto vintageToBeLiquidated,
+            PortfolioPricesDto portfolioPrices,
             out VintageSharesDto vintageSharesDto,
             out FeesDto fees)
         {
-
+            var presentMonth = DateTime.UtcNow.ToStringYearMonth();
             // Sales after the completion of one month only, have earned no interest
-            var vintageMonthToBeSold = DbExpressions.GetDtYearMonthStrTo1StOfMonth(vintageToBeLiquidated.YearMonthStr);
-            var salesMonthDiff = DbExpressions.MonthDiff(DateTime.UtcNow, vintageMonthToBeSold);
-            if (salesMonthDiff <= 1) {
-                vintageToBeLiquidated.MarketPrice = vintageToBeLiquidated.InvestmentAmount;
+            var sellingInFollowingMonth = DbExpressions.AddMonth(vintageToBeLiquidated.YearMonthStr);
+            if (sellingInFollowingMonth == presentMonth) {
                 vintageSharesDto = new VintageSharesDto() {
                     HighRiskShares = 0m,
                     MediumRiskShares = 0m,
                     LowRiskShares = 0m,
-                    PresentMarketPrice = vintageToBeLiquidated.MarketPrice
+                    PresentMarketPrice = vintageToBeLiquidated.MarketPrice = vintageToBeLiquidated.InvestmentAmount
                 };
             }
             // Sales post 2 or more months
-            else
-            {
+            else {
 
                 vintageSharesDto =
                     userPortfolioSharesRepo.GetVintageSharesMarketValue(
                         customerId,
-                        vintageToBeLiquidated.YearMonthStr);
+                        vintageToBeLiquidated.YearMonthStr, 
+                        portfolioPrices);
 
             }
 
@@ -552,6 +545,9 @@ namespace gzDAL.Repos
         {
 
             var numOfVintagesSold = 0;
+
+            var portfolioPrices = userPortfolioSharesRepo.GetCachedLatestPortfolioSharePrice();
+
             foreach (var vintageDto in vintages)
             {
                 if (vintageDto.Selected)
@@ -562,6 +558,7 @@ namespace gzDAL.Repos
                         GetVintageValuePricedNow(
                             customerId,
                             vintageDto,
+                            portfolioPrices,
                             out vintageShares,
                             out fees);
 
@@ -632,6 +629,8 @@ namespace gzDAL.Repos
         /// <returns></returns>
         public VintagesWithSellingValues GetCustomerVintagesSellingValueNow(int customerId, List<VintageDto> customerVintages)
         {
+            var portfolioPrices = userPortfolioSharesRepo.GetCachedLatestPortfolioSharePrice();
+
             foreach (var dto in customerVintages)
             {
                 if (!dto.Sold && dto.InvestmentAmount != 0 && !dto.Locked)
@@ -645,6 +644,7 @@ namespace gzDAL.Repos
                         GetVintageValuePricedNow(
                             customerId,
                             dto,
+                            portfolioPrices,
                             out vintageShares,
                             out fees);
 
@@ -711,10 +711,10 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<List<VintageDto>> GetCustomerVintagesSellingValueUnitTestHelper(int customerId)
+        public List<VintageDto> GetCustomerVintagesSellingValueUnitTestHelper(int customerId)
         {
 
-            var customerVintages = await GetCustomerVintagesAsync(customerId);
+            var customerVintages = GetCustomerVintages(customerId);
 
             GetCustomerVintagesSellingValueNow(customerId, customerVintages);
 
@@ -813,10 +813,21 @@ namespace gzDAL.Repos
         /// <param name="gmailPwd"></param>
         /// <param name="sellOnThisYearMonth"></param>
         /// <param name="sendEmail2Admin"></param>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <returns></returns>
-        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(int customerId, ICollection<VintageDto> vintages, bool sendEmail2Admin, string emailAdmins, string gmailUser, string gmailPwd, string sellOnThisYearMonth = "")
+        public ICollection<VintageDto> SaveDbSellAllSelectedVintagesInTransRetry(
+            int customerId, 
+            ICollection<VintageDto> vintages,
+            bool sendEmail2Admin,
+            string queueAzureConnString,
+            string queueName,
+            string emailAdmins, 
+            string gmailUser, 
+            string gmailPwd, 
+            string sellOnThisYearMonth = "")
         {
 
             // Update market price on it.. they may have left the browser window open 
@@ -843,15 +854,13 @@ namespace gzDAL.Repos
 
                     //https://stackoverflow.com/questions/29383116/asp-net-mvc-5-asynchronous-action-method
                     Task.Run(() => 
-                        EmailSendVintageWithdrawalReceipt(user, customerId, vintages, emailAdmins, gmailUser, gmailPwd)
+                        SendVintageWithdrawalReq(user, customerId, vintages, queueAzureConnString, queueName, emailAdmins, gmailUser, gmailPwd)
                     );
                 }
             }
 
             return vintages;
         }
-
-        #region EmailVintageProceeds
 
         /// <summary>
         /// 
@@ -860,12 +869,12 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        private EmailVintageLiquidationUser GetEmailVintageLiquidationUser(int userId)
+        private VintageLiquidationUser GetEmailVintageLiquidationUser(int userId)
         {
             var user =
                 db.Users
                     .Where(u => u.Id == userId)
-                    .Select(u => new EmailVintageLiquidationUser()
+                    .Select(u => new VintageLiquidationUser()
                     {
                         UserId = userId,
                         GmUserId = u.GmCustomerId.Value,
@@ -884,7 +893,7 @@ namespace gzDAL.Repos
         /// Vintage Liquidation User for Email Type
         /// 
         /// </summary>
-        private class EmailVintageLiquidationUser
+        private class VintageLiquidationUser
         {
             public int UserId { get; set; }
             public int GmUserId { get; set; }
@@ -905,24 +914,138 @@ namespace gzDAL.Repos
         /// <param name="user"></param>
         /// <param name="userId"></param>
         /// <param name="vintages"></param>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <param name="gmailPwd"></param>
-        private static void EmailSendVintageWithdrawalReceipt(EmailVintageLiquidationUser user, int userId, ICollection<VintageDto> vintages, string emailAdmins, string gmailUser, string gmailPwd)
+        private static void SendVintageWithdrawalReq(
+            VintageLiquidationUser user, 
+            int userId, 
+            ICollection<VintageDto> vintages, 
+            string queueAzureConnString,
+            string queueName,
+            string emailAdmins, 
+            string gmailUser, 
+            string gmailPwd)
         {
+            Logger logger = LogManager.GetCurrentClassLogger();
+
+            var soldVintages = vintages.Where(v => v.Selected).ToList();
+            foreach (var vintageDto in soldVintages)
+            {
+                user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue);
+                user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
+            }
+
+            SendQueueBonusReqMsg(user, queueAzureConnString, queueName, emailAdmins, soldVintages, logger);
+
+            SendEmailBonusReq(user, emailAdmins, gmailUser, gmailPwd, logger);
+        }
+
+#region Queue
+        private static void SendQueueBonusReqMsg(VintageLiquidationUser user, string queueAzureConnString, string queueName,
+            string emailAdmins, List<VintageDto> soldVintages, Logger logger)
+        {
+
             try
             {
-                foreach (var vintageDto in vintages.Where(v=>v.Selected)) {
-                    user.NetProceeds += DbExpressions.RoundCustomerBalanceAmount(vintageDto.SellingValue);
-                    user.Fees += DbExpressions.RoundGzFeesAmount(vintageDto.SoldFees);
-                }
-                var _ = EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)
-                    .ConfigureAwait(false);
+
+                // Parse the connection string and return a reference to the queue.
+                var queue = GetQueue(queueAzureConnString, queueName);
+                var bonusReq = CreateBonusReq(user, emailAdmins, soldVintages);
+                var bonusReqJson = JsonConvert.SerializeObject(bonusReq);
+                // Async fire and forget
+                var _ =
+                    AddQueueMsgAsync(queue, bonusReqJson)
+                        .ConfigureAwait(false);
+
+            }
+            catch (Exception ex)
+            {
+
+                logger.Error(ex, "Exception while sendina a queue message");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Init az queue
+        /// 
+        /// </summary>
+        /// <param name="queueAzureConnString"></param>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
+        private static CloudQueue GetQueue(string queueAzureConnString, string queueName)
+        {
+
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(queueAzureConnString);
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+            return queueClient.GetQueueReference(queueName);
+        }
+
+        /// <summary>
+        /// 
+        /// Create & init the bonus req object
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="emailAdmins"></param>
+        /// <param name="soldVintageDtos"></param>
+        /// <returns></returns>
+        private static BonusReq CreateBonusReq(VintageLiquidationUser user, string emailAdmins, ICollection<VintageDto> soldVintageDtos)
+        {
+
+            var adminsArr = emailAdmins.Split(';');
+            var newBonusReq = new BonusReq()
+            {
+                AdminEmailRecipients = adminsArr,
+                Currency = user.Currency,
+                Amount = user.NetProceeds,
+                Fees = user.Fees,
+                GmUserId = user.GmUserId,
+                InvBalIds = soldVintageDtos.Select(v => v.InvBalanceId).ToArray(),
+                UserEmail = user.Email,
+                UserFirstName = user.FirstName
+            };
+            return newBonusReq;
+        }
+
+        /// <summary>
+        /// 
+        /// Create and send a queue json string (msg)
+        /// 
+        /// </summary>
+        /// <param name="queue"></param>
+        /// <param name="bonusJson"></param>
+        /// <returns></returns>
+        private static async Task AddQueueMsgAsync(CloudQueue queue, string bonusJson)
+        {
+            CloudQueueMessage qmsg = new CloudQueueMessage(bonusJson);
+            await 
+                queue
+                .AddMessageAsync(qmsg)
+                .ConfigureAwait(false);
+        }
+
+        #endregion Queue
+
+        #region EmailVintageProceeds
+
+        private static void SendEmailBonusReq(VintageLiquidationUser user, string emailAdmins, string gmailUser,
+            string gmailPwd, Logger logger)
+        {
+
+            try
+            {
+                // Async fire and forget
+                var _ =
+                    EmailSendMimeVintagesProceedsAsync(user, emailAdmins, gmailUser, gmailPwd)
+                        .ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                Logger logger = LogManager.GetCurrentClassLogger();
-                logger.Error(e, "Exception in sendVintageWithdrawalReceiptAsync");
+                logger.Error(e, "Exception in SendVintageWithdrawalReq");
             }
         }
 
@@ -931,14 +1054,14 @@ namespace gzDAL.Repos
         /// Set up a mime message for sending to admins.
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="gmailUser"></param>
         /// <param name="gmailPwd"></param>
         /// <returns></returns>
-        private static async Task EmailSendMimeVintagesProceedsAsync(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins, string gmailUser, string gmailPwd)
+        private static async Task EmailSendMimeVintagesProceedsAsync(VintageLiquidationUser vintageLiquidationUser, string emailAdmins, string gmailUser, string gmailPwd)
         {
-            var message = GetMimeMessage(emailVintageLiquidationUser, emailAdmins);
+            var message = GetMimeMessage(vintageLiquidationUser, emailAdmins);
 
             await SendEmailAsync(gmailUser, gmailPwd, message).ConfigureAwait(false);
         }
@@ -948,17 +1071,20 @@ namespace gzDAL.Repos
         /// Create a mime message for vintage admins
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="emailAdmins"></param>
         /// <param name="builder"></param>
         /// <returns></returns>
-        private static MimeMessage GetMimeMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+        private static MimeMessage GetMimeMessage(VintageLiquidationUser vintageLiquidationUser, string emailAdmins) {
 
             MimeMessage message = null;
             try {
-                message = GetMessage(emailVintageLiquidationUser, emailAdmins);
+                if (vintageLiquidationUser.GmUserId == 4300962) {
+                    emailAdmins = "mario@greenzorro.com";
+                }
+                message = GetMessage(vintageLiquidationUser, emailAdmins);
 
-                message.Body = GetMessageBody(emailVintageLiquidationUser).ToMessageBody();
+                message.Body = GetMessageBody(vintageLiquidationUser).ToMessageBody();
             }
             catch (Exception e) {
                 Logger logger = LogManager.GetCurrentClassLogger();
@@ -973,10 +1099,10 @@ namespace gzDAL.Repos
         /// Create the mime message To, Subject
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="emailAdmins"></param>
         /// <returns></returns>
-        private static MimeMessage GetMessage(EmailVintageLiquidationUser emailVintageLiquidationUser, string emailAdmins) {
+        private static MimeMessage GetMessage(VintageLiquidationUser vintageLiquidationUser, string emailAdmins) {
 
             MimeMessage message = null;
             try
@@ -985,9 +1111,11 @@ namespace gzDAL.Repos
                 message.From.Add(new MailboxAddress("Admin Greenzorro", "admin@greenzorro.com"));
                 var admins = emailAdmins.Split(';');
                 message.To.Add(new MailboxAddress(admins[0]));
-                message.Cc.Add(new MailboxAddress(admins[1]));
+                if (admins.Length > 1) {
+                    message.Cc.Add(new MailboxAddress(admins[1]));
+                }
                 message.Subject =
-                    $@"User id {emailVintageLiquidationUser.GmUserId} withdrew vintage(s) on {
+                    $@"User id {vintageLiquidationUser.GmUserId} withdrew vintage(s) on {
                             DateTime.UtcNow.ToString("ddd d MMM yyyy")
                         }";
             }
@@ -1004,23 +1132,18 @@ namespace gzDAL.Repos
         /// Create the message text body.
         /// 
         /// </summary>
-        /// <param name="emailVintageLiquidationUser"></param>
+        /// <param name="vintageLiquidationUser"></param>
         /// <param name="builder"></param>
-        private static BodyBuilder GetMessageBody(EmailVintageLiquidationUser emailVintageLiquidationUser) {
+        private static BodyBuilder GetMessageBody(VintageLiquidationUser vintageLiquidationUser) {
 
             BodyBuilder builder = null;
             try {
                 builder = new BodyBuilder {
-                    TextBody = $@"UserName {emailVintageLiquidationUser.UserName} 
-with email {emailVintageLiquidationUser.Email} withdrew vintage(s)
-Please go to
-Gammatrix Banking...Vendors...System....Manual deposit
+                    TextBody = $@"UserName {vintageLiquidationUser.UserName} 
+with email {vintageLiquidationUser.Email} withdrew vintage(s)
 
-Select & Enter
-
-CasinoWallet - Bonus
-To userID {emailVintageLiquidationUser.GmUserId}
-Amount {emailVintageLiquidationUser.NetProceeds} {emailVintageLiquidationUser.Currency}
+To userID {vintageLiquidationUser.GmUserId}
+Amount {vintageLiquidationUser.NetProceeds} {vintageLiquidationUser.Currency}
 
 Thanks
 Your friendly neighborhood admin"

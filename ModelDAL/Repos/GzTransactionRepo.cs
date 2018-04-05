@@ -132,7 +132,7 @@ namespace gzDAL.Repos {
         /// <returns>Total greenzorro + Fund fees on a investment amount.</returns>
         public FeesDto GetWithdrawnFees(decimal vintageCashInvestment, string vintageYearMonthStr, decimal liquidationAmount) {
 
-            var confRow = confRepo.GetConfRow().Result;
+            var confRow = confRepo.GetConfRow();
 
             var isAnEarlyWithdrawal = IsAnEarlyWithdrawal(vintageYearMonthStr, confRow);
 
@@ -233,7 +233,7 @@ namespace gzDAL.Repos {
                      (1 + (hurdleFeeTriggerPcnt / 100m))))
                 {
 
-                    hurdleFee = liquidationAmount
+                    hurdleFee = (liquidationAmount - vintageCashInvestment)
                                 *
                                 (hurdleFeePcnt / 100m);
                 }
@@ -258,7 +258,7 @@ namespace gzDAL.Repos {
         /// <returns></returns>
         public void SaveDbPlayingLoss(int customerId, decimal totPlayinLossAmount, string trxYearMonth, DateTime createdOnUtc, decimal begGmBalance, decimal deposits, decimal withdrawals, decimal gainLoss, decimal endGmbalance) {
 
-            var creditPcnt = confRepo.GetConfRow().Result.CREDIT_LOSS_PCNT;
+            var creditPcnt = confRepo.GetConfRow().CREDIT_LOSS_PCNT;
 
             SaveDbGzTransaction(
                 customerId, 

@@ -55,10 +55,10 @@ namespace gzDAL.Models
         
         public bool? IsRegistrationFinalized { get; set; }
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager, string authenticationType)
+        public ClaimsIdentity GenerateUserIdentity(UserManager<ApplicationUser, int> manager, string authenticationType)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+            var userIdentity = manager.CreateIdentity(this, authenticationType);
             // Add custom user claims here
             return userIdentity;
         }
@@ -165,6 +165,7 @@ namespace gzDAL.Models
         public DbSet<GzTrx> GzTrxs { get; set; }
         public DbSet<GzTrxType> GzTrxTypes { get; set; }
         public DbSet<InvBalance> InvBalances { get; set; }
+        public DbSet<InvAdj> InvAdjustments { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }

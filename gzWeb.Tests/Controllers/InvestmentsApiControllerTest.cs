@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -81,9 +82,10 @@ namespace gzWeb.Tests.Controllers
             Assert.IsNotNull(result);
         }
 
-        private async Task<IHttpActionResult> GetSummaryData() {
+        private IHttpActionResult GetSummaryData()
+        {
             // Act
-            IHttpActionResult result = await investmentsApiController.GetSummaryData();
+            IHttpActionResult result = investmentsApiController.GetSummaryData();
             return result;
         }
 
@@ -98,18 +100,20 @@ namespace gzWeb.Tests.Controllers
             var user = await manager.FindByEmailAsync("info@nessos.gr");
 
             // Act
-            var result = await investmentsApiController.GetCustomerPlansAsync(user.Id);
+            var result = investmentsApiController.GetCustomerPlans(user.Id);
 
             // 3 Active Portfolios
             Assert.IsNotNull(result.Count() == 3);
         }
 
         [Test]
-        public async Task SaveDbVintages() {
-
+        public void SaveDbVintages()
+        {
+            string queueAzureConnString = ConfigurationManager.AppSettings["QueueAzureConnString"];
+            string queueName = ConfigurationManager.AppSettings["QueueName"];
             var user = manager.FindByEmail("info@nessos.gr");
 
-            var vintagesDto = await SellOneVintage(user);
+            var vintagesDto = SellOneVintage(user);
 
             // Mark for selling earliest and latest available vintages even if sold or locked
             var earliestVin = vintagesDto
@@ -127,7 +131,9 @@ namespace gzWeb.Tests.Controllers
                 .SaveDbSellAllSelectedVintagesInTransRetry(
                     user.Id,
                     vintagesDto,
-                    true,
+                    false,
+                    queueAzureConnString,
+                    queueName,
                     null,
                     null,
                     null
@@ -135,42 +141,17 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public async Task TestSellingAVintage() {
-
+        public void TestSellingAVintage()
+        {
             var user = manager.FindByEmail("alaa_el-chami@hotmail.com");
-            var vintagesDto = await SellOneVintage(user);
+            var vintagesDto = SellOneVintage(user);
         }
 
-        [Test]
-        //public async Task TestSellEarlyVintage()
-        //{
-        //    var user = manager.FindByEmail("alaa_el-chami@hotmail.com");
-
-        //    var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
-        //    var sellVintage = vintagesVMs
-        //        .Single(v => v.YearMonthStr == "201711");
-
-        //    sellVintage.Locked = true;
-        //    sellVintage.Selected = true;
-
-        //    ICollection<VintageDto> vintagesDto = vintagesVMs.Select(v => mapper.Map<VintageViewModel, VintageDto>(v))
-        //        .ToList();
-
-        //    invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
-
-        //    vintagesDto = investmentsApiController.SaveDbSellVintages(
-        //        user.Id,
-        //        vintagesDto,
-        //        false,
-        //        null,
-        //        null,
-        //        null);
-        //    Assert.IsTrue(sellVintage.SoldAmount > 0);
-        //}
-
-        private async Task<ICollection<VintageDto>> SellOneVintage(ApplicationUser user) {
-
-            var vintagesVMs = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
+        private ICollection<VintageDto> SellOneVintage(ApplicationUser user)
+        {
+            string queueAzureConnString = ConfigurationManager.AppSettings["QueueAzureConnString"];
+            string queueName = ConfigurationManager.AppSettings["QueueName"];
+            var vintagesVMs = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
 
             // Mark for selling earliest even if sold already or is locked
             var sellVintage = vintagesVMs
@@ -186,12 +167,15 @@ namespace gzWeb.Tests.Controllers
 
             invBalanceRepo.SetAllSelectedVintagesPresentMarketValue(user.Id, vintagesDto);
 
-            vintagesDto = 
+            vintagesDto =
                 invBalanceRepo
                     .SaveDbSellAllSelectedVintagesInTransRetry(
                         user.Id,
                         vintagesDto,
-                        true,
+                        false,
+                        queueAzureConnString,
+                        queueName,
+                        null,
                         null,
                         null,
                         null
@@ -201,18 +185,18 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public async Task GetSummaryDataWithUser() {
-
+        public void GetSummaryDataWithUser()
+        {
             var s = Stopwatch.StartNew();
             var userId = db.Users
                 .Where(u => u.Email == "testuser@gz.com")
                 .Select(u => u.Id).Single();
-            var tuple = await invBalanceRepo.GetSummaryDataAsync(userId);
+            var tuple = invBalanceRepo.GetSummaryData(userId);
             var user = tuple.Item2;
             var summaryDto = tuple.Item1;
 
             // Act
-            var result = ((IInvestmentsApi) investmentsApiController).GetSummaryData(user, summaryDto);
+            var result = ((IInvestmentsApi)investmentsApiController).GetSummaryData(user, summaryDto);
             Assert.IsNotNull(result);
 
             // Is this formula correct?
@@ -224,12 +208,13 @@ namespace gzWeb.Tests.Controllers
         }
 
         [Test]
-        public async Task GetVintagesSellingValues() {
-
+        public void GetVintagesSellingValues()
+        {
             var user = manager.FindByEmail("6month@allocation.com");
 
-            var vintages = await investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
-            foreach (var vintageViewModel in vintages) {
+            var vintages = investmentsApiController.GetVintagesSellingValuesByUserTestHelper(user);
+            foreach (var vintageViewModel in vintages)
+            {
                 Console.WriteLine("{0} Investment: {1}, SellingValue: {2}, Sold: {3}, Locked: {4}",
                     vintageViewModel.YearMonthStr,
                     vintageViewModel.InvestmentAmount,

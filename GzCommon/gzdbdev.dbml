@@ -1,0 +1,459 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="gzDbDev" Class="GzDbDev" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.__MigrationHistory" Member="__MigrationHistory">
+    <Type Name="__MigrationHistory">
+      <Column Name="MigrationId" Type="System.String" DbType="NVarChar(150) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ContextKey" Type="System.String" DbType="NVarChar(300) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Model" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="ProductVersion" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetRoles" Member="AspNetRoles">
+    <Type Name="AspNetRoles">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.AspNetUserRoles_dbo.AspNetRoles_RoleId" Member="AspNetUserRoles" ThisKey="Id" OtherKey="RoleId" Type="AspNetUserRoles" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUserClaims" Member="AspNetUserClaims">
+    <Type Name="AspNetUserClaims">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ClaimType" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="ClaimValue" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="FK_dbo.AspNetUserClaims_dbo.AspNetUsers_UserId" Member="AspNetUsers" ThisKey="UserId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUserLogins" Member="AspNetUserLogins">
+    <Type Name="AspNetUserLogins">
+      <Column Name="LoginProvider" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProviderKey" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="FK_dbo.AspNetUserLogins_dbo.AspNetUsers_UserId" Member="AspNetUsers" ThisKey="UserId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUserRoles" Member="AspNetUserRoles">
+    <Type Name="AspNetUserRoles">
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RoleId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="FK_dbo.AspNetUserRoles_dbo.AspNetRoles_RoleId" Member="AspNetRoles" ThisKey="RoleId" OtherKey="Id" Type="AspNetRoles" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="FK_dbo.AspNetUserRoles_dbo.AspNetUsers_UserId" Member="AspNetUsers" ThisKey="UserId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUsers" Member="AspNetUsers">
+    <Type Name="AspNetUsers">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Birthday" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ActiveCustomerIdInPlatform" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
+      <Column Name="EmailConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordHash" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="SecurityStamp" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="PhoneNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="PhoneNumberConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TwoFactorEnabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LockoutEndDateUtc" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LockoutEnabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AccessFailedCount" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="Currency" Type="System.String" DbType="Char(3) NOT NULL" CanBeNull="false" />
+      <Column Name="GmCustomerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DisabledGzCustomer" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ClosedGzAccount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsRegistrationFinalized" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="FK_dbo.AspNetUserClaims_dbo.AspNetUsers_UserId" Member="AspNetUserClaims" ThisKey="Id" OtherKey="UserId" Type="AspNetUserClaims" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.AspNetUserLogins_dbo.AspNetUsers_UserId" Member="AspNetUserLogins" ThisKey="Id" OtherKey="UserId" Type="AspNetUserLogins" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.AspNetUserRoles_dbo.AspNetUsers_UserId" Member="AspNetUserRoles" ThisKey="Id" OtherKey="UserId" Type="AspNetUserRoles" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.CustPortfolios_dbo.AspNetUsers_CustomerId" Member="CustPortfolios" ThisKey="Id" OtherKey="CustomerId" Type="CustPortfolios" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.GzTransactions_dbo.AspNetUsers_CustomerId" Member="GzTrxs" ThisKey="Id" OtherKey="CustomerId" Type="GzTrxs" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.InvAdjs_dbo.AspNetUsers_UserId" Member="InvAdjs" ThisKey="Id" OtherKey="UserId" Type="InvAdjs" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId" Member="InvBalances" ThisKey="Id" OtherKey="CustomerId" Type="InvBalances" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CarouselEntries" Member="CarouselEntries">
+    <Type Name="CarouselEntries">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="SubTitle" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="ActionUrl" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Live" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LiveFrom" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="LiveTo" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ActionText" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="BackgroundImageUrl" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="ActionType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Updated" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Deleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsMobile" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CurrencyListXes" Member="CurrencyListXes">
+    <Type Name="CurrencyListXes">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="From" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="To" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="UpdatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CurrencyRates" Member="CurrencyRates">
+    <Type Name="CurrencyRates">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TradeDateTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FromTo" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="rate" Member="Rate" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustFundShares" Member="CustFundShares">
+    <Type Name="CustFundShares">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonth" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="FundId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="SharesNum" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="SharesValue" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="SharesFundPriceId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NewSharesNum" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="NewSharesValue" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="InvBalanceId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SoldSharesValue" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="SoldSharesFundPriceId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SoldOnUtc" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="FK_dbo.CustFundShares_dbo.FundPrices_SharesFundPriceId" Member="FundPrices" ThisKey="SharesFundPriceId" OtherKey="Id" Type="FundPrices" IsForeignKey="true" />
+      <Association Name="FK_dbo.CustFundShares_dbo.Funds_FundId" Member="Funds" ThisKey="FundId" OtherKey="Id" Type="Funds" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="FK_dbo.CustFundShares_dbo.InvBalances_SoldInvBalanceId" Member="InvBalances" ThisKey="InvBalanceId" OtherKey="Id" Type="InvBalances" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustPortfolios" Member="CustPortfolios">
+    <Type Name="CustPortfolios">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonth" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Weight" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.CustPortfolios_dbo.AspNetUsers_CustomerId" Member="AspNetUsers" ThisKey="CustomerId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="FK_dbo.CustPortfolios_dbo.Portfolios_PortfolioId" Member="Portfolios" ThisKey="PortfolioId" OtherKey="Id" Type="Portfolios" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DynamicPageDatas" Member="DynamicPageDatas">
+    <Type Name="DynamicPageDatas">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DynamicPageId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DataName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="DataType" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="DataValue" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Association Name="FK_dbo.DynamicPageDatas_dbo.DynamicPages_DynamicPageId" Member="DynamicPages" ThisKey="DynamicPageId" OtherKey="Id" Type="DynamicPages" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DynamicPages" Member="DynamicPages">
+    <Type Name="DynamicPages">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Live" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LiveFrom" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="LiveTo" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Html" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="ThumbImageUrl" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="ThumbTitle" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="ThumbText" Type="System.String" DbType="NVarChar(2048) NOT NULL" CanBeNull="false" />
+      <Column Name="Updated" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="DynamicPageTemplateId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UseInPromoList" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Deleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsMobile" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.DynamicPageDatas_dbo.DynamicPages_DynamicPageId" Member="DynamicPageDatas" ThisKey="Id" OtherKey="DynamicPageId" Type="DynamicPageDatas" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.DynamicPages_dbo.DynamicPageTemplates_DynamicPageTemplateId" Member="DynamicPageTemplates" ThisKey="DynamicPageTemplateId" OtherKey="Id" Type="DynamicPageTemplates" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DynamicPageTemplates" Member="DynamicPageTemplates">
+    <Type Name="DynamicPageTemplates">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Html" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Association Name="FK_dbo.DynamicPages_dbo.DynamicPageTemplates_DynamicPageTemplateId" Member="DynamicPages" ThisKey="Id" OtherKey="DynamicPageTemplateId" Type="DynamicPages" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EmailTemplates" Member="EmailTemplates">
+    <Type Name="EmailTemplates">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Subject" Type="System.String" DbType="NVarChar(1024) NOT NULL" CanBeNull="false" />
+      <Column Name="Body" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Updated" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FundPrices" Member="FundPrices">
+    <Type Name="FundPrices">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FundId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonthDay" Type="System.String" DbType="Char(8) NOT NULL" CanBeNull="false" />
+      <Column Name="ClosingPrice" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.CustFundShares_dbo.FundPrices_SharesFundPriceId" Member="CustFundShares" ThisKey="Id" OtherKey="SharesFundPriceId" Type="CustFundShares" DeleteRule="NO ACTION" />
+      <Association Name="FK_dbo.FundPrices_dbo.Funds_FundId" Member="Funds" ThisKey="FundId" OtherKey="Id" Type="Funds" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Funds" Member="Funds">
+    <Type Name="Funds">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Symbol" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="HoldingName" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="YearToDate" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.CustFundShares_dbo.Funds_FundId" Member="CustFundShares" ThisKey="Id" OtherKey="FundId" Type="CustFundShares" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.FundPrices_dbo.Funds_FundId" Member="FundPrices" ThisKey="Id" OtherKey="FundId" Type="FundPrices" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.PortFunds_dbo.Funds_FundId" Member="PortFunds" ThisKey="Id" OtherKey="FundId" Type="PortFunds" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GameCategories" Member="GameCategories">
+    <Type Name="GameCategories">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="GameSlugs" Type="System.String" DbType="NVarChar(2048) NOT NULL" CanBeNull="false" />
+      <Column Name="Updated" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IsMobile" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GmTrxTypes" Member="GmTrxTypes">
+    <Type Name="GmTrxTypes">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(300) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GzConfigurations" Member="GzConfigurations">
+    <Type Name="GzConfigurations">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LOCK_IN_NUM_DAYS" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="COMMISSION_PCNT" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="FUND_FEE_PCNT" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="CREDIT_LOSS_PCNT" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="FIRST_PORTFOLIO_RISK_VAL" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CONSERVATIVE_RISK_ROI" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="MEDIUM_RISK_ROI" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="AGGRESSIVE_RISK_ROI" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="EARLY_WITHDRAWAL_FEE_PCNT" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="HURDLE_FEE_PCNT" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="HURDLE_TRIGGER_GAIN_PCNT" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GzTrxs" Member="GzTrxs">
+    <Type Name="GzTrxs">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonthCtd" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="TypeId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreditPcntApplied" Type="System.Single" DbType="Real" CanBeNull="true" />
+      <Column Name="CreatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="PlayerRevRptId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BegGmBalance" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="Deposits" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="Withdrawals" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="EndGmBalance" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="GmGainLoss" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="JoinDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FirstDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastPlayedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="FK_dbo.GzTransactions_dbo.AspNetUsers_CustomerId" Member="AspNetUsers" ThisKey="CustomerId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="FK_dbo.GzTransactions_dbo.GzTransactionTypes_TypeId" Member="GzTrxTypes" ThisKey="TypeId" OtherKey="Id" Type="GzTrxTypes" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="FK_dbo.GzTrxs_dbo.PlayerRevRpt_PlayerRevRptId" Member="PlayerRevRpt" ThisKey="PlayerRevRptId" OtherKey="Id" Type="PlayerRevRpt" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GzTrxTypes" Member="GzTrxTypes">
+    <Type Name="GzTrxTypes">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(300) NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.GzTransactions_dbo.GzTransactionTypes_TypeId" Member="GzTrxs" ThisKey="Id" OtherKey="TypeId" Type="GzTrxs" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.InvAdjs" Member="InvAdjs">
+    <Type Name="InvAdjs">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="YearMonth" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AmountType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUtc" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.InvAdjs_dbo.AspNetUsers_UserId" Member="AspNetUsers" ThisKey="UserId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.InvBalances" Member="InvBalances">
+    <Type Name="InvBalances">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonth" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Balance" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="InvGainLoss" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashInvestment" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUTC" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Sold" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="SoldYearMonth" Type="System.String" DbType="Char(6)" CanBeNull="true" />
+      <Column Name="SoldAmount" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="SoldFees" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="SoldOnUtc" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="BegGmBalance" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="Deposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="Withdrawals" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="GmGainLoss" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="EndGmBalance" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LowRiskShares" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="MediumRiskShares" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="HighRiskShares" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCashInvestments" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalSoldVintagesValue" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCashInvInHold" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="AwardedSoldAmount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="EarlyCashoutFee" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="HurdleFee" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Association Name="FK_dbo.CustFundShares_dbo.InvBalances_SoldInvBalanceId" Member="CustFundShares" ThisKey="Id" OtherKey="InvBalanceId" Type="CustFundShares" DeleteRule="NO ACTION" />
+      <Association Name="FK_dbo.InvBalances_dbo.AspNetUsers_CustomerId" Member="AspNetUsers" ThisKey="CustomerId" OtherKey="Id" Type="AspNetUsers" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="FK_dbo.InvBalances_dbo.Portfolios_PortfolioId" Member="Portfolios" ThisKey="PortfolioId" OtherKey="Id" Type="Portfolios" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LogEntries" Member="LogEntries">
+    <Type Name="LogEntries">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Application" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Logged" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Level" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Message" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="UserName" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="ServerName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Port" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Url" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Https" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ServerAddress" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="RemoteAddress" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Logger" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="CallSite" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Exception" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayerRevLastMonths" Member="PlayerRevLastMonths">
+    <Type Name="PlayerRevLastMonths">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="YearMonth" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUtc" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayerRevRpt" Member="PlayerRevRpt">
+    <Type Name="PlayerRevRpt">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="User ID" Member="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Username" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonth" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonthDay" Type="System.String" DbType="Char(8) NOT NULL" CanBeNull="false" />
+      <Column Name="BegGmBalance" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="EndGmBalance" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="Email address" Member="EmailAddress" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="Total deposits amount" Member="TotalDepositsAmount" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="Withdraws made" Member="WithdrawsMade" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="Currency" Type="System.String" DbType="Char(3)" CanBeNull="true" />
+      <Column Name="Processed" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedOnUtc" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUtc" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="PendingWithdrawals" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="GmGainLoss" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="Player status" Member="PlayerStatus" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
+      <Column Name="Block reason" Member="BlockReason" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
+      <Column Name="CashBonusAmount" Type="System.Decimal" DbType="Decimal(29,16)" CanBeNull="true" />
+      <Column Name="CashDeposits" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="Phone" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+      <Column Name="Mobile" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+      <Column Name="City" Type="System.String" DbType="NVarChar(80)" CanBeNull="true" />
+      <Column Name="Country" Type="System.String" DbType="NVarChar(80)" CanBeNull="true" />
+      <Column Name="JoinDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FirstDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastDeposit" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastPlayedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="FK_dbo.GzTrxs_dbo.PlayerRevRpt_PlayerRevRptId" Member="GzTrxs" ThisKey="Id" OtherKey="PlayerRevRptId" Type="GzTrxs" DeleteRule="NO ACTION" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PortfolioPrices" Member="PortfolioPrices">
+    <Type Name="PortfolioPrices">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="YearMonthDay" Type="System.String" DbType="Char(8) NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedOnUtc" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioLowPrice" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioMediumPrice" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioHighPrice" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Portfolios" Member="Portfolios">
+    <Type Name="Portfolios">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RiskTolerance" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Color" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="FK_dbo.CustPortfolios_dbo.Portfolios_PortfolioId" Member="CustPortfolios" ThisKey="Id" OtherKey="PortfolioId" Type="CustPortfolios" DeleteRule="CASCADE" />
+      <Association Name="FK_dbo.InvBalances_dbo.Portfolios_PortfolioId" Member="InvBalances" ThisKey="Id" OtherKey="PortfolioId" Type="InvBalances" DeleteRule="NO ACTION" />
+      <Association Name="FK_dbo.PortFunds_dbo.Portfolios_PortfolioId" Member="PortFunds" ThisKey="Id" OtherKey="PortfolioId" Type="PortFunds" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PortFunds" Member="PortFunds">
+    <Type Name="PortFunds">
+      <Column Name="PortfolioId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="FundId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Weight" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Association Name="FK_dbo.PortFunds_dbo.Funds_FundId" Member="Funds" ThisKey="FundId" OtherKey="Id" Type="Funds" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="FK_dbo.PortFunds_dbo.Portfolios_PortfolioId" Member="Portfolios" ThisKey="PortfolioId" OtherKey="Id" Type="Portfolios" IsForeignKey="true" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.RevokedUsers" Member="RevokedUsers">
+    <Type Name="RevokedUsers">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="EmailConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordHash" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="SecurityStamp" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="PhoneNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="PhoneNumberConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TwoFactorEnabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LockoutEndDateUtc" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LockoutEnabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AccessFailedCount" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Birthday" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="GmCustomerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="DisabledGzCustomer" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ClosedGzAccount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ActiveCustomerIdInPlatform" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsRegistrationFinalized" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Reason" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="TimeStampUtc" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.VintageShares" Member="VintageShares">
+    <Type Name="VintageShares">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="YearMonth" Type="System.String" DbType="Char(6) NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioLowShares" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioMediumShares" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="PortfolioHighShares" Type="System.Decimal" DbType="Decimal(29,16) NOT NULL" CanBeNull="false" />
+      <Column Name="BuyPortfolioTradeDay" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="SoldPortfolioTradeDay" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpdatedOnUtc" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>

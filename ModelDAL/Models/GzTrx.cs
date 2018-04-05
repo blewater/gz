@@ -77,7 +77,7 @@ namespace gzDAL.Models {
 
         [DefaultValue(0)]
         [Required]
-        public decimal Vendor2UserDeposits { get; set; }
+        public decimal CashDeposits { get; set; }
 
         /// <summary>
         /// 
@@ -94,6 +94,14 @@ namespace gzDAL.Models {
         /// 
         /// </summary>
         public float? CreditPcntApplied { get; set; }
+
+        public DateTime? JoinDate { get; set; }
+
+        public DateTime? FirstDeposit { get; set; }
+
+        public DateTime? LastDeposit { get; set; }
+
+        public DateTime? LastPlayedDate { get; set; }
 
         [Required]
         public DateTime CreatedOnUtc { get; set; }

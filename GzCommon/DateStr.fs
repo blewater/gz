@@ -39,6 +39,12 @@ module DateStr =
             this.Day.ToString("00") + "/" + this.Month.ToString("00") + "/" + this.Year.ToString()
 
     type String with
+        member this.ToNullableDate = 
+            match DateTime.TryParse(this) with
+            | true, date -> Nullable date
+            | false, noDate -> Nullable noDate
+
+    type String with
         member this.ToDateWithDay = 
             match DateTime.TryParseExact(this, "yyyyMMdd", null, Globalization.DateTimeStyles.None) with
             | true, date -> date

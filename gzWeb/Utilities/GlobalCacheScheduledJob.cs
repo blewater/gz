@@ -40,7 +40,7 @@ namespace gzWeb.Utilities  {
 
                 _logger.Trace("Execute() of GlobalCacheScheduledJob.");
 
-                CacheGlobalData().Wait();
+                CacheGlobalData();
             }
         }
 
@@ -58,7 +58,7 @@ namespace gzWeb.Utilities  {
         /// Cache global database data applicable to all customers
         /// 
         /// </summary>
-        private async Task CacheGlobalData() {
+        private void CacheGlobalData() {
 
             try {
 
@@ -66,13 +66,18 @@ namespace gzWeb.Utilities  {
                 var db = new ApplicationDbContext();
 
                 // Cache configuration object
-                await new ConfRepo(db).GetConfRow();
+                var _ = new ConfRepo(db).GetConfRow();
 
                 //-------- Cache Fund prices for 2 hours
-                await db.PortfolioPrices
-                    .Where(p=>p.YearMonthDay == db.PortfolioPrices.Select(pm=>pm.YearMonthDay).Max())
-                    .Select(p => new { p.PortfolioLowPrice, p.PortfolioMediumPrice, p.PortfolioHighPrice, p.YearMonthDay })
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(2));
+                var __ = db.PortfolioPrices
+                    .Where(p => p.YearMonthDay == db.PortfolioPrices.Select(pm => pm.YearMonthDay).Max())
+                    .Select(p => new {
+                        p.PortfolioLowPrice,
+                        p.PortfolioMediumPrice,
+                        p.PortfolioHighPrice,
+                        p.YearMonthDay
+                    })
+                    .FromCache(DateTime.UtcNow.AddHours(2));
             }
             catch (Exception ex) {
                 _logger.Error(ex, "CacheGlobalData()");

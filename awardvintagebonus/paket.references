@@ -1,0 +1,10 @@
+canopy
+FSharp.Configuration
+FSharp.Core
+FSharp.Data
+FSharp.Data.TypeProviders
+NLog
+NLog.Config
+NLog.Schema
+Selenium.WebDriver
+Selenium.Chrome.WebDriver

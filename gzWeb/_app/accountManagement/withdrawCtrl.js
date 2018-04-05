@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'withdrawCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', 'message', '$rootScope', 'accountManagement', 'iso4217', 'modals', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout, message, $rootScope, accountManagement, iso4217, modals) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBankingWithdraw', 'helpers', '$timeout', 'message', '$rootScope', 'accountManagement', 'iso4217', 'modals', '$filter', '$log', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBankingWithdraw, helpers, $timeout, message, $rootScope, accountManagement, iso4217, modals, $filter, $log) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -13,24 +13,13 @@
         // #endregion
 
         // #region payment methods fields
-        //var creditCardFields = { templateUrl: '/_app/accountManagement/withdrawCreditCard.html', ctrlId: 'withdrawCreditCardCtrl' }
-        var moneyMatrixCreditCardFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' }
-        var moneyMatrixTrustlyFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' }
-        var moneyMatrixSkrillFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixSkrill.html', ctrlId: 'withdrawMoneyMatrixSkrillCtrl' }
-        var moneyMatrixEnterCashFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixEnterCash.html', ctrlId: 'withdrawMoneyMatrixEnterCashCtrl' }
-        //var moneyMatrixBankTransferFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixBankTransfer.html', ctrlId: 'withdrawMoneyMatrixBankTransferCtrl' }
-        var moneyMatrixAdyenSepaFields = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixAdyenSepa.html', ctrlId: 'withdrawMoneyMatrixAdyenSepaCtrl' }
-        //var withdrawFields = { templateUrl: '/_app/accountManagement/withdrawFields.html', ctrlId: 'withdrawFieldsCtrl' }
         var paymentMethodsFields = [];
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.VISA] = creditCardFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.Maestro] = creditCardFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MasterCard] = creditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = moneyMatrixCreditCardFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = moneyMatrixTrustlyFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill] = moneyMatrixSkrillFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixEnterCash] = moneyMatrixEnterCashFields;
-        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixBankTransfer] = moneyMatrixBankTransferFields;
-        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixAdyenSepa] = moneyMatrixAdyenSepaFields;
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard] = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixCreditCard.html', ctrlId: 'withdrawMoneyMatrixCreditCardCtrl' };
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixTrustly] = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixTrustly.html', ctrlId: 'withdrawMoneyMatrixTrustlyCtrl' };
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixSkrill] = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixSkrill.html', ctrlId: 'withdrawMoneyMatrixSkrillCtrl' };
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixEnterCash] = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixEnterCash.html', ctrlId: 'withdrawMoneyMatrixEnterCashCtrl' };
+        //paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixBankTransfer] = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixBankTransfer.html', ctrlId: 'withdrawMoneyMatrixBankTransferCtrl' };
+        paymentMethodsFields[emBankingWithdraw.PaymentMethodCode.MoneyMatrixAdyenSepa] = { templateUrl: '/_app/accountManagement/withdrawMoneyMatrixAdyenSepa.html', ctrlId: 'withdrawMoneyMatrixAdyenSepaCtrl' };
         function getPaymentMethodFields(paymentMethodCode) {
             return paymentMethodsFields[paymentMethodCode];
         };
@@ -39,32 +28,22 @@
         // #region init
         function init() {
             $scope.selected.group = $scope.selectedMethodGroup;
-            if ($scope.selected.group.length === 1) {
-                $scope.selected.method = $scope.selected.group[0];
-                getPaymentMethodCfg();
-            }
-        };
-
-        $scope.onPayCardSelected = function () {
-            if ($scope.selected.method)
-                getPaymentMethodCfg();
-            else
-                angular.element('#withdrawFields').contents().remove();
+            getPaymentMethodCfg();
         };
 
         function getPaymentMethodCfg() {
             $scope.initializing = true;
-            emBankingWithdraw.getPaymentMethodCfg($scope.selected.method.code, $scope.selected.method.payCard ? $scope.selected.method.payCard.id : null).then(function (paymentMethodCfgResult) {
+            //var payCardId = $scope.selected.method.payCard ? $scope.selected.method.payCard.id : null;
+            emBankingWithdraw.getPaymentMethodCfg($scope.selected.group[0].code, null).then(function (paymentMethodCfgResult) {
                 $scope.paymentMethodCfg = paymentMethodCfgResult;
 
-                //$scope.existingPayCards = $scope.paymentMethodCfg.fields.payCardID.options;
-                //$scope.maximumPayCards = $scope.paymentMethodCfg.fields.payCardID.maximumPayCards;
-                //$scope.thereAreExistingPayCards = $scope.existingPayCards.length > 0;
-                //$scope.canAddNewPayCard = $scope.existingPayCards.length < $scope.maximumPayCards;
-                //if ($scope.existingPayCards.length === 1)
-                //    $scope.selected.method = $scope.existingPayCards[0];
+                $scope.existingPayCards = $scope.paymentMethodCfg.fields.payCardID.options;
+                $scope.maximumPayCards = $scope.paymentMethodCfg.fields.payCardID.maximumPayCards;
+                $scope.thereAreExistingPayCards = $scope.existingPayCards.length > 0;
+                $scope.canAddNewPayCard = $scope.existingPayCards.length < $scope.maximumPayCards;
 
                 attachFields($scope.paymentMethodCfg.paymentMethodCode);
+
                 $scope.initializing = false;
             }, function (error) {
                 message.autoCloseError(error.desc);
@@ -91,59 +70,31 @@
                 withdraw();
         };
 
-        function sendTransactionReceipt(pid, appInsightsTrackEvent) {
+        function sendTransactionReceipt(pid, appInsightsTrackEvent, logSuccessfulTransaction) {
             var getTransactionInfoCall = function () { return emBankingWithdraw.getTransactionInfo(pid); };
-            modals.receipt(getTransactionInfoCall, $scope.selected.method.displayName, true).then(function (transactionResult) {
+            modals.receipt(getTransactionInfoCall, $scope.selected.group[0].displayName, true).then(function (transactionResult) {
                 $scope.waiting = false;
                 $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                 if (transactionResult.status === "success") {
                     appInsightsTrackEvent('TRANSACTION SUCCESS');
+                    logSuccessfulTransaction();
                     $scope.nsOk(true);
+                    init();
                 } else if (transactionResult.status === "incomplete") {
                     appInsightsTrackEvent('TRANSACTION INCOMPLETE');
+                    init();
                 } else if (transactionResult.status === "pending") {
                     appInsightsTrackEvent('TRANSACTION PENDING');
                     $scope.setState(accountManagement.states.pendingWithdrawals);
                 } else if (transactionResult.status === "error") {
                     appInsightsTrackEvent('TRANSACTION ERROR');
+                    init();
                 }
-                init();
             }, function (error) {
                 $scope.waiting = false;
                 message.autoCloseError(error.desc);
                 init();
             });
-
-            //$timeout(function () {
-            //    emBankingWithdraw.getTransactionInfo(pid).then(function (transactionResult) {
-            //        modals.receipt($scope.selected.method.displayName, transactionResult, true).then(function (response) {
-            //            $scope.waiting = false;
-            //            if (transactionResult.status === "success") {
-            //                appInsightsTrackEvent('TRANSACTION SUCCESS');
-            //                $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-            //                $scope.nsOk(true);
-            //            } else if (transactionResult.status === "incomplete") {
-            //                appInsightsTrackEvent('TRANSACTION INCOMPLETE');
-            //                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
-            //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-            //                });
-            //            } else if (transactionResult.status === "pending") {
-            //                appInsightsTrackEvent('TRANSACTION PENDING');
-            //                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
-            //                    $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-            //                });
-            //                $scope.setState(accountManagement.states.pendingWithdrawals);
-            //            } else if (transactionResult.status === "error") {
-            //                appInsightsTrackEvent('TRANSACTION ERROR');
-            //                init();
-            //            }
-            //        });
-            //    }, function (error) {
-            //        $scope.waiting = false;
-            //        message.autoCloseError(error.desc);
-            //        init();
-            //    });
-            //}, 2000);
         }
 
         function withdraw() {
@@ -151,22 +102,34 @@
             window.appInsights.trackEvent("WITHDRAW", { status: "READ FIELDS" });
             $scope.readFields().then(function (fields) {
                 window.appInsights.trackEvent("WITHDRAW", { status: "PREPARE" });
-                emBankingWithdraw.prepare($scope.selected.method.code, fields).then(function (prepareResult) {
+                emBankingWithdraw.prepare($scope.selected.group[0].code, fields).then(function (prepareResult) {
                     $scope.pid = prepareResult.pid;
+
+                    var rates = $scope.paymentMethodCfg.fields.currency.rates;
+                    var baseCurrencyRate = rates[constants.baseCurrency];
+                    var creditRate = rates[prepareResult.credit.currency];
+                    var debitRate = rates[prepareResult.debit.currency];
+                    var baseCurrencyCredit = $filter('number')(prepareResult.credit.amount * baseCurrencyRate / creditRate, 1);
+                    var baseCurrencyDebit = $filter('number')(prepareResult.debit.amount * baseCurrencyRate / debitRate, 1);
 
                     var prepareData = {
                         creditTo: prepareResult.credit.name,
                         creditAmount: iso4217.getCurrencyByCode(prepareResult.credit.currency).symbol + " " + prepareResult.credit.amount,
+                        creditBaseAmount: iso4217.getCurrencyByCode(constants.baseCurrency).symbol + " " + baseCurrencyCredit,
                         debitFrom: prepareResult.debit.name,
-                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount
+                        debitAmount: iso4217.getCurrencyByCode(prepareResult.debit.currency).symbol + " " + prepareResult.debit.amount,
+                        debitBaseAmount: iso4217.getCurrencyByCode(constants.baseCurrency).symbol + " " + baseCurrencyDebit,
                     };
 
                     function appInsightsTrackEvent(status) {
                         window.appInsights.trackEvent("WITHDRAW", {
-                            credit: prepareData.creditTo + " " + prepareData.creditAmount,
-                            debit: prepareData.debitTo + " " + prepareData.debitAmount,
+                            credit: prepareData.creditTo + " " + prepareData.creditBaseAmount,
+                            debit: prepareData.debitTo + " " + prepareData.debitBaseAmount,
                             status: status
                         });
+                    };
+                    function logSuccessfulTransaction() {
+                        $log.info("SUCCESSFULL WITHDRAWAL: " + prepareData.creditBaseAmount);
                     };
 
                     if (prepareResult.status === "setup") {
@@ -176,7 +139,7 @@
                                 appInsightsTrackEvent('CONFIRM');
                                 if (confirmResult.status === "setup") {
                                     appInsightsTrackEvent('GET TRANSACTION INFO');
-                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent);
+                                    sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                 } else if (confirmResult.status === "redirection") {
                                     appInsightsTrackEvent('CONFIRM REDIRECTION');
                                     var html = '<gz-third-party-iframe gz-redirection-form="redirectionForm"></gz-third-party-iframe>'
@@ -191,7 +154,7 @@
                                         nsShowClose: false
                                     });
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
-                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent);
+                                        sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
                                         $scope.waiting = false;
@@ -241,11 +204,11 @@
             return "Do you want to withdraw the amount of " + prepareData.debitAmount + getConfirmMessageSuffix(prepareData) + "?";
         };
         function getConfirmMessageSuffix(prepareData) {
-            switch ($scope.selected.method.code) {
+            switch ($scope.selected.group[0].code) {
                 case emBankingWithdraw.PaymentMethodCode.MoneyMatrixCreditCard:
                     return " to " + prepareData.creditTo;
                 default:
-                    return " using " + $scope.selected.method.name;
+                    return " using " + $scope.selected.group[0].name;
             }
         };
     }

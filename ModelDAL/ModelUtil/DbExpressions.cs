@@ -53,7 +53,7 @@ namespace gzDAL.ModelUtil {
         /// <returns></returns>
         public static decimal RoundCustomerBalanceAmount(decimal amount) {
 
-            return amount >= 1 ? Math.Round(amount - 0.1M, 0) : amount;
+            return amount >= 1 ? Math.Round(amount - 0.1M, 0) : Math.Round(amount, 1);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace gzDAL.ModelUtil {
         /// <returns></returns>
         public static decimal RoundGzFeesAmount(decimal amount) {
 
-            return amount >= 1 ? Math.Round(amount, 0) : amount;
+            return amount >= 1 ? Math.Round(amount, 0) : Math.Round(amount, 1);
         }
 
         /// <summary>

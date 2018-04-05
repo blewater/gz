@@ -2,13 +2,17 @@
 using System.Web.Http;
 using gzDAL.Conf;
 using gzWeb.Utilities;
+using Microsoft.ApplicationInsights;
 
 namespace gzWeb.Controllers
 {
     public class BaseApiController : ApiController
     {
+        protected TelemetryClient telemetry;
+
         public BaseApiController(ApplicationUserManager userManager)
         {
+            telemetry = new TelemetryClient();
             UserManager = userManager;
         }
         

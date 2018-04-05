@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
-using gzDAL.Models;
 using gzDAL.Repos.Interfaces;
 using NLog;
+using Microsoft.ApplicationInsights;
+
 
 namespace gzWeb.Utilities {
 
@@ -16,10 +16,12 @@ namespace gzWeb.Utilities {
 
         private readonly IInvBalanceRepo invBalanceRepo;
         private readonly IUserPortfolioRepo custPortfolioRepo;
+        private readonly TelemetryClient telemetry;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public CacheUserData(IInvBalanceRepo invBalanceRepo, IUserPortfolioRepo custPortfolioRepo) {
 
+            telemetry = new TelemetryClient();
             this.invBalanceRepo = invBalanceRepo;
             this.custPortfolioRepo = custPortfolioRepo;
         }
@@ -30,19 +32,22 @@ namespace gzWeb.Utilities {
         /// 
         /// </summary>
         /// <param name="userId"></param>
-        public async Task Query(int userId) {
+        public void Query(int userId)
+        {
+            try
+            {
 
-            try {
+                var summaryRes = invBalanceRepo.GetSummaryData(userId);
 
-                var summaryRes = await invBalanceRepo.GetSummaryDataAsync(userId);
+                invBalanceRepo.GetCustomerVintagesSellingValueNow(userId, summaryRes.Item1.Vintages.ToList());
 
-                invBalanceRepo.GetCustomerVintagesSellingValueNow(summaryRes.Item2.Id, summaryRes.Item1.Vintages.ToList());
-
-                await custPortfolioRepo.GetUserPlansAsync(userId);
+                var _ = custPortfolioRepo.GetUserPlans(userId);
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.Error(ex, "Exception in Query()");
+                telemetry.TrackException(ex);
             }
         }
     }

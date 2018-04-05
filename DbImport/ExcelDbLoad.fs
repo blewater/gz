@@ -25,7 +25,11 @@ module DbGzTrx =
         trxRow.Withdrawals <- Nullable <| playerRevRpt.WithdrawsMade.Value + playerRevRpt.PendingWithdrawals.Value
         trxRow.GmGainLoss <- Nullable playerGainLoss
         trxRow.CashBonusAmount <- if playerRevRpt.CashBonusAmount.HasValue then playerRevRpt.CashBonusAmount.Value else 0M
-        trxRow.Vendor2UserDeposits <- if playerRevRpt.Vendor2UserDeposits.HasValue then playerRevRpt.Vendor2UserDeposits.Value else 0M
+        trxRow.CashDeposits <- playerRevRpt.CashDeposits
+        trxRow.JoinDate <- playerRevRpt.JoinDate
+        trxRow.FirstDeposit <- playerRevRpt.FirstDeposit
+        trxRow.LastDeposit <- playerRevRpt.LastDeposit
+        trxRow.LastPlayedDate <- playerRevRpt.LastPlayedDate
 
     /// Create & Insert a GzTrxs row
     let insDbGzTrxRowValues
@@ -57,7 +61,7 @@ module DbGzTrx =
         }
         |> (fun userId ->
             if userId = 0 then
-                logger.Warn (sprintf "*** Everymatrix email %s not found in the AspNetUsers table of db: %s. Cannot award..." gmUserEmail db.DataContext.Connection.DataSource)
+                logger.Warn (sprintf "*** Everymatrix email %s not found in the AspNetUsers table of db: %s. Cannot award..." gmUserEmail db.Connection.DataSource)
                 None
             else
                 Some userId
@@ -113,13 +117,13 @@ module DbGzTrx =
                 else 
                     updDbGzTrxRowValues playerLossToInvest playerGainLoss creditLossPcnt playerRevRpt trxRow
             )
-            db.DataContext.SubmitChanges()
+            db.SubmitChanges()
 
     /// Read all 
     let getDbPlayerMonthlyRows
         (db : DbContext)
         (yyyyMm : string)
-        (emailToProcAlone : string option) : Linq.IQueryable<DbSchema.ServiceTypes.PlayerRevRpt>=
+        (emailToProcAlone : string option) : Linq.IQueryable<DbSchema.PlayerRevRpt>=
 
         match emailToProcAlone with
         | Some singleEmailUser ->
@@ -160,7 +164,7 @@ module DbPlayerRevRpt =
 
     /// Update the player gaming amounts
     let private setDbPlayerGainLossValues
-        (row : DbSchema.ServiceTypes.PlayerRevRpt) =
+        (row : DbSchema.PlayerRevRpt) =
 
         let totalWithdrawals = row.WithdrawsMade.Value + row.PendingWithdrawals.Value
         // Formula to get player losses as negative amounts
@@ -176,7 +180,7 @@ module DbPlayerRevRpt =
     /// Update db player Gain Loss
     let private setDbPlayerGainLoss 
         (emailToProcAlone: string option) 
-        (row : DbSchema.ServiceTypes.PlayerRevRpt) : unit =
+        (row : DbSchema.PlayerRevRpt) : unit =
 
         // Normal processing
         if emailToProcAlone.IsNone then
@@ -201,7 +205,7 @@ module DbPlayerRevRpt =
                             playerDbRow.BegGmBalance <> Nullable 0M 
                             || playerDbRow.EndGmBalance <> Nullable 0M
                             || playerDbRow.TotalDepositsAmount <> Nullable 0M
-                            || playerDbRow.Vendor2UserDeposits <> Nullable 0m
+                            || playerDbRow.CashDeposits <> 0m
                             || playerDbRow.PendingWithdrawals <> Nullable 0M
                             || playerDbRow.WithdrawsMade <> Nullable 0M
                             || playerDbRow.CashBonusAmount <> Nullable 0M
@@ -210,7 +214,7 @@ module DbPlayerRevRpt =
         }
                     // append dbRow param here as 2nd setDbPlayerGainLos() arg
         |> Seq.iter (setDbPlayerGainLoss emailToProcAlone)
-        db.DataContext.SubmitChanges()
+        db.SubmitChanges()
 
 
     /// get deposits in the user currency
@@ -265,8 +269,10 @@ module DbPlayerRevRpt =
         let dbDeposits = playerRow.TotalDepositsAmount.Value
         let notNullUserCurrency = userCurrency db playerRow.Currency playerRow.EmailAddress
         let thisDepositAmount = getDepositAmountInUserCurrency depositsExcelRow notNullUserCurrency
-        let newDeposits = dbDeposits + thisDepositAmount  // in players native currency
-        playerRow.TotalDepositsAmount <- Nullable newDeposits
+        let newDepositsTotal = dbDeposits + thisDepositAmount  // in players native currency
+        playerRow.TotalDepositsAmount <- Nullable newDepositsTotal
+        // Bonus has not been added yet so DepositsTotal = CashBonusBonus
+        playerRow.CashDeposits <- newDepositsTotal
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
@@ -274,10 +280,17 @@ module DbPlayerRevRpt =
     /// Increase the total deposits value in the playerRevRpt table by the investment bonus
     let private updDbRowBonusValues(bonusExcelRow : BonusExcel)(playerRow : DbPlayerRevRpt) = 
 
-        let dbDeposits = playerRow.TotalDepositsAmount.Value
-        let thisDepositAmount = bonusExcelRow.Amount
-        let newDeposits = dbDeposits + decimal thisDepositAmount  // in players native currency
-        playerRow.TotalDepositsAmount <- Nullable newDeposits
+        let dbDeposits = if playerRow.TotalDepositsAmount.HasValue then playerRow.TotalDepositsAmount.Value else 0M
+        let dbBonusDeposits = if playerRow.CashBonusAmount.HasValue then playerRow.CashBonusAmount.Value else 0M
+        let thisBonusAmount = decimal bonusExcelRow.Amount
+        // Deposits + Bonus
+        let newDepositsTotal = dbDeposits + thisBonusAmount
+        // Total Bonus without cash deposits
+        let newBonusTotal = dbBonusDeposits + thisBonusAmount
+
+        playerRow.CashBonusAmount <- Nullable newBonusTotal
+        playerRow.TotalDepositsAmount <- Nullable newDepositsTotal
+        playerRow.CashDeposits <- newDepositsTotal - newBonusTotal
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.BonusUpd
@@ -374,12 +387,12 @@ module DbPlayerRevRpt =
         playerRow.WithdrawsMade <- Nullable 0m
 
         // Zero out gaming deposit cashBonus
-        playerRow.Vendor2UserDeposits <- Nullable 0m
         playerRow.CashBonusAmount <- Nullable 0m
+        playerRow.CashDeposits <- 0m
 
         // If null it means it's a new user so beg balance should be zero
         // Linq compatible null check
-        if playerRow.BegGmBalance.HasValue = false then
+        if not <| playerRow.BegGmBalance.HasValue then
             playerRow.BegGmBalance <- Nullable 0m
 
         playerRow.EndGmBalance <- customExcelRow.``Real money balance`` |> float2NullableDecimal
@@ -394,6 +407,21 @@ module DbPlayerRevRpt =
         playerRow.Phone <- customExcelRow.Phone |> excelObjNullableString
         playerRow.City <- customExcelRow.City
         playerRow.Country <- customExcelRow.Country
+
+        playerRow.JoinDate <- customExcelRow.``Join date``.ToNullableDate
+
+        if objIsNotNull(customExcelRow.``Initial deposit date``) then
+            let dateObj = customExcelRow.``Initial deposit date``.ToString()
+            playerRow.FirstDeposit <- dateObj.ToNullableDate
+            playerRow.LastDeposit <- dateObj.ToNullableDate
+
+        if objIsNotNull customExcelRow.``Last deposit date`` then
+            let dateObj = customExcelRow.``Last deposit date``.ToString()
+            playerRow.LastDeposit <- dateObj.ToNullableDate
+
+        if objIsNotNull customExcelRow.``Last played date`` then
+            let dateObj = customExcelRow.``Last played date``.ToString()
+            playerRow.LastPlayedDate <- dateObj.ToNullableDate
 
         //Non-excel content
         playerRow.YearMonth <- yearMonthDay.ToYyyyMm
@@ -436,7 +464,7 @@ module DbPlayerRevRpt =
                 logger.Warn warningMsg
             else
                 updDbRowWithdrawalsValues db withdrawalType withdrawalRow playerDbRow
-                db.DataContext.SubmitChanges()
+                db.SubmitChanges()
         )
 
     /// Set beginning or ending amount in a db PlayerRevRpt Row
@@ -463,7 +491,7 @@ module DbPlayerRevRpt =
                 | BeginingBalance -> updDbRowBegBalanceValues balanceRow playerDbRow
                 | EndingBalance -> updDbRowEndBalanceValues balanceRow playerDbRow
         )
-        db.DataContext.SubmitChanges()
+        db.SubmitChanges()
 
     /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
     let updDbDepositsPlayerRow 
@@ -485,7 +513,7 @@ module DbPlayerRevRpt =
                 logger.Warn warningMsg
             else
                 updDbRowDepositsValues db depositsExcelRow playerDbRow
-                db.DataContext.SubmitChanges()
+                db.SubmitChanges()
         )
 
     /// Set trans deposits, vendor2user Cash bonus amount in a db PlayerRevRpt Row
@@ -508,7 +536,7 @@ module DbPlayerRevRpt =
                 logger.Warn warningMsg
             else
                 updDbRowBonusValues bonusExcelRow playerDbRow
-                db.DataContext.SubmitChanges()
+                db.SubmitChanges()
         )
 
     /// Upsert excel row values in a db PlayerRevRpt Row
@@ -530,7 +558,7 @@ module DbPlayerRevRpt =
             else 
                 setDbRowCustomValues yyyyMmDd customExcelRow playerDbRow
         )
-        db.DataContext.SubmitChanges()
+        db.SubmitChanges()
 
     /// Update all null everymatrix customer ids from the playerRevRpt (excel reports table)
     let setDbGmCustomerId(db : DbContext) =
@@ -563,7 +591,7 @@ module DbPlayerRevRpt =
                         setErrorStatus()
                     | gmId -> 
                         user.GmCustomerId <- Nullable gmId
-                        db.DataContext.SubmitChanges()
+                        db.SubmitChanges()
             )
         )
         if getErrorStatus() then

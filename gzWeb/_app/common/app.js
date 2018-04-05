@@ -133,16 +133,24 @@ var APP = (function () {
                         $location.path(constants.routes.games.path).search({});
                 });
 
+                function setDocumentTitle() {
+                    var title = constants.title;
+                    if ($route.current.$$route) {
+                        if ($route.current.$$route.title)
+                            title += " - " + $route.current.$$route.title;
+                        setRouteData($route.current.$$route);
+                    }
+                    document.title = title;
+                };
+                function restoreHeader() {
+                    angular.element('#header-nav').css('top', 0);
+                };
                 function onRouteChangeSuccess() {
                     $timeout(function () {
                         $rootScope.loading = false;
-                        var title = constants.title;
-                        if ($route.current.$$route) {
-                            if ($route.current.$$route.title)
-                                title += " - " + $route.current.$$route.title;
-                            setRouteData($route.current.$$route);
-                        }
-                        document.title = title;
+                        setDocumentTitle();
+                        restoreHeader();
+                        auth.readBtag();
                     });
                 }
                 onRouteChangeSuccess();
@@ -170,10 +178,10 @@ var APP = (function () {
 
                 reveal();
 
-                $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function () {
+                $rootScope.$on(constants.events.DEPOSIT_STATUS_CHANGED, function (args) {
                     $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                 });
-                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function () {
+                $rootScope.$on(constants.events.WITHDRAW_STATUS_CHANGED, function (args) {
                     $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                 });
                 $rootScope.$broadcast(constants.events.ON_AFTER_INIT);

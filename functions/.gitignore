@@ -3,6 +3,7 @@ bin
 obj
 csx
 .vs
+.paket
 edge
 Publish
 .vscode
@@ -15,7 +16,6 @@ project.lock.json
 
 /packages
 /TestResults
-
 /tools/NuGet.exe
 /App_Data
 /secrets

@@ -6,6 +6,6 @@ using gzDAL.Models;
 namespace gzDAL.Repos.Interfaces
 {
     public interface IConfRepo {
-        Task<GzConfiguration> GetConfRow();
+        GzConfiguration GetConfRow();
     }
 }

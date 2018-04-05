@@ -88,13 +88,13 @@ namespace gzWeb.Tests.Models
         }
 
         private FSharpMap<string, PortfolioTypes.PortfoliosPrices> SetDbPortfoliosPriceMap(
-            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev SqlProviderCtx,
+            DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx,
             FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap,
             string startYearMonthStr,
             int monthCnt)
         {
 
-            DailyPortfolioShares.setDbPortfoliosPrices(SqlProviderCtx, portfoliosPriceMap);
+            DailyPortfolioShares.setDbPortfoliosPrices(sqlProviderCtx, portfoliosPriceMap);
             return portfoliosPriceMap;
         }
 
@@ -140,7 +140,7 @@ namespace gzWeb.Tests.Models
                 }
             }
 
-            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev sqlProviderCtx;
+            DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx;
             using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString))
             {
                 var portfoliosPriceMap =
@@ -460,32 +460,34 @@ namespace gzWeb.Tests.Models
                     break;
 
             }
-            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, false, null, null, null, currentYearMonthStr);
+            invBalRepo.SaveDbSellAllSelectedVintagesInTransRetry(userId, userVintages, false, null, null, null, null, null, currentYearMonthStr);
         }
 
-        private async Task ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)
+        private void ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)
         {
-
             FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap = null;
 
-            DbUtil.DbSchema.ServiceTypes.SimpleDataContextTypes.GzDbDev sqlProviderCtx;
-            using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString)) {
+            DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx;
+            using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString))
+            {
 
-                foreach (var email in userEmails) {
+                foreach (var email in userEmails)
+                {
 
                     int userId = db.Users
                         .Where(u => u.Email == email)
                         .Select(u => u.Id)
                         .SingleOrDefault();
 
-                    if (userId != 0) {
+                    if (userId != 0)
+                    {
                         usersFound.Add(userId);
 
                         SetDbMonthlyPortfolioSelection(monthsCnt, userId, currentYearMonthStr);
 
                         SetDbMonthlyPlayerLossTrx_3_4(currentYearMonthStr, userId);
 
-                        var userVintages = await AssertUserVintagesCount(userId, monthsCnt);
+                        var userVintages = AssertUserVintagesCount(userId, monthsCnt);
 
                         portfoliosPriceMap = GetPortfoliosPricesMapTable(currentYearMonthStr);
 
@@ -499,26 +501,26 @@ namespace gzWeb.Tests.Models
                 UserTrx.processGzTrx(sqlProviderCtx, currentYearMonthStr, portfoliosPriceMap, FSharpOption<string>.None);
             }
 
-            await AssertAllUsersVintagesCountAfterMonthClearance(usersFound, monthsCnt + 1);
+            AssertAllUsersVintagesCountAfterMonthClearance(usersFound, monthsCnt + 1);
         }
 
-        private async Task<List<VintageDto>> AssertUserVintagesCount(int userId, int numberOfVintages)
+        private List<VintageDto> AssertUserVintagesCount(int userId, int numberOfVintages)
         {
 
-            var userVintages = await invBalRepo.GetCustomerVintagesAsync(userId);
+            var userVintages = invBalRepo.GetCustomerVintages(userId);
 
             // Pre Clearance vintages.count check: First month (Nov) is 0 vintages
             Assert.AreEqual(numberOfVintages, userVintages.Count);
             return userVintages;
         }
 
-        private async Task AssertAllUsersVintagesCountAfterMonthClearance(List<int> usersFound, int numberOfVintages)
+        private void AssertAllUsersVintagesCountAfterMonthClearance(List<int> usersFound, int numberOfVintages)
         {
 
             foreach (var userId in usersFound)
             {
 
-                await AssertUserVintagesCount(userId, numberOfVintages);
+                AssertUserVintagesCount(userId, numberOfVintages);
             }
         }
 
@@ -726,9 +728,8 @@ namespace gzWeb.Tests.Models
             }
         }
 
-        private async Task InvBalancesExcelVintagesSelling(int caseNo)
+        private void InvBalancesExcelVintagesSelling(int caseNo)
         {
-
             ClearTrxHistory(userEmails);
 
             var now = DateTime.UtcNow;
@@ -740,7 +741,7 @@ namespace gzWeb.Tests.Models
             // Loop through all the months activity
             while (startYearMonthStr.BeforeEq(endYearMonthStr))
             {
-                await ProcessInvBalances_1_through_4(caseNo, usersFound, monthsCnt, startYearMonthStr);
+                ProcessInvBalances_1_through_4(caseNo, usersFound, monthsCnt, startYearMonthStr);
 
                 switch (caseNo)
                 {
@@ -771,9 +772,9 @@ namespace gzWeb.Tests.Models
         /// 
         /// </summary>
         [Test]
-        public async Task SetDbInvBalanceSoldVintages_1()
+        public void SetDbInvBalanceSoldVintages_1()
         {
-            await InvBalancesExcelVintagesSelling(1);
+            InvBalancesExcelVintagesSelling(1);
         }
 
         /// <summary>
@@ -784,9 +785,9 @@ namespace gzWeb.Tests.Models
         /// 
         /// </summary>
         [Test]
-        public async Task SetDbInvBalanceSoldVintages_2()
+        public void SetDbInvBalanceSoldVintages_2()
         {
-            await InvBalancesExcelVintagesSelling(2);
+            InvBalancesExcelVintagesSelling(2);
         }
 
         /// <summary>
@@ -798,9 +799,9 @@ namespace gzWeb.Tests.Models
         /// 
         /// </summary>
         [Test]
-        public async Task SetDbInvBalanceSoldVintages_3()
+        public void SetDbInvBalanceSoldVintages_3()
         {
-            await InvBalancesExcelVintagesSelling(3);
+            InvBalancesExcelVintagesSelling(3);
         }
 
         /// <summary>
@@ -811,8 +812,9 @@ namespace gzWeb.Tests.Models
         /// 
         /// </summary>
         [Test]
-        public async Task SetDbInvBalanceSoldVintages_4() {
-            await InvBalancesExcelVintagesSelling(4);
+        public void SetDbInvBalanceSoldVintages_4()
+        {
+            InvBalancesExcelVintagesSelling(4);
         }
     }
 }

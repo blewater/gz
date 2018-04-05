@@ -116,9 +116,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<Portfolio> GetCurrentCustomerPortfolio(int customerId) {
-
-            return await GetUserPortfolioForThisMonthOrBeforeAsync(customerId, DateTime.UtcNow.ToStringYearMonth());
+        public Portfolio GetCurrentCustomerPortfolio(int customerId)
+        {
+            return GetUserPortfolioForThisMonthOrBefore(customerId, DateTime.UtcNow.ToStringYearMonth());
         }
 
         /// <summary>
@@ -128,12 +128,12 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<Portfolio> GetPresentMonthsUserPortfolioAsync(int customerId) {
+        public Portfolio GetPresentMonthsUserPortfolio(int customerId)
+        {
 
-            return 
-                await 
-                    GetUserPortfolioForThisMonthOrBeforeAsync(
-                        customerId, 
+            return
+                GetUserPortfolioForThisMonthOrBefore(
+                        customerId,
                         DateTime.UtcNow.ToStringYearMonth()
                     );
         }
@@ -146,22 +146,23 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="nextYearMonthStr">+1 Month from Present To be safe we have the latest</param>
         /// <returns></returns>
-        public async Task<Portfolio> GetUserPortfolioForThisMonthOrBeforeAsync(int customerId, string nextYearMonthStr) {
-
+        public Portfolio GetUserPortfolioForThisMonthOrBefore(int customerId, string nextYearMonthStr)
+        {
             Portfolio customerMonthPortfolioReturn;
 
             // userPortfolioMaxMonthSet typically comes back as the present month or -1 
             // if no portfolio back-end management has run yet.
             var userPortfolioMaxMonthSet = GetUserPortfolioLastYearMonthSet(customerId, nextYearMonthStr);
 
-            if (userPortfolioMaxMonthSet != null) {
+            if (userPortfolioMaxMonthSet != null)
+            {
 
                 // Don't cache portfolio. Portfolio selections occur within the current month
                 customerMonthPortfolioReturn =
-                    await db.CustPortfolios
+                    db.CustPortfolios
                         .Where(p => p.YearMonth == userPortfolioMaxMonthSet && p.CustomerId == customerId)
                         .Select(cp => cp.Portfolio)
-                        .SingleOrDefaultAsync();
+                        .SingleOrDefault();
             }
             /**
              * Edge Case for leaky user registrations: 
@@ -169,16 +170,19 @@ namespace gzDAL.Repos
              * portfolio in their account. Portfolio management adds a portfolio next time 
              * it runs.
              */
-            else {
+            else
+            {
 
                 // Cached already
-                var defaultRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
+                var defaultRisk =
+                    (confRepo
+                        .GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
                 customerMonthPortfolioReturn =
-                    await db
-                        .Portfolios
-                        .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
-                        .FromCacheAsync(DateTime.UtcNow.AddHours(2));
+                    db
+                    .Portfolios
+                    .DeferredSingle(p => p.RiskTolerance == defaultRisk && p.IsActive)
+                    .FromCache(DateTime.UtcNow.AddHours(2));
             }
 
             return customerMonthPortfolioReturn;
@@ -194,16 +198,16 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="gmUserId"></param>
         /// <returns></returns>
-        public async Task SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId)
+        public void SetDbDefaultPorfolioAddGmUserId(int customerId, int gmUserId)
         {
-            var user = await db.Users.SingleOrDefaultAsync(x => x.Id == customerId);
+            var user = db.Users.SingleOrDefault(x => x.Id == customerId);
             if (user == null)
                 throw new InvalidOperationException("User not found.");
 
             if (user.IsRegistrationFinalized.HasValue && user.IsRegistrationFinalized.Value)
                 return;
 
-            var defaultPortfolioRisk = (await confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
+            var defaultPortfolioRisk = (confRepo.GetConfRow()).FIRST_PORTFOLIO_RISK_VAL;
 
             ConnRetryConf.TransactWithRetryStrategy(
                     db,
@@ -225,78 +229,82 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<PortfolioDto>> GetUserPlansAsync(int userId) {
+        public List<PortfolioDto> GetUserPlans(int userId)
+        {
 
-            var currentPortfolioId = (await 
-                                            GetPresentMonthsUserPortfolioAsync(userId))
+            var currentPortfolioId = (GetPresentMonthsUserPortfolio(userId))
                                                 .Id;
 
             // Get gz Database Configuration
-            var gzDbConf = await confRepo.GetConfRow();
+            var gzDbConf = confRepo.GetConfRow();
 
-            var portfolioDtos = 
-                (
-                    await 
+            var portfolioDtos =
                 (
                     from p in db.Portfolios
-                        join b in db.InvBalances on p.Id equals b.PortfolioId
-                        where b.CustomerId == 8
-                        && !b.Sold
+                    join b in db.InvBalances on p.Id equals b.PortfolioId
+                    where b.CustomerId == userId
+                          && !b.Sold
                     group b by p
                     into g
-                    select new PortfolioDto {
+                    select new PortfolioDto
+                    {
                         Id = g.Key.Id,
                         Title = g.Key.Title,
                         Color = g.Key.Color,
                         ROI = ((RiskToleranceEnum)g.Key.RiskTolerance) == RiskToleranceEnum.Low
-                                    ? gzDbConf.CONSERVATIVE_RISK_ROI
-                                    : (RiskToleranceEnum)g.Key.RiskTolerance == RiskToleranceEnum.Medium
-                                        ? gzDbConf.MEDIUM_RISK_ROI
-                                        : gzDbConf.AGGRESSIVE_RISK_ROI,
+                            ? gzDbConf.CONSERVATIVE_RISK_ROI
+                            : (RiskToleranceEnum)g.Key.RiskTolerance == RiskToleranceEnum.Medium
+                                ? gzDbConf.MEDIUM_RISK_ROI
+                                : gzDbConf.AGGRESSIVE_RISK_ROI,
                         Risk = ((RiskToleranceEnum)g.Key.RiskTolerance),
                         AllocatedAmount = g.Sum(b => b.CashInvestment),
-                        Holdings = g.Key.PortFunds.Select(f => new HoldingDto {
-                            Name = f.Fund.HoldingName,
-                            Weight = f.Weight
-                        })
-                        .ToList()
-                })
-
-                // Cache 1 Day
-                .FromCacheAsync(DateTime.UtcNow.AddDays(1)))
-                .ToList()
-                /*** Union with non-allocated customer portfolio ****/
-                .Union(
-                    await (from p in db.Portfolios
-                        where p.IsActive
-                        select new PortfolioDto {
-                            Id = p.Id,
-                            Title = p.Title,
-                            Color = p.Color,
-                            ROI = p.RiskTolerance == RiskToleranceEnum.Low
-                                ? gzDbConf.CONSERVATIVE_RISK_ROI
-                                : p.RiskTolerance == RiskToleranceEnum.Medium
-                                    ? gzDbConf.MEDIUM_RISK_ROI
-                                    : gzDbConf.AGGRESSIVE_RISK_ROI,
-                            Risk = p.RiskTolerance,
-                            AllocatedAmount = 0M,
-                            Holdings = p.PortFunds.Select(f => new HoldingDto {
+                        Holdings = g.Key.PortFunds.Select(f => new HoldingDto
+                            {
                                 Name = f.Fund.HoldingName,
                                 Weight = f.Weight
                             })
                             .ToList()
-                        })
+                    })
+
+                // Cache 1 Day
+                .FromCache(DateTime.UtcNow.AddDays(1))
+                .ToList()
+                /*** Union with non-allocated customer portfolio ****/
+                .Union(
+                    (from p in db.Portfolios
+                     where p.IsActive
+                     select new PortfolioDto
+                     {
+                         Id = p.Id,
+                         Title = p.Title,
+                         Color = p.Color,
+                         ROI = p.RiskTolerance == RiskToleranceEnum.Low
+                             ? gzDbConf.CONSERVATIVE_RISK_ROI
+                             : p.RiskTolerance == RiskToleranceEnum.Medium
+                                 ? gzDbConf.MEDIUM_RISK_ROI
+                                 : gzDbConf.AGGRESSIVE_RISK_ROI,
+                         Risk = p.RiskTolerance,
+                         AllocatedAmount = 0M,
+                         Holdings = p.PortFunds.Select(f => new HoldingDto
+                         {
+                             Name = f.Fund.HoldingName,
+                             Weight = f.Weight
+                         })
+                         .ToList()
+                     })
 
                         // Cache 1 day
-                        .FromCacheAsync(DateTime.UtcNow.AddDays(1))
+                        .FromCache(DateTime.UtcNow.AddDays(1))
                         , new PortfolioComparer())
                 .ToList();
 
             // Calculate allocation percentage
             var totalSum = portfolioDtos.Sum(p => p.AllocatedAmount);
-            foreach (var portfolioDto in portfolioDtos) {
-                if (totalSum != 0) {
-                    portfolioDto.AllocatedPercent = (float) (100*portfolioDto.AllocatedAmount/totalSum);
+            foreach (var portfolioDto in portfolioDtos)
+            {
+                if (totalSum != 0)
+                {
+                    portfolioDto.AllocatedPercent = (float)(100 * portfolioDto.AllocatedAmount / totalSum);
                 }
                 portfolioDto.Selected = portfolioDto.Id == currentPortfolioId;
             }
