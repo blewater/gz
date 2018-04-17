@@ -485,22 +485,6 @@ module UserTrx =
         (3, dbTrxOper) 
         ||> retry
 
-    /// get the portfolio market quote that's latest within the month processing
-    let private findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
-        let nextMonth = month.ToNextMonth1st
-
-        let getMonthLateQuote (portfoliosPrices)= 
-            portfoliosPrices
-            |> Map.filter(fun key _ -> key <= nextMonth)
-            |> Seq.maxBy(fun kvp -> kvp.Key)
-            |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
-        
-        let lateQuote = 
-            portfoliosPrices 
-            |> getMonthLateQuote
-
-        lateQuote
-        
     /// Input type for portfolio processing
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPrices) =
         { 
@@ -528,12 +512,8 @@ module UserTrx =
     let processGzTrx
         (db : DbContext)
         (yyyyMm : string)
-        (portfoliosPricesMap : PortfoliosPricesMap)
+        (latestInMonthPortfoliosPrices : PortfoliosPrices)
         (emailToProcAlone : string option) =
-
-        let latestInMonthPortfoliosPrices = 
-            (portfoliosPricesMap, yyyyMm) 
-                ||> findNearestPortfolioPrice
 
         // Single user mode --or all ?
         let trxRows = 
