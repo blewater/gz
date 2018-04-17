@@ -62,7 +62,7 @@ namespace gzWeb.Tests.Models
             db.Dispose();
         }
 
-        private FSharpMap<string, PortfolioTypes.PortfoliosPrices> GetPortfoliosPricesMapTable(string startYearMonthStr, int monthCnt)
+        private PortfolioTypes.PortfoliosPrices GetPortfoliosPrices(string startYearMonthStr, int monthCnt)
         {
 
             var stockPrice = 1 + (monthCnt / 10.0);
@@ -75,27 +75,8 @@ namespace gzWeb.Tests.Models
                 DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr));
             var portfolioPricesEoM = new PortfolioTypes.PortfoliosPrices(lowPortfolioPrice, mediumPortfolioPrice,
                 highPortfolioPrice);
-            var portfoliosPriceDict = new Dictionary<string, PortfolioTypes.PortfoliosPrices>() {
-                {
-                    DbExpressions.GetDtYearMonthStrToEndOfMonth(startYearMonthStr)
-                        .ToStringYearMonthDay(),
-                    portfolioPricesEoM
-                }
-            };
 
-            var portfoliosPriceMap = PortfolioTypes.toMap(portfoliosPriceDict);
-            return portfoliosPriceMap;
-        }
-
-        private FSharpMap<string, PortfolioTypes.PortfoliosPrices> SetDbPortfoliosPriceMap(
-            DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx,
-            FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap,
-            string startYearMonthStr,
-            int monthCnt)
-        {
-
-            DailyPortfolioShares.setDbPortfoliosPrices(sqlProviderCtx, portfoliosPriceMap);
-            return portfoliosPriceMap;
+            return portfolioPricesEoM;
         }
 
         private void Assert7MonthBalanceNumbers(List<int> usersFound, string endYearMonthStr)
@@ -143,11 +124,9 @@ namespace gzWeb.Tests.Models
             DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx;
             using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString))
             {
-                var portfoliosPriceMap =
-                    SetDbPortfoliosPriceMap(sqlProviderCtx, GetPortfoliosPricesMapTable(startYearMonthStr, monthsCnt), startYearMonthStr,
-                        monthsCnt);
+                var portfoliosPrices = GetPortfoliosPrices(startYearMonthStr, monthsCnt);
 
-                UserTrx.processGzTrx(sqlProviderCtx, startYearMonthStr, portfoliosPriceMap, FSharpOption<string>.None);
+                UserTrx.processGzTrx(sqlProviderCtx, startYearMonthStr, portfoliosPrices, FSharpOption<string>.None);
             }
         }
 
@@ -354,7 +333,7 @@ namespace gzWeb.Tests.Models
             return portfolioPricesEoM;
         }
 
-        private FSharpMap<string, PortfolioTypes.PortfoliosPrices> GetPortfoliosPricesMapTable(string currentYearMonthStr)
+        private FSharpMap<string, PortfolioTypes.PortfoliosPrices> GetPortfoliosPrices(string currentYearMonthStr)
         {
 
             double stockPrice = -1;
@@ -465,7 +444,7 @@ namespace gzWeb.Tests.Models
 
         private void ProcessInvBalances_1_through_4(int caseNo, List<int> usersFound, int monthsCnt, string currentYearMonthStr)
         {
-            FSharpMap<string, PortfolioTypes.PortfoliosPrices> portfoliosPriceMap = null;
+            PortfolioTypes.PortfoliosPrices monthPortfoliosPrices = null;
 
             DbUtil.DbSchema.GzRunTimeDb sqlProviderCtx;
             using (sqlProviderCtx = DbUtil.getOpenDb(devDbConnString))
@@ -489,16 +468,14 @@ namespace gzWeb.Tests.Models
 
                         var userVintages = AssertUserVintagesCount(userId, monthsCnt);
 
-                        portfoliosPriceMap = GetPortfoliosPricesMapTable(currentYearMonthStr);
-
-                        DailyPortfolioShares.setDbPortfoliosPrices(sqlProviderCtx, portfoliosPriceMap);
+                        monthPortfoliosPrices = GetPortfoliosPrices(currentYearMonthStr, monthsCnt);
 
                         SellVintages(caseNo, currentYearMonthStr, userVintages, userId);
                     }
                 }
 
                 // Process losses -> invbalance
-                UserTrx.processGzTrx(sqlProviderCtx, currentYearMonthStr, portfoliosPriceMap, FSharpOption<string>.None);
+                UserTrx.processGzTrx(sqlProviderCtx, currentYearMonthStr, monthPortfoliosPrices, FSharpOption<string>.None);
             }
 
             AssertAllUsersVintagesCountAfterMonthClearance(usersFound, monthsCnt + 1);
