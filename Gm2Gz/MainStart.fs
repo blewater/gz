@@ -94,10 +94,6 @@ let gmReports2Db
     Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder emailToProcAlone
     rptFilesOkToProcess.DayToProcess
 
-/// Choose next biz processing steps based on args
-let portfolioSharesPrelude2MainProcessing (db : DbContext) =
-    DailyPortfolioShares.storeShares db
-
 let getTimer() =
     let timer = System.Diagnostics.Stopwatch()
     timer.Start()
@@ -130,7 +126,7 @@ let main argv =
         UserTrx.processGzTrx
             db
             (customRpdDate.Substring(0, 6))
-            (portfolioSharesPrelude2MainProcessing db)
+            (DailyPortfolioShares.getLatestPortfolioPrices db customRpdDate)
             cmdArgs.UserEmailProcAlone
 
         appTimer.Stop()

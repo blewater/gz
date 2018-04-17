@@ -1,0 +1,10 @@
+{
+    "frameworks": {
+        "net46": {
+            "dependencies": {
+                "FSharp.Data": "2.4.6",
+                "FSharp.Data.TypeProviders": "5.0.0.2"
+            }
+        }
+    }
+}
