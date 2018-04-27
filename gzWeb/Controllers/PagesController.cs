@@ -20,7 +20,12 @@ namespace gzWeb.Controllers
         public IHttpActionResult Carousel(bool isMobile)
         {
             var now = DateTime.UtcNow;
-            return OkMsg(() => _dbContext.CarouselEntries.Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.IsMobile == isMobile));
+            return OkMsg(() => 
+                _dbContext
+                    .CarouselEntries
+                    .Where(x => x.Live && now >= x.LiveFrom && now <= x.LiveTo && !x.Deleted && x.IsMobile == isMobile)
+                    .OrderBy(c=>c.Code)
+                );
         }
 
         //[Route("Page")]
