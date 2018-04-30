@@ -27,13 +27,24 @@
       "Type": "DateTime",
       "Optional": true
     },
-    "Amount": {
-      "Type": "double"
-    },
     "CreatedOn": {
       "Type": "DateTime"
     },
     "LastProcessedTime": {
+      "Type": "DateTime"
+    }
+  },
+  "RegistrationReceipts": {
+    "UserEmail": {
+      "Type": "String"
+    },
+    "GmUserId": {
+      "Type": "int32"
+    },
+    "Days": {
+      "Type":  "int32" 
+    },
+    "EmailedOn": {
       "Type": "DateTime"
     }
   }
