@@ -1,0 +1,40 @@
+﻿{
+  "Registrations": {
+    "UserEmail": {
+      "Type": "String"
+    },
+    "GmUserId": {
+      "Type": "int32"
+    },
+    "GzUserId": {
+      "Type": "int32",
+      "Optional": true
+    },
+    "UserFirstName": {
+      "Type": "String"
+    },
+    "SignedUp": {
+      "Type": "DateTime"
+    },
+    "IsActive": {
+      "Type": "boolean"
+    },
+    "LastDeposit": {
+      "Type": "DateTime",
+      "Optional": true
+    },
+    "LastBonus": {
+      "Type": "DateTime",
+      "Optional": true
+    },
+    "Amount": {
+      "Type": "double"
+    },
+    "CreatedOn": {
+      "Type": "DateTime"
+    },
+    "LastProcessedTime": {
+      "Type": "DateTime"
+    }
+  }
+}
