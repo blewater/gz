@@ -6,12 +6,9 @@ open Microsoft.WindowsAzure.Storage
 open FSharp.Azure.StorageTypeProvider.Table
 open Newtonsoft.Json
 open NLog
-open FSharp.ExcelProvider
-
-type BalanceExcelSchema = ExcelFile< "Balance Prod 20161001.xlsx" >
-type CustomExcelSchema = ExcelFile< "Custom Prod 20180309.xlsx" >
-//type DepositsExcelSchema = ExcelFile< "Vendor2User Prod 20170606.xlsx" >
-//type BonusExcelSchema = ExcelFile< "Bonus Prod 20171212.xlsx" >
+open GzBatchCommon
+open ExcelSchemas
+open GmRptFiles
 
 let logger = LogManager.GetCurrentClassLogger()
 
@@ -26,3 +23,60 @@ let private openBalanceRptSchemaFile (excelFilename : string) : BalanceExcelSche
     logger.Info ""
     balanceFileExcelSchema
     
+/// Open an excel file and console out the filename
+let private openCustomRptSchemaFile excelFilename = 
+    let customExcelSchemaFile = new CustomExcelSchema(excelFilename)
+    logger.Info ""
+    logger.Info (sprintf "************ Processing Custom Report %s excel file" excelFilename)
+    logger.Info ""
+    customExcelSchemaFile
+    
+/// Process all excel lines except Totals and upsert them
+let private setDbCustomExcelRptRows 
+            (customExcelSchemaFile : CustomExcelSchema) 
+            (yyyyMmDd : string) 
+            (emailToProcAlone: string option) : unit =
+
+    // Loop through all excel rows
+    for excelRow in customExcelSchemaFile.Data do
+        let isActive = 
+            match excelRow.``Player status`` with 
+            | "Active" -> true
+            | "Blocked" -> true // They may be unblocked in the future
+            | _ -> false
+        let excelEmailAddress = excelRow.``Email address``
+        let okEmail =
+            match excelEmailAddress with
+            | null -> false
+            | email -> email |> allowedPlayerEmail
+        if 
+            isActive && okEmail then
+
+            printfn "Ok"
+
+            // Normal all users processing mode
+            //if emailToProcAlone.IsNone then
+            //    procCustomUser db yyyyMmDd excelRow
+    
+            //// single user processing
+            //elif emailToProcAlone.IsSome && emailToProcAlone.Value = excelEmailAddress then
+            //    procCustomUser db yyyyMmDd excelRow
+
+/// Process a single custom user row
+let procCustomUser (yyyyMmDd : string) (excelRow : CustomExcelSchema.Row) =
+    logger.Info(
+        sprintf "Processing email %s on %s/%s/%s" 
+            excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+
+/// Process the custom excel file: Extract each row and upsert the database PlayerRevRpt table customer rows.
+let loadCustomRpt 
+        (customRptFullPath: string) 
+        (emailToProcOnly: string option) : unit =
+
+    // Open excel report file for the memory schema
+    let openFile = customRptFullPath |> openCustomRptSchemaFile
+    let yyyyMmDd = customRptFullPath |> getCustomDtStr
+    try 
+        setDbCustomExcelRptRows openFile yyyyMmDd emailToProcOnly
+    with _ -> 
+        reraise()

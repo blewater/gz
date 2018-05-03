@@ -104,10 +104,26 @@
     <None Include="gzdbdev.dbml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="ExcelSchemas.fs" />
+    <Compile Include="GmRptFiles.fs" />
+    <None Include="WithdrawalsPending prod 20160930.xlsx" />
+    <None Include="Vendor2User Prod 20170606.xlsx" />
+    <None Include="Balance Prod 20161001.xlsx" />
+    <None Include="Custom Prod 20180309.xlsx" />
+    <None Include="Bonus Prod 20171212.xlsx" />
+    <None Include="ExchangeRate-31-08-2017.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>$(SolutionDir)\packages\BouncyCastle.1.8.2\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Excel">
+      <HintPath>..\GzBatch\packages\ExcelProvider.0.8.2\lib\Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ExcelProvider">
+      <HintPath>..\GzBatch\packages\ExcelProvider.0.8.2\lib\ExcelProvider.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Core">
       <HintPath>$(SolutionDir)\packages\FSharp.Core.4.3.4\lib\net45\FSharp.Core.dll</HintPath>
@@ -117,6 +133,10 @@
     </Reference>
     <Reference Include="FSharp.Data.TypeProviders">
       <HintPath>$(SolutionDir)packages\FSharp.Data.TypeProviders.5.0.0.2\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\GzBatch\packages\ExcelProvider.0.8.2\lib\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MailKit">

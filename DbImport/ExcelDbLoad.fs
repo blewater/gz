@@ -156,9 +156,9 @@ module DbPlayerRevRpt =
     open System
     open NLog
     open GzDb.DbUtil
-    open ExcelSchemas
     open GzBatchCommon
     open ExcelUtil
+    open ExcelSchemas
 
     let logger = LogManager.GetCurrentClassLogger()
 

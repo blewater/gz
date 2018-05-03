@@ -57,7 +57,11 @@
     <Content Include="packages.config" />
     <None Include="Emailing.json" />
     <None Include="Balance Prod 20161001.xlsx" />
+    <None Include="WithdrawalsPending prod 20160930.xlsx" />
+    <None Include="Vendor2User Prod 20170606.xlsx" />
     <None Include="Custom Prod 20180309.xlsx" />
+    <None Include="Bonus Prod 20171212.xlsx" />
+    <None Include="ExchangeRate-31-08-2017.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Excel">
@@ -117,6 +121,13 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GzCommon\GzBatchCommon.fsproj">
+      <Name>GzBatchCommon</Name>
+      <Project>{d118702e-4b38-4bcf-9184-daa324c5d160}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

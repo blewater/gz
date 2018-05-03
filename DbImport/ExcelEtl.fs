@@ -3,8 +3,8 @@
 module BalanceRpt2Db =
     open NLog
     open GzDb.DbUtil
-    open ExcelSchemas
     open GzBatchCommon
+    open ExcelSchemas
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -290,9 +290,9 @@ module BonusRpt2Db =
 module CustomRpt2Db =
     open NLog
     open GzDb.DbUtil
+    open GzBatchCommon
     open ExcelSchemas
     open GmRptFiles
-    open GzBatchCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -363,14 +363,15 @@ module Etl =
     open System.IO
     open GzDb.DbUtil
     open NLog
-    open GmRptFiles
-    open ExcelSchemas
     open CustomRpt2Db
     open BalanceRpt2Db
     open WithdrawalRpt2Db
     open DbPlayerRevRpt
     open DepositsRpt2Db
     open BonusRpt2Db
+    open GzBatchCommon
+    open ExcelSchemas
+    open GmRptFiles
 
     let logger = LogManager.GetCurrentClassLogger()
 

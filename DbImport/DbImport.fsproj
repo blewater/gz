@@ -89,8 +89,6 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="ExcelSchemas.fs" />
-    <Compile Include="GmRptFiles.fs" />
     <Compile Include="ExcelUtil.fs" />
     <Compile Include="ExcelDbLoad.fs" />
     <Compile Include="ExcelEtlWithdrawals.fs" />
@@ -107,25 +105,15 @@
     <None Include="Scripts\load-project-production.fsx" />
     <None Include="Scripts\load-references-debug.fsx" />
     <None Include="Scripts\load-project-debug.fsx" />
-    <None Include="Custom Prod 20180309.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Bonus Prod 20171212.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="ExchangeRate-31-08-2017.xlsx" />
-    <None Include="Vendor2User Prod 20170606.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="WithdrawalsPending prod 20160930.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Balance Prod 20161001.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="chromedriver.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Balance Prod 20161001.xlsx" />
+    <None Include="WithdrawalsPending prod 20160930.xlsx" />
+    <None Include="Vendor2User Prod 20170606.xlsx" />
+    <None Include="Custom Prod 20180309.xlsx" />
+    <None Include="Bonus Prod 20171212.xlsx" />
+    <None Include="ExchangeRate-31-08-2017.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">

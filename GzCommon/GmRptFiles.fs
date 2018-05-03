@@ -1,4 +1,4 @@
-﻿namespace DbImport
+﻿namespace GzBatchCommon
 
 module GmRptFiles =
     open System
