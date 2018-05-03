@@ -27,6 +27,9 @@
       "Type": "DateTime",
       "Optional": true
     },
+    "LastProcessed": {
+      "Type": "String"
+    },
     "CreatedOn": {
       "Type": "DateTime"
     },
@@ -41,10 +44,13 @@
     "GmUserId": {
       "Type": "int32"
     },
-    "Days": {
+    "RegistrationDays": {
       "Type":  "int32" 
     },
     "EmailedOn": {
+      "Type": "String"
+    },
+    "EmailedOnDt": {
       "Type": "DateTime"
     }
   }
