@@ -166,6 +166,11 @@
       <Project>{bd103410-e702-454c-ae68-17f50a0a4742}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Emailing\Emailing.fsproj">
+      <Name>Emailing</Name>
+      <Project>{bd33b020-d81c-4370-9038-6d4a1958a9b7}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\GzBalances\GzBalances.fsproj">
       <Name>GzBalances</Name>
       <Project>{906609cb-1aa2-4596-8584-94c2ccc23274}</Project>

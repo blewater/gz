@@ -491,3 +491,16 @@ module GmRptFiles =
                 endBalanceDateValidation rDates.begBalanceDate.Value rDates.endBalanceDate.Value
         // if no exception occurs to this point:
         { Valid = true; DayToProcess = rDates.customDate.ToYyyyMmDd } 
+
+    let validateReportFilenames(inputFolder : InRptFolder) : ExcelDatesValid =
+        let rptFilesOkToProcess = inputFolder
+                                    |> getExcelFilenames
+                                    |> balanceRptDateMatchTitles
+                                    |> depositsRptContentMatch
+                                    |> bonusRptContentMatch
+                                    |> getExcelDtStr
+                                    |> getExcelDates 
+                                    |> areExcelFilenamesValid
+        if not rptFilesOkToProcess.Valid then
+            exit 1
+        rptFilesOkToProcess

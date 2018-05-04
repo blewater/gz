@@ -30,7 +30,15 @@ let private openCustomRptSchemaFile excelFilename =
     logger.Info (sprintf "************ Processing Custom Report %s excel file" excelFilename)
     logger.Info ""
     customExcelSchemaFile
-    
+
+/// Process a single custom user row
+let procCustomUser (yyyyMmDd : string) (excelRow : CustomExcelSchema.Row) =
+    let joinDate = excelRow.``Join date``
+    printfn "%O" joinDate
+    logger.Info(
+        sprintf "Processing email %s on %s/%s/%s" 
+            excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+
 /// Process all excel lines except Totals and upsert them
 let private setDbCustomExcelRptRows 
             (customExcelSchemaFile : CustomExcelSchema) 
@@ -62,12 +70,6 @@ let private setDbCustomExcelRptRows
             //elif emailToProcAlone.IsSome && emailToProcAlone.Value = excelEmailAddress then
             //    procCustomUser db yyyyMmDd excelRow
 
-/// Process a single custom user row
-let procCustomUser (yyyyMmDd : string) (excelRow : CustomExcelSchema.Row) =
-    logger.Info(
-        sprintf "Processing email %s on %s/%s/%s" 
-            excelRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
-
 /// Process the custom excel file: Extract each row and upsert the database PlayerRevRpt table customer rows.
 let loadCustomRpt 
         (customRptFullPath: string) 
@@ -80,3 +82,8 @@ let loadCustomRpt
         setDbCustomExcelRptRows openFile yyyyMmDd emailToProcOnly
     with _ -> 
         reraise()
+
+
+let segmentUsers(inRpt : InRptFolder)(userEmail : string option) =
+    let reportFilenames = getExcelFilenames inRpt
+    loadCustomRpt reportFilenames.customFilename userEmail
