@@ -37,7 +37,7 @@ module GmRptFiles =
     type EndBalanceDateType = DateTime option
 
     type InRptFolder = { isProd : bool; folderName : FolderNameType }
-    type RptFilenames = { customFilename : CustomFilenameType; DepositsFilename : DepositsFilenameType; BonusFilename: BonusFilenameType; withdrawalsPendingFilename : WithdrawalsPendingFilenameType; withdrawalsRollbackFilename : WithdrawalsRollingFilenameType; begBalanceFilename : BegBalanceFilenameType; endBalanceFilename : EndBalanceFilenameType}
+    type RptFilenames = { customFilename : CustomFilenameType; DepositsFilename : DepositsFilenameType; PastDaysDepositsFilename : DepositsFilenameType; BonusFilename: BonusFilenameType; withdrawalsPendingFilename : WithdrawalsPendingFilenameType; withdrawalsRollbackFilename : WithdrawalsRollingFilenameType; begBalanceFilename : BegBalanceFilenameType; endBalanceFilename : EndBalanceFilenameType}
     type RptStrDates = { customDtStr : CustomStrDateType; DepositsDtStr : DepositsStrDateType; BonusDtStr : BonusStrDateType; withdrawalsPendingDtStr : WithdrawalsPendingStrDateType; withdrawalsRollbackDtStr : WithdrawalsRollbackStrDateType; begBalanceDtStr : BegBalanceStrDateType; endBalanceDtStr : EndBalanceStrDateType}
     type RptDates = { customDate : CustomDateType; DepositsDate : DepositsDateType; BonusDate : BonusDateType; withdrawalsPendingDate : WithdrawalsPendingDateType; withdrawalsRollbackDate : WithdrawalsRollbackDateType; begBalanceDate : BegBalanceDateType; endBalanceDate : EndBalanceDateType}
 
@@ -51,6 +51,8 @@ module GmRptFiles =
     let CustomFileListPrefix = "Custom"
     [<Literal>]
     let DepositsFileListPrefix = "Deposits"
+    [<Literal>]
+    let PastDaysDepositsFileListPrefix = "PastDaysDeposits"
     [<Literal>]
     let BonusFileListPrefix = "Bonus"
     [<Literal>]
@@ -173,6 +175,10 @@ module GmRptFiles =
         (DepositsFileListPrefix , inRptFolder, customFilename) 
             |||> getOptionalExcelRptFilenameInSyncWithCustomDate 
 
+    let getPastDepositsFilename (inRptFolder : InRptFolder)(customFilename : CustomFilenameType) : DepositsFilenameType = 
+        (PastDaysDepositsFileListPrefix, inRptFolder, customFilename) 
+            |||> getOptionalExcelRptFilenameInSyncWithCustomDate 
+
     let getBonusFilename (inRptFolder : InRptFolder)(customFilename : CustomFilenameType) : BonusFilenameType = 
         (BonusFileListPrefix, inRptFolder, customFilename) 
             |||> getOptionalExcelRptFilenameInSyncWithCustomDate 
@@ -198,6 +204,7 @@ module GmRptFiles =
         { 
             customFilename = customFilename
             DepositsFilename = getDepositsFilename inRptFolder customFilename
+            PastDaysDepositsFilename = getPastDepositsFilename inRptFolder customFilename
             BonusFilename = getBonusFilename inRptFolder customFilename
             withdrawalsPendingFilename = getWithdrawalPendingFilename inRptFolder customFilename
             withdrawalsRollbackFilename = getWithdrawalsRollbackFilename inRptFolder customFilename

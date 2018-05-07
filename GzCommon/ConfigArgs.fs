@@ -32,6 +32,7 @@ module ConfigArgs =
         WithdrawalsPendingRptFilenamePrefix : string;
         WithdrawalsRollbackRptFilenamePrefix : string;
         DepositsRptFilenamePrefix : string;
+        PastDaysDepositsRptFilenamePrefix : string;
         BonusRptFilenamePrefix : string;
         Wait_For_File_Download_MS : int;
     }

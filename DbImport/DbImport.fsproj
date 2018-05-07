@@ -97,7 +97,6 @@
     <None Include="openexchangerates.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Canopy_PlayerId.fs" />
     <Compile Include="Canopy_Excel.fs" />
     <Compile Include="ExcelDownloader.fs" />
     <None Include="Scripts\CanopyTester.fsx" />

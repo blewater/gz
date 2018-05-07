@@ -221,6 +221,13 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
         "#txtStartDate" << "01/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
         "#txtEndDate" << formDateToSet.Day.ToString("00") + "/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
 
+        /// Set the transaction report to span x days before up to now
+    let setPastMonthFormDates (daysBefore : float) : unit =
+        let utcNow = DateTime.UtcNow
+        let utcDaysBefore = utcNow.AddDays(-daysBefore)
+        "#txtStartDate" << utcDaysBefore.ToString("dd/MM/yyyy")
+        "#txtEndDate" << utcNow.ToString("dd/MM/yyyy")
+
     /// Bonus, Transaction Reports: Press show and if there's data download it
     let display2SavedRpt (searchBtnId: string)(downBtnId: string)(searchResultsSel: string)(selectorDataFound : string) : bool =
 
@@ -259,6 +266,24 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
         uiAutomatedEnterTransactionsReport()
 
         setFormDates dayToProcess
+
+        // Deposit
+        check "#chkTransType_0"
+
+        // Withdrawals
+        uncheck "#chkTransType_1"
+
+        // Vendor2User
+        check "#chkTransType_4"
+
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+    /// Past x days Deposits
+    let uiAutomateDownloadedPastDaysDepositsRpt (daysBefore : float) : bool =
+    
+        uiAutomatedEnterTransactionsReport()
+
+        setPastMonthFormDates daysBefore
 
         // Deposit
         check "#chkTransType_0"
@@ -478,6 +503,14 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
+        // Past x days Deposits
+        let downloadPastDaysDeposits() =
+            if uiAutomateDownloadedPastDaysDepositsRpt 30.0 then
+                renameRptInRptFolder
+                    rptFilesArgs.DownloadedDepositsFilter
+                    rptFilesArgs.PastDaysDepositsRptFilenamePrefix
+                    dayToProcess
+        retry NUM_DOWNLOAD_ATTEMPTS downloadPastDaysDeposits
 
         // Create Custom Scheduled Report
         if not <| monthlyCustomReportExists() then

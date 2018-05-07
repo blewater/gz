@@ -59,6 +59,7 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
             WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
             WithdrawalsRollbackRptFilenamePrefix = Settings.WithdrawalsRollbackRptFilenamePrefix;
             DepositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
+            PastDaysDepositsRptFilenamePrefix = Settings.PastDaysDepositsRptFilenamePrefix;
             BonusRptFilenamePrefix = Settings.BonusRptFilenamePrefix;
             Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
         }
