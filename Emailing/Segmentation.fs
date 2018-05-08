@@ -53,53 +53,68 @@ let getUserDeposits(depositsExcel : PastDepositsExcelSchema)(username : string) 
     |> Seq.filter (fun r -> objIsNotNull r.Username && r.Username.ToLower() = usernameLower)
     |> Seq.cache
 
-let getLastUserDepositDate(depositsExcel : PastDepositsExcelSchema)(username : string) : DateTime option= 
+let parseCompletedDate (dateString : string) : DateTime =
+    match DateTime.TryParseExact(dateString, "dd/MM/yyyy HH:mm", null, Globalization.DateTimeStyles.None) with
+    | true, date -> date
+    | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %A." dateString)
 
-    let userDeposits = getUserDeposits depositsExcel username 
+let findLastUserDepositDate (userDeposits : DepositsRows)(trxType : string) : DateTime option =
+    let len = userDeposits |> Seq.length
+    let lastDepositDate =
+        match len with
+        | 0 -> None
+        | _ ->
+            userDeposits
+            |> Seq.filter (fun r-> r.``Trans type`` = trxType)
+            |> Seq.sortByDescending (fun r-> (parseCompletedDate r.Completed))
+            |> Seq.head
+            |> fun r -> Some (parseCompletedDate r.Completed)
+    lastDepositDate
 
-    let parseCompletedDate (dateString : string) : DateTime =
-        match DateTime.TryParseExact(dateString, "dd/MM/yyyy HH:mm", null, Globalization.DateTimeStyles.None) with
-        | true, date -> date
-        | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %A." dateString)
-
-    let findLastUserDeposit (userDeposits : DepositsRows) : DateTime option =
-        let len = userDeposits |> Seq.length
-        let lastDepositDate =
-            match len with
-            | 0 -> None
-            | _ ->
-                userDeposits
-                |> Seq.filter (fun r-> r.``Trans type`` = "Deposit" && r.``Debit real amount`` > 0.0)
-                |> Seq.sortByDescending (fun r-> (parseCompletedDate r.Completed))
-                |> Seq.head
-                |> fun r -> Some (parseCompletedDate r.Completed)
-        lastDepositDate
+let getLastUserDepositDate(userDeposits : DepositsRows) : DateTime option= 
 
     let lastUserDepositDate =
         if objIsNotNull userDeposits then
-            findLastUserDeposit userDeposits
+            findLastUserDepositDate userDeposits "Deposit"
         else
             None
                 
+    printfn "Last deposit date %s" <| lastUserDepositDate.ToString()
+
     lastUserDepositDate
+
+let getLastBonusDate(userDeposits : DepositsRows) : DateTime option= 
+
+    let lastUserBonusDate =
+        if objIsNotNull userDeposits then
+            findLastUserDepositDate userDeposits "Vendor2User"
+        else
+            None
+
+    printfn "Last bonus date %s" <| lastUserBonusDate.ToString()
+                
+    lastUserBonusDate
 
 /// Process a single custom user row
 let processUser (yyyyMmDd : string) (excelCustomRow : CustomExcelSchema.Row)(depositsExcel : PastDepositsExcelSchema option) =
 
     let joiningDays = daysSinceJoining yyyyMmDd excelCustomRow
 
-    let lastUserDepositDate = 
+    let lastDate =
         match depositsExcel with
-        | Some openDeposits -> (getLastUserDepositDate openDeposits excelCustomRow.Username)
+        | Some openDeposits -> 
+            let userDeposits = getUserDeposits openDeposits excelCustomRow.Username 
+            let lastdepositDate = getLastUserDepositDate userDeposits
+            let lastBonusDate = getLastBonusDate userDeposits
+            lastBonusDate
         | _ -> None
 
     logger.Info(
-        sprintf "Processing email %s on %s/%s/%s with last deposit date: %s" 
+        sprintf "Processing email %s on %s/%s/%s" 
             excelCustomRow.``Email address`` 
             <| yyyyMmDd.Substring(6, 2) 
             <| yyyyMmDd.Substring(4, 2) 
-            <| yyyyMmDd.Substring(0, 4) 
-            <| if lastUserDepositDate.IsSome then lastUserDepositDate.Value.ToString() else "No deposits yet")
+            <| yyyyMmDd.Substring(0, 4))
 
 /// Process all excel lines except Totals and upsert them
 let private setDbExcelRows 
