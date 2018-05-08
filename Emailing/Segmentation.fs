@@ -9,39 +9,102 @@ open NLog
 open GzBatchCommon
 open ExcelSchemas
 open GmRptFiles
+open FsUtils
 
 let logger = LogManager.GetCurrentClassLogger()
 
 // Connect via configuration file with named connection string.
 type AzStorage = AzureTypeProvider<"DefaultEndpointsProtocol=https;AccountName=gzazurefunctionsstorage;AccountKey=70GYx9psHLDTh+y4TBIYNb2OSkXRWy5JTIdFFGL7GY3EsrTnebs8ztsyEu3ro5ZEnOm1g8RmgbrlORpSQuJEjQ==;EndpointSuffix=core.windows.net", tableSchema="Emailing.json">
 
-let private openDepositsRptSchemaFile excelFilename = 
-    let depositsExcelSchemaFile = DepositsExcelSchema(excelFilename)
+let openDepositsRptSchemaFile excelFilename = 
+    let depositsExcelSchemaFile = PastDepositsExcelSchema(excelFilename)
     logger.Info ""
     logger.Info (sprintf "************ Importing Segmentation Users from Deposits Report %s excel file" excelFilename)
     logger.Info ""
     depositsExcelSchemaFile
     
 /// Open an excel file and console out the filename
-let private openCustomRptSchemaFile excelFilename = 
+let openCustomRptSchemaFile excelFilename = 
     let customExcelSchemaFile = new CustomExcelSchema(excelFilename)
     logger.Info ""
     logger.Info (sprintf "************ Importing Segmentation Users from Custom Report %s excel file" excelFilename)
     logger.Info ""
     customExcelSchemaFile
 
+let daysSinceJoining(yyyyMmDd : string) (excelCustomRow : CustomExcelSchema.Row) : float =
+    let joinDateObj = excelCustomRow.``Join date``
+    let userJoinDate =
+        match DateTime.TryParseExact(joinDateObj, "yyyy-MM-dd", null, Globalization.DateTimeStyles.None) with
+        | true, date -> date
+        | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %A." joinDateObj)
+
+    let procDate = yyyyMmDd.ToDateWithDay.AddDays(1.0)
+
+    printfn "Join Date: %s, Processing Date: %s" (userJoinDate.ToString()) yyyyMmDd
+
+    let joinElapsedDays = (procDate - userJoinDate).TotalDays
+    joinElapsedDays
+    
+type DepositsRows = seq<PastDepositsExcelSchema.Row>
+
+let getUserDeposits(depositsExcel : PastDepositsExcelSchema)(username : string) : DepositsRows = 
+    let usernameLower = username.ToLower()
+    depositsExcel.Data
+    |> Seq.filter (fun r -> objIsNotNull r.Username && r.Username.ToLower() = usernameLower)
+    |> Seq.cache
+
+let getLastUserDepositDate(depositsExcel : PastDepositsExcelSchema)(username : string) : DateTime option= 
+
+    let userDeposits = getUserDeposits depositsExcel username 
+
+    let parseCompletedDate (dateString : string) : DateTime =
+        match DateTime.TryParseExact(dateString, "dd/MM/yyyy HH:mm", null, Globalization.DateTimeStyles.None) with
+        | true, date -> date
+        | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %A." dateString)
+
+    let findLastUserDeposit (userDeposits : DepositsRows) : DateTime option =
+        let len = userDeposits |> Seq.length
+        let lastDepositDate =
+            match len with
+            | 0 -> None
+            | _ ->
+                userDeposits
+                |> Seq.filter (fun r-> r.``Trans type`` = "Deposit" && r.``Debit real amount`` > 0.0)
+                |> Seq.sortByDescending (fun r-> (parseCompletedDate r.Completed))
+                |> Seq.head
+                |> fun r -> Some (parseCompletedDate r.Completed)
+        lastDepositDate
+
+    let lastUserDepositDate =
+        if objIsNotNull userDeposits then
+            findLastUserDeposit userDeposits
+        else
+            None
+                
+    lastUserDepositDate
+
 /// Process a single custom user row
-let processUser (yyyyMmDd : string) (excelCustomRow : CustomExcelSchema.Row)(depositsExcel : DepositsExcelSchema option) =
-    let joinDate = excelCustomRow.``Join date``
-    printfn "%O" joinDate
+let processUser (yyyyMmDd : string) (excelCustomRow : CustomExcelSchema.Row)(depositsExcel : PastDepositsExcelSchema option) =
+
+    let joiningDays = daysSinceJoining yyyyMmDd excelCustomRow
+
+    let lastUserDepositDate = 
+        match depositsExcel with
+        | Some openDeposits -> (getLastUserDepositDate openDeposits excelCustomRow.Username)
+        | _ -> None
+
     logger.Info(
-        sprintf "Processing email %s on %s/%s/%s" 
-            excelCustomRow.``Email address`` <| yyyyMmDd.Substring(6, 2) <| yyyyMmDd.Substring(4, 2) <| yyyyMmDd.Substring(0, 4))
+        sprintf "Processing email %s on %s/%s/%s with last deposit date: %s" 
+            excelCustomRow.``Email address`` 
+            <| yyyyMmDd.Substring(6, 2) 
+            <| yyyyMmDd.Substring(4, 2) 
+            <| yyyyMmDd.Substring(0, 4) 
+            <| if lastUserDepositDate.IsSome then lastUserDepositDate.Value.ToString() else "No deposits yet")
 
 /// Process all excel lines except Totals and upsert them
 let private setDbExcelRows 
             (customExcelSchemaFile : CustomExcelSchema)
-            (depositsExcel : DepositsExcelSchema option)
+            (depositsExcel : PastDepositsExcelSchema option)
             (yyyyMmDd : string) 
             (emailToProcAlone: string option) : unit =
 
