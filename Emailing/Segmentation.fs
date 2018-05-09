@@ -45,53 +45,76 @@ let daysSinceJoining(yyyyMmDd : string) (excelCustomRow : CustomExcelSchema.Row)
     let joinElapsedDays = (procDate - userJoinDate).TotalDays
     joinElapsedDays
     
-type DepositsRows = seq<PastDepositsExcelSchema.Row>
-
-let getUserDeposits(depositsExcel : PastDepositsExcelSchema)(username : string) : DepositsRows = 
-    let usernameLower = username.ToLower()
-    depositsExcel.Data
-    |> Seq.filter (fun r -> objIsNotNull r.Username && r.Username.ToLower() = usernameLower)
-    |> Seq.cache
+type DepositTrx = 
+    {
+        Amount : float;
+        CompletedDate : DateTime;
+        DepositTrx : bool;
+    }
+type DepositTrxs = DepositTrx seq
 
 let parseCompletedDate (dateString : string) : DateTime =
     match DateTime.TryParseExact(dateString, "dd/MM/yyyy HH:mm", null, Globalization.DateTimeStyles.None) with
     | true, date -> date
     | false, _ -> invalidArg "Cannot parse a Date in this string" (sprintf "this string %A." dateString)
 
-let findLastUserDepositDate (userDeposits : DepositsRows)(trxType : string) : DateTime option =
-    let len = userDeposits |> Seq.length
+let getUserDeposits(depositsExcel : PastDepositsExcelSchema)(username : string) : DepositTrxs option = 
+    let usernameLower = username.ToLower()
+
+    let userDeposits =
+        depositsExcel.Data
+        |> Seq.filter (fun (r:PastDepositsExcelSchema.Row) -> objIsNotNull r.Username && r.Username.ToLower() = usernameLower)
+
+    let userDepositsLen = userDeposits |> Seq.length
+    match userDepositsLen with
+    | 0 -> None
+    | _ ->
+        userDeposits
+        |> Seq.map(fun (r:PastDepositsExcelSchema.Row) -> 
+            { 
+                Amount = r.``Credit real  amount``; 
+                CompletedDate = parseCompletedDate r.Completed;
+                DepositTrx = (r.``Trans type`` = "Deposit") 
+            })
+        |> Seq.sortByDescending (fun r-> r.CompletedDate)
+        |> Seq.cache
+        |> Some
+
+let findLastUserDepositDate (userDeposits : DepositTrxs)(depositTrx : bool) : DateTime option =
     let lastDepositDate =
-        match len with
+        let userDepTrxs =
+            userDeposits
+            |> Seq.filter (fun r-> r.DepositTrx = depositTrx)
+        let userDepTrxsLen = userDepTrxs |> Seq.length
+        match userDepTrxsLen with
         | 0 -> None
         | _ ->
-            userDeposits
-            |> Seq.filter (fun r-> r.``Trans type`` = trxType)
-            |> Seq.sortByDescending (fun r-> (parseCompletedDate r.Completed))
+            userDepTrxs
             |> Seq.head
-            |> fun r -> Some (parseCompletedDate r.Completed)
+            |> fun r -> Some r.CompletedDate
     lastDepositDate
 
-let getLastUserDepositDate(userDeposits : DepositsRows) : DateTime option= 
+let getLastUserDepositDate(userDeposits : DepositTrxs option) : DateTime option= 
 
     let lastUserDepositDate =
-        if objIsNotNull userDeposits then
-            findLastUserDepositDate userDeposits "Deposit"
-        else
-            None
+        match userDeposits with
+        | Some deposits ->
+            findLastUserDepositDate deposits true
+        | None -> None
                 
-    printfn "Last deposit date %s" <| lastUserDepositDate.ToString()
+    printfn "Last deposit date %s" <| if lastUserDepositDate.IsSome then lastUserDepositDate.ToString() else "None"
 
     lastUserDepositDate
 
-let getLastBonusDate(userDeposits : DepositsRows) : DateTime option= 
+let getLastBonusDate(userDeposits : DepositTrxs option) : DateTime option= 
 
     let lastUserBonusDate =
-        if objIsNotNull userDeposits then
-            findLastUserDepositDate userDeposits "Vendor2User"
-        else
-            None
+        match userDeposits with
+        | Some deposits ->
+            findLastUserDepositDate deposits false
+        | None -> None
 
-    printfn "Last bonus date %s" <| lastUserBonusDate.ToString()
+    printfn "Last bonus date %s" <| if lastUserBonusDate.IsSome then lastUserBonusDate.ToString() else "None"
                 
     lastUserBonusDate
 
