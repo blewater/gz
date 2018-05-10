@@ -17,6 +17,7 @@ module GmRptFiles =
     type WithdrawalsRollingFilenameType = string option
     type BegBalanceFilenameType = string option
     type EndBalanceFilenameType = string option
+    type CasinoGameReportType = string option
 
     // Filename string dates
     type CustomStrDateType = string
