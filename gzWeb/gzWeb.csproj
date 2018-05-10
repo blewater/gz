@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44300</IISExpressSSLPort>
+    <IISExpressSSLPort>44377</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -719,6 +719,10 @@
     <Compile Include="Migrations\201803101802259_CashDeposits_XReportDates.cs" />
     <Compile Include="Migrations\201803101802259_CashDeposits_XReportDates.Designer.cs">
       <DependentUpon>201803101802259_CashDeposits_XReportDates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805101836399_Betting.cs" />
+    <Compile Include="Migrations\201805101836399_Betting.Designer.cs">
+      <DependentUpon>201805101836399_Betting.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
@@ -1589,6 +1593,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803101802259_CashDeposits_XReportDates.resx">
       <DependentUpon>201803101802259_CashDeposits_XReportDates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805101836399_Betting.resx">
+      <DependentUpon>201805101836399_Betting.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

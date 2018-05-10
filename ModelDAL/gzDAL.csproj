@@ -181,6 +181,7 @@
     <Compile Include="Models\CarouselEntry.cs" />
     <Compile Include="Models\InvAdj.cs" />
     <Compile Include="Models\PlayerRevLastMonth.cs" />
+    <Compile Include="Models\Betting.cs" />
     <Compile Include="Models\RevokedUser.cs" />
     <Compile Include="Models\VintageShares.cs" />
     <Compile Include="Models\DbSetExtensions.cs" />
