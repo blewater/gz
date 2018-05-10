@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Segmentation.fs" />
+    <Compile Include="QryInvActions.fs" />
     <None Include="Script.fsx" />
     <Content Include="packages.config" />
     <None Include="Emailing.json" />
@@ -144,6 +145,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
