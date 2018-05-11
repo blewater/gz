@@ -112,7 +112,7 @@
     <None Include="Custom Prod 20180309.xlsx" />
     <None Include="Bonus Prod 20171212.xlsx" />
     <None Include="ExchangeRate-31-08-2017.xlsx" />
-    <None Include="CasinoGameReport.xlsx" />
+    <None Include="CasinoGameReport 20170509.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">
@@ -168,7 +168,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <Import Project="$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets" Condition="Exists('$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets')" />
+  <!-- <Import Project="$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets" Condition="Exists('$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets')" /> -->
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

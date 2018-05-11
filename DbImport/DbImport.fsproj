@@ -179,7 +179,7 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets" Condition="Exists('$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets')" />
+  <!-- <Import Project="$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets" Condition="Exists('$(SolutionDir)\packages\FSharpLint.MSBuild.0.9.0\build\FSharpLint.MSBuild.targets')" /> -->
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
