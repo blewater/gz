@@ -8,9 +8,9 @@
 #r "System.Xml.Linq.dll"
 #r "System.Drawing.dll"
 #r "System.Configuration.dll"
-#r "../packages/Selenium.WebDriver/lib/net40/WebDriver.dll"
+#r "../../GzBatch/packages/Selenium.WebDriver.3.11.2/lib/net40/WebDriver.dll"
 #r "../../GzBatch/packages/Selenium.Support.3.8.0/lib/net40/WebDriver.Support.dll"
-#r "../packages/canopy/lib/canopy.dll"
+#r "../../GzBatch/packages/canopy.1.6.3/lib/canopy.dll"
 #r "../../GzBatch/packages/System.ValueTuple.4.4.0/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
 open canopy
@@ -40,6 +40,7 @@ let downloadedBalanceFilter = "byBalance*.xlsx"
 let downloadedWithdrawalsFilter = "trans*.xlsx"
 let downloadedDepositsFilter = "trans*.xlsx"
 let downloadedBonusFilter = "Casino bonus-completed bonus*.xlsx"
+let downloadedCasinoGameFilter = "CasinoGameReport Prod "
 
 let customRptFilenamePrefix = "Custom Prod "
 let endBalanceRptFilenamePrefix = "Balance Prod "
@@ -47,6 +48,7 @@ let withdrawalsPendingRptFilenamePrefix = "withdrawalsPending Prod "
 let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
 let depositsRptFilenamePrefix = "Deposits Prod "
 let bonusRptFilenamePrefix = "Bonus Prod "
+let casinoGameRptFilenameFilter = "CasinoGameReport Prod "
 
 let dayToProcess = DateTime.Today.AddDays(-1.0)
 
@@ -437,9 +439,17 @@ let uiAutomationDownloading (dayToProcess : DateTime) =
     canopy.configuration.chromeDir <- projDir
     let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
     chromeOptions.AddArgument("--no-sandbox")
-    chromeOptions.AddArgument("--disable-extensions")
-    chromeOptions.AddArgument("--headless")
     chromeOptions.AddArgument("--disable-gpu")
+    chromeOptions.AddArgument("--disable-extensions")
+    //chromeOptions.AddArgument("--headless")
+    chromeOptions.AddArgument("--disable-client-side-phishing-detection")
+    chromeOptions.AddArgument("--disable-suggestions-service")
+    chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
+    chromeOptions.AddArgument("--no-first-run")
+    chromeOptions.AddUserProfilePreference("download.prompt_for_download", false)
+    chromeOptions.AddUserProfilePreference("download.directory_upgrade", true)
+    chromeOptions.AddUserProfilePreference("download.default_directory", inRptFolderName)
+
     let chromeNoSandbox = ChromeWithOptions(chromeOptions)
     start chromeNoSandbox
     match screen.monitorCount with

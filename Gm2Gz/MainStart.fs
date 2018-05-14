@@ -54,6 +54,7 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
             DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
             DownloadedDepositsFilter = Settings.DownloadedDepositsFilter;
             DownloadedBonusFilter = Settings.DownloadedBonusFilter;
+            DownloadedCasinoGameFilter = Settings.DownloadedCasinoGameFilter;
             CustomRptFilenamePrefix = Settings.CustomRptFilenamePrefix;
             EndBalanceRptFilenamePrefix = Settings.EndBalanceRptFilenamePrefix;
             WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
@@ -61,6 +62,7 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
             DepositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
             PastDaysDepositsRptFilenamePrefix = Settings.PastDaysDepositsRptFilenamePrefix;
             BonusRptFilenamePrefix = Settings.BonusRptFilenamePrefix;
+            CasinoGameRptFilenameFilter = Settings.CasinoGameRptFilenameFilter;
             Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
         }
 

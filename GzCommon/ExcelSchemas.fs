@@ -14,7 +14,7 @@ module ExcelSchemas =
     type PastDepositsExcelSchema = ExcelFile< "Vendor2User Prod 20170606.xlsx" >
     type BonusExcelSchema = ExcelFile< "Bonus Prod 20171212.xlsx" >
     type CurrencyExchanges = ExcelFile< "ExchangeRate-31-08-2017.xlsx" >
-    type CasinoGameReport = ExcelFile< "CasinoGameReport.xlsx" >
+    type CasinoGameReport = ExcelFile< "CasinoGameReport 20170509.xlsx" >
 
     type BonusExcel = 
         {

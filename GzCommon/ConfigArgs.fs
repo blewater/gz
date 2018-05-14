@@ -27,13 +27,18 @@ module ConfigArgs =
         DownloadedWithdrawalsFilter : string;
         DownloadedDepositsFilter : string;
         DownloadedBonusFilter : string;
+        DownloadedCasinoGameFilter : string; // Segmentation betting table usage
+
         CustomRptFilenamePrefix : string;
         EndBalanceRptFilenamePrefix : string;
         WithdrawalsPendingRptFilenamePrefix : string;
         WithdrawalsRollbackRptFilenamePrefix : string;
         DepositsRptFilenamePrefix : string;
-        PastDaysDepositsRptFilenamePrefix : string;
         BonusRptFilenamePrefix : string;
+        (* Email Segmentation *)
+        PastDaysDepositsRptFilenamePrefix : string;
+        CasinoGameRptFilenameFilter : string;
+
         Wait_For_File_Download_MS : int;
     }
 
