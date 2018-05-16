@@ -158,6 +158,7 @@ namespace gzWeb
                     , "~/Scripts/intro/angular-intro.min.js"
                     , "~/_app/modules/customDirectives.js"
                     , "~/_app/modules/customFilters.js"
+                    , "~/Scripts/cms/buttercms-1.1.1.min.js"
                 });
 
             var everyMatrixStageSetting = ConfigurationManager.AppSettings["everyMatrixStage"];
@@ -351,6 +352,7 @@ namespace gzWeb
                                     , "~/_app/services/navService.js"
                                     , "~/_app/services/iovationService.js"
                                     , "~/_app/services/modalsService.js"
+                                    , "~/_app/services/cmsService.js"
             #endregion
 
             #region nsMessageService

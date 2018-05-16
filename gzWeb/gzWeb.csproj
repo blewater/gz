@@ -847,6 +847,7 @@
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
     <Content Include="Scripts\autobahn\autobahn.min.js" />
+    <Content Include="Scripts\cms\buttercms-1.1.1.min.js" />
     <Content Include="_app\accountManagement\depositMoneyMatrixBankTransfer.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixBankTransferCtrl.js" />
     <Content Include="Scripts\intro\angular-intro.min.js" />
@@ -1180,6 +1181,7 @@
     <Content Include="_app\investments\gzPlanHoldingsChart.js" />
     <Content Include="_app\services\authService.js" />
     <Content Include="_app\services\modalsService.js" />
+    <Content Include="_app\services\cmsService.js" />
     <Content Include="_app\services\navService.js" />
     <Content Include="_app\services\iovationService.js" />
     <Content Include="_app\services\loginCtrl.Test.js" />
