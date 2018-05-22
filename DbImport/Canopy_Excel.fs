@@ -221,6 +221,13 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
         "#txtStartDate" << "01/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
         "#txtEndDate" << formDateToSet.Day.ToString("00") + "/" + formDateToSet.Month.ToString("00") + "/" + formDateToSet.Year.ToString()
 
+        /// Set the transaction report to span x days before up to now
+    let setPastMonthFormDates (daysBefore : float) : unit =
+        let utcNow = DateTime.UtcNow
+        let utcDaysBefore = utcNow.AddDays(-daysBefore)
+        "#txtStartDate" << utcDaysBefore.ToString("dd/MM/yyyy")
+        "#txtEndDate" << utcNow.ToString("dd/MM/yyyy")
+
     /// Bonus, Transaction Reports: Press show and if there's data download it
     let display2SavedRpt (searchBtnId: string)(downBtnId: string)(searchResultsSel: string)(selectorDataFound : string) : bool =
 
@@ -271,7 +278,57 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
 
         display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
-    // Into the player bonuses including inv bonus
+(*--------------------- Non Investment Reports ----------------------------*)
+
+    /// Past x days Deposits
+    let uiAutomateDownloadedPastDaysDepositsRpt (daysBefore : float) : bool =
+    
+        uiAutomatedEnterTransactionsReport()
+
+        setPastMonthFormDates daysBefore
+
+        // Deposit
+        check "#chkTransType_0"
+
+        // Withdrawals
+        uncheck "#chkTransType_1"
+
+        // Vendor2User
+        check "#chkTransType_4"
+
+        display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
+
+    /// Download the monthly custom report
+    let automateDownloadCasinoGameReportRpt (dayToProcess : DateTime) =
+
+        try 
+            // Activity
+            click "#nav > li:nth-child(1) > a"
+
+            click "#nav > li:nth-child(1) > ul > li:nth-child(9) > a"
+
+            click "#nav > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(5) > a"
+
+            "#ddlDisplayBy" << "Player"
+
+            let endDate = dayToProcess
+            let startDate = endDate
+
+            "#txtStartDate" << startDate.Day.ToString("00") + "/" + startDate.Month.ToString("00") + "/" + startDate.Year.ToString()
+            "#txtEndDate" << endDate.Day.ToString("00") + "/" + endDate.Month.ToString("00") + "/" + endDate.Year.ToString()
+
+            click "#btnSaveAsExcel"
+            Threading.Thread.Sleep(waitForFileDownloadMs)
+            true
+        with
+        | :? OpenQA.Selenium.WebDriverTimeoutException 
+            ->  printfn "Absorbed WebDriverTimeoutException during the Balance download"; 
+                false
+        | _ -> false
+
+(*--------------------- End of Non Investment Reports ----------------------------*)
+
+    /// Into the player bonuses including inv bonus
     let uiEnterBonusReport() = 
         // Activity
         click "#nav > li:nth-child(1) > a"
@@ -478,6 +535,26 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
+(**** Non-investment reports ****)
+
+        // Past x days Deposits
+        let downloadPastDaysDeposits() =
+            if uiAutomateDownloadedPastDaysDepositsRpt 30.0 then
+                renameRptInRptFolder
+                    rptFilesArgs.DownloadedDepositsFilter
+                    rptFilesArgs.PastDaysDepositsRptFilenamePrefix
+                    dayToProcess
+        retry NUM_DOWNLOAD_ATTEMPTS downloadPastDaysDeposits
+
+        let downloadPlayerActivity() =
+            if automateDownloadCasinoGameReportRpt dayToProcess then
+                renameRptInRptFolder
+                    rptFilesArgs.DownloadedCasinoGameFilter
+                    rptFilesArgs.CasinoGameRptFilenamePrefix
+                    dayToProcess
+        retry NUM_DOWNLOAD_ATTEMPTS downloadPlayerActivity
+
+(**** Investment reports ****)
 
         // Create Custom Scheduled Report
         if not <| monthlyCustomReportExists() then

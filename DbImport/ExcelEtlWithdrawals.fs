@@ -67,7 +67,7 @@ module WithdrawalRpt2Db =
 
         // initiatedCurrently && not CompletedInSameMonth are true pending
         if withdrawalType = Pending && initiatedCurrently && not completedInSameMonth && not rollbackNote then
-            DbPlayerRevRpt.updDbWithdrawalsPlayerRow Pending db yyyyMmDd excelRow.Email excelRow
+            DbPlayerRevRpt.updDbWithdrawalsPlayerRow GzBatchCommon.ExcelSchemas.Pending db yyyyMmDd excelRow.Email excelRow
 
         // initiatedCurrently && CompletedInSameMonth are Completed Withdrawals and we track in the user currency
         elif withdrawalType = Pending && initiatedCurrently && completedInSameMonth && not rollbackNote then

@@ -54,8 +54,8 @@ module DbGzTrx =
     /// Get the greenzorro used id by email
     let getGzUserId (db : DbContext) (gmUserEmail : string) : int option =
         query {
-            for user in db.AspNetUsers do
-            where (user.Email = gmUserEmail)
+            for user in db.PlayerRevRpt do
+            where (user.Username = gmUserEmail)
             select user.Id
             exactlyOneOrDefault 
         }
@@ -156,9 +156,9 @@ module DbPlayerRevRpt =
     open System
     open NLog
     open GzDb.DbUtil
-    open ExcelSchemas
     open GzBatchCommon
     open ExcelUtil
+    open ExcelSchemas
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -216,6 +216,8 @@ module DbPlayerRevRpt =
         |> Seq.iter (setDbPlayerGainLoss emailToProcAlone)
         db.SubmitChanges()
 
+
+(*********** Deposits Report Upload ***************)
 
     /// get deposits in the user currency
     let getDepositAmountInUserCurrency
@@ -277,6 +279,10 @@ module DbPlayerRevRpt =
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.DepositsUpd
 
+(*********** End of Deposits Report Upload ***************)
+
+(*********** Bonus Report Upload ***************)
+
     /// Increase the total deposits value in the playerRevRpt table by the investment bonus
     let private updDbRowBonusValues(bonusExcelRow : BonusExcel)(playerRow : DbPlayerRevRpt) = 
 
@@ -294,6 +300,10 @@ module DbPlayerRevRpt =
         //Non-excel content
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.BonusUpd
+
+(*********** End of Bonus Report Upload ***************)
+
+(*********** Withdrawal Report Upload ***************)
 
     /// get withdrawals in the user currency or fail if not possible
     let getWithdrawalAmountInUserCurrency
@@ -349,6 +359,10 @@ module DbPlayerRevRpt =
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
         playerRow.Processed <- int GmRptProcessStatus.WithdrawsRptUpd
 
+(*********** End of Withdrawal Report Upload ***************)
+
+(*********** Begining Balance Report Upload ***************)
+
     /// Update begining balance amount of the selected month
     let private updDbRowBegBalanceValues 
             (begBalanceExcelRow : BalanceExcelSchema.Row) 
@@ -371,7 +385,11 @@ module DbPlayerRevRpt =
         //Non-excel content
         playerRow.Processed <- int GmRptProcessStatus.EndBalanceRptUpd
         playerRow.UpdatedOnUtc <- DateTime.UtcNow
-    
+
+(*********** End of Begining Balance Report Upload ***************)
+
+(*********** Custom Report Upload ***************)
+
     /// Update most PlayerRevRpt row values from the CustomRpt values but without touching the id or insert time stamp.
     let private setDbRowCustomValues 
             (yearMonthDay : string) 
@@ -439,6 +457,38 @@ module DbPlayerRevRpt =
             new DbPlayerRevRpt(UserID = (int) excelRow.``User ID``, CreatedOnUtc = DateTime.UtcNow)
         setDbRowCustomValues yearMonthDay excelRow newPlayerRow
         db.PlayerRevRpt.InsertOnSubmit(newPlayerRow)
+
+(*********** End Custom Report Upload ***************)
+
+(*********** Casino Gaming Report Upload ***************)
+
+    /// Update most PlayerRevRpt row values from the CustomRpt values but without touching the id or insert time stamp.
+    let private updDbRowPlaying
+            (yearMonthDay : string) 
+            (playingExcelRow : CasinoGameExcelSchema.Row) 
+            (playingDbRow : DbBetting) : unit =
+
+        playingDbRow.Username <- playingExcelRow.Item
+        playingDbRow.Rounds <- (float32) playingExcelRow.Rounds
+        let payoutFloat =  Single.Parse(playingExcelRow.Payout.TrimEnd([|'%'|]))
+        playingDbRow.Payout <- payoutFloat
+        playingDbRow.UserWin <- (float32) playingExcelRow.``Game win``
+        playingDbRow.YearMonthDay <- yearMonthDay
+
+    /// Insert custom excel row values in db Row but don't touch the id and set the createdOnUtc time stamp.
+    let insDbNewPlayingRow
+            (db : DbContext) 
+            (yearMonthDay : string) 
+            (excelRow : CasinoGameExcelSchema.Row) : unit =
+
+        let newPlayingRow = 
+            new DbBetting(Username = excelRow.Item, CreatedOnUtc = DateTime.UtcNow)
+        updDbRowPlaying yearMonthDay excelRow newPlayingRow
+        db.Bettings.InsertOnSubmit(newPlayingRow)
+
+(*********** End Casino Gaming Report Upload ***************)
+
+(*********** Db Upsert Methods ***************)
 
     /// Set withdrawal amount in a db PlayerRevRpt Row
     let updDbWithdrawalsPlayerRow 
@@ -560,6 +610,27 @@ module DbPlayerRevRpt =
         )
         db.SubmitChanges()
 
+    /// Upsert excel row values in a db PlayerRevRpt Row
+    let setDbPlayerGamingRow (db : DbContext)
+                        (username : string)
+                        (yyyyMmDd :string) 
+                        (playingExcelRow : CasinoGameExcelSchema.Row) : unit =
+
+        let yyyyMm = yyyyMmDd.ToYyyyMm
+        query { 
+            for playingRow in db.Bettings do
+                where (playingRow.YearMonthDay = yyyyMmDd && playingRow.Username = username)
+                select playingRow
+                exactlyOneOrDefault
+        }
+        |> (fun playingDbRow -> 
+            if isNull playingDbRow then 
+                insDbNewPlayingRow db yyyyMmDd playingExcelRow
+            else 
+                updDbRowPlaying yyyyMmDd playingExcelRow playingDbRow
+        )
+        db.SubmitChanges()
+
     /// Update all null everymatrix customer ids from the playerRevRpt (excel reports table)
     let setDbGmCustomerId(db : DbContext) =
 
@@ -596,4 +667,6 @@ module DbPlayerRevRpt =
         )
         if getErrorStatus() then
             logger.Warn "Unresolved AspNetUser rows found without GmPlayerId. Please see the log entries preceeding this."
+
+(*********** End of Db Upsert Methods ***************)
       

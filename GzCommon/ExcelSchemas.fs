@@ -1,4 +1,4 @@
-namespace DbImport
+namespace GzBatchCommon
 
 module ExcelSchemas =
     open FSharp.ExcelProvider
@@ -11,8 +11,10 @@ module ExcelSchemas =
     // Transactions Rpt: Withdrawal Type + Completed + Rollback
     type WithdrawalsRollbackExcelSchema = WithdrawalsPendingExcelSchema
     type DepositsExcelSchema = ExcelFile< "Vendor2User Prod 20170606.xlsx" >
+    type PastDepositsExcelSchema = ExcelFile< "Vendor2User Prod 20170606.xlsx" >
     type BonusExcelSchema = ExcelFile< "Bonus Prod 20171212.xlsx" >
     type CurrencyExchanges = ExcelFile< "ExchangeRate-31-08-2017.xlsx" >
+    type CasinoGameExcelSchema = ExcelFile< "CasinoGameReport 20170509.xlsx" >
 
     type BonusExcel = 
         {
@@ -33,7 +35,9 @@ module ExcelSchemas =
     | BalanceRptExcel
     | WithdrawalsRptExcel
     | Vendor2UserRptExcel
+    | PastDepositsExcel
     | ExchRateRptExcel
+    | CasinoGameReport
 
     type BalanceType =
     | BeginingBalance
