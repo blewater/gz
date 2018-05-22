@@ -48,7 +48,7 @@ let withdrawalsPendingRptFilenamePrefix = "withdrawalsPending Prod "
 let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
 let depositsRptFilenamePrefix = "Deposits Prod "
 let bonusRptFilenamePrefix = "Bonus Prod "
-let casinoGameRptFilenameFilter = "CasinoGameReport Prod "
+let casinoGameRptFilenamePrefix = "CasinoGameReport Prod "
 
 let dayToProcess = DateTime.Today.AddDays(-1.0)
 
@@ -220,7 +220,28 @@ let removeScheduledEmailCustomReport() : unit =
     |> elementWithin "td:nth-last-child(1) > a" 
     |> click
     acceptAlert()
-    
+
+/// Download the monthly custom report
+let uiAutomateDownloadCasinoGameReportRpt (dayToProcess : DateTime) =
+
+    // Activity
+    click "#nav > li:nth-child(1) > a"
+
+    click "#nav > li:nth-child(1) > ul > li:nth-child(9) > a"
+
+    click "#nav > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(5) > a"
+
+    "#ddlDisplayBy" << "Player"
+
+    let endDate = dayToProcess
+    let startDate = endDate
+
+    "#txtStartDate" << startDate.Day.ToString("00") + "/" + startDate.Month.ToString("00") + "/" + startDate.Year.ToString()
+    "#txtEndDate" << endDate.Day.ToString("00") + "/" + endDate.Month.ToString("00") + "/" + endDate.Year.ToString()
+
+    click "#btnSaveAsExcel"
+    Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+
 /// Download the monthly custom report
 let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
 

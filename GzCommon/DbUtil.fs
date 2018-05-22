@@ -27,6 +27,7 @@ module DbUtil =
     type DbInvBalances = DbSchema.InvBalances
     type DbCustoPortfolios = DbSchema.CustPortfolios
     type DbInvAdjs = DbSchema.InvAdjs
+    type DbBetting = DbSchema.Bettings
 
     type Currency = string
 

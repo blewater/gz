@@ -278,6 +278,8 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
 
         display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
+(*--------------------- Non Investment Reports ----------------------------*)
+
     /// Past x days Deposits
     let uiAutomateDownloadedPastDaysDepositsRpt (daysBefore : float) : bool =
     
@@ -296,7 +298,37 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
 
         display2SavedRpt "#btnShowReport" "#btnSaveAsExcel" "#TransDetail1_gvTransactionDetails" "#TransDetail1_gvTransactionDetails > tbody > tr:nth-child(1) > td:nth-child(1)"
 
-    // Into the player bonuses including inv bonus
+    /// Download the monthly custom report
+    let automateDownloadCasinoGameReportRpt (dayToProcess : DateTime) =
+
+        try 
+            // Activity
+            click "#nav > li:nth-child(1) > a"
+
+            click "#nav > li:nth-child(1) > ul > li:nth-child(9) > a"
+
+            click "#nav > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(5) > a"
+
+            "#ddlDisplayBy" << "Player"
+
+            let endDate = dayToProcess
+            let startDate = endDate
+
+            "#txtStartDate" << startDate.Day.ToString("00") + "/" + startDate.Month.ToString("00") + "/" + startDate.Year.ToString()
+            "#txtEndDate" << endDate.Day.ToString("00") + "/" + endDate.Month.ToString("00") + "/" + endDate.Year.ToString()
+
+            click "#btnSaveAsExcel"
+            Threading.Thread.Sleep(waitForFileDownloadMs)
+            true
+        with
+        | :? OpenQA.Selenium.WebDriverTimeoutException 
+            ->  printfn "Absorbed WebDriverTimeoutException during the Balance download"; 
+                false
+        | _ -> false
+
+(*--------------------- End of Non Investment Reports ----------------------------*)
+
+    /// Into the player bonuses including inv bonus
     let uiEnterBonusReport() = 
         // Activity
         click "#nav > li:nth-child(1) > a"
@@ -503,6 +535,8 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
 
         let rptFilesArgs = reportsArgs.ReportsFilesArgs
     
+(**** Non-investment reports ****)
+
         // Past x days Deposits
         let downloadPastDaysDeposits() =
             if uiAutomateDownloadedPastDaysDepositsRpt 30.0 then
@@ -511,6 +545,16 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
                     rptFilesArgs.PastDaysDepositsRptFilenamePrefix
                     dayToProcess
         retry NUM_DOWNLOAD_ATTEMPTS downloadPastDaysDeposits
+
+        let downloadPlayerActivity() =
+            if automateDownloadCasinoGameReportRpt dayToProcess then
+                renameRptInRptFolder
+                    rptFilesArgs.DownloadedCasinoGameFilter
+                    rptFilesArgs.CasinoGameRptFilenamePrefix
+                    dayToProcess
+        retry NUM_DOWNLOAD_ATTEMPTS downloadPlayerActivity
+
+(**** Investment reports ****)
 
         // Create Custom Scheduled Report
         if not <| monthlyCustomReportExists() then

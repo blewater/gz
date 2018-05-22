@@ -62,7 +62,7 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
             DepositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
             PastDaysDepositsRptFilenamePrefix = Settings.PastDaysDepositsRptFilenamePrefix;
             BonusRptFilenamePrefix = Settings.BonusRptFilenamePrefix;
-            CasinoGameRptFilenameFilter = Settings.CasinoGameRptFilenameFilter;
+            CasinoGameRptFilenamePrefix = Settings.CasinoGameRptFilenamePrefix;
             Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
         }
 

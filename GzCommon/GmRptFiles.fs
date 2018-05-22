@@ -17,7 +17,7 @@ module GmRptFiles =
     type WithdrawalsRollingFilenameType = string option
     type BegBalanceFilenameType = string option
     type EndBalanceFilenameType = string option
-    type CasinoGameReportType = string option // Segmentation betting table usage
+    type CasinoGameFilenameType = string // Player gaming activity for non-investment
 
     // Filename string dates
     type CustomStrDateType = string
@@ -38,7 +38,7 @@ module GmRptFiles =
     type EndBalanceDateType = DateTime option
 
     type InRptFolder = { isProd : bool; folderName : FolderNameType }
-    type RptFilenames = { customFilename : CustomFilenameType; DepositsFilename : DepositsFilenameType; PastDaysDepositsFilename : DepositsFilenameType; BonusFilename: BonusFilenameType; withdrawalsPendingFilename : WithdrawalsPendingFilenameType; withdrawalsRollbackFilename : WithdrawalsRollingFilenameType; begBalanceFilename : BegBalanceFilenameType; endBalanceFilename : EndBalanceFilenameType}
+    type RptFilenames = { casinoGameFilename : CasinoGameFilenameType; customFilename : CustomFilenameType; DepositsFilename : DepositsFilenameType; PastDaysDepositsFilename : DepositsFilenameType; BonusFilename: BonusFilenameType; withdrawalsPendingFilename : WithdrawalsPendingFilenameType; withdrawalsRollbackFilename : WithdrawalsRollingFilenameType; begBalanceFilename : BegBalanceFilenameType; endBalanceFilename : EndBalanceFilenameType}
     type RptStrDates = { customDtStr : CustomStrDateType; DepositsDtStr : DepositsStrDateType; BonusDtStr : BonusStrDateType; withdrawalsPendingDtStr : WithdrawalsPendingStrDateType; withdrawalsRollbackDtStr : WithdrawalsRollbackStrDateType; begBalanceDtStr : BegBalanceStrDateType; endBalanceDtStr : EndBalanceStrDateType}
     type RptDates = { customDate : CustomDateType; DepositsDate : DepositsDateType; BonusDate : BonusDateType; withdrawalsPendingDate : WithdrawalsPendingDateType; withdrawalsRollbackDate : WithdrawalsRollbackDateType; begBalanceDate : BegBalanceDateType; endBalanceDate : EndBalanceDateType}
 
@@ -62,6 +62,9 @@ module GmRptFiles =
     let WithdrawalRollbackFileListPrefix = "withdrawalsRollback"
     [<Literal>]
     let BalanceFileListPrefix = "Balance"
+    (* Non - Investment Files *)
+    [<Literal>]
+    let PlayerGamingFileListPrefix = "CasinoGameReport"
 
     let private folderTryF (isProd : bool) f domainException =
         let logInfo = "isProd", isProd
@@ -117,6 +120,11 @@ module GmRptFiles =
             None
     
     /// Get the custom excel rpt filename
+    let private getLatestPlayerGamingExcelRptFilename (inRptFolder : InRptFolder) : string =
+        let readDir () = getFolderFilenameByMaskIndex inRptFolder PlayerGamingFileListPrefix LastAsc
+        folderTryF inRptFolder.isProd readDir MissingPlayerGamingReport
+    
+    /// Get the custom excel rpt filename
     let private getLatestCustomExcelRptFilename (inRptFolder : InRptFolder) : string =
         let readDir () = getFolderFilenameByMaskIndex inRptFolder CustomFileListPrefix LastAsc
         folderTryF inRptFolder.isProd readDir MissingCustomReport
@@ -169,7 +177,12 @@ module GmRptFiles =
     
  //-------- public Excel Filename functions
 
-    let getCustomFilename (inRptFolder : InRptFolder) : string = 
+    let getPlayerGamingFilename (inRptFolder : InRptFolder) : CasinoGameFilenameType = 
+        getLatestPlayerGamingExcelRptFilename inRptFolder
+
+// Investement Files
+
+    let getCustomFilename (inRptFolder : InRptFolder) : CustomFilenameType = 
         getLatestCustomExcelRptFilename inRptFolder
 
     let getDepositsFilename (inRptFolder : InRptFolder)(customFilename : CustomFilenameType) : DepositsFilenameType = 
@@ -211,6 +224,8 @@ module GmRptFiles =
             withdrawalsRollbackFilename = getWithdrawalsRollbackFilename inRptFolder customFilename
             begBalanceFilename = getBegBalanceFilename inRptFolder
             endBalanceFilename = getEndBalanceFilename inRptFolder
+            // Non-investment
+            casinoGameFilename = getPlayerGamingFilename inRptFolder
         }
 
     let getExcelFilenames (inRptFolder : InRptFolder) : RptFilenames =
@@ -221,7 +236,11 @@ module GmRptFiles =
 
  //-------- Excel Date String functions
 
-    let getCustomDtStr (customFilename : string) : string = 
+    let getPlayerGamingDtStr (playerGamingFilename : CasinoGameFilenameType) : string = 
+        playerGamingFilename 
+            |> validateDateOnExcelFilename
+
+    let getCustomDtStr (customFilename : CustomFilenameType) : string = 
         customFilename 
             |> validateDateOnExcelFilename
 
@@ -230,11 +249,11 @@ module GmRptFiles =
         | Some filename -> Some (filename |> validateDateOnExcelFilename)
         | None -> None
 
-    let getDepositDtStr (depositFilename : string option) : string option = 
+    let getDepositDtStr (depositFilename : DepositsFilenameType) : string option = 
         depositFilename 
             |> getOptionalFilenameDateValidation
 
-    let getBonusDtStr (bonusFilename : string option) : string option = 
+    let getBonusDtStr (bonusFilename : BonusFilenameType) : string option = 
         bonusFilename 
             |> getOptionalFilenameDateValidation
 

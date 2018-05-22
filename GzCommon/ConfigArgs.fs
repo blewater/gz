@@ -37,7 +37,7 @@ module ConfigArgs =
         BonusRptFilenamePrefix : string;
         (* Email Segmentation *)
         PastDaysDepositsRptFilenamePrefix : string;
-        CasinoGameRptFilenameFilter : string;
+        CasinoGameRptFilenamePrefix : string;
 
         Wait_For_File_Download_MS : int;
     }
