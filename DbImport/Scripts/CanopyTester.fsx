@@ -8,9 +8,9 @@
 #r "System.Xml.Linq.dll"
 #r "System.Drawing.dll"
 #r "System.Configuration.dll"
-#r "../packages/Selenium.WebDriver/lib/net40/WebDriver.dll"
+#r "../../GzBatch/packages/Selenium.WebDriver.3.11.2/lib/net40/WebDriver.dll"
 #r "../../GzBatch/packages/Selenium.Support.3.8.0/lib/net40/WebDriver.Support.dll"
-#r "../packages/canopy/lib/canopy.dll"
+#r "../../GzBatch/packages/canopy.1.6.3/lib/canopy.dll"
 #r "../../GzBatch/packages/System.ValueTuple.4.4.0/lib/netstandard1.0/System.ValueTuple.dll"
 #r "../../GzCommon/bin/Production/GzCommon.dll"
 open canopy
@@ -40,6 +40,7 @@ let downloadedBalanceFilter = "byBalance*.xlsx"
 let downloadedWithdrawalsFilter = "trans*.xlsx"
 let downloadedDepositsFilter = "trans*.xlsx"
 let downloadedBonusFilter = "Casino bonus-completed bonus*.xlsx"
+let downloadedCasinoGameFilter = "CasinoGameReport Prod "
 
 let customRptFilenamePrefix = "Custom Prod "
 let endBalanceRptFilenamePrefix = "Balance Prod "
@@ -47,6 +48,7 @@ let withdrawalsPendingRptFilenamePrefix = "withdrawalsPending Prod "
 let withdrawalsRollbackRptFilenamePrefix = "withdrawalsRollback Prod "
 let depositsRptFilenamePrefix = "Deposits Prod "
 let bonusRptFilenamePrefix = "Bonus Prod "
+let casinoGameRptFilenamePrefix = "CasinoGameReport Prod "
 
 let dayToProcess = DateTime.Today.AddDays(-1.0)
 
@@ -218,7 +220,28 @@ let removeScheduledEmailCustomReport() : unit =
     |> elementWithin "td:nth-last-child(1) > a" 
     |> click
     acceptAlert()
-    
+
+/// Download the monthly custom report
+let uiAutomateDownloadCasinoGameReportRpt (dayToProcess : DateTime) =
+
+    // Activity
+    click "#nav > li:nth-child(1) > a"
+
+    click "#nav > li:nth-child(1) > ul > li:nth-child(9) > a"
+
+    click "#nav > li:nth-child(1) > ul > li:nth-child(9) > ul > li:nth-child(5) > a"
+
+    "#ddlDisplayBy" << "Player"
+
+    let endDate = dayToProcess
+    let startDate = endDate
+
+    "#txtStartDate" << startDate.Day.ToString("00") + "/" + startDate.Month.ToString("00") + "/" + startDate.Year.ToString()
+    "#txtEndDate" << endDate.Day.ToString("00") + "/" + endDate.Month.ToString("00") + "/" + endDate.Year.ToString()
+
+    click "#btnSaveAsExcel"
+    Threading.Thread.Sleep(Wait_For_File_Download_Ms)
+
 /// Download the monthly custom report
 let uiAutomateDownloadedCustomRpt (dayToProcess : DateTime) =
 
@@ -437,9 +460,17 @@ let uiAutomationDownloading (dayToProcess : DateTime) =
     canopy.configuration.chromeDir <- projDir
     let chromeOptions = OpenQA.Selenium.Chrome.ChromeOptions()
     chromeOptions.AddArgument("--no-sandbox")
-    chromeOptions.AddArgument("--disable-extensions")
-    chromeOptions.AddArgument("--headless")
     chromeOptions.AddArgument("--disable-gpu")
+    chromeOptions.AddArgument("--disable-extensions")
+    //chromeOptions.AddArgument("--headless")
+    chromeOptions.AddArgument("--disable-client-side-phishing-detection")
+    chromeOptions.AddArgument("--disable-suggestions-service")
+    chromeOptions.AddArgument("--safebrowsing-disable-download-protection")
+    chromeOptions.AddArgument("--no-first-run")
+    chromeOptions.AddUserProfilePreference("download.prompt_for_download", false)
+    chromeOptions.AddUserProfilePreference("download.directory_upgrade", true)
+    chromeOptions.AddUserProfilePreference("download.default_directory", inRptFolderName)
+
     let chromeNoSandbox = ChromeWithOptions(chromeOptions)
     start chromeNoSandbox
     match screen.monitorCount with

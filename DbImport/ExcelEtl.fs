@@ -3,8 +3,8 @@
 module BalanceRpt2Db =
     open NLog
     open GzDb.DbUtil
-    open ExcelSchemas
     open GzBatchCommon
+    open ExcelSchemas
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -290,9 +290,9 @@ module BonusRpt2Db =
 module CustomRpt2Db =
     open NLog
     open GzDb.DbUtil
+    open GzBatchCommon
     open ExcelSchemas
     open GmRptFiles
-    open GzBatchCommon
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -358,19 +358,78 @@ module CustomRpt2Db =
         with _ -> 
             reraise()
 
+module PlayerGamingRpt2Db =
+    open NLog
+    open GzDb.DbUtil
+    open GzBatchCommon
+    open ExcelSchemas
+    open GmRptFiles
+
+    let logger = LogManager.GetCurrentClassLogger()
+
+    /// Open an player gaming excel file and console out the filename
+    let private openPlayingActivityRptSchemaFile excelFilename = 
+        let playerGamingActivity = new CasinoGameExcelSchema(excelFilename)
+        logger.Info ""
+        logger.Info (sprintf "************ Processing Player Gaming Report %s excel file" excelFilename)
+        logger.Info ""
+        playerGamingActivity
+    
+    let getUserIdFromUsername(db : DbContext)(username : string) : int =
+        query {
+            for playerDbRow in db.PlayerRevRpt do
+                where (playerDbRow.Username = username)
+                select playerDbRow.UserID
+                take 1
+                exactlyOne
+        }
+
+    /// Process all excel lines except Totals and upsert them
+    let private insDbPlayerGamingExcelRptRows 
+                (db : DbContext) 
+                (gamingExcelFile : CasinoGameExcelSchema) 
+                (yyyyMmDd : string) 
+                (emailToProcAlone: string option) : Unit =
+
+        //for excelRow in gamingExcelFile.Data do
+        for excelRow in gamingExcelFile.Data do
+            let username = excelRow.Item
+            if objIsNotNull username then
+                match username.Length with
+                | 0 -> ()
+                | _ -> DbPlayerRevRpt.setDbPlayerGamingRow db username yyyyMmDd excelRow
+            else
+                ()
+
+    /// Process the custom excel file: Extract each row and upsert the database PlayerRevRpt table customer rows.
+    let loadGamingActivityRpt 
+            (db : DbContext) 
+            (playerGamingRptFullPath: string) 
+            (emailToProcOnly: string option) : unit =
+
+        // Open excel report file for the memory schema
+        let openFile = 
+            playerGamingRptFullPath 
+            |> openPlayingActivityRptSchemaFile
+
+        let playerGamingDtStr = getPlayerGamingDtStr playerGamingRptFullPath
+        insDbPlayerGamingExcelRptRows db openFile playerGamingDtStr emailToProcOnly
+
 module Etl =
     open System 
     open System.IO
     open GzDb.DbUtil
     open NLog
-    open GmRptFiles
-    open ExcelSchemas
     open CustomRpt2Db
     open BalanceRpt2Db
     open WithdrawalRpt2Db
     open DbPlayerRevRpt
     open DepositsRpt2Db
     open BonusRpt2Db
+    open GzBatchCommon
+    open ExcelSchemas
+    open GmRptFiles
+    open PlayerGamingRpt2Db
 
     let logger = LogManager.GetCurrentClassLogger()
 
@@ -432,7 +491,11 @@ module Etl =
             (inFolder, outFolder, withdrawalsFilename) |||> moveFileWithOverwrite
         | None -> logger.Warn "No Rollback withdrawal file to move."
 
+        // Gaming Activity
+        (inFolder, outFolder, rpts.casinoGameFilename) |||> moveFileWithOverwrite
+
     let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames)(emailToProcAlone : string option) : unit =
+
         let { 
                 customFilename = customFilename; 
                 DepositsFilename = depositsFilename;
@@ -440,8 +503,10 @@ module Etl =
                 withdrawalsPendingFilename = withdrawalsPendingFilename;
                 withdrawalsRollbackFilename = withdrawalsRollbackFilename;
                 begBalanceFilename = begBalanceFilename; 
-                endBalanceFilename = endBalanceFilename 
-            }   = reportFilenames
+                endBalanceFilename = endBalanceFilename;
+                casinoGameFilename = casinoGameFilename;
+            } : RptFilenames 
+                    = reportFilenames
 
         let customDtStr = getCustomDtStr customFilename
         match emailToProcAlone with
@@ -450,6 +515,8 @@ module Etl =
             logger.Warn("********************************************************")
             logger.Warn(sprintf "Processing excel files in single user mode for %s." singleUserEmail)
             logger.Warn("********************************************************")
+
+        loadGamingActivityRpt db casinoGameFilename emailToProcAlone
 
         // Custom import
         (db, customFilename, emailToProcAlone) 
