@@ -665,3 +665,28 @@
 }
 
 
+.auth.gdpr .form-group { margin: 10px 0; }
+.auth.gdpr .radios { float: left; }
+.auth.gdpr .radios label { margin-right: 5px; cursor: pointer; }
+.auth.gdpr .radio-text { line-height: 28px; }
+.auth.gdpr .emphatic {
+    background-color: #07893C;
+    margin: 5px 0;    
+}
+.auth.gdpr a.external {
+    font-weight: bold;
+    text-decoration: underline;
+}
+.auth.gdpr button.continue, .auth.gdpr button.logout {
+    vertical-align: bottom;
+    height: 36px;
+}
+.auth.gdpr button.logout {
+    width: 100px;
+}
+.auth.gdpr button.continue {
+    width: 180px;
+}
+
+
+
