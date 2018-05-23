@@ -203,35 +203,35 @@ namespace gzWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("SetGzGdpr")]
         public IHttpActionResult SetGzGdpr(GdprBindingModel model) {
             try {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
+                var userId = User.Identity.GetUserId<int>();
                 var user =
                     _dbContext
                         .Users
-                        .SingleOrDefault(u => u.UserName == model.Username);
+                        .SingleOrDefault(u => u.Id == userId);
                 if (user != null) {
-                    if (string.IsNullOrEmpty(model.AllowGzSms))
-                        user.AllowGzSms = Boolean.Parse(model.AllowGzSms);
-                    if (string.IsNullOrEmpty(model.AllowGzEmail))
-                        user.AllowGzEmail = Boolean.Parse(model.AllowGzEmail);
-                    if (string.IsNullOrEmpty(model.AcceptedGdpr3rdParties))
-                        user.Allow3rdPartySms = Boolean.Parse(model.AcceptedGdpr3rdParties);
-                    if (string.IsNullOrEmpty(model.AcceptedGdprTc))
-                        user.AcceptedGdprTc = Boolean.Parse(model.AcceptedGdprTc);
-                    if (string.IsNullOrEmpty(model.AcceptedGdprPp))
-                        user.AcceptedGdprPp = Boolean.Parse(model.AcceptedGdprPp);
-                    if (string.IsNullOrEmpty(model.AcceptedGdpr3rdParties))
-                        user.AcceptedGdpr3rdParties = Boolean.Parse(model.AcceptedGdpr3rdParties);
+
+                    // Consent
+                    user.AcceptedGdprTc = model.AcceptedGdprTc;
+
+                    user.AcceptedGdprPp = model.AcceptedGdprPp;
+
+                    user.AcceptedGdpr3rdParties = model.AcceptedGdpr3rdParties;
+
+                    // Marketing
+                    user.AllowGzSms = model.AllowGzSms;
+
+                    user.AllowGzEmail =model.AllowGzEmail;
+
+                    user.Allow3rdPartySms = model.Allow3rdPartySms;
+
                     _dbContext.SaveChanges();
-                }
-                else {
-                    var userNotFoundError = "api/Account/SetGzGdpr: User not found: " + model.Username;
-                    Logger.Error(userNotFoundError);
-                    telemetry.TrackException(new Exception(userNotFoundError));
                 }
             }
             catch (Exception ex) {
