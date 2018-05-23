@@ -724,6 +724,10 @@
     <Compile Include="Migrations\201805101836399_Betting.Designer.cs">
       <DependentUpon>201805101836399_Betting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805231047044_GDPR.cs" />
+    <Compile Include="Migrations\201805231047044_GDPR.Designer.cs">
+      <DependentUpon>201805231047044_GDPR.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -1596,6 +1600,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805101836399_Betting.resx">
       <DependentUpon>201805101836399_Betting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805231047044_GDPR.resx">
+      <DependentUpon>201805231047044_GDPR.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

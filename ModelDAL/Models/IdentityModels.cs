@@ -55,6 +55,33 @@ namespace gzDAL.Models
         
         public bool? IsRegistrationFinalized { get; set; }
 
+        #region GDPR
+        /// <summary>
+        /// Allow sending Gz marketing email to user.
+        /// </summary>
+        public bool? AllowGzEmail { get; set; }
+        /// <summary>
+        /// Allow sending Gz marketing Sms to user.
+        /// </summary>
+        public bool? AllowGzSms { get; set; }
+        /// <summary>
+        /// Allow 3rd party vendor marketing Sms to user.
+        /// </summary>
+        public bool? Allow3rdPartySms { get; set; }
+        /// <summary>
+        /// User consented to new GDPR Terms & Conditions.
+        /// </summary>
+        public bool? AcceptedGdprTc { get; set; }
+        /// <summary>
+        /// User consented to new GDPR Private Policy.
+        /// </summary>
+        public bool? AcceptedGdprPp { get; set; }
+        /// <summary>
+        /// User consented to 3rd Parties.
+        /// </summary>
+        public bool? AcceptedGdpr3rdParties { get; set; }
+        #endregion
+
         public ClaimsIdentity GenerateUserIdentity(UserManager<ApplicationUser, int> manager, string authenticationType)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
