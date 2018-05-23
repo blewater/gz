@@ -119,20 +119,17 @@ namespace gzWeb.Models
     public class GdprBindingModel
     {
         [Required]
-        [MaxLength(256)]
-        public string Username { get; set; }
+        public bool AllowGzEmail { get; set; }
         [Required]
-        [MinLength(4),MaxLength(5)]
-        public string AllowGzEmail { get; set; }
-        public string AllowGzSms { get; set; }
-        public string Allow3rdPartySms { get; set; }
+        public bool AllowGzSms { get; set; }
         [Required]
-        [MinLength(4),MaxLength(5)]
-        public string AcceptedGdprTc { get; set; }
+        public bool Allow3rdPartySms { get; set; }
         [Required]
-        [MinLength(4),MaxLength(5)]
-        public string AcceptedGdprPp { get; set; }
-        public string AcceptedGdpr3rdParties { get; set; }
+        public bool AcceptedGdprTc { get; set; }
+        [Required]
+        public bool AcceptedGdprPp { get; set; }
+        [Required]
+        public bool AcceptedGdpr3rdParties { get; set; }
     }
 
     public class SetPasswordBindingModel
