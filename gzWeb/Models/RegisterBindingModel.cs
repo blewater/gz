@@ -116,6 +116,16 @@ namespace gzWeb.Models
         //public string ConfirmPassword { get; set; }
     }
 
+    public class GdprBindingModel
+    {
+        public string AllowGzEmail { get; set; }
+        public string AllowGzSms { get; set; }
+        public string Allow3rdPartySms { get; set; }
+        public string AcceptedGdprTc { get; set; }
+        public string AcceptedGdprPp { get; set; }
+        public string AcceptedGdpr3rdParties { get; set; }
+    }
+
     public class SetPasswordBindingModel
     {
         [Required]

@@ -201,6 +201,13 @@ namespace gzWeb.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("SetGzGdpr")]
+        public IHttpActionResult SetGzGdpr(GdprBindingModel model) {
+
+            return GetErrorResult(null);
+        }
+
         // POST api/Account/Register
         [AllowAnonymous]
         [HttpPost]
