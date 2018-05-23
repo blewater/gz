@@ -77,6 +77,19 @@
                 alert("Returned!");
             });
         };
+        $scope.GDPR = function () {
+            var promise = message.open({
+                nsType: 'modal',
+                nsSize: '600px',
+                nsTemplate: '_app/account/gdpr.html',
+                nsCtrl: 'gdprCtrl',
+                nsStatic: true,
+                nsRoute: 'gdpr'
+            })
+            promise.then(function (consents) {
+                console.log(consents);
+            });
+        };
         // #endregion
 
         // #region Account

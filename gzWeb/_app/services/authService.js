@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', '$timeout', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message, $timeout) {
         var factory = {};
 
         // #region AuthData
@@ -19,7 +19,9 @@
             isGamer: false,
             isInvestor: false,
             isAdmin: false,
-            isGuest: true
+            isGuest: true,
+
+            gdprConsents: undefined
         };
         
         factory.readAuthData = function () {
@@ -52,6 +54,22 @@
             factory.data.firstname = data.firstname;
             factory.data.lastname = data.lastname;
             factory.data.currency = data.currency;
+            storeAuthData();
+        }
+
+        function getConsentValue(value) {
+            var consentValue = value === undefined || value === null || value.length === 0 ? undefined : (value === true || value === "true");
+            return consentValue;
+        }
+        function setGdprData(data) {
+            factory.data.gdprConsents = {
+                allowGzEmail: getConsentValue(data.allowGzEmail),
+                allowGzSms: getConsentValue(data.allowGzSms),
+                allow3rdPartySms: getConsentValue(data.allow3rdPartySms),
+                acceptedGdprTc: getConsentValue(data.acceptedGdprTc),
+                acceptedGdprPp: getConsentValue(data.acceptedGdprPp),
+                acceptedGdpr3rdParties: getConsentValue(data.acceptedGdpr3rdParties)
+            };
             storeAuthData();
         }
 
@@ -155,29 +173,75 @@
         //    $rootScope.$broadcast(constants.events.SESSION_TERMINATED);
         //}
 
+        factory.setGdpr = function (consents) {
+            var q = $q.defer();
+            //$timeout(function () {
+            //    setGdprData(consents);
+            //    q.resolve(true);
+            //}, 3000);
+            api.setGdpr(consents).then(function (result) {
+                setGdprData(consents);
+                q.resolve(true);
+            }, function (error) {
+                q.reject(error);
+            });
+            return q.promise;
+        };
+        function hasToSetConsents() {
+            if (factory.data.gdprConsents === undefined)
+                return true;
+            else {
+                for (var consent in factory.data.gdprConsents) {
+                    var consentValue = factory.data.gdprConsents[consent];
+                    if (consentValue === undefined || consentValue === null || consentValue.length === 0)
+                        return true;
+                }
+                return false;
+            }
+        }
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
             var args = kwargs;
             if (args.code === 0) {
                 emWamp.getSessionInfo().then(function (sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
-                        setGamingAuthData(sessionInfo);
-                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                        //getGamingAccountAndWatchBalance();
+                        function onAuthenticated() {
+                            setGamingAuthData(sessionInfo);
+                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                            //getGamingAccountAndWatchBalance();
 
-                        if (args.initialized === true) { //&& $rootScope.routeData.category === constants.categories.wandering
-                            var requestUrl = nav.getRequestUrl();
-                            if (requestUrl) {
-                                nav.clearRequestUrls();
-                                $rootScope.$broadcast(constants.events.REDIRECTED);
-                                $rootScope.redirected = false;
-                                $location.path(requestUrl);
+                            if (args.initialized === true) { //&& $rootScope.routeData.category === constants.categories.wandering
+                                var requestUrl = nav.getRequestUrl();
+                                if (requestUrl) {
+                                    nav.clearRequestUrls();
+                                    $rootScope.$broadcast(constants.events.REDIRECTED);
+                                    $rootScope.redirected = false;
+                                    $location.path(requestUrl);
+                                }
+                                else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isGamer)
+                                    $location.path(constants.routes.games.path).search({});
+                                else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isInvestor)
+                                    $location.path(constants.routes.summary.path);
                             }
-                            else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isGamer)
-                                $location.path(constants.routes.games.path).search({});
-                            else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isInvestor)
-                                $location.path(constants.routes.summary.path);
+                            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                         }
-                        $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+
+                        if (hasToSetConsents()) {
+                            $timeout(function () {
+                                message.open({
+                                    nsType: 'modal',
+                                    nsSize: '600px',
+                                    nsTemplate: '_app/account/gdpr.html',
+                                    nsCtrl: 'gdprCtrl',
+                                    nsStatic: true,
+                                    nsShowClose: false,
+                                    nsParams: {
+                                        continueCallback: onAuthenticated
+                                    }
+                                });
+                            }, 1000);
+                        }
+                        else
+                            onAuthenticated();
                     }
                     else {
                         factory.logout();
@@ -263,6 +327,7 @@
 
             api.login(usernameOrEmail, password).then(function (gzLoginResult) {
                 setInvestmentAuthData(gzLoginResult.data);
+                setGdprData(gzLoginResult.data);
                 $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                 q.resolve(gzLoginResult);
             }, function (error) {
