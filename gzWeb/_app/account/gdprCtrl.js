@@ -18,21 +18,16 @@
         };
 
         $scope.isFormValid = function () {
-            var isValid = true;
-            var acceptedTcIdx = 3;
-            var acceptedPpIdx = 4;
-            var accepted3RdIdx = 5;
-            var acceptedTcVal = $scope.consents[acceptedTcIdx];
-
+            var consObj = $scope.consents;
             // Everymatrix guideline: user answers once for the 3 consent questions.
-            if (typeof (acceptedTcVal) !== "undefined" && acceptedTcVal !== null) {
-                $scope.consents[accepted3RdIdx] = $scope.consents[acceptedPpIdx] = acceptedTcVal;
+            if ( 
+                (consObj["acceptedGdprTc"] === undefined || consObj["acceptedGdprTc"] === "false")
+                || consObj["allowGzEmail"] === undefined
+                || consObj["allowGzSms"] === undefined
+                || consObj["allow3rdPartySms"] === undefined) {
+                return false;
             }
-            for (var consent in $scope.consents) {
-                var consentValue = $scope.consents[consent];
-                isValid = isValid && consentValue !== undefined;
-            }
-            return isValid;
+            return true;
         };
 
         $scope.logout = function () {
@@ -42,11 +37,13 @@
 
         $scope.submit = function () {
             if ($scope.isFormValid() && !$scope.continueWaiting) {
+                // in the popup are 1 question with T&C
+                $scope.consents["acceptedGdprPp"] = $scope.consents["acceptedGdpr3rdParties"] = true;
+
                 $scope.continueWaiting = true;
                 $scope.errorMsg = "";
 
                 auth.setGdpr($scope.consents).then(function (response) {
-                    $scope.continueCallback();
                     $scope.nsOk();
                 });
             }
