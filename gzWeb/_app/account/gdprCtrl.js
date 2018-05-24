@@ -19,6 +19,15 @@
 
         $scope.isFormValid = function () {
             var isValid = true;
+            var acceptedTcIdx = 3;
+            var acceptedPpIdx = 4;
+            var accepted3RdIdx = 5;
+            var acceptedTcVal = $scope.consents[acceptedTcIdx];
+
+            // Everymatrix guideline: user answers once for the 3 consent questions.
+            if (typeof (acceptedTcVal) !== "undefined" && acceptedTcVal !== null) {
+                $scope.consents[accepted3RdIdx] = $scope.consents[acceptedPpIdx] = acceptedTcVal;
+            }
             for (var consent in $scope.consents) {
                 var consentValue = $scope.consents[consent];
                 isValid = isValid && consentValue !== undefined;

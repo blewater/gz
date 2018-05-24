@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                     <div class="form-group text-left">
-                        Tincidunt integer eu augue augue nunc elit dolor, luctus placerat scelerisque euismod, iaculis eu lacus nunc mi elit, vehicula ut laoreet ac, aliquam sit amet justo nunc tempor, metus vel.
+                        We’ve recently updated our: Terms of Service, and Privacy Policy (collectively, “Terms of Service”). The updated Terms of Service and Privacy Policy will automatically come into effect for all existing users on May 25, 2018. If you signed up for an account prior to 25th of May 2018 we’ll ask you to agree to the new Terms when you use the Website on or after May 25, 2018. Your continued use of the Website from that day on will be subject to the new Terms of Service and Privacy Policy. If you signed up for an account on or after May 25, 2018, the updated Terms of Service and Privacy Policy apply to you.
                     </div>
                 </div>
             </div>
@@ -25,12 +25,51 @@
                     <div class="form-group text-left">
                         <div class="col-xs-3">
                             <span class="radios">
+                                <label><input type="radio" ng-model="consents.acceptedGdprTc" value="true">Yes</label>
+                                <label><input type="radio" ng-model="consents.acceptedGdprTc" value="false">No</label>
+                            </span>
+                        </div>
+                        <div class="col-xs-9">
+                            <span class="radio-text">I accept the <a class="external" href="/gaming-terms" target="_blank">Gaming Terms & Conditions</a>, the <a class="external" href="/gaming-privacy" target="_blank">Gaming Privacy Policy</a> and the <a class="external" href="/third-parties" target="_blank">Cookie Policy</a> as published on this site and confirm that I am over 18 years old.</span>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+        <div class="form-group text-left">
+            <div class="col-xs-3">
+                <span class="radios">
+                    <label><input type="radio" ng-model="consents.acceptedGdprPp" value="true">Yes</label>
+                    <label><input type="radio" ng-model="consents.acceptedGdprPp" value="false">No</label>
+                </span>
+            </div>
+            <div class="col-xs-9">
+                <span class="radio-text">I have read and accept the <a class="external" href="/gaming-privacy" target="_blank">gaming</a> privacy policy</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+        <div class="form-group text-left">
+            <div class="col-xs-3">
+                <span class="radios">
+                    <label><input type="radio" ng-model="consents.acceptedGdpr3rdParties" value="true">Yes</label>
+                    <label><input type="radio" ng-model="consents.acceptedGdpr3rdParties" value="false">No</label>
+                </span>
+            </div>
+            <div class="col-xs-9">
+                <span class="radio-text">I have read and accept <a class="external" href="/third-parties" target="_blank">3rd parties</a> terms and conditions and privacy policies</span>
+            </div>
+        </div>
+    </div>-->
+                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                    <div class="form-group text-left">
+                        <div class="col-xs-3">
+                            <span class="radios">
                                 <label><input type="radio" ng-model="consents.allowGzEmail" value="true">Yes</label>
                                 <label><input type="radio" ng-model="consents.allowGzEmail" value="false">No</label>
                             </span>
                         </div>
                         <div class="col-xs-9">
-                            <span class="radio-text">Please send me exclusive offers by email</span>
+                            <span class="radio-text">I am happy to receive customised marketing communications and exclusive offers via email.</span>
                         </div>
                     </div>
                 </div>
@@ -43,7 +82,7 @@
                             </span>
                         </div>
                         <div class="col-xs-9">
-                            <span class="radio-text">Please send me exclusive offers by sms</span>
+                            <span class="radio-text">I am happy to receive customised marketing communications and exclusive offers via SMS.</span>
                         </div>
                     </div>
                 </div>
@@ -58,52 +97,7 @@
                             </span>
                         </div>
                         <div class="col-xs-9">
-                            <span class="radio-text">Allow <a class="external" href="/third-parties" target="_blank">3rd parties</a> to send me sms</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                    <div class="form-group text-left">
-                        <span>I confirm that I am 18 years or older and</span>
-                    </div>
-                </div>
-                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                    <div class="form-group text-left">
-                        <div class="col-xs-3">
-                            <span class="radios">
-                                <label><input type="radio" ng-model="consents.acceptedGdprTc" value="true">Yes</label>
-                                <label><input type="radio" ng-model="consents.acceptedGdprTc" value="false">No</label>
-                            </span>
-                        </div>
-                        <div class="col-xs-9">
-                            <span class="radio-text">I have read and accept the <a class="external" href="/gaming-terms" target="_blank">gaming</a> and <a class="external" href="/investment-privacy" target="_blank">investment</a> terms and conditions</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                    <div class="form-group text-left">
-                        <div class="col-xs-3">
-                            <span class="radios">
-                                <label><input type="radio" ng-model="consents.acceptedGdprPp" value="true">Yes</label>
-                                <label><input type="radio" ng-model="consents.acceptedGdprPp" value="false">No</label>
-                            </span>
-                        </div>
-                        <div class="col-xs-9">
-                            <span class="radio-text">I have read and accept the <a class="external" href="/gaming-privacy" target="_blank">gaming</a> and <a class="external" href="/investment-privacy" target="_blank">investment</a> privacy policy</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                    <div class="form-group text-left">
-                        <div class="col-xs-3">
-                            <span class="radios">
-                                <label><input type="radio" ng-model="consents.acceptedGdpr3rdParties" value="true">Yes</label>
-                                <label><input type="radio" ng-model="consents.acceptedGdpr3rdParties" value="false">No</label>
-                            </span>
-                        </div>
-                        <div class="col-xs-9">
-                            <span class="radio-text">I have read and accept <a class="external" href="/third-parties" target="_blank">3rd parties</a> terms and conditions and privacy policies</span>
+                            <span class="radio-text">I am happy to receive similar marketing communications via email or sms from partners.</span>
                         </div>
                     </div>
                 </div>
