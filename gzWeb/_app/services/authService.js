@@ -204,44 +204,24 @@
             if (args.code === 0) {
                 emWamp.getSessionInfo().then(function (sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
-                        function onAuthenticated() {
-                            setGamingAuthData(sessionInfo);
-                            $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
-                            //getGamingAccountAndWatchBalance();
+                        setGamingAuthData(sessionInfo);
+                        $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
+                        //getGamingAccountAndWatchBalance();
 
-                            if (args.initialized === true) { //&& $rootScope.routeData.category === constants.categories.wandering
-                                var requestUrl = nav.getRequestUrl();
-                                if (requestUrl) {
-                                    nav.clearRequestUrls();
-                                    $rootScope.$broadcast(constants.events.REDIRECTED);
-                                    $rootScope.redirected = false;
-                                    $location.path(requestUrl);
-                                }
-                                else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isGamer)
-                                    $location.path(constants.routes.games.path).search({});
-                                else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isInvestor)
-                                    $location.path(constants.routes.summary.path);
+                        if (args.initialized === true) { //&& $rootScope.routeData.category === constants.categories.wandering
+                            var requestUrl = nav.getRequestUrl();
+                            if (requestUrl) {
+                                nav.clearRequestUrls();
+                                $rootScope.$broadcast(constants.events.REDIRECTED);
+                                $rootScope.redirected = false;
+                                $location.path(requestUrl);
                             }
-                            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                            else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isGamer)
+                                $location.path(constants.routes.games.path).search({});
+                            else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isInvestor)
+                                $location.path(constants.routes.summary.path);
                         }
-
-                        if (hasToSetConsents()) {
-                            $timeout(function () {
-                                message.open({
-                                    nsType: 'modal',
-                                    nsSize: '600px',
-                                    nsTemplate: '_app/account/gdpr.html',
-                                    nsCtrl: 'gdprCtrl',
-                                    nsStatic: true,
-                                    nsShowClose: false,
-                                    nsParams: {
-                                        continueCallback: onAuthenticated
-                                    }
-                                });
-                            }, 1000);
-                        }
-                        else
-                            onAuthenticated();
+                        $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                     }
                     else {
                         factory.logout();
@@ -328,11 +308,49 @@
             api.login(usernameOrEmail, password).then(function (gzLoginResult) {
                 setInvestmentAuthData(gzLoginResult.data);
                 setGdprData(gzLoginResult.data);
-                $rootScope.$broadcast(constants.events.AUTH_CHANGED);
                 q.resolve(gzLoginResult);
             }, function (error) {
                 q.reject(error.data.error_description);
             });
+            return q.promise;
+        }
+
+        // Called after a login response prop hasToAcceptTC is set = true
+        function emAcceptTcPromise() {
+            var q = $q.defer();
+
+            emWamp.acceptTC().then(function () {
+                q.resolve();
+            }, function (error) {
+                q.reject(error ? error.desc : false);
+            });
+            return q.promise;
+        }
+        function conditionalConsentPopup(emLoginResult) {
+            var q = $q.defer();
+            if (emLoginResult.hasToAcceptTC) {
+                message.open({
+                    nsType: 'modal',
+                    nsSize: '600px',
+                    nsTemplate: '_app/account/gdpr.html',
+                    nsCtrl: 'gdprCtrl',
+                    nsStatic: true,
+                    nsShowClose: false
+                }).then(function() {
+                    // To be tested in stage or prod.
+                    // Required when hasToAcceptTC set to true
+                    // https://everymatrix.atlassian.net/wiki/spaces/WA1/pages/152502571/login
+                    emAcceptTcPromise().then(function() {
+                        q.resolve();
+                    }, function(acceptTcError) {
+                        q.reject(acceptTcError ? acceptTcError.desc : false);
+                    });
+                }, function(error) {
+                    q.reject(error ? error.desc : false);
+                });
+            } else {
+                q.resolve();
+            }
             return q.promise;
         }
 
@@ -368,9 +386,16 @@
                     q.resolve({ enterCaptcha: true });
                 else {
                     message.clear();
+
                     factory.gzLogin(usernameOrEmail, password).then(function () {
-                        api.cacheUserData();
-                        q.resolve({ emLogin: true, gzLogin: true });
+                        conditionalConsentPopup(emLoginResult).then(function() {
+                            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                            api.cacheUserData();
+                            q.resolve({ emLogin: true, gzLogin: true });
+                        }, function(popupError) {
+                            $log.error("Greenzorro login popup failed for user " + usernameOrEmail + ": " + popupError);
+                            q.resolve({ emLogin: false, gzLogin: true });
+                        });
                     }, function (gzLoginError) {
                         $log.error("Greenzorro login failed for user " + usernameOrEmail + ": " + gzLoginError);
                         q.resolve({ emLogin: true, gzLogin: false });
