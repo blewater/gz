@@ -349,11 +349,13 @@
                     q.reject(error ? error.desc : false);
                 });
             } else if (emLoginResult.minorChangeInTC) {
-                message.notify("Click here to see the new Terms and Conditions", {
-                    nsCallback: function () {
+                message.notify("The Terms and Conditions have minor changes. Click here to check the details.",
+                {
+                    nsCallback: function() {
                         $location.path(constants.routes.termsGames.path);
+                        q.resolve();
                     }
-                })
+                });
             } else {
                 q.resolve();
             }
