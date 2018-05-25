@@ -80,15 +80,22 @@
         $scope.GDPR = function () {
             var promise = message.open({
                 nsType: 'modal',
-                nsSize: '600px',
+                nsSize: 'md',
                 nsTemplate: '_app/account/gdpr.html',
                 nsCtrl: 'gdprCtrl',
                 nsStatic: true,
-                nsRoute: 'gdpr'
+                nsShowClose: false
             })
             promise.then(function (consents) {
                 console.log(consents);
             });
+        };
+        $scope.testNotifyWithRedirectionCallback = function () {
+            message.notify("Click here to see the new Terms and Conditions", {
+                nsCallback: function () {
+                    $location.path('/help');
+                }
+            })
         };
         // #endregion
 

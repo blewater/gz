@@ -331,7 +331,7 @@
             if (emLoginResult.hasToAcceptTC) {
                 message.open({
                     nsType: 'modal',
-                    nsSize: '600px',
+                    nsSize: 'md',
                     nsTemplate: '_app/account/gdpr.html',
                     nsCtrl: 'gdprCtrl',
                     nsStatic: true,
@@ -348,6 +348,12 @@
                 }, function(error) {
                     q.reject(error ? error.desc : false);
                 });
+            } else if (emLoginResult.minorChangeInTC) {
+                message.notify("Click here to see the new Terms and Conditions", {
+                    nsCallback: function () {
+                        $location.path(constants.routes.termsGames.path);
+                    }
+                })
             } else {
                 q.resolve();
             }
