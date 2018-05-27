@@ -218,18 +218,21 @@ namespace gzWeb.Controllers
                 if (user != null) {
 
                     // Consent
-                    user.AcceptedGdprTc = model.AcceptedGdprTc;
+                    if (model.IsTc) {
+                        user.AcceptedGdprTc = model.AcceptedGdprTc;
 
-                    user.AcceptedGdprPp = model.AcceptedGdprPp;
+                        user.AcceptedGdprPp = model.AcceptedGdprPp;
 
-                    user.AcceptedGdpr3rdParties = model.AcceptedGdpr3rdParties;
+                        user.AcceptedGdpr3rdParties = model.AcceptedGdpr3rdParties;
+                    }
+                    else {
+                        // Marketing
+                        user.AllowGzSms = model.AllowGzSms;
 
-                    // Marketing
-                    user.AllowGzSms = model.AllowGzSms;
+                        user.AllowGzEmail = model.AllowGzEmail;
 
-                    user.AllowGzEmail =model.AllowGzEmail;
-
-                    user.Allow3rdPartySms = model.Allow3rdPartySms;
+                        user.Allow3rdPartySms = model.Allow3rdPartySms;
+                    }
 
                     _dbContext.SaveChanges();
                 }

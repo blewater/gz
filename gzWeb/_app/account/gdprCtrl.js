@@ -9,6 +9,7 @@
         $scope.responseMsg = null;
 
         $scope.consents = {
+            isTc : undefined,
             allowGzEmail: undefined,
             allowGzSms: undefined,
             allow3rdPartySms: undefined,
@@ -19,14 +20,18 @@
 
         $scope.isFormValid = function () {
             var consObj = $scope.consents;
-            // Everymatrix guideline: user answers once for the 3 consent questions.
-            if ( 
-                (consObj["acceptedGdprTc"] === undefined || consObj["acceptedGdprTc"] === "false")
-                || consObj["allowGzEmail"] === undefined
-                || consObj["allowGzSms"] === undefined
-                || consObj["allow3rdPartySms"] === undefined) {
+            var acceptedGdprTc = consObj.acceptedGdprTc;
+            var isTc = $scope.isTc;
+            if (isTc && (acceptedGdprTc === undefined || acceptedGdprTc === "false")) {
                 return false;
             }
+            // Everymatrix guideline: user answers once for the 3 consent questions.
+            if (!isTc)
+                if  (consObj.allowGzEmail === undefined
+                    || consObj.allowGzSms === undefined
+                    || consObj.allow3rdPartySms === undefined) {
+                    return false;
+                }
             return true;
         };
 
@@ -37,14 +42,15 @@
 
         $scope.submit = function () {
             if ($scope.isFormValid() && !$scope.continueWaiting) {
-                // in the popup are 1 question with T&C
-                $scope.consents["acceptedGdprPp"] = $scope.consents["acceptedGdpr3rdParties"] = true;
+                $scope.consents.isTc = $scope.isTc;
+                // in the popup there is 1 question with T&C
+                $scope.consents.acceptedGdprPp = $scope.consents.acceptedGdpr3rdParties = true;
 
                 $scope.continueWaiting = true;
                 $scope.errorMsg = "";
 
                 auth.setGdpr($scope.consents).then(function (response) {
-                    $scope.nsOk();
+                    $scope.nsOk(true);
                 });
             }
         };
