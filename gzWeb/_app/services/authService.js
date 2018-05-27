@@ -335,16 +335,19 @@
                     nsTemplate: '_app/account/gdpr.html',
                     nsCtrl: 'gdprCtrl',
                     nsStatic: true,
-                    nsShowClose: false
-                }).then(function() {
-                    // To be tested in stage or prod.
-                    // Required when hasToAcceptTC set to true
-                    // https://everymatrix.atlassian.net/wiki/spaces/WA1/pages/152502571/login
-                    emAcceptTcPromise().then(function() {
+                    nsShowClose: false,
+                    nsParams: { isTc: true }
+                }).then(function(accepted) {
+                    if (accepted) {
+                        emAcceptTcPromise().then(function() {
+                                q.resolve();
+                            },
+                            function(acceptTcError) {
+                                q.reject(acceptTcError ? acceptTcError.desc : false);
+                            });
+                    } else {
                         q.resolve();
-                    }, function(acceptTcError) {
-                        q.reject(acceptTcError ? acceptTcError.desc : false);
-                    });
+                    }
                 }, function(error) {
                     q.reject(error ? error.desc : false);
                 });

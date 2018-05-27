@@ -118,12 +118,12 @@ namespace gzWeb.Models
 
     public class GdprBindingModel
     {
+        [Required]
+        public bool IsTc { get; set; }
         public bool AllowGzEmail { get; set; }
         public bool AllowGzSms { get; set; }
         public bool Allow3rdPartySms { get; set; }
-        [Required]
         public bool AcceptedGdprTc { get; set; }
-        [Required]
         public bool AcceptedGdprPp { get; set; }
         public bool AcceptedGdpr3rdParties { get; set; }
     }
