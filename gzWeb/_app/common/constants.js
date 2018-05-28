@@ -120,6 +120,13 @@
         title: 'Responsible Gambling',
         category: categories.wandering
     };
+    routes.thirdParties = {
+        path: '/third-parties',
+        ctrl: 'thirdPartiesCtrl',
+        tpl: '_app/guest/thirdParties.html',
+        title: 'Third Parties',
+        category: categories.wandering,
+    };
 
     routes.promotion = {
         path: '/promotions/:code',

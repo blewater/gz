@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -195,6 +196,49 @@ namespace gzWeb.Controllers
             catch (Exception ex)
             {
                 Logger.Error(ex, "api/Account/ResetPassword");
+                telemetry.TrackException(ex);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("SetGzGdpr")]
+        public IHttpActionResult SetGzGdpr(GdprBindingModel model) {
+            try {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var userId = User.Identity.GetUserId<int>();
+                var user =
+                    _dbContext
+                        .Users
+                        .SingleOrDefault(u => u.Id == userId);
+                if (user != null) {
+
+                    // Consent
+                    if (model.IsTc) {
+                        user.AcceptedGdprTc = model.AcceptedGdprTc;
+
+                        user.AcceptedGdprPp = model.AcceptedGdprPp;
+
+                        user.AcceptedGdpr3rdParties = model.AcceptedGdpr3rdParties;
+                    }
+                    else {
+                        // Marketing
+                        user.AllowGzSms = model.AllowGzSms;
+
+                        user.AllowGzEmail = model.AllowGzEmail;
+
+                        user.Allow3rdPartySms = model.Allow3rdPartySms;
+                    }
+
+                    _dbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex) {
+                Logger.Error(ex, "api/Account/SetGzGdpr");
                 telemetry.TrackException(ex);
             }
 

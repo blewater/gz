@@ -243,12 +243,14 @@ namespace gzWeb
                                     , "~/_app/guest/privacyInvestmentCtrl.js"
                                     , "~/_app/guest/termsGamesCtrl.js"
                                     , "~/_app/guest/termsInvestmentCtrl.js"
+                                    , "~/_app/guest/thirdPartiesCtrl.js"
                                     , "~/_app/guest/playgroundCtrl.js"
                                     , "~/_app/guest/responsibleGamblingCtrl.js"
             #endregion
 
             #region Account
                                     , "~/_app/account/loginCtrl.js"
+                                    , "~/_app/account/gdprCtrl.js"
                                     , "~/_app/account/investmentAccessErrorCtrl.js"
                                     , "~/_app/account/forgotPasswordCtrl.js"
                                     , "~/_app/account/resetPasswordCtrl.js"
