@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', '$timeout', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message, $timeout) {
         var factory = {};
 
         // #region AuthData
@@ -19,7 +19,9 @@
             isGamer: false,
             isInvestor: false,
             isAdmin: false,
-            isGuest: true
+            isGuest: true,
+
+            gdprConsents: undefined
         };
         
         factory.readAuthData = function () {
@@ -52,6 +54,22 @@
             factory.data.firstname = data.firstname;
             factory.data.lastname = data.lastname;
             factory.data.currency = data.currency;
+            storeAuthData();
+        }
+
+        function getConsentValue(value) {
+            var consentValue = value === undefined || value === null || value.length === 0 ? undefined : (value === true || value === "true");
+            return consentValue;
+        }
+        function setGdprData(data) {
+            factory.data.gdprConsents = {
+                allowGzEmail: getConsentValue(data.allowGzEmail),
+                allowGzSms: getConsentValue(data.allowGzSms),
+                allow3rdPartySms: getConsentValue(data.allow3rdPartySms),
+                acceptedGdprTc: getConsentValue(data.acceptedGdprTc),
+                acceptedGdprPp: getConsentValue(data.acceptedGdprPp),
+                acceptedGdpr3rdParties: getConsentValue(data.acceptedGdpr3rdParties)
+            };
             storeAuthData();
         }
 
@@ -155,6 +173,32 @@
         //    $rootScope.$broadcast(constants.events.SESSION_TERMINATED);
         //}
 
+        factory.setGdpr = function (consents) {
+            var q = $q.defer();
+            //$timeout(function () {
+            //    setGdprData(consents);
+            //    q.resolve(true);
+            //}, 3000);
+            api.setGdpr(consents).then(function (result) {
+                setGdprData(consents);
+                q.resolve(true);
+            }, function (error) {
+                q.reject(error);
+            });
+            return q.promise;
+        };
+        function hasToSetConsents() {
+            if (factory.data.gdprConsents === undefined)
+                return true;
+            else {
+                for (var consent in factory.data.gdprConsents) {
+                    var consentValue = factory.data.gdprConsents[consent];
+                    if (consentValue === undefined || consentValue === null || consentValue.length === 0)
+                        return true;
+                }
+                return false;
+            }
+        }
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
             var args = kwargs;
             if (args.code === 0) {
@@ -263,11 +307,61 @@
 
             api.login(usernameOrEmail, password).then(function (gzLoginResult) {
                 setInvestmentAuthData(gzLoginResult.data);
-                $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                setGdprData(gzLoginResult.data);
                 q.resolve(gzLoginResult);
             }, function (error) {
                 q.reject(error.data.error_description);
             });
+            return q.promise;
+        }
+
+        // Called after a login response prop hasToAcceptTC is set = true
+        function emAcceptTcPromise() {
+            var q = $q.defer();
+
+            emWamp.acceptTC().then(function () {
+                q.resolve();
+            }, function (error) {
+                q.reject(error ? error.desc : false);
+            });
+            return q.promise;
+        }
+        function conditionalConsentPopup(emLoginResult) {
+            var q = $q.defer();
+            if (emLoginResult.hasToAcceptTC) {
+                message.open({
+                    nsType: 'modal',
+                    nsSize: 'md',
+                    nsTemplate: '_app/account/gdpr.html',
+                    nsCtrl: 'gdprCtrl',
+                    nsStatic: true,
+                    nsShowClose: false,
+                    nsParams: { isTc: true }
+                }).then(function(accepted) {
+                    if (accepted) {
+                        emAcceptTcPromise().then(function() {
+                                q.resolve();
+                            },
+                            function(acceptTcError) {
+                                q.reject(acceptTcError ? acceptTcError.desc : false);
+                            });
+                    } else {
+                        q.resolve();
+                    }
+                }, function(error) {
+                    q.reject(error ? error.desc : false);
+                });
+            } else if (emLoginResult.minorChangeInTC) {
+                message.notify("The Terms and Conditions have minor changes. Click here to check the details.",
+                {
+                    nsCallback: function() {
+                        $location.path(constants.routes.termsGames.path);
+                        q.resolve();
+                    }
+                });
+            } else {
+                q.resolve();
+            }
             return q.promise;
         }
 
@@ -303,9 +397,16 @@
                     q.resolve({ enterCaptcha: true });
                 else {
                     message.clear();
+
                     factory.gzLogin(usernameOrEmail, password).then(function () {
-                        api.cacheUserData();
-                        q.resolve({ emLogin: true, gzLogin: true });
+                        conditionalConsentPopup(emLoginResult).then(function() {
+                            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                            api.cacheUserData();
+                            q.resolve({ emLogin: true, gzLogin: true });
+                        }, function(popupError) {
+                            $log.error("Greenzorro login popup failed for user " + usernameOrEmail + ": " + popupError);
+                            q.resolve({ emLogin: false, gzLogin: true });
+                        });
                     }, function (gzLoginError) {
                         $log.error("Greenzorro login failed for user " + usernameOrEmail + ": " + gzLoginError);
                         q.resolve({ emLogin: true, gzLogin: false });

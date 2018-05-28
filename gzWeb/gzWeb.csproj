@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
@@ -872,6 +872,8 @@
     <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrillCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustly.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustlyCtrl.js" />
+    <Content Include="_app\account\gdpr.html" />
+    <Content Include="_app\account\gdprCtrl.js" />
     <Content Include="_app\account\receiptCtrl.js" />
     <Content Include="_app\account\receipt.html" />
     <Content Include="_app\accountManagement\depositCtrl.js" />
@@ -950,7 +952,9 @@
     <Content Include="_app\games\games.html" />
     <Content Include="_app\games\liveSearch.html" />
     <Content Include="_app\games\liveSearch.js" />
+    <Content Include="_app\guest\thirdParties.html" />
     <Content Include="_app\guest\help.html" />
+    <Content Include="_app\guest\thirdPartiesCtrl.js" />
     <Content Include="_app\guest\home.html" />
     <Content Include="_app\guest\privacyInvestmentCtrl.js" />
     <Content Include="_app\guest\privacyInvestment.html" />
