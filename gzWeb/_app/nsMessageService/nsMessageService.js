@@ -191,7 +191,7 @@
         }
         function alert(msg, okCallBack, options) {
             var defaults = {
-                nsIconClass: 'fa-exclamation',
+                nsIconClass: 'fa-exclamation'
             };
             prompt(msg, okCallBack, angular.noop, angular.extend(defaults, options));
         }
