@@ -217,7 +217,7 @@ namespace gzWeb.Controllers
                         .SingleOrDefault(u => u.Id == userId);
                 if (user != null) {
 
-                    // Consent
+                    // Terms & Conditions, Private & Cookie Policy
                     if (model.IsTc) {
                         user.AcceptedGdprTc = model.AcceptedGdprTc;
 
@@ -225,8 +225,9 @@ namespace gzWeb.Controllers
 
                         user.AcceptedGdpr3rdParties = model.AcceptedGdpr3rdParties;
                     }
-                    else {
-                        // Marketing
+
+                    // Marketing consent
+                    if (model.IsUc) {
                         user.AllowGzSms = model.AllowGzSms;
 
                         user.AllowGzEmail = model.AllowGzEmail;
