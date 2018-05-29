@@ -326,42 +326,72 @@
             });
             return q.promise;
         }
-        function conditionalConsentPopup(emLoginResult) {
+        // Called after a login response prop hasToAcceptTC is set = true
+        function emGetUserConsent(hasToSetUserConsent) {
             var q = $q.defer();
-            if (emLoginResult.hasToAcceptTC) {
-                message.open({
-                    nsType: 'modal',
-                    nsSize: 'md',
-                    nsTemplate: '_app/account/gdpr.html',
-                    nsCtrl: 'gdprCtrl',
-                    nsStatic: true,
-                    nsShowClose: false,
-                    nsParams: { isTc: true }
-                }).then(function(accepted) {
-                    if (accepted) {
-                        emAcceptTcPromise().then(function() {
-                                q.resolve();
-                            },
-                            function(acceptTcError) {
-                                q.reject(acceptTcError ? acceptTcError.desc : false);
-                            });
-                    } else {
-                        q.resolve();
-                    }
-                }, function(error) {
-                    q.reject(error ? error.desc : false);
-                });
-            } else if (emLoginResult.minorChangeInTC) {
-                message.notify("The Terms and Conditions have minor changes. Click here to check the details.",
-                {
-                    nsCallback: function() {
-                        $location.path(constants.routes.termsGames.path);
-                        q.resolve();
-                    }
-                });
+
+            if (hasToSetUserConsent) {
+                var parameters = {};
+                parameters.action = 1;
+
+                emWamp.getConsentRequirements(parameters).then(function(consentList) {
+                        q.resolve(consentList);
+                    },
+                    function(error) {
+                        q.reject(error ? error.desc : false);
+                    });
             } else {
                 q.resolve();
             }
+            return q.promise;
+        }
+        // handle any flag set 2 true for hasToSetUserConsent, hasToAcceptTC and minorChangeInTC
+        function conditionalConsentPopup(emLoginResult) {
+            var q = $q.defer();
+            emGetUserConsent(emLoginResult.hasToSetUserConsent).then(function(consentList) {
+
+                if (emLoginResult.hasToAcceptTC || emLoginResult.hasToSetUserConsent) {
+                    message.open({
+                        nsType: 'modal',
+                        nsSize: 'md',
+                        nsTemplate: '_app/account/gdpr.html',
+                        nsCtrl: 'gdprCtrl',
+                        nsStatic: true,
+                        nsShowClose: false,
+                        nsParams: {
+                            isTc: emLoginResult.hasToAcceptTC,
+                            isUc: emLoginResult.hasToSetUserConsent,
+                            userConsentList: consentList
+                        }
+                    }).then(function(accepted) {
+                            if (accepted) {
+                                emAcceptTcPromise().then(function() {
+                                        q.resolve();
+                                    },
+                                    function(acceptTcError) {
+                                        q.reject(acceptTcError ? acceptTcError.desc : false);
+                                    });
+                            } else {
+                                q.resolve();
+                            }
+                        },
+                        function(error) {
+                            q.reject(error ? error.desc : false);
+                        });
+                } else if (emLoginResult.minorChangeInTC) {
+                    message.notify("The Terms and Conditions have minor changes. Click here to check the details.",
+                        {
+                            nsCallback: function() {
+                                $location.path(constants.routes.termsGames.path);
+                                q.resolve();
+                            }
+                        });
+                } else {
+                    q.resolve();
+                }
+            }, function(errorGetConsent) {
+                q.reject(errorGetConsent ? errorGetConsent.desc : false);
+            });
             return q.promise;
         }
 

@@ -9,7 +9,8 @@
         $scope.responseMsg = null;
 
         $scope.consents = {
-            isTc : undefined,
+            isTc : $scope.isTc,
+            isUc : $scope.isUc,
             allowGzEmail: undefined,
             allowGzSms: undefined,
             allow3rdPartySms: undefined,

@@ -253,6 +253,10 @@
                 return _call("/user#acceptTC");
             },
 
+            getConsentRequirements: function(parameters) {
+                return _call("/user/account#getConsentRequirements", parameters);
+            },
+
             /// <summary>
             /// Get current session information.
             /// <summary>
