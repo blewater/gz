@@ -120,6 +120,8 @@ namespace gzWeb.Models
     {
         [Required]
         public bool IsTc { get; set; }
+        [Required]
+        public bool IsUc { get; set; }
         public bool AllowGzEmail { get; set; }
         public bool AllowGzSms { get; set; }
         public bool Allow3rdPartySms { get; set; }
