@@ -348,6 +348,10 @@
         // handle any flag set 2 true for hasToSetUserConsent, hasToAcceptTC and minorChangeInTC
         function conditionalConsentPopup(emLoginResult) {
             var q = $q.defer();
+
+            // Prod may not be synced with the login api update
+            if (emLoginResult.hasToSetUserConsent === undefined) 
+                emLoginResult.hasToSetUserConsent = false;
             emGetUserConsent(emLoginResult.hasToSetUserConsent).then(function(consentList) {
 
                 if (emLoginResult.hasToAcceptTC || emLoginResult.hasToSetUserConsent) {
