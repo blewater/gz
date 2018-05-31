@@ -257,6 +257,10 @@
                 return _call("/user/account#getConsentRequirements", parameters);
             },
 
+            setConsentRequirements: function(parameters) {
+                return _call("/user#setUserConsents", parameters);
+            },
+
             // <summary>
             // Get current session information.
             // <summary>
