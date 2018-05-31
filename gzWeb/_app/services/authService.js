@@ -326,19 +326,45 @@
             });
             return q.promise;
         }
-        // Called after a login response prop hasToAcceptTC is set = true
-        function emGetUserConsent(hasToSetUserConsent) {
+        // Called after a login response prop hasToSetUserConsent is set = true
+        function emGetUserConsent(hasToSetUserConsent, action) {
             var q = $q.defer();
 
             if (hasToSetUserConsent) {
-                var parameters = {};
-                parameters.action = 1;
+                var params = angular.extend({}, { "action": action });
 
-                emWamp.getConsentRequirements(parameters).then(function(consentList) {
+                emWamp.getConsentRequirements(params).then(function(consentList) {
                         q.resolve(consentList);
                     },
                     function(error) {
                         q.reject(error ? error.desc : false);
+                    });
+            } else {
+                q.resolve();
+            }
+            return q.promise;
+        }
+        // Called after getUserConsents
+        function emSetUserConsent(userConsents) {
+            var q = $q.defer();
+
+            emWamp.setConsentRequirements({ userConsents: userConsents }).then(function() {
+                    q.resolve();
+                },
+                function(setUserConsentError) {
+                    q.reject(error ? error.desc : false);
+                });
+
+            return q.promise;
+        }
+        function condSetUserConsents(popupConsents) {
+            var q = $q.defer();
+            if (popupConsents.setUserConsent) {
+                emSetUserConsent(popupConsents.userConsents).then(function() {
+                        q.resolve();
+                    },
+                    function(acceptTcError) {
+                        q.reject(acceptTcError ? acceptTcError.desc : false);
                     });
             } else {
                 q.resolve();
@@ -352,7 +378,7 @@
             // Prod may not be synced with the login api update
             if (emLoginResult.hasToSetUserConsent === undefined) 
                 emLoginResult.hasToSetUserConsent = false;
-            emGetUserConsent(emLoginResult.hasToSetUserConsent).then(function(consentList) {
+            emGetUserConsent(emLoginResult.hasToSetUserConsent, 2).then(function(userConsentList) {
 
                 if (emLoginResult.hasToAcceptTC || emLoginResult.hasToSetUserConsent) {
                     message.open({
@@ -365,22 +391,32 @@
                         nsParams: {
                             isTc: emLoginResult.hasToAcceptTC,
                             isUc: emLoginResult.hasToSetUserConsent,
-                            userConsentList: consentList
+                            userConsentList: userConsentList
                         }
-                    }).then(function(accepted) {
-                            if (accepted) {
+                    }).then(function(popupConsents) {
+                            // Have to call acceptTC?
+                            if (popupConsents.setAcceptTC) {
                                 emAcceptTcPromise().then(function() {
+                                    // Then call setUserConsents?
+                                    condSetUserConsents(popupConsents).then(function() {
                                         q.resolve();
-                                    },
-                                    function(acceptTcError) {
-                                        q.reject(acceptTcError ? acceptTcError.desc : false);
+                                    }, function(setUserConsents) {
+                                        q.reject(setUserConsents ? setUserConsents.desc : false);
                                     });
+                                }, function(acceptTcError) {
+                                    q.reject(acceptTcError ? acceptTcError.desc : false);
+                                });
                             } else {
-                                q.resolve();
+                                // --Or just call setUserConsents?
+                                condSetUserConsents(popupConsents).then(function() {
+                                    q.resolve();
+                                }, function(setUserConsents) {
+                                    q.reject(setUserConsents ? setUserConsents.desc : false);
+                                });
                             }
                         },
-                        function(error) {
-                            q.reject(error ? error.desc : false);
+                        function(errorPopup) {
+                            q.reject(errorPopup ? errorPopup.desc : false);
                         });
                 } else if (emLoginResult.minorChangeInTC) {
                     message.notify("The Terms and Conditions have minor changes. Click here to check the details.",
