@@ -21,7 +21,7 @@
         $scope.showSms = false;
         $scope.show3rdParty = false;
 
-        function _init() {
+        function init() {
             if (angular.isDefined($scope.userConsentList)) {
                 angular.forEach($scope.userConsentList,
                     function(value) {
@@ -43,8 +43,10 @@
                         }
                     });
             }
+            // Consider the case setAcceptTC value
+            $scope.showTcbyUserConsentApi = $scope.showTcbyUserConsentApi || $scope.isTc;
         }
-        _init();
+        init();
 
         $scope.consents = {
             // hasToAcceptTC
@@ -64,9 +66,8 @@
             var acceptedGdprTc = consObj.acceptedGdprTc;
 
             // TC by either accept or userconsent Api
-            if ($scope.isTc || ($scope.isUc && $scope.showTcbyUserConsentApi))
-                if (acceptedGdprTc === undefined || acceptedGdprTc === "false")
-                    return false;
+            if ($scope.showTcbyUserConsentApi && acceptedGdprTc === undefined || acceptedGdprTc === "false")
+                return false;
 
             // marketing consent
             if ($scope.isUc)
@@ -83,7 +84,7 @@
             auth.logout();
         };
 
-        function getUserConsents() {
+        function createUserConsents() {
 
             var userConsents = undefined;
             if ($scope.isUc) {
@@ -117,9 +118,9 @@
                 $scope.continueWaiting = true;
                 $scope.errorMsg = "";
 
-                $scope.consents.isTc = $scope.isTc;
+                $scope.consents.isTc = $scope.isTc || $scope.showTcbyUserConsentApi;
                 // Assume if the tc question was asked, it must be accepted by the user
-                if ($scope.isTc || ($scope.isUc && $scope.showTcbyUserConsentApi)) {
+                if ($scope.showTcbyUserConsentApi) {
                     $scope.consents.acceptedGdprPp = true;
                     $scope.consents.acceptedGdpr3rdParties = true;
                 }
@@ -128,7 +129,7 @@
                     $scope.nsOk({
                         setAcceptTC : $scope.isTc, 
                         setUserConsent : $scope.isUc,
-                        userConsents: getUserConsents()
+                        userConsents: createUserConsents()
                     });
                 });
             }

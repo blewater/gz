@@ -344,6 +344,96 @@
             }
             return q.promise;
         }
+        // action: 1 : registration, 2: login, 3: profile
+        function emGetActionableUserConsent(action) {
+            var q = $q.defer();
+            var params = angular.extend({}, { "action": action });
+
+            emWamp.getConsentRequirements(params).then(function(consentList) {
+                q.resolve(consentList);
+            },
+            function(error) {
+                q.reject(error ? error.desc : false);
+            });
+
+            return q.promise;
+        }
+        factory.setUserConsentQuestions = function(controller, action) {
+            var q = $q.defer();
+
+            emGetActionableUserConsent(action).then(function(userConsentQuestions) {
+                if (angular.isDefined(userConsentQuestions)) {
+                    angular.forEach(userConsentQuestions,
+                        function(value) {
+                            if (value.code.indexOf(constants.emUserConsentKeys.tcApiCode) !== -1) {
+                                // may be set by getConsentRequirements or hasToAcceptTC
+                                controller.showTcbyUserConsentApi = true;
+                            }
+
+                            if (value.code.indexOf(constants.emUserConsentKeys.emailApiCode) !== -1) {
+                                controller.showEmail = true;
+                            }
+
+                            if (value.code.indexOf(constants.emUserConsentKeys.smsApiCode) !== -1) {
+                                controller.showSms = true;
+                            }
+
+                            if (value.code.indexOf(constants.emUserConsentKeys.thirdpartyApiCode) !== -1) {
+                                controller.show3rdParty = true;
+                            }
+                        });
+                }
+                q.resolve(userConsentQuestions);
+            },
+            function(errorGetUserConsent) {
+                q.reject(errorGetUserConsent ? errorGetUserConsent.desc : false);
+            });
+            return q.promise;
+        }
+
+        factory.isGdprFormSectionValid = function (controller) {
+            var consObj = controller.consents;
+            var acceptedGdprTc = consObj.acceptedGdprTc;
+
+            // TC by either accept or userconsent Api
+            if (controller.showTcbyUserConsentApi && (acceptedGdprTc === undefined || acceptedGdprTc === "false"))
+                return false;
+
+            if (controller.showEmail && consObj.allowGzEmail === undefined)
+                return false;
+
+            if (controller.showSms && consObj.allowGzSms === undefined)
+                return false;
+
+            if (controller.show3rdParty && consObj.allow3rdPartySms === undefined)
+                return false;
+
+            return true;
+        };
+
+        // create userConsents for inclusion in Api params call (reg., login, profile)
+        factory.createUserConsents = function(controller) {
+
+            var userConsents = undefined;
+            if (controller.consents.isUc) {
+                userConsents = {};
+                var consents = controller.consents;
+                if (controller.showTcbyUserConsentApi) {
+                    userConsents[constants.emUserConsentKeys.tcApiCode] = consents.acceptedGdprTc;
+                }
+                if (controller.showEmail) {
+                    userConsents[constants.emUserConsentKeys.emailApiCode] = consents.allowGzEmail;
+                }
+                if (controller.showSms) {
+                    userConsents[constants.emUserConsentKeys.smsApiCode] = consents.allowGzSms;
+                }
+                if (controller.show3rdParty) {
+                    userConsents[constants.emUserConsentKeys.thirdpartyApiCode] = consents.allow3rdPartySms;
+                }
+            }
+            return userConsents;
+        }
+
         // Called after getUserConsents
         function emSetUserConsent(userConsents) {
             var q = $q.defer();

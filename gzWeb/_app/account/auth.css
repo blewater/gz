@@ -10,22 +10,19 @@
 
 .auth .heading {
     background-color: #f2f2f2;
-    margin: 40px auto;
-    height: 100px;
+    margin: 20px auto;
+    height: 90px;
     color: #7b7b7b
 }
 .auth .heading h2 {
     font-size: 28px;
 }
 
-.auth .content {
-    padding-bottom: 20px;
-}
 .auth .content .logo-icon {
     background: #ffffff none repeat scroll 0 0;
     height: 70px;
     line-height: 68px;
-    margin: -30px auto 40px;
+    margin: -30px auto 10px;
     position: relative;
     text-align: center;
     width: 70px;
