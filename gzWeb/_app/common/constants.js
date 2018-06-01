@@ -284,7 +284,14 @@
             signupAndPlay: 'SignupandPlay',
             signup: 'Signup',
             deposit: 'Deposit',
-            withdraw: 'Withdraw',
+            withdraw: 'Withdraw'
+        },
+        // UserConsentList Api Constants
+        emUserConsentKeys: {
+            tcApiCode: "termsandconditions",
+            emailApiCode: "emailmarketing",
+            smsApiCode: "sms",
+            thirdpartyApiCode: "3rdparty"
         },
         events: {
             ON_INIT: 'onInit',
