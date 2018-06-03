@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'myProfileCtrl';
-    APP.controller(ctrlId, ['$scope', 'emWamp', '$filter', 'message', 'constants', '$q', '$log', '$timeout', ctrlFactory]);
-    function ctrlFactory($scope, emWamp, $filter, message, constants, $q, $log, $timeout) {
+    APP.controller(ctrlId, ['$scope', 'emWamp', '$filter', 'message', 'constants', '$q', '$log', '$timeout', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, emWamp, $filter, message, constants, $q, $log, $timeout, auth) {
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
 
@@ -35,6 +35,20 @@
             ms: { display: 'Ms.', gender: 'F' },
             mrs: { display: 'Mrs.', gender: 'F' },
             miss: { display: 'Miss', gender: 'F' }
+        };
+
+        // #region terms and conditions
+        $scope.consents = {
+            // hasToAcceptTC not set in profile
+            isTc : false,
+            // always set UserConsent in profile
+            isUc : true,
+            allowGzEmail: undefined,
+            allowGzSms: undefined,
+            allow3rdPartySms: undefined,
+            acceptedGdprTc: undefined,
+            acceptedGdprPp: undefined,
+            acceptedGdpr3rdParties: undefined
         };
 
         function loadYears(country, defer) {
@@ -229,7 +243,23 @@
             });
         }
 
+        $scope.readGamesTerms = function(){
+            message.modal("Gaming terms and conditions", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isGaming: true }
+            });
+        };
+
+        function getUserConsent() {
+            auth.setUserConsentQuestions($scope, 3).then(function() {},
+            function(errorUserConsent) {
+                message.warning(errorUserConsent);
+            });
+        }
+
         function init() {
+            getUserConsent();
             //var loadYearsDefer = $q.defer();
             //var loadMonthsDefer = $q.defer();
             //var loadTitlesDefer = $q.defer();

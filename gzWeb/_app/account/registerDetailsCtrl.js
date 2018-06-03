@@ -185,7 +185,7 @@
             },
             function(errorUserConsent) {
                 $scope.waiting = false;
-                message.error(errorUserConsent);
+                message.warning(errorUserConsent);
             });
         }
 
