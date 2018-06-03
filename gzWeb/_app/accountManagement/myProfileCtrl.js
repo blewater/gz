@@ -25,9 +25,7 @@
             address1: null,
             city: null,
             postalCode: null,
-            currency: null,
-            acceptNewsEmail: true,
-            acceptSMSOffer: true,
+            currency: null
         }
 
         var titles = {
@@ -233,10 +231,26 @@
                     $scope.model.city = $scope.profile.fields.city;
                     $scope.model.postalCode = $scope.profile.fields.postalCode;
                     $scope.model.currency = $filter('filter')($scope.currencies, { code: $scope.profile.fields.currency })[0];
-                    $scope.model.acceptNewsEmail = $scope.profile.fields.acceptNewsEmail;
-                    $scope.model.acceptSMSOffer = $scope.profile.fields.acceptSMSOffer;
+                if ($scope.showTcbyUserConsentApi) {
+                    var tcConsentVal = $scope.profile.fields.userConsents[constants.emUserConsentKeys.tcApiCode];
+                    if (angular.isDefined(tcConsentVal)) {
+                        $scope.consents.acceptedGdprTc = tcConsentVal;
+                    }
+                }
+                if ($scope.showEmail) {
+                    $scope.consents.allowGzEmail = $scope.profile.fields.acceptNewsEmail || $scope.profile.fields.userConsents[constants.emUserConsentKeys.emailApiCode];
+                }
+                if ($scope.showSms) {
+                    $scope.consents.allowGzSms = $scope.profile.fields.acceptSMSOffer || $scope.profile.fields.userConsents[constants.emUserConsentKeys.smsApiCode];
+                }
+                if ($scope.show3rdParty) {
+                    var thirdPartyConsentVal = $scope.profile.fields.userConsents[constants.emUserConsentKeys.thirdpartyApiCode];
+                    if (angular.isDefined(thirdPartyConsentVal)) {
+                        $scope.consents.allow3rdPartySms = thirdPartyConsentVal;
+                    }
+                }
 
-                    $scope.onCountrySelected($scope.model.country.code);
+                $scope.onCountrySelected($scope.model.country.code);
                     $scope.onYearSelected($scope.model.yearOfBirth);
                     $scope.onMonthSelected($scope.model.monthOfBirth);
                 //}, 0);
@@ -251,15 +265,7 @@
             });
         };
 
-        function getUserConsent() {
-            auth.setUserConsentQuestions($scope, 3).then(function() {},
-            function(errorUserConsent) {
-                message.warning(errorUserConsent);
-            });
-        }
-
         function init() {
-            getUserConsent();
             //var loadYearsDefer = $q.defer();
             //var loadMonthsDefer = $q.defer();
             //var loadTitlesDefer = $q.defer();
@@ -273,7 +279,7 @@
             loadCurrencies(loadCurrenciesDefer);
 
             //loadYearsDefer.promise, loadMonthsDefer.promise, loadTitlesDefer.promise,
-            $q.all([loadCountriesDefer.promise, loadCurrenciesDefer.promise]).then(function () {
+            $q.all([auth.setUserConsentQuestions($scope, 3), loadCountriesDefer.promise, loadCurrenciesDefer.promise]).then(function () {
                 getProfile();
             });
 
@@ -291,6 +297,7 @@
         $scope.submit = function () {
             if ($scope.form.$valid && !$scope.waiting) {
                 $scope.waiting = true;
+                auth.setGdpr($scope.consents);
                 var dateOfBirth = moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]).format('YYYY-MM-DD');
                 var gender = $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender;
                 var parameters = {
@@ -307,9 +314,10 @@
                     city: $scope.model.city,
                     postalCode: $scope.model.postalCode,
                     currency: $scope.model.currency.code,
-                    acceptNewsEmail: $scope.model.acceptNewsEmail,
-                    acceptSMSOffer: $scope.model.acceptSMSOffer
+                    acceptNewsEmail: $scope.consents.allowGzEmail,
+                    acceptSMSOffer: $scope.consents.allowGzSms
                 };
+                parameters["userConsents"] = auth.createUserConsents($scope);
                 emWamp.updateProfile(parameters).then(function () {
                     $scope.waiting = false;
                     message.success("Your profile has been updated successfully!", { nsType: 'toastr' });

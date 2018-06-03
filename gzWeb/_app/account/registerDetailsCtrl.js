@@ -221,6 +221,7 @@
         
         function register() {
             $scope.waiting = true;
+            auth.setGdpr($scope.consents);
             var dateOfBirth = moment([$scope.model.yearOfBirth, $scope.model.monthOfBirth.value - 1, $scope.model.dayOfBirth.value]);
             var gender = $filter('filter')($filter('toArray')(titles), { display: $scope.model.title })[0].gender;
             var parameters = {
@@ -260,7 +261,6 @@
                     nsStatic: true,
                     nsParams: { accountModel: $scope.model }
                 });
-                auth.setGdpr($scope.consents);
             }, function(error) {
                 $scope.waiting = false;
                 message.error(error);
