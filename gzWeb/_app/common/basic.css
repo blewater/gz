@@ -184,7 +184,7 @@ a { text-decoration:none; }
 }
 
 
-.text-gz { color: #27A95C; }
+.text-gz { color: #337ab7 /*#27A95C*/; }
 .text-grey { color: #646464; }
 .text-black { color: #000; }
 
