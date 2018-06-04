@@ -659,6 +659,10 @@
                 Address: parameters.address1,
                 PostalCode: parameters.postalCode,
                 // TODO: Region ???
+                AcceptedGdprTc: parameters.userConsents[constants.emUserConsentKeys.tcApiCode],
+                AllowGzEmail: parameters.userConsents[constants.emUserConsentKeys.emailApiCode],
+                AllowGzSms: parameters.userConsents[constants.emUserConsentKeys.smsApiCode],
+                Allow3rdPartySms: parameters.userConsents[constants.emUserConsentKeys.thirdpartyApiCode]
             });
         }
 

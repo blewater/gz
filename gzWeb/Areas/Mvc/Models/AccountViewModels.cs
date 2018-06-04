@@ -88,6 +88,11 @@ namespace gzWeb.Areas.Mvc.Models {
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public bool? AcceptedGdprTc { get; set; }
+        public bool? AllowGzEmail { get; set; }
+        public bool? AllowGzSms { get; set; }
+        public bool? Allow3rdPartySms { get; set; }
     }
 
     internal class BirthdayValidationAttribute : ValidationAttribute {
