@@ -167,7 +167,11 @@ namespace gzWeb.Areas.Mvc.Controllers
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    Birthday = model.Birthday
+                    Birthday = model.Birthday,
+                    AcceptedGdprTc = model.AcceptedGdprTc,
+                    AllowGzEmail = model.AllowGzEmail,
+                    AllowGzSms = model.AllowGzSms,
+                    Allow3rdPartySms = model.Allow3rdPartySms
                 };
                 var result = UserManager.Create(user, model.Password);
                 if (result.Succeeded)
