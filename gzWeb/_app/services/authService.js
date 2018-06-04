@@ -637,7 +637,8 @@
                 securityQuestion: parameters.securityQuestion,
                 securityAnswer: parameters.securityAnswer,
                 iovationBlackbox: iovation.getBlackbox(),
-                affiliateMarker: getBtag()
+                affiliateMarker: getBtag(),
+                userConsents: parameters.userConsents
             });
         }
 
