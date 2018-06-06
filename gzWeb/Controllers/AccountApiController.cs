@@ -221,9 +221,6 @@ namespace gzWeb.Controllers
                     if (model.IsTc) {
                         user.AcceptedGdprTc = model.AcceptedGdprTc;
 
-                        user.AcceptedGdprPp = model.AcceptedGdprPp;
-
-                        user.AcceptedGdpr3rdParties = model.AcceptedGdpr3rdParties;
                     }
 
                     // Marketing consent
