@@ -952,8 +952,10 @@
     <Content Include="_app\games\games.html" />
     <Content Include="_app\games\liveSearch.html" />
     <Content Include="_app\games\liveSearch.js" />
+    <Content Include="_app\guest\cookiePolicy.html" />
     <Content Include="_app\guest\thirdParties.html" />
     <Content Include="_app\guest\help.html" />
+    <Content Include="_app\guest\cookiePolicyCtrl.js" />
     <Content Include="_app\guest\thirdPartiesCtrl.js" />
     <Content Include="_app\guest\home.html" />
     <Content Include="_app\guest\privacyInvestmentCtrl.js" />
