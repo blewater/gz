@@ -44,7 +44,7 @@
             allowGzEmail: undefined,
             allowGzSms: undefined,
             allow3rdPartySms: undefined,
-            acceptedGdprTc: undefined,
+            acceptedGdprTc: true,
             acceptedGdprPp: undefined,
             acceptedGdpr3rdParties: undefined
         };
@@ -264,6 +264,28 @@
                 nsParams: { isGaming: true }
             });
         };
+        $scope.readInvestmentTerms = function () {
+            message.modal("Investment terms and conditions", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isInvestment: true }
+            });
+        };
+        $scope.readPrivacyPolicy = function () {
+            message.modal("Privacy Policy", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isPrivacy: true }
+            });
+        };
+        $scope.readCookiePolicy = function () {
+            message.modal("Cookie Policy", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isCookie: true }
+            });
+        };
+
 
         function init() {
             //var loadYearsDefer = $q.defer();
