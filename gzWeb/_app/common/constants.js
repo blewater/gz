@@ -120,6 +120,13 @@
         title: 'Responsible Gambling',
         category: categories.wandering
     };
+    routes.cookiePolicy = {
+        path: '/cookiePolicy',
+        ctrl: 'cookiePolicyCtrl',
+        tpl: '_app/guest/cookiePolicy.html',
+        title: 'Cookie Policy',
+        category: categories.wandering,
+    };
     routes.thirdParties = {
         path: '/third-parties',
         ctrl: 'thirdPartiesCtrl',
@@ -127,6 +134,7 @@
         title: 'Third Parties',
         category: categories.wandering,
     };
+
 
     routes.promotion = {
         path: '/promotions/:code',
