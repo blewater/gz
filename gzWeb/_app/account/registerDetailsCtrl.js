@@ -315,6 +315,13 @@
                 nsParams: { isCookie: true }
             });
         };
+        $scope.read3rdParties = function () {
+            message.modal("3rd Parties", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { is3rdParties: true }
+            });
+        };
         // #endregion
 
         init();
