@@ -68,7 +68,7 @@
 			        { Q: "Which deposit methods do you have available?", A: "Once logged in, please click deposit button and you will see all of the payment methods available to you." },
 			        { Q: "Which credit/debit cards do you accept?", A: "We accept all Visa and MasterCard/maestro Credit and Debit cards as depositing methods, although there might be restrictions on withdrawals to MasterCard/Maestro card." },
 			        { Q: "Will I be charged any fees when depositing into my account?", A: "No! Deposits are free of charge. Nevertheless, please keep in mind that your bank may charge you a fee for their service." },
-			        { Q: "What is the minimum/maximum amounts that I can deposit at a time?", A: "The minimum deposit amount is €10 or your currency equivalent and the maximum deposit amount vary according to payment methods you used. Please click on Deposit once you login to see the maximum deposit amount." },
+			        { Q: "What is the minimum/maximum amounts that I can deposit at a time?", A: "The minimum deposit amount is €15 or your currency equivalent and the maximum deposit amount vary according to payment methods you used. Please click on Deposit once you login to see the maximum deposit amount." },
 			        { Q: "Is there a way for me to set daily, weekly and monthly deposit limits?", A: "You are able to set Daily, Weekly or Monthly Deposit Limits. These can be set within 'My Account' sub section 'Responsible Gaming'. Limits can be amended at any time in the same section." },
 			        { Q: "How do I transfer money from my bank account?", A: "Please click 'Deposit' in 'My Account' and chose Bank transfers. Then follow the instructions on the screen." },
                 ]
