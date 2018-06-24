@@ -278,6 +278,13 @@
                 nsParams: { isPrivacy: true }
             });
         };
+        $scope.readDataSubjectRights = function () {
+            message.modal("Data Subject Rights", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isDataSubjectRights: true }
+            });
+        };
         $scope.readCookiePolicy = function () {
             message.modal("Cookie Policy", {
                 nsSize: 'xl',
