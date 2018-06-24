@@ -125,16 +125,22 @@
         ctrl: 'cookiePolicyCtrl',
         tpl: '_app/guest/cookiePolicy.html',
         title: 'Cookie Policy',
-        category: categories.wandering,
+        category: categories.wandering
     };
     routes.thirdParties = {
         path: '/third-parties',
         ctrl: 'thirdPartiesCtrl',
         tpl: '_app/guest/thirdParties.html',
         title: 'Third Parties',
-        category: categories.wandering,
+        category: categories.wandering
     };
-
+    routes.dataSubjectRights = {
+        path: '/dataSubjectRights',
+        ctrl: 'dataSubjectRightsCtrl',
+        tpl: '_app/guest/dataSubjectRights.html',
+        title: 'Data Subject Rights',
+        category: categories.wandering
+    };
 
     routes.promotion = {
         path: '/promotions/:code',
@@ -142,7 +148,7 @@
         tpl: '_app/promotions/promotion.html',
         title: 'Promotions',
         roles: [roles.guest],
-        category: categories.wandering,
+        category: categories.wandering
         //redirectTo: function (routeParams, path, search) {
         //    switch (routeParams.key) {
         //        case 'signup':
