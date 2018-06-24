@@ -926,6 +926,8 @@
     <Content Include="_app\games\noGameFoundCtrl.js" />
     <Content Include="_app\games\carouselVideoCtrl.js" />
     <Content Include="_app\games\noGameFound.html" />
+    <Content Include="_app\guest\dataSubjectRights.html" />
+    <Content Include="_app\guest\dataSubjectRightsCtrl.js" />
     <Content Include="_app\guest\explainerVideo.html" />
     <Content Include="_app\account\forgotPassword.html" />
     <Content Include="_app\account\forgotPasswordCtrl.js" />
