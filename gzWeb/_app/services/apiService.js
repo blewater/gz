@@ -97,6 +97,32 @@
         factory.cacheUserData = function () {
             return $http.post('/api/Account/CacheUserData');
         };
+        factory.vrRegister = function(vrVals) {
+            var params =
+            {
+                "params": {
+                    "event": "registration",
+                    "user": {
+                        "firstname": vrVals.firstname,
+                        "lastname": vrVals.lastname,
+                        "email": vrVals.email
+                    },
+                    "referrer": {
+                        //at least one of these two is necessary if there is a referrer
+                        "referralCode": vrVals.referralCode,
+                        "email": vrVals.email
+                    },
+                    "refSource": vrVals.refSource
+                },
+                "apiToken": vrVals.apiToken
+            };
+            return $http({
+                url: "https://app.viral-loops.com/api/v2/events",
+                method: "POST",
+                data: params,
+                headers: { "Content-Type": "application/json" }
+            });
+        };
         // #endregion
 
         // #region Investments

@@ -155,11 +155,27 @@
         //    $rootScope.$broadcast(constants.events.SESSION_TERMINATED);
         //}
 
+        function vrIdentifyRefered(sessionInfo) {
+            var vrVals = getVrRefCodeFromStorage();
+            if (vrVals) {
+                vrVals['email'] = sessionInfo.email;
+                vrVals['firstname'] = sessionInfo.firstname;
+                vrVals['lastname'] = sessionInfo.surname;
+
+                api.vrRegister(vrVals).then(function (successRes) {
+                    $log.info("vr register for user " + sessionInfo.email + " succeeded: " + successRes);
+                }, function (error) {
+                    $log.error("vr register for user " + sessionInfo.email + " failed: " + error);
+                });
+            }
+        }
+
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
             var args = kwargs;
             if (args.code === 0) {
                 emWamp.getSessionInfo().then(function (sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
+                        vrIdentifyRefered(sessionInfo);
                         setGamingAuthData(sessionInfo);
                         $rootScope.$broadcast(constants.events.REQUEST_ACCOUNT_BALANCE);
                         //getGamingAccountAndWatchBalance();
@@ -348,6 +364,38 @@
 
             clearBtags();
             return "";
+        };
+
+        factory.saveVrRefCodeFromUrl = function () {
+            var refCodeVal = $location.search().referralCode;
+            if (refCodeVal) {
+                var vrCampaignIdVal = localStorageService.get(constants.storageKeys.vrCampaignId);
+                if (vrCampaignIdVal) {
+                    var now = new Date();
+                    localStorageService.set(constants.storageKeys.vrUserCampaignId, vrCampaignIdVal);
+                    localStorageService.set(constants.storageKeys.vrRefCode, refCodeVal);
+                    localStorageService.set(constants.storageKeys.vrRefCodeTime, now.getTime());
+                    var refCodeSource = $location.search().refSource;
+                    if (refCodeSource) {
+                        localStorageService.set(constants.storageKeys.vrRefSource, refCodeSource);
+                    }
+                }
+            }
+        };
+
+        function getVrRefCodeFromStorage() {
+            var vrRefCode = localStorageService.get(constants.storageKeys.vrRefCode);
+            var vrCampaignIdVal = localStorageService.get(constants.storageKeys.vrCampaignId);
+            var vrUserCampaignIdVal = localStorageService.get(constants.storageKeys.vrUserCampaignId);
+            var vrApiToken = localStorageService.get(constants.storageKeys.vrApiToken);
+            if (vrCampaignIdVal && vrUserCampaignIdVal && vrRefCode && vrCampaignIdVal === vrUserCampaignIdVal)
+                return {
+                     "referralCode": vrRefCode, 
+                     "refSource" : localStorageService.get(constants.storageKeys.vrRefSource),
+                     "apiToken" : vrApiToken
+                };
+            else
+                return undefined;
         };
 
         function emRegister(parameters) {
@@ -591,6 +639,7 @@
         factory.init = function () {
             factory.readAuthData();
             factory.readBtag();
+            factory.saveVrRefCodeFromUrl();
 
             api.call(function () {
                 return api.getDeploymentInfo();
@@ -602,6 +651,8 @@
                 localStorageService.set(constants.storageKeys.version, response.Result.Version);
                 localStorageService.set(constants.storageKeys.debug, response.Result.Debug);
                 localStorageService.set(constants.storageKeys.reCaptchaPublicKey, response.Result.ReCaptchaSiteKey);
+                localStorageService.set(constants.storageKeys.vrApiToken, response.Result.VrApiToken);
+                localStorageService.set(constants.storageKeys.vrCampaignId, response.Result.VrCampaignId);
                 //localStorageService.set(constants.storageKeys.live, response.Result.Live);
             });
 

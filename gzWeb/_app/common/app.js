@@ -151,6 +151,7 @@ var APP = (function () {
                         setDocumentTitle();
                         restoreHeader();
                         auth.readBtag();
+                        auth.saveVrRefCodeFromUrl();
                     });
                 }
                 onRouteChangeSuccess();

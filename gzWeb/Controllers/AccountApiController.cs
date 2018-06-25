@@ -624,15 +624,19 @@ namespace gzWeb.Controllers
         [Route("GetDeploymentInfo")]
         // 10 minutes caching
         // Crashing? [ClientCachingInApi(Duration = 600)]
-        public IHttpActionResult GetDeploymentInfo()
-        {
-            string useCdnValue = "false", cdnValue = null;
+        public IHttpActionResult GetDeploymentInfo() {
+
+            string useCdnValue = "false", cdnValue = null, vrApiToken = null, vrCampaignId = null;
             try
             {
                 const string staticCdnKey = "StaticCdn";
                 const string useCdn = "UseCdn";
+                const string viralLoopsApiTokenKey = "VrApiToken";
+                const string vrCampaignIdKey = "VrCampaignId";
                 useCdnValue = System.Configuration.ConfigurationManager.AppSettings[useCdn];
                 cdnValue = System.Configuration.ConfigurationManager.AppSettings[staticCdnKey];
+                vrApiToken = System.Configuration.ConfigurationManager.AppSettings[viralLoopsApiTokenKey];
+                vrCampaignId = System.Configuration.ConfigurationManager.AppSettings[viralLoopsApiTokenKey];
             }
             catch (Exception exception)
             {
@@ -646,7 +650,9 @@ namespace gzWeb.Controllers
                 StaticCdn = cdnValue,
                 Debug = IsInDebugMode(),
                 Version = GetVersion(),
-                ReCaptchaSiteKey = GetReCaptchaSiteKey()
+                ReCaptchaSiteKey = GetReCaptchaSiteKey(),
+                VrApiToken = vrApiToken,
+                VrCampaignId = vrCampaignId
                 //Live = IsLive()
             });
         }

@@ -246,7 +246,7 @@
         categories: categories,
         roles: roles,
         carouselActionTypes: actionTypes,
-        keepBtagAliveTime: 1296000000, // 15 days
+        keepBtagAliveTime: 2592000000, // 30 days
         defaultImg: '../../Content/Images/casino-default.png',
         baseCurrency: "EUR",
 
@@ -271,7 +271,14 @@
             //language: 'gz_language',
             reCaptchaPublicKey: 'gz_reCaptchaPublicKey',
             btagMarker: 'gz_btagMarker',
-            btagTime: 'gz_btagTime'
+            btagTime: 'gz_btagTime',
+            //https://www.greenzorro.com?referralCode=HkEmRvAxQ&refSource=email
+            vrRefCode: 'gz_vrrefcode',
+            vrRefSource: "gz_vrrefcode",
+            vrRefCodeTime: 'gz_vrrefcodetime',
+            vrApiToken: 'gz_vrapitoken',
+            vrCampaignId: 'gz_vrcampaignid',
+            vrUserCampaignId: 'gz_vrusercampaignid'
         },
         gaKeys: {
             signupAndPlay: 'SignupandPlay',
