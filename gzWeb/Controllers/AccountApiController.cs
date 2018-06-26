@@ -636,7 +636,7 @@ namespace gzWeb.Controllers
                 useCdnValue = System.Configuration.ConfigurationManager.AppSettings[useCdn];
                 cdnValue = System.Configuration.ConfigurationManager.AppSettings[staticCdnKey];
                 vrApiToken = System.Configuration.ConfigurationManager.AppSettings[viralLoopsApiTokenKey];
-                vrCampaignId = System.Configuration.ConfigurationManager.AppSettings[viralLoopsApiTokenKey];
+                vrCampaignId = System.Configuration.ConfigurationManager.AppSettings[vrCampaignIdKey];
             }
             catch (Exception exception)
             {

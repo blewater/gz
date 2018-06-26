@@ -108,9 +108,7 @@
                         "email": vrVals.email
                     },
                     "referrer": {
-                        //at least one of these two is necessary if there is a referrer
-                        "referralCode": vrVals.referralCode,
-                        "email": vrVals.email
+                        "referralCode": vrVals.referralCode
                     },
                     "refSource": vrVals.refSource
                 },

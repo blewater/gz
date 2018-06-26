@@ -274,8 +274,8 @@
             btagTime: 'gz_btagTime',
             //https://www.greenzorro.com?referralCode=HkEmRvAxQ&refSource=email
             vrRefCode: 'gz_vrrefcode',
-            vrRefSource: "gz_vrrefcode",
-            vrRefCodeTime: 'gz_vrrefcodetime',
+            vrRefSource: "gz_vrrefsource",
+            vrRefCodeTime: 'gz_vrreftime',
             vrApiToken: 'gz_vrapitoken',
             vrCampaignId: 'gz_vrcampaignid',
             vrUserCampaignId: 'gz_vrusercampaignid'
