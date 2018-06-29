@@ -362,7 +362,7 @@
             var q = $q.defer();
 
             emGetActionableUserConsent(action).then(function(userConsentQuestions) {
-                if (angular.isDefined(userConsentQuestions)) {
+                if (userConsentQuestions) {
                     angular.forEach(userConsentQuestions,
                         function(value) {
                             if (value.code.indexOf(constants.emUserConsentKeys.tcApiCode) !== -1) {
@@ -382,6 +382,9 @@
                                 controller.show3rdParty = true;
                             }
                         });
+                    // if null
+                } else {
+                    controller.showTcbyUserConsentApi = true;
                 }
                 q.resolve(userConsentQuestions);
             },
