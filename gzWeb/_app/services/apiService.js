@@ -97,6 +97,7 @@
         factory.cacheUserData = function () {
             return $http.post('/api/Account/CacheUserData');
         };
+        // viral loops registration
         factory.vrRegister = function(vrVals) {
             var params =
             {
@@ -113,6 +114,25 @@
                     "refSource": vrVals.refSource
                 },
                 "apiToken": vrVals.apiToken
+            };
+            return $http({
+                url: "https://app.viral-loops.com/api/v2/events",
+                method: "POST",
+                data: params,
+                headers: { "Content-Type": "application/json" }
+            });
+        };
+        // viral loops track conversion
+        factory.vrSendConversion = function(depositorEm) {
+            var params =
+            {
+                "apiToken": "MySecretT0ken",
+                "params": {
+                    "event": "referred_deposit",
+                    "user": {
+                        "email": depositorEm
+                    }
+                }
             };
             return $http({
                 url: "https://app.viral-loops.com/api/v2/events",

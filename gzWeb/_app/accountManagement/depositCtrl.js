@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'iso4217', 'modals', '$filter', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, iso4217, modals, $filter) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'api', 'iso4217', 'modals', '$filter', 'auth', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, api, iso4217, modals, $filter, auth) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -60,6 +60,12 @@
                 deposit();
             }
         };
+
+        function vrSendConvertion() {
+
+            api.vrSendConversion(auth.data.email);
+
+        }
 
         function sendTransactionReceipt(pid, appInsightsTrackEvent, logSuccessfulTransaction) {
             var getTransactionInfoCall = function () { return emBanking.getTransactionInfo(pid); };
