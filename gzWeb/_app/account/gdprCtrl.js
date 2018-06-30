@@ -22,12 +22,14 @@
         $scope.show3rdParty = false;
 
         function init() {
-            if (angular.isDefined($scope.userConsentList)) {
-                auth.setUserConsentQuestions($scope, 2);
-            } else {
-                // Consider the case setAcceptTC value
-                $scope.showTcbyUserConsentApi = $scope.isTc;
-            }
+            $scope.waiting = true;
+            auth.setUserConsentQuestions($scope, 2).then(function() {
+                $scope.waiting = false;
+            },
+            function(errorUserConsent) {
+                $scope.waiting = false;
+                message.warning(errorUserConsent);
+            });
         }
         init();
 
