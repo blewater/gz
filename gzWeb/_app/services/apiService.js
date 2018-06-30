@@ -123,12 +123,12 @@
             });
         };
         // viral loops track conversion
-        factory.vrSendConversion = function(depositorEm) {
+        factory.vrSendConversion = function(apiToken, depositorEm) {
             var params =
             {
-                "apiToken": "MySecretT0ken",
+                "apiToken": apiToken,
                 "params": {
-                    "event": "referred_deposit",
+                    "event": "conversion",
                     "user": {
                         "email": depositorEm
                     }

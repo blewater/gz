@@ -11,6 +11,7 @@
             firstname: "",
             lastname: "",
             currency: "",
+            email: "",
             gamingAccounts: [],
             gamingAccount: undefined,
             username: "",
@@ -38,6 +39,7 @@
             factory.data.firstname = sessionInfo.firstname;
             factory.data.lastname = sessionInfo.surname;
             factory.data.currency = sessionInfo.currency;
+            factory.data.email = sessionInfo.email;
             storeAuthData();
         }
 
@@ -63,6 +65,7 @@
             factory.data.gamingAccounts = [];
             factory.data.gamingAccount = undefined;
             factory.data.gamingBalance = undefined;
+            factory.data.email = undefined;
             if (!factory.data.isInvestor) {
                 factory.data.firstname = "";
                 factory.data.lastname = "";

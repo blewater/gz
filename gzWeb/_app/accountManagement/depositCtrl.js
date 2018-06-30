@@ -1,8 +1,8 @@
 ﻿(function () {
     'use strict';
     var ctrlId = 'depositCtrl';
-    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'api', 'iso4217', 'modals', '$filter', 'auth', ctrlFactory]);
-    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, api, iso4217, modals, $filter, auth) {
+    APP.controller(ctrlId, ['$scope', 'constants', 'emBanking', 'helpers', '$timeout', 'message', '$rootScope', '$location', '$log', 'api', 'iso4217', 'modals', '$filter', 'auth', 'localStorageService', ctrlFactory]);
+    function ctrlFactory($scope, constants, emBanking, helpers, $timeout, message, $rootScope, $location, $log, api, iso4217, modals, $filter, auth, localStorageService) {
         // #region scope variables
         $scope.spinnerGreen = constants.spinners.sm_rel_green;
         $scope.spinnerWhite = constants.spinners.sm_rel_white;
@@ -62,8 +62,15 @@
         };
 
         function vrSendConvertion() {
-
-            api.vrSendConversion(auth.data.email);
+            var apiToken = localStorageService.get(constants.storageKeys.vrApiToken);
+            if (apiToken) {
+                api.vrSendConversion(apiToken, auth.data.email).then(function(successRes) {
+                        $log.info("vr sendConversion for user " + auth.data.email + " succeeded: " + successRes);
+                    },
+                    function(error) {
+                        $log.error("vr sendConversion for user " + auth.data.email + " failed: " + error);
+                    });
+            }
 
         }
 
@@ -136,6 +143,7 @@
                             emBanking.confirm($scope.pid).then(function (confirmResult) {
                                 appInsightsTrackEvent('CONFIRM');
                                 if (confirmResult.status === "success") {
+                                    vrSendConvertion();
                                     appInsightsTrackEvent('GET TRANSACTION INFO');
                                     sendTransactionReceipt(confirmResult.pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                 } else if (confirmResult.status === "redirection") {
