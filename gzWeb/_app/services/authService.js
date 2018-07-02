@@ -445,7 +445,7 @@
                     q.resolve();
                 },
                 function(setUserConsentError) {
-                    q.reject(error ? error.desc : false);
+                    q.reject(setUserConsentError ? setUserConsentError.desc : false);
                 });
 
             return q.promise;
