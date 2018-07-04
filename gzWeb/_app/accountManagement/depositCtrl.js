@@ -64,12 +64,23 @@
         function vrSendConvertion() {
             var apiToken = localStorageService.get(constants.storageKeys.vrApiToken);
             if (apiToken) {
-                api.vrSendConversion(apiToken, auth.data.email).then(function(successRes) {
-                        $log.info("vr sendConversion for user " + auth.data.email + " succeeded: " + successRes);
-                    },
-                    function(error) {
-                        $log.error("vr sendConversion for user " + auth.data.email + " failed: " + error);
-                    });
+                var vrCmpId = localStorageService.get(constants.storageKeys.vrCampaignId);
+                var vrUserCmpId = localStorageService.get(constants.storageKeys.vrUserCampaignId);
+                if (vrCmpId && vrUserCmpId && vrCmpId === vrUserCmpId) {
+
+                    api.vrSendConversion(apiToken, auth.data.email).then(function(successRes) {
+                            $log.info("vr sendConversion for user " +
+                                auth.data.email +
+                                " succeeded: " +
+                                angular.toJson(successRes));
+                        },
+                        function(error) {
+                            $log.error("vr sendConversion for user " +
+                                auth.data.email +
+                                " failed: " +
+                                angular.toJson(error));
+                        });
+                }
             }
 
         }

@@ -166,9 +166,9 @@
                 vrVals['lastname'] = sessionInfo.surname;
 
                 api.vrRegister(vrVals).then(function (successRes) {
-                    $log.info("vr register for user " + sessionInfo.email + " succeeded: " + successRes);
+                    $log.info("vr register for user " + sessionInfo.email + " succeeded: " + angular.toJson(successRes));
                 }, function (error) {
-                    $log.error("vr register for user " + sessionInfo.email + " failed: " + error);
+                    $log.error("vr register for user " + sessionInfo.email + " failed: " + angular.toJson(error));
                 });
             }
         }
