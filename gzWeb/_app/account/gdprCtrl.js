@@ -16,20 +16,29 @@
         $scope.thirdpartyApiCode = "3rdparty";
 
         // T&C may be set by getConsentRequirements or hasToAcceptTC
-        $scope.showTcbyUserConsentApi = false;
+        $scope.showTcbyUserConsentApi = true;
         $scope.showEmail = false;
         $scope.showSms = false;
         $scope.show3rdParty = false;
 
         function init() {
             $scope.waiting = true;
-            auth.setUserConsentQuestions($scope, 2).then(function() {
-                $scope.waiting = false;
-            },
-            function(errorUserConsent) {
-                $scope.waiting = false;
-                message.warning(errorUserConsent);
-            });
+
+            if ($scope.isUc) {
+                // hasToSetUserConsent is set. Call getConsentRequirements 
+                auth.setUserConsentQuestions($scope, 2).then(function() {
+                        $scope.waiting = false;
+                    },
+                    function(errorUserConsent) {
+                        $scope.waiting = false;
+                        message.warning(errorUserConsent);
+                    });
+            } else {
+                // hasToAcceptTC is set. Only T&C need to be accepted
+                $scope.showTcbyUserConsentApi = true;
+                $scope.showEmail = $scope.showSms = $scope.show3rdParty = false;
+            }
+            $scope.waiting = false;
         }
         init();
 
