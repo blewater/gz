@@ -22,9 +22,9 @@
         $scope.show3rdParty = false;
 
         function init() {
-            $scope.waiting = true;
-
             if ($scope.isUc) {
+                $scope.waiting = true;
+
                 // hasToSetUserConsent is set. Call getConsentRequirements 
                 auth.setUserConsentQuestions($scope, 2).then(function() {
                         $scope.waiting = false;
@@ -33,12 +33,7 @@
                         $scope.waiting = false;
                         message.warning(errorUserConsent);
                     });
-            } else {
-                // hasToAcceptTC is set. Only T&C need to be accepted
-                $scope.showTcbyUserConsentApi = true;
-                $scope.showEmail = $scope.showSms = $scope.show3rdParty = false;
             }
-            $scope.waiting = false;
         }
         init();
 
