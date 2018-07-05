@@ -86,18 +86,18 @@
             </div>
 
             <div class="form-group">
-                <div class="btns text-center">
-                    <button type="button" class="btn-gz btn-gz-alt logout" ng-click="logout()"
-                            ng-mouseenter="logoutHovered = true" ng-mouseleave="logoutHovered = false">
-                        <span ng-show="logoutWaiting && !logoutHovered" us-spinner="spinnerWhite"></span>
-                        <span ng-show="logoutWaiting && logoutHovered" us-spinner="spinnerGreen"></span>
-                        <span ng-show="!logoutWaiting">Log Out</span>
-                    </button>
+                <div class="btns pull-left">
                     <button type="submit" class="btn-gz continue" ng-disabled="!isFormValid()"
                             ng-mouseenter="continueHovered = true" ng-mouseleave="continueHovered = false">
                         <span ng-show="continueWaiting && !continueHovered" us-spinner="spinnerGreen"></span>
                         <span ng-show="continueWaiting && continueHovered" us-spinner="spinnerWhite"></span>
                         <span ng-show="!continueWaiting">Continue</span>
+                    </button>
+                    <button type="button" class="btn-gz btn-gz-alt logout" ng-click="logout()"
+                            ng-mouseenter="logoutHovered = true" ng-mouseleave="logoutHovered = false">
+                        <span ng-show="logoutWaiting && !logoutHovered" us-spinner="spinnerWhite"></span>
+                        <span ng-show="logoutWaiting && logoutHovered" us-spinner="spinnerGreen"></span>
+                        <span ng-show="!logoutWaiting">Log Out</span>
                     </button>
                 </div>
             </div>
