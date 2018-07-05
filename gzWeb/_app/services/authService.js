@@ -326,13 +326,15 @@
             });
             return q.promise;
         }
-        // Called after a login response prop hasToSetUserConsent is set = true
-        function emGetUserConsent(hasToSetUserConsent, action) {
+        // Enter here after a login response of hasToAcceptTC or hasToSetUserConsent is set = true
+        // But call everymatrix getConsentRequirements() only upon hasToSetUserConsent is set = true
+        function conditionalEmGetUserConsent(hasToSetUserConsent, action) {
             var q = $q.defer();
 
             if (hasToSetUserConsent) {
                 var params = angular.extend({}, { "action": action });
 
+                // Everymatrix API Call only if hasToSetUserConsent === true
                 emWamp.getConsentRequirements(params).then(function(consentList) {
                         q.resolve(consentList);
                     },
@@ -362,6 +364,7 @@
             var q = $q.defer();
 
             emGetActionableUserConsent(action).then(function(userConsentQuestions) {
+                controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = false;
                 if (userConsentQuestions) {
                     angular.forEach(userConsentQuestions,
                         function(value) {
@@ -445,7 +448,7 @@
                     q.resolve();
                 },
                 function(setUserConsentError) {
-                    q.reject(error ? error.desc : false);
+                    q.reject(setUserConsentError ? setUserConsentError.desc : false);
                 });
 
             return q.promise;
@@ -471,7 +474,7 @@
             // Prod may not be synced with the login api update
             if (emLoginResult.hasToSetUserConsent === undefined) 
                 emLoginResult.hasToSetUserConsent = false;
-            emGetUserConsent(emLoginResult.hasToSetUserConsent, 2).then(function(userConsentList) {
+            conditionalEmGetUserConsent(emLoginResult.hasToSetUserConsent, 2).then(function(userConsentList) {
 
                 if (emLoginResult.hasToAcceptTC || emLoginResult.hasToSetUserConsent) {
                     message.open({
