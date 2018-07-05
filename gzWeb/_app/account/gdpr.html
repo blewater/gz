@@ -20,9 +20,13 @@
 
             <div class="row emphatic">
                 <div class="form-group text-left" ng-show="isTc||showTcbyUserConsentApi">
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <span class="radios">
                             <label><input type="radio" ng-model="consents.acceptedGdprTc" value="true">Yes</label>
+                        </span>
+                    </div>
+                    <div class="col-xs-1">
+                        <span class="radios">
                             <label><input type="radio" ng-model="consents.acceptedGdprTc" value="false">No</label>
                         </span>
                     </div>
@@ -31,9 +35,13 @@
                     </div>
                 </div>
                 <div class="form-group text-left" ng-show="showEmail">
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <span class="radios">
                             <label><input type="radio" ng-model="consents.allowGzEmail" value="true">Yes</label>
+                        </span>
+                    </div>
+                    <div class="col-xs-1">
+                        <span class="radios">
                             <label><input type="radio" ng-model="consents.allowGzEmail" value="false">No</label>
                         </span>
                     </div>
@@ -42,9 +50,13 @@
                     </div>
                 </div>
                 <div class="form-group text-left" ng-show="showSms">
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <span class="radios">
                             <label><input type="radio" ng-model="consents.allowGzSms" value="true">Yes</label>
+                        </span>
+                    </div>
+                    <div class="col-xs-1">
+                        <span class="radios">
                             <label><input type="radio" ng-model="consents.allowGzSms" value="false">No</label>
                         </span>
                     </div>
@@ -54,14 +66,18 @@
                 </div>
 
                 <div class="form-group text-left" ng-show="show3rdParty">
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <span class="radios">
                             <label><input type="radio" ng-model="consents.allow3rdPartySms" value="true">Yes</label>
+                        </span>
+                    </div>
+                    <div class="col-xs-1">
+                        <span class="radios">
                             <label><input type="radio" ng-model="consents.allow3rdPartySms" value="false">No</label>
                         </span>
                     </div>
                     <div class="col-xs-10">
-                        <span class="radio-text">I am happy to receive similar marketing communications via email or sms from partners.</span>
+                        <span class="radio-text">I am happy to receive similar marketing communications via email or sms from <a class="external" href="/third-parties" target="_blank">partners</a>.</span>
                     </div>
                 </div>
             </div>
