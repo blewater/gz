@@ -22,17 +22,21 @@
         $scope.show3rdParty = false;
 
         function init() {
-            if ($scope.isUc) {
+            if ($scope.isUc && $scope.isTc) {
+
+                $scope.showTcbyUserConsentApi = $scope.showEmail = $scope.showSms = $scope.show3rdParty = true;
+
+            } else if ($scope.isUc) {
                 $scope.waiting = true;
 
                 // hasToSetUserConsent is set. Call getConsentRequirements 
                 auth.setUserConsentQuestions($scope, 2).then(function() {
                         $scope.waiting = false;
-                    },
-                    function(errorUserConsent) {
-                        $scope.waiting = false;
-                        message.warning(errorUserConsent);
-                    });
+                },
+                function(errorUserConsent) {
+                    $scope.waiting = false;
+                    message.warning(errorUserConsent);
+                });
             }
         }
         init();
@@ -60,13 +64,13 @@
             }
 
             // marketing consent
-            if (consObj.showEmail && consObj.allowGzEmail === undefined) {
+            if ($scope.showEmail && $scope.consents.allowGzEmail === undefined) {
                 return false;
             }
-            if (consObj.showSms && consObj.allowGzSms === undefined) {
+            if ($scope.showSms && $scope.consents.allowGzSms === undefined) {
                 return false;
             }
-            if (consObj.show3rdParty && consObj.allow3rdPartySms === undefined) {
+            if ($scope.show3rdParty && $scope.consents.allow3rdPartySms === undefined) {
                 return false;
             }
 
