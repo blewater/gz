@@ -362,6 +362,7 @@
             var q = $q.defer();
 
             emGetActionableUserConsent(action).then(function(userConsentQuestions) {
+                controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = false;
                 if (userConsentQuestions) {
                     angular.forEach(userConsentQuestions,
                         function(value) {
