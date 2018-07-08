@@ -371,6 +371,9 @@
                             if (value.code.indexOf(constants.emUserConsentKeys.tcApiCode) !== -1) {
                                 // may be set by getConsentRequirements or hasToAcceptTC
                                 controller.showTcbyUserConsentApi = true;
+                                if (userConsentQuestions.length === 1) {
+                                    controller.showEmail = controller.showSms = controller.show3rdParty = true;
+                                }
                             }
 
                             if (value.code.indexOf(constants.emUserConsentKeys.emailApiCode) !== -1) {
