@@ -171,6 +171,7 @@
                                         nsShowClose: false
                                     });
                                     thirdPartyPromise.then(function (thirdPartyPromiseResult) {
+                                        vrSendConvertion();
                                         sendTransactionReceipt(thirdPartyPromiseResult.$pid, appInsightsTrackEvent, logSuccessfulTransaction);
                                     }, function (thirdPartyPromiseError) {
                                         appInsightsTrackEvent('TRANSACTION ERROR');
