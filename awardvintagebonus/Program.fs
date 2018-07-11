@@ -18,7 +18,6 @@ open NLog
 open BonusQueue
 open BonusReq
 open System
-open SendEmail
 open FSharp.Azure.StorageTypeProvider.Queue
 let logger = LogManager.GetCurrentClassLogger()
 
@@ -28,7 +27,6 @@ let hostEmail = Settings.HostGmailUser;
 let hostPwd = Settings.HostGmailPwd;
 let helpEmail = Settings.HelpGmailUser;
 let helpPwd = Settings.HelpGmailPwd;
-let emailSender = EmailReceipts()
 //let dbCtx = Db.getOpenDb Settings.ConnectionStrings.GzProdDb
 let yearMonthSold = DateTime.UtcNow.Year.ToString("0000") + DateTime.UtcNow.Month.ToString("00")
 
