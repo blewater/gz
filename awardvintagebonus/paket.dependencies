@@ -9,7 +9,6 @@ nuget FSharp.Core <= 4.1.34
 nuget FSharp.Data
 nuget FSharp.Data.TypeProviders
 nuget FSharp.Json
-nuget MailKit
 nuget NLog
 nuget NLog.Config
 nuget NLog.Schema
