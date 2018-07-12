@@ -86,7 +86,6 @@
     <None Include="gzdbdev.dbml" />
     <None Include="TblLoggerSchema.json" />
     <Compile Include="ChromeAwarder.fs" />
-    <Compile Include="Db.fs" />
     <Content Include="connectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
