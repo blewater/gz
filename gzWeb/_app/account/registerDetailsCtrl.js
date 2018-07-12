@@ -322,6 +322,13 @@
                 nsParams: { is3rdParties: true }
             });
         };
+        $scope.readDataSubjectRights = function () {
+            message.modal("Data Subject Rights", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isDataSubjectRights: true }
+            });
+        };
         // #endregion
 
         init();

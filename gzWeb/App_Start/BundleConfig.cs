@@ -245,6 +245,7 @@ namespace gzWeb
                                     , "~/_app/guest/termsInvestmentCtrl.js"
                                     , "~/_app/guest/cookiePolicyCtrl.js"
                                     , "~/_app/guest/thirdPartiesCtrl.js"
+                                    , "~/_app/guest/dataSubjectRightsCtrl.js"
                                     , "~/_app/guest/playgroundCtrl.js"
                                     , "~/_app/guest/responsibleGamblingCtrl.js"
             #endregion

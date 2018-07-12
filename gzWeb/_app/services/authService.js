@@ -367,10 +367,13 @@
                 controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = false;
                 if (userConsentQuestions) {
                     angular.forEach(userConsentQuestions,
-                        function(value) {
+                        function (value) {
                             if (value.code.indexOf(constants.emUserConsentKeys.tcApiCode) !== -1) {
                                 // may be set by getConsentRequirements or hasToAcceptTC
                                 controller.showTcbyUserConsentApi = true;
+                                if (userConsentQuestions.length === 1) {
+                                    controller.showEmail = controller.showSms = controller.show3rdParty = true;
+                                }
                             }
 
                             if (value.code.indexOf(constants.emUserConsentKeys.emailApiCode) !== -1) {
@@ -387,7 +390,8 @@
                         });
                     // if null
                 } else {
-                    controller.showTcbyUserConsentApi = true;
+                    // per Everymatrix Q&A request
+                    controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = true;
                 }
                 q.resolve(userConsentQuestions);
             },

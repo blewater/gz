@@ -135,7 +135,7 @@
         category: categories.wandering
     };
     routes.dataSubjectRights = {
-        path: '/dataSubjectRights',
+        path: '/datasubjectrights',
         ctrl: 'dataSubjectRightsCtrl',
         tpl: '_app/guest/dataSubjectRights.html',
         title: 'Data Subject Rights',
