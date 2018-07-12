@@ -55,10 +55,37 @@ namespace gzDAL.Models
         
         public bool? IsRegistrationFinalized { get; set; }
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager, string authenticationType)
+        #region GDPR
+        /// <summary>
+        /// Allow sending Gz marketing email to user.
+        /// </summary>
+        public bool? AllowGzEmail { get; set; }
+        /// <summary>
+        /// Allow sending Gz marketing Sms to user.
+        /// </summary>
+        public bool? AllowGzSms { get; set; }
+        /// <summary>
+        /// Allow 3rd party vendor marketing Sms to user.
+        /// </summary>
+        public bool? Allow3rdPartySms { get; set; }
+        /// <summary>
+        /// User consented to new GDPR Terms & Conditions.
+        /// </summary>
+        public bool? AcceptedGdprTc { get; set; }
+        /// <summary>
+        /// User consented to new GDPR Private Policy.
+        /// </summary>
+        public bool? AcceptedGdprPp { get; set; }
+        /// <summary>
+        /// User consented to 3rd Parties.
+        /// </summary>
+        public bool? AcceptedGdpr3rdParties { get; set; }
+        #endregion
+
+        public ClaimsIdentity GenerateUserIdentity(UserManager<ApplicationUser, int> manager, string authenticationType)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+            var userIdentity = manager.CreateIdentity(this, authenticationType);
             // Add custom user claims here
             return userIdentity;
         }
@@ -165,6 +192,7 @@ namespace gzDAL.Models
         public DbSet<GzTrx> GzTrxs { get; set; }
         public DbSet<GzTrxType> GzTrxTypes { get; set; }
         public DbSet<InvBalance> InvBalances { get; set; }
+        public DbSet<InvAdj> InvAdjustments { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<PortFund> PortFunds { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
@@ -179,6 +207,7 @@ namespace gzDAL.Models
         public DbSet<VintageShares> VintageShares { get; set; }
         public DbSet<PlayerRevLastMonth> PlayerRevLastMonth { get; set; }
         public DbSet<RevokedUser> RevokedUsers { get; set; }
+        public DbSet<Betting> Betting { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

@@ -25,14 +25,16 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<GzConfiguration> GetConfRow() {
-
+        public GzConfiguration GetConfRow()
+        {
             string key = "gzConfiguration";
             var gzConfiguration = (GzConfiguration)MemoryCache.Default.Get(key);
 
-            if (gzConfiguration == null) {
-                var cachedGzConf = await _db.GzConfigurations
-                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+            if (gzConfiguration == null)
+            {
+                var cachedGzConf =
+                    _db.GzConfigurations
+                    .FromCache(DateTime.UtcNow.AddDays(1));
 
                 gzConfiguration =
                     cachedGzConf.Select(c => c)
@@ -43,7 +45,6 @@ namespace gzDAL.Repos
                     .Default
                     .Set(key, gzConfiguration, DateTimeOffset.UtcNow.AddDays(1));
             }
-
 
             return gzConfiguration;
         }

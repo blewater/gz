@@ -179,6 +179,16 @@
             });
         };
 
+        function getUserConsent() {
+            auth.setUserConsentQuestions($scope, 1).then(function() {
+                $scope.waiting = false;
+            },
+            function(errorUserConsent) {
+                $scope.waiting = false;
+                message.warning(errorUserConsent);
+            });
+        }
+
         function selectCurrency(currencies, country) {
             var foundCurrencies = $filter('filter')(currencies, { code: country.currency });
             $scope.model.currency = foundCurrencies.length > 0
@@ -187,6 +197,8 @@
         }
 
         function init() {
+            $scope.waiting = true;
+            getUserConsent();
             loadYears();
             loadMonths();
             loadTitles();
@@ -237,6 +249,7 @@
                 securityQuestion: "(empty security question)",
                 securityAnswer: "(empty security answer)"
             };
+            parameters["userConsents"] = auth.createUserConsents($scope);
             auth.register(parameters).then(function () {
                 $scope.waiting = false;
                 $scope.nsNext({
@@ -255,28 +268,65 @@
         // #endregion
 
         // #region terms and conditions
+        $scope.consents = {
+            // hasToAcceptTC not set in registration
+            isTc : false,
+            // always set UserConsent in registration
+            isUc : true,
+            allowGzEmail: undefined,
+            allowGzSms: undefined,
+            allow3rdPartySms: undefined,
+            acceptedGdprTc: undefined,
+            acceptedGdprPp: undefined,
+            acceptedGdpr3rdParties: undefined
+        };
+
+        $scope.isGdprFormSectionValid = function() {
+            if ($scope.waiting)
+                return false;
+            return $scope.model.acceptedInvTc === "true" && auth.isGdprFormSectionValid($scope);
+        }
+
         $scope.readGamesTerms = function(){
-            var promise = message.modal("Gaming terms and conditions", {
+            message.modal("Gaming terms and conditions", {
                 nsSize: 'xl',
                 nsTemplate: '_app/guest/termsConfirm.html',
                 nsParams: { isGaming: true }
             });
-            promise.then(function() {
-                $scope.model.agreedGames = true;
-            }, function() {
-                //$scope.model.agreed = false;
-            });
         };
         $scope.readInvestmentTerms = function () {
-            var promise = message.modal("Investment terms and conditions", {
+            message.modal("Investment terms and conditions", {
                 nsSize: 'xl',
                 nsTemplate: '_app/guest/termsConfirm.html',
-                nsParams: { isGaming: false }
+                nsParams: { isInvestment: true }
             });
-            promise.then(function () {
-                $scope.model.agreedInvestment = true;
-            }, function () {
-                //$scope.model.agreedInvestment = false;
+        };
+        $scope.readPrivacyPolicy = function () {
+            message.modal("Privacy Policy", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isPrivacy: true }
+            });
+        };
+        $scope.readCookiePolicy = function () {
+            message.modal("Cookie Policy", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isCookie: true }
+            });
+        };
+        $scope.read3rdParties = function () {
+            message.modal("3rd Parties", {
+                nsSize: 'md',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { is3rdParties: true }
+            });
+        };
+        $scope.readDataSubjectRights = function () {
+            message.modal("Data Subject Rights", {
+                nsSize: 'xl',
+                nsTemplate: '_app/guest/termsConfirm.html',
+                nsParams: { isDataSubjectRights: true }
             });
         };
         // #endregion

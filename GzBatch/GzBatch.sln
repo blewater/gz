@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
-MinimumVisualStudioVersion = 10.0.40219.1
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 14.0.25420.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzBatchCommon", "..\GzCommon\GzBatchCommon.fsproj", "{D118702E-4B38-4BCF-9184-DAA324C5D160}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GzBalances", "..\GzBalances\GzBalances.fsproj", "{906609CB-1AA2-4596-8584-94C2CCC23274}"
@@ -10,6 +10,8 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DbImport", "..\DbImport\DbImport.fsproj", "{BD103410-E702-454C-AE68-17F50A0A4742}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MainProcessor", "..\Gm2Gz\MainProcessor.fsproj", "{15A3E41A-1268-44BE-9C1A-743AA2172D55}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Emailing", "..\Emailing\Emailing.fsproj", "{BD33B020-D81C-4370-9038-6D4A1958A9B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,8 +44,17 @@ Global
 		{15A3E41A-1268-44BE-9C1A-743AA2172D55}.Production|Any CPU.Build.0 = Production|Any CPU
 		{15A3E41A-1268-44BE-9C1A-743AA2172D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15A3E41A-1268-44BE-9C1A-743AA2172D55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD33B020-D81C-4370-9038-6D4A1958A9B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD33B020-D81C-4370-9038-6D4A1958A9B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD33B020-D81C-4370-9038-6D4A1958A9B7}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{BD33B020-D81C-4370-9038-6D4A1958A9B7}.Production|Any CPU.Build.0 = Production|Any CPU
+		{BD33B020-D81C-4370-9038-6D4A1958A9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD33B020-D81C-4370-9038-6D4A1958A9B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {115FCDCA-0859-4B7E-A15B-5CC5701CA58D}
 	EndGlobalSection
 EndGlobal

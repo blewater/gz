@@ -270,6 +270,18 @@ module InvBalance =
             }
         invBalance
 
+    /// get the invAdj row for month parameter
+    let private getInvAdj (dbUserMonth : DbUserMonth) : DbInvAdjs = 
+        query {
+            for row in dbUserMonth.Db.InvAdjs do
+            where (
+                row.YearMonth = dbUserMonth.Month
+                && row.UserId = dbUserMonth.UserId
+            )
+            select row
+            exactlyOneOrDefault
+        }
+
     /// update an invBalance row
     let private updDbInvBalance(input : InvBalanceInput)(invBalanceRow : DbInvBalances) : unit =
 
@@ -326,7 +338,7 @@ module InvBalance =
         invBalanceRow.Withdrawals <- input.UserFinance.Withdrawals
         invBalanceRow.GmGainLoss <- input.UserFinance.GainLoss
         invBalanceRow.EndGmBalance <- input.UserFinance.EndBalance
-        invBalanceRow.Vendor2UserDeposits <- input.UserFinance.Vendor2UserDeposits
+        invBalanceRow.CashDeposits <- input.UserFinance.CashDeposits
         invBalanceRow.CashBonusAmount <- input.UserFinance.CashBonus
 
         invBalanceRow.UpdatedOnUTC <- DateTime.UtcNow
@@ -364,6 +376,28 @@ module InvBalance =
             { TotalCashInvestments = invB.TotalCashInvestments; TotalCashInvInHold = invB.TotalCashInvInHold; TotalSoldVintagesSold = invB.TotalSoldVintagesValue }
         else
             { TotalCashInvestments = 0M; TotalCashInvInHold = 0M; TotalSoldVintagesSold = 0M }
+
+    /// adjust inv balance if a monthly adjustment exists
+    let adjustInvBalanceTotals(dbUserMonth : DbUserMonth)(userFinance : UserFinance) : UserFinance =
+        let invAdjustment = getInvAdj dbUserMonth
+
+        if isNull invAdjustment then
+            userFinance
+        else
+            match enum invAdjustment.AmountType with
+            | InvAdjustmentType.Deposit ->
+                { 
+                    userFinance with 
+                        Deposits = userFinance.Deposits + invAdjustment.Amount; 
+                        GainLoss = userFinance.GainLoss - invAdjustment.Amount 
+                }
+            | InvAdjustmentType.Withdrawal ->
+                {
+                    userFinance with 
+                        Withdrawals = userFinance.Withdrawals + invAdjustment.Amount; 
+                        GainLoss = userFinance.GainLoss + invAdjustment.Amount 
+                }
+            | _ -> userFinance
 
     /// get any sold vintages for this user during the month we're presently clearing
     (* Note this is the only table that is affected by sold vintages and available to read them back and deduct them from user shares *)
@@ -451,22 +485,6 @@ module UserTrx =
         (3, dbTrxOper) 
         ||> retry
 
-    /// get the portfolio market quote that's latest within the month processing
-    let private findNearestPortfolioPrice (portfoliosPrices:PortfoliosPricesMap)(month : string) =
-        let nextMonth = month.ToNextMonth1st
-
-        let getMonthLateQuote (portfoliosPrices)= 
-            portfoliosPrices
-            |> Map.filter(fun key _ -> key <= nextMonth)
-            |> Seq.maxBy(fun kvp -> kvp.Key)
-            |> (fun (kvp : KeyValuePair<string, PortfoliosPrices>) -> kvp.Value)
-        
-        let lateQuote = 
-            portfoliosPrices 
-            |> getMonthLateQuote
-
-        lateQuote
-        
     /// Input type for portfolio processing
     let private getUserPortfolioInput (dbUserMonth : DbUserMonth)(trxRow : DbGzTrx)(portfoliosPricesMap:PortfoliosPrices) =
         { 
@@ -486,7 +504,7 @@ module UserTrx =
             Deposits = if trxRow.Deposits.HasValue then trxRow.Deposits.Value else 0m
             Withdrawals = if trxRow.Withdrawals.HasValue then trxRow.Withdrawals.Value else 0m
             GainLoss = if trxRow.GmGainLoss.HasValue then trxRow.GmGainLoss.Value else 0m
-            Vendor2UserDeposits = trxRow.Vendor2UserDeposits
+            CashDeposits = trxRow.CashDeposits
             CashBonus = trxRow.CashBonusAmount
         }
 
@@ -494,12 +512,8 @@ module UserTrx =
     let processGzTrx
         (db : DbContext)
         (yyyyMm : string)
-        (portfoliosPricesMap : PortfoliosPricesMap)
+        (latestInMonthPortfoliosPrices : PortfoliosPrices)
         (emailToProcAlone : string option) =
-
-        let latestInMonthPortfoliosPrices = 
-            (portfoliosPricesMap, yyyyMm) 
-                ||> findNearestPortfolioPrice
 
         // Single user mode --or all ?
         let trxRows = 
@@ -538,6 +552,7 @@ module UserTrx =
                     let userFinance = 
                         trxRow 
                         |> getUserFinance
+                        |> adjustInvBalanceTotals dbUserMonth
                     
                     let invBalanceInput = 
                         (userPortfolioInput, userFinance) 

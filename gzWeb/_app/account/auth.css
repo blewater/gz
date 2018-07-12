@@ -10,22 +10,19 @@
 
 .auth .heading {
     background-color: #f2f2f2;
-    margin: 40px auto;
-    height: 100px;
+    margin: 20px auto;
+    height: 90px;
     color: #7b7b7b
 }
 .auth .heading h2 {
     font-size: 28px;
 }
 
-.auth .content {
-    padding-bottom: 20px;
-}
 .auth .content .logo-icon {
     background: #ffffff none repeat scroll 0 0;
     height: 70px;
     line-height: 68px;
-    margin: -30px auto 40px;
+    margin: -30px auto 10px;
     position: relative;
     text-align: center;
     width: 70px;
@@ -663,5 +660,46 @@
 .auth .bonus-accordion .panel-group .panel.panel-open .panel-heading {
     background-color: #fff;
 }
+
+
+.auth.gdpr .form-group { margin: 10px 0; }
+.auth.gdpr .radios { float: left; }
+.auth.gdpr .radios label { margin-right: 5px; cursor: pointer; }
+.auth.gdpr .radio-text { line-height: 28px; }
+.auth.gdpr .emphatic {
+    background-color: #07893C;
+    margin: 5px 0;    
+}
+.auth.gdpr a.external {
+    font-weight: bold;
+    text-decoration: underline;
+}
+.auth.gdpr button.continue, .auth.gdpr button.logout {
+    vertical-align: bottom;
+    height: 36px;
+}
+.auth.gdpr button.logout {
+    width: 100px;
+}
+.auth.gdpr button.continue {
+    width: 180px;
+}
+
+.auth.gdpr .heading {
+    margin: 10px auto;
+}
+.auth.gdpr .content {
+    padding-bottom: 0;
+}
+.auth.gdpr .content .logo-icon {
+    margin-bottom: 0;
+}
+
+.auth.gdpr .content .form-group {
+    clear: both;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 
 

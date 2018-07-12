@@ -183,7 +183,7 @@
 .auth.mgmt-modal .mgmt-content {
     /*position: fixed;*/
     position: absolute;
-    padding: 40px 20px;
+    padding: 10px 20px;
     right: 0;
     top: 0;
     bottom: 0;

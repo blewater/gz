@@ -49,22 +49,31 @@ namespace gzWeb.Controllers {
         #region Summary
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetSummaryData()
+        public IHttpActionResult GetSummaryData()
         {
-            var userId = User.Identity.GetUserId<int>();
-            Logger.Trace("GetSummaryData requested for [User#{0}]", userId);
-            
-            var summaryRes = await invBalanceRepo.GetSummaryDataAsync(userId);
-            var user = summaryRes.Item2;
-            var summaryDto = summaryRes.Item1;
+            ApplicationUser user = null;
+            UserSummaryDTO summaryDto = null;
+            try {
+                var userId = User.Identity.GetUserId<int>();
+                Logger.Trace("GetSummaryData requested for [User#{0}]", userId);
 
-            if (user == null)
-            {
-                Logger.Error("User not found [User#{0}]", userId);
-                return OkMsg(new object(), "User not found!");
+                var summaryRes = invBalanceRepo.GetSummaryData(userId);
+                user = summaryRes.Item2;
+                summaryDto = summaryRes.Item1;
+
+                if (user == null) {
+                    Logger.Error("User not found [User#{0}]", userId);
+                    return OkMsg(new object(), "User not found!");
+                }
+
             }
+            catch (Exception ex) {
 
-            return OkMsg(((IInvestmentsApi) this).GetSummaryData(user, summaryDto));
+                telemetry.TrackException(ex);
+                Logger.Error(ex, "Exception in GetSummaryData()");
+
+            }
+            return OkMsg(((IInvestmentsApi)this).GetSummaryData(user, summaryDto));
         }
 
         /// <summary>
@@ -125,12 +134,12 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IHttpActionResult> GetVintagesWithSellingValues(IList<VintageViewModel> vintages)
+        public IHttpActionResult GetVintagesWithSellingValues(IList<VintageViewModel> vintages)
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetVintagesWithSellingValues requested for [User#{0}]", userId);
 
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}].", userId);
@@ -139,7 +148,7 @@ namespace gzWeb.Controllers {
 
             var vintagesWithSoldAmounts = GetVintagesSellingValuesByUser(user, vintages);
 
-            return OkMsg( () => vintagesWithSoldAmounts );
+            return OkMsg(() => vintagesWithSoldAmounts);
         }
 
         /// <summary>
@@ -172,12 +181,12 @@ namespace gzWeb.Controllers {
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public async Task<List<VintageViewModel>> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user)
+        public List<VintageViewModel> GetVintagesSellingValuesByUserTestHelper(ApplicationUser user)
         {
             Logger.Trace("GetVintagesSellingValuesByUser requested for [User#{0}]", user.Id);
 
-            var vintagesValuedAtPresentValue = 
-                await invBalanceRepo
+            var vintagesValuedAtPresentValue =
+                invBalanceRepo
                     .GetCustomerVintagesSellingValueUnitTestHelper(user.Id);
 
             var vintagesVmRet = GetVintagesDto2Vm(vintagesValuedAtPresentValue);
@@ -270,11 +279,11 @@ namespace gzWeb.Controllers {
         #region Portfolio
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetPortfolioData()
+        public IHttpActionResult GetPortfolioData()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetPortfolioData requested for [User#{0}]", userId);
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);
@@ -288,27 +297,27 @@ namespace gzWeb.Controllers {
                                                                                                              ()));
 
             var model = new PortfolioDataViewModel
-                        {
-                                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                                NextExpectedInvestment = investmentAmount,
-                                Plans = await GetCustomerPlansAsync(user.Id, investmentAmount)
-                        };
+            {
+                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
+                NextExpectedInvestment = investmentAmount,
+                Plans = GetCustomerPlans(user.Id, investmentAmount)
+            };
             return OkMsg(model);
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> SetPlanSelection(PlanViewModel plan)
+        public IHttpActionResult SetPlanSelection(PlanViewModel plan)
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("SetPlanSelection requested for [User#{0}]", userId);
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);
                 return OkMsg(new object(), "User not found!");
             }
 
-            return 
+            return
                 OkMsg(() =>
                 {
                     return
@@ -323,11 +332,11 @@ namespace gzWeb.Controllers {
         #region Performance
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetPerformanceData()
+        public IHttpActionResult GetPerformanceData()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("SetPlanSelection requested for [User#{0}]", userId);
-            var user = await userRepo.GetCachedUserAsync(userId);
+            var user = userRepo.GetCachedUser(userId);
             if (user == null)
             {
                 Logger.Error("User not found [User#{0}]", userId);
@@ -337,8 +346,7 @@ namespace gzWeb.Controllers {
             var invBalance =
                 invBalanceRepo
                     .GetLatestBalanceDto(
-                        await
-                            invBalanceRepo.GetCachedLatestBalanceAsync(userId)
+                            invBalanceRepo.GetCachedLatestBalance(userId)
                     ).Balance;
 
             var lastInvestmentAmount =
@@ -349,11 +357,11 @@ namespace gzWeb.Controllers {
 
             var model = new PerformanceDataViewModel
             {
-                    InvestmentsBalance = // Don't include the month's loss amount in the current inv balance
+                InvestmentsBalance = // Don't include the month's loss amount in the current inv balance
                             DbExpressions.RoundCustomerBalanceAmount(invBalance - lastInvestmentAmount),
-                    NextExpectedInvestment =
+                NextExpectedInvestment =
                             DbExpressions.RoundCustomerBalanceAmount(lastInvestmentAmount),
-                    Plans = await GetCustomerPlansAsync(user.Id)
+                Plans = GetCustomerPlans(user.Id)
             };
             return OkMsg(model);
         }
@@ -365,13 +373,13 @@ namespace gzWeb.Controllers {
         #endregion
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetPortfolios()
+        public IHttpActionResult GetPortfolios()
         {
             var userId = User.Identity.GetUserId<int>();
             Logger.Trace("GetPortfolios requested for [User#{0}]", userId);
 
             var portfolios =
-                await dbContext.Portfolios
+                dbContext.Portfolios
                     .Where(x => x.IsActive)
                     .Select(x => new {
                         x.Id,
@@ -380,7 +388,8 @@ namespace gzWeb.Controllers {
                             x.PortFunds.Select(
                                 f => new {f.Fund.HoldingName, f.Weight})
                     })
-                    .FromCacheAsync(DateTime.UtcNow.AddDays(1));
+                    .FromCache(DateTime.UtcNow.AddDays(1))
+                    .AsEnumerable();
 
             return OkMsg(portfolios);
         }
@@ -389,28 +398,28 @@ namespace gzWeb.Controllers {
 
         #region Methods
 
-        public async Task<List<PlanViewModel>> GetCustomerPlansAsync(int userId, decimal nextInvestAmount = 0)
+        public List<PlanViewModel> GetCustomerPlans(int userId, decimal nextInvestAmount = 0)
         {
-            var portfolioDtos = await userPortfolioRepo.GetUserPlansAsync(userId);
+            var portfolioDtos = userPortfolioRepo.GetUserPlans(userId);
             var portfolios = portfolioDtos
                     .Select(p => new PlanViewModel()
-                                 {
-                                         Id = p.Id,
-                                         Title = p.Title,
-                                         Color = p.Color,
-                                         AllocatedPercent = p.AllocatedPercent,
-                                         AllocatedAmount = p.AllocatedAmount,
-                                         ROI = p.ROI,
-                                         Risk = p.Risk,
-                                         Selected = p.Selected,
-                                         Holdings = p.Holdings
+                    {
+                        Id = p.Id,
+                        Title = p.Title,
+                        Color = p.Color,
+                        AllocatedPercent = p.AllocatedPercent,
+                        AllocatedAmount = p.AllocatedAmount,
+                        ROI = p.ROI,
+                        Risk = p.Risk,
+                        Selected = p.Selected,
+                        Holdings = p.Holdings
                                                      .Select(h => new HoldingViewModel()
-                                                                  {
-                                                                          Name = h.Name,
-                                                                          Weight = h.Weight
-                                                                  })
+                                                     {
+                                                         Name = h.Name,
+                                                         Weight = h.Weight
+                                                     })
                                                                     .ToList()
-                                 })
+                    })
                     .OrderBy(x => x.Risk)
                     .ToList();
 

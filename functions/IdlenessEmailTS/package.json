@@ -1,0 +1,21 @@
+{
+  "name": "idlenessemail",
+  "private": true,
+  "version": "0.5.0",
+  "description": "SendGrid messaging for new or existing idle customers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mario Karagiorgas",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/mssql": "^4.0.6",
+    "@types/node": "^8.0.51",
+    "typescript": "^2.6.1"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^6.1.4",
+    "mssql": "^4.1.0"
+  }
+}

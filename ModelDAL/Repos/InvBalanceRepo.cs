@@ -76,7 +76,6 @@ namespace gzDAL.Repos
         private readonly ApplicationDbContext db;
         private readonly IUserPortfolioSharesRepo userPortfolioSharesRepo;
         private readonly IGzTransactionRepo gzTransactionRepo;
-        private readonly IUserPortfolioRepo custPortfolioRepo;
         private readonly IConfRepo confRepo;
         private readonly IUserRepo userRepo;
 
@@ -94,7 +93,6 @@ namespace gzDAL.Repos
             this.db = db;
             this.userPortfolioSharesRepo = userPortfolioSharesRepo;
             this.gzTransactionRepo = gzTransactionRepo;
-            this.custPortfolioRepo = custPortfolioRepo;
             this.confRepo = confRepo;
             this.userRepo = userRepo;
         }
@@ -112,15 +110,15 @@ namespace gzDAL.Repos
         /// <param name="yyyyMm"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public async Task<InvBalance> GetCachedLatestBalanceAsyncByMonth(int customerId, string yyyyMm)
+        public InvBalance GetCachedLatestBalanceByMonth(int customerId, string yyyyMm)
         {
             var invBalanceRow =
-                await db.InvBalances
+                db.InvBalances
                     .Where(i => i.CustomerId == customerId
                                 && i.YearMonth == yyyyMm)
                     .DeferredSingleOrDefault()
                     // Cache 4 hours
-                    .FromCacheAsync(DateTime.UtcNow.AddHours(4));
+                    .FromCache(DateTime.UtcNow.AddHours(4));
 
             return invBalanceRow;
         }
@@ -135,7 +133,7 @@ namespace gzDAL.Repos
         /// <param name="customerId"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public Task<InvBalance> GetCachedLatestBalanceAsync(int customerId)
+        public InvBalance GetCachedLatestBalance(int customerId)
         {
             var now = DateTime.UtcNow;
             string monthToAskInvBalance = 
@@ -145,7 +143,7 @@ namespace gzDAL.Repos
                 : 
                 now.ToStringYearMonth();
 
-            return GetCachedLatestBalanceAsyncByMonth(customerId, monthToAskInvBalance);
+            return GetCachedLatestBalanceByMonth(customerId, monthToAskInvBalance);
         }
 
         /// <summary>
@@ -186,77 +184,69 @@ namespace gzDAL.Repos
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Tuple<UserSummaryDTO, ApplicationUser>> GetSummaryDataAsync(int userId)
+        public Tuple<UserSummaryDTO, ApplicationUser> GetSummaryData(int userId)
         {
             ApplicationUser userRet = null;
             UserSummaryDTO summaryDtoRet = null;
 
-            try
+            var invBalanceRes =
+                GetLatestBalanceDto(
+                    GetCachedLatestBalance(userId)
+                );
+
+            userRet = userRepo.GetCachedUser(userId);
+
+            var withdrawalEligibility = GetWithdrawEligibilityData(userId);
+
+            //---------------- Execute SQL Function
+            var vintages = GetCustomerVintages(userId);
+
+            var lastInvestmentAmount =
+                DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount(userId,
+                    DateTime.UtcNow
+                        .ToStringYearMonth
+                        ()));
+            //-------------- Retrieve previously executed async query results
+
+            // user
+            if (userRet == null)
             {
-                var invBalanceRes =
-                    GetLatestBalanceDto(
-                        await GetCachedLatestBalanceAsync(userId)
-                        );
-
-                userRet = await userRepo.GetCachedUserAsync(userId);
-
-                var withdrawalEligibility = GetWithdrawEligibilityData(userId);
-
-                //---------------- Execute SQL Function
-                var vintages = await GetCustomerVintagesAsync(userId);
-
-                var lastInvestmentAmount =
-                    DbExpressions.RoundCustomerBalanceAmount(gzTransactionRepo.LastInvestmentAmount(userId,
-                        DateTime.UtcNow
-                            .ToStringYearMonth
-                            ()));
-                //-------------- Retrieve previously executed async query results
-
-                // user
-                if (userRet == null)
-                {
-                    _logger.Error("User with id {0} is null in GetSummaryData()", userId);
-                }
-
-                // Package all the results
-                summaryDtoRet = new UserSummaryDTO()
-                {
-
-                    Vintages = vintages,
-
-                    Currency = CurrencyHelper.GetSymbol(userRet.Currency),
-                    // current balance should not include this month's loss amount to be invested
-                    InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount, 
-
-                    // Monthly gaming amounts
-                    BegGmBalance = invBalanceRes.BegGmBalance,
-                    Deposits = invBalanceRes.Deposits,
-                    Withdrawals = invBalanceRes.Withdrawals,
-                    GmGainLoss = invBalanceRes.GmGainLoss,
-                    EndGmBalance = invBalanceRes.EndGmBalance,
-                    CashBonus = invBalanceRes.CashBonus,
-
-                    TotalInvestments = invBalanceRes.TotalCashInvInHold,
-                    TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
-
-                    NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
-                    LastInvestmentAmount = lastInvestmentAmount,
-
-                    //latestBalanceUpdateDatetime
-                    StatusAsOf = GetLastUpdatedMidnight(invBalanceRes.UpdatedOnUtc),
-
-                    // Withdrawal eligibility
-                    LockInDays = withdrawalEligibility.LockInDays,
-                    EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
-                    OkToWithdraw = withdrawalEligibility.OkToWithdraw,
-                    Prompt = withdrawalEligibility.Prompt
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Exception in GetSummaryData()");
+                _logger.Error("User with id {0} is null in GetSummaryData()", userId);
             }
 
+            // Package all the results
+            summaryDtoRet = new UserSummaryDTO()
+            {
+
+                Vintages = vintages,
+
+                Currency = CurrencyHelper.GetSymbol(userRet.Currency),
+                // current balance should not include this month's loss amount to be invested
+                InvestmentsBalance = invBalanceRes.Balance - lastInvestmentAmount,
+
+                // Monthly gaming amounts
+                BegGmBalance = invBalanceRes.BegGmBalance,
+                Deposits = invBalanceRes.Deposits,
+                Withdrawals = invBalanceRes.Withdrawals,
+                GmGainLoss = invBalanceRes.GmGainLoss,
+                EndGmBalance = invBalanceRes.EndGmBalance,
+                CashBonus = invBalanceRes.CashBonus,
+
+                TotalInvestments = invBalanceRes.TotalCashInvInHold,
+                TotalInvestmentsReturns = invBalanceRes.Balance - invBalanceRes.TotalCashInvInHold,
+
+                NextInvestmentOn = DbExpressions.GetNextMonthsFirstWeekday(),
+                LastInvestmentAmount = lastInvestmentAmount,
+
+                //latestBalanceUpdateDatetime
+                StatusAsOf = GetLastUpdatedMidnight(invBalanceRes.UpdatedOnUtc),
+
+                // Withdrawal eligibility
+                LockInDays = withdrawalEligibility.LockInDays,
+                EligibleWithdrawDate = withdrawalEligibility.EligibleWithdrawDate,
+                OkToWithdraw = withdrawalEligibility.OkToWithdraw,
+                Prompt = withdrawalEligibility.Prompt
+            };
             return Tuple.Create(summaryDtoRet, userRet);
         }
 
@@ -328,7 +318,7 @@ namespace gzDAL.Repos
         /// <returns></returns>
         private Tuple<bool, DateTime, int> IsWithdrawalEligible(int customerId)
         {
-            var lockInDays = (confRepo.GetConfRow().Result).LOCK_IN_NUM_DAYS;
+            var lockInDays = (confRepo.GetConfRow()).LOCK_IN_NUM_DAYS;
 
             var nowUtc = DateTime.UtcNow;
             var monthsLockCnt = lockInDays / 30;
@@ -370,9 +360,9 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<List<VintageDto>> GetCustomerVintagesAsync(int customerId)
+        public List<VintageDto> GetCustomerVintages(int customerId)
         {
-            var monthsLockPeriod = (await confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
+            var monthsLockPeriod = (confRepo.GetConfRow()).LOCK_IN_NUM_DAYS / 30;
 
             var vintagesList = db.Database
                 .SqlQuery<VintageDto>(
@@ -382,16 +372,17 @@ namespace gzDAL.Repos
                 .ToList();
 
             // Remove current month as a vintage
-            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth()) {
+            if (vintagesList.Count > 0 && vintagesList[vintagesList.Count - 1].YearMonthStr == DateTime.UtcNow.ToStringYearMonth())
+            {
                 vintagesList.RemoveAt(vintagesList.Count - 1);
             }
 
             // Calcluate earliest locking date, locked status
             foreach (var dto in vintagesList)
             {
-                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod);
+                var firstOfMonthUnlocked = DbExpressions.GetDtYearMonthStrTo1StOfMonth(dto.YearMonthStr).AddMonths(monthsLockPeriod).AddHours(12);
                 // Unlock at Utc noon of 1st month day
-                dto.Locked = firstOfMonthUnlocked >= DateTime.UtcNow.AddHours(12);
+                dto.Locked = firstOfMonthUnlocked >= DateTime.UtcNow;
             }
 
             return vintagesList;
@@ -720,10 +711,10 @@ namespace gzDAL.Repos
         /// </summary>
         /// <param name="customerId"></param>
         /// <returns></returns>
-        public async Task<List<VintageDto>> GetCustomerVintagesSellingValueUnitTestHelper(int customerId)
+        public List<VintageDto> GetCustomerVintagesSellingValueUnitTestHelper(int customerId)
         {
 
-            var customerVintages = await GetCustomerVintagesAsync(customerId);
+            var customerVintages = GetCustomerVintages(customerId);
 
             GetCustomerVintagesSellingValueNow(customerId, customerVintages);
 
@@ -1009,6 +1000,7 @@ namespace gzDAL.Repos
             var newBonusReq = new BonusReq()
             {
                 AdminEmailRecipients = adminsArr,
+                Currency = user.Currency,
                 Amount = user.NetProceeds,
                 Fees = user.Fees,
                 GmUserId = user.GmUserId,

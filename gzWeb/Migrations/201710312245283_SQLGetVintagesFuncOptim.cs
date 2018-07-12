@@ -1,5 +1,3 @@
-using Glimpse.Ado.Tab;
-
 namespace gzWeb.Migrations
 {
     using System;

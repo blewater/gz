@@ -15,6 +15,8 @@ module ErrorHandling =
     | MismatchedFilenameDates of Exception // Reserved for future use
     | BegBalanceDateMismatch of Exception // Reserved for future use
     | NoCurrentMarketQuote of Exception
+    // Non-investment files
+    | MissingPlayerGamingReport of Exception
 
     let logger = LogManager.GetCurrentClassLogger()
 

@@ -57,7 +57,7 @@
                 }, function(withdrawResponse) {
                     $scope.vintages = processVintages(withdrawResponse.Result);
                     var netProceeds = getVintageSoldNetProceeds(withdrawResponse.Result);
-                    message.success("To be credited into your casino wallet (" + netProceeds.toString() + " " + $scope.currency + " within a maximum of 48 hours). Once the bonus is awarded, place a minimum bet once and it will be cached out.");
+                    message.success("To be credited into your casino wallet (" + netProceeds.toString() + " " + $scope.currency + " within an hour.) Once the bonus is awarded, place a minimum bet once and it will be cached out.");
                 }, {
                     rejectFn: function() {
                         var selectedCount = $filter('where')(updatedVintages, { 'Selected': true }).length;

@@ -46,7 +46,6 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
         BaseFolder = Settings.BaseFolder;
         ExcelInFolder = Settings.ExcelInFolder;
         ExcelOutFolder = Settings.ExcelOutFolder;
-        reportsDownloadFolder = Settings.ReportsDownloadFolder;
     }
 
     let reportsFilesArgs : ConfigArgs.ReportsFilesArgsType = {
@@ -55,12 +54,15 @@ let downloadArgs : ConfigArgs.EverymatriReportsArgsType =
             DownloadedWithdrawalsFilter = Settings.DownloadedWithdrawalsFilter;
             DownloadedDepositsFilter = Settings.DownloadedDepositsFilter;
             DownloadedBonusFilter = Settings.DownloadedBonusFilter;
+            DownloadedCasinoGameFilter = Settings.DownloadedCasinoGameFilter;
             CustomRptFilenamePrefix = Settings.CustomRptFilenamePrefix;
             EndBalanceRptFilenamePrefix = Settings.EndBalanceRptFilenamePrefix;
             WithdrawalsPendingRptFilenamePrefix = Settings.WithdrawalsPendingRptFilenamePrefix;
             WithdrawalsRollbackRptFilenamePrefix = Settings.WithdrawalsRollbackRptFilenamePrefix;
             DepositsRptFilenamePrefix = Settings.DepositsRptFilenamePrefix;
+            PastDaysDepositsRptFilenamePrefix = Settings.PastDaysDepositsRptFilenamePrefix;
             BonusRptFilenamePrefix = Settings.BonusRptFilenamePrefix;
+            CasinoGameRptFilenamePrefix = Settings.CasinoGameRptFilenamePrefix;
             Wait_For_File_Download_MS = Settings.WaitForFileDownloadMs;
         }
 
@@ -79,25 +81,13 @@ let gmReports2Db
     logger.Info("----------------------------")
 
     logger.Info("Validating Gm excel rpt files")
-        
-    let rptFilesOkToProcess = { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
-                                |> GmRptFiles.getExcelFilenames
-                                |> GmRptFiles.balanceRptDateMatchTitles
-                                |> GmRptFiles.depositsRptContentMatch
-                                |> GmRptFiles.bonusRptContentMatch
-                                |> GmRptFiles.getExcelDtStr
-                                |> GmRptFiles.getExcelDates 
-                                |> GmRptFiles.areExcelFilenamesValid
-    if not rptFilesOkToProcess.Valid then
-        exit 1
+    
+    let rptFilesOkToProcess = 
+        GmRptFiles.validateReportFilenames { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
 
     // Extract & Load Daily Everymatrix Report
     Etl.ProcessExcelFolder isProd db inRptFolder outRptFolder emailToProcAlone
     rptFilesOkToProcess.DayToProcess
-
-/// Choose next biz processing steps based on args
-let portfolioSharesPrelude2MainProcessing (db : DbContext) =
-    DailyPortfolioShares.storeShares db
 
 let getTimer() =
     let timer = System.Diagnostics.Stopwatch()
@@ -120,6 +110,10 @@ let main argv =
         // Download reports
         let dwLoader = ExcelDownloader(downloadArgs, cmdArgs.BalanceFilesUsage)
         dwLoader.SaveReportsToInputFolder()
+        
+        Segmentation.segmentUsers 
+            { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
+            cmdArgs.UserEmailProcAlone
 
         // Excel reports -> db
         let customRpdDate = 
@@ -131,11 +125,8 @@ let main argv =
         UserTrx.processGzTrx
             db
             (customRpdDate.Substring(0, 6))
-            (portfolioSharesPrelude2MainProcessing db)
+            (DailyPortfolioShares.getLatestPortfolioPrices db customRpdDate)
             cmdArgs.UserEmailProcAlone
-
-        // Vintage withdrawal bonus
-        WithdrawnVintageBonusGen.updDbRewSoldVintages downloadArgs.EverymatrixPortalArgs downloadArgs.ReportsFoldersArgs db DateTime.UtcNow
 
         appTimer.Stop()
         logger.Info("----------------------------")

@@ -1,0 +1,21 @@
+{
+    "disabled": true,
+    "scriptFile": "index.js",
+    "bindings": [{
+            "name": "myTimer",
+            "type": "timerTrigger",
+            "direction": "in",
+            "schedule": "0 0 6 * * *", // on 0 sec, 0 min, 6th hour, any day of month, any month, any weekday
+            "connection": "AzureWebJobsStorage",
+            "runOnStartup": true
+        },
+        {
+            "type": "sendGrid",
+            "name": "mails",
+            "apiKey": "SENDGRID_API_KEY",
+            "groupId": "IDLENESS_GROUP_ID",
+            "direction": "out",
+            "from": "help@greenzorro.com"
+        }
+    ]
+}

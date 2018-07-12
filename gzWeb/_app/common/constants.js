@@ -120,6 +120,27 @@
         title: 'Responsible Gambling',
         category: categories.wandering
     };
+    routes.cookiePolicy = {
+        path: '/cookiePolicy',
+        ctrl: 'cookiePolicyCtrl',
+        tpl: '_app/guest/cookiePolicy.html',
+        title: 'Cookie Policy',
+        category: categories.wandering
+    };
+    routes.thirdParties = {
+        path: '/third-parties',
+        ctrl: 'thirdPartiesCtrl',
+        tpl: '_app/guest/thirdParties.html',
+        title: 'Third Parties',
+        category: categories.wandering
+    };
+    routes.dataSubjectRights = {
+        path: '/datasubjectrights',
+        ctrl: 'dataSubjectRightsCtrl',
+        tpl: '_app/guest/dataSubjectRights.html',
+        title: 'Data Subject Rights',
+        category: categories.wandering
+    };
 
     routes.promotion = {
         path: '/promotions/:code',
@@ -127,7 +148,7 @@
         tpl: '_app/promotions/promotion.html',
         title: 'Promotions',
         roles: [roles.guest],
-        category: categories.wandering,
+        category: categories.wandering
         //redirectTo: function (routeParams, path, search) {
         //    switch (routeParams.key) {
         //        case 'signup':
@@ -277,7 +298,14 @@
             signupAndPlay: 'SignupandPlay',
             signup: 'Signup',
             deposit: 'Deposit',
-            withdraw: 'Withdraw',
+            withdraw: 'Withdraw'
+        },
+        // UserConsentList Api Constants
+        emUserConsentKeys: {
+            tcApiCode: "termsandconditions",
+            emailApiCode: "emailmarketing",
+            smsApiCode: "sms",
+            thirdpartyApiCode: "3rdparty"
         },
         events: {
             ON_INIT: 'onInit',
