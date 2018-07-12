@@ -42,14 +42,24 @@
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
   <Choose>
-    <When Condition="'$(VisualStudioVersion)' == '11.0'">
-      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.3.0.0 AND $(TargetFSharpCoreVersion) &lt; 4.3.1.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.3.1.0 AND $(TargetFSharpCoreVersion) &lt; 4.4.0.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\3.1\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <When Condition="$(TargetFSharpCoreVersion) &gt;= 4.4.0.0 AND $(TargetFSharpCoreVersion) &lt; 4.4.1.0 ">
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\4.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
       </PropertyGroup>
     </When>
     <Otherwise>
-      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets')">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildProgramFiles32)\Microsoft SDKs\F#\4.1\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -161,17 +171,6 @@
       <ItemGroup>
         <Reference Include="FSharp.Data">
           <HintPath>packages\FSharp.Data\lib\net45\FSharp.Data.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
-      <ItemGroup>
-        <Reference Include="FSharp.Data.TypeProviders">
-          <HintPath>packages\FSharp.Data.TypeProviders\lib\net40\FSharp.Data.TypeProviders.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
