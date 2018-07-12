@@ -1,7 +1,6 @@
 ﻿#if INTERACTIVE
 #r "./packages/canopy/lib/canopy.dll"
 #r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
-#r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
 #r "./packages/NLog/lib/net45/NLog.dll"
 #r "./packages/Selenium.WebDriver/lib/net45/WebDriver.dll"
 #r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"
@@ -12,7 +11,6 @@
 //#else
 //module main
 #endif
-open Microsoft.FSharp.Collections
 open FSharp.Configuration
 open NLog
 open BonusQueue
@@ -64,21 +62,24 @@ let main argv =
 
     try
         let queuedItemCnt = qCnt()
-        if queuedItemCnt > 0 then
+        match queuedItemCnt with
+        | 0 -> 
+            logger.Info("No bonus requests to process.")
+            printfn("No bonus requests to process.")
+        | _ ->
             try
                 ChromeAwarder.startBrowserSession false
                 let rec procQueue(qLeftItems) : unit =
                     match getNextQMsg() with
                     | Some bonusQReq ->
                         try
-                            bonusQReq 
+                            bonusQReq
                             |> bonusQ2Obj
                             |> TblLogger.Upsert None
                             |> ChromeAwarder.awardUser
-                            |> enQueue2BonusMsg
-                            //|> emailSender.SendBonusReqUserReceipt helpEmail helpPwd
-                            //|> emailSender.SendBonusReqAdminReceipt hostEmail hostPwd
-                            deleteBonusReq bonusQReq
+                            |> deleteBonusReq bonusQReq
+                            |> enQueue2BonusMsg // Notify success to admin, user
+
                         with ex ->
                             TblLogger.Upsert (Some ex) (bonusQ2Obj bonusQReq) |> ignore
                             // Update process cnt
