@@ -1,7 +1,5 @@
 ﻿#I __SOURCE_DIRECTORY__
 #r "./packages/canopy/lib/canopy.dll"
-#r "./packages/FSharp.Data/lib/net45/FSharp.Data.dll"
-#r "./packages/FSharp.Data.TypeProviders/lib/net40/FSharp.Data.TypeProviders.dll"
 #r "./packages/NLog/lib/net45/NLog.dll"
 #r "./packages/Selenium.WebDriver/lib/net45/WebDriver.dll"
 #r "./packages/FSharp.Configuration/lib/net45/FSharp.Configuration.dll"

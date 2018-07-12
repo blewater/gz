@@ -7,7 +7,6 @@ nuget FSharp.Azure.StorageTypeProvider
 nuget FSharp.Configuration
 nuget FSharp.Core <= 4.1.34
 nuget FSharp.Data
-nuget FSharp.Data.TypeProviders
 nuget FSharp.Json
 nuget NLog
 nuget NLog.Config
