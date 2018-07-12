@@ -71,8 +71,25 @@ let bonusQ2Obj(qMsg : ProvidedQueueMessage) : BonusReqType =
     let bonusReq = Json.deserialize<BonusReqType> qMsg.AsString.Value
     bonusReq
 
-let deleteBonusReq(msq : ProvidedQueueMessage) =
-    async { do! bonusQueue.DeleteMessage msq.Id } |> Async.RunSynchronously
+/// Resilient Bonus Queue Msg Deletion which tries 10 times with a 1 sec pause
+let deleteBonusReq(msq : ProvidedQueueMessage)(bonusReq : BonusReqType) : BonusReqType =
+    let rec retryDel(cnt) =
+        let res = 
+            async { do! bonusQueue.DeleteMessage msq.Id }
+            |> Async.Catch
+            |> Async.RunSynchronously
+        match res with
+        | Choice1Of2 _ -> logger.Info("Message deleted.")
+        | Choice2Of2 exn ->
+            TblLogger.Upsert (Some exn) bonusReq |> ignore
+            logger.Error( sprintf "Message not deleted: %s." exn.Message)
+            match cnt with
+            | 1 -> raise exn
+            | _ -> // Sleep 1 sec
+                Threading.Thread.Sleep(1000)
+                retryDel (cnt - 1)
+    retryDel 60
+    bonusReq
 
 let enQueue2BonusReq(bonusReq : BonusReqType) =
     let json = JsonConvert.SerializeObject(bonusReq)
