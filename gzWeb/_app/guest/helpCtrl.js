@@ -68,7 +68,7 @@
 			        { Q: "Which deposit methods do you have available?", A: "Once logged in, please click deposit button and you will see all of the payment methods available to you." },
 			        { Q: "Which credit/debit cards do you accept?", A: "We accept all Visa and MasterCard/maestro Credit and Debit cards as depositing methods, although there might be restrictions on withdrawals to MasterCard/Maestro card." },
 			        { Q: "Will I be charged any fees when depositing into my account?", A: "No! Deposits are free of charge. Nevertheless, please keep in mind that your bank may charge you a fee for their service." },
-			        { Q: "What is the minimum/maximum amounts that I can deposit at a time?", A: "The minimum deposit amount is €10 or your currency equivalent and the maximum deposit amount vary according to payment methods you used. Please click on Deposit once you login to see the maximum deposit amount." },
+			        { Q: "What is the minimum/maximum amounts that I can deposit at a time?", A: "The minimum deposit amount is €15 or your currency equivalent and the maximum deposit amount vary according to payment methods you used. Please click on Deposit once you login to see the maximum deposit amount." },
 			        { Q: "Is there a way for me to set daily, weekly and monthly deposit limits?", A: "You are able to set Daily, Weekly or Monthly Deposit Limits. These can be set within 'My Account' sub section 'Responsible Gaming'. Limits can be amended at any time in the same section." },
 			        { Q: "How do I transfer money from my bank account?", A: "Please click 'Deposit' in 'My Account' and chose Bank transfers. Then follow the instructions on the screen." },
                 ]
@@ -103,7 +103,7 @@
 			        { Q: "Can I get my winnings paid back to my credit/debit card?", A: "Yes you can as long as it is the same card that you used to make your original deposit and the card is able  to accept a  withdraw back onto it." },
 			        { Q: "I used my credit/debit card to deposit, can I request a withdrawal by any other mean?", A: "Our policy is to return the original deposit amount back to the card that is used for deposit and extra winning can be returned via other method. If the card does not accept withdrawal, your winning can be paid out via bank transfer but we might need you to provide some documentation." },
 			        { Q: "Why can’t I choose by which method I want to get paid?", A: "Due to anti money laundering laws, it is our policy to ensure the money is going back to the original source that made the deposit when possible." },
-			        { Q: "Do you charge any withdrawal fees?", A: "We allow you to make one monthly withdrawal free of charge. For any withdrawals further to the 1st withdrawal of the month, a 3% processing fee will be charged." },
+			        { Q: "Do you charge any withdrawal fees?", A: "At Greenzorro all credit card withdrawals are free. For all payment methods other than credit card, the first withdrawal of the month is free of charge and for any further withdrawal a 3% processing fee is charged." },
                     {
                         Q: "How long do withdrawals take?",
                         A: "<div>Withdrawals to Credit/Debit cards typically take 2-5 days, once executed, while withdrawals via Bank Transfer (Trustly) take 3-5 days, once executed. Withdrawals to e-wallets (e.g. Skrill and Neteller) are instantly processed, once executed.</div>" +

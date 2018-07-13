@@ -6,11 +6,11 @@
                     <uib-progressbar value="50"></uib-progressbar>
                 </div>
                 <div ng-repeat="step in steps" class="col-xs-4 centered">
-                     <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
+                    <div class="step" ng-class="{'visited':$index < currentStep,'current': $index === currentStep}">
                         <i class="fa step-icon" ng-class="{'fa-check-circle-o': $index < currentStep, 'fa-dot-circle-o': $index === currentStep, 'fa-circle-thin': $index > currentStep }"></i>
                         <i class="fa fa-circle step-icon-bg"></i>
                         <div class="step-title">{{$index + 1}}.{{steps[$index].title}}</div>
-                     </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -167,28 +167,92 @@
                 </div>
             </div>
 
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" style="margin-bottom: .5em">
+                <div class="col-xs-12"><span class="pull-left"><a class="terms" ng-click="readDataSubjectRights()">See data subject rights page</a></span></div>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" style="margin-bottom: .5em">
+                <div class="col-xs-12"><span class="pull-left"><a class="terms" ng-click="readCookiePolicy()">See cookie policy</a></span></div>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" style="margin-bottom: .5em">
+                <div class="col-xs-12"><span class="pull-left"><a class="terms" ng-click="readPrivacyPolicy()">See data privacy policy</a></span></div>
+            </div>
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group text-left">
-                    <gz-check-box gz-model="model" gz-value="agreedGames">I have read and accepted the <a class="terms" ng-click="readGamesTerms()">gaming terms & conditions</a></gz-check-box>
+                <div class="col-xs-1">
+                    <span class="radios">
+                        <label><input type="radio" ng-model="consents.acceptedGdprTc" value="true">Yes</label>
+                    </span>
+                </div>
+                <div class="col-xs-1">
+                    <span class="radios">
+                        <label><input type="radio" ng-model="consents.acceptedGdprTc" value="false">No</label>
+                    </span>
+                </div>
+                <div class="col-xs-10">
+                    <span class="radio-text">I confirm that I am 18 years or older and have read and accept the <a class="terms" ng-click="readGamesTerms()">Terms & Conditions</a></span>
+                </div>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <div class="col-xs-1">
+                    <span class="radios">
+                        <label><input type="radio" ng-model="model.acceptedInvTc" value="true">Yes</label>
+                    </span>
+                </div>
+                <div class="col-xs-1">
+                    <span class="radios">
+                        <label><input type="radio" ng-model="model.acceptedInvTc" value="false">No</label>
+                    </span>
+                </div>
+                <div class="col-xs-10">
+                    <span class="radio-text">I have read and accept the <a class="terms" ng-click="readInvestmentTerms()">Investment Terms & Conditions</a></span>
+                </div>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-show="showEmail">
+                <div class="col-xs-1">
+                    <span class="radios"><label><input type="radio" ng-model="consents.allowGzEmail" value="true">Yes</label></span>
+                </div>
+                <div class="col-xs-1">
+                    <span class="radios"><label><input type="radio" ng-model="consents.allowGzEmail" value="false">No</label></span>
+                </div>
+                <div class="col-xs-10">
+                    <span class="radio-text">Yes, please send me exclusive offers by email.</span>
+                </div>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-show="showSms">
+                <div class="col-xs-1">
+                    <span class="radios">
+                        <label><input type="radio" ng-model="consents.allowGzSms" value="true">Yes</label>
+                    </span>
+                </div>
+                <div class="col-xs-1">
+                    <span>
+                        <label><input type="radio" ng-model="consents.allowGzSms" value="false">No</label>
+                    </span>
+                </div>
+                <div class="col-xs-10">
+                    <span class="radio-text">Yes, please send me exclusive offers by sms.</span>
                 </div>
             </div>
 
-            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group text-left">
-                    <gz-check-box gz-model="model" gz-value="agreedInvestment">I have read and accepted the <a class="terms" ng-click="readInvestmentTerms()">investment terms & conditions</a></gz-check-box>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2" ng-show="show3rdParty">
+                <div class="col-xs-1">
+                    <span class="radios">
+                        <label><input type="radio" ng-model="consents.allow3rdPartySms" value="true">Yes</label>
+                    </span>
                 </div>
-            </div>
-
-            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                <div class="form-group text-left">
-                    <gz-check-box gz-model="model" gz-value="oldEnough">I'm 18 years or older.</gz-check-box>
+                <div class="col-xs-1">
+                    <span class="radios">
+                        <label><input type="radio" ng-model="consents.allow3rdPartySms" value="false">No</label>
+                    </span>
+                </div>
+                <div class="col-xs-10">
+                    <span class="radio-text">Yes, please send me exclusive offers by email and SMS from 3rd parties. <a class="terms" ng-click="read3rdParties()">View all</a> 3rd parties here.</span>
                 </div>
             </div>
 
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                 <div class="form-group">
                     <div class="btns text-center">
-                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !model.agreedGames || !model.agreedInvestment || !model.oldEnough"
+                        <button type="submit" class="btn-gz next" ng-disabled="form.$invalid || !isGdprFormSectionValid()"
                                 ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                             <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
                             <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>

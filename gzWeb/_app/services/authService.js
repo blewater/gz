@@ -1,9 +1,9 @@
-﻿(function () {
+﻿(function() {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', '$timeout', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message, $timeout) {
         var factory = {};
 
         // #region AuthData
@@ -20,10 +20,12 @@
             isGamer: false,
             isInvestor: false,
             isAdmin: false,
-            isGuest: true
+            isGuest: true,
+
+            gdprConsents: undefined
         };
-        
-        factory.readAuthData = function () {
+
+        factory.readAuthData = function() {
             factory.data = angular.extend(noAuthData, (localStorageService.get(constants.storageKeys.authData) || {}));
         }
 
@@ -54,6 +56,23 @@
             factory.data.firstname = data.firstname;
             factory.data.lastname = data.lastname;
             factory.data.currency = data.currency;
+            storeAuthData();
+        }
+
+        function getConsentValue(value) {
+            var consentValue = value === undefined || value === null || value.length === 0 ? undefined : (value === true || value === "true");
+            return consentValue;
+        }
+
+        function setGdprData(data) {
+            factory.data.gdprConsents = {
+                allowGzEmail: getConsentValue(data.allowGzEmail),
+                allowGzSms: getConsentValue(data.allowGzSms),
+                allow3rdPartySms: getConsentValue(data.allow3rdPartySms),
+                acceptedGdprTc: getConsentValue(data.acceptedGdprTc),
+                acceptedGdprPp: getConsentValue(data.acceptedGdprPp),
+                acceptedGdpr3rdParties: getConsentValue(data.acceptedGdpr3rdParties)
+            };
             storeAuthData();
         }
 
@@ -124,17 +143,19 @@
         //        watchBalance();
         //}
 
-        $rootScope.$on(constants.events.REQUEST_ACCOUNT_BALANCE, function (event, args) {
+        $rootScope.$on(constants.events.REQUEST_ACCOUNT_BALANCE, function(event, args) {
             var expectBalance = args && args.expectBalance ? args.expectBalance : true;
             var expectBonus = args && args.expectBonus ? args.expectBonus : true;
             var callback = args && args.callback ? args.callback : angular.noop;
             factory.getGamingAccounts(expectBalance, expectBonus, callback);
         });
 
-        factory.getGamingAccounts = function (expectBalance, expectBonus, callback) {
-            emBanking.getGamingAccounts(expectBalance, expectBonus).then(function (result) {
+        factory.getGamingAccounts = function(expectBalance, expectBonus, callback) {
+            emBanking.getGamingAccounts(expectBalance, expectBonus).then(function(result) {
                 factory.data.gamingAccounts = result.accounts;
-                factory.data.gamingBalance = $filter('sum')($filter('map')(factory.data.gamingAccounts, function (acc) { return acc.amount; }));
+                factory.data.gamingBalance = $filter('sum')($filter('map')(factory.data.gamingAccounts, function(acc) {
+                    return acc.amount;
+                }));
                 storeAuthData();
                 $rootScope.$broadcast(constants.events.ACCOUNT_BALANCE_CHANGED);
                 if (angular.isFunction(callback))
@@ -147,7 +168,7 @@
                 //}
                 //else {
                 //}
-            }, function (error) {
+            }, function(error) {
                 $log.error(error.desc);
             });
         };
@@ -165,18 +186,45 @@
                 vrVals['firstname'] = sessionInfo.firstname;
                 vrVals['lastname'] = sessionInfo.surname;
 
-                api.vrRegister(vrVals).then(function (successRes) {
+                api.vrRegister(vrVals).then(function(successRes) {
                     $log.info("vr register for user " + sessionInfo.email + " succeeded: " + angular.toJson(successRes));
-                }, function (error) {
+                }, function(error) {
                     $log.error("vr register for user " + sessionInfo.email + " failed: " + angular.toJson(error));
                 });
             }
         }
 
-        $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
+        factory.setGdpr = function(consents) {
+            var q = $q.defer();
+            //$timeout(function () {
+            //    setGdprData(consents);
+            //    q.resolve(true);
+            //}, 3000);
+            api.setGdpr(consents).then(function(result) {
+                setGdprData(consents);
+                q.resolve(true);
+            }, function(error) {
+                q.reject(error);
+            });
+            return q.promise;
+        };
+
+        function hasToSetConsents() {
+            if (factory.data.gdprConsents === undefined)
+                return true;
+            else {
+                for (var consent in factory.data.gdprConsents) {
+                    var consentValue = factory.data.gdprConsents[consent];
+                    if (consentValue === undefined || consentValue === null || consentValue.length === 0)
+                        return true;
+                }
+                return false;
+            }
+        }
+        $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function(event, kwargs) {
             var args = kwargs;
             if (args.code === 0) {
-                emWamp.getSessionInfo().then(function (sessionInfo) {
+                emWamp.getSessionInfo().then(function(sessionInfo) {
                     if (sessionInfo.isAuthenticated) {
                         vrIdentifyRefered(sessionInfo);
                         setGamingAuthData(sessionInfo);
@@ -190,21 +238,18 @@
                                 $rootScope.$broadcast(constants.events.REDIRECTED);
                                 $rootScope.redirected = false;
                                 $location.path(requestUrl);
-                            }
-                            else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isGamer)
+                            } else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isGamer)
                                 $location.path(constants.routes.games.path).search({});
                             else if ($route.current.$$route.originalPath === constants.routes.home.path && factory.data.isInvestor)
                                 $location.path(constants.routes.summary.path);
                         }
                         $rootScope.$broadcast(constants.events.AUTH_CHANGED);
-                    }
-                    else {
+                    } else {
                         factory.logout();
                         //emLogout();
                     }
                 });
-            }
-            else if (args.code > 0) {
+            } else if (args.code > 0) {
                 factory.onLogout(args.desc);
             }
         });
@@ -233,10 +278,10 @@
         // #endregion
 
         // #region Authorize
-        factory.authorize = function (roles, mode) {
+        factory.authorize = function(roles, mode) {
             if (roles && factory.data) {
                 var rolesArray = angular.isArray(roles) ? roles : roles.split(',');
-                var contains = function (r) {
+                var contains = function(r) {
                     return factory.data.roles.indexOf(r) !== -1;
                 }
                 if (mode === 'all')
@@ -245,14 +290,13 @@
                     return factory.data.roles.length === rolesArray.length && helpers.array.all(rolesArray, contains);
                 else
                     return helpers.array.any(rolesArray, contains);
-            }
-            else
+            } else
                 return false;
         };
         // #endregion
 
         // #region Logout
-        factory.logout = function () {
+        factory.logout = function() {
             if (factory.data.isGamer)
                 emWamp.logout();
             else
@@ -267,25 +311,251 @@
             clearGamingData();
             $rootScope.$broadcast(constants.events.AUTH_CHANGED);
         };
-        factory.onLogout = function (reason) {
-            setLogout();
+        factory.onLogout = function(reason) {
+                setLogout();
 
-            //$location.path(constants.routes.home.path).search({ logoutReason: reason });
-            window.appInsights.trackEvent("LOGOUT");
-            $window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
-        }
-        // #endregion
+                //$location.path(constants.routes.home.path).search({ logoutReason: reason });
+                window.appInsights.trackEvent("LOGOUT");
+                $window.location.href = constants.routes.home.path + (reason ? ("?logoutReason=" + reason) : "");
+            }
+            // #endregion
 
         // #region Login
         factory.gzLogin = function(usernameOrEmail, password) {
             var q = $q.defer();
 
-            api.login(usernameOrEmail, password).then(function (gzLoginResult) {
+            api.login(usernameOrEmail, password).then(function(gzLoginResult) {
                 setInvestmentAuthData(gzLoginResult.data);
-                $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                setGdprData(gzLoginResult.data);
                 q.resolve(gzLoginResult);
-            }, function (error) {
+            }, function(error) {
                 q.reject(error.data.error_description);
+            });
+            return q.promise;
+        }
+
+        // Called after a login response prop hasToAcceptTC is set = true
+        function emAcceptTcPromise() {
+            var q = $q.defer();
+
+            emWamp.acceptTC().then(function() {
+                q.resolve();
+            }, function(error) {
+                q.reject(error ? error.desc : false);
+            });
+            return q.promise;
+        }
+        // Enter here after a login response of hasToAcceptTC or hasToSetUserConsent is set = true
+        // But call everymatrix getConsentRequirements() only upon hasToSetUserConsent is set = true
+        function conditionalEmGetUserConsent(hasToSetUserConsent, action) {
+            var q = $q.defer();
+
+            if (hasToSetUserConsent) {
+                var params = angular.extend({}, {
+                    "action": action
+                });
+
+                // Everymatrix API Call only if hasToSetUserConsent === true
+                emWamp.getConsentRequirements(params).then(function(consentList) {
+                        q.resolve(consentList);
+                    },
+                    function(error) {
+                        q.reject(error ? error.desc : false);
+                    });
+            } else {
+                q.resolve();
+            }
+            return q.promise;
+        }
+        // action: 1 : registration, 2: login, 3: profile
+        function emGetActionableUserConsent(action) {
+            var q = $q.defer();
+            var params = angular.extend({}, {
+                "action": action
+            });
+
+            emWamp.getConsentRequirements(params).then(function(consentList) {
+                    q.resolve(consentList);
+                },
+                function(error) {
+                    q.reject(error ? error.desc : false);
+                });
+
+            return q.promise;
+        }
+        factory.setUserConsentQuestions = function(controller, action) {
+            var q = $q.defer();
+
+            emGetActionableUserConsent(action).then(function(userConsentQuestions) {
+                    controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = false;
+                    if (userConsentQuestions) {
+                        angular.forEach(userConsentQuestions,
+                            function(value) {
+                                if (value.code.indexOf(constants.emUserConsentKeys.tcApiCode) !== -1) {
+                                    // may be set by getConsentRequirements or hasToAcceptTC
+                                    controller.showTcbyUserConsentApi = true;
+                                    if (userConsentQuestions.length === 1) {
+                                        controller.showEmail = controller.showSms = controller.show3rdParty = true;
+                                    }
+                                }
+
+                                if (value.code.indexOf(constants.emUserConsentKeys.emailApiCode) !== -1) {
+                                    controller.showEmail = true;
+                                }
+
+                                if (value.code.indexOf(constants.emUserConsentKeys.smsApiCode) !== -1) {
+                                    controller.showSms = true;
+                                }
+
+                                if (value.code.indexOf(constants.emUserConsentKeys.thirdpartyApiCode) !== -1) {
+                                    controller.show3rdParty = true;
+                                }
+                            });
+                        // if null
+                    } else {
+                        // per Everymatrix Q&A request
+                        controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = true;
+                    }
+                    q.resolve(userConsentQuestions);
+                },
+                function(errorGetUserConsent) {
+                    q.reject(errorGetUserConsent ? errorGetUserConsent.desc : false);
+                });
+            return q.promise;
+        }
+
+        factory.isGdprFormSectionValid = function(controller) {
+            var consObj = controller.consents;
+            var acceptedGdprTc = consObj.acceptedGdprTc;
+
+            // TC by either accept or userconsent Api
+            if (controller.showTcbyUserConsentApi && (acceptedGdprTc === undefined || acceptedGdprTc === "false"))
+                return false;
+
+            if (controller.showEmail && consObj.allowGzEmail === undefined)
+                return false;
+
+            if (controller.showSms && consObj.allowGzSms === undefined)
+                return false;
+
+            if (controller.show3rdParty && consObj.allow3rdPartySms === undefined)
+                return false;
+
+            return true;
+        };
+
+        // create userConsents for inclusion in Api params call (reg., login, profile)
+        factory.createUserConsents = function(controller) {
+
+            var userConsents = undefined;
+            if (controller.consents.isUc) {
+                userConsents = {};
+                var consents = controller.consents;
+                if (controller.showTcbyUserConsentApi) {
+                    userConsents[constants.emUserConsentKeys.tcApiCode] = consents.acceptedGdprTc;
+                }
+                if (controller.showEmail) {
+                    userConsents[constants.emUserConsentKeys.emailApiCode] = consents.allowGzEmail;
+                }
+                if (controller.showSms) {
+                    userConsents[constants.emUserConsentKeys.smsApiCode] = consents.allowGzSms;
+                }
+                if (controller.show3rdParty) {
+                    userConsents[constants.emUserConsentKeys.thirdpartyApiCode] = consents.allow3rdPartySms;
+                }
+            }
+            return userConsents;
+        }
+
+        // Called after getUserConsents
+        function emSetUserConsent(userConsents) {
+            var q = $q.defer();
+
+            emWamp.setConsentRequirements({
+                userConsents: userConsents
+            }).then(function() {
+                    q.resolve();
+                },
+                function(setUserConsentError) {
+                    q.reject(setUserConsentError ? setUserConsentError.desc : false);
+                });
+
+            return q.promise;
+        }
+
+        function condSetUserConsents(popupConsents) {
+            var q = $q.defer();
+            if (popupConsents.setUserConsent) {
+                emSetUserConsent(popupConsents.userConsents).then(function() {
+                        q.resolve();
+                    },
+                    function(acceptTcError) {
+                        q.reject(acceptTcError ? acceptTcError.desc : false);
+                    });
+            } else {
+                q.resolve();
+            }
+            return q.promise;
+        }
+        // handle any flag set 2 true for hasToSetUserConsent, hasToAcceptTC and minorChangeInTC
+        function conditionalConsentPopup(emLoginResult) {
+            var q = $q.defer();
+
+            // Prod may not be synced with the login api update
+            if (emLoginResult.hasToSetUserConsent === undefined)
+                emLoginResult.hasToSetUserConsent = false;
+            conditionalEmGetUserConsent(emLoginResult.hasToSetUserConsent, 2).then(function(userConsentList) {
+
+                if (emLoginResult.hasToAcceptTC || emLoginResult.hasToSetUserConsent) {
+                    message.open({
+                        nsType: 'modal',
+                        nsSize: 'md',
+                        nsTemplate: '_app/account/gdpr.html',
+                        nsCtrl: 'gdprCtrl',
+                        nsStatic: true,
+                        nsShowClose: false,
+                        nsParams: {
+                            isTc: emLoginResult.hasToAcceptTC,
+                            isUc: emLoginResult.hasToSetUserConsent,
+                            userConsentList: userConsentList
+                        }
+                    }).then(function(popupConsents) {
+                            // Have to call acceptTC?
+                            if (popupConsents.setAcceptTC) {
+                                emAcceptTcPromise().then(function() {
+                                    // Then call setUserConsents?
+                                    condSetUserConsents(popupConsents).then(function() {
+                                        q.resolve();
+                                    }, function(setUserConsents) {
+                                        q.reject(setUserConsents ? setUserConsents.desc : false);
+                                    });
+                                }, function(acceptTcError) {
+                                    q.reject(acceptTcError ? acceptTcError.desc : false);
+                                });
+                            } else {
+                                // --Or just call setUserConsents?
+                                condSetUserConsents(popupConsents).then(function() {
+                                    q.resolve();
+                                }, function(setUserConsents) {
+                                    q.reject(setUserConsents ? setUserConsents.desc : false);
+                                });
+                            }
+                        },
+                        function(errorPopup) {
+                            q.reject(errorPopup ? errorPopup.desc : false);
+                        });
+                } else if (emLoginResult.minorChangeInTC) {
+                    message.notify("The Terms and Conditions have minor changes. Click here to check the details.", {
+                        nsCallback: function() {
+                            $location.path(constants.routes.termsGames.path);
+                            q.resolve();
+                        }
+                    });
+                } else {
+                    q.resolve();
+                }
+            }, function(errorGetConsent) {
+                q.reject(errorGetConsent ? errorGetConsent.desc : false);
             });
             return q.promise;
         }
@@ -303,49 +573,70 @@
                 params.captchaResponse = vcRecaptchaService.getResponse(widgetId);
             }
 
-            emWamp.login(params).then(function (emLoginResult) {
+            emWamp.login(params).then(function(emLoginResult) {
                 factory.data.username = usernameOrEmail;
                 q.resolve(emLoginResult);
-            }, function (error) {
+            }, function(error) {
                 factory.data.username = '';
                 q.reject(error ? error.desc : false);
             });
             return q.promise;
         }
 
-        factory.login = function (usernameOrEmail, password, captcha, widgetId) {
-            var q = $q.defer();
-            emLogin(usernameOrEmail, password, captcha, widgetId).then(function (emLoginResult) {
-                window.appInsights.setAuthenticatedUserContext(usernameOrEmail);
-                window.appInsights.trackEvent("LOGIN");
-                if (emLoginResult.hasToEnterCaptcha)
-                    q.resolve({ enterCaptcha: true });
-                else {
-                    message.clear();
-                    factory.gzLogin(usernameOrEmail, password).then(function () {
-                        api.cacheUserData();
-                        q.resolve({ emLogin: true, gzLogin: true });
-                    }, function (gzLoginError) {
-                        $log.error("Greenzorro login failed for user " + usernameOrEmail + ": " + gzLoginError);
-                        q.resolve({ emLogin: true, gzLogin: false });
+        factory.login = function(usernameOrEmail, password, captcha, widgetId) {
+                var q = $q.defer();
+                emLogin(usernameOrEmail, password, captcha, widgetId).then(function(emLoginResult) {
+                    window.appInsights.setAuthenticatedUserContext(usernameOrEmail);
+                    window.appInsights.trackEvent("LOGIN");
+                    if (emLoginResult.hasToEnterCaptcha)
+                        q.resolve({
+                            enterCaptcha: true
+                        });
+                    else {
+                        message.clear();
+
+                        factory.gzLogin(usernameOrEmail, password).then(function() {
+                            conditionalConsentPopup(emLoginResult).then(function() {
+                                $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                                api.cacheUserData();
+                                q.resolve({
+                                    emLogin: true,
+                                    gzLogin: true
+                                });
+                            }, function(popupError) {
+                                $log.error("Greenzorro login popup failed for user " + usernameOrEmail + ": " + popupError);
+                                q.resolve({
+                                    emLogin: false,
+                                    gzLogin: true
+                                });
+                            });
+                        }, function(gzLoginError) {
+                            $log.error("Greenzorro login failed for user " + usernameOrEmail + ": " + gzLoginError);
+                            q.resolve({
+                                emLogin: true,
+                                gzLogin: false
+                            });
+                        });
+                    }
+                }, function(emLoginError) {
+                    //gzLogin(usernameOrEmail, password).then(function () {
+                    //    api.cacheUserData();
+                    //    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
+                    //}, function (gzLoginError) {
+                    //    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
+                    //});
+                    window.appInsights.setAuthenticatedUserContext('');
+                    q.resolve({
+                        emLogin: false,
+                        emError: emLoginError
                     });
-                }
-            }, function (emLoginError) {
-                //gzLogin(usernameOrEmail, password).then(function () {
-                //    api.cacheUserData();
-                //    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: true });
-                //}, function (gzLoginError) {
-                //    q.resolve({ emLogin: false, emError: emLoginError, gzLogin: false, gzError: gzLoginError });
-                //});
-                window.appInsights.setAuthenticatedUserContext('');
-                q.resolve({ emLogin: false, emError: emLoginError });
-            });
-            return q.promise;
-        }
-        // #endregion
+                });
+                return q.promise;
+            }
+            // #endregion
 
         // #region Register
-        factory.readBtag = function () {
+        factory.readBtag = function() {
             var btag = $location.search().btag;
             if (btag) {
                 var now = new Date();
@@ -358,6 +649,7 @@
             localStorageService.remove(constants.storageKeys.btagMarker);
             localStorageService.remove(constants.storageKeys.btagTime);
         };
+
         function getBtag() {
             var btag = localStorageService.get(constants.storageKeys.btagMarker);
             var btagTime = localStorageService.get(constants.storageKeys.btagTime);
@@ -369,7 +661,7 @@
             return "";
         };
 
-        factory.saveVrRefCodeFromUrl = function () {
+        factory.saveVrRefCodeFromUrl = function() {
             var refCodeVal = $location.search().referralCode;
             if (refCodeVal) {
                 var vrCampaignIdVal = localStorageService.get(constants.storageKeys.vrCampaignId);
@@ -393,9 +685,9 @@
             var vrApiToken = localStorageService.get(constants.storageKeys.vrApiToken);
             if (vrCampaignIdVal && vrUserCampaignIdVal && vrRefCode && vrCampaignIdVal === vrUserCampaignIdVal)
                 return {
-                     "referralCode": vrRefCode, 
-                     "refSource" : localStorageService.get(constants.storageKeys.vrRefSource),
-                     "apiToken" : vrApiToken
+                    "referralCode": vrRefCode,
+                    "refSource": localStorageService.get(constants.storageKeys.vrRefSource),
+                    "apiToken": vrApiToken
                 };
             else
                 return undefined;
@@ -427,7 +719,8 @@
                 securityQuestion: parameters.securityQuestion,
                 securityAnswer: parameters.securityAnswer,
                 iovationBlackbox: iovation.getBlackbox(),
-                affiliateMarker: getBtag()
+                affiliateMarker: getBtag(),
+                userConsents: parameters.userConsents
             });
         }
 
@@ -448,205 +741,210 @@
                 Address: parameters.address1,
                 PostalCode: parameters.postalCode,
                 // TODO: Region ???
+                AcceptedGdprTc: parameters.userConsents[constants.emUserConsentKeys.tcApiCode],
+                AllowGzEmail: parameters.userConsents[constants.emUserConsentKeys.emailApiCode],
+                AllowGzSms: parameters.userConsents[constants.emUserConsentKeys.smsApiCode],
+                Allow3rdPartySms: parameters.userConsents[constants.emUserConsentKeys.thirdpartyApiCode]
             });
         }
 
-        factory.register = function (parameters) {
-            var q = $q.defer();
+        factory.register = function(parameters) {
+                var q = $q.defer();
 
-            var revoke = function(error) {
-                api.revokeRegistration(error).then(function () {
-                    q.reject(error);
-                }, function () {
-                    q.reject(error);
-                });
-            }
-
-            var registrationSteps = ['gzRegister', 'gzLogin', 'emRegister', 'emLogin', 'getSessionInfo', 'finalizeRegistration'];
-            function logStepMsg(name) {
-                var step = registrationSteps.indexOf(name) + 1;
-                return "Registration step " + step + " (" + name + ")";
-            }
-
-            function logStepSucceeded(name, user) {
-                $log.info(logStepMsg(name) + " for user " + user + " succeeded!");
-            }
-
-            function logStepFailed(name, msg) {
-                $log.error(logStepMsg(name) + ": " + msg);
-            }
-
-            gzRegister(parameters).then(function (gzRegisterResult) {
-                var user = parameters.email || parameters.username;
-                logStepSucceeded("gzRegister", user);
-                factory.gzLogin(parameters.username, parameters.password).then(function (gzLoginResult) {
-                    logStepSucceeded("gzLogin", user);
-                    emRegister(parameters).then(function (emRegisterResult) {
-                        logStepSucceeded("emRegister", user);
-                        clearBtags();
-                        emLogin(parameters.username, parameters.password).then(function (emLoginResult) {
-                            logStepSucceeded("emLogin", user);
-                            emWamp.getSessionInfo().then(function (sessionInfo) {
-                                logStepSucceeded("getSessionInfo", user);
-                                api.finalizeRegistration(sessionInfo.userID).then(function () {
-                                    logStepSucceeded("finalizeRegistration", user);
-                                    q.resolve(true);
-                                }, function (finalizeError) {
-                                    logStepFailed("finalizeRegistration", finalizeError);
-                                    q.reject(finalizeError);
-                                });
-                            }, function (getSessionInfoError) {
-                                logStepFailed("getSessionInfo", getSessionInfoError);
-                                q.reject(getSessionInfoError);
-                            });
-                        }, function (emLoginError) {
-                            var emLoginErr = emLoginError || "Undefined error. Please try logging in again.";
-                            logStepFailed("emLogin", emLoginErr);
-                            q.reject(emLoginErr);
-                        });
-                    }, function (emRegisterError) {
-                        var emRegisterErr = emRegisterError ? emRegisterError.desc : "Undefined error. Please try again later.";
-                        logStepFailed("emRegister", emRegisterErr);
-                        revoke(emRegisterErr);
-
-                        //var errorDesc = emRegisterError.desc;
-                        //logStepFailed("emRegister", errorDesc);
-                        //// when system is busy, the Em registration likely succeeded; don't revoke
-                        //if (errorDesc.indexOf('system is busy now') === -1 ) {
-                        //    revoke(emRegisterError.desc);
-                        //}
+                var revoke = function(error) {
+                    api.revokeRegistration(error).then(function() {
+                        q.reject(error);
+                    }, function() {
+                        q.reject(error);
                     });
-                }, function (gzLoginError) {
-                    var gzLoginErr = gzLoginError || "Login error.";
-                    logStepFailed("gzLogin", gzLoginErr);
-                    q.reject(gzLoginErr);
-                    //revoke(gzLoginError.desc);
-                });
-            }, function(gzRegisterError) {
-                logStepFailed("gzRegister", gzRegisterError.data.Message);
-                q.reject(gzRegisterError.data.Message);
-            });
+                }
 
-            return q.promise;
-        }
-        // #endregion
+                var registrationSteps = ['gzRegister', 'gzLogin', 'emRegister', 'emLogin', 'getSessionInfo', 'finalizeRegistration'];
+
+                function logStepMsg(name) {
+                    var step = registrationSteps.indexOf(name) + 1;
+                    return "Registration step " + step + " (" + name + ")";
+                }
+
+                function logStepSucceeded(name, user) {
+                    $log.info(logStepMsg(name) + " for user " + user + " succeeded!");
+                }
+
+                function logStepFailed(name, msg) {
+                    $log.error(logStepMsg(name) + ": " + msg);
+                }
+
+                gzRegister(parameters).then(function(gzRegisterResult) {
+                    var user = parameters.email || parameters.username;
+                    logStepSucceeded("gzRegister", user);
+                    factory.gzLogin(parameters.username, parameters.password).then(function(gzLoginResult) {
+                        logStepSucceeded("gzLogin", user);
+                        emRegister(parameters).then(function(emRegisterResult) {
+                            logStepSucceeded("emRegister", user);
+                            clearBtags();
+                            emLogin(parameters.username, parameters.password).then(function(emLoginResult) {
+                                logStepSucceeded("emLogin", user);
+                                emWamp.getSessionInfo().then(function(sessionInfo) {
+                                    logStepSucceeded("getSessionInfo", user);
+                                    api.finalizeRegistration(sessionInfo.userID).then(function() {
+                                        logStepSucceeded("finalizeRegistration", user);
+                                        q.resolve(true);
+                                    }, function(finalizeError) {
+                                        logStepFailed("finalizeRegistration", finalizeError);
+                                        q.reject(finalizeError);
+                                    });
+                                }, function(getSessionInfoError) {
+                                    logStepFailed("getSessionInfo", getSessionInfoError);
+                                    q.reject(getSessionInfoError);
+                                });
+                            }, function(emLoginError) {
+                                var emLoginErr = emLoginError || "Undefined error. Please try logging in again.";
+                                logStepFailed("emLogin", emLoginErr);
+                                q.reject(emLoginErr);
+                            });
+                        }, function(emRegisterError) {
+                            var emRegisterErr = emRegisterError ? emRegisterError.desc : "Undefined error. Please try again later.";
+                            logStepFailed("emRegister", emRegisterErr);
+                            revoke(emRegisterErr);
+
+                            //var errorDesc = emRegisterError.desc;
+                            //logStepFailed("emRegister", errorDesc);
+                            //// when system is busy, the Em registration likely succeeded; don't revoke
+                            //if (errorDesc.indexOf('system is busy now') === -1 ) {
+                            //    revoke(emRegisterError.desc);
+                            //}
+                        });
+                    }, function(gzLoginError) {
+                        var gzLoginErr = gzLoginError || "Login error.";
+                        logStepFailed("gzLogin", gzLoginErr);
+                        q.reject(gzLoginErr);
+                        //revoke(gzLoginError.desc);
+                    });
+                }, function(gzRegisterError) {
+                    logStepFailed("gzRegister", gzRegisterError.data.Message);
+                    q.reject(gzRegisterError.data.Message);
+                });
+
+                return q.promise;
+            }
+            // #endregion
 
         // #region ForgotPassword
-        factory.forgotPassword = function (email, widgetId) {
-            var q = $q.defer();
-            api.forgotPassword(email).then(function (gzResetKey) {
-                var changePwdUrl = $location.protocol() + "://" + $location.host();
-                if ($location.port() > 0)
-                    changePwdUrl += ":" + $location.port();
+        factory.forgotPassword = function(email, widgetId) {
+                var q = $q.defer();
+                api.forgotPassword(email).then(function(gzResetKey) {
+                    var changePwdUrl = $location.protocol() + "://" + $location.host();
+                    if ($location.port() > 0)
+                        changePwdUrl += ":" + $location.port();
 
-                changePwdUrl += "?";
-                changePwdUrl += "email=";
-                changePwdUrl += email;
-                changePwdUrl += "&";
-                changePwdUrl += "gzKey=";
-                changePwdUrl += encodeURIComponent(gzResetKey.data);
-                changePwdUrl += "&";
-                changePwdUrl += "emKey=";
+                    changePwdUrl += "?";
+                    changePwdUrl += "email=";
+                    changePwdUrl += email;
+                    changePwdUrl += "&";
+                    changePwdUrl += "gzKey=";
+                    changePwdUrl += encodeURIComponent(gzResetKey.data);
+                    changePwdUrl += "&";
+                    changePwdUrl += "emKey=";
 
-                emWamp.sendResetPwdEmail({
-                    email: email,
-                    changePwdURL: changePwdUrl,
+                    emWamp.sendResetPwdEmail({
+                        email: email,
+                        changePwdURL: changePwdUrl,
+                        captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
+                        captchaChallenge: "",
+                        captchaResponse: vcRecaptchaService.getResponse(widgetId)
+                    }).then(function(result) {
+                        q.resolve(true);
+                    }, function(error) {
+                        vcRecaptchaService.reload();
+                        q.reject(error.desc);
+                    });
+                }, function(error) {
+                    vcRecaptchaService.reload();
+                    q.reject(error);
+                });
+                return q.promise;
+            }
+            // #endregion
+
+        // #region ResetPassword
+        factory.resetPassword = function(parameters) {
+                var q = $q.defer();
+                emWamp.resetPassword(parameters.emKey, parameters.password).then(function(emResetResult) {
+                    api.resetPassword({
+                        Email: parameters.email,
+                        Password: parameters.password,
+                        ConfirmPassword: parameters.confirmPassword,
+                        Code: parameters.gzKey
+                    }).then(function(gzResetResult) {
+                        q.resolve(true);
+                    }, function(gzResetError) {
+                        q.reject(gzResetError);
+                    });
+                }, function(emResetError) {
+                    q.reject(emResetError.desc);
+                });
+                return q.promise;
+            }
+            // #endregion
+
+        // #region ChangePassword
+        factory.changePassword = function(oldPassword, newPassword, confirmPassword, widgetId) {
+                var q = $q.defer();
+                emWamp.changePassword({
+                    oldPassword: oldPassword,
+                    newPassword: newPassword,
                     captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
                     captchaChallenge: "",
                     captchaResponse: vcRecaptchaService.getResponse(widgetId)
-                }).then(function (result) {
-                    q.resolve(true);
-                }, function (error) {
+                }).then(function(emChangeResult) {
+                    api.changePassword({
+                        OldPassword: oldPassword,
+                        NewPassword: newPassword,
+                        ConfirmPassword: confirmPassword
+                    }).then(function(gzChangeResult) {
+                        q.resolve(true);
+                    }, function(gzChangeError) {
+                        vcRecaptchaService.reload();
+                        q.reject(gzChangeError);
+                    });
+                }, function(emChangeError) {
                     vcRecaptchaService.reload();
-                    q.reject(error.desc);
+                    q.reject(emChangeError.desc);
                 });
-            }, function (error) {
-                vcRecaptchaService.reload();
-                q.reject(error);
-            });
-            return q.promise;
-        }
-        // #endregion
-
-        // #region ResetPassword
-        factory.resetPassword = function (parameters) {
-            var q = $q.defer();
-            emWamp.resetPassword(parameters.emKey, parameters.password).then(function (emResetResult) {
-                api.resetPassword({
-                    Email: parameters.email,
-                    Password: parameters.password,
-                    ConfirmPassword: parameters.confirmPassword,
-                    Code: parameters.gzKey
-                }).then(function(gzResetResult) {
-                    q.resolve(true);
-                }, function(gzResetError) {
-                    q.reject(gzResetError);
-                });
-            }, function (emResetError) {
-                q.reject(emResetError.desc);
-            });
-            return q.promise;
-        }
-        // #endregion
-
-        // #region ChangePassword
-        factory.changePassword = function (oldPassword, newPassword, confirmPassword, widgetId) {
-            var q = $q.defer();
-            emWamp.changePassword({
-                oldPassword: oldPassword,
-                newPassword: newPassword,
-                captchaPublicKey: localStorageService.get(constants.storageKeys.reCaptchaPublicKey),
-                captchaChallenge: "",
-                captchaResponse: vcRecaptchaService.getResponse(widgetId)
-            }).then(function (emChangeResult) {
-                api.changePassword({
-                    OldPassword: oldPassword,
-                    NewPassword: newPassword,
-                    ConfirmPassword: confirmPassword
-                }).then(function (gzChangeResult) {
-                    q.resolve(true);
-                }, function (gzChangeError) {
-                    vcRecaptchaService.reload();
-                    q.reject(gzChangeError);
-                });
-            }, function (emChangeError) {
-                vcRecaptchaService.reload();
-                q.reject(emChangeError.desc);
-            });
-            return q.promise;
-        }
-        // #endregion
+                return q.promise;
+            }
+            // #endregion
 
         // #region Bonus
-        factory.applyBonus = function (bonusCode) {
+        factory.applyBonus = function(bonusCode) {
             return emWamp.applyBonus({
                 bonusCode: bonusCode,
                 iovationBlackbox: iovation.getBlackbox()
             });
         }
-        factory.getGrantedBonuses = function () {
+        factory.getGrantedBonuses = function() {
             return emWamp.getGrantedBonuses();
         }
-        factory.getApplicableBonuses = function (parameters) {
+        factory.getApplicableBonuses = function(parameters) {
             return emWamp.getApplicableBonuses(parameters);
         }
-        factory.forfeit = function (bonusID) {
+        factory.forfeit = function(bonusID) {
             return emWamp.forfeit(bonusID);
         }
-        factory.moveToTop = function (bonusID) {
-            return emWamp.moveToTop(bonusID);
-        }
-        // #endregion
+        factory.moveToTop = function(bonusID) {
+                return emWamp.moveToTop(bonusID);
+            }
+            // #endregion
 
         // #region Init
-        factory.init = function () {
+        factory.init = function() {
             factory.readAuthData();
             factory.readBtag();
             factory.saveVrRefCodeFromUrl();
 
-            api.call(function () {
+            api.call(function() {
                 return api.getDeploymentInfo();
-            }, function (response) {
+            }, function(response) {
                 //var lastVersion = localStorageService.get(constants.storageKeys.version);
                 //if (lastVersion !== response.Result.Version)
                 //    setLogout();
@@ -659,15 +957,14 @@
                 //localStorageService.set(constants.storageKeys.live, response.Result.Live);
             });
 
-            var unregisterConnectionInitiated = $rootScope.$on(constants.events.CONNECTION_INITIATED, function () {
+            var unregisterConnectionInitiated = $rootScope.$on(constants.events.CONNECTION_INITIATED, function() {
                 if (factory.data.username.length > 0) {
-                    emWamp.getSessionInfo().then(function (sessionInfo) {
+                    emWamp.getSessionInfo().then(function(sessionInfo) {
                         if (!sessionInfo.isAuthenticated)
                             setLogout();
                         $rootScope.$broadcast(constants.events.ON_INIT);
                     });
-                }
-                else
+                } else
                     $rootScope.$broadcast(constants.events.ON_INIT);
                 unregisterConnectionInitiated();
             });

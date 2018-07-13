@@ -47,7 +47,7 @@
                 <label>Birthday</label>
                 <input type="text" name="year" class="form-control" autocomplete="off" ng-model="model.yearOfBirth" required disabled>
                 <!--<gz-select gz-name="year" gz-model="model.yearOfBirth" gz-collection="years" gz-change="onYearSelected(id)" gz-prompt="YYYY" gz-loading="loadingYears"
-                           gz-required gz-error="!form.year.$pristine && form.year.$error.required"></gz-select>-->
+                       gz-required gz-error="!form.year.$pristine && form.year.$error.required"></gz-select>-->
                 <!--gz-disabled="!profile.isBirthDateUpdatable"-->
                 <gz-field-ok gz-when="xs && form.year.$valid"></gz-field-ok>
             </div>
@@ -55,7 +55,7 @@
                 <label>&nbsp;</label>
                 <input type="text" name="month" class="form-control" autocomplete="off" ng-model="model.monthOfBirth.display" required disabled>
                 <!--<gz-select gz-name="month" gz-model="model.monthOfBirth" gz-collection="months" gz-change="onMonthSelected(id)" gz-prompt="MM" gz-loading="loadingMonths"
-                           gz-required gz-id="value" gz-display="display" gz-error="!form.month.$pristine && form.month.$error.required" gz-disabled="!model.yearOfBirth"></gz-select>-->
+                       gz-required gz-id="value" gz-display="display" gz-error="!form.month.$pristine && form.month.$error.required" gz-disabled="!model.yearOfBirth"></gz-select>-->
                 <!--|| !profile.isBirthDateUpdatable-->
                 <gz-field-ok gz-when="xs && form.month.$valid"></gz-field-ok>
             </div>
@@ -63,7 +63,7 @@
                 <label>&nbsp;</label>
                 <input type="text" name="day" class="form-control" autocomplete="off" ng-model="model.dayOfBirth.display" required disabled>
                 <!--<gz-select gz-name="day" gz-model="model.dayOfBirth" gz-collection="daysOfMonth" gz-prompt="DD" gz-loading="loadingDays"
-                           gz-required gz-id="value" gz-display="display" gz-error="!form.day.$pristine && form.day.$error.required" gz-disabled="!model.yearOfBirth || !model.monthOfBirth"></gz-select>-->
+                       gz-required gz-id="value" gz-display="display" gz-error="!form.day.$pristine && form.day.$error.required" gz-disabled="!model.yearOfBirth || !model.monthOfBirth"></gz-select>-->
                 <!--|| !profile.isBirthDateUpdatable-->
                 <gz-field-ok gz-when="xs && form.day.$valid"></gz-field-ok>
             </div>
@@ -71,7 +71,7 @@
                 <label for="title">Title</label>
                 <input type="text" name="title" class="form-control" autocomplete="off" ng-model="model.title" required disabled>
                 <!--<gz-select gz-name="title" gz-model="model.title" gz-collection="titles" gz-prompt="-" gz-loading="loadingTitles"
-                           gz-required gz-error="!form.title.$pristine && form.title.$error.required"></gz-select>-->
+                       gz-required gz-error="!form.title.$pristine && form.title.$error.required"></gz-select>-->
                 <gz-field-ok gz-when="(!xs && form.year.$valid && form.month.$valid && form.day.$valid && form.title.$valid) || (xs && form.title.$valid)"></gz-field-ok>
             </div>
             <div class="col-xs-11">
@@ -99,7 +99,7 @@
                 <label for="currency">Currency</label>
                 <input type="text" name="currency" class="form-control" autocomplete="off" ng-model="model.currency.name" required disabled>
                 <!--<gz-select gz-name="currency" gz-model="model.currency" gz-collection="currencies" gz-prompt="Currency" gz-loading="loadingCurrencies"
-                           gz-required gz-id="code" gz-display="name" gz-error="!form.currency.$pristine && form.currency.$error.required" gz-disabled="true"></gz-select>-->
+                       gz-required gz-id="code" gz-display="name" gz-error="!form.currency.$pristine && form.currency.$error.required" gz-disabled="true"></gz-select>-->
                 <!--dg-disabled="!profile.isCurrencyUpdatable"-->
                 <div class="help-block" ng-class="{'show': !form.currency.$pristine && form.currency.$error.required}">Currency is required</div>
                 <gz-field-ok gz-when="xs && form.currency.$valid"></gz-field-ok>
@@ -108,7 +108,7 @@
                 <label for="country">Country</label>
                 <input type="text" name="country" class="form-control" autocomplete="off" ng-model="model.country.name" required disabled>
                 <!--<gz-select gz-name="country" gz-model="model.country" gz-collection="countries" gz-change="onCountrySelected(id)" gz-prompt="Country" gz-loading="loadingCountries"
-                           gz-required gz-id="code" gz-display="name" gz-error="!form.country.$pristine && form.country.$error.required" gz-disabled="true"></gz-select>-->
+                       gz-required gz-id="code" gz-display="name" gz-error="!form.country.$pristine && form.country.$error.required" gz-disabled="true"></gz-select>-->
                 <!--dg-disabled="!profile.isCountryUpdatable"-->
                 <div class="help-block" ng-class="{'show': !form.country.$pristine && form.country.$error.required}">Country is required</div>
                 <gz-field-ok gz-when="(!xs && form.currency.$valid && form.country.$valid) || (xs && form.country.$valid)"></gz-field-ok>
@@ -160,29 +160,77 @@
                 <gz-field-ok gz-when="(!xs && model.phonePrefix && form.phoneNumber.$valid) || (xs && form.phoneNumber.$valid)"></gz-field-ok>
             </div>
         </div>
-
+        <div class="col-xs-10" style="margin-bottom: .5em">
+            <div class="col-xs-12"><span class="pull-left"><a class="terms" ng-click="readDataSubjectRights()">See data subject rights page</a></span></div>
+        </div>
+        <div class="col-xs-10" style="margin-bottom: .5em">
+            <div class="col-xs-12"><span class="pull-left"><a class="terms" ng-click="readCookiePolicy()">See cookie policy</a></span></div>
+        </div>
+        <div class="col-xs-10" style="margin-bottom: .5em">
+            <div class="col-xs-12"><span class="pull-left"><a class="terms" ng-click="readPrivacyPolicy()">See data privacy policy</a></span></div>
+        </div>
         <div class="form-group">
-            <div class="col-xs-11">
-                <gz-check-box gz-model="model" gz-value="acceptNewsEmail">Yes, please send me emails about news and offers</gz-check-box>
+            <div class="col-xs-1">
+                <span class="radios">
+                    <label><input type="radio" ng-model="consents.acceptedGdprTc" ng-value="true">Yes</label>
+                </span>
+            </div>
+            <div class="col-xs-1">
+                <span class="radios">
+                    <label><input type="radio" ng-model="consents.acceptedGdprTc" ng-disabled="true" ng-value="false">No</label>
+                </span>
+            </div>
+            <div class="col-xs-10">
+                <span class="radio-text">I confirm that I am 18 years or older and have read and accept the <a class="terms" ng-click="readGamesTerms()">TERMS & CONDITIONS</a></span>
             </div>
         </div>
-
-        <div class="form-group">
-            <div class="col-xs-11">
-                <gz-check-box gz-model="model" gz-value="acceptSMSOffer">Yes, please send me exclusive offers by SMS</gz-check-box>
+        <div class="form-group" ng-show="showEmail">
+            <div class="col-xs-1">
+                <span class="radios"><label><input type="radio" ng-model="consents.allowGzEmail" ng-value="true">Yes</label></span>
+            </div>
+            <div class="col-xs-1">
+                <span class="radios"><label><input type="radio" ng-model="consents.allowGzEmail" ng-value="false">No</label></span>
+            </div>
+            <div class="col-xs-10">
+                <span class="radio-text">Yes, please send me exclusive offers by email.</span>
             </div>
         </div>
-
-        <div>
-            <br />
-            <h6 class="disclaimer">Note: If you wish to change any personal information regarding your profile please contact <a href="mailto:help@greenzorro.com">help-at-greenzorro-dot-com</a> with your request and relevant documentation regarding changes.</h6>
-            <br />
+        <div class="form-group" ng-show="showSms">
+            <div class="col-xs-1">
+                <span class="radios">
+                    <label><input type="radio" ng-model="consents.allowGzSms" ng-value="true">Yes</label>
+                </span>
+            </div>
+            <div class="col-xs-1">
+                <span>
+                    <label><input type="radio" ng-model="consents.allowGzSms" ng-value="false">No</label>
+                </span>
+            </div>
+            <div class="col-xs-10">
+                <span class="radio-text">Yes, please send me exclusive offers by sms.</span>
+            </div>
         </div>
+        <div class="form-group" ng-show="show3rdParty">
+            <div class="col-xs-1">
+                <span class="radios">
+                    <label><input type="radio" ng-model="consents.allow3rdPartySms" ng-value="true">Yes</label>
+                </span>
+            </div>
+            <div class="col-xs-1">
+                <span class="radios">
+                    <label><input type="radio" ng-model="consents.allow3rdPartySms" ng-value="false">No</label>
+                </span>
+            </div>
+            <div class="col-xs-10">
+                <span class="radio-text">Yes, please send me exclusive offers by email and SMS from 3rd parties. <a class="terms" ng-click="read3rdParties()">View all</a> 3rd parties here.</span>
+            </div>
+        </div>
+        <h6 class="disclaimer">Note: If you wish to change any personal information regarding your profile please contact <a href="mailto:help@greenzorro.com">help-at-greenzorro-dot-com</a> with your request and relevant documentation regarding changes.</h6>
 
         <div class="form-group">
             <div class="col-xs-11">
                 <div class="btns">
-                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid"
+                    <button type="submit" class="btn-gz" ng-disabled="form.$invalid||!consents.acceptedGdprTc"
                             ng-mouseenter="hovered = true" ng-mouseleave="hovered = false">
                         <span ng-show="waiting && !hovered" us-spinner="spinnerGreen"></span>
                         <span ng-show="waiting && hovered" us-spinner="spinnerWhite"></span>
