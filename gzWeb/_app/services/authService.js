@@ -175,13 +175,12 @@
 
         factory.setGdpr = function (consents) {
             var q = $q.defer();
-            //$timeout(function () {
-            //    setGdprData(consents);
-            //    q.resolve(true);
-            //}, 3000);
             api.setGdpr(consents).then(function (result) {
-                setGdprData(consents);
-                q.resolve(true);
+                // timeout: allow the Gz login to complete & avoid the 401 unauthorized calls
+                $timeout(function () {
+                    setGdprData(consents);
+                    q.resolve(true);
+                }, 100);
             }, function (error) {
                 q.reject(error);
             });
