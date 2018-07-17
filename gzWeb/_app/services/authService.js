@@ -175,30 +175,17 @@
 
         factory.setGdpr = function (consents) {
             var q = $q.defer();
-            //$timeout(function () {
-            //    setGdprData(consents);
-            //    q.resolve(true);
-            //}, 3000);
             api.setGdpr(consents).then(function (result) {
-                setGdprData(consents);
-                q.resolve(true);
+                // timeout: allow the Gz login to complete & avoid the 401 unauthorized calls
+                $timeout(function () {
+                    setGdprData(consents);
+                    q.resolve(true);
+                }, 100);
             }, function (error) {
                 q.reject(error);
             });
             return q.promise;
         };
-        function hasToSetConsents() {
-            if (factory.data.gdprConsents === undefined)
-                return true;
-            else {
-                for (var consent in factory.data.gdprConsents) {
-                    var consentValue = factory.data.gdprConsents[consent];
-                    if (consentValue === undefined || consentValue === null || consentValue.length === 0)
-                        return true;
-                }
-                return false;
-            }
-        }
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
             var args = kwargs;
             if (args.code === 0) {
