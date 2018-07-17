@@ -186,18 +186,6 @@
             });
             return q.promise;
         };
-        function hasToSetConsents() {
-            if (factory.data.gdprConsents === undefined)
-                return true;
-            else {
-                for (var consent in factory.data.gdprConsents) {
-                    var consentValue = factory.data.gdprConsents[consent];
-                    if (consentValue === undefined || consentValue === null || consentValue.length === 0)
-                        return true;
-                }
-                return false;
-            }
-        }
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
             var args = kwargs;
             if (args.code === 0) {
