@@ -251,8 +251,10 @@
                 }
 
                 $scope.onCountrySelected($scope.model.country.code);
-                    $scope.onYearSelected($scope.model.yearOfBirth);
-                    $scope.onMonthSelected($scope.model.monthOfBirth);
+                $scope.onYearSelected($scope.model.yearOfBirth);
+                $scope.onMonthSelected($scope.model.monthOfBirth);
+
+                $scope.waiting = false;
                 //}, 0);
             });
         }
@@ -301,6 +303,9 @@
         };
 
         function init() {
+            
+            $scope.waiting = true;
+
             //var loadYearsDefer = $q.defer();
             //var loadMonthsDefer = $q.defer();
             //var loadTitlesDefer = $q.defer();
