@@ -59,6 +59,13 @@ body.mobile-menu {
     top: auto;
 }
 
+.hiddenH1 {
+    display:  block;
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+    font-size: 2px;
+}
 
 .content-wrap {
     position: relative;
@@ -220,7 +227,7 @@ a { text-decoration:none; }
 button.btn-gz {
     height: 36px;
     line-height: 36px;
-    margin: 7px 5px;
+    margin-right: 7px;
     padding: 0 10px;
     -webkit-box-shadow: none;
     -ms-box-shadow: none;
@@ -258,7 +265,7 @@ button.btn-gz:disabled {
 button.btn-gz.btn-gz-alt {
     height: 36px;
     line-height: 36px;
-    margin: 7px 5px;
+    margin-right: 7px;
     padding: 0 10px;
     -webkit-box-shadow: none;
     -ms-box-shadow: none;
