@@ -14,7 +14,7 @@
                     title: "Privacy Policy",
                     subroutes: [
                         { route: constants.routes.privacyGames, when: function () { return $rootScope.routeData && ($rootScope.routeData.gaming || $rootScope.routeData.wandering); } },
-                        { route: constants.routes.privacyInvestment, when: function () { return $rootScope.routeData && $rootScope.routeData.investing; } },
+                        { route: constants.routes.privacyInvestment, when: function () { return $rootScope.routeData && $rootScope.routeData.investing; } }
                     ],
                     when: function () { return true; }
                 },
@@ -34,7 +34,7 @@
         }
 
         var service = {
-            getMenu: getMenu,
+            getMenu: getMenu
         };
 
         return service;

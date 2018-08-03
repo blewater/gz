@@ -401,15 +401,16 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
 
         // LGA reports
         click "#nav > li:nth-child(5) > a"
+
         // Player balances
         click "#nav > li:nth-child(5) > ul > li > a"
-
-        // Bizarre report issue: post with date before doesn't work
 
         // date
         let dateToStrVal = dayToProcess.ToDdMmYYYYSlashed
         "#txtStartDate" << dateToStrVal
 
+        sleep 5
+        enabled "#btnShowReport"
         click "#btnShowReport"
 
         // Open 2nd balance window
