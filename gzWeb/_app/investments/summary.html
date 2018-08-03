@@ -12,6 +12,7 @@
     </div>
 </script>
 
+<h1 class="hiddenH1">My Investment Summary</h1>
 <div class="clearfix investments" ng-intro-options="IntroOptions" ng-intro-method="introCall">
     <div class="container">
         <div class="summary">
@@ -106,7 +107,7 @@
                                     <div class="date-data text-emphasis">
                                         <span class="date-datetime">
                                             <span class="date-datevalue">{{model.NextInvestmentOnLocalDate}}</span>
-                                        <span class="date-timevalue">{{model.NextInvestmentOnLocalTime}}</span>
+                                            <span class="date-timevalue">{{model.NextInvestmentOnLocalTime}}</span>
                                         </span>
                                     </div>
                                 </div>
@@ -128,7 +129,7 @@
                                         <div class="date-data text-emphasis">
                                             <span class="date-datetime">
                                                 <span class="date-datevalue">{{model.StatusAsOfLocalDate}}</span>
-                                            <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
+                                                <span class="date-timevalue">{{model.StatusAsOfLocalTime}}</span>
                                             </span>
                                         </div>
                                     </div>
@@ -263,7 +264,7 @@
                                         <div class="col-xs-8 text-left">Current balance</div>
                                         <div class="col-xs-4 text-right">{{model.EndMonthlyGmBalance | isoCurrency : currency : 0}}</div>
                                         <!--<div ng-if="hasGamingBalance" class="col-xs-4 text-right" uib-tooltip-html="gamingBalanceDetails" tooltip-placement="bottom" tooltip-class="summary-balance-tooltip">{{gamingBalance | isoCurrency : currency : 0}}</div>
-                                        <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><i>offline</i></div>-->
+                                    <div ng-if="!hasGamingBalance" class="col-xs-4 text-right"><i>offline</i></div>-->
                                     </div>
                                 </div>
                             </div>
