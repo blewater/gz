@@ -491,8 +491,15 @@ module Etl =
             (inFolder, outFolder, withdrawalsFilename) |||> moveFileWithOverwrite
         | None -> logger.Warn "No Rollback withdrawal file to move."
 
+//--- Non investment files
         // Gaming Activity
         (inFolder, outFolder, rpts.casinoGameFilename) |||> moveFileWithOverwrite
+
+        // Past Days Deposit Filename
+        match rpts.PastDaysDepositsFilename with
+        | Some excelFilename -> 
+            (inFolder, outFolder, excelFilename) |||> moveFileWithOverwrite
+        | None -> logger.Warn "No Past Days Deposits file to move."
 
     let private setDbimportExcel (db : DbContext)(reportFilenames : RptFilenames)(emailToProcAlone : string option) : unit =
 
@@ -516,52 +523,61 @@ module Etl =
             logger.Warn(sprintf "Processing excel files in single user mode for %s." singleUserEmail)
             logger.Warn("********************************************************")
 
-        loadGamingActivityRpt db casinoGameFilename emailToProcAlone
+        // Try 3 times to upload
+        // Bettings table non-investment related
+        let loadGamingActivityRptOper() = loadGamingActivityRpt db casinoGameFilename emailToProcAlone
+        tryDBCommit3Times db loadGamingActivityRptOper
 
         // Custom import
-        (db, customFilename, emailToProcAlone) 
-            |||> loadCustomRpt 
+        // Try 3 times to upload
+        let loadCustomRptOper() = loadCustomRpt db customFilename emailToProcAlone
+        tryDBCommit3Times db loadCustomRptOper
         
         // Beg, end balance import
         if begBalanceFilename.IsSome then
-            loadBalanceRpt BeginingBalance db begBalanceFilename.Value customDtStr emailToProcAlone
+            let loadBegBalanceRptOper() = loadBalanceRpt BeginingBalance db begBalanceFilename.Value customDtStr emailToProcAlone
+            tryDBCommit3Times db loadBegBalanceRptOper
 
         // In present month there's no end balance file
         if endBalanceFilename.IsSome then
-            loadBalanceRpt EndingBalance db endBalanceFilename.Value customDtStr emailToProcAlone
+            let loadEndBalanceRptOper() = loadBalanceRpt EndingBalance db endBalanceFilename.Value customDtStr emailToProcAlone
+            tryDBCommit3Times db loadEndBalanceRptOper
         
         // Deposits import
         match depositsFilename with
         | Some depositsFilename -> 
-                (db, depositsFilename, emailToProcAlone) 
-                    |||> updDbDepositsRpt
+            let dbDepositsRptOper() = updDbDepositsRpt db depositsFilename emailToProcAlone
+            tryDBCommit3Times db dbDepositsRptOper
         | None -> logger.Warn "No Deposits file to import."
         
         // Bonus import
         match bonusFilename with
         | Some bonusFilename -> 
-                (db, bonusFilename, emailToProcAlone) 
-                    |||> updDbBonusRpt
+            let dbBonusRptOper() = updDbBonusRpt db bonusFilename emailToProcAlone
+            tryDBCommit3Times db dbBonusRptOper
         | None -> logger.Warn "No Bonus file to import."
         
         // Pending withdrawals import
         match withdrawalsPendingFilename with
         | Some withdrawalFilename -> 
-            updDbWithdrawalsRpt db withdrawalFilename Pending emailToProcAlone
+            let dbWithdrawalsRptOper() = updDbWithdrawalsRpt db withdrawalFilename Pending emailToProcAlone
+            tryDBCommit3Times db dbWithdrawalsRptOper
         | None -> logger.Warn "No pending withdrawal file to import."
         
         // Rollback withdrawals import
         match withdrawalsRollbackFilename with
         | Some withdrawalFilename -> 
-                updDbWithdrawalsRpt db withdrawalFilename Rollback emailToProcAlone
+            let dbWithdrawalsRptOper() = updDbWithdrawalsRpt db withdrawalFilename Rollback emailToProcAlone
+            tryDBCommit3Times db dbWithdrawalsRptOper
         | None -> logger.Warn "No rollback withdrawal file to import."
         
-        (db, customDtStr, emailToProcAlone) 
-            |||> DbPlayerRevRpt.setDbMonthyGainLossAmounts 
+        // User Gain Loss Investment Bonus
+        let dbPlayerRevRptOper() = DbPlayerRevRpt.setDbMonthyGainLossAmounts db customDtStr emailToProcAlone
+        tryDBCommit3Times db dbPlayerRevRptOper
 
         // Finally upsert GzTrx with the balance, credit amounts
-        (db, customDtStr, emailToProcAlone)
-            |||> DbGzTrx.setDbPlayerRevRpt2GzTrx
+        let dbGzTrxOper() = DbGzTrx.setDbPlayerRevRpt2GzTrx db customDtStr emailToProcAlone
+        tryDBCommit3Times db dbGzTrxOper
 
     /// <summary>
     ///
@@ -587,12 +603,8 @@ module Etl =
             { isProd = isProd ; folderName = inFolder } 
             |> getExcelFilenames
 
-        /// Try 3 times to upload reports
-        let dbOperation() = 
-            (db, reportfileNames, emailToProcAlone) 
-                |||> setDbimportExcel
-        (db, dbOperation) 
-            ||> tryDBCommit3Times
+        (db, reportfileNames, emailToProcAlone) 
+            |||> setDbimportExcel
 
         // Update null gmCustomerids
         setDbGmCustomerId db
