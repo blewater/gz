@@ -846,11 +846,13 @@
     <Content Include="Content\Styles\introjs\introjs-nassim.css" />
     <Content Include="Content\Styles\introjs\introjs-nazanin.css" />
     <Content Include="Content\Styles\introjs\introjs-royal.css" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\angular-appinsights\angular-appinsights.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
     <Content Include="Scripts\autobahn\autobahn.min.js" />
+    <Content Include="sitemap.xml" />
     <Content Include="_app\accountManagement\depositMoneyMatrixBankTransfer.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixBankTransferCtrl.js" />
     <Content Include="Scripts\intro\angular-intro.min.js" />

@@ -111,9 +111,9 @@ let main argv =
         let dwLoader = ExcelDownloader(downloadArgs, cmdArgs.BalanceFilesUsage)
         dwLoader.SaveReportsToInputFolder()
         
-        Segmentation.segmentUsers 
+        (* Segmentation.segmentUsers 
             { GmRptFiles.isProd = isProd; GmRptFiles.folderName = inRptFolder }
-            cmdArgs.UserEmailProcAlone
+            cmdArgs.UserEmailProcAlone *)
 
         // Excel reports -> db
         let customRpdDate = 
