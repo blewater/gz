@@ -71,6 +71,10 @@
             return $http.post('/api/Account/Register', parameters);
         };
 
+        factory.setGdpr = function (consents) {
+            return $http.post('/api/Account/SetGzGdpr', consents);
+        };
+
         factory.revokeRegistration = function (error) {
             return $http.post('/api/Account/RevokeRegistration?reason=' + error);
         };

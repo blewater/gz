@@ -134,7 +134,13 @@ namespace gzWeb.Providers
                                                        {"userName", user.UserName},
                                                        {"firstname", user.FirstName},
                                                        {"lastname", user.LastName},
-                                                       {"currency", user.Currency}
+                                                       {"currency", user.Currency},
+                                                       {"allowGzEmail", user.AllowGzEmail?.ToString().ToLower() ?? ""},
+                                                       {"allowGzSms", user.AllowGzSms?.ToString().ToLower() ?? ""},
+                                                       {"allow3rdPartySms", user.Allow3rdPartySms?.ToString().ToLower() ?? ""},
+                                                       {"acceptedGdprTc", user.AcceptedGdprTc?.ToString().ToLower() ?? ""},
+                                                       {"acceptedGdprPp", user.AcceptedGdprPp?.ToString().ToLower() ?? ""},
+                                                       {"acceptedGdpr3rdParties", user.AcceptedGdpr3rdParties?.ToString().ToLower() ?? ""}
                                                };
             return new AuthenticationProperties(data);
         }

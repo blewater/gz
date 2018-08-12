@@ -23,7 +23,7 @@
             prompt: prompt,
             confirm: confirm,
             alert: alert
-        }
+        };
         return services;
 
         function clear() {
@@ -137,7 +137,7 @@
             return notify(msg, angular.extend(defaults, options));
         }
         function autoCloseError(msg) {
-            return error(msg, { nsType: 'toastr', nsAutoCloseDelay: 20000 })
+            return error(msg, { nsType: 'toastr', nsAutoCloseDelay: 20000 });
         }
         function success(msg, options) {
             var defaults = {
@@ -191,7 +191,7 @@
         }
         function alert(msg, okCallBack, options) {
             var defaults = {
-                nsIconClass: 'fa-exclamation',
+                nsIconClass: 'fa-exclamation'
             };
             prompt(msg, okCallBack, angular.noop, angular.extend(defaults, options));
         }

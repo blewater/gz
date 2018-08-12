@@ -7,8 +7,11 @@
     </uib-tab>
 </uib-tabset>-->
 <div ng-show="isGaming" ng-include="'_app/guest/termsContentGames.html'"></div>
-<div ng-show="!isGaming" ng-include="'_app/guest/termsContentInvestment.html'"></div>
+<div ng-show="isInvestment" ng-include="'_app/guest/termsContentInvestment.html'"></div>
+<div ng-show="isPrivacy" ng-include="'_app/guest/privacyGames.html'"></div>
+<div ng-show="isCookie" ng-include="'_app/guest/cookiePolicy.html'"></div>
+<div ng-show="is3rdParties" ng-include="'_app/guest/thirdParties.html'"></div>
+<div ng-show="isDataSubjectRights" ng-include="'_app/guest/dataSubjectRights.html'"></div>
 <div class="pull-right">
-    <button type="button" class="btn-gz btn-gz-alt" ng-click="nsCancel(false)">Decline</button>
-    <button type="button" class="btn-gz" ng-click="nsOk(true)">Accept</button>
+    <button type="button" class="btn-gz" ng-click="nsOk(true)">Close</button>
 </div>

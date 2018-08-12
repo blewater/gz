@@ -67,6 +67,7 @@
         function login(method) {
             return method(_modals.login);
         };
+
         function register(method) {
             return method(_modals.register);
         };

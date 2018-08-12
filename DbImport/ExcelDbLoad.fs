@@ -51,17 +51,17 @@ module DbGzTrx =
         updDbGzTrxRowValues amount playerGainLoss creditPcntApplied playerRevRpt newGzTrxRow
         db.GzTrxs.InsertOnSubmit(newGzTrxRow)
 
-    /// Get the greenzorro used id by email
-    let getGzUserId (db : DbContext) (gmUserEmail : string) : int option =
+    /// Get the greenzorro user id by username
+    let getGzUserId (db : DbContext) (username : string) : int option =
         query {
-            for user in db.PlayerRevRpt do
-            where (user.Username = gmUserEmail)
+            for user in db.AspNetUsers do
+            where (user.UserName = username)
             select user.Id
             exactlyOneOrDefault 
         }
         |> (fun userId ->
             if userId = 0 then
-                logger.Warn (sprintf "*** Everymatrix email %s not found in the AspNetUsers table of db: %s. Cannot award..." gmUserEmail db.Connection.DataSource)
+                logger.Warn (sprintf "*** Everymatrix username %s not found in the AspNetUsers table of db: %s. Cannot award..." username db.Connection.DataSource)
                 None
             else
                 Some userId
@@ -92,9 +92,10 @@ module DbGzTrx =
     /// Upsert a GzTrxs transaction row with the credited amount: 1 user row per month
     let private setDbGzTrxRow(db : DbContext)(yyyyMmDd :string)(playerRevRpt : DbPlayerRevRpt)(creditLossPcnt : float32) =
 
-        let gmEmail = playerRevRpt.EmailAddress
-        let gzUserId = getGzUserId db gmEmail
-        if gzUserId.IsSome then
+        let username = playerRevRpt.Username
+        let gzUserIdNullable = getGzUserId db username
+        match gzUserIdNullable with
+        | Some gzUserId ->
 
             let yyyyMm = yyyyMmDd.ToYyyyMm
             let playerGainLoss = playerRevRpt.GmGainLoss.Value
@@ -103,7 +104,7 @@ module DbGzTrx =
                 for trxRow in db.GzTrxs do
                     where (
                         trxRow.YearMonthCtd = yyyyMm
-                        && trxRow.CustomerId = gzUserId.Value
+                        && trxRow.CustomerId = gzUserId
                         && trxRow.GzTrxTypes.Code = int GzTransactionType.CreditedPlayingLoss
                     )
                     select trxRow
@@ -113,11 +114,12 @@ module DbGzTrx =
                 let playerLossToInvest = getCreditedPlayerAmount creditLossPcnt playerGainLoss
 
                 if isNull trxRow then
-                    insDbGzTrxRowValues db yyyyMm playerLossToInvest playerGainLoss creditLossPcnt gzUserId.Value playerRevRpt
+                    insDbGzTrxRowValues db yyyyMm playerLossToInvest playerGainLoss creditLossPcnt gzUserId playerRevRpt
                 else 
                     updDbGzTrxRowValues playerLossToInvest playerGainLoss creditLossPcnt playerRevRpt trxRow
             )
             db.SubmitChanges()
+        | _ -> ()
 
     /// Read all 
     let getDbPlayerMonthlyRows

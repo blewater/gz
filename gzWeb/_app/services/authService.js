@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', authService]);
+    APP.factory('auth', ['$rootScope', '$http', '$q', '$location', '$window', 'emWamp', 'emBanking', 'api', 'constants', 'localStorageService', 'helpers', 'vcRecaptchaService', 'iovation', '$log', '$filter', 'nav', '$route', 'message', '$timeout', authService]);
 
-    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message) {
+    function authService($rootScope, $http, $q, $location, $window, emWamp, emBanking, api, constants, localStorageService, helpers, vcRecaptchaService, iovation, $log, $filter, nav, $route, message, $timeout) {
         var factory = {};
 
         // #region AuthData
@@ -19,7 +19,9 @@
             isGamer: false,
             isInvestor: false,
             isAdmin: false,
-            isGuest: true
+            isGuest: true,
+
+            gdprConsents: undefined
         };
         
         factory.readAuthData = function () {
@@ -52,6 +54,22 @@
             factory.data.firstname = data.firstname;
             factory.data.lastname = data.lastname;
             factory.data.currency = data.currency;
+            storeAuthData();
+        }
+
+        function getConsentValue(value) {
+            var consentValue = value === undefined || value === null || value.length === 0 ? undefined : (value === true || value === "true");
+            return consentValue;
+        }
+        function setGdprData(data) {
+            factory.data.gdprConsents = {
+                allowGzEmail: getConsentValue(data.allowGzEmail),
+                allowGzSms: getConsentValue(data.allowGzSms),
+                allow3rdPartySms: getConsentValue(data.allow3rdPartySms),
+                acceptedGdprTc: getConsentValue(data.acceptedGdprTc),
+                acceptedGdprPp: getConsentValue(data.acceptedGdprPp),
+                acceptedGdpr3rdParties: getConsentValue(data.acceptedGdpr3rdParties)
+            };
             storeAuthData();
         }
 
@@ -155,6 +173,19 @@
         //    $rootScope.$broadcast(constants.events.SESSION_TERMINATED);
         //}
 
+        factory.setGdpr = function (consents) {
+            var q = $q.defer();
+            api.setGdpr(consents).then(function (result) {
+                // timeout: allow the Gz login to complete & avoid the 401 unauthorized calls
+                $timeout(function () {
+                    setGdprData(consents);
+                    q.resolve(true);
+                }, 100);
+            }, function (error) {
+                q.reject(error);
+            });
+            return q.promise;
+        };
         $rootScope.$on(constants.events.SESSION_STATE_CHANGE, function (event, kwargs) {
             var args = kwargs;
             if (args.code === 0) {
@@ -263,10 +294,230 @@
 
             api.login(usernameOrEmail, password).then(function (gzLoginResult) {
                 setInvestmentAuthData(gzLoginResult.data);
-                $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                setGdprData(gzLoginResult.data);
                 q.resolve(gzLoginResult);
             }, function (error) {
                 q.reject(error.data.error_description);
+            });
+            return q.promise;
+        }
+
+        // Called after a login response prop hasToAcceptTC is set = true
+        function emAcceptTcPromise() {
+            var q = $q.defer();
+
+            emWamp.acceptTC().then(function () {
+                q.resolve();
+            }, function (error) {
+                q.reject(error ? error.desc : false);
+            });
+            return q.promise;
+        }
+        // Enter here after a login response of hasToAcceptTC or hasToSetUserConsent is set = true
+        // But call everymatrix getConsentRequirements() only upon hasToSetUserConsent is set = true
+        function conditionalEmGetUserConsent(hasToSetUserConsent, action) {
+            var q = $q.defer();
+
+            if (hasToSetUserConsent) {
+                var params = angular.extend({}, { "action": action });
+
+                // Everymatrix API Call only if hasToSetUserConsent === true
+                emWamp.getConsentRequirements(params).then(function(consentList) {
+                        q.resolve(consentList);
+                    },
+                    function(error) {
+                        q.reject(error ? error.desc : false);
+                    });
+            } else {
+                q.resolve();
+            }
+            return q.promise;
+        }
+        // action: 1 : registration, 2: login, 3: profile
+        function emGetActionableUserConsent(action) {
+            var q = $q.defer();
+            var params = angular.extend({}, { "action": action });
+
+            emWamp.getConsentRequirements(params).then(function(consentList) {
+                q.resolve(consentList);
+            },
+            function(error) {
+                q.reject(error ? error.desc : false);
+            });
+
+            return q.promise;
+        }
+        factory.setUserConsentQuestions = function(controller, action) {
+            var q = $q.defer();
+
+            emGetActionableUserConsent(action).then(function(userConsentQuestions) {
+                controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = false;
+                if (userConsentQuestions) {
+                    angular.forEach(userConsentQuestions,
+                        function (value) {
+                            if (value.code.indexOf(constants.emUserConsentKeys.tcApiCode) !== -1) {
+                                // may be set by getConsentRequirements or hasToAcceptTC
+                                controller.showTcbyUserConsentApi = true;
+                                if (userConsentQuestions.length === 1) {
+                                    controller.showEmail = controller.showSms = controller.show3rdParty = true;
+                                }
+                            }
+
+                            if (value.code.indexOf(constants.emUserConsentKeys.emailApiCode) !== -1) {
+                                controller.showEmail = true;
+                            }
+
+                            if (value.code.indexOf(constants.emUserConsentKeys.smsApiCode) !== -1) {
+                                controller.showSms = true;
+                            }
+
+                            if (value.code.indexOf(constants.emUserConsentKeys.thirdpartyApiCode) !== -1) {
+                                controller.show3rdParty = true;
+                            }
+                        });
+                    // if null
+                } else {
+                    // per Everymatrix Q&A request
+                    controller.showTcbyUserConsentApi = controller.showEmail = controller.showSms = controller.show3rdParty = true;
+                }
+                q.resolve(userConsentQuestions);
+            },
+            function(errorGetUserConsent) {
+                q.reject(errorGetUserConsent ? errorGetUserConsent.desc : false);
+            });
+            return q.promise;
+        }
+
+        factory.isGdprFormSectionValid = function (controller) {
+            var consObj = controller.consents;
+            var acceptedGdprTc = consObj.acceptedGdprTc;
+
+            // TC by either accept or userconsent Api
+            if (controller.showTcbyUserConsentApi && (acceptedGdprTc === undefined || acceptedGdprTc === "false"))
+                return false;
+
+            if (controller.showEmail && consObj.allowGzEmail === undefined)
+                return false;
+
+            if (controller.showSms && consObj.allowGzSms === undefined)
+                return false;
+
+            if (controller.show3rdParty && consObj.allow3rdPartySms === undefined)
+                return false;
+
+            return true;
+        };
+
+        // create userConsents for inclusion in Api params call (reg., login, profile)
+        factory.createUserConsents = function(controller) {
+
+            var userConsents = undefined;
+            if (controller.consents.isUc) {
+                userConsents = {};
+                var consents = controller.consents;
+                if (controller.showTcbyUserConsentApi) {
+                    userConsents[constants.emUserConsentKeys.tcApiCode] = consents.acceptedGdprTc;
+                }
+                if (controller.showEmail) {
+                    userConsents[constants.emUserConsentKeys.emailApiCode] = consents.allowGzEmail;
+                }
+                if (controller.showSms) {
+                    userConsents[constants.emUserConsentKeys.smsApiCode] = consents.allowGzSms;
+                }
+                if (controller.show3rdParty) {
+                    userConsents[constants.emUserConsentKeys.thirdpartyApiCode] = consents.allow3rdPartySms;
+                }
+            }
+            return userConsents;
+        }
+
+        // Called after getUserConsents
+        function emSetUserConsent(userConsents) {
+            var q = $q.defer();
+
+            emWamp.setConsentRequirements({ userConsents: userConsents }).then(function() {
+                    q.resolve();
+                },
+                function(setUserConsentError) {
+                    q.reject(setUserConsentError ? setUserConsentError.desc : false);
+                });
+
+            return q.promise;
+        }
+        function condSetUserConsents(popupConsents) {
+            var q = $q.defer();
+            if (popupConsents.setUserConsent) {
+                emSetUserConsent(popupConsents.userConsents).then(function() {
+                        q.resolve();
+                    },
+                    function(acceptTcError) {
+                        q.reject(acceptTcError ? acceptTcError.desc : false);
+                    });
+            } else {
+                q.resolve();
+            }
+            return q.promise;
+        }
+        // handle any flag set 2 true for hasToSetUserConsent, hasToAcceptTC and minorChangeInTC
+        function conditionalConsentPopup(emLoginResult) {
+            var q = $q.defer();
+
+            // Prod may not be synced with the login api update
+            if (emLoginResult.hasToSetUserConsent === undefined) 
+                emLoginResult.hasToSetUserConsent = false;
+            conditionalEmGetUserConsent(emLoginResult.hasToSetUserConsent, 2).then(function(userConsentList) {
+
+                if (emLoginResult.hasToAcceptTC || emLoginResult.hasToSetUserConsent) {
+                    message.open({
+                        nsType: 'modal',
+                        nsSize: 'md',
+                        nsTemplate: '_app/account/gdpr.html',
+                        nsCtrl: 'gdprCtrl',
+                        nsStatic: true,
+                        nsShowClose: false,
+                        nsParams: {
+                            isTc: emLoginResult.hasToAcceptTC,
+                            isUc: emLoginResult.hasToSetUserConsent,
+                            userConsentList: userConsentList
+                        }
+                    }).then(function(popupConsents) {
+                            // Have to call acceptTC?
+                            if (popupConsents.setAcceptTC) {
+                                emAcceptTcPromise().then(function() {
+                                    // Then call setUserConsents?
+                                    condSetUserConsents(popupConsents).then(function() {
+                                        q.resolve();
+                                    }, function(setUserConsents) {
+                                        q.reject(setUserConsents ? setUserConsents.desc : false);
+                                    });
+                                }, function(acceptTcError) {
+                                    q.reject(acceptTcError ? acceptTcError.desc : false);
+                                });
+                            } else {
+                                // --Or just call setUserConsents?
+                                condSetUserConsents(popupConsents).then(function() {
+                                    q.resolve();
+                                }, function(setUserConsents) {
+                                    q.reject(setUserConsents ? setUserConsents.desc : false);
+                                });
+                            }
+                        },
+                        function(errorPopup) {
+                            q.reject(errorPopup ? errorPopup.desc : false);
+                        });
+                } else if (emLoginResult.minorChangeInTC) {
+                    message.notify("The Terms and Conditions have minor changes. Click here to check the details.",
+                        {
+                            nsCallback: function() {
+                                $location.path(constants.routes.termsGames.path);
+                                q.resolve();
+                            }
+                        });
+                } else {
+                    q.resolve();
+                }
+            }, function(errorGetConsent) {
+                q.reject(errorGetConsent ? errorGetConsent.desc : false);
             });
             return q.promise;
         }
@@ -303,9 +554,16 @@
                     q.resolve({ enterCaptcha: true });
                 else {
                     message.clear();
+
                     factory.gzLogin(usernameOrEmail, password).then(function () {
-                        api.cacheUserData();
-                        q.resolve({ emLogin: true, gzLogin: true });
+                        conditionalConsentPopup(emLoginResult).then(function() {
+                            $rootScope.$broadcast(constants.events.AUTH_CHANGED);
+                            api.cacheUserData();
+                            q.resolve({ emLogin: true, gzLogin: true });
+                        }, function(popupError) {
+                            $log.error("Greenzorro login popup failed for user " + usernameOrEmail + ": " + popupError);
+                            q.resolve({ emLogin: false, gzLogin: true });
+                        });
                     }, function (gzLoginError) {
                         $log.error("Greenzorro login failed for user " + usernameOrEmail + ": " + gzLoginError);
                         q.resolve({ emLogin: true, gzLogin: false });
@@ -376,7 +634,8 @@
                 securityQuestion: parameters.securityQuestion,
                 securityAnswer: parameters.securityAnswer,
                 iovationBlackbox: iovation.getBlackbox(),
-                affiliateMarker: getBtag()
+                affiliateMarker: getBtag(),
+                userConsents: parameters.userConsents
             });
         }
 
@@ -397,6 +656,10 @@
                 Address: parameters.address1,
                 PostalCode: parameters.postalCode,
                 // TODO: Region ???
+                AcceptedGdprTc: parameters.userConsents[constants.emUserConsentKeys.tcApiCode],
+                AllowGzEmail: parameters.userConsents[constants.emUserConsentKeys.emailApiCode],
+                AllowGzSms: parameters.userConsents[constants.emUserConsentKeys.smsApiCode],
+                Allow3rdPartySms: parameters.userConsents[constants.emUserConsentKeys.thirdpartyApiCode]
             });
         }
 

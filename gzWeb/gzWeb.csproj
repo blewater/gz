@@ -720,6 +720,14 @@
     <Compile Include="Migrations\201803101802259_CashDeposits_XReportDates.Designer.cs">
       <DependentUpon>201803101802259_CashDeposits_XReportDates.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805101836399_Betting.cs" />
+    <Compile Include="Migrations\201805101836399_Betting.Designer.cs">
+      <DependentUpon>201805101836399_Betting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805231047044_GDPR.cs" />
+    <Compile Include="Migrations\201805231047044_GDPR.Designer.cs">
+      <DependentUpon>201805231047044_GDPR.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
     <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
@@ -838,11 +846,13 @@
     <Content Include="Content\Styles\introjs\introjs-nassim.css" />
     <Content Include="Content\Styles\introjs\introjs-nazanin.css" />
     <Content Include="Content\Styles\introjs\introjs-royal.css" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\angular-appinsights\angular-appinsights.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.min.js" />
     <Content Include="Scripts\angular-ui-datetime-picker\datetime-picker.tpls.js" />
     <Content Include="Scripts\autobahn\autobahn.min.js" />
+    <Content Include="sitemap.xml" />
     <Content Include="_app\accountManagement\depositMoneyMatrixBankTransfer.html" />
     <Content Include="_app\accountManagement\depositMoneyMatrixBankTransferCtrl.js" />
     <Content Include="Scripts\intro\angular-intro.min.js" />
@@ -864,6 +874,8 @@
     <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrillCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustly.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustlyCtrl.js" />
+    <Content Include="_app\account\gdpr.html" />
+    <Content Include="_app\account\gdprCtrl.js" />
     <Content Include="_app\account\receiptCtrl.js" />
     <Content Include="_app\account\receipt.html" />
     <Content Include="_app\accountManagement\depositCtrl.js" />
@@ -916,6 +928,8 @@
     <Content Include="_app\games\noGameFoundCtrl.js" />
     <Content Include="_app\games\carouselVideoCtrl.js" />
     <Content Include="_app\games\noGameFound.html" />
+    <Content Include="_app\guest\dataSubjectRights.html" />
+    <Content Include="_app\guest\dataSubjectRightsCtrl.js" />
     <Content Include="_app\guest\explainerVideo.html" />
     <Content Include="_app\account\forgotPassword.html" />
     <Content Include="_app\account\forgotPasswordCtrl.js" />
@@ -942,7 +956,11 @@
     <Content Include="_app\games\games.html" />
     <Content Include="_app\games\liveSearch.html" />
     <Content Include="_app\games\liveSearch.js" />
+    <Content Include="_app\guest\cookiePolicy.html" />
+    <Content Include="_app\guest\thirdParties.html" />
     <Content Include="_app\guest\help.html" />
+    <Content Include="_app\guest\cookiePolicyCtrl.js" />
+    <Content Include="_app\guest\thirdPartiesCtrl.js" />
     <Content Include="_app\guest\home.html" />
     <Content Include="_app\guest\privacyInvestmentCtrl.js" />
     <Content Include="_app\guest\privacyInvestment.html" />
@@ -1589,6 +1607,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803101802259_CashDeposits_XReportDates.resx">
       <DependentUpon>201803101802259_CashDeposits_XReportDates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805101836399_Betting.resx">
+      <DependentUpon>201805101836399_Betting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805231047044_GDPR.resx">
+      <DependentUpon>201805231047044_GDPR.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
