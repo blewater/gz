@@ -91,7 +91,6 @@ module PortfolioTypes =
         DbUserMonth : DbUserMonth;
         VintagesSold : VintagesSold;
         Portfolio : Portfolio;
-        CashToInvest : Money;
         PortfoliosPrices : PortfoliosPrices
     }
 
@@ -103,6 +102,7 @@ module PortfolioTypes =
         EndBalance : Money;
         CashDeposits : Money;
         CashBonus : Money;
+        CashToInvest: Money;
     }
 
     type Symbol = string
