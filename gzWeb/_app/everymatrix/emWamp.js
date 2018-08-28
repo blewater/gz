@@ -246,7 +246,8 @@
             // </parameters>
             login: function (parameters) {
                 JL("emWamp").info("login attempt for user: " + parameters.usernameOrEmail);
-                return _call("/user#login", parameters);
+                // offline Sept 1
+                //return _call("/user#login", parameters);
             },
 
             acceptTC: function() {

@@ -24,10 +24,11 @@
             recaptcha: undefined
         };
 
-        $scope.submit = function () {
-            if ($scope.form.$valid && !$scope.waiting)
-                login();
-        };
+        // Turning application offline: Sept 1
+        //$scope.submit = function () {
+        //    if ($scope.form.$valid && !$scope.waiting)
+        //        login();
+        //};
 
         function login() {
             $scope.waiting = true;

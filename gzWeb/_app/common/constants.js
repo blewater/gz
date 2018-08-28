@@ -220,11 +220,28 @@
     routes.modal = {
         path: '/:key',
         redirectTo: function (routeParams, path, search) {
+            // offline Sept 1
+            //switch (routeParams.key) {
+            //    case 'login':
+            //    case 'signup':
+            //    case 'forgot-password':
+            //        return routes.home.path + "?open=" + routeParams.key;
+            //    case 'deposit':
+            //    case 'withdraw':
+            //    case 'pending-withdrawals':
+            //    case 'transaction-history':
+            //    case 'bonuses':
+            //    case 'responsible-gaming':
+            //    case 'my-profile':
+            //    case 'change-password':
+            //        return routes.games.path + "?open=" + routeParams.key;
+            //    default:
+            //        return routes.home.path;
+            //}
             switch (routeParams.key) {
                 case 'login':
                 case 'signup':
                 case 'forgot-password':
-                    return routes.home.path + "?open=" + routeParams.key;
                 case 'deposit':
                 case 'withdraw':
                 case 'pending-withdrawals':
@@ -233,9 +250,8 @@
                 case 'responsible-gaming':
                 case 'my-profile':
                 case 'change-password':
-                    return routes.games.path + "?open=" + routeParams.key;
                 default:
-                    return routes.home.path;
+                    return routes.home.path + "?open=offline";
             }
         }
     };

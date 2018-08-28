@@ -16,8 +16,6 @@
                     return 'Your transaction is incomplete!';
                 case 'error':
                     return 'Your transaction failed!';
-                case 'success':
-                    return 'Your transaction has been successful!';
                 case 'pending':
                     return 'Your transaction is pending and waiting for approval!';
                 default:

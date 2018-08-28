@@ -1,12 +1,12 @@
 ﻿<script type="text/ng-template" id="login-signup.html">
     <div gz-authorize="guest" gz-match="exact" ng-class="{'text-center': sm || md}">
         <span ng-class="{'col-xs-12':xs, 'col-sm-offset-3':sm, 'col-sm-3':sm, 'col-sm-offset-4':md, 'col-md-2':md}">
-            <button type="button" class="btn-gz btn-gz-alt" ng-click="login()" ng-class="{'full-width':!lg}">
+            <button type="button" class="btn-gz btn-gz-alt" ng-click="login()" ng-class="{'full-width':!lg}" disabled>
                 LOGIN
             </button>
         </span>
         <span ng-class="{'col-xs-12':xs, 'col-sm-3':sm, 'col-md-2':md}">
-            <button type="button" class="btn-gz" ng-click="signup()" ng-class="{'full-width':!lg}">
+            <button type="button" class="btn-gz" ng-click="signup()" ng-class="{'full-width':!lg}" disabled>
                 SIGNUP
             </button>
         </span>

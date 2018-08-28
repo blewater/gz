@@ -135,10 +135,11 @@
         $scope.backToLogin = function () {
             modals.login($scope.nsBack);
         };
-        $scope.submit = function () {
-            if ($scope.form.$valid)
-                proccedToUserDetails();
-        };
+        // Turning application offline: Sept 1
+        //$scope.submit = function () {
+        //    if ($scope.form.$valid)
+        //        proccedToUserDetails();
+        //};
         function proccedToUserDetails(){
             $scope.nsNext({
                 nsType: 'modal',

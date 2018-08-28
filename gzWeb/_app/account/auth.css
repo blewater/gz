@@ -10,8 +10,8 @@
 
 .auth .heading {
     background-color: #f2f2f2;
-    margin: 20px auto;
-    height: 90px;
+    margin-top: 1em;
+    height: 5em;
     color: #7b7b7b
 }
 .auth .heading h2 {
