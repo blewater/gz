@@ -368,12 +368,17 @@ module PlayerGamingRpt2Db =
     let logger = LogManager.GetCurrentClassLogger()
 
     /// Open an player gaming excel file and console out the filename
-    let private openPlayingActivityRptSchemaFile excelFilename = 
-        let playerGamingActivity = new CasinoGameExcelSchema(excelFilename)
-        logger.Info ""
-        logger.Info (sprintf "************ Processing Player Gaming Report %s excel file" excelFilename)
-        logger.Info ""
-        playerGamingActivity
+    let private openPlayingActivityRptSchemaFile (excelFilename : string) : CasinoGameExcelSchema option = 
+        try
+            let playerGamingActivity = new CasinoGameExcelSchema(excelFilename)
+
+            logger.Info ""
+            logger.Info (sprintf "************ Processing Player Gaming Report %s excel file" excelFilename)
+            logger.Info ""
+            Some playerGamingActivity
+            // There may be no activity
+        with _ ->
+            None
     
     let getUserIdFromUsername(db : DbContext)(username : string) : int =
         query {
@@ -408,12 +413,13 @@ module PlayerGamingRpt2Db =
             (emailToProcOnly: string option) : unit =
 
         // Open excel report file for the memory schema
-        let openFile = 
-            playerGamingRptFullPath 
-            |> openPlayingActivityRptSchemaFile
+        match openPlayingActivityRptSchemaFile playerGamingRptFullPath with
+        | Some openCasinoGamingExcelSchema -> 
+            
+            let playerGamingDtStr = getPlayerGamingDtStr playerGamingRptFullPath
+            insDbPlayerGamingExcelRptRows db openCasinoGamingExcelSchema playerGamingDtStr emailToProcOnly
 
-        let playerGamingDtStr = getPlayerGamingDtStr playerGamingRptFullPath
-        insDbPlayerGamingExcelRptRows db openFile playerGamingDtStr emailToProcOnly
+        | None -> logger.Info "No Casino Gaming Excel Activity."
 
 module Etl =
     open System 

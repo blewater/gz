@@ -67,15 +67,6 @@ module DbGzTrx =
                 Some userId
         )
 
-    /// Get the credited loss Percentage in human form % i.e. 50 from gzConfiguration
-    /// <param name="db"></param>
-    let getCreditLossPcnt (db : DbContext) : float32 =
-        query {
-            for c in db.GzConfigurations do
-            exactlyOne
-        }
-        |> (fun conf -> conf.CREDIT_LOSS_PCNT)
-
     /// Main formula calculating the amount that will be credited to the users account.
     /// Here the early liquidations tracked in invBalances are considered as withdrawals
     let getCreditedPlayerAmount (creditLossPcnt : float32)

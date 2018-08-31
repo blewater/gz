@@ -730,10 +730,8 @@
     </Compile>
     <Compile Include="Models\InvestmentViewModels.cs" />
     <Compile Include="Areas\Mvc\MvcAreaRegistration.cs" />
-    <Compile Include="Areas\Mvc\Controllers\AccountController.cs" />
     <Compile Include="Areas\Mvc\Controllers\HomeController.cs" />
     <Compile Include="Areas\Mvc\Controllers\GamesController.cs" />
-    <Compile Include="Areas\Mvc\Controllers\ManageController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\AccountApiController.cs" />
     <Compile Include="Controllers\InvestmentsApiController.cs" />
@@ -874,6 +872,8 @@
     <Content Include="_app\accountManagement\withdrawMoneyMatrixSkrillCtrl.js" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustly.html" />
     <Content Include="_app\accountManagement\withdrawMoneyMatrixTrustlyCtrl.js" />
+    <Content Include="_app\account\offlineCtrl.js" />
+    <Content Include="_app\account\offline.html" />
     <Content Include="_app\account\gdpr.html" />
     <Content Include="_app\account\gdprCtrl.js" />
     <Content Include="_app\account\receiptCtrl.js" />

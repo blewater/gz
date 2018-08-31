@@ -79,61 +79,6 @@ module UserPortfolio =
 
         userPortfolioInput.DbUserMonth.Db.SubmitChanges()
 
-module CalcUserPortfolioShares =
-    open PortfolioTypes
-        
-    let private priceLowRiskPortfolio (userPortfolioInput : UserPortfolioInput) : PortfolioPriced =
-
-        let lowRiskPrice = userPortfolioInput.PortfoliosPrices.PortfolioLowRiskPrice.Price
-        {
-            PortfolioShares = { 
-                                SharesLowRisk = userPortfolioInput.CashToInvest / decimal lowRiskPrice;
-                                SharesMediumRisk = 0M;
-                                SharesHighRisk = 0M
-            };
-            Worth = userPortfolioInput.CashToInvest
-        }
-
-    let private priceMediumRiskPortfolio (userPortfolioInput : UserPortfolioInput) : PortfolioPriced =
-
-        let mediumRiskPrice = userPortfolioInput.PortfoliosPrices.PortfolioMediumRiskPrice.Price
-        { 
-            PortfolioShares = { 
-                                SharesLowRisk = 0M;
-                                SharesMediumRisk = userPortfolioInput.CashToInvest / decimal mediumRiskPrice;
-                                SharesHighRisk = 0M;
-            };
-            Worth = userPortfolioInput.CashToInvest
-        }
-
-    let private priceHighRiskPortfolio (userPortfolioInput : UserPortfolioInput) : PortfolioPriced =
-
-        let highRiskPrice = userPortfolioInput.PortfoliosPrices.PortfolioHighRiskPrice.Price
-        { 
-            PortfolioShares = { 
-                                SharesLowRisk = 0M;
-                                SharesMediumRisk = 0M;
-                                SharesHighRisk = userPortfolioInput.CashToInvest / decimal highRiskPrice
-            }
-            Worth = userPortfolioInput.CashToInvest
-        }
-
-    /// Get cash -> shares by looking at the investment cash amount and user portfolio
-    let getNewCustomerShares (userPortfolioInput : UserPortfolioInput) : PortfolioPriced =
-        match userPortfolioInput.Portfolio.Risk with
-        | Low 
-            -> 
-            userPortfolioInput 
-            |> priceLowRiskPortfolio
-        | Medium 
-            -> 
-            userPortfolioInput 
-            |> priceMediumRiskPortfolio
-        | High 
-            -> 
-            userPortfolioInput 
-            |> priceHighRiskPortfolio
-
 module VintageShares =
     open System
     open GzBatchCommon
@@ -241,7 +186,6 @@ module InvBalance =
     open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
-    open System.Runtime.Serialization
 
     type InvBalancePrevTotals = {
         TotalCashInvestments : decimal;
@@ -292,7 +236,7 @@ module InvBalance =
             prevShares.Worth 
             + newShares.Worth
 
-        let cashInv = input.UserInputPortfolio.CashToInvest
+        let cashInv = input.UserFinance.CashToInvest
 
         let vintagesSoldThisMonth = input.UserInputPortfolio.VintagesSold
 
@@ -378,7 +322,7 @@ module InvBalance =
             { TotalCashInvestments = 0M; TotalCashInvInHold = 0M; TotalSoldVintagesSold = 0M }
 
     /// adjust inv balance if a monthly adjustment exists
-    let adjustInvBalanceTotals(dbUserMonth : DbUserMonth)(userFinance : UserFinance) : UserFinance =
+    let adjustInvBalanceTotals (creditLossPcnt: float32)(dbUserMonth : DbUserMonth)(userFinance : UserFinance) : UserFinance =
         let invAdjustment = getInvAdj dbUserMonth
 
         if isNull invAdjustment then
@@ -386,16 +330,28 @@ module InvBalance =
         else
             match enum invAdjustment.AmountType with
             | InvAdjustmentType.Deposit ->
+                let cashBonus = 
+                    match (userFinance.CashBonus + invAdjustment.Amount) with
+                    | posAmount when posAmount >= 0m -> posAmount
+                    | _ -> 0m
                 { 
                     userFinance with 
                         Deposits = userFinance.Deposits + invAdjustment.Amount; 
-                        GainLoss = userFinance.GainLoss - invAdjustment.Amount 
+                        GainLoss = userFinance.GainLoss - invAdjustment.Amount;
+                        CashBonus = cashBonus;
+                        CashToInvest = cashBonus * decimal (creditLossPcnt / 100.0f)
                 }
             | InvAdjustmentType.Withdrawal ->
+                let cashBonus = 
+                    match (userFinance.CashBonus - invAdjustment.Amount) with
+                    | posAmount when posAmount >= 0m -> posAmount
+                    | _ -> 0m
                 {
                     userFinance with 
                         Withdrawals = userFinance.Withdrawals + invAdjustment.Amount; 
-                        GainLoss = userFinance.GainLoss + invAdjustment.Amount 
+                        GainLoss = userFinance.GainLoss + invAdjustment.Amount;
+                        CashBonus = cashBonus;
+                        CashToInvest = cashBonus * decimal (creditLossPcnt / 100.0f)
                 }
             | _ -> userFinance
 
@@ -428,11 +384,42 @@ module InvBalance =
                     { PortfolioShares = vintShares; BoughtAt = cashInv; SoldAt = soldAmount }
                 )
 
+    /// get portfolio shares for user case
+    let private getPricedPortfolio (cashToInvest : decimal)(userPortfolioInput : UserPortfolioInput) : PortfolioPriced =
+        {
+            PortfolioShares =
+                match userPortfolioInput.Portfolio.Risk with
+                | Low ->
+                    let lowRiskPrice = userPortfolioInput.PortfoliosPrices.PortfolioLowRiskPrice.Price
+                    { 
+                                        SharesLowRisk = cashToInvest / decimal lowRiskPrice;
+                                        SharesMediumRisk = 0M;
+                                        SharesHighRisk = 0M
+                    };
+                | Medium ->
+                    let mediumRiskPrice = userPortfolioInput.PortfoliosPrices.PortfolioMediumRiskPrice.Price
+                    { 
+                                        SharesLowRisk = 0M;
+                                        SharesMediumRisk = cashToInvest / decimal mediumRiskPrice;
+                                        SharesHighRisk = 0M;
+                    };
+                | High ->
+                    let highRiskPrice = userPortfolioInput.PortfoliosPrices.PortfolioHighRiskPrice.Price
+                    { 
+                                        SharesLowRisk = 0M;
+                                        SharesMediumRisk = 0M;
+                                        SharesHighRisk = cashToInvest / decimal highRiskPrice
+                    }
+            Worth = cashToInvest
+        }
+
     /// get instance of input values for InvBalance processing
     let getInvBalanceInput (userPortfolioInput : UserPortfolioInput)(userFinance : UserFinance) : InvBalanceInput = 
         let portfolioShares = { 
-            PrevPortfolioShares = userPortfolioInput |> VintageShares.getPricedPrevMonthShares;
-            NewPortfolioShares = userPortfolioInput |> CalcUserPortfolioShares.getNewCustomerShares
+            PrevPortfolioShares = 
+                VintageShares.getPricedPrevMonthShares userPortfolioInput
+            NewPortfolioShares = 
+                getPricedPortfolio userFinance.CashToInvest userPortfolioInput
         }
         { 
             InvBalancePrevTotals =  userPortfolioInput.DbUserMonth |> getInvBalancePrevTotals;
@@ -442,12 +429,9 @@ module InvBalance =
         }
 
 module UserTrx =
-    open GzBatchCommon
     open GzDb.DbUtil
     open PortfolioTypes
     open InvBalance
-    open System.Collections.Generic
-    open System
     open NLog
     open GzDb.Trx
 
@@ -472,9 +456,9 @@ module UserTrx =
 
     /// Process input balances
     let private setDbProcessUserBalances (userPortfolioInput : UserPortfolioInput)(userFinance:UserFinance)(invBalanceInput : InvBalanceInput): unit = 
-        if userPortfolioInput.CashToInvest > 0M || userFinance.EndBalance > 0M then
+        if userFinance.CashToInvest > 0M || userFinance.EndBalance > 0M then
             logger.Info(sprintf "Processing investment balances for user id %d in the month of %s having these financial amounts\n%A, cash to invest: %M" 
-                userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance userPortfolioInput.CashToInvest)
+                userPortfolioInput.DbUserMonth.UserId userPortfolioInput.DbUserMonth.Month userFinance userFinance.CashToInvest)
 
         let dbTrxOper() = 
             transactionWith 
@@ -491,7 +475,6 @@ module UserTrx =
             DbUserMonth = dbUserMonth;
             VintagesSold = dbUserMonth |> InvBalance.getSoldVintages
             Portfolio = dbUserMonth |> UserPortfolio.getUserPortfolioDetail;
-            CashToInvest = trxRow.Amount;
             PortfoliosPrices = portfoliosPricesMap
         }
 
@@ -506,6 +489,7 @@ module UserTrx =
             GainLoss = if trxRow.GmGainLoss.HasValue then trxRow.GmGainLoss.Value else 0m
             CashDeposits = trxRow.CashDeposits
             CashBonus = trxRow.CashBonusAmount
+            CashToInvest = trxRow.Amount
         }
 
     /// Main entry to process credit losses for the month and put forth balance amounts from gaming activities
@@ -540,6 +524,9 @@ module UserTrx =
                         sortBy trxRow.CustomerId
                         select trxRow
                 }
+
+        let creditLossPcnt = getCreditLossPcnt db 
+
         trxRows 
         |> Seq.iter (fun (trxRow : DbGzTrx) ->
                     // set input types
@@ -552,7 +539,7 @@ module UserTrx =
                     let userFinance = 
                         trxRow 
                         |> getUserFinance
-                        |> adjustInvBalanceTotals dbUserMonth
+                        |> adjustInvBalanceTotals creditLossPcnt dbUserMonth
                     
                     let invBalanceInput = 
                         (userPortfolioInput, userFinance) 

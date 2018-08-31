@@ -188,8 +188,10 @@ var APP = (function () {
             }
 
             function onInit() {
-                if ($route.current.$$route.originalPath === constants.routes.home.path && auth.data.isGamer)
-                    $location.path(constants.routes.games.path).search({});
+                // offline Sept 1
+                //if ($route.current.$$route.originalPath === constants.routes.home.path && auth.data.isGamer)
+                //    $location.path(constants.routes.games.path).search({});
+                $location.path("/?open=offline").search({});
                 helpers.ui.compile({ selector: '#footer', templateUrl: '_app/common/footer.html', controllerId: 'footerCtrl' });
                 helpers.ui.compile({ selector: '#header', templateUrl: '_app/common/header.html', controllerId: 'headerCtrl', callback: onInitCallback });
             }

@@ -173,6 +173,15 @@ module DbUtil =
         let dbTransOperation() = (db, dbOperation) ||> tryDbTransOperation 
         retry 3 dbTransOperation
 
+    /// Get the credited loss Percentage in human form % i.e. 50 from gzConfiguration
+    /// <param name="db"></param>
+    let getCreditLossPcnt (db : DbContext) : float32 =
+        query {
+            for c in db.GzConfigurations do
+            exactlyOne
+        }
+        |> (fun conf -> conf.CREDIT_LOSS_PCNT)
+
 /// Credit to http://www.fssnip.net/7PJ/title/Way-to-wrap-methods-to-transactions
 module Trx =
     open System

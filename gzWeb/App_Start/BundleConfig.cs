@@ -252,6 +252,7 @@ namespace gzWeb
 
             #region Account
                                     , "~/_app/account/loginCtrl.js"
+                                    , "~/_app/account/offlineCtrl.js"
                                     , "~/_app/account/gdprCtrl.js"
                                     , "~/_app/account/investmentAccessErrorCtrl.js"
                                     , "~/_app/account/forgotPasswordCtrl.js"

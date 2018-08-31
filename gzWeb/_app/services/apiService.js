@@ -56,19 +56,21 @@
 
         // #region Account
         factory.login = function (usernameOrEmail, password) {
-            var data = "grant_type=password" +
-                       "&username=" + usernameOrEmail +
-                       "&password=" + password;
-            return $http({
-                url: "/TOKEN",
-                method: "POST",
-                data: data,
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            });
+            // offline Sept 1
+            //var data = "grant_type=password" +
+            //           "&username=" + usernameOrEmail +
+            //           "&password=" + password;
+            //return $http({
+            //    url: "/TOKEN",
+            //    method: "POST",
+            //    data: data,
+            //    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            //});
         };
 
         factory.register = function (parameters) {
-            return $http.post('/api/Account/Register', parameters);
+            // offline Sept 1
+            //return $http.post('/api/Account/Register', parameters);
         };
 
         factory.setGdpr = function (consents) {
@@ -76,11 +78,13 @@
         };
 
         factory.revokeRegistration = function (error) {
-            return $http.post('/api/Account/RevokeRegistration?reason=' + error);
+            // offline Sept 1
+            //return $http.post('/api/Account/RevokeRegistration?reason=' + error);
         };
 
         factory.finalizeRegistration = function (userId) {
-            return $http.post('/api/Account/FinalizeRegistration?gmUserId=' + userId);
+            // offline Sept 1
+            //return $http.post('/api/Account/FinalizeRegistration?gmUserId=' + userId);
         };
 
         factory.forgotPassword = function (email) {
