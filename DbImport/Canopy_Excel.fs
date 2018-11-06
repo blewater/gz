@@ -8,6 +8,7 @@ open ExcelSchemas
 open ConfigArgs
 open Microsoft.FSharp.Collections
 open NLog
+open System
 
 type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsType) =
 
@@ -27,7 +28,12 @@ type CanopyExcel(dayToProcess : DateTime, reportsArgs : EverymatriReportsArgsTyp
     [<Literal>]
     let CustomRptName = "Auto"
 
-    let inRptFolderName = Path.Combine (reportsArgs.ReportsFoldersArgs.BaseFolder, reportsArgs.ReportsFoldersArgs.ExcelInFolder)
+    let driveSlashed = System.IO.Path.GetPathRoot  __SOURCE_DIRECTORY__
+    let drive =
+        match driveSlashed.[0] with 
+        | 'c' | 'C' -> ""
+        | _ -> driveSlashed.Replace("\\", "")
+    let inRptFolderName = (* drive + *) Path.Combine ([| reportsArgs.ReportsFoldersArgs.BaseFolder; reportsArgs.ReportsFoldersArgs.ExcelInFolder|])
 
     let rptFilename (rptFilenamePrefix : string)(filenameDatePostfix : DateTime) : string =
         rptFilenamePrefix

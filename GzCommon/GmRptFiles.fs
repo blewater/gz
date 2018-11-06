@@ -364,29 +364,43 @@ module GmRptFiles =
         | None ->
             true // return ok
 
+    type BonusFileResult =
+    | ValidBonusFile
+    | InvalidBonusFile
+    | EmptyOrNoneBonusFile
+
+    // Validate bonus file content
+    let private getBonusValidationResult(bonusExcel : BonusExcelSchema) : BonusFileResult =
+        // Keep the first data row
+        let bonusRows = bonusExcel.Data |> Seq.truncate 2
+        let len = bonusRows |> Seq.length 
+        if len <= 1 then
+            ValidBonusFile // header + total line only-> empty balance file
+        else
+            bonusRows
+            |> Seq.tryFindIndex(fun (excelRow) ->
+                let bonusProgramId = excelRow.``Bonus program ID``
+                bonusProgramId.Length > 1
+            )   
+            |> function
+                | None -> InvalidBonusFile // this is not a Bonus Report excel file
+                | _ -> ValidBonusFile // Ok it's Bonus file
+
     /// Check if bonus excel report is really that type of excel report
-    let private bonusRptContentMatchCheck(excelFilename : BonusFilenameType) : bool =
+    let private bonusRptContentMatchCheck(excelFilename : BonusFilenameType) : BonusFileResult =
 
         match excelFilename with
         | Some bonusFilename ->
-            let bonusExcel = new BonusExcelSchema(bonusFilename)
+            try 
+                let bonusFile = new BonusExcelSchema(bonusFilename)
+                getBonusValidationResult bonusFile
 
-            // Keep the first data row
-            let bonusRows = bonusExcel.Data |> Seq.truncate 2
-            let len = bonusRows |> Seq.length 
-            if len <= 1 then
-                true // header + total line only-> empty balance file
-            else
-                bonusRows
-                |> Seq.tryFindIndex(fun (excelRow) ->
-                    let bonusProgramId = excelRow.``Bonus program ID``
-                    bonusProgramId.Length > 1
-                )   
-                |> function
-                    | None -> false // this is not a Bonus Report excel file
-                    | _ -> true // Ok it's Bonus file
+            with _ ->
+                logger.Warn "** No bonus content and opening it throws an exception. Removing bonus file **"
+                EmptyOrNoneBonusFile
+
         | None ->
-            true // return ok
+            EmptyOrNoneBonusFile
 
     /// Enforce beginning and ending balance Report files title dates match their content
     let depositsRptContentMatch(excelFiles : RptFilenames) : RptFilenames =
@@ -397,10 +411,16 @@ module GmRptFiles =
 
     /// Enforce beginning and ending balance Report files title dates match their content
     let bonusRptContentMatch(excelFiles : RptFilenames) : RptFilenames =
-        if not (excelFiles.BonusFilename
-                    |> bonusRptContentMatchCheck) then 
+        match (bonusRptContentMatchCheck excelFiles.BonusFilename) with
+        | InvalidBonusFile ->                
             failWithLogInvalidArg "[BonusFileNotMatchingContent]" (sprintf "The bonus excel report filename: %s does not match its contents." excelFiles.BonusFilename.Value)
-        excelFiles
+        | ValidBonusFile ->
+            excelFiles
+        | EmptyOrNoneBonusFile ->
+            match excelFiles.BonusFilename with
+            | Some bonusFilename -> File.Delete bonusFilename
+            | None -> ()
+            { excelFiles with BonusFilename = None }
 
     /// Check if balance report dates content mismatches title. Precondition is excelFilename is Some  
     let private matchBalanceRptDatesWithTitle(excelFilename : string) : bool =
